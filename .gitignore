@@ -1,0 +1,8 @@
+node_modules
+dist
+.DS_Store
+.env
+.env.local
+
+# Local Netlify folder (state from CLI — netlify.toml at root is committed)
+.netlify

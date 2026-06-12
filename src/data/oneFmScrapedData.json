@@ -1,0 +1,629 @@
+{
+  "station": {
+    "name": "ONE FM 98.5",
+    "callsign": "3ONE",
+    "frequency": "98.5 FM",
+    "location": "Shepparton, Victoria, Australia",
+    "established": 1989,
+    "slogan": "Live and Local",
+    "email": "admin@fm985.com.au",
+    "phone": "(+613) 58313131",
+    "acma_license": "1385226/1",
+    "organisation": "Goulburn Valley Community Radio Inc.",
+    "licensed_by": "APRA AMCOS & ACMA",
+    "broadcast_radius_km": 100,
+    "weekly_listeners": 39375,
+    "area_population_2026": 185791,
+    "communities_served": 25
+  },
+  "program_guide": {
+    "monday": [
+      {
+        "time": "12:00am - 6:00am",
+        "show": "Overnight Mix",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "6:00am - 9:00am",
+        "show": "Breaky with Plemo",
+        "presenter": "Plemo"
+      },
+      {
+        "time": "9:00am - 12:00pm",
+        "show": "Dancing through the decades",
+        "presenter": "Johnny P"
+      },
+      {
+        "time": "12:00pm - 3:00pm",
+        "show": "The Regional Voice",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "9:00pm - 10:00pm",
+        "show": "Africonnect",
+        "presenter": "Fikiri (Swahili)"
+      },
+      {
+        "time": "10:00pm - 11:00pm",
+        "show": "[DATA_MISSING_FROM_SOURCE]",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "11:00pm - 12:00am",
+        "show": "Punjabi Music Program",
+        "presenter": "Rai, Aanchal or Sahil"
+      }
+    ],
+    "tuesday": [
+      {
+        "time": "12:00am - 6:00am",
+        "show": "Overnight Mix",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "6:00am - 9:00am",
+        "show": "Breaky with Plemo",
+        "presenter": "Plemo"
+      },
+      {
+        "time": "9:00am - 12:00pm",
+        "show": "Dancing through the decades",
+        "presenter": "Johnny P"
+      },
+      {
+        "time": "12:00pm - 3:00pm",
+        "show": "The Regional Voice",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      }
+    ],
+    "wednesday": [
+      {
+        "time": "12:00am - 6:00am",
+        "show": "Overnight Mix",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "6:00am - 9:00am",
+        "show": "Breaky with Plemo",
+        "presenter": "Plemo"
+      },
+      {
+        "time": "9:00am - 12:00pm",
+        "show": "Dancing through the decades",
+        "presenter": "Johnny P"
+      },
+      {
+        "time": "12:00pm - 3:00pm",
+        "show": "The Regional Voice",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "9:00pm - 10:00pm",
+        "show": "Samoan Program",
+        "presenter": "MK"
+      },
+      {
+        "time": "10:00pm - 11:00pm",
+        "show": "Filipino Music Program",
+        "presenter": "Edith"
+      }
+    ],
+    "thursday": [
+      {
+        "time": "12:00am - 6:00am",
+        "show": "Overnight Mix",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "6:00am - 9:00am",
+        "show": "Breaky with Plemo",
+        "presenter": "Plemo"
+      },
+      {
+        "time": "9:00am - 12:00pm",
+        "show": "Dancing through the decades",
+        "presenter": "Johnny P"
+      },
+      {
+        "time": "12:00pm - 3:00pm",
+        "show": "The Regional Voice",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "11:00pm - 12:00am",
+        "show": "Planet of Sound",
+        "presenter": "Carlos Rock"
+      }
+    ],
+    "friday": [
+      {
+        "time": "12:00am - 6:00am",
+        "show": "Overnight Mix",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "6:00am - 9:00am",
+        "show": "Breaky with Plemo",
+        "presenter": "Plemo"
+      },
+      {
+        "time": "9:00am - 12:00pm",
+        "show": "Dancing through the decades",
+        "presenter": "Johnny P"
+      },
+      {
+        "time": "12:00pm - 3:00pm",
+        "show": "The Regional Voice",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "8:00pm - 9:00pm",
+        "show": "Good Evening Country",
+        "presenter": "Timmy Ahmet"
+      },
+      {
+        "time": "11:00pm - 12:00am",
+        "show": "Planet of Sound",
+        "presenter": "Carlos Rock"
+      }
+    ],
+    "saturday": [
+      {
+        "time": "12:00am - 6:00am",
+        "show": "Overnight Mix",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      },
+      {
+        "time": "[DATA_MISSING_FROM_SOURCE]",
+        "show": "Super Saturday Sports Show",
+        "presenter": "Various"
+      }
+    ],
+    "sunday": [
+      {
+        "time": "12:00am - 6:00am",
+        "show": "Overnight Mix",
+        "presenter": "[DATA_MISSING_FROM_SOURCE]"
+      }
+    ]
+  },
+  "presenters": [
+    {
+      "name": "Plemo",
+      "show": "Breaky with Plemo",
+      "timeslot": "Monday-Friday, 6am-9am",
+      "bio": "ONE FM 98.5 breakfast announcer. Interviews local community figures, business owners, and event organisers across the Goulburn Valley.",
+      "category": "Breakfast"
+    },
+    {
+      "name": "Josh Revens",
+      "show": "Interviews / Various",
+      "timeslot": "Various",
+      "bio": "ONE FM announcer who conducts community interviews covering local events, sports, and community initiatives.",
+      "category": "Community"
+    },
+    {
+      "name": "Johnny P (John Painter)",
+      "show": "Dancing through the decades / Interviews",
+      "timeslot": "Monday-Friday, 9am-12pm",
+      "bio": "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades. Also interviews RoadSafe Goulburn Valley's Bill Winters.",
+      "category": "Music"
+    },
+    {
+      "name": "Carlos Rock",
+      "show": "Planet of Sound",
+      "timeslot": "Thursday nights, 11pm",
+      "bio": "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades.",
+      "category": "Music"
+    },
+    {
+      "name": "Ralph Whitehead",
+      "show": "Friday Arvo / Friday Morning",
+      "timeslot": "Friday afternoons / mornings",
+      "bio": "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter.",
+      "category": "Music"
+    },
+    {
+      "name": "Roman Koz",
+      "show": "Friday Mornings",
+      "timeslot": "Friday mornings",
+      "bio": "[MANUAL_ENTRY_REQUIRED]",
+      "category": "Music"
+    },
+    {
+      "name": "Timmy Ahmet",
+      "show": "Good Evening Country",
+      "timeslot": "Friday, 8pm",
+      "bio": "Hosts the Good Evening Country program featuring country music.",
+      "category": "Music"
+    },
+    {
+      "name": "Ken & Jill Gaffney",
+      "show": "Winding Back",
+      "timeslot": "[DATA_MISSING_FROM_SOURCE]",
+      "bio": "[MANUAL_ENTRY_REQUIRED]",
+      "category": "Music"
+    },
+    {
+      "name": "Les 'Harro' Harrison",
+      "show": "Various",
+      "timeslot": "Various",
+      "bio": "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club.",
+      "category": "Community"
+    },
+    {
+      "name": "Michael Costello",
+      "show": "River Allsorts",
+      "timeslot": "[DATA_MISSING_FROM_SOURCE]",
+      "bio": "Lived in Melbourne most of his life, had a 30 year involvement in Community Television.",
+      "category": "Community"
+    },
+    {
+      "name": "Craig Stott",
+      "show": "Super Saturday Sports Show",
+      "timeslot": "Saturday",
+      "bio": "Co-hosts the Saturday sports show with John Painter.",
+      "category": "Sport"
+    },
+    {
+      "name": "Rowan Farren-Parnell",
+      "show": "The Regional Voice / The Advocate",
+      "timeslot": "Monday-Friday, 12pm-3pm",
+      "bio": "Member of the Mooroopna Community Planning Group. Interviews community figures and discusses local advocacy issues.",
+      "category": "Community"
+    },
+    {
+      "name": "Fikiri",
+      "show": "Africonnect",
+      "timeslot": "Monday, 9-10pm",
+      "bio": "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley.",
+      "category": "Multicultural"
+    },
+    {
+      "name": "Jimmy",
+      "show": "Mandarin Program / Her Quiet Strength",
+      "timeslot": "Various",
+      "bio": "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy.",
+      "category": "Multicultural"
+    },
+    {
+      "name": "MK (Muagutauti'a Faletoese Lemamea)",
+      "show": "Samoan Program",
+      "timeslot": "Wednesday, 9-10pm",
+      "bio": "Hosts the Samoan language program.",
+      "category": "Multicultural"
+    },
+    {
+      "name": "Edith",
+      "show": "Filipino Music Program",
+      "timeslot": "Wednesday, 10-11pm",
+      "bio": "Hosts the Filipino music program.",
+      "category": "Multicultural"
+    }
+  ],
+  "regular_segments": [
+    {
+      "name": "Breaky with Plemo",
+      "description": "Breakfast show with community interviews, local news, and music. Monday-Friday 6am-9am.",
+      "host": "Plemo"
+    },
+    {
+      "name": "Dancing through the decades",
+      "description": "Music from across the decades with Johnny P. Monday-Friday 9am-12pm.",
+      "host": "Johnny P"
+    },
+    {
+      "name": "The Regional Voice",
+      "description": "Community-focused programming with local interviews and advocacy. Monday-Friday 12pm-3pm.",
+      "host": "Rowan Farren-Parnell"
+    },
+    {
+      "name": "Planet of Sound",
+      "description": "Rock music program spanning 19-20 years on air. Thursday nights 11pm.",
+      "host": "Carlos Rock"
+    },
+    {
+      "name": "Good Evening Country",
+      "description": "Country music showcase Friday evenings.",
+      "host": "Timmy Ahmet"
+    },
+    {
+      "name": "Overnight Mix",
+      "description": "Automated overnight music mix. 12am-6am daily.",
+      "host": "Auto"
+    },
+    {
+      "name": "Shepplife",
+      "description": "Specialist interview program covering local community stories and events.",
+      "host": "Various"
+    },
+    {
+      "name": "So Much More",
+      "description": "Health and wellbeing program.",
+      "host": "Various"
+    },
+    {
+      "name": "Whatever Happened To?",
+      "description": "Music retrospective program exploring the stories behind classic artists and songs.",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "name": "Sport And Road",
+      "description": "Weekly sports coverage including local football, netball, cricket and racing.",
+      "host": "Various"
+    },
+    {
+      "name": "Square Gaiters",
+      "description": "Harness racing show covering the Goulburn Valley racing scene.",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "name": "Hole In One",
+      "description": "Golf show covering local golf events and news.",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "name": "At the Net",
+      "description": "Tennis show covering local tennis competitions and events.",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "name": "Cricket Shepparton Show",
+      "description": "Local cricket coverage from the Shepparton cricket scene.",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "name": "The Stats Man",
+      "description": "GVL Football & Netball season previews and reviews.",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "name": "KDL Show",
+      "description": "Local sports coverage.",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "name": "Weekly News Wrap",
+      "description": "News roundup with Will Adams/Geoff Adams of the Shepparton Adviser.",
+      "host": "Will Adams / Geoff Adams"
+    },
+    {
+      "name": "Mandarin Program",
+      "description": "Chinese language program with Jimmy.",
+      "host": "Jimmy"
+    },
+    {
+      "name": "Africonnect",
+      "description": "Swahili language program connecting the African community.",
+      "host": "Fikiri"
+    },
+    {
+      "name": "Punjabi Music Program",
+      "description": "Punjabi music program Monday nights.",
+      "host": "Rai, Aanchal or Sahil"
+    },
+    {
+      "name": "Filipino Music Program",
+      "description": "Filipino music program Wednesday nights.",
+      "host": "Edith"
+    },
+    {
+      "name": "Samoan Program",
+      "description": "Samoan language program Wednesday nights.",
+      "host": "MK"
+    }
+  ],
+  "recent_interviews": [
+    {
+      "date": "2026-04-29",
+      "guest": "Melanie Domaschenz & Athena Papadotas",
+      "topic": "St Vinnies Shepparton",
+      "host": "Plemo"
+    },
+    {
+      "date": "2026-04-21",
+      "guest": "Wendy Boyle",
+      "topic": "Shepparton Mother's Day Classic fun run",
+      "host": "Plemo"
+    },
+    {
+      "date": "2026-04-17",
+      "guest": "Steve 'Neffy' Neff",
+      "topic": "We Listen Support Group trivia night",
+      "host": "Josh Revens"
+    },
+    {
+      "date": "2026-04-15",
+      "guest": "Will Adams",
+      "topic": "Weekly News Wrap — Shepparton Adviser",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "date": "2026-04-13",
+      "guest": "Rowan Farren-Parnell",
+      "topic": "Mooroopna Community Planning Group",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "date": "2026-04-11",
+      "guest": "[DATA_MISSING_FROM_SOURCE]",
+      "topic": "GVL Football & Netball Round Two preview",
+      "host": "The Stats Man"
+    },
+    {
+      "date": "2026-04-10",
+      "guest": "Jan Phillips",
+      "topic": "Mooroopna Education & Activity Centre (MEAC)",
+      "host": "Plemo"
+    },
+    {
+      "date": "2026-04-10",
+      "guest": "Nathan Lyon",
+      "topic": "'Have You Got What It Takes' Regional Tour",
+      "host": "Plemo"
+    },
+    {
+      "date": "2026-04-10",
+      "guest": "Jackie Lee",
+      "topic": "Fire Relief Festival Community Concert & Fun Day Cobram",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "date": "2026-04-09",
+      "guest": "Stacy Watt",
+      "topic": "The Centre — volunteering to be matched with elder Australians",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "date": "2026-04-03",
+      "guest": "Jim Gow",
+      "topic": "Salvation Army Under the Same Stars VIP Sleepout",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "date": "2026-03-26",
+      "guest": "Shane Sali",
+      "topic": "Greater Shepparton Council Update",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "date": "2026-03-24",
+      "guest": "Rowan Farren-Parnell",
+      "topic": "2027-2031 Community Plan for Mooroopna",
+      "host": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "date": "2026-03-14",
+      "guest": "Sam Campi",
+      "topic": "Shepparton Italian Festa 2026",
+      "host": "Josh Revens"
+    },
+    {
+      "date": "2026-03-13",
+      "guest": "Geoff Long",
+      "topic": "Rotary Club Motor Show Market Day & Swap Meet",
+      "host": "Plemo"
+    },
+    {
+      "date": "2026-03-10",
+      "guest": "Reg Qemal & Mariola Nebiu",
+      "topic": "Shepparton Albanian Harvest Festival 2026",
+      "host": "Plemo"
+    }
+  ],
+  "ethnic_programs": [
+    {
+      "language": "Swahili",
+      "show": "Africonnect",
+      "presenter": "Fikiri",
+      "time": "Monday 9-10pm"
+    },
+    {
+      "language": "Swahili",
+      "show": "Africonnect",
+      "presenter": "Esther",
+      "time": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "language": "French",
+      "show": "Africonnect",
+      "presenter": "Jean-Marie",
+      "time": "[DATA_MISSING_FROM_SOURCE]"
+    },
+    {
+      "language": "Mandarin",
+      "show": "Mandarin Program",
+      "presenter": "Jimmy",
+      "time": "Various"
+    },
+    {
+      "language": "Mandarin",
+      "show": "Her Quiet Strength",
+      "presenter": "Jimmy & Ivy",
+      "time": "Various"
+    },
+    {
+      "language": "Punjabi",
+      "show": "Punjabi Music Program",
+      "presenter": "Rai, Aanchal or Sahil",
+      "time": "Monday 11pm"
+    },
+    {
+      "language": "Filipino",
+      "show": "Filipino Music Program",
+      "presenter": "Edith",
+      "time": "Wednesday 10-11pm"
+    },
+    {
+      "language": "Samoan",
+      "show": "Samoan Program",
+      "presenter": "MK",
+      "time": "Wednesday 9-10pm"
+    }
+  ],
+  "sports_programs": [
+    {
+      "name": "Super Saturday Sports Show",
+      "day": "Saturday",
+      "description": "Comprehensive local sports coverage including GVL Football & Netball, cricket, bowls, tennis and harness racing."
+    },
+    {
+      "name": "Sport And Road",
+      "day": "Weekends",
+      "description": "Sports coverage with Bill Winters from RoadSafe Goulburn Valley."
+    },
+    {
+      "name": "Square Gaiters",
+      "day": "Saturday",
+      "description": "Harness Racing show covering the Goulburn Valley racing scene."
+    },
+    {
+      "name": "Hole In One",
+      "day": "Saturday",
+      "description": "Golf show covering local golf events and news."
+    },
+    {
+      "name": "At the Net",
+      "day": "Saturday",
+      "description": "Tennis show covering local tennis competitions."
+    },
+    {
+      "name": "Cricket Shepparton Show",
+      "day": "Saturday",
+      "description": "Shepparton cricket coverage during cricket season."
+    },
+    {
+      "name": "Murray Valley Cricket Show",
+      "day": "Saturday",
+      "description": "Murray Valley cricket coverage."
+    },
+    {
+      "name": "The Murray Bowls Show",
+      "day": "Saturday",
+      "description": "Murray Bowls coverage."
+    },
+    {
+      "name": "GV Bowls Show",
+      "day": "Saturday",
+      "description": "Goulburn Valley Bowls coverage."
+    },
+    {
+      "name": "The Stats Man",
+      "day": "Saturday",
+      "description": "GVL Football & Netball season previews and round-by-round analysis."
+    },
+    {
+      "name": "KDL Show",
+      "day": "Saturday",
+      "description": "Local sports coverage."
+    }
+  ],
+  "contact": {
+    "address": "[MANUAL_ENTRY_REQUIRED — not found on live site]",
+    "phone": "(+613) 58313131",
+    "email": "admin@fm985.com.au",
+    "podcast_email": "[DATA_MISSING_FROM_SOURCE]",
+    "facebook": "[MANUAL_ENTRY_REQUIRED]",
+    "instagram": "[MANUAL_ENTRY_REQUIRED]"
+  }
+}

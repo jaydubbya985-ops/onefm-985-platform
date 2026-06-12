@@ -1,0 +1,671 @@
+/* eslint-disable react-refresh/only-export-components */
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react'
+import { MOCK_ENQUIRIES, type Enquiry, type EnquirySource } from './data/enquiries'
+import { BATCH_INVOICES, BILLING_INVOICES } from './data/invoices'
+import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
+import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
+import type { DbContactEnquiry } from '@/lib/supabase'
+import * as opsApi from '@/lib/opsApi'
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+export type OpsTab =
+  | 'enquiries'
+  | 'proposals'
+  | 'contracts'
+  | 'sponsors'
+  | 'schedule'
+  | 'invoices'
+  | 'batch'
+  | 'billing'
+  | 'payments'
+
+export type ProposalStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
+
+export interface Proposal {
+  id: string
+  enquiryId?: string
+  clientName: string
+  company?: string
+  email?: string
+  source?: EnquirySource
+  packageName?: string
+  tier?: string
+  value: number
+  status: ProposalStatus
+  createdAt: string
+  updatedAt: string
+}
+
+export type OpsContract = Contract & { proposalId?: string }
+
+export type OpsInvoiceStatus =
+  | 'draft'
+  | 'previewed'
+  | 'tested'
+  | 'sent'
+  | 'paid'
+  | 'partially_paid'
+  | 'overdue'
+
+export interface OpsInvoice {
+  id: string
+  number: string
+  company: string
+  contactName: string
+  email: string
+  /** Amount excluding GST */
+  amount: number
+  gst: number
+  total: number
+  description: string
+  period: string
+  issueDate: string
+  dueDate: string
+  status: OpsInvoiceStatus
+  inBatch: boolean
+  contractId?: string
+  emailSubject?: string
+  emailBody?: string
+  story?: string
+  notes?: string
+  paidDate?: string
+  paidAmount?: number
+  paymentMethod?: string
+}
+
+export interface NewProposalInput {
+  clientName: string
+  company?: string
+  email?: string
+  enquiryId?: string
+  source?: EnquirySource
+  packageName?: string
+  tier?: string
+  value: number
+}
+
+export type NewInvoiceInput = Omit<
+  OpsInvoice,
+  'id' | 'number' | 'status' | 'inBatch'
+> & {
+  id?: string
+  number?: string
+  status?: OpsInvoiceStatus
+  inBatch?: boolean
+}
+
+interface OpsState {
+  enquiries: Enquiry[]
+  proposals: Proposal[]
+  contracts: OpsContract[]
+  invoices: OpsInvoice[]
+}
+
+export interface OpsStore extends OpsState {
+  activeTab: OpsTab
+  setActiveTab: (tab: OpsTab) => void
+  resetDemoData: () => void
+  // Enquiries
+  updateEnquiry: (id: string, patch: Partial<Enquiry>) => void
+  addEnquiryNote: (id: string, text: string) => void
+  // Proposals
+  createProposalFromEnquiry: (enquiryId: string) => string | null
+  addProposal: (input: NewProposalInput) => string
+  updateProposal: (id: string, patch: Partial<Proposal>) => void
+  sendProposal: (id: string) => void
+  acceptProposal: (id: string) => void
+  declineProposal: (id: string) => void
+  // Contracts
+  updateContract: (id: string, patch: Partial<OpsContract>) => void
+  generateInvoiceFromContract: (contractId: string) => string | null
+  // Invoices
+  addInvoice: (invoice: NewInvoiceInput) => string
+  updateInvoice: (id: string, patch: Partial<OpsInvoice>) => void
+  markInvoicePaid: (id: string, paidAmount: number, method: string) => void
+  queueForBatch: (invoiceId: string) => void
+  removeFromBatch: (invoiceId: string) => void
+  sendBatch: (ids: string[]) => void
+}
+
+// ---------------------------------------------------------------------------
+// Seed + persistence
+// ---------------------------------------------------------------------------
+
+const STORAGE_KEY = 'onefm_ops_v1'
+
+function isoDate(d: Date): string {
+  return d.toISOString().split('T')[0]
+}
+
+function nextSequential(existing: string[], prefix: string): string {
+  let max = 0
+  for (const n of existing) {
+    if (n.startsWith(prefix)) {
+      const num = parseInt(n.slice(prefix.length), 10)
+      if (!Number.isNaN(num) && num > max) max = num
+    }
+  }
+  return `${prefix}${String(max + 1).padStart(3, '0')}`
+}
+
+function buildSeedState(): OpsState {
+  // Enquiries that already had a proposal out the door get a matching seeded
+  // proposal so the Proposals tab starts populated.
+  const proposals: Proposal[] = MOCK_ENQUIRIES.filter(
+    (e) => e.status === 'proposal_sent',
+  ).map((e, i) => ({
+    id: `prop-seed-${String(i + 1).padStart(3, '0')}`,
+    enquiryId: e.id,
+    clientName: e.name,
+    company: e.company,
+    email: e.email,
+    source: e.source,
+    value: e.value ?? 0,
+    status: 'sent',
+    createdAt: e.updatedAt,
+    updatedAt: e.updatedAt,
+  }))
+
+  const billingInvoices: OpsInvoice[] = BILLING_INVOICES.map((b) => ({
+    id: b.id,
+    number: b.number,
+    company: b.company,
+    contactName: b.contactName,
+    email: '',
+    amount: b.amount,
+    gst: b.gst,
+    total: b.total,
+    description: 'Sponsorship',
+    period: '',
+    issueDate: b.issueDate,
+    dueDate: b.dueDate,
+    status: b.status,
+    inBatch: false,
+    paidDate: b.paidDate,
+    paidAmount: b.paidAmount,
+    paymentMethod: b.paymentMethod,
+  }))
+
+  const batchInvoices: OpsInvoice[] = BATCH_INVOICES.map((b) => ({
+    id: b.id,
+    number: b.number,
+    company: b.company,
+    contactName: b.contactName,
+    email: b.email,
+    amount: b.amountExclGst,
+    gst: b.gst,
+    total: b.total,
+    description: b.description,
+    period: b.period,
+    issueDate: b.createdAt ?? '2026-06-09',
+    dueDate: b.dueDate,
+    status: b.status,
+    inBatch: true,
+    emailSubject: b.emailSubject,
+    emailBody: b.emailBody,
+    story: b.story,
+    notes: b.notes,
+  }))
+
+  return {
+    enquiries: MOCK_ENQUIRIES,
+    proposals,
+    contracts: MOCK_CONTRACTS,
+    invoices: [...billingInvoices, ...batchInvoices],
+  }
+}
+
+function loadState(): OpsState {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<OpsState>
+      if (
+        parsed &&
+        Array.isArray(parsed.enquiries) &&
+        Array.isArray(parsed.proposals) &&
+        Array.isArray(parsed.contracts) &&
+        Array.isArray(parsed.invoices)
+      ) {
+        return parsed as OpsState
+      }
+    }
+  } catch {
+    // Corrupt or unavailable storage — fall back to seed data.
+  }
+  return buildSeedState()
+}
+
+// ---------------------------------------------------------------------------
+// Context
+// ---------------------------------------------------------------------------
+
+const OpsContext = createContext<OpsStore | null>(null)
+
+export function OpsProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<OpsState>(loadState)
+  const [activeTab, setActiveTab] = useState<OpsTab>('enquiries')
+  const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
+
+  // Load from Supabase on mount (when configured + authenticated)
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return
+    let cancelled = false
+
+    ;(async () => {
+      const { state: remote, hasData } = await opsApi.loadAll()
+      if (cancelled) return
+
+      if (hasData) {
+        // Merge: remote enquiries + local mock enquiries not yet in DB
+        const remoteIds = new Set(remote.enquiries.map((e) => e.id))
+        const localOnly = loadState().enquiries.filter((e) => !remoteIds.has(e.id))
+        setState({
+          enquiries: [...remote.enquiries, ...localOnly],
+          proposals: remote.proposals.length ? remote.proposals : loadState().proposals,
+          contracts: remote.contracts.length ? remote.contracts : loadState().contracts,
+          invoices: remote.invoices.length ? remote.invoices : loadState().invoices,
+        })
+      }
+      setRemoteReady(true)
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Realtime: new contact form submissions appear in Ops inbox
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return
+
+    const channel = supabase
+      .channel('ops-inbox')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'contact_enquiries' },
+        (payload) => {
+          const enquiry = dbRowToEnquiry(payload.new as DbContactEnquiry)
+          setState((prev) => {
+            if (prev.enquiries.some((e) => e.id === enquiry.id)) return prev
+            return { ...prev, enquiries: [enquiry, ...prev.enquiries] }
+          })
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'contact_enquiries' },
+        (payload) => {
+          const enquiry = dbRowToEnquiry(payload.new as DbContactEnquiry)
+          setState((prev) => ({
+            ...prev,
+            enquiries: prev.enquiries.map((e) =>
+              e.id === enquiry.id ? enquiry : e,
+            ),
+          }))
+        },
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!remoteReady) return
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    } catch {
+      // Storage full / unavailable — keep working in memory.
+    }
+  }, [state, remoteReady])
+
+  const value = useMemo<OpsStore>(() => {
+    const now = () => new Date().toISOString()
+
+    const touchEnquiry = (
+      enquiries: Enquiry[],
+      id: string | undefined,
+      patch: Partial<Enquiry>,
+    ): Enquiry[] => {
+      if (!id) return enquiries
+      return enquiries.map((e) =>
+        e.id === id ? { ...e, ...patch, updatedAt: now() } : e,
+      )
+    }
+
+    return {
+      ...state,
+      activeTab,
+      setActiveTab,
+
+      resetDemoData: () => {
+        try {
+          window.localStorage.removeItem(STORAGE_KEY)
+        } catch {
+          // ignore
+        }
+        setState(buildSeedState())
+      },
+
+      updateEnquiry: (id, patch) => {
+        setState((prev) => ({
+          ...prev,
+          enquiries: touchEnquiry(prev.enquiries, id, patch),
+        }))
+        void opsApi.updateEnquiry(id, patch)
+      },
+
+      addEnquiryNote: (id, text) => {
+        const trimmed = text.trim()
+        if (!trimmed) return
+        setState((prev) => {
+          const updated = prev.enquiries.map((e) =>
+            e.id === id
+              ? {
+                  ...e,
+                  notes: [
+                    ...e.notes,
+                    {
+                      id: `n-${Date.now()}`,
+                      text: trimmed,
+                      author: 'Current User',
+                      createdAt: now(),
+                    },
+                  ],
+                  updatedAt: now(),
+                }
+              : e,
+          )
+          const enquiry = updated.find((e) => e.id === id)
+          if (enquiry) void opsApi.updateEnquiry(id, { notes: enquiry.notes })
+          return { ...prev, enquiries: updated }
+        })
+      },
+
+      createProposalFromEnquiry: (enquiryId) => {
+        const enquiry = state.enquiries.find((e) => e.id === enquiryId)
+        if (!enquiry) return null
+        const proposal: Proposal = {
+          id: `prop-${Date.now()}`,
+          enquiryId,
+          clientName: enquiry.name,
+          company: enquiry.company,
+          email: enquiry.email,
+          source: enquiry.source,
+          value: enquiry.value ?? 0,
+          status: 'draft',
+          createdAt: now(),
+          updatedAt: now(),
+        }
+        setState((prev) => ({
+          ...prev,
+          proposals: [proposal, ...prev.proposals],
+          enquiries: touchEnquiry(prev.enquiries, enquiryId, {
+            status: 'in_progress',
+          }),
+        }))
+        void opsApi.upsertProposal(proposal)
+        void opsApi.updateEnquiry(enquiryId, { status: 'in_progress' })
+        setActiveTab('proposals')
+        return proposal.id
+      },
+
+      addProposal: (input) => {
+        const proposal: Proposal = {
+          ...input,
+          id: `prop-${Date.now()}`,
+          status: 'draft',
+          createdAt: now(),
+          updatedAt: now(),
+        }
+        setState((prev) => ({
+          ...prev,
+          proposals: [proposal, ...prev.proposals],
+        }))
+        void opsApi.upsertProposal(proposal)
+        return proposal.id
+      },
+
+      updateProposal: (id, patch) => {
+        setState((prev) => ({
+          ...prev,
+          proposals: prev.proposals.map((p) =>
+            p.id === id ? { ...p, ...patch, updatedAt: now() } : p,
+          ),
+        }))
+        void opsApi.updateProposal(id, patch)
+      },
+
+      sendProposal: (id) => {
+        const proposal = state.proposals.find((p) => p.id === id)
+        setState((prev) => ({
+          ...prev,
+          proposals: prev.proposals.map((p) =>
+            p.id === id ? { ...p, status: 'sent', updatedAt: now() } : p,
+          ),
+          enquiries: touchEnquiry(prev.enquiries, proposal?.enquiryId, {
+            status: 'proposal_sent',
+          }),
+        }))
+        void opsApi.updateProposal(id, { status: 'sent' })
+        if (proposal?.enquiryId) {
+          void opsApi.updateEnquiry(proposal.enquiryId, { status: 'proposal_sent' })
+        }
+      },
+
+      acceptProposal: (id) => {
+        const proposal = state.proposals.find((p) => p.id === id)
+        if (!proposal) return
+        const start = new Date()
+        const end = new Date()
+        end.setMonth(end.getMonth() + 6)
+        const contract: OpsContract = {
+          id: `c-${Date.now()}`,
+          contractNumber: nextSequential(
+            state.contracts.map((c) => c.contractNumber),
+            'ONEFM-C-2026-',
+          ),
+          companyName: proposal.company ?? proposal.clientName,
+          primaryContact: proposal.clientName,
+          email: proposal.email ?? '',
+          campaignName: proposal.packageName ?? 'Sponsorship Agreement',
+          description: proposal.packageName
+            ? `${proposal.packageName} package — from accepted proposal`
+            : 'Created from accepted proposal',
+          contractValue: proposal.value,
+          startDate: isoDate(start),
+          endDate: isoDate(end),
+          status: 'pending',
+          tier: proposal.tier ?? 'Custom',
+          invoices: [],
+          proposalId: proposal.id,
+        }
+        setState((prev) => ({
+          ...prev,
+          proposals: prev.proposals.map((p) =>
+            p.id === id ? { ...p, status: 'accepted', updatedAt: now() } : p,
+          ),
+          enquiries: touchEnquiry(prev.enquiries, proposal.enquiryId, {
+            status: 'closed_won',
+          }),
+          contracts: [contract, ...prev.contracts],
+        }))
+        void opsApi.updateProposal(id, { status: 'accepted' })
+        if (proposal.enquiryId) {
+          void opsApi.updateEnquiry(proposal.enquiryId, { status: 'closed_won' })
+        }
+        void opsApi.upsertContract(contract)
+        setActiveTab('contracts')
+      },
+
+      declineProposal: (id) => {
+        const proposal = state.proposals.find((p) => p.id === id)
+        setState((prev) => ({
+          ...prev,
+          proposals: prev.proposals.map((p) =>
+            p.id === id ? { ...p, status: 'rejected', updatedAt: now() } : p,
+          ),
+          enquiries: touchEnquiry(prev.enquiries, proposal?.enquiryId, {
+            status: 'closed_lost',
+          }),
+        }))
+        void opsApi.updateProposal(id, { status: 'rejected' })
+        if (proposal?.enquiryId) {
+          void opsApi.updateEnquiry(proposal.enquiryId, { status: 'closed_lost' })
+        }
+      },
+
+      updateContract: (id, patch) => {
+        setState((prev) => ({
+          ...prev,
+          contracts: prev.contracts.map((c) =>
+            c.id === id ? { ...c, ...patch } : c,
+          ),
+        }))
+        void opsApi.updateContract(id, patch)
+      },
+
+      generateInvoiceFromContract: (contractId) => {
+        const contract = state.contracts.find((c) => c.id === contractId)
+        if (!contract) return null
+        const amount = contract.contractValue
+        const gst = Math.round(amount * 0.1 * 100) / 100
+        const invoice: OpsInvoice = {
+          id: `inv-${Date.now()}`,
+          number: nextSequential(
+            state.invoices.map((i) => i.number),
+            'INV-2026-',
+          ),
+          company: contract.companyName,
+          contactName: contract.primaryContact,
+          email: contract.email,
+          amount,
+          gst,
+          total: Math.round((amount + gst) * 100) / 100,
+          description: `${contract.campaignName} (${contract.contractNumber})`,
+          period: `${contract.startDate} – ${contract.endDate}`,
+          issueDate: isoDate(new Date()),
+          dueDate: isoDate(new Date(Date.now() + 30 * 86400000)),
+          status: 'draft',
+          inBatch: false,
+          contractId,
+        }
+        setState((prev) => ({
+          ...prev,
+          invoices: [invoice, ...prev.invoices],
+        }))
+        void opsApi.upsertInvoice(invoice)
+        setActiveTab('invoices')
+        return invoice.id
+      },
+
+      addInvoice: (input) => {
+        const invoice: OpsInvoice = {
+          ...input,
+          id: input.id ?? `inv-${Date.now()}`,
+          number:
+            input.number ??
+            nextSequential(
+              state.invoices.map((i) => i.number),
+              'INV-2026-',
+            ),
+          status: input.status ?? 'draft',
+          inBatch: input.inBatch ?? false,
+        }
+        setState((prev) => ({
+          ...prev,
+          invoices: [invoice, ...prev.invoices],
+        }))
+        void opsApi.upsertInvoice(invoice)
+        return invoice.id
+      },
+
+      updateInvoice: (id, patch) => {
+        setState((prev) => ({
+          ...prev,
+          invoices: prev.invoices.map((i) =>
+            i.id === id ? { ...i, ...patch } : i,
+          ),
+        }))
+        void opsApi.updateInvoice(id, patch)
+      },
+
+      markInvoicePaid: (id, paidAmount, method) => {
+        const paidDate = isoDate(new Date())
+        setState((prev) => ({
+          ...prev,
+          invoices: prev.invoices.map((i) =>
+            i.id === id
+              ? {
+                  ...i,
+                  status: paidAmount >= i.total ? 'paid' : 'partially_paid',
+                  paidAmount,
+                  paymentMethod: method,
+                  paidDate,
+                }
+              : i,
+          ),
+        }))
+        void opsApi.updateInvoice(id, {
+          status: paidAmount >= (state.invoices.find((i) => i.id === id)?.total ?? 0)
+            ? 'paid'
+            : 'partially_paid',
+          paidAmount,
+          paymentMethod: method,
+          paidDate,
+        })
+      },
+
+      queueForBatch: (invoiceId) => {
+        setState((prev) => ({
+          ...prev,
+          invoices: prev.invoices.map((i) =>
+            i.id === invoiceId ? { ...i, inBatch: true } : i,
+          ),
+        }))
+        void opsApi.updateInvoice(invoiceId, { inBatch: true })
+      },
+
+      removeFromBatch: (invoiceId) => {
+        setState((prev) => ({
+          ...prev,
+          invoices: prev.invoices.map((i) =>
+            i.id === invoiceId ? { ...i, inBatch: false } : i,
+          ),
+        }))
+        void opsApi.updateInvoice(invoiceId, { inBatch: false })
+      },
+
+      sendBatch: (ids) => {
+        const idSet = new Set(ids)
+        setState((prev) => ({
+          ...prev,
+          invoices: prev.invoices.map((i) =>
+            idSet.has(i.id) ? { ...i, status: 'sent' } : i,
+          ),
+        }))
+        void opsApi.updateInvoicesBatch(ids, { status: 'sent' })
+      },
+    }
+  }, [state, activeTab])
+
+  return <OpsContext.Provider value={value}>{children}</OpsContext.Provider>
+}
+
+export function useOpsStore(): OpsStore {
+  const ctx = useContext(OpsContext)
+  if (!ctx) throw new Error('useOpsStore must be used within OpsProvider')
+  return ctx
+}

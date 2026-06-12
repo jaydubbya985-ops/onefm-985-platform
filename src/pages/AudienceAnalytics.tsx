@@ -1,0 +1,1039 @@
+import { useState, useRef, useEffect, useMemo } from 'react'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
+import {
+  Download,
+  Share2,
+  Sparkles,
+  TrendingUp,
+  TrendingDown,
+  Radio,
+  Headphones,
+  Mic,
+  X,
+  Calendar,
+  ChevronDown,
+  AlertTriangle,
+  FileText,
+} from 'lucide-react'
+import {
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  ReferenceLine,
+  ComposedChart,
+} from 'recharts'
+import { Layout } from '@/components/Layout'
+import { SEO } from '@/components/SEO'
+
+/* ─────────── easing ─────────── */
+const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
+
+/* ─────────── animation variants ─────────── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay, ease: easeOutExpo },
+  }),
+}
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+}
+
+const cardStagger = {
+  hidden: { opacity: 0, y: 25 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: easeOutExpo },
+  },
+}
+
+/* ─────────── data ─────────── */
+const sparklineData = [
+  8200, 9100, 8700, 10200, 9800, 11100, 10500, 12000, 11400, 12800,
+  12400, 11800, 13200, 12700, 13500, 14100, 13800, 14500, 14200, 14800,
+  14400, 15000, 14700, 15200, 14900, 15500, 15100, 15800, 15400, 16000,
+  15700, 16200, 15900, 16500, 16100, 16700, 16300, 16900, 16600, 17000,
+  16800, 17200, 17000, 17400, 17200, 17600, 17400, 17800, 17600, 18000,
+  17800, 18200, 18000, 18400, 18200, 18600, 18400, 18800, 18600, 19000,
+]
+
+const trendData = Array.from({ length: 30 }, (_, i) => ({
+  day: `Day ${i + 1}`,
+  listeners: 120000 + Math.random() * 40000 + i * 800,
+  unique: 95000 + Math.random() * 30000 + i * 600,
+  forecast: i >= 23 ? 130000 + Math.random() * 35000 + i * 900 : null,
+}))
+
+const ageDemoData = [
+  { age: '18-24', percent: 18, count: 432000, growth: '+4%' },
+  { age: '25-34', percent: 32, count: 768000, growth: '+12%' },
+  { age: '35-44', percent: 24, count: 576000, growth: '+6%' },
+  { age: '45-54', percent: 16, count: 384000, growth: '-2%' },
+  { age: '55+', percent: 10, count: 240000, growth: '+1%' },
+]
+
+const genderData = [
+  { name: 'Male', value: 48, color: '#2EC4B6' },
+  { name: 'Female', value: 49, color: '#D4963A' },
+  { name: 'Non-binary', value: 2, color: '#9B5DE5' },
+  { name: 'Prefer not to say', value: 1, color: '#6B6B75' },
+]
+
+const locationData = [
+  { region: 'Metro Central', listeners: 840000, pct: 35 },
+  { region: 'North Valley', listeners: 520000, pct: 22 },
+  { region: 'Coastal East', listeners: 410000, pct: 17 },
+  { region: 'South Ridge', listeners: 380000, pct: 16 },
+  { region: 'West Plains', listeners: 250000, pct: 10 },
+]
+
+const platformCards = [
+  {
+    icon: Radio,
+    title: 'FM Radio',
+    stat: '2.1M',
+    label: 'weekly',
+    share: '87% of total',
+    status: 'Stable',
+    statusColor: '#2EC4B6',
+    accent: '#D4963A',
+    trend: [8200, 8500, 8400, 8800, 8600, 9000, 9200],
+  },
+  {
+    icon: Headphones,
+    title: 'Digital Streaming',
+    stat: '1.8M',
+    label: 'monthly',
+    share: 'iOS App (42%)',
+    status: 'Growing',
+    statusColor: '#2EC4B6',
+    accent: '#2EC4B6',
+    trend: [1200, 1400, 1600, 1800, 2100, 2400, 2800],
+  },
+  {
+    icon: Share2,
+    title: 'Social Media',
+    stat: '168K',
+    label: 'followers',
+    share: 'Instagram (65K)',
+    status: '4.2%',
+    statusColor: '#F0C75E',
+    accent: '#9B5DE5',
+    trend: [100, 120, 150, 180, 220, 270, 330],
+  },
+  {
+    icon: Mic,
+    title: 'Podcast Network',
+    stat: '320K',
+    label: 'downloads',
+    share: 'The Night Shift (89K)',
+    status: 'Growing',
+    statusColor: '#2EC4B6',
+    accent: '#FF6B6B',
+    trend: [200, 230, 260, 300, 340, 390, 450],
+  },
+]
+
+const anomalyData = [
+  { time: 'Sunday 14:00', change: '+23%', reason: 'Music festival coverage', severity: 'spike' },
+  { time: 'Tuesday 09:00', change: '-8%', reason: 'Technical issue, resolved', severity: 'drop' },
+  { time: 'Podcast segment', change: '+45%', reason: 'Viral social share', severity: 'growth' },
+]
+
+const smartSegments = [
+  { name: 'Morning Commuters', pct: 32, color: '#D4963A' },
+  { name: 'Weekend Enthusiasts', pct: 24, color: '#2EC4B6' },
+  { name: 'Night Owls', pct: 18, color: '#9B5DE5' },
+  { name: 'Loyal Long-term', pct: 26, color: '#F0C75E' },
+]
+
+/* ─────────── helpers ─────────── */
+function useCountUp(end: number, duration = 1200) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-50px' })
+  const hasRun = useRef(false)
+
+  useEffect(() => {
+    if (inView && !hasRun.current) {
+      hasRun.current = true
+      const start = performance.now()
+      const tick = (now: number) => {
+        const p = Math.min((now - start) / duration, 1)
+        const eased = 1 - Math.pow(1 - p, 3)
+        setCount(Math.floor(eased * end))
+        if (p < 1) requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    }
+  }, [inView, end, duration])
+
+  return { count, ref }
+}
+
+function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
+  const { count, ref } = useCountUp(value)
+  return (
+    <span ref={ref}>
+      {prefix}{count.toLocaleString()}{suffix}
+    </span>
+  )
+}
+
+/* ─────────── sparkline ─────────── */
+function MiniSparkline({ data, color = '#D4963A' }: { data: number[]; color?: string }) {
+  const chartData = data.map((v, i) => ({ i: i, v }))
+  return (
+    <div className="w-full h-[50px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={chartData}>
+          <defs>
+            <linearGradient id={`grad-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+              <stop offset="100%" stopColor={color} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <Area type="monotone" dataKey="v" stroke={color} fill={`url(#grad-${color.replace('#', '')})`} strokeWidth={2} dot={false} />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
+/* ─────────── heatmap ─────────── */
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const HOURS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}`)
+
+function generateHeatmapData() {
+  const data: number[][] = []
+  for (let d = 0; d < 7; d++) {
+    const row: number[] = []
+    for (let h = 0; h < 24; h++) {
+      let base = 0
+      if (d < 5) {
+        if (h >= 6 && h <= 9) base = 80 + Math.random() * 20
+        else if (h >= 16 && h <= 19) base = 85 + Math.random() * 15
+        else if (h >= 12 && h <= 14) base = 50 + Math.random() * 20
+        else if (h >= 20 && h <= 23) base = 40 + Math.random() * 25
+        else base = 10 + Math.random() * 15
+      } else {
+        if (h >= 9 && h <= 12) base = 60 + Math.random() * 25
+        else if (h >= 18 && h <= 22) base = 70 + Math.random() * 20
+        else base = 15 + Math.random() * 20
+      }
+      row.push(Math.min(100, Math.round(base)))
+    }
+    data.push(row)
+  }
+  return data
+}
+
+function HeatmapCell({ value, isCurrent }: { value: number; isCurrent: boolean }) {
+  let bg = 'transparent'
+  if (value > 85) bg = 'rgba(230,57,70,0.8)'
+  else if (value > 60) bg = 'rgba(212,150,58,0.7)'
+  else if (value > 30) bg = 'rgba(212,150,58,0.3)'
+  else if (value > 10) bg = 'rgba(212,150,58,0.1)'
+
+  return (
+    <motion.div
+      className={`relative w-full aspect-square rounded-[3px] cursor-pointer transition-all duration-200 hover:scale-[1.3] hover:z-10 ${isCurrent ? 'ring-1 ring-amber' : ''}`}
+      style={{ backgroundColor: bg }}
+      initial={{ opacity: 0, scale: 0 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, ease: easeOutExpo }}
+      title={`${value}% capacity`}
+    />
+  )
+}
+
+/* ═══════════════════════════════════
+   AUDIENCE ANALYTICS PAGE
+   ═══════════════════════════════════ */
+export default function AudienceAnalytics() {
+  const [dateRange, setDateRange] = useState('7 Days')
+  const [chartTab, setChartTab] = useState('Listeners')
+  const [weekdayMode, setWeekdayMode] = useState(true)
+  const [dismissInsight, setDismissInsight] = useState(false)
+  const [selectedSegment, setSelectedSegment] = useState<string | null>(null)
+
+  const heatmapData = useMemo(() => generateHeatmapData(), [weekdayMode])
+  const currentHour = new Date().getHours()
+
+  return (
+    <Layout>
+      <SEO title="Audience Analytics" description="Real-time audience analytics for ONE FM 98.5. Demographics, listenership trends, and platform performance." />
+      {/* ═══════ HERO / LIVE DASHBOARD HEADER ═══════ */}
+      <section className="relative min-h-[40vh] bg-one-navy overflow-hidden">
+        {/* Animated grid background */}
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
+          style={{
+            backgroundImage: `linear-gradient(#2A2A30 1px, transparent 1px), linear-gradient(90deg, #2A2A30 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 py-12 pt-8">
+          {/* Top bar */}
+          <motion.div
+            className="flex flex-wrap items-center justify-between gap-4 mb-8"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-data-teal opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-data-teal" />
+              </span>
+              <span className="font-label text-data-teal">Live — Updated 2s ago</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <select
+                  value={dateRange}
+                  onChange={(e) => setDateRange(e.target.value)}
+                  className="appearance-none glass-card px-4 py-2 pr-10 font-label text-xs text-one-white bg-transparent cursor-pointer focus:outline-none focus:border-one-gold/50"
+                >
+                  <option value="Today">Today</option>
+                  <option value="7 Days">7 Days</option>
+                  <option value="30 Days">30 Days</option>
+                  <option value="90 Days">90 Days</option>
+                  <option value="1 Year">1 Year</option>
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+              </div>
+              <button className="glass-card p-2 hover:border-one-gold/50 transition-colors" aria-label="Export data">
+                <Download size={16} className="text-muted" />
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.div
+            className="mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
+          >
+            <h1 className="font-h1 text-one-white mb-2">AUDIENCE INTELLIGENCE</h1>
+            <p className="font-body text-one-white">
+              Real-time insights into who's listening, when, and how
+            </p>
+          </motion.div>
+
+          {/* KPI stat row */}
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {[
+              { label: 'Current Listeners', value: 12847, color: '#2EC4B6', suffix: '', sparkline: true, extra: '' },
+              { label: "Today's Total", value: 142300, color: '#D4963A', suffix: '', sparkline: false, extra: '+8.2% vs yesterday' },
+              { label: 'Peak Today', value: 18402, color: '#F0C75E', suffix: '', sparkline: false, extra: 'at 08:32' },
+              { label: 'Avg. Session', value: 47, color: '#9B5DE5', suffix: ' min', sparkline: false, extra: '+3 min vs last week' },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                className="glass-card p-5 flex flex-col justify-between min-h-[140px]"
+                variants={cardStagger}
+              >
+                <div>
+                  <div className="font-label text-muted mb-2">{stat.label}</div>
+                  <div className="font-stat" style={{ color: stat.color }}>
+                    <AnimatedNumber value={stat.value} suffix={stat.suffix} />
+                  </div>
+                  {stat.extra && (
+                    <div className="flex items-center gap-1 mt-1">
+                      {stat.extra.startsWith('+') ? (
+                        <TrendingUp size={12} className="text-data-teal" />
+                      ) : stat.extra.startsWith('-') ? (
+                        <TrendingDown size={12} className="text-one-red" />
+                      ) : null}
+                      <span className={`font-label text-xs ${stat.extra.startsWith('+') ? 'text-data-teal' : stat.extra.startsWith('-') ? 'text-one-red' : 'text-muted'}`}>
+                        {stat.extra}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {stat.sparkline && (
+                  <MiniSparkline data={sparklineData.slice(-20)} color={stat.color} />
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ LISTENERSHIP HEATMAP ═══════ */}
+      <section className="bg-one-navy section-padding">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <motion.div
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={fadeUp}
+          >
+            <div>
+              <h2 className="font-h2 text-one-white">LISTENERSHIP HEATMAP</h2>
+              <p className="font-body-small text-muted mt-1">When your audience tunes in</p>
+            </div>
+            <div className="flex bg-one-navy/50 rounded-full p-1 border border-one-border">
+              <button
+                onClick={() => setWeekdayMode(true)}
+                className={`px-4 py-1.5 rounded-full font-label text-xs transition-all ${weekdayMode ? 'text-one-navy bg-one-gold' : 'text-one-white/60 hover:text-one-white'}`}
+              >
+                Weekday
+              </button>
+              <button
+                onClick={() => setWeekdayMode(false)}
+                className={`px-4 py-1.5 rounded-full font-label text-xs transition-all ${!weekdayMode ? 'text-one-navy bg-one-gold' : 'text-one-white/60 hover:text-one-white'}`}
+              >
+                Weekend
+              </button>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="glass-card p-4 sm:p-6 overflow-x-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* Hours header */}
+            <div className="grid grid-cols-[50px_repeat(24,1fr)] gap-[3px] mb-[3px]">
+              <div />
+              {HOURS.map((h) => (
+                <div key={h} className="text-center font-micro text-muted text-[9px] hidden sm:block">
+                  {h}
+                </div>
+              ))}
+            </div>
+            {/* Heatmap rows */}
+            {DAYS.map((day, dIdx) => (
+              <div key={day} className="grid grid-cols-[50px_repeat(24,1fr)] gap-[3px] mb-[3px]">
+                <div className="flex items-center font-label text-[10px] text-one-white">{day}</div>
+                {heatmapData[dIdx].map((val, hIdx) => (
+                  <HeatmapCell
+                    key={hIdx}
+                    value={val}
+                    isCurrent={hIdx === currentHour && new Date().getDay() === (dIdx + 1) % 7}
+                  />
+                ))}
+              </div>
+            ))}
+            {/* Legend */}
+            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-one-border">
+              <span className="font-micro text-muted">Low</span>
+              <div className="flex gap-[3px]">
+                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.05)' }} />
+                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.15)' }} />
+                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.35)' }} />
+                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.6)' }} />
+                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(230,57,70,0.8)' }} />
+              </div>
+              <span className="font-micro text-muted">Peak</span>
+            </div>
+          </motion.div>
+
+          {/* AI Insight */}
+          <AnimatePresence>
+            {!dismissInsight && (
+              <motion.div
+                className="mt-6 glass-card p-4 flex items-start gap-3 border-l-2 border-l-amber"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.5, delay: 1, ease: easeOutExpo }}
+              >
+                <Sparkles size={18} className="text-one-gold shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-body-small text-one-white">
+                    <span className="text-one-gold font-medium">AI Insight:</span> Peak engagement shifts 12% later on weekends. Consider adjusting Saturday morning programming.
+                  </p>
+                </div>
+                <button onClick={() => setDismissInsight(true)} className="text-muted hover:text-one-white transition-colors">
+                  <X size={16} />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* ═══════ AUDIENCE TRENDS ═══════ */}
+      <section className="bg-one-navy section-padding">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-8">
+            {/* Main Chart */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.6, ease: easeOutExpo }}
+            >
+              <h2 className="font-h2 text-one-white mb-6">AUDIENCE TRENDS</h2>
+              {/* Chart tabs */}
+              <div className="flex gap-2 mb-6 overflow-x-auto">
+                {['Listeners', 'Sessions', 'Engagement', 'Demographics'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setChartTab(tab)}
+                    className={`px-4 py-2 rounded-full font-label text-xs whitespace-nowrap transition-all ${
+                      chartTab === tab
+                        ? 'text-one-gold bg-one-gold/10 border border-one-gold/30'
+                        : 'text-one-white/60 border border-one-border hover:text-one-white hover:border-ivory/20'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              <div className="glass-card p-4 sm:p-6">
+                <div className="w-full h-[360px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart data={trendData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="areaAmber" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#D4963A" stopOpacity={0.3} />
+                          <stop offset="100%" stopColor="#D4963A" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" vertical={false} />
+                      <XAxis dataKey="day" tick={{ fill: '#6B6B75', fontSize: 10, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}K`} />
+                      <Tooltip
+                        contentStyle={{
+                          background: 'rgba(26,26,31,0.95)',
+                          border: '1px solid #2A2A30',
+                          borderRadius: '8px',
+                          fontFamily: 'JetBrains Mono, monospace',
+                          fontSize: '12px',
+                          color: '#F4F1EA',
+                        }}
+                      />
+                      <Area type="monotone" dataKey="listeners" stroke="#D4963A" fill="url(#areaAmber)" strokeWidth={2} name="Daily Listeners" />
+                      <Line type="monotone" dataKey="unique" stroke="#2EC4B6" strokeWidth={2} dot={false} name="Unique Listeners" />
+                      <Line type="monotone" dataKey="forecast" stroke="#F0C75E" strokeWidth={2} strokeDasharray="6 4" dot={false} name="AI Forecast" />
+                      <ReferenceLine x="Day 24" stroke="#6B6B75" strokeDasharray="3 3" label={{ value: 'Forecast', fill: '#F0C75E', fontSize: 10, fontFamily: 'JetBrains Mono' }} />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-4">
+                <button className="btn-secondary text-xs">
+                  <Download size={14} />
+                  Full Report
+                </button>
+                <button className="btn-secondary text-xs">
+                  Set Alert
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Insight Cards */}
+            <motion.div
+              className="flex flex-col gap-4"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+            >
+              <h3 className="font-h3 text-one-white mb-2">Insights</h3>
+              {[
+                {
+                  title: 'Trending Up',
+                  text: 'Podcast downloads up 34%',
+                  sub: 'Driven by: The Night Shift relaunch',
+                  border: '#2EC4B6',
+                  icon: TrendingUp,
+                },
+                {
+                  title: 'Watch This',
+                  text: 'Breaky with Plemo audience growing',
+                  sub: '-2.3% this week · AI suggests: Increase music ratio',
+                  border: '#F0C75E',
+                  icon: AlertTriangle,
+                },
+                {
+                  title: 'Opportunity',
+                  text: 'Untapped: 18-24 demographic',
+                  sub: 'Only 8% of current audience · TikTok cross-promotion recommended',
+                  border: '#D4963A',
+                  icon: Sparkles,
+                },
+              ].map((insight, i) => {
+                const Icon = insight.icon
+                return (
+                  <motion.div
+                    key={i}
+                    className="glass-card p-5 border-l-[3px]"
+                    style={{ borderLeftColor: insight.border }}
+                    variants={{
+                      hidden: { opacity: 0, x: 20 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        transition: { duration: 0.5, delay: i * 0.12, ease: easeOutExpo },
+                      },
+                    }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon size={14} style={{ color: insight.border }} />
+                      <span className="font-label text-xs" style={{ color: insight.border }}>{insight.title}</span>
+                    </div>
+                    <p className="font-h4 text-one-white mb-1">{insight.text}</p>
+                    <p className="font-body-small text-muted">{insight.sub}</p>
+                  </motion.div>
+                )
+              })}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ DEMOGRAPHIC BREAKDOWN ═══════ */}
+      <section className="bg-one-navy section-padding">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <motion.div
+            className="mb-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={fadeUp}
+          >
+            <h2 className="font-h2 text-one-white">DEMOGRAPHIC DEEP DIVE</h2>
+            <p className="font-body-small text-muted mt-1">Who makes up your audience</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Age */}
+            <motion.div
+              className="glass-card p-5"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: easeOutExpo }}
+            >
+              <h4 className="font-h4 text-one-white mb-4">Age Distribution</h4>
+              <div className="w-full h-[240px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={ageDemoData} layout="vertical" margin={{ left: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" horizontal={false} />
+                    <XAxis type="number" hide />
+                    <YAxis type="category" dataKey="age" tick={{ fill: '#F4F1EA', fontSize: 11, fontFamily: 'Space Grotesk' }} axisLine={false} tickLine={false} width={50} />
+                    <Tooltip
+                      contentStyle={{
+                        background: 'rgba(26,26,31,0.95)',
+                        border: '1px solid #2A2A30',
+                        borderRadius: '8px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontSize: '12px',
+                        color: '#F4F1EA',
+                      }}
+                      formatter={(value: number, _name: string, props: { payload?: { count?: number; growth?: string } }) => [
+                        `${value}% (${props.payload?.count?.toLocaleString()}) · ${props.payload?.growth}`,
+                        'Percentage',
+                      ]}
+                    />
+                    <Bar dataKey="percent" radius={[0, 4, 4, 0]} barSize={20}>
+                      {ageDemoData.map((_, i) => (
+                        <Cell key={i} fill={['#2EC4B6', '#00BBF9', '#D4963A', '#FF6B6B', '#E63946'][i]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <TrendingUp size={12} className="text-data-teal" />
+                <span className="font-label text-xs text-data-teal">25-34 is your fastest-growing segment</span>
+              </div>
+            </motion.div>
+
+            {/* Gender */}
+            <motion.div
+              className="glass-card p-5"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1, ease: easeOutExpo }}
+            >
+              <h4 className="font-h4 text-one-white mb-4">Gender Split</h4>
+              <div className="w-full h-[200px] flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={genderData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={90}
+                      paddingAngle={4}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {genderData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        background: 'rgba(26,26,31,0.95)',
+                        border: '1px solid #2A2A30',
+                        borderRadius: '8px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontSize: '12px',
+                        color: '#F4F1EA',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="text-center -mt-4 mb-3">
+                <div className="font-stat text-one-white">39.4K</div>
+                <div className="font-label text-muted">Total</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-label text-xs text-one-gold">Balanced gender split — 48/52</span>
+              </div>
+            </motion.div>
+
+            {/* Location */}
+            <motion.div
+              className="glass-card p-5"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2, ease: easeOutExpo }}
+            >
+              <h4 className="font-h4 text-one-white mb-4">Top Locations</h4>
+              <div className="w-full h-[240px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={locationData} margin={{ bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" vertical={false} />
+                    <XAxis dataKey="region" tick={{ fill: '#F4F1EA', fontSize: 10, fontFamily: 'Space Grotesk' }} axisLine={false} tickLine={false} angle={-20} textAnchor="end" height={50} />
+                    <YAxis hide />
+                    <Tooltip
+                      contentStyle={{
+                        background: 'rgba(26,26,31,0.95)',
+                        border: '1px solid #2A2A30',
+                        borderRadius: '8px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontSize: '12px',
+                        color: '#F4F1EA',
+                      }}
+                      formatter={(value: number, _name: string, props: { payload?: { pct?: number } }) => [
+                        `${value.toLocaleString()} (${props.payload?.pct}%)`,
+                        'Listeners',
+                      ]}
+                    />
+                    <Bar dataKey="listeners" fill="#D4963A" radius={[4, 4, 0, 0]} barSize={28} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <TrendingUp size={12} className="text-data-teal" />
+                <span className="font-label text-xs text-data-teal">Regional coverage: 78% within 50km</span>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ PLATFORM PERFORMANCE ═══════ */}
+      <section className="bg-one-navy section-padding">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <motion.div
+            className="mb-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={fadeUp}
+          >
+            <h2 className="font-h2 text-one-white">PLATFORM PERFORMANCE</h2>
+            <p className="font-body-small text-muted mt-1">Where your audience connects</p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+          >
+            {platformCards.map((card, i) => {
+              const Icon = card.icon
+              return (
+                <motion.div
+                  key={i}
+                  className="glass-card p-5 hover:scale-[1.02] transition-all duration-300"
+                  variants={cardStagger}
+                  whileHover={{ borderColor: `${card.accent}50` }}
+                >
+                  <Icon size={32} style={{ color: card.accent }} className="mb-3" />
+                  <div className="font-stat text-one-white mb-0.5">{card.stat}</div>
+                  <div className="font-label text-muted mb-3">{card.label}</div>
+                  <div className="w-full h-[40px] mb-3">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={card.trend.map((v, i) => ({ i, v }))}>
+                        <defs>
+                          <linearGradient id={`ptrend-${i}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={card.accent} stopOpacity={0.25} />
+                            <stop offset="100%" stopColor={card.accent} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <Area type="monotone" dataKey="v" stroke={card.accent} fill={`url(#ptrend-${i})`} strokeWidth={2} dot={false} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-label text-xs text-muted">{card.share}</span>
+                    <span className="font-label text-xs flex items-center gap-1" style={{ color: card.statusColor }}>
+                      <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: card.statusColor }} />
+                      {card.status}
+                    </span>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ AI PREDICTIONS ═══════ */}
+      <section className="bg-gradient-to-b from-slate to-onyx section-padding">
+        <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
+          <motion.div
+            className="flex items-center gap-3 mb-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={fadeUp}
+          >
+            <div>
+              <h2 className="font-h2 text-one-white">AI-POWERED INSIGHTS</h2>
+              <p className="font-body-small text-muted mt-1">Machine learning predictions and anomaly detection</p>
+            </div>
+            <span className="px-3 py-1 rounded-full bg-one-gold/20 text-one-gold font-label text-[10px] shrink-0">BETA</span>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* 7-Day Forecast */}
+            <motion.div
+              className="glass-card p-6"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: easeOutExpo }}
+            >
+              <h4 className="font-h4 text-one-white mb-4">Next Week Prediction</h4>
+              <div className="w-full h-[200px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={trendData.slice(17, 30).map((d, i) => ({ ...d, day: `D${i + 17}` }))}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" vertical={false} />
+                    <XAxis dataKey="day" tick={{ fill: '#6B6B75', fontSize: 10 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: '#6B6B75', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}K`} />
+                    <Area type="monotone" dataKey="listeners" stroke="#D4963A" fill="rgba(212,150,58,0.1)" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="forecast" stroke="#F0C75E" strokeWidth={2} strokeDasharray="6 4" dot={false} name="AI Forecast" />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 p-3 rounded-lg bg-one-navy/50">
+                <span className="font-label text-xs text-one-gold">Expected peak: Thursday, 19,203 listeners</span>
+              </div>
+            </motion.div>
+
+            {/* Anomaly Detection */}
+            <motion.div
+              className="glass-card p-6"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.15, ease: easeOutExpo }}
+            >
+              <h4 className="font-h4 text-one-white mb-4">Recent Anomalies</h4>
+              <div className="space-y-3">
+                {anomalyData.map((a, i) => (
+                  <motion.div
+                    key={i}
+                    className="flex items-start gap-3 p-3 rounded-lg bg-one-navy/50"
+                    initial={{ opacity: 0, x: -15 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.1, ease: easeOutExpo }}
+                  >
+                    <AlertTriangle
+                      size={16}
+                      className={`shrink-0 mt-0.5 ${a.severity === 'growth' ? 'text-data-teal' : 'text-one-red'}`}
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-body-small text-one-white">{a.time}</span>
+                        <span className={`font-label text-xs ${a.severity === 'growth' ? 'text-data-teal' : 'text-one-red'}`}>
+                          {a.change}
+                        </span>
+                      </div>
+                      <p className="font-body-small text-muted mt-0.5">{a.reason}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Smart Segments */}
+          <motion.div
+            className="glass-card p-6"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3, ease: easeOutExpo }}
+          >
+            <h4 className="font-h4 text-one-white mb-4">Smart Audience Segments</h4>
+            <p className="font-body-small text-muted mb-4">
+              AI clusters based on listening patterns, engagement, and demographics
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {smartSegments.map((seg, i) => (
+                <motion.button
+                  key={seg.name}
+                  className={`px-4 py-2.5 rounded-full font-label text-xs transition-all ${
+                    selectedSegment === seg.name
+                      ? 'ring-2 ring-offset-1 ring-offset-slate'
+                      : 'hover:scale-105'
+                  }`}
+                  style={{
+                    backgroundColor: `${seg.color}20`,
+                    color: seg.color,
+                  }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: i * 0.08, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] }}
+                  onClick={() => setSelectedSegment(selectedSegment === seg.name ? null : seg.name)}
+                >
+                  {seg.name} ({seg.pct}%)
+                </motion.button>
+              ))}
+            </div>
+            <AnimatePresence>
+              {selectedSegment && (
+                <motion.div
+                  className="mt-4 p-4 rounded-lg bg-one-navy/50"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p className="font-body-small text-one-white">
+                    <span className="text-one-gold font-medium">{selectedSegment}:</span>{' '}
+                    Detailed segment profile with listening habits, preferred content types, and optimal targeting windows.
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ DATA EXPORT ═══════ */}
+      <section className="bg-one-navy section-padding">
+        <div className="max-w-[800px] mx-auto px-4 sm:px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: easeOutExpo }}
+          >
+            <h2 className="font-h2 text-one-white mb-3">USE YOUR DATA</h2>
+            <p className="font-body text-one-white mb-8">
+              Export insights for reports, presentations, or share with your team.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <motion.button className="btn-secondary text-sm" variants={cardStagger}>
+              <Download size={16} />
+              Download CSV
+            </motion.button>
+            <motion.button className="btn-primary text-sm" variants={cardStagger}>
+              <FileText size={16} />
+              Export PDF Report
+            </motion.button>
+            <motion.button className="btn-secondary text-sm" variants={cardStagger}>
+              <Share2 size={16} />
+              Share Dashboard Link
+            </motion.button>
+          </motion.div>
+
+          <motion.div
+            className="glass-card p-5 max-w-md mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <Calendar size={16} className="text-one-gold" />
+              <span className="font-label text-xs text-one-white">Scheduled Reports</span>
+            </div>
+            <div className="flex gap-2">
+              <select className="flex-1 appearance-none glass-card px-3 py-2 font-label text-xs text-one-white bg-transparent cursor-pointer focus:outline-none focus:border-one-gold/50">
+                <option>Daily</option>
+                <option>Weekly</option>
+                <option>Monthly</option>
+              </select>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                className="flex-[2] glass-card px-3 py-2 font-body text-sm text-one-white bg-transparent focus:outline-none focus:border-one-gold/50 placeholder:text-muted"
+              />
+              <button className="btn-primary text-xs px-4">Subscribe</button>
+            </div>
+          </motion.div>
+
+          <motion.p
+            className="mt-6"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+          >
+            <span className="font-label text-xs text-muted">Developer? </span>
+            <button className="font-label text-xs text-one-gold hover:text-one-gold transition-colors">
+              Access our analytics API
+            </button>
+          </motion.p>
+        </div>
+      </section>
+    </Layout>
+  )
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PlayHQ API Test — ONE FM 98.5</title>
+  <style>
+    body { font-family: monospace; background: #0A1628; color: #D4A84B; padding: 20px; }
+    h1 { color: #FFFFFF; }
+    .endpoint { margin: 10px 0; padding: 10px; background: #1A2A42; border-radius: 4px; }
+    .status-200 { color: #4ade80; }
+    .status-error { color: #ef4444; }
+    button { background: #D4A84B; color: #0A1628; border: none; padding: 8px 16px; cursor: pointer; font-weight: bold; }
+    pre { background: #0f172a; padding: 10px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🎯 PlayHQ API Connection Test</h1>
+  <p>This page tests if your network can reach the PlayHQ API. Run this from your browser.</p>
+  
+  <div class="endpoint">
+    <h3>Test 1: Public Games API (No API Key)</h3>
+    <button onclick="testPublic()">Test Public Endpoint</button>
+    <div id="public-result"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>Test 2: With x-api-key Header</h3>
+    <input type="text" id="api-key" placeholder="Paste your PlayHQ API key here" style="width:300px; padding:8px;">
+    <button onclick="testWithKey()">Test With Key</button>
+    <div id="key-result"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>Test 3: Goulburn Valley League Specific</h3>
+    <button onclick="testGVL()">Test GVL Endpoint</button>
+    <div id="gvl-result"></div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://api.playhq.com/v1';
+    
+    async function testPublic() {
+      const result = document.getElementById('public-result');
+      result.innerHTML = '<p>Testing...</p>';
+      try {
+        const res = await fetch(`${API_BASE}/games?limit=5`, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+        const text = await res.text();
+        if (res.status === 200) {
+          const data = JSON.parse(text);
+          result.innerHTML = `<p class="status-200">✅ SUCCESS! Status: ${res.status}</p><pre>${JSON.stringify(data, null, 2).substring(0, 1000)}</pre>`;
+        } else {
+          result.innerHTML = `<p class="status-error">❌ Status: ${res.status}</p><pre>${text.substring(0, 500)}</pre>`;
+        }
+      } catch (e) {
+        result.innerHTML = `<p class="status-error">❌ Error: ${e.message}</p>`;
+      }
+    }
+    
+    async function testWithKey() {
+      const key = document.getElementById('api-key').value.trim();
+      const result = document.getElementById('key-result');
+      if (!key) {
+        result.innerHTML = '<p class="status-error">❌ Please enter an API key</p>';
+        return;
+      }
+      result.innerHTML = '<p>Testing...</p>';
+      try {
+        const res = await fetch(`${API_BASE}/games?limit=5`, {
+          method: 'GET',
+          headers: { 
+            'Accept': 'application/json',
+            'x-api-key': key,
+            'x-phq-tenant': 'gvl'
+          }
+        });
+        const text = await res.text();
+        if (res.status === 200) {
+          const data = JSON.parse(text);
+          result.innerHTML = `<p class="status-200">✅ SUCCESS WITH KEY! Status: ${res.status}</p><pre>${JSON.stringify(data, null, 2).substring(0, 1000)}</pre>`;
+        } else {
+          result.innerHTML = `<p class="status-error">❌ Status: ${res.status}</p><pre>${text.substring(0, 500)}</pre>`;
+        }
+      } catch (e) {
+        result.innerHTML = `<p class="status-error">❌ Error: ${e.message}</p>`;
+      }
+    }
+    
+    async function testGVL() {
+      const result = document.getElementById('gvl-result');
+      result.innerHTML = '<p>Testing...</p>';
+      try {
+        // Try the PlayHQ website for GVL
+        const res = await fetch('https://www.playhq.com/afl-goulburn-valley-league/fixtures', {
+          method: 'GET',
+          headers: { 'Accept': 'text/html' }
+        });
+        const text = await res.text();
+        if (res.status === 200) {
+          result.innerHTML = `<p class="status-200">✅ GVL WEBSITE ACCESSIBLE! Status: ${res.status}</p><p>Page length: ${text.length} chars</p>`;
+        } else {
+          result.innerHTML = `<p class="status-error">❌ Status: ${res.status}</p>`;
+        }
+      } catch (e) {
+        result.innerHTML = `<p class="status-error">❌ Error: ${e.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>

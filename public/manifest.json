@@ -1,0 +1,13 @@
+{
+  "name": "ONE FM 98.5 — Broadcast Explorer",
+  "short_name": "ONE FM 98.5",
+  "description": "Community radio for the Goulburn Valley since 1989",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0A1628",
+  "theme_color": "#0A1628",
+  "icons": [
+    { "src": "/one-fm-logo.png", "sizes": "256x256", "type": "image/png" }
+  ]
+}
