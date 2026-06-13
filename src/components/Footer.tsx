@@ -33,7 +33,7 @@ export function Footer() {
           {/* Brand column */}
           <div className="space-y-6">
             <div className="flex items-center gap-2">
-              <img src="/one-fm-logo.png" alt="ONE FM 98.5" className="h-12 w-auto object-contain" />
+              <img src="/one-fm-logo.svg" alt="ONE FM 98.5" className="h-12 w-auto object-contain" />
               <Radio size={20} className="text-one-gold" />
             </div>
             <p className="font-body-small text-one-white max-w-xs">

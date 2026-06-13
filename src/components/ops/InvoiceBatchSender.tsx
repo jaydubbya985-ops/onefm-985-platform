@@ -263,7 +263,7 @@ function InvoicePreview({ invoice }: { invoice: BatchRow }) {
         <div>
           <div className="bg-[#0A1628] rounded-lg px-4 py-2 inline-block">
             <img
-              src="/one-fm-logo-master.png"
+              src="/one-fm-logo-master.svg"
               alt="ONE FM 98.5"
               className="h-12 w-auto object-contain"
             />

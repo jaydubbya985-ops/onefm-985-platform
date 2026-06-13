@@ -7,7 +7,7 @@ interface SEOProps {
   ogType?: string;
 }
 
-export function SEO({ title, description, ogImage = '/one-fm-logo.png', ogType = 'website' }: SEOProps) {
+export function SEO({ title, description, ogImage = '/one-fm-logo-master.svg', ogType = 'website' }: SEOProps) {
   return (
     <Helmet>
       <title>{title} | ONE FM 98.5</title>

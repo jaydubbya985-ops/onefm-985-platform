@@ -47,7 +47,7 @@ export function RouteFallback() {
   return (
     <div className="min-h-screen bg-one-navy flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <img src="/one-fm-logo.png" alt="ONE FM" className="h-16 w-auto animate-pulse" />
+        <img src="/one-fm-logo.svg" alt="ONE FM" className="h-16 w-auto animate-pulse" />
         <div className="h-1 w-32 bg-one-border rounded-full overflow-hidden">
           <div className="h-full bg-one-gold animate-[shimmer_1.5s_infinite]" />
         </div>

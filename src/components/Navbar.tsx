@@ -250,12 +250,12 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="ONE FM 98.5 — Home">
             <img
-              src="/one-fm-logo-master.png"
+              src="/one-fm-logo-master.svg"
               alt="ONE FM 98.5"
               className="h-12 w-auto object-contain drop-shadow-lg"
               style={{ maxWidth: 160 }}
               onError={(e) => {
-                e.currentTarget.src = '/one-fm-logo.png'
+                e.currentTarget.src = '/one-fm-logo.svg'
               }}
             />
             <span className="relative flex h-2.5 w-2.5 hidden sm:flex">

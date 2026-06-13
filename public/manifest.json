@@ -8,6 +8,6 @@
   "background_color": "#0A1628",
   "theme_color": "#0A1628",
   "icons": [
-    { "src": "/one-fm-logo.png", "sizes": "256x256", "type": "image/png" }
+    { "src": "/one-fm-logo.svg", "sizes": "any", "type": "image/svg+xml" }
   ]
 }

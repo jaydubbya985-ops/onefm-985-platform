@@ -354,7 +354,7 @@ export function generateInvoiceEmailHtml(
     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
         <td align="center" style="padding:40px 40px 12px 40px;" class="mobile-padding">
-          <img src="https://vuvsbxc5bsqi2.kimi.page/one-fm-logo-master.png"
+          <img src="/one-fm-logo-master.svg"
                alt="ONE FM 98.5"
                width="auto" height="56"
                style="height:56px;width:auto;display:block;border:0;outline:none;" />

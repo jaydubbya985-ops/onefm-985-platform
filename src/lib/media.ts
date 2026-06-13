@@ -9,11 +9,11 @@ const UB = 'https://images.unsplash.com'
 
 export const media = {
   /* ── Brand ────────────────────────────────────────────── */
-  logoDefault:    '/one-fm-logo.png',
-  logoWhite:      '/one-fm-logo-white.png',
-  logoBlue:       '/one-fm-logo-blue.png',
-  logoMaster:     '/one-fm-logo-master.png',
-  logoOriginal:   '/one-fm-logo-original.png',
+  logoDefault:    '/one-fm-logo.svg',
+  logoWhite:      '/one-fm-logo-white.svg',
+  logoBlue:       '/one-fm-logo.svg',
+  logoMaster:     '/one-fm-logo-master.svg',
+  logoOriginal:   '/one-fm-logo.svg',
 
   /* ── Station ──────────────────────────────────────────── */
   studioControlRoom: '/studio-control-room.jpg',
