@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { submitEnquiry } from '@/lib/enquiries'
+import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import {
   Phone,
   Mail,
@@ -79,7 +80,7 @@ function ContactHero() {
 
   const socials = [
     { icon: Instagram, label: 'Instagram', href: '#' },
-    { icon: Facebook, label: 'Facebook', href: '#' },
+    { icon: Facebook, label: 'Facebook', href: FACEBOOK_PAGE_URL, external: true },
     { icon: Twitter, label: 'Twitter', href: '#' },
     { icon: Youtube, label: 'YouTube', href: '#' },
   ]
@@ -152,6 +153,9 @@ function ContactHero() {
               key={social.label}
               href={social.href}
               aria-label={social.label}
+              {...('external' in social && social.external
+                ? { target: '_blank', rel: 'noopener noreferrer' }
+                : {})}
               className="text-one-muted hover:text-one-gold transition-colors duration-300"
             >
               <social.icon size={22} />

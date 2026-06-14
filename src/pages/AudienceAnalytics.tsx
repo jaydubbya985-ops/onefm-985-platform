@@ -572,7 +572,7 @@ export default function AudienceAnalytics() {
                 },
                 {
                   title: 'Watch This',
-                  text: 'Breaky with Plemo audience growing',
+                  text: 'ONE FM Breakfast audience growing',
                   sub: '-2.3% this week · AI suggests: Increase music ratio',
                   border: '#F0C75E',
                   icon: AlertTriangle,

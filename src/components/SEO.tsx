@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { LOGO } from '@/lib/brand';
 
 interface SEOProps {
   title: string;
@@ -7,7 +8,7 @@ interface SEOProps {
   ogType?: string;
 }
 
-export function SEO({ title, description, ogImage = '/one-fm-logo-master.svg', ogType = 'website' }: SEOProps) {
+export function SEO({ title, description, ogImage = LOGO.transparent, ogType = 'website' }: SEOProps) {
   return (
     <Helmet>
       <title>{title} | ONE FM 98.5</title>

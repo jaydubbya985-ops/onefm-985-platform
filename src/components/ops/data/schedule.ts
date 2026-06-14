@@ -111,8 +111,12 @@ export const PROGRAMME_GUIDE: ProgrammeEntry[] = [
     category: 'automation',
     dayparts: ['EM'],
   })),
-  // Weekday strips
-  ...weekdayStrip('breaky', '6:00am – 9:00am', 'Breaky with Plemo', 'Plemo', 'breakfast', ['EM', 'B']),
+  // Weekday breakfast (rotating hosts — confirmed June 2026)
+  { id: 'breaky-1', day: 1, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Tim Ahemt', category: 'breakfast', dayparts: ['EM', 'B'] },
+  { id: 'breaky-2', day: 2, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Tim Ahemt', category: 'breakfast', dayparts: ['EM', 'B'] },
+  { id: 'breaky-3', day: 3, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Lillian Stone', category: 'breakfast', dayparts: ['EM', 'B'] },
+  { id: 'breaky-4', day: 4, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Craig Stott', category: 'breakfast', dayparts: ['EM', 'B'] },
+  { id: 'breaky-5', day: 5, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Di Hunter', category: 'breakfast', dayparts: ['EM', 'B'] },
   ...weekdayStrip('decades', '9:00am – 12:00pm', 'Dancing through the decades', 'Johnny P', 'music', ['B', 'M']),
   ...weekdayStrip('regional-voice', '12:00pm – 3:00pm', 'The Regional Voice', 'James Manley', 'community', ['M', 'L']),
   // Specialty evening programmes

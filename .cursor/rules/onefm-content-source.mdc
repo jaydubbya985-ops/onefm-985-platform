@@ -1,0 +1,30 @@
+---
+description: ONE FM content — fm985.com.au is canonical for people, news, interviews
+globs: src/**/*.{tsx,ts,json}
+alwaysApply: false
+---
+
+# ONE FM content rules
+
+## Canonical sources (priority order)
+1. **Jason confirms** in chat
+2. **https://fm985.com.au** — live WordPress site + REST API `https://fm985.com.au/wp-json/wp/v2/`
+3. `src/data/oneFmScrapedData.json` — may be stale; verify before using presenters/shows
+
+## Known stale (do not ship)
+- **Plemo** — gone; breakfast is ONE FM Breakfast with rotating hosts (see `src/data/programGuide.ts`)
+- Unsplash URLs in `src/lib/media.ts` — replace with real assets
+- Placeholder SVG logos in `public/one-fm-logo*.svg` — replace with brand files from fm985.com.au or Canva
+
+## Live site facts (verified)
+- Slogan: **Live and Local**
+- Established 1980, licensed 1989, callsign 3ONE
+- Org: Goulburn Valley Community Radio Inc.
+- Contact: admin@fm985.com.au, (+613) 58313131
+- Facebook: **https://www.facebook.com/onefmshepparton** (`src/lib/socialLinks.ts`)
+- SoundCloud: **https://soundcloud.com/user-570295409**
+- Content types: Interviews (SoundCloud audio), Community News, Sponsors
+- Presenters on live posts: John Painter, Josh Revens, James Manley
+
+## When adding "active website" features
+Prefer pulling real posts (title, excerpt, featured image, SoundCloud URL) over static mock content.

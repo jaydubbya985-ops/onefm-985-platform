@@ -1776,10 +1776,10 @@ export default function InvoiceGenerator() {
 
       {/* View / print dialog */}
       <Dialog open={!!viewInvoice} onOpenChange={(open) => !open && setViewInvoice(null)}>
-        <DialogContent className="bg-white text-black max-w-3xl max-h-[85vh] overflow-y-auto print:max-w-none print:w-full print:bg-white print:text-black print:border-none print:shadow-none">
+        <DialogContent className="bg-white text-black max-w-3xl max-h-[85vh] overflow-y-auto print:max-w-none print:max-h-none print:w-full print:overflow-visible print:bg-white print:text-black print:border-none print:shadow-none print:fixed print:inset-0 print:top-0 print:left-0 print:translate-x-0 print:translate-y-0 print:rounded-none print:p-0">
           {viewInvoice && (
             <div className="print-area">
-              <div className="bg-[#0A1628] p-6 -mx-6 -mt-6 mb-6">
+              <div className="bg-[#0A1628] p-6 -mx-6 -mt-6 mb-6 print:mx-0 print:mt-0 print:mb-4">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-3xl font-bold text-white tracking-tight">
@@ -2164,9 +2164,54 @@ export default function InvoiceGenerator() {
 
       <style>{`
         @media print {
+          @page { size: A4 portrait; margin: 12mm; }
+          html, body {
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            background: white !important;
+          }
+          [data-slot="dialog-overlay"],
+          [data-slot="dialog-close"] { display: none !important; }
+          [data-slot="dialog-content"] {
+            position: static !important;
+            transform: none !important;
+            inset: auto !important;
+            max-width: none !important;
+            width: 100% !important;
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: white !important;
+          }
           body * { visibility: hidden !important; }
-          .print-area, .print-area * { visibility: visible !important; }
-          .print-area { position: absolute; left: 0; top: 0; width: 100%; }
+          .print-area,
+          .print-area * { visibility: visible !important; }
+          .print-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
+          .print-area table { display: table !important; }
+          .print-area thead { display: table-header-group !important; }
+          .print-area tbody { display: table-row-group !important; }
+          .print-area tr { display: table-row !important; }
+          .print-area th,
+          .print-area td { display: table-cell !important; }
+          .print-area .flex { display: flex !important; }
+          .print-area .grid { display: grid !important; }
         }
       `}</style>
     </div>

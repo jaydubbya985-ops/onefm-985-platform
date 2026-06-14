@@ -451,6 +451,13 @@
   }
 }
 
+/* ── Official ONE FM logo — crisp on retina ─────────── */
+.brand-logo {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
 /* ── Custom Scrollbar ─────────────────────────────────── */
 ::-webkit-scrollbar       { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: #080F1C; }
@@ -480,4 +487,7 @@
   main { max-width: 100% !important; padding: 0 !important; }
   /* Page breaks */
   .page-break { page-break-before: always; }
+  /* Radix dialog — don't centre modal on printed page */
+  [data-slot="dialog-overlay"] { display: none !important; }
+  [data-slot="dialog-close"] { display: none !important; }
 }

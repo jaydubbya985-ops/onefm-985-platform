@@ -5,6 +5,13 @@ import { SEO } from '@/components/SEO'
 import { WeatherMini } from '@/components/WeatherWidget'
 import { MediaImage } from '@/components/MediaImage'
 import { media } from '@/lib/media'
+import {
+  BREAKFAST_SHOW,
+  getBreakfastHost,
+  getBreakfastScheduleLabel,
+  getCurrentLiveShow,
+} from '@/data/programGuide'
+import { LatestInterviews } from '@/components/LatestInterviews'
 import { motion, useInView } from 'framer-motion'
 import {
   Play, Pause, Volume2, ArrowRight, MapPin, Radio,
@@ -74,20 +81,7 @@ function StationIdent() {
 
 /* ─── Get Current Show ─── */
 function getCurrentShow() {
-  const now = new Date()
-  const hour = now.getHours()
-
-  if (hour >= 6 && hour < 9) {
-    return { name: 'Breaky with Plemo', host: 'Plemo', time: '6:00AM — 9:00AM', category: 'Breakfast', upNext: 'Dancing through the decades' }
-  } else if (hour >= 9 && hour < 12) {
-    return { name: 'Dancing through the decades', host: 'Johnny P', time: '9:00AM — 12:00PM', category: 'Music', upNext: 'The Regional Voice' }
-  } else if (hour >= 12 && hour < 15) {
-    return { name: 'The Regional Voice', host: 'Rowan Farren-Parnell', time: '12:00PM — 3:00PM', category: 'Community', upNext: 'Afternoon Music Mix' }
-  } else if (hour >= 15 && hour < 18) {
-    return { name: 'The Regional Voice', host: 'Rowan Farren-Parnell', time: '12:00PM — 3:00PM', category: 'Community', upNext: 'Evening Programs' }
-  } else {
-    return { name: 'Overnight Mix', host: 'Auto', time: '12:00AM — 6:00AM', category: 'Music', upNext: 'Breaky with Plemo' }
-  }
+  return getCurrentLiveShow()
 }
 
 /* ─── Audio Wave Canvas ─── */
@@ -167,10 +161,10 @@ function ProgramPreview() {
 
   const programData = [
     {
-      title: 'Breaky with Plemo',
-      presenter: 'Plemo',
+      title: BREAKFAST_SHOW,
+      presenter: getBreakfastScheduleLabel(),
       schedule: 'Monday–Friday, 6AM–9AM',
-      description: 'Breakfast show with community interviews, local news, and music. The Valley\'s essential morning companion.',
+      description: 'Rotating breakfast hosts — community interviews, local news, and music. The Valley\'s essential morning companion.',
       color: '#D4963A',
     },
     {
@@ -182,7 +176,7 @@ function ProgramPreview() {
     },
     {
       title: 'The Regional Voice',
-      presenter: 'Rowan Farren-Parnell',
+      presenter: 'James Manley',
       schedule: 'Monday–Friday, 12PM–3PM',
       description: 'Community-focused programming with local interviews and advocacy. The issues that matter to the Valley.',
       color: '#D4963A',
@@ -301,19 +295,20 @@ export default function Home() {
   })
 
   // Program preview
+  const todayHost = getBreakfastHost(currentTime.getDay())
   const featuredShows = [
     {
-      name: 'Breaky with Plemo',
+      name: BREAKFAST_SHOW,
       time: 'Mon–Fri 6:00AM',
-      host: 'Plemo',
+      host: todayHost,
       image: media.onAirHost1,
       fallback: media.presenter1,
-      isNow: true,
+      isNow: currentShow.name === BREAKFAST_SHOW,
     },
     {
       name: 'Dancing through the decades',
       time: 'Mon–Fri 9:00AM',
-      host: 'Johnny P',
+      host: 'John Painter',
       image: media.onAirHost2,
       fallback: media.presenter2,
       isNow: false,
@@ -321,7 +316,7 @@ export default function Home() {
     {
       name: 'The Regional Voice',
       time: 'Mon–Fri 12:00PM',
-      host: 'Rowan Farren-Parnell',
+      host: 'James Manley',
       image: media.onAirHost3,
       fallback: media.presenter3,
       isNow: false,
@@ -577,6 +572,8 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      <LatestInterviews />
 
       {/* ═══════ FEATURED SHOWS ═══════ */}
       <section className="section-padding bg-[#0A0E1A] relative overflow-hidden">

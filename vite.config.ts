@@ -13,6 +13,13 @@ export default defineConfig(({ mode }) => ({
   ],
   server: {
     port: 3000,
+    proxy: {
+      '/api/fm985': {
+        target: 'https://fm985.com.au',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/fm985/, ''),
+      },
+    },
   },
   resolve: {
     alias: {

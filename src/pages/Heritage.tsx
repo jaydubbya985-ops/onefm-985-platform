@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 
 /* ─── easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -107,7 +108,7 @@ const timeline = [
 
 /* ─── Regional Data ─── */
 const regions = [
-  { name: 'The Coast', icon: Waves, color: 'text-one-gold', bg: 'bg-one-gold/10', listeners: '412K', show: 'Breaky with Plemo', highlight: 'Beach report every hour in summer' },
+  { name: 'ONE FM Breakfast', icon: Waves, color: 'text-one-gold', bg: 'bg-one-gold/10', listeners: '412K', show: 'ONE FM Breakfast', highlight: 'Rotating hosts Mon–Fri mornings' },
   { name: 'The Valley', icon: Mountain, color: 'text-sage', bg: 'bg-sage/10', listeners: '298K', show: 'The Country Hour', highlight: 'Agricultural news and markets daily' },
   { name: 'The City', icon: Building2, color: 'text-data-teal', bg: 'bg-data-teal/10', listeners: '756K', show: 'The Night Shift', highlight: 'Live music venue partnerships' },
   { name: 'The Hinterland', icon: TreePine, color: 'text-data-violet', bg: 'bg-data-violet/10', listeners: '187K', show: 'Community Connect', highlight: 'Local producer marketplace' },
@@ -117,7 +118,10 @@ const regions = [
 const team = {
   leadership: [{ name: 'Station Manager', role: 'Goulburn Valley Community Radio Inc.', since: 'Since 1989', img: '/studio-control-room.jpg' }],
   onAir: [
-    { name: 'Plemo', role: 'Breakfast Host', since: 'On air daily', img: '/on-air-host-1.jpg' },
+    { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', since: '2026', img: '/on-air-host-1.jpg' },
+    { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', since: '2026', img: '/on-air-host-1.jpg' },
+    { name: 'Craig Stott', role: 'Breakfast (Thu)', since: '2026', img: '/on-air-host-2.jpg' },
+    { name: 'Di Hunter', role: 'Breakfast Host (Fri)', since: '2026', img: '/on-air-host-2.jpg' },
     { name: 'Johnny P', role: 'Dancing through the decades', since: '4 years on air', img: '/on-air-host-2.jpg' },
     { name: 'Rowan Farren-Parnell', role: 'The Regional Voice', since: 'Community advocate', img: '/on-air-host-3.jpg' },
   ],
@@ -140,11 +144,11 @@ const pillars = [
 
 /* ─── Social Icons ─── */
 const socials = [
-  { label: 'Instagram', path: 'M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z' },
-  { label: 'TikTok', path: 'M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5' },
-  { label: 'Twitter', path: 'M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z' },
-  { label: 'Facebook', path: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z' },
-  { label: 'YouTube', path: 'M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17' },
+  { label: 'Instagram', path: 'M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z', href: '#' },
+  { label: 'TikTok', path: 'M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5', href: '#' },
+  { label: 'Twitter', path: 'M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z', href: '#' },
+  { label: 'Facebook', path: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z', href: FACEBOOK_PAGE_URL, external: true },
+  { label: 'YouTube', path: 'M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17', href: '#' },
 ]
 
 /* ═══════════════════════════════════════════ */
@@ -760,7 +764,10 @@ export default function Heritage() {
               {socials.map((social, i) => (
                 <motion.a
                   key={social.label}
-                  href="#"
+                  href={social.href}
+                  {...('external' in social && social.external
+                    ? { target: '_blank', rel: 'noopener noreferrer' }
+                    : {})}
                   initial={{ opacity: 0, scale: 0 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}

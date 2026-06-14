@@ -27,34 +27,34 @@ const TIME_FILTERS = [
 const SHOWS = [
   /* Monday (day 0) */
   { id: 'overnight-mon', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 0, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-mon', name: 'Breaky with Plemo', hosts: 'Plemo', time: '06:00–09:00', duration: 3, start: 6, day: 0, category: 'Talk', color: '#D4963A', desc: 'Breakfast show with community interviews, local news, and music.' },
-  { id: 'dancing-mon', name: 'Dancing through the decades', hosts: 'Johnny P', time: '09:00–12:00', duration: 3, start: 9, day: 0, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with Johnny P.' },
-  { id: 'regional-mon', name: 'The Regional Voice', hosts: 'Rowan Farren-Parnell', time: '12:00–15:00', duration: 3, start: 12, day: 0, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
+  { id: 'breaky-mon', name: 'ONE FM Breakfast', hosts: 'Tim Ahemt', time: '06:00–09:00', duration: 3, start: 6, day: 0, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
+  { id: 'dancing-mon', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 0, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
+  { id: 'regional-mon', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 0, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
   { id: 'africonnect-mon', name: 'Africonnect', hosts: 'Fikiri (Swahili)', time: '21:00–22:00', duration: 1, start: 21, day: 0, category: 'Multicultural', color: '#E63946', desc: 'Swahili language program connecting the African community in the Goulburn Valley.' },
   { id: 'punjabi-mon', name: 'Punjabi Music Program', hosts: 'Rai, Aanchal or Sahil', time: '23:00–00:00', duration: 1, start: 23, day: 0, category: 'Multicultural', color: '#E63946', desc: 'Punjabi music program Monday nights.' },
   /* Tuesday (day 1) */
   { id: 'overnight-tue', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 1, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-tue', name: 'Breaky with Plemo', hosts: 'Plemo', time: '06:00–09:00', duration: 3, start: 6, day: 1, category: 'Talk', color: '#D4963A', desc: 'Breakfast show with community interviews, local news, and music.' },
-  { id: 'dancing-tue', name: 'Dancing through the decades', hosts: 'Johnny P', time: '09:00–12:00', duration: 3, start: 9, day: 1, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with Johnny P.' },
-  { id: 'regional-tue', name: 'The Regional Voice', hosts: 'Rowan Farren-Parnell', time: '12:00–15:00', duration: 3, start: 12, day: 1, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
+  { id: 'breaky-tue', name: 'ONE FM Breakfast', hosts: 'Tim Ahemt', time: '06:00–09:00', duration: 3, start: 6, day: 1, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
+  { id: 'dancing-tue', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 1, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
+  { id: 'regional-tue', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 1, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
   /* Wednesday (day 2) */
   { id: 'overnight-wed', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 2, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-wed', name: 'Breaky with Plemo', hosts: 'Plemo', time: '06:00–09:00', duration: 3, start: 6, day: 2, category: 'Talk', color: '#D4963A', desc: 'Breakfast show with community interviews, local news, and music.' },
-  { id: 'dancing-wed', name: 'Dancing through the decades', hosts: 'Johnny P', time: '09:00–12:00', duration: 3, start: 9, day: 2, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with Johnny P.' },
-  { id: 'regional-wed', name: 'The Regional Voice', hosts: 'Rowan Farren-Parnell', time: '12:00–15:00', duration: 3, start: 12, day: 2, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
+  { id: 'breaky-wed', name: 'ONE FM Breakfast', hosts: 'Lillian Stone', time: '06:00–09:00', duration: 3, start: 6, day: 2, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
+  { id: 'dancing-wed', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 2, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
+  { id: 'regional-wed', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 2, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
   { id: 'samoan-wed', name: 'Samoan Program', hosts: 'MK', time: '21:00–22:00', duration: 1, start: 21, day: 2, category: 'Multicultural', color: '#E63946', desc: 'Samoan language program connecting the Samoan community.' },
   { id: 'filipino-wed', name: 'Filipino Music Program', hosts: 'Edith', time: '22:00–23:00', duration: 1, start: 22, day: 2, category: 'Multicultural', color: '#E63946', desc: 'Filipino music program celebrating Filipino culture and music.' },
   /* Thursday (day 3) */
   { id: 'overnight-thu', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 3, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-thu', name: 'Breaky with Plemo', hosts: 'Plemo', time: '06:00–09:00', duration: 3, start: 6, day: 3, category: 'Talk', color: '#D4963A', desc: 'Breakfast show with community interviews, local news, and music.' },
-  { id: 'dancing-thu', name: 'Dancing through the decades', hosts: 'Johnny P', time: '09:00–12:00', duration: 3, start: 9, day: 3, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with Johnny P.' },
-  { id: 'regional-thu', name: 'The Regional Voice', hosts: 'Rowan Farren-Parnell', time: '12:00–15:00', duration: 3, start: 12, day: 3, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
+  { id: 'breaky-thu', name: 'ONE FM Breakfast', hosts: 'Craig Stott', time: '06:00–09:00', duration: 3, start: 6, day: 3, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
+  { id: 'dancing-thu', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 3, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
+  { id: 'regional-thu', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 3, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
   { id: 'planet-thu', name: 'Planet of Sound', hosts: 'Carlos Rock', time: '23:00–00:00', duration: 1, start: 23, day: 3, category: 'Music', color: '#9B5DE5', desc: 'Rock music program spanning 19-20 years on air.' },
   /* Friday (day 4) */
   { id: 'overnight-fri', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 4, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-fri', name: 'Breaky with Plemo', hosts: 'Plemo', time: '06:00–09:00', duration: 3, start: 6, day: 4, category: 'Talk', color: '#D4963A', desc: 'Breakfast show with community interviews, local news, and music.' },
-  { id: 'dancing-fri', name: 'Dancing through the decades', hosts: 'Johnny P', time: '09:00–12:00', duration: 3, start: 9, day: 4, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with Johnny P.' },
-  { id: 'regional-fri', name: 'The Regional Voice', hosts: 'Rowan Farren-Parnell', time: '12:00–15:00', duration: 3, start: 12, day: 4, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
+  { id: 'breaky-fri', name: 'ONE FM Breakfast', hosts: 'Di Hunter', time: '06:00–09:00', duration: 3, start: 6, day: 4, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
+  { id: 'dancing-fri', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 4, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
+  { id: 'regional-fri', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 4, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
   { id: 'country-fri', name: 'Good Evening Country', hosts: 'Timmy Ahmet', time: '20:00–21:00', duration: 1, start: 20, day: 4, category: 'Music', color: '#D4963A', desc: 'Country music showcase Friday evenings.' },
   { id: 'planet-fri', name: 'Planet of Sound', hosts: 'Carlos Rock', time: '23:00–00:00', duration: 1, start: 23, day: 4, category: 'Music', color: '#9B5DE5', desc: 'Rock music program spanning 19-20 years on air.' },
   /* Saturday (day 5) */
@@ -65,14 +65,16 @@ const SHOWS = [
 ]
 
 const HOSTS = [
-  { name: 'Plemo', role: 'Breakfast Host', shows: ['Breaky with Plemo'], avatar: '/on-air-host-1.jpg', shift: 'Morning' },
-  { name: 'Johnny P (John Painter)', role: 'Music Host', shows: ['Dancing through the decades'], avatar: '/on-air-host-2.jpg', shift: 'Daytime' },
-  { name: 'Rowan Farren-Parnell', role: 'Community Host', shows: ['The Regional Voice'], avatar: '/on-air-host-1.jpg', shift: 'Daytime' },
+  { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', shows: ['ONE FM Breakfast'], avatar: '/on-air-host-1.jpg', shift: 'Morning' },
+  { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', shows: ['ONE FM Breakfast'], avatar: '/on-air-host-1.jpg', shift: 'Morning' },
+  { name: 'Craig Stott', role: 'Breakfast (Thu) / Sports (Sat)', shows: ['ONE FM Breakfast', 'Super Saturday Sports Show'], avatar: '/on-air-host-2.jpg', shift: 'Morning' },
+  { name: 'Di Hunter', role: 'Breakfast Host (Fri)', shows: ['ONE FM Breakfast'], avatar: '/on-air-host-2.jpg', shift: 'Morning' },
+  { name: 'John Painter', role: 'Music Host', shows: ['Dancing through the decades'], avatar: '/on-air-host-2.jpg', shift: 'Daytime' },
+  { name: 'James Manley', role: 'Community Host', shows: ['The Regional Voice'], avatar: '/on-air-host-1.jpg', shift: 'Daytime' },
   { name: 'Carlos Rock', role: 'Rock Host — 19-20 years on air', shows: ['Planet of Sound'], avatar: '/on-air-host-3.jpg', shift: 'Evening' },
   { name: 'Timmy Ahmet', role: 'Country Host', shows: ['Good Evening Country'], avatar: '/on-air-host-2.jpg', shift: 'Evening' },
   { name: 'Ralph Whitehead', role: 'Music Host', shows: ['Friday Arvo / Friday Morning'], avatar: '/on-air-host-2.jpg', shift: 'Daytime' },
   { name: 'Roman Koz', role: 'Music Host', shows: ['Friday Mornings'], avatar: '/on-air-host-3.jpg', shift: 'Daytime' },
-  { name: 'Craig Stott', role: 'Sports Co-Host', shows: ['Super Saturday Sports Show'], avatar: '/on-air-host-2.jpg', shift: 'Weekend' },
   { name: 'Fikiri', role: 'Swahili Host', shows: ['Africonnect'], avatar: '/on-air-host-1.jpg', shift: 'Evening' },
   { name: 'MK', role: 'Samoan Host', shows: ['Samoan Program'], avatar: '/on-air-host-2.jpg', shift: 'Evening' },
   { name: 'Edith', role: 'Filipino Host', shows: ['Filipino Music Program'], avatar: '/on-air-host-3.jpg', shift: 'Evening' },
@@ -84,17 +86,17 @@ const HOSTS = [
 ]
 
 const SEGMENTS = [
-  { id: '01', name: 'Breaky with Plemo', duration: 'Mon–Fri, 6am–9am', category: 'Breakfast', desc: 'Breakfast show with community interviews, local news, and music. Monday-Friday 6am-9am. Hosted by Plemo who interviews local community figures, business owners, and event organisers across the Goulburn Valley.', stats: { editions: '5 weekly', avg: '3 hrs', completion: '94%' } },
-  { id: '02', name: 'The Regional Voice', duration: 'Mon–Fri, 12pm–3pm', category: 'Community', desc: 'Community-focused programming with local interviews and advocacy. Hosted by Rowan Farren-Parnell, member of the Mooroopna Community Planning Group.', stats: { editions: '5 weekly', avg: '3 hrs', completion: '91%' } },
+  { id: '01', name: 'ONE FM Breakfast', duration: 'Mon–Fri, 6am–9am', category: 'Breakfast', desc: 'Rotating breakfast hosts: Tim Ahemt (Mon–Tue), Lillian Stone (Wed), Craig Stott (Thu), Di Hunter (Fri). Community interviews, local news, and music across the Goulburn Valley.', stats: { editions: '5 weekly', avg: '3 hrs', completion: '94%' } },
+  { id: '02', name: 'The Regional Voice', duration: 'Mon–Fri, 12pm–3pm', category: 'Community', desc: 'Community-focused programming with local interviews and advocacy. Hosted by James Manley.', stats: { editions: '5 weekly', avg: '3 hrs', completion: '91%' } },
   { id: '03', name: 'Planet of Sound', duration: 'Thursday & Friday, 11pm', category: 'Music', desc: 'Rock music program spanning 19-20 years on air with Carlos Rock. A Valley institution for rock fans.', stats: { editions: '2 weekly', avg: '1 hr', completion: '96%' } },
   { id: '04', name: 'Africonnect', duration: 'Monday, 9-10pm', category: 'Multicultural', desc: 'Swahili language program connecting the African community in the Goulburn Valley. Hosted by Fikiri.', stats: { editions: '1 weekly', avg: '1 hr', completion: '92%' } },
   { id: '05', name: 'Super Saturday Sports Show', duration: 'Saturday', category: 'Sports', desc: 'Comprehensive local sports coverage including GVL Football & Netball, cricket, bowls, tennis and harness racing. Co-hosted by Craig Stott.', stats: { editions: '1 weekly', avg: '6 hrs', completion: '95%' } },
 ]
 
 const SHOW_CARDS = [
-  { name: 'Breaky with Plemo', host: 'Plemo', schedule: 'Mon–Fri, 6am – 9am', desc: 'Breakfast show with community interviews, local news, and music. The Valley\'s essential morning companion.', tags: ['Breakfast', 'Talk', 'Live'], color: '#D4963A', image: '/on-air-host-1.jpg', category: 'Talk' },
-  { name: 'Dancing through the decades', host: 'Johnny P', schedule: 'Mon–Fri, 9am – 12pm', desc: 'Music from across the decades with Johnny P. Four years on air, playing the hits that span generations.', tags: ['Music', 'Hits'], color: '#9B5DE5', image: '/on-air-host-2.jpg', category: 'Music' },
-  { name: 'The Regional Voice', host: 'Rowan Farren-Parnell', schedule: 'Mon–Fri, 12pm – 3pm', desc: 'Community-focused programming with local interviews and advocacy. The issues that matter to the Valley.', tags: ['Talk', 'Community', 'Local'], color: '#2EC4B6', image: '/on-air-host-1.jpg', category: 'Talk' },
+  { name: 'ONE FM Breakfast', host: 'Rotating hosts', schedule: 'Mon–Fri, 6am – 9am', desc: 'Tim Ahemt · Lillian Stone · Craig Stott · Di Hunter — the Valley\'s essential morning companion.', tags: ['Breakfast', 'Talk', 'Live'], color: '#D4963A', image: '/on-air-host-1.jpg', category: 'Talk' },
+  { name: 'Dancing through the decades', host: 'John Painter', schedule: 'Mon–Fri, 9am – 12pm', desc: 'Music from across the decades with John Painter. Four years on air, playing the hits that span generations.', tags: ['Music', 'Hits'], color: '#9B5DE5', image: '/on-air-host-2.jpg', category: 'Music' },
+  { name: 'The Regional Voice', host: 'James Manley', schedule: 'Mon–Fri, 12pm – 3pm', desc: 'Community-focused programming with local interviews and advocacy. The issues that matter to the Valley.', tags: ['Talk', 'Community', 'Local'], color: '#2EC4B6', image: '/on-air-host-1.jpg', category: 'Talk' },
   { name: 'Planet of Sound', host: 'Carlos Rock', schedule: 'Thu & Fri, 11pm', desc: 'Rock music program spanning 19-20 years on air. The definitive rock show for the Goulburn Valley.', tags: ['Music', 'Rock'], color: '#9B5DE5', image: '/on-air-host-3.jpg', category: 'Music' },
   { name: 'Good Evening Country', host: 'Timmy Ahmet', schedule: 'Friday, 8pm', desc: 'Country music showcase Friday evenings. The best country classics and new releases.', tags: ['Music', 'Country'], color: '#D4963A', image: '/on-air-host-2.jpg', category: 'Music' },
   { name: 'Africonnect', host: 'Fikiri', schedule: 'Monday, 9pm – 10pm', desc: 'Swahili language program connecting the African community in the Goulburn Valley.', tags: ['Multicultural', 'Swahili', 'Community'], color: '#E63946', image: '/on-air-host-1.jpg', category: 'Multicultural' },
@@ -199,7 +201,7 @@ function HeroSection() {
           className="font-h1 text-one-white mb-3"
           style={{ textShadow: '0 0 40px rgba(212,150,58,0.3)', fontSize: 'clamp(3rem, 8vw, 5rem)' }}
         >
-          BREAKY WITH PLEMO
+          ONE FM BREAKFAST
         </motion.h1>
 
         <motion.p
@@ -208,7 +210,7 @@ function HeroSection() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="font-h3 text-one-white mb-2"
         >
-          with Plemo
+          Tim · Lillian · Craig · Di
         </motion.p>
 
         <motion.div
@@ -279,7 +281,7 @@ function HeroSection() {
         >
           <div className="font-micro text-muted">UP NEXT</div>
           <div className="flex-1">
-            <div className="font-body-small text-one-white">09:00 — Dancing through the decades with Johnny P</div>
+            <div className="font-body-small text-one-white">09:00 — Dancing through the decades with John Painter</div>
           </div>
           <ArrowRight size={16} className="text-one-gold" />
         </motion.div>
@@ -534,7 +536,7 @@ function ShowSpotlight() {
             <div className="md:w-[45%] relative overflow-hidden">
               <img
                 src="/on-air-host-1.jpg"
-                alt="Breaky with Plemo"
+                alt="ONE FM Breakfast"
                 className="w-full h-full object-cover md:absolute md:inset-0 hover:scale-105 transition-transform duration-700"
                 style={{ maxHeight: 400 }}
               />
@@ -543,17 +545,17 @@ function ShowSpotlight() {
               </div>
             </div>
             <div className="md:w-[55%] p-6 md:p-8 flex flex-col justify-center">
-              <h2 className="font-h2 text-one-white mb-3">BREAKY WITH PLEMO</h2>
+              <h2 className="font-h2 text-one-white mb-3">ONE FM BREAKFAST</h2>
               <div className="flex items-center gap-3 mb-4">
-                <img src="/on-air-host-1.jpg" alt="Plemo" className="w-12 h-12 rounded-full object-cover border-2 border-one-gold/30" />
+                <img src="/on-air-host-1.jpg" alt="Breakfast hosts" className="w-12 h-12 rounded-full object-cover border-2 border-one-gold/30" />
                 <div>
-                  <div className="font-h4 text-one-white">Plemo</div>
-                  <div className="font-label text-one-gold text-[10px]">BREAKFAST HOST</div>
+                  <div className="font-h4 text-one-white">Rotating hosts</div>
+                  <div className="font-label text-one-gold text-[10px]">MON–FRI 6AM–9AM</div>
                 </div>
               </div>
-              <div className="font-label text-one-gold mb-4">Mon–Fri, 6:00 – 9:00</div>
+              <div className="font-label text-one-gold mb-4">Mon Tim · Tue Tim · Wed Lillian · Thu Craig · Fri Di</div>
               <p className="font-body text-one-white mb-6 line-clamp-3">
-                Breakfast show with community interviews, local news, and music. Plemo interviews local community figures, business owners, and event organisers across the Goulburn Valley. The essential morning companion for the Valley.
+                Community interviews, local news, and music across the Goulburn Valley. The essential morning companion for the Valley.
               </p>
               <div className="flex flex-wrap gap-2 mb-6">
                 {['NEWS', 'MUSIC', 'TALK', 'LIVE CALLS'].map((tag) => (

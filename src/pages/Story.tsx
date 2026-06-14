@@ -100,7 +100,10 @@ const milestones = [
 
 /* ─── Team data ─── */
 const team = [
-  { name: "Plemo", role: "Breakfast Host — Breaky with Plemo", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/on-air-host-1.jpg", quote: "Interviews local community figures, business owners, and event organisers across the Goulburn Valley." },
+  { name: "Tim Ahemt", role: "Breakfast Host (Mon–Tue)", years: "2026", cat: "On-Air", img: "/on-air-host-1.jpg", quote: "Hosts ONE FM Breakfast Monday and Tuesday — community interviews and local news." },
+  { name: "Lillian Stone", role: "Breakfast Host (Wed)", years: "2026", cat: "On-Air", img: "/on-air-host-1.jpg", quote: "Hosts ONE FM Breakfast on Wednesdays." },
+  { name: "Craig Stott", role: "Breakfast (Thu) / Super Saturday Sports", years: "2026", cat: "On-Air", img: "/on-air-host-2.jpg", quote: "Thursday breakfast and Saturday GVL sports coverage." },
+  { name: "Di Hunter", role: "Breakfast Host (Fri)", years: "2026", cat: "On-Air", img: "/on-air-host-2.jpg", quote: "Hosts ONE FM Breakfast on Fridays." },
   { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", years: "4", cat: "On-Air", img: "/on-air-host-2.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
   { name: "Rowan Farren-Parnell", role: "Host — The Regional Voice / The Advocate", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/on-air-host-1.jpg", quote: "Member of the Mooroopna Community Planning Group. Interviews community figures and discusses local advocacy issues." },
   { name: "Carlos Rock", role: "Host — Planet of Sound", years: "19-20", cat: "On-Air", img: "/on-air-host-3.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },

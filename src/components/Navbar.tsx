@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ChevronDown, Lock, Menu, X } from 'lucide-react'
+import { BrandLogo } from '@/components/BrandLogo'
 import { useOpsAccess } from '@/hooks/useOpsAccess'
 
 const NAV_GROUPS = [
@@ -249,14 +250,9 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="ONE FM 98.5 — Home">
-            <img
-              src="/one-fm-logo-master.svg"
-              alt="ONE FM 98.5"
-              className="h-12 w-auto object-contain drop-shadow-lg"
-              style={{ maxWidth: 160 }}
-              onError={(e) => {
-                e.currentTarget.src = '/one-fm-logo.svg'
-              }}
+            <BrandLogo
+              variant="primary"
+              className="h-11 sm:h-12 w-auto object-contain drop-shadow-lg max-w-[min(200px,42vw)]"
             />
             <span className="relative flex h-2.5 w-2.5 hidden sm:flex">
               <span className="animate-signal-pulse absolute inline-flex h-full w-full rounded-full bg-one-gold opacity-75" />

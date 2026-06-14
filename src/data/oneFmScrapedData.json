@@ -25,8 +25,8 @@
       },
       {
         "time": "6:00am - 9:00am",
-        "show": "Breaky with Plemo",
-        "presenter": "Plemo"
+        "show": "ONE FM Breakfast",
+        "presenter": "Tim Ahemt"
       },
       {
         "time": "9:00am - 12:00pm",
@@ -62,8 +62,8 @@
       },
       {
         "time": "6:00am - 9:00am",
-        "show": "Breaky with Plemo",
-        "presenter": "Plemo"
+        "show": "ONE FM Breakfast",
+        "presenter": "Tim Ahemt"
       },
       {
         "time": "9:00am - 12:00pm",
@@ -84,8 +84,8 @@
       },
       {
         "time": "6:00am - 9:00am",
-        "show": "Breaky with Plemo",
-        "presenter": "Plemo"
+        "show": "ONE FM Breakfast",
+        "presenter": "Lillian Stone"
       },
       {
         "time": "9:00am - 12:00pm",
@@ -116,8 +116,8 @@
       },
       {
         "time": "6:00am - 9:00am",
-        "show": "Breaky with Plemo",
-        "presenter": "Plemo"
+        "show": "ONE FM Breakfast",
+        "presenter": "Craig Stott"
       },
       {
         "time": "9:00am - 12:00pm",
@@ -143,8 +143,8 @@
       },
       {
         "time": "6:00am - 9:00am",
-        "show": "Breaky with Plemo",
-        "presenter": "Plemo"
+        "show": "ONE FM Breakfast",
+        "presenter": "Di Hunter"
       },
       {
         "time": "9:00am - 12:00pm",
@@ -189,10 +189,31 @@
   },
   "presenters": [
     {
-      "name": "Plemo",
-      "show": "Breaky with Plemo",
-      "timeslot": "Monday-Friday, 6am-9am",
-      "bio": "ONE FM 98.5 breakfast announcer. Interviews local community figures, business owners, and event organisers across the Goulburn Valley.",
+      "name": "Tim Ahemt",
+      "show": "ONE FM Breakfast",
+      "timeslot": "Monday–Tuesday, 6am–9am",
+      "bio": "ONE FM 98.5 breakfast host Monday and Tuesday.",
+      "category": "Breakfast"
+    },
+    {
+      "name": "Lillian Stone",
+      "show": "ONE FM Breakfast",
+      "timeslot": "Wednesday, 6am–9am",
+      "bio": "ONE FM 98.5 breakfast host Wednesday.",
+      "category": "Breakfast"
+    },
+    {
+      "name": "Craig Stott",
+      "show": "ONE FM Breakfast / Super Saturday Sports Show",
+      "timeslot": "Thursday breakfast · Saturday sport",
+      "bio": "Thursday breakfast host and Saturday sports coverage.",
+      "category": "Breakfast"
+    },
+    {
+      "name": "Di Hunter",
+      "show": "ONE FM Breakfast",
+      "timeslot": "Friday, 6am–9am",
+      "bio": "ONE FM 98.5 breakfast host Friday.",
       "category": "Breakfast"
     },
     {
@@ -303,9 +324,9 @@
   ],
   "regular_segments": [
     {
-      "name": "Breaky with Plemo",
-      "description": "Breakfast show with community interviews, local news, and music. Monday-Friday 6am-9am.",
-      "host": "Plemo"
+      "name": "ONE FM Breakfast",
+      "description": "Rotating breakfast hosts Mon–Fri 6am–9am: Tim Ahemt, Lillian Stone, Craig Stott, Di Hunter.",
+      "host": "Rotating"
     },
     {
       "name": "Dancing through the decades",
@@ -418,13 +439,13 @@
       "date": "2026-04-29",
       "guest": "Melanie Domaschenz & Athena Papadotas",
       "topic": "St Vinnies Shepparton",
-      "host": "Plemo"
+      "host": "ONE FM Breakfast (archive)"
     },
     {
       "date": "2026-04-21",
       "guest": "Wendy Boyle",
       "topic": "Shepparton Mother's Day Classic fun run",
-      "host": "Plemo"
+      "host": "ONE FM Breakfast (archive)"
     },
     {
       "date": "2026-04-17",
@@ -454,13 +475,13 @@
       "date": "2026-04-10",
       "guest": "Jan Phillips",
       "topic": "Mooroopna Education & Activity Centre (MEAC)",
-      "host": "Plemo"
+      "host": "ONE FM Breakfast (archive)"
     },
     {
       "date": "2026-04-10",
       "guest": "Nathan Lyon",
       "topic": "'Have You Got What It Takes' Regional Tour",
-      "host": "Plemo"
+      "host": "ONE FM Breakfast (archive)"
     },
     {
       "date": "2026-04-10",
@@ -502,13 +523,13 @@
       "date": "2026-03-13",
       "guest": "Geoff Long",
       "topic": "Rotary Club Motor Show Market Day & Swap Meet",
-      "host": "Plemo"
+      "host": "ONE FM Breakfast (archive)"
     },
     {
       "date": "2026-03-10",
       "guest": "Reg Qemal & Mariola Nebiu",
       "topic": "Shepparton Albanian Harvest Festival 2026",
-      "host": "Plemo"
+      "host": "ONE FM Breakfast (archive)"
     }
   ],
   "ethnic_programs": [
@@ -623,7 +644,7 @@
     "phone": "(+613) 58313131",
     "email": "admin@fm985.com.au",
     "podcast_email": "[DATA_MISSING_FROM_SOURCE]",
-    "facebook": "[MANUAL_ENTRY_REQUIRED]",
+    "facebook": "https://www.facebook.com/onefmshepparton",
     "instagram": "[MANUAL_ENTRY_REQUIRED]"
   }
 }

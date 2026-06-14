@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Radio } from 'lucide-react'
+import { BrandLogo } from '@/components/BrandLogo'
 
 interface PageLoaderProps {
   isReady?: boolean
@@ -29,15 +29,10 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
             </div>
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <Radio size={28} className="text-one-gold" />
+            <BrandLogo variant="mark" className="h-10 w-10" />
           </div>
         </div>
-        <div className="text-center space-y-1.5">
-          <h2 className="font-heading text-xl text-one-white tracking-tight">ONE FM</h2>
-          <p className="font-label text-[10px] text-muted uppercase tracking-widest">
-            98.5 FM Goulburn Valley
-          </p>
-        </div>
+        <BrandLogo variant="primary" className="h-14 w-auto max-w-[220px]" />
       </div>
     </div>
   )
@@ -47,7 +42,7 @@ export function RouteFallback() {
   return (
     <div className="min-h-screen bg-one-navy flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <img src="/one-fm-logo.svg" alt="ONE FM" className="h-16 w-auto animate-pulse" />
+        <BrandLogo variant="primary" className="h-16 w-auto animate-pulse" />
         <div className="h-1 w-32 bg-one-border rounded-full overflow-hidden">
           <div className="h-full bg-one-gold animate-[shimmer_1.5s_infinite]" />
         </div>

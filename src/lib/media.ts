@@ -7,13 +7,15 @@
 
 const UB = 'https://images.unsplash.com'
 
+import { LOGO } from '@/lib/brand'
+
 export const media = {
-  /* ── Brand ────────────────────────────────────────────── */
-  logoDefault:    '/one-fm-logo.svg',
-  logoWhite:      '/one-fm-logo-white.svg',
-  logoBlue:       '/one-fm-logo.svg',
-  logoMaster:     '/one-fm-logo-master.svg',
-  logoOriginal:   '/one-fm-logo.svg',
+  /* ── Brand (official drop zone: /public/brand/) ─────── */
+  logoDefault:    LOGO.transparent,
+  logoWhite:      LOGO.transparent,
+  logoBlue:       LOGO.transparent,
+  logoMaster:     LOGO.primarySvg,
+  logoOriginal:   LOGO.source,
 
   /* ── Station ──────────────────────────────────────────── */
   studioControlRoom: '/studio-control-room.jpg',

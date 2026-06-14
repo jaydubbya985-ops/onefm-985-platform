@@ -8,6 +8,8 @@ import {
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { FacebookPageEmbed } from '@/components/FacebookPageEmbed'
+import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -61,7 +63,7 @@ const GUIDES = [
 ]
 
 const FEED_POSTS = [
-  { platform: 'Instagram', image: '/on-air-host-1.jpg', caption: 'Breaky with Plemo is LIVE! Plemo is taking your calls until 9AM. Tune in! 📻', likes: '1.2K', comments: '89', time: '2h ago' },
+  { platform: 'Instagram', image: '/on-air-host-1.jpg', caption: 'ONE FM Breakfast is LIVE! Tim on air until 9AM. Tune in! 📻', likes: '1.2K', comments: '89', time: '2h ago' },
   { platform: 'TikTok', image: '/on-air-host-2.jpg', caption: 'DJ Kalem drops an exclusive first play of the new track everyone\'s talking about 🔥', likes: '3.4K', comments: '156', time: '4h ago' },
   { platform: 'Twitter/X', image: '/studio-control-room.jpg', caption: 'Behind the scenes in Studio A — where the magic happens every morning ✨', likes: '892', comments: '45', time: '5h ago' },
   { platform: 'Facebook', image: '/community-event.jpg', caption: 'Thank you to everyone who came out for the Summer Sounds Festival! What was your favorite moment?', likes: '2.1K', comments: '234', time: '8h ago' },
@@ -201,6 +203,34 @@ function HeroSection() {
           <a href="#templates" className="btn-primary text-xs">Browse Templates</a>
           <a href="#assets" className="btn-secondary text-xs">Download Brand Kit</a>
         </motion.div>
+      </div>
+    </section>
+  )
+}
+
+/* ─── Live Facebook feed ─── */
+function LiveFacebookSection() {
+  return (
+    <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+        <div>
+          <p className="font-label text-one-gold text-[10px] mb-2">LIVE FROM FACEBOOK</p>
+          <h2 className="font-h2 text-one-white">Follow ONE FM 98.5</h2>
+          <p className="font-body text-muted mt-2 max-w-xl">
+            News, events, and community updates from our official Facebook page.
+          </p>
+        </div>
+        <a
+          href={FACEBOOK_PAGE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-secondary text-xs shrink-0"
+        >
+          Open Facebook Page
+        </a>
+      </div>
+      <div className="max-w-lg mx-auto md:mx-0">
+        <FacebookPageEmbed height={420} />
       </div>
     </section>
   )
@@ -828,7 +858,7 @@ function CaptionGenerator() {
     setTimeout(() => {
       const captions: Record<string, string[]> = {
         Instagram: [
-          '🔥 The beats are dropping and the vibes are rising! Tune into ONE FM now for your daily dose of energy. #BreakyWithPlemo #LiveRadio #OneFM',
+          '🔥 The beats are dropping and the vibes are rising! Tune into ONE FM now for your daily dose of energy. #ONEFMBreakfast #LiveRadio #OneFM',
           '🎙️ Your favorite hosts are LIVE and ready to make your morning unforgettable. Join the conversation! 📻✨ #OneFM #RadioLife',
         ],
         TikTok: [
@@ -836,11 +866,11 @@ function CaptionGenerator() {
           'When the DJ drops THAT track and the whole studio loses it 🎧💥 #OneFM #MusicTok',
         ],
         'Twitter/X': [
-          '🎵 LIVE NOW: Breaky with Plemo on ONE FM 98.5. News, music, and your calls. Tune in → ONE FM 98.5 #BreakyWithPlemo',
+          '🎵 LIVE NOW: ONE FM Breakfast on ONE FM 98.5. News, music, and your calls. Tune in → ONE FM 98.5 #ONEFMBreakfast',
           'The Night Shift is about to get started. Indie, electronica, and zero sleep required 🌙 #TheNightShift #OneFM',
         ],
         Facebook: [
-          'Join thousands of listeners who start their day with ONE FM. Breaky with Plemo is live from 6AM — news, music, and community. 🎙️',
+          'Join thousands of listeners who start their day with ONE FM. ONE FM Breakfast is live from 6AM — news, music, and community. 🎙️',
           'Weekend Warmup is here! Two hours of feel-good anthems to kick off your Saturday right. Tune in now! 🎉',
         ],
         LinkedIn: [
@@ -990,7 +1020,7 @@ function CaptionGenerator() {
               </div>
 
               <div className="flex flex-wrap gap-2 mb-4">
-                {['#OneFM', '#RadioLife', '#BreakyWithPlemo', '#LiveMusic'].map((tag) => (
+                {['#OneFM', '#RadioLife', '#ONEFMBreakfast', '#LiveMusic'].map((tag) => (
                   <button key={tag} className="px-2 py-1 rounded-full border border-one-border font-label text-[10px] text-muted hover:border-one-gold hover:text-one-gold transition-colors">
                     {tag}
                   </button>
@@ -1130,6 +1160,7 @@ export default function SocialHub() {
     <Layout>
       <SEO title="Social Media Hub" description="ONE FM 98.5 brand assets, content templates, AI caption generator, and campaign calendar." />
       <HeroSection />
+      <LiveFacebookSection />
       <AssetLibrary />
       <TemplatesSection />
       <CampaignCalendar />

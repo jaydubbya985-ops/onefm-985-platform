@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowUp, Mail, Phone, MapPin, Radio } from 'lucide-react'
+import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
+import { BrandLogo } from '@/components/BrandLogo'
 
 const pageLinks = [
   { label: 'Home', path: '/' },
@@ -33,13 +35,16 @@ export function Footer() {
           {/* Brand column */}
           <div className="space-y-6">
             <div className="flex items-center gap-2">
-              <img src="/one-fm-logo.svg" alt="ONE FM 98.5" className="h-12 w-auto object-contain" />
+              <BrandLogo variant="primary" className="h-12 w-auto object-contain" />
               <Radio size={20} className="text-one-gold" />
             </div>
             <p className="font-body-small text-one-white max-w-xs">
               Community radio for the Goulburn Valley since 1989. Local voices, local stories, local music.
             </p>
             <div className="flex items-center gap-4">
+              <a href={FACEBOOK_PAGE_URL} target="_blank" rel="noopener noreferrer" className="text-one-muted hover:text-one-white transition-colors" aria-label="Facebook">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </a>
               <a href="#" className="text-one-muted hover:text-one-white transition-colors" aria-label="Instagram">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
               </a>

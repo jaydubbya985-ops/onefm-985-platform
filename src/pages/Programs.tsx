@@ -1,7 +1,13 @@
-import { useState, useEffect, memo } from 'react'
+import { useState, memo } from 'react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { motion, AnimatePresence } from 'framer-motion'
+import {
+  BREAKFAST_SHOW,
+  getBreakfastScheduleLabel,
+  getCurrentLiveShow,
+} from '@/data/programGuide'
+import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import {
   Mic2,
   Clock,
@@ -44,34 +50,7 @@ const RadioWaveBackground = memo(function RadioWaveBackground() {
 /*  ON AIR NOW indicator                                      */
 /* ────────────────────────────────────────────────────────── */
 function OnAirNow() {
-  const [show, setShow] = useState("Breaky with Plemo")
-  const [timeSlot, setTimeSlot] = useState("6:00AM — 9:00AM")
-  const [host, setHost] = useState("Plemo")
-
-  useEffect(() => {
-    const hour = new Date().getHours()
-    if (hour >= 6 && hour < 9) {
-      setShow("Breaky with Plemo")
-      setTimeSlot("6:00AM — 9:00AM")
-      setHost("Plemo")
-    } else if (hour >= 9 && hour < 12) {
-      setShow("Dancing through the decades")
-      setTimeSlot("9:00AM — 12:00PM")
-      setHost("Johnny P")
-    } else if (hour >= 12 && hour < 15) {
-      setShow("The Regional Voice")
-      setTimeSlot("12:00PM — 3:00PM")
-      setHost("Rowan Farren-Parnell")
-    } else if (hour >= 15 && hour < 18) {
-      setShow("The Regional Voice")
-      setTimeSlot("12:00PM — 3:00PM")
-      setHost("Rowan Farren-Parnell")
-    } else {
-      setShow("Overnight Mix")
-      setTimeSlot("12:00AM — 6:00AM")
-      setHost("Auto")
-    }
-  }, [])
+  const live = getCurrentLiveShow()
 
   return (
     <motion.div
@@ -86,8 +65,8 @@ function OnAirNow() {
       </span>
       <div className="text-left">
         <p className="font-label text-one-red mb-0.5">ON AIR NOW</p>
-        <p className="font-h4 text-one-white">{show}</p>
-        <p className="font-body-small text-muted">with {host} &middot; {timeSlot}</p>
+        <p className="font-h4 text-one-white">{live.name}</p>
+        <p className="font-body-small text-muted">with {live.host} &middot; {live.time}</p>
       </div>
       <Wifi size={20} className="text-one-gold ml-auto shrink-0" />
     </motion.div>
@@ -99,10 +78,10 @@ function OnAirNow() {
 /* ────────────────────────────────────────────────────────── */
 const shows = [
   {
-    name: "Breaky with Plemo",
+    name: BREAKFAST_SHOW,
     time: "Mon–Fri, 6am–9am",
-    host: "Plemo",
-    desc: "Breakfast show with community interviews, local news, and music. The Valley's essential morning companion.",
+    host: getBreakfastScheduleLabel(),
+    desc: "Rotating breakfast hosts — community interviews, local news, and music. The Valley's essential morning companion.",
     tag: "Breakfast",
     icon: Mic2,
   },
@@ -152,9 +131,12 @@ const shows = [
 /*  Section 3 — Host Roster                                   */
 /* ────────────────────────────────────────────────────────── */
 const hosts = [
-  { name: "Plemo", show: "Breaky with Plemo", time: "Mon–Fri, 6am–9am", type: "Breakfast", img: "/on-air-host-1.jpg", social: { fb: true, tw: true } },
-  { name: "Johnny P (John Painter)", show: "Dancing through the decades", time: "Mon–Fri, 9am–12pm", type: "Music", img: "/on-air-host-2.jpg", social: { fb: true, ig: true } },
-  { name: "Rowan Farren-Parnell", show: "The Regional Voice / The Advocate", time: "Mon–Fri, 12pm–3pm", type: "Community", img: "/on-air-host-1.jpg", social: { fb: true } },
+  { name: "Tim Ahemt", show: BREAKFAST_SHOW, time: "Mon & Tue, 6am–9am", type: "Breakfast", img: "/on-air-host-1.jpg", social: { fb: true } },
+  { name: "Lillian Stone", show: BREAKFAST_SHOW, time: "Wed, 6am–9am", type: "Breakfast", img: "/on-air-host-1.jpg", social: { fb: true } },
+  { name: "Craig Stott", show: `${BREAKFAST_SHOW} / Super Saturday Sports`, time: "Thu breakfast · Sat sport", type: "Breakfast", img: "/on-air-host-2.jpg", social: { fb: true } },
+  { name: "Di Hunter", show: BREAKFAST_SHOW, time: "Fri, 6am–9am", type: "Breakfast", img: "/on-air-host-2.jpg", social: { fb: true } },
+  { name: "John Painter", show: "Dancing through the decades", time: "Mon–Fri, 9am–12pm", type: "Music", img: "/on-air-host-2.jpg", social: { fb: true, ig: true } },
+  { name: "James Manley", show: "The Regional Voice", time: "Mon–Fri, 12pm–3pm", type: "Community", img: "/on-air-host-1.jpg", social: { fb: true } },
   { name: "Carlos Rock", show: "Planet of Sound", time: "Thursday nights, 11pm", type: "Music", img: "/on-air-host-3.jpg", social: { fb: true } },
   { name: "Ralph Whitehead", show: "Friday Arvo / Friday Morning", time: "Friday afternoons / mornings", type: "Music", img: "/on-air-host-2.jpg", social: { ig: true, tw: true } },
   { name: "Roman Koz", show: "Friday Mornings", time: "Friday mornings", type: "Music", img: "/on-air-host-3.jpg", social: { tw: true } },
@@ -162,7 +144,6 @@ const hosts = [
   { name: "Ken & Jill Gaffney", show: "Winding Back", time: "[DATA_MISSING_FROM_SOURCE]", type: "Music", img: "/on-air-host-1.jpg", social: { fb: true, ig: true } },
   { name: "Les 'Harro' Harrison", show: "Various", time: "Various", type: "Community", img: "/on-air-host-3.jpg", social: { fb: true } },
   { name: "Michael Costello", show: "River Allsorts", time: "[DATA_MISSING_FROM_SOURCE]", type: "Community", img: "/on-air-host-1.jpg", social: { fb: true, ig: true } },
-  { name: "Craig Stott", show: "Super Saturday Sports Show", time: "Saturday", type: "Sport", img: "/on-air-host-2.jpg", social: { fb: true } },
   { name: "Josh Revens", show: "Community Interviews / Various", time: "Various", type: "Community", img: "/on-air-host-3.jpg", social: { tw: true } },
   { name: "Fikiri", show: "Africonnect (Swahili)", time: "Monday, 9-10pm", type: "Multicultural", img: "/on-air-host-1.jpg", social: { fb: true } },
   { name: "MK (Muagutauti'a Faletoese Lemamea)", show: "Samoan Program", time: "Wednesday, 9-10pm", type: "Multicultural", img: "/on-air-host-2.jpg", social: { ig: true } },
@@ -261,7 +242,7 @@ export default function Programs() {
 
   return (
     <Layout>
-      <SEO title="Programs & Shows" description="Breaky with Plemo, Dancing through the decades, The Regional Voice, GVL Game Day, podcasts, and more. Explore ONE FM 98.5's program lineup with 16 real presenters." />
+      <SEO title="Programs & Shows" description="ONE FM Breakfast, Dancing through the decades, The Regional Voice, GVL Game Day, podcasts, and more. Explore ONE FM 98.5's program lineup." />
       {/* ═══════ Section 1 — Hero ═══════ */}
       <section className="relative min-h-[80dvh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
         <RadioWaveBackground />
@@ -399,9 +380,15 @@ export default function Programs() {
                 </p>
                 <div className="flex items-center gap-3 mt-3 pt-3 border-t border-one-border">
                   {host.social.fb && (
-                    <span className="text-muted hover:text-one-white transition-colors cursor-pointer">
+                    <a
+                      href={FACEBOOK_PAGE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted hover:text-one-white transition-colors"
+                      aria-label={`${host.name} on Facebook`}
+                    >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                    </span>
+                    </a>
                   )}
                   {host.social.ig && (
                     <span className="text-muted hover:text-one-white transition-colors cursor-pointer">
