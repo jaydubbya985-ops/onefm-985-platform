@@ -14,9 +14,19 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[functions]
+  directory = "netlify/functions"
+
 # Proxy fm985.com.au WordPress API (avoids browser CORS on cross-origin fetch)
 [[redirects]]
   from = "/api/fm985/*"
+  to = "/.netlify/functions/fm985-proxy/:splat"
+  status = 200
+  force = true
+
+# Legacy direct proxy fallback
+[[redirects]]
+  from = "/api/fm985-direct/*"
   to = "https://fm985.com.au/:splat"
   status = 200
   force = true

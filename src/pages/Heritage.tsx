@@ -734,7 +734,7 @@ export default function Heritage() {
       <section className="relative section-padding overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/community-event.jpg"
+            src="/assets/images/community-outdoor-market.jpg"
             alt="Community event"
             className="w-full h-full object-cover opacity-15"
             style={{ position: 'fixed', top: 0, left: 0 }}

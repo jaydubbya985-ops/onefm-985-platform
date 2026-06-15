@@ -3,13 +3,21 @@
  * Interviews on WordPress embed SoundCloud stream URLs — we parse those for native audio.
  */
 
+import scraped from '@/data/oneFmScrapedData.json'
+
 export const SOUNDCLOUD_PROFILE_URL = 'https://soundcloud.com/user-570295409'
 export const SOUNDCLOUD_EMBED_URL =
   'https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/user-570295409&color=%23D4A853&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true'
 
-const WP_API = '/api/fm985/wp-json/wp/v2'
+const WP_PATH = '/wp-json/wp/v2'
 /** WordPress category: Interview */
 const INTERVIEW_CATEGORY_ID = 24
+
+/** Try Netlify rewrite, then serverless proxy, then static scraped interviews. */
+const API_BASES = [
+  '/api/fm985',
+  '/.netlify/functions/fm985-proxy',
+]
 
 export interface Fm985Interview {
   id: number
@@ -44,26 +52,55 @@ export function extractSoundCloudStream(html: string): string | null {
   return match?.[0] ?? null
 }
 
-export async function fetchLatestInterviews(limit = 6): Promise<Fm985Interview[]> {
-  const url = `${WP_API}/posts?categories=${INTERVIEW_CATEGORY_ID}&per_page=${limit}&_embed=wp:featuredmedia`
-  const res = await fetch(url)
-  if (!res.ok) {
-    throw new Error(`fm985 feed error: ${res.status}`)
+function scrapedFallback(limit: number): Fm985Interview[] {
+  const rows = (scraped as { recent_interviews?: Array<{ date: string; guest: string; topic: string; host: string }> })
+    .recent_interviews ?? []
+  return rows.slice(0, limit).map((row, i) => {
+    const guest = row.guest.startsWith('[') ? 'Community guest' : row.guest
+    const host = row.host.startsWith('[') ? 'ONE FM' : row.host
+    return {
+      id: 9000 + i,
+      title: `${guest} — ${row.topic}`,
+      excerpt: `Interview with ${guest} on ${row.topic}. Hosted by ${host}.`,
+      link: 'https://fm985.com.au/category/interview/',
+      date: row.date,
+      audioUrl: null,
+      imageUrl: null,
+    }
+  })
+}
+
+async function fetchFromWp(limit: number): Promise<Fm985Interview[] | null> {
+  const query = `posts?categories=${INTERVIEW_CATEGORY_ID}&per_page=${limit}&_embed=wp:featuredmedia`
+  for (const base of API_BASES) {
+    const url = `${base}${WP_PATH}/${query}`
+    try {
+      const res = await fetch(url)
+      if (!res.ok) continue
+      const posts: WpPost[] = await res.json()
+      if (!Array.isArray(posts) || posts.length === 0) continue
+      return posts.map((post) => ({
+        id: post.id,
+        title: stripHtml(post.title.rendered),
+        excerpt: stripHtml(post.excerpt.rendered),
+        link: post.link,
+        date: post.date,
+        audioUrl:
+          extractSoundCloudStream(post.content.rendered) ??
+          extractSoundCloudStream(post.excerpt.rendered),
+        imageUrl: post._embedded?.['wp:featuredmedia']?.[0]?.source_url ?? null,
+      }))
+    } catch {
+      continue
+    }
   }
+  return null
+}
 
-  const posts: WpPost[] = await res.json()
-
-  return posts.map((post) => ({
-    id: post.id,
-    title: stripHtml(post.title.rendered),
-    excerpt: stripHtml(post.excerpt.rendered),
-    link: post.link,
-    date: post.date,
-    audioUrl:
-      extractSoundCloudStream(post.content.rendered) ??
-      extractSoundCloudStream(post.excerpt.rendered),
-    imageUrl: post._embedded?.['wp:featuredmedia']?.[0]?.source_url ?? null,
-  }))
+export async function fetchLatestInterviews(limit = 6): Promise<Fm985Interview[]> {
+  const live = await fetchFromWp(limit)
+  if (live && live.length > 0) return live
+  return scrapedFallback(limit)
 }
 
 export function formatInterviewDate(iso: string): string {

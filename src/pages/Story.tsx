@@ -51,7 +51,7 @@ const milestones = [
     year: "1995",
     title: "First GVL Broadcast Partnership",
     desc: "Signed a landmark agreement with the Goulburn Valley League to broadcast live football and netball matches. The partnership continues strong three decades later, making ONE FM the trusted voice of local sport.",
-    img: "/community-event.jpg",
+    img: "/assets/images/community-outdoor-market.jpg",
     icon: Mic,
   },
   {
@@ -79,7 +79,7 @@ const milestones = [
     year: "2019",
     title: "30th Anniversary Special Broadcast",
     desc: "A 30-hour non-stop broadcast marathon featuring every host in the station's history, live music from 30 local acts, and a fundraising drive that raised over $120,000 for regional mental health services.",
-    img: "/community-event.jpg",
+    img: "/assets/images/community-outdoor-market.jpg",
     icon: Award,
   },
   {
@@ -496,7 +496,7 @@ export default function Story() {
             className="rounded-2xl overflow-hidden border border-one-border aspect-[4/3] relative"
           >
             <img
-              src="/community-event.jpg"
+              src="/community-outdoor-market.jpg"
               alt="ONE FM community event"
               className="w-full h-full object-cover"
             />
