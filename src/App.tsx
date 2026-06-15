@@ -5,8 +5,8 @@ import { OpsRouteGuard } from '@/components/OpsRouteGuard'
 import { InitialPageLoader } from '@/components/PageLoader'
 import { RouteGuard } from '@/components/RouteErrorBoundary'
 import { SkeletonLoader } from '@/components/SkeletonLoader'
-import Home from './pages/Home'
-
+const Home = lazy(() => import('./pages/Home'))
+const Listen = lazy(() => import('./pages/Listen'))
 const Football = lazy(() => import('./pages/Football'))
 const CoverageMap = lazy(() => import('./pages/CoverageMap'))
 const SponsorshipKit = lazy(() => import('./pages/SponsorshipKit'))
@@ -53,7 +53,19 @@ export default function App() {
     <>
       <InitialPageLoader isReady={ready} />
       <Routes>
-        <Route path="/" element={<RouteGuard routeName="Home"><Home /></RouteGuard>} />
+        <Route path="/" element={
+          <Suspense fallback={<SkeletonLoader variant="card" count={1} />}>
+            <RouteGuard routeName="Home"><Home /></RouteGuard>
+          </Suspense>
+        } />
+        <Route
+          path="/listen"
+          element={
+            <LazyRoute variant="card" routeName="Listen Live">
+              <Listen />
+            </LazyRoute>
+          }
+        />
         <Route
           path="/football"
           element={

@@ -50,13 +50,13 @@ function Ticker() {
   )
 }
 
-export function LivePlayerWidget() {
+export function LivePlayerWidget({ className = '-mt-12' }: { className?: string }) {
   const meta = usePlayerMetadata()
   const { playing, loading, error, toggle } = useLiveStream()
   const presenterImg = presenterPhotoPath(meta.presenter)
 
   return (
-    <section className="relative -mt-12 z-20 px-4 sm:px-6">
+    <section className={`relative z-20 px-4 sm:px-6 ${className}`}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

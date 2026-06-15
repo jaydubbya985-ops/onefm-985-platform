@@ -12,6 +12,9 @@ import {
   PROGRAM_PREVIEW_CARDS,
 } from '@/data/programGuide'
 import { LatestInterviews } from '@/components/LatestInterviews'
+import { HomeQuickJobs } from '@/components/home/HomeQuickJobs'
+import { useLiveStream } from '@/hooks/useLiveStream'
+import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { motion, useInView } from 'framer-motion'
 import {
   Play, Pause, Volume2, ArrowRight, MapPin, Radio,
@@ -210,6 +213,7 @@ function ProgramPreview() {
               transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
               className="glass-card p-5 hover:border-one-gold/30 transition-all duration-300 group cursor-pointer"
             >
+              <Link to="/programs" className="block">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="font-h4 text-one-white group-hover:text-one-gold transition-colors">
                   {program.title}
@@ -224,6 +228,7 @@ function ProgramPreview() {
                 <span className="font-label text-muted text-[10px]">{program.schedule}</span>
                 <span className="font-label text-one-gold text-[10px]">{program.presenter}</span>
               </div>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -244,7 +249,8 @@ function ProgramPreview() {
 /*  HOME PAGE                                              */
 /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 export default function Home() {
-  const [playing, setPlaying] = useState(false)
+  const stream = useLiveStream()
+  const playerMeta = usePlayerMetadata()
   const [volume] = useState(75)
   const [currentTime] = useState(() => new Date())
   const currentShow = getCurrentShow()
@@ -280,7 +286,7 @@ export default function Home() {
     { text: '36 years of community broadcasting — join the celebration', url: '/story' },
     { text: 'ONE FM is your emergency broadcaster for the Goulburn Valley', url: '/story' },
     { text: 'Sponsorship enquiries now open for 2026', url: '/sponsorship' },
-    { text: 'Listen anywhere — FM 98.5, online stream, smart speakers', url: '/listen' },
+    { text: 'Listen anywhere — FM 98.5, online stream, Community Radio Plus', url: '/listen' },
   ]
 
   return (
@@ -391,14 +397,16 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2">
               <Headphones size={16} className="text-one-gold" />
-              <span className="font-body-small text-one-muted">FM 98.5 ┬╖ Online ┬╖ App</span>
+              <span className="font-body-small text-one-muted">FM 98.5 · Online · App</span>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ LIVE PLAYER BAR ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
-      <section className="relative z-20 -mt-24 pb-16 px-4 sm:px-6">
+      <HomeQuickJobs />
+
+      {/* LIVE PLAYER BAR */}
+      <section id="listen" className="relative z-20 -mt-4 pb-16 px-4 sm:px-6 scroll-mt-24">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -444,20 +452,14 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Progress bar */}
-              <div className="mt-4">
-                <div className="h-1 bg-one-navy rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-one-gold rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: '42%' }}
-                    transition={{ duration: 1, ease: 'easeOut' }}
-                  />
-                </div>
-                <div className="flex justify-between mt-1">
-                  <span className="font-micro text-muted text-[10px]">ELAPSED</span>
-                  <span className="font-micro text-muted text-[10px]">REMAINING</span>
-                </div>
+              {/* Stream status */}
+              <div className="mt-4 flex items-center justify-between gap-4">
+                <span className="font-label text-muted text-[10px]">
+                  {stream.playing ? 'Streaming live' : 'Press play to listen'}
+                </span>
+                <Link to="/listen" className="font-label text-one-gold text-[10px] hover:underline">
+                  All ways to listen →
+                </Link>
               </div>
             </div>
 
@@ -466,10 +468,13 @@ export default function Home() {
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <button
-                    onClick={() => setPlaying(!playing)}
-                    className="w-10 h-10 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform"
+                    type="button"
+                    onClick={() => void stream.toggle()}
+                    disabled={stream.loading}
+                    className="w-10 h-10 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform disabled:opacity-60"
+                    aria-pressed={stream.playing}
                   >
-                    {playing ? <Pause size={16} /> : <Play size={16} />}
+                    {stream.playing ? <Pause size={16} /> : <Play size={16} />}
                   </button>
 
                   <div className="flex items-center gap-2">
@@ -486,14 +491,33 @@ export default function Home() {
                     to="/broadcast"
                     className="font-label text-one-gold text-[10px] hover:text-one-gold transition-colors"
                   >
-                    View Broadcast Explorer
+                    Broadcast Explorer
+                  </Link>
+                  <Link
+                    to="/programs"
+                    className="font-label text-muted text-[10px] hover:text-one-gold transition-colors hidden sm:inline"
+                  >
+                    Programs
+                  </Link>
+                  <Link
+                    to="/coverage"
+                    className="font-label text-muted text-[10px] hover:text-one-gold transition-colors hidden sm:inline"
+                  >
+                    Coverage
                   </Link>
                 </div>
 
-                <div className="font-body-small text-muted text-xs">
-                  Up Next: {currentShow.upNext}
+                <div className="font-body-small text-muted text-xs text-right">
+                  {playerMeta.nowPlaying ? (
+                    <span>Now playing: {playerMeta.nowPlaying}</span>
+                  ) : (
+                    <span>Up Next: {currentShow.upNext}</span>
+                  )}
                 </div>
               </div>
+              {stream.error && (
+                <p className="mt-2 font-body-small text-one-red text-xs">{stream.error}</p>
+              )}
             </div>
 
             {/* Ticker */}
@@ -552,8 +576,9 @@ export default function Home() {
                   delay: index * 0.1,
                   ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
                 }}
-                className="glass-card overflow-hidden group cursor-pointer"
+                className="glass-card overflow-hidden group"
               >
+                <Link to="/programs" className="block">
                 <div className="relative h-44 overflow-hidden">
                   <MediaImage
                     src={show.image}
@@ -579,6 +604,7 @@ export default function Home() {
                     <ChevronRight size={14} className="text-one-gold group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
+                </Link>
               </motion.div>
             ))}
           </div>
@@ -704,10 +730,10 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6 mt-5">
             {[
-              { value: '39,375', label: 'Weekly Listeners', icon: Headphones },
-              { value: '12,000+', label: 'Emergency Broadcasts', icon: Zap },
-              { value: '16', label: 'Presenters', icon: Mic2 },
-              { value: '500+', label: 'Community Events Covered', icon: Calendar },
+              { value: '39,375', label: 'Est. Weekly Listeners', icon: Headphones },
+              { value: '3ONE', label: 'Callsign', icon: Zap },
+              { value: '25+', label: 'Multicultural Programs', icon: Mic2 },
+              { value: '37', label: 'Years Licensed', icon: Calendar },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -947,7 +973,7 @@ export default function Home() {
                     <div>
                       <h4 className="font-h4 text-one-white">Super Saturday Sports Show</h4>
                       <p className="font-label text-muted text-[10px]">
-                        Every Saturday ┬╖ Live GVL Coverage
+                        Every Saturday · Live GVL Coverage
                       </p>
                     </div>
                   </div>

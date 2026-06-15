@@ -1,47 +1,11 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ChevronDown, Lock, Menu, X } from 'lucide-react'
+import { ChevronDown, Headphones, Lock, Menu, X } from 'lucide-react'
 import { BrandLogo } from '@/components/BrandLogo'
 import { useOpsAccess } from '@/hooks/useOpsAccess'
+import { NAV_GROUPS, type NavGroup } from '@/lib/siteNav'
 
-const NAV_GROUPS = [
-  {
-    label: 'Listen',
-    items: [
-      { label: 'Programs', path: '/programs' },
-      { label: 'Broadcast', path: '/broadcast' },
-      { label: 'Coverage', path: '/coverage' },
-    ],
-  },
-  {
-    label: 'Sponsor',
-    items: [
-      { label: 'Sponsorship', path: '/sponsorship' },
-      { label: 'Media Kit', path: '/media-kit' },
-      { label: 'Audience', path: '/audience' },
-      { label: 'Social', path: '/social' },
-      { label: 'Proposal', path: '/proposal' },
-    ],
-  },
-  {
-    label: 'About',
-    items: [
-      { label: 'Heritage', path: '/heritage' },
-      { label: 'Community', path: '/community' },
-      { label: 'Story', path: '/story' },
-      { label: 'Football', path: '/football' },
-    ],
-  },
-  {
-    label: 'Support',
-    items: [
-      { label: 'Support Us', path: '/support' },
-      { label: 'Contact', path: '/contact' },
-    ],
-  },
-]
-
-function NavDropdown({ group }: { group: (typeof NAV_GROUPS)[0] }) {
+function NavDropdown({ group }: { group: NavGroup }) {
   const [open, setOpen] = useState(false)
   const location = useLocation()
   const ref = useRef<HTMLDivElement>(null)
@@ -63,10 +27,18 @@ function NavDropdown({ group }: { group: (typeof NAV_GROUPS)[0] }) {
   const isActive = group.items.some((item) => location.pathname === item.path)
 
   return (
-    <div ref={ref} className="relative">
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
       <button
+        type="button"
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-1 px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors duration-150 ${
+        aria-expanded={open}
+        aria-haspopup="true"
+        className={`relative flex items-center gap-1 px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors duration-150 ${
           isActive || open ? 'text-one-gold' : 'text-one-white hover:text-one-gold'
         }`}
       >
@@ -79,20 +51,25 @@ function NavDropdown({ group }: { group: (typeof NAV_GROUPS)[0] }) {
         )}
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1 w-44 bg-[#0F1D30]/95 backdrop-blur-xl border border-[#1E3A5F]/40 rounded-lg shadow-2xl overflow-hidden z-50">
+        <div className="absolute top-full left-0 mt-1 w-56 bg-[#0F1D30]/95 backdrop-blur-xl border border-[#1E3A5F]/40 rounded-lg shadow-2xl overflow-hidden z-50">
           {group.items.map((item) => {
             const active = location.pathname === item.path
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`block px-4 py-2.5 font-body text-sm transition-colors ${
+                className={`block px-4 py-3 transition-colors border-b border-one-border/30 last:border-0 ${
                   active
                     ? 'text-one-gold bg-[#1E3A5F]/30'
                     : 'text-[#F4F1EA]/80 hover:text-one-gold hover:bg-[#1E3A5F]/20'
                 }`}
               >
-                {item.label}
+                <span className="font-body text-sm block">{item.label}</span>
+                {item.description && (
+                  <span className="font-body-small text-muted text-[11px] block mt-0.5 leading-snug">
+                    {item.description}
+                  </span>
+                )}
               </Link>
             )
           })}
@@ -263,7 +240,7 @@ export function Navbar() {
           <div className="hidden lg:flex items-center gap-1">
             <Link
               to="/"
-              className={`px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors ${
+              className={`relative px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors ${
                 location.pathname === '/'
                   ? 'text-one-gold'
                   : 'text-one-white hover:text-one-gold'
@@ -278,6 +255,7 @@ export function Navbar() {
               <NavDropdown key={group.label} group={group} />
             ))}
             <button
+              type="button"
               onClick={goToOps}
               className={`relative flex items-center gap-1.5 px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors border-l border-one-border ml-1 pl-4 ${
                 location.pathname === '/ops'
@@ -290,11 +268,18 @@ export function Navbar() {
             </button>
           </div>
 
-          <div className="hidden lg:flex items-center gap-4 shrink-0">
-            <Link to="/proposal" className="btn-primary text-xs px-5 py-2.5 whitespace-nowrap">
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
+            <Link
+              to="/listen"
+              className="btn-primary text-xs px-4 py-2.5 whitespace-nowrap inline-flex items-center gap-1.5"
+            >
+              <Headphones size={14} />
+              Listen Live
+            </Link>
+            <Link to="/proposal" className="btn-secondary text-xs px-4 py-2.5 whitespace-nowrap">
               Build Proposal
             </Link>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pl-2 border-l border-one-border">
               <span className="relative flex h-2 w-2">
                 <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-one-red" />
@@ -304,6 +289,7 @@ export function Navbar() {
           </div>
 
           <button
+            type="button"
             className="lg:hidden p-2 text-one-white"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
@@ -332,6 +318,13 @@ export function Navbar() {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 bg-[#0A1628]/98 backdrop-blur-xl pt-20 px-6 pb-8 overflow-y-auto lg:hidden">
           <Link
+            to="/listen"
+            className="btn-primary w-full text-center mb-6 inline-flex items-center justify-center gap-2"
+          >
+            <Headphones size={18} />
+            Listen Live
+          </Link>
+          <Link
             to="/"
             className="block py-3 font-heading text-xl text-one-white hover:text-one-gold"
           >
@@ -346,21 +339,27 @@ export function Navbar() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="block py-2 pl-2 font-body text-lg text-one-white hover:text-one-gold"
+                  className="block py-2.5 pl-2 border-b border-one-border/30"
                 >
-                  {item.label}
+                  <span className="font-body text-lg text-one-white hover:text-one-gold block">
+                    {item.label}
+                  </span>
+                  {item.description && (
+                    <span className="font-body-small text-muted text-xs">{item.description}</span>
+                  )}
                 </Link>
               ))}
             </div>
           ))}
           <button
+            type="button"
             onClick={goToOps}
             className="mt-6 flex items-center gap-2 font-heading text-xl text-one-muted hover:text-one-gold"
           >
             <Lock className="w-4 h-4" />
             Ops Portal
           </button>
-          <Link to="/proposal" className="btn-primary mt-6 inline-block">
+          <Link to="/proposal" className="btn-secondary mt-4 inline-block w-full text-center">
             Build Proposal
           </Link>
         </div>
