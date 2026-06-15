@@ -1,0 +1,31 @@
+:root {
+  /* ONE FM source identity */
+  --onefm-blue: #1B458F;
+  --onefm-blue-bright: #0A5EB7;
+  --onefm-deep-blue: #0A2A5E;
+  --onefm-navy: #071D3A;
+  --onefm-midnight: #020A18;
+  --onefm-white: #FFFFFF;
+  --onefm-red: #E51636;
+
+  /* Premium layer - accent only */
+  --onefm-gold: #D4AF37;
+  --onefm-gold-deep: #B88A24;
+  --onefm-champagne: #F4D27A;
+  --onefm-gold-glow: rgba(212,175,55,.32);
+
+  /* Digital fluorescent layer - 1-4% of layout only */
+  --onefm-electric-cyan: #00E5FF;
+  --onefm-neon-sky: #38BDF8;
+  --onefm-neon-orange: #FF6A00;
+  --onefm-fluoro-lime: #B6FF00;
+  --onefm-broadcast-magenta: #FF2BD6;
+
+  /* Semantic rules */
+  --brand-primary: var(--onefm-blue);
+  --brand-secondary: var(--onefm-red);
+  --brand-background: var(--onefm-white);
+  --brand-dark: var(--onefm-navy);
+  --brand-premium: var(--onefm-gold);
+  --brand-glow: var(--onefm-electric-cyan);
+}

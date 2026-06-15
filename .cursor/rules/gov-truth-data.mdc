@@ -1,0 +1,30 @@
+---
+description: ONE FM is a licensed community broadcaster — zero fabricated data
+alwaysApply: true
+---
+
+# Government / community broadcaster — truth only
+
+Goulburn Valley Community Radio Inc. (ONE FM 98.5, callsign 3ONE) is a **licensed community radio organisation**. Treat all public-facing content as accountable.
+
+## Never fabricate
+
+- Listener reach, demographics, rankings, or "live now" counts
+- National Community Radio Plus aggregates presented as ONE FM-specific reach
+- Sponsor names, invoices, payments, or member records (Ops demo data must be labelled DEMO)
+- People, places, logos, or photos (use `/public/assets/images/` and `/public/brand/` only)
+
+## Required for every statistic
+
+- **Value** from an approved source (ACMA, ABS census, internal survey, townData research, station-specific CRP if verified)
+- **Source label** visible or in code comment (e.g. `source: 'ABS 2021 via townData'`)
+- If unknown: show **"Data pending"** or hide the metric — never invent a plausible number
+
+## Ops portal
+
+- Real invoices (FOOTT, Jason's TV, etc.) stay
+- Demo/synthetic CRM rows must be tagged DEMO or removed before any gov-facing deploy
+
+## When user sends GO-TRUTH
+
+Proceed autonomously: audit public pages, strip fake stats, merge real research, build pass, report what changed.

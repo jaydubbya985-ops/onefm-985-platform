@@ -33,24 +33,33 @@ const ASSETS = [
   { name: 'Social Media Kit', format: 'PSD, Canva', category: 'Patterns', preview: 'bg-data-violet' },
 ]
 
+// V3 Brand System colours — source: ONE_FM_brand_system_v3
 const BRAND_COLORS = [
-  { name: 'Onyx', hex: '#0D0D0D', usage: 'Backgrounds, deep sections' },
-  { name: 'Slate', hex: '#1A1A1F', usage: 'Cards, elevated surfaces' },
-  { name: 'Ivory', hex: '#F4F1EA', usage: 'Primary text, headings' },
-  { name: 'Chalk', hex: '#E8E4DB', usage: 'Body text on dark' },
-  { name: 'Amber', hex: '#D4963A', usage: 'CTAs, highlights, accents' },
-  { name: 'Gold', hex: '#F0C75E', usage: 'Hover, decorative elements' },
-  { name: 'Signal Red', hex: '#E63946', usage: 'Live indicators, urgent' },
-  { name: 'Sage', hex: '#7A8B6E', usage: 'Community, heritage accent' },
+  { name: 'ONE FM Blue', hex: '#1B458F', usage: 'Core identity — wordmark, headers' },
+  { name: 'Deep Navy', hex: '#071D3A', usage: 'Backgrounds, email header band' },
+  { name: '98.5 Red', hex: '#E51636', usage: 'Core identity — frequency, accents' },
+  { name: 'Broadcast White', hex: '#FFFFFF', usage: 'Core identity — reversed lockup' },
+  { name: 'Heritage Gold', hex: '#D4AF37', usage: 'Premium accent — totals, highlights' },
+  { name: 'Champagne', hex: '#F4D27A', usage: 'Gold light — hover, decorative' },
+  { name: 'Electric Cyan', hex: '#00E5FF', usage: 'Digital glow — stream, live signal' },
+  { name: 'Neon Sky Blue', hex: '#38BDF8', usage: 'Safe daily UI accent' },
+  { name: 'Neon Orange', hex: '#FF6A00', usage: 'Sport & event alerts only' },
 ]
 
+// 2026 on-trend template formats — square, vertical story, horizontal, reel cover
 const TEMPLATES = [
-  { name: 'Morning Show Quote Card', platform: 'Instagram', dimensions: '1080×1080', format: 'PSD, Canva, Figma', tags: ['Quote', 'Music', 'Daily'], image: '/on-air-host-1.jpg' },
-  { name: 'Event Promo Story', platform: 'Instagram', dimensions: '1080×1920', format: 'PSD, Canva', tags: ['Event', 'Story', 'Promo'], image: '/community-event.jpg' },
-  { name: 'New Music Alert', platform: 'TikTok', dimensions: '1080×1920', format: 'Canva, Figma', tags: ['Music', 'Alert', 'Video'], image: '/on-air-host-2.jpg' },
-  { name: 'Behind the Scenes', platform: 'Twitter/X', dimensions: '1200×675', format: 'PSD, Figma', tags: ['BTS', 'Studio', 'Photo'], image: '/studio-control-room.jpg' },
-  { name: 'Weekend Warmup', platform: 'Facebook', dimensions: '1200×630', format: 'PSD, Canva', tags: ['Event', 'Weekend', 'Music'], image: '/on-air-host-3.jpg' },
-  { name: 'Heritage Spotlight', platform: 'Instagram', dimensions: '1080×1350', format: 'PSD, Canva', tags: ['Heritage', 'Story', 'Community'], image: '/regional-landscape.jpg' },
+  { name: 'Breakfast Live Card', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
+  { name: 'GVL Match Day Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Matchday'], image: '/assets/images/gvl-night-panorama.jpg' },
+  { name: 'Community Event Reel Cover', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Event', 'Community', 'Reel'], image: '/assets/images/community-outdoor-market.jpg' },
+  { name: 'Multicultural Program Tile', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'Program', 'Community'], image: '/assets/images/studio-sbs-diversity.jpg' },
+  { name: 'Studio Behind the Mic', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['BTS', 'Studio', 'Presenter'], image: '/assets/images/studio-commentary-selfie.jpg' },
+  { name: 'Goulburn Valley Heritage', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Heritage', 'Regional', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Live Stream Now Playing', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'Sponsor Thank You', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Sponsor', 'Community', 'Thank You'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
+  { name: 'First Nations Program', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
+  { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
+  { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
 ]
 
 const PLATFORM_FILTERS = ['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'Stories', 'Reels']
@@ -62,27 +71,32 @@ const GUIDES = [
   { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: '10 pages' },
 ]
 
+// Real ONE FM Facebook/social post examples — localised Goulburn Murray content
 const FEED_POSTS = [
-  { platform: 'Instagram', image: '/on-air-host-1.jpg', caption: 'ONE FM Breakfast is LIVE! Tim on air until 9AM. Tune in! 📻', likes: '1.2K', comments: '89', time: '2h ago' },
-  { platform: 'TikTok', image: '/on-air-host-2.jpg', caption: 'DJ Kalem drops an exclusive first play of the new track everyone\'s talking about 🔥', likes: '3.4K', comments: '156', time: '4h ago' },
-  { platform: 'Twitter/X', image: '/studio-control-room.jpg', caption: 'Behind the scenes in Studio A — where the magic happens every morning ✨', likes: '892', comments: '45', time: '5h ago' },
-  { platform: 'Facebook', image: '/community-event.jpg', caption: 'Thank you to everyone who came out for the Summer Sounds Festival! What was your favorite moment?', likes: '2.1K', comments: '234', time: '8h ago' },
-  { platform: 'Instagram', image: '/on-air-host-3.jpg', caption: 'Ava Monroe takes over the Night Shift at 10PM. Indie, electronica, and late-night thoughts 🌙', likes: '876', comments: '67', time: '12h ago' },
-  { platform: 'TikTok', image: '/regional-landscape.jpg', caption: 'Our region is beautiful — and we\'re proud to call it home 🏞️ #LocalPride', likes: '5.6K', comments: '312', time: '1d ago' },
-  { platform: 'Twitter/X', image: '/on-air-host-1.jpg', caption: 'BREAKING: Local sports team clinches playoff spot! Full coverage on Sports Central at 6PM.', likes: '1.5K', comments: '198', time: '1d ago' },
-  { platform: 'Instagram', image: '/social-template-mockup.jpg', caption: 'New social templates are live in the hub! Download them and start creating 🎨', likes: '2.3K', comments: '145', time: '2d ago' },
+  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage is LIVE on ONE FM 98.5! Follow every bounce on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM', likes: '', comments: '', time: '' },
+  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton', likes: '', comments: '', time: '' },
+  { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley', likes: '', comments: '', time: '' },
+  { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community', likes: '', comments: '', time: '' },
+  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL — nothing beats local footy on a Friday night. Catch us on 98.5 FM 🔴 #GVL #LocalFooty', likes: '', comments: '', time: '' },
+  { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM', likes: '', comments: '', time: '' },
+  { platform: 'Facebook', image: '/assets/images/studio-sbs-diversity.jpg', caption: 'Proud to work with SBS Audio and multicultural communities across our region. Live and Local — for everyone. #OneFM985', likes: '', comments: '', time: '' },
+  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️', likes: '', comments: '', time: '' },
 ]
 
+// Content calendar — GVL events & ONE FM programming (update monthly)
 const CALENDAR_EVENTS = [
-  { day: 3, type: 'Brand', color: '#D4963A', name: 'Summer Campaign Launch' },
-  { day: 5, type: 'Partner', color: '#2EC4B6', name: 'Partner Promo: Local Cafe' },
-  { day: 8, type: 'Live', color: '#E63946', name: 'Live at the Park Festival' },
-  { day: 12, type: 'Content', color: '#9B5DE5', name: 'Morning Show Quote Series' },
-  { day: 15, type: 'Brand', color: '#D4963A', name: 'Rebrand Announcement' },
-  { day: 18, type: 'Live', color: '#E63946', name: 'Sports Central Live Panel' },
-  { day: 22, type: 'Partner', color: '#2EC4B6', name: 'Sponsor Spotlight' },
-  { day: 25, type: 'Content', color: '#9B5DE5', name: 'Heritage Month Series' },
-  { day: 28, type: 'Brand', color: '#D4963A', name: 'Month-end Engagement Push' },
+  { day: 1,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 5,  type: 'Content', color: '#9B5DE5', name: 'Multicultural Program Spotlight' },
+  { day: 8,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 10, type: 'Partner', color: '#2EC4B6', name: 'Sponsor Shoutout' },
+  { day: 12, type: 'Content', color: '#9B5DE5', name: 'Breakfast Behind the Scenes' },
+  { day: 15, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 18, type: 'Content', color: '#1B458F', name: 'Goulburn Valley Heritage Post' },
+  { day: 20, type: 'Partner', color: '#2EC4B6', name: 'Community Org Feature' },
+  { day: 22, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 25, type: 'Content', color: '#9B5DE5', name: 'Regional Feature — Town of the Week' },
+  { day: 27, type: 'Partner', color: '#2EC4B6', name: 'Sponsor Spotlight' },
+  { day: 29, type: 'Live',    color: '#E51636', name: 'GVL Final / Major Event' },
 ]
 
 /* ─── Animated Grid Pattern Background ─── */

@@ -48,14 +48,23 @@ module.exports = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        "one-navy": "#0A1628",
-        "one-blue": "#1B4F8F",
-        "one-electric": "#0066CC",
-        "one-gold": "#D4A84B",
-        "one-red": "#E31E24",
-        "one-white": "#FFFFFF",
-        "one-muted": "#8A9199",
-        "one-border": "#1A2A42",
+        // ── ONE FM V3 Brand System (source: brand_system_v3) ──
+        "one-navy":    "#071D3A",   // Deep Broadcast Navy
+        "one-blue":    "#1B458F",   // ONE FM Blue (core identity)
+        "one-blue-bright": "#0A5EB7",
+        "one-deep-blue": "#0A2A5E",
+        "one-midnight": "#020A18",
+        "one-electric": "#00E5FF",  // Electric Cyan (digital glow)
+        "one-neon-sky": "#38BDF8",  // Neon Sky Blue (daily UI accent)
+        "one-gold":    "#D4AF37",   // Heritage Gold (premium accent only)
+        "one-champagne": "#F4D27A",
+        "one-red":     "#E51636",   // 98.5 Red (core identity)
+        "one-white":   "#FFFFFF",
+        "one-muted":   "#8A9199",
+        "one-border":  "#1A2A42",
+        "one-neon-orange": "#FF6A00", // Sport/event alert only
+        "one-fluoro-lime": "#B6FF00", // Specialist accent only
+        "one-magenta": "#FF2BD6",     // Specialist accent only
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",

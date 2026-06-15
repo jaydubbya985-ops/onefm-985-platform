@@ -1,0 +1,57 @@
+{
+  "terminalAllowlist": [
+    "*",
+    "git",
+    "npm",
+    "npm.cmd",
+    "npx",
+    "npx.cmd",
+    "node",
+    "node.exe",
+    "curl",
+    "curl.exe",
+    "gh",
+    "netlify",
+    "powershell",
+    "cmd",
+    "cmd.exe",
+    "python",
+    "tsc",
+    "vite",
+    "mkdir",
+    "copy",
+    "move",
+    "dir",
+    "echo",
+    "Set-ExecutionPolicy",
+    "Get-ChildItem",
+    "Set-Location",
+    "Test-Path",
+    "New-Item",
+    "Tee-Object",
+    "Select-Object"
+  ],
+  "mcpAllowlist": [
+    "cursor-app-control:*",
+    "cursor-ide-browser:*"
+  ],
+  "autoRun": {
+    "allow_instructions": [
+      "Run build verification with npm run build",
+      "Copy assets into public/assets/images",
+      "Remove fabricated listener statistics from public pages",
+      "Update stationPhotos and data files with sourced facts only",
+      "Git status, diff, log, add, commit for project progress",
+      "Netlify and GitHub CLI for deploy when credentials exist",
+      "Install npm packages and run npx commands for tooling",
+      "Read and write project source files for ONE FM development",
+      "Fetch live site and fm985.com.au for factual data"
+    ],
+    "block_instructions": [
+      "Force push to main or master",
+      "Delete production database or remote resources",
+      "Commit secrets or .env files",
+      "Publish fabricated audience or reach numbers"
+    ]
+  }
+}

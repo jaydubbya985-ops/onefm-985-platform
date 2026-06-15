@@ -170,7 +170,8 @@ const TIER_ICONS: Record<MembershipTierId, LucideIcon> = {
 
 const STRIPE_PUBLISHABLE_KEY: string =
   (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? ''
-const STRIPE_KEY_CONFIGURED = STRIPE_PUBLISHABLE_KEY.length > 0
+// Accepts both pk_live_ and pk_test_ keys
+const STRIPE_KEY_CONFIGURED = STRIPE_PUBLISHABLE_KEY.startsWith('pk_live_') || STRIPE_PUBLISHABLE_KEY.startsWith('pk_test_')
 
 const containerVariants = {
   hidden: { opacity: 0 },

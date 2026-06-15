@@ -65,24 +65,24 @@ const SHOWS = [
 ]
 
 const HOSTS = [
-  { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', shows: ['ONE FM Breakfast'], avatar: '/on-air-host-1.jpg', shift: 'Morning' },
-  { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', shows: ['ONE FM Breakfast'], avatar: '/on-air-host-1.jpg', shift: 'Morning' },
-  { name: 'Craig Stott', role: 'Breakfast (Thu) / Sports (Sat)', shows: ['ONE FM Breakfast', 'Super Saturday Sports Show'], avatar: '/on-air-host-2.jpg', shift: 'Morning' },
-  { name: 'Di Hunter', role: 'Breakfast Host (Fri)', shows: ['ONE FM Breakfast'], avatar: '/on-air-host-2.jpg', shift: 'Morning' },
-  { name: 'John Painter', role: 'Music Host', shows: ['Dancing through the decades'], avatar: '/on-air-host-2.jpg', shift: 'Daytime' },
-  { name: 'James Manley', role: 'Community Host', shows: ['The Regional Voice'], avatar: '/on-air-host-1.jpg', shift: 'Daytime' },
-  { name: 'Carlos Rock', role: 'Rock Host — 19-20 years on air', shows: ['Planet of Sound'], avatar: '/on-air-host-3.jpg', shift: 'Evening' },
-  { name: 'Timmy Ahmet', role: 'Country Host', shows: ['Good Evening Country'], avatar: '/on-air-host-2.jpg', shift: 'Evening' },
-  { name: 'Ralph Whitehead', role: 'Music Host', shows: ['Friday Arvo / Friday Morning'], avatar: '/on-air-host-2.jpg', shift: 'Daytime' },
-  { name: 'Roman Koz', role: 'Music Host', shows: ['Friday Mornings'], avatar: '/on-air-host-3.jpg', shift: 'Daytime' },
-  { name: 'Fikiri', role: 'Swahili Host', shows: ['Africonnect'], avatar: '/on-air-host-1.jpg', shift: 'Evening' },
-  { name: 'MK', role: 'Samoan Host', shows: ['Samoan Program'], avatar: '/on-air-host-2.jpg', shift: 'Evening' },
-  { name: 'Edith', role: 'Filipino Host', shows: ['Filipino Music Program'], avatar: '/on-air-host-3.jpg', shift: 'Evening' },
-  { name: 'Jimmy', role: 'Mandarin Host', shows: ['Mandarin Program', 'Her Quiet Strength'], avatar: '/on-air-host-1.jpg', shift: 'Specialist' },
-  { name: "Ken & Jill Gaffney", role: 'Music Hosts', shows: ['Winding Back'], avatar: '/on-air-host-1.jpg', shift: 'Specialist' },
-  { name: "Les 'Harro' Harrison", role: 'Community Host', shows: ['Various'], avatar: '/on-air-host-3.jpg', shift: 'Specialist' },
-  { name: 'Michael Costello', role: 'Community Host', shows: ['River Allsorts'], avatar: '/on-air-host-1.jpg', shift: 'Specialist' },
-  { name: 'Josh Revens', role: 'Community Interviewer', shows: ['Interviews / Various'], avatar: '/on-air-host-2.jpg', shift: 'Specialist' },
+  { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', shows: ['ONE FM Breakfast'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Morning' },
+  { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', shows: ['ONE FM Breakfast'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Morning' },
+  { name: 'Craig Stott', role: 'Breakfast (Thu) / Sports (Sat)', shows: ['ONE FM Breakfast', 'Super Saturday Sports Show'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Morning' },
+  { name: 'Di Hunter', role: 'Breakfast Host (Fri)', shows: ['ONE FM Breakfast'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Morning' },
+  { name: 'John Painter', role: 'Music Host', shows: ['Dancing through the decades'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Daytime' },
+  { name: 'James Manley', role: 'Community Host', shows: ['The Regional Voice'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Daytime' },
+  { name: 'Carlos Rock', role: 'Rock Host — 19-20 years on air', shows: ['Planet of Sound'], avatar: '/assets/images/studio-sbs-diversity.jpg', shift: 'Evening' },
+  { name: 'Timmy Ahmet', role: 'Country Host', shows: ['Good Evening Country'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Evening' },
+  { name: 'Ralph Whitehead', role: 'Music Host', shows: ['Friday Arvo / Friday Morning'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Daytime' },
+  { name: 'Roman Koz', role: 'Music Host', shows: ['Friday Mornings'], avatar: '/assets/images/studio-sbs-diversity.jpg', shift: 'Daytime' },
+  { name: 'Fikiri', role: 'Swahili Host', shows: ['Africonnect'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Evening' },
+  { name: 'MK', role: 'Samoan Host', shows: ['Samoan Program'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Evening' },
+  { name: 'Edith', role: 'Filipino Host', shows: ['Filipino Music Program'], avatar: '/assets/images/studio-sbs-diversity.jpg', shift: 'Evening' },
+  { name: 'Jimmy', role: 'Mandarin Host', shows: ['Mandarin Program', 'Her Quiet Strength'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Specialist' },
+  { name: "Ken & Jill Gaffney", role: 'Music Hosts', shows: ['Winding Back'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Specialist' },
+  { name: "Les 'Harro' Harrison", role: 'Community Host', shows: ['Various'], avatar: '/assets/images/studio-sbs-diversity.jpg', shift: 'Specialist' },
+  { name: 'Michael Costello', role: 'Community Host', shows: ['River Allsorts'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Specialist' },
+  { name: 'Josh Revens', role: 'Community Interviewer', shows: ['Interviews / Various'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Specialist' },
 ]
 
 const SEGMENTS = [
@@ -94,12 +94,12 @@ const SEGMENTS = [
 ]
 
 const SHOW_CARDS = [
-  { name: 'ONE FM Breakfast', host: 'Rotating hosts', schedule: 'Mon–Fri, 6am – 9am', desc: 'Tim Ahemt · Lillian Stone · Craig Stott · Di Hunter — the Valley\'s essential morning companion.', tags: ['Breakfast', 'Talk', 'Live'], color: '#D4963A', image: '/on-air-host-1.jpg', category: 'Talk' },
-  { name: 'Dancing through the decades', host: 'John Painter', schedule: 'Mon–Fri, 9am – 12pm', desc: 'Music from across the decades with John Painter. Four years on air, playing the hits that span generations.', tags: ['Music', 'Hits'], color: '#9B5DE5', image: '/on-air-host-2.jpg', category: 'Music' },
-  { name: 'The Regional Voice', host: 'James Manley', schedule: 'Mon–Fri, 12pm – 3pm', desc: 'Community-focused programming with local interviews and advocacy. The issues that matter to the Valley.', tags: ['Talk', 'Community', 'Local'], color: '#2EC4B6', image: '/on-air-host-1.jpg', category: 'Talk' },
-  { name: 'Planet of Sound', host: 'Carlos Rock', schedule: 'Thu & Fri, 11pm', desc: 'Rock music program spanning 19-20 years on air. The definitive rock show for the Goulburn Valley.', tags: ['Music', 'Rock'], color: '#9B5DE5', image: '/on-air-host-3.jpg', category: 'Music' },
-  { name: 'Good Evening Country', host: 'Timmy Ahmet', schedule: 'Friday, 8pm', desc: 'Country music showcase Friday evenings. The best country classics and new releases.', tags: ['Music', 'Country'], color: '#D4963A', image: '/on-air-host-2.jpg', category: 'Music' },
-  { name: 'Africonnect', host: 'Fikiri', schedule: 'Monday, 9pm – 10pm', desc: 'Swahili language program connecting the African community in the Goulburn Valley.', tags: ['Multicultural', 'Swahili', 'Community'], color: '#E63946', image: '/on-air-host-1.jpg', category: 'Multicultural' },
+  { name: 'ONE FM Breakfast', host: 'Rotating hosts', schedule: 'Mon–Fri, 6am – 9am', desc: 'Tim Ahemt · Lillian Stone · Craig Stott · Di Hunter — the Valley\'s essential morning companion.', tags: ['Breakfast', 'Talk', 'Live'], color: '#D4963A', image: '/assets/images/commentary-box-action.jpg', category: 'Talk' },
+  { name: 'Dancing through the decades', host: 'John Painter', schedule: 'Mon–Fri, 9am – 12pm', desc: 'Music from across the decades with John Painter. Four years on air, playing the hits that span generations.', tags: ['Music', 'Hits'], color: '#9B5DE5', image: '/assets/images/studio-commentary-selfie.jpg', category: 'Music' },
+  { name: 'The Regional Voice', host: 'James Manley', schedule: 'Mon–Fri, 12pm – 3pm', desc: 'Community-focused programming with local interviews and advocacy. The issues that matter to the Valley.', tags: ['Talk', 'Community', 'Local'], color: '#2EC4B6', image: '/assets/images/commentary-box-action.jpg', category: 'Talk' },
+  { name: 'Planet of Sound', host: 'Carlos Rock', schedule: 'Thu & Fri, 11pm', desc: 'Rock music program spanning 19-20 years on air. The definitive rock show for the Goulburn Valley.', tags: ['Music', 'Rock'], color: '#9B5DE5', image: '/assets/images/studio-sbs-diversity.jpg', category: 'Music' },
+  { name: 'Good Evening Country', host: 'Timmy Ahmet', schedule: 'Friday, 8pm', desc: 'Country music showcase Friday evenings. The best country classics and new releases.', tags: ['Music', 'Country'], color: '#D4963A', image: '/assets/images/studio-commentary-selfie.jpg', category: 'Music' },
+  { name: 'Africonnect', host: 'Fikiri', schedule: 'Monday, 9pm – 10pm', desc: 'Swahili language program connecting the African community in the Goulburn Valley.', tags: ['Multicultural', 'Swahili', 'Community'], color: '#E63946', image: '/assets/images/commentary-box-action.jpg', category: 'Multicultural' },
 ]
 
 /* ─── Live Waveform Canvas ─── */
@@ -535,7 +535,7 @@ function ShowSpotlight() {
           <div className="flex flex-col md:flex-row" style={{ minHeight: 400 }}>
             <div className="md:w-[45%] relative overflow-hidden">
               <img
-                src="/on-air-host-1.jpg"
+                src="/assets/images/commentary-box-action.jpg"
                 alt="ONE FM Breakfast"
                 className="w-full h-full object-cover md:absolute md:inset-0 hover:scale-105 transition-transform duration-700"
                 style={{ maxHeight: 400 }}
@@ -547,7 +547,7 @@ function ShowSpotlight() {
             <div className="md:w-[55%] p-6 md:p-8 flex flex-col justify-center">
               <h2 className="font-h2 text-one-white mb-3">ONE FM BREAKFAST</h2>
               <div className="flex items-center gap-3 mb-4">
-                <img src="/on-air-host-1.jpg" alt="Breakfast hosts" className="w-12 h-12 rounded-full object-cover border-2 border-one-gold/30" />
+                <img src="/assets/images/commentary-box-action.jpg" alt="Breakfast hosts" className="w-12 h-12 rounded-full object-cover border-2 border-one-gold/30" />
                 <div>
                   <div className="font-h4 text-one-white">Rotating hosts</div>
                   <div className="font-label text-one-gold text-[10px]">MON–FRI 6AM–9AM</div>
@@ -840,7 +840,7 @@ function BehindTheScenes() {
             className="relative"
           >
             <img
-              src="/studio-control-room.jpg"
+              src="/assets/images/studio-exterior-rainbow.jpg"
               alt="Studio A"
               className="w-full rounded-2xl object-cover hover:scale-[1.03] transition-transform duration-700"
               style={{ maxHeight: 480 }}

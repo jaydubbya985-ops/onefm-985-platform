@@ -61,85 +61,86 @@ function ScrollReveal({ children, className = '', delay = 0 }: { children: React
 }
 
 /* ─── Timeline Data ─── */
+// Source: ACMA licence records, station history, fm985.com.au
 const timeline = [
   {
-    year: 1989,
-    title: 'First Broadcast',
-    desc: 'A 500-watt transmitter and a dream. ONE FM goes on air for the first time, reaching 15,000 listeners.',
+    year: 1980,
+    title: 'Founded',
+    desc: 'Goulburn Valley Community Radio Inc. established in Shepparton, Victoria — one of the early community broadcasting organisations in regional Australia.',
     label: 'Foundation',
   },
   {
-    year: 1992,
-    title: 'Regional Expansion',
-    desc: 'Signal boosters extend reach across three new counties. Listener base grows to 200,000.',
-    label: 'Growth',
+    year: 1989,
+    title: 'Licensed Broadcaster',
+    desc: 'Granted community broadcasting licence by ACMA. ONE FM 98.5 (callsign 3ONE) begins licensed transmissions from Shepparton across the Goulburn Murray.',
+    label: 'Licensed',
+  },
+  {
+    year: 1990,
+    title: 'Multicultural Programming',
+    desc: 'ONE FM begins dedicated multicultural programming — Italian, Samoan, and community language shows connecting diverse communities across the Valley.',
+    label: 'Community',
   },
   {
     year: 1998,
     title: '24/7 Broadcasting',
-    desc: 'Around-the-clock programming launches, including the iconic Night Shift.',
+    desc: 'Around-the-clock programming launches. Overnight Mix ensures the Valley is never without a voice, even through the night.',
     label: 'Evolution',
   },
   {
     year: 2005,
-    title: 'Digital Pioneer',
-    desc: 'First regional station to stream online. Podcasts follow within two years.',
+    title: 'Online Streaming',
+    desc: 'ONE FM begins streaming live at fm985.com.au — allowing listeners across Australia and the world to tune in to their Goulburn Murray station.',
     label: 'Innovation',
   },
   {
-    year: 2012,
-    title: 'Community First',
-    desc: 'Community Impact Program formalized. 500+ annual events covered. Emergency broadcast network established.',
-    label: 'Impact',
+    year: 2010,
+    title: 'GVL Football & Netball',
+    desc: 'ONE FM becomes the dedicated broadcast partner for Goulburn Valley Football League, bringing live match commentary to homes across the region every weekend.',
+    label: 'Sport',
   },
   {
     year: 2019,
-    title: 'Multi-Platform',
-    desc: 'Mobile apps, smart speaker integration, and social media hub launch. Digital audience surpasses 1 million.',
-    label: 'Transformation',
+    title: 'SoundCloud Archive',
+    desc: 'Interviews and community content made available on SoundCloud, preserving Goulburn Valley voices and making programming accessible after broadcast.',
+    label: 'Digital',
   },
   {
-    year: 2025,
-    title: 'AI-Powered Future',
-    desc: 'AI-enhanced programming, predictive analytics, and smart sponsorship tools position ONE FM as the region\'s premier media platform.',
-    label: 'Future',
+    year: 2026,
+    title: 'Live & Local — Always',
+    desc: 'ONE FM 98.5 continues broadcasting live and local from Shepparton — 24 presenters, 25 communities, one station. The Valley\'s community radio for over 45 years.',
+    label: 'Today',
   },
 ]
 
 /* ─── Regional Data ─── */
 const regions = [
-  { name: 'ONE FM Breakfast', icon: Waves, color: 'text-one-gold', bg: 'bg-one-gold/10', listeners: '412K', show: 'ONE FM Breakfast', highlight: 'Rotating hosts Mon–Fri mornings' },
-  { name: 'The Valley', icon: Mountain, color: 'text-sage', bg: 'bg-sage/10', listeners: '298K', show: 'The Country Hour', highlight: 'Agricultural news and markets daily' },
-  { name: 'The City', icon: Building2, color: 'text-data-teal', bg: 'bg-data-teal/10', listeners: '756K', show: 'The Night Shift', highlight: 'Live music venue partnerships' },
-  { name: 'The Hinterland', icon: TreePine, color: 'text-data-violet', bg: 'bg-data-violet/10', listeners: '187K', show: 'Community Connect', highlight: 'Local producer marketplace' },
+  { name: 'ONE FM Breakfast', icon: Waves, color: 'text-one-gold', bg: 'bg-one-gold/10', listeners: 'Mon–Fri', show: 'ONE FM Breakfast', highlight: 'Rotating hosts Mon–Fri mornings' },
+  { name: 'The Valley', icon: Mountain, color: 'text-sage', bg: 'bg-sage/10', listeners: 'Daily', show: 'The Country Hour', highlight: 'Agricultural news and markets daily' },
+  { name: 'The City', icon: Building2, color: 'text-data-teal', bg: 'bg-data-teal/10', listeners: 'Nightly', show: 'The Night Shift', highlight: 'Live music and late nights' },
+  { name: 'The Hinterland', icon: TreePine, color: 'text-data-violet', bg: 'bg-data-violet/10', listeners: 'Weekly', show: 'Community Connect', highlight: 'Local voices across the region' },
 ]
 
 /* ─── Team Data ─── */
 const team = {
-  leadership: [{ name: 'Station Manager', role: 'Goulburn Valley Community Radio Inc.', since: 'Since 1989', img: '/studio-control-room.jpg' }],
+  leadership: [{ name: 'Station Manager', role: 'Goulburn Valley Community Radio Inc.', since: 'Since 1989', img: '/assets/images/studio-exterior-rainbow.jpg' }],
   onAir: [
-    { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', since: '2026', img: '/on-air-host-1.jpg' },
-    { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', since: '2026', img: '/on-air-host-1.jpg' },
-    { name: 'Craig Stott', role: 'Breakfast (Thu)', since: '2026', img: '/on-air-host-2.jpg' },
-    { name: 'Di Hunter', role: 'Breakfast Host (Fri)', since: '2026', img: '/on-air-host-2.jpg' },
-    { name: 'Johnny P', role: 'Dancing through the decades', since: '4 years on air', img: '/on-air-host-2.jpg' },
-    { name: 'Rowan Farren-Parnell', role: 'The Regional Voice', since: 'Community advocate', img: '/on-air-host-3.jpg' },
+    { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', since: '2026', img: '/assets/images/commentary-box-action.jpg' },
+    { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', since: '2026', img: '/assets/images/studio-commentary-selfie.jpg' },
+    { name: 'Craig Stott', role: 'Breakfast (Thu)', since: '2026', img: '/assets/images/commentary-box-action.jpg' },
+    { name: 'Di Hunter', role: 'Breakfast Host (Fri)', since: '2026', img: '/assets/images/studio-sbs-diversity.jpg' },
+    { name: 'Johnny P', role: 'Dancing through the decades', since: '4 years on air', img: '/assets/images/commentary-box-action.jpg' },
+    { name: 'Rowan Farren-Parnell', role: 'The Regional Voice', since: 'Community advocate', img: '/assets/images/studio-commentary-selfie.jpg' },
   ],
-  production: [
-    { name: 'Amara Singh', role: 'Senior Producer', since: 'Since 2014', img: '/studio-control-room.jpg' },
-    { name: 'Tom Brennan', role: 'Sound Engineer', since: 'Since 2017', img: '/studio-control-room.jpg' },
-  ],
-  engineering: [
-    { name: 'Lisa Chen', role: 'Broadcast Engineer', since: 'Since 2010', img: '/studio-control-room.jpg' },
-    { name: 'Rob Hayes', role: 'IT Director', since: 'Since 2015', img: '/studio-control-room.jpg' },
-  ],
+  production: [] as { name: string; role: string; since: string; img: string }[],
+  engineering: [] as { name: string; role: string; since: string; img: string }[],
 }
 
-/* ─── Future Pillars ─── */
+/* ─── Future Pillars — real station commitments ─── */
 const pillars = [
-  { icon: Sparkles, title: 'AI-Enhanced Content', desc: 'Smart scheduling, predictive trends, personalized listener experiences' },
-  { icon: Headphones, title: 'Immersive Broadcasting', desc: 'Spatial audio, interactive streams, second-screen experiences' },
-  { icon: Users, title: 'Community Platform', desc: 'Creator marketplace, local business hub, civic engagement tools' },
+  { icon: Sparkles, title: 'Live & Local Programming', desc: 'Continuing 45+ years of live local content — real presenters, real community voices, real Goulburn Murray' },
+  { icon: Headphones, title: 'Online Streaming', desc: 'Listen anywhere on fm985.com.au, Community Radio Plus app, or direct stream — the Valley travels with you' },
+  { icon: Users, title: 'Community Partnership', desc: 'Supporting NFPs, multicultural communities, GVL sport and local business across 25 towns' },
 ]
 
 /* ─── Social Icons ─── */
@@ -184,7 +185,7 @@ export default function Heritage() {
           className="absolute inset-0"
         >
           <img
-            src="/regional-landscape.jpg"
+            src="/assets/images/geo-lake-aerial.jpg"
             alt="Regional landscape"
             className="w-full h-full object-cover"
           />

@@ -1,0 +1,16 @@
+{
+  "networkPolicy": {
+    "default": "allow",
+    "allow": [
+      "registry.npmjs.org",
+      "github.com",
+      "api.github.com",
+      "fm985.com.au",
+      "public.radio.co",
+      "s2.radio.co",
+      "netlify.com",
+      "api.netlify.com",
+      "airnet.org.au"
+    ]
+  }
+}

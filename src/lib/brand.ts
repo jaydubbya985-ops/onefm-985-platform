@@ -1,14 +1,15 @@
 /**
- * ONE FM 98.5 — brand system (logo paths, colours, usage).
+ * ONE FM 98.5 — brand system V3
+ * Source: ONE_FM_brand_system_v3_full_vector_pack (June 2026)
  *
- * Drop official assets into /public/brand/ — the site picks them up automatically:
- *   one-fm-logo-primary.png   — full colour on dark (navbar, hero)
- *   one-fm-logo-white.png     — reversed for dark photo backgrounds
- *   one-fm-logo-gold-mark.png — icon / favicon / compact mark
- *   one-fm-logo-primary.svg   — vector preferred if available
- *
- * Until those exist, legacy placeholder SVGs in /public/ are used.
+ * Core rule (non-negotiable):
+ *   Blue + White + Red = ONE FM identity
+ *   Gold = premium accent ONLY
+ *   Fluoro = digital signal layer ONLY (1–4% of layout)
+ *   Never rebuild as black/gold/red
  */
+
+import { PHOTO_DEFAULTS } from '@/lib/stationPhotos'
 
 export const BRAND = {
   name: 'ONE FM',
@@ -17,60 +18,79 @@ export const BRAND = {
   tagline: 'Live and Local',
   region: 'Goulburn Valley',
   callsign: '3ONE',
+  org: 'Goulburn Valley Community Radio Inc.',
+  abn: '92 117 291 771',
   established: 1980,
   licensed: 1989,
+  phone: '(03) 5831 3131',
+  email: 'admin@fm985.com.au',
+  accountsEmail: 'accounts@fm985.com.au',
+  address: '47 Parkside Drive, Shepparton VIC 3630',
+  website: 'https://fm985.com.au',
+  stream: 'https://s2.radio.co/sae3372059/listen',
+  facebook: 'https://www.facebook.com/onefmshepparton',
+  soundcloud: 'https://soundcloud.com/user-570295409',
 } as const
 
-/** Official palette — gold is prestige layer on navy heritage base */
+/** Official V3 palette — source: onefm_palette_tokens_v3.json */
 export const BRAND_COLORS = {
-  navy: '#0A1628',
-  blue: '#1B4F8F',
-  electric: '#0066CC',
-  gold: '#D4A84B',
-  goldLight: '#F0C75E',
-  red: '#E31E24',
-  white: '#FFFFFF',
-  ivory: '#F4F1EA',
-  muted: '#8A9199',
-  border: '#1A2A42',
+  // Core identity
+  blue:    '#1B458F',   // ONE FM Blue
+  white:   '#FFFFFF',   // Broadcast White
+  red:     '#E51636',   // 98.5 Red
+  // Premium layer (accent only)
+  navy:    '#071D3A',   // Deep Broadcast Navy
+  gold:    '#D4AF37',   // Heritage Gold
+  champagne: '#F4D27A', // Champagne Highlight
+  // Digital fluorescent (1–4% of layout max)
+  cyan:    '#00E5FF',   // Electric Cyan
+  neonSky: '#38BDF8',   // Neon Sky Blue (safer daily UI)
+  neonOrange: '#FF6A00',// Sport/event alert only
+  lime:    '#B6FF00',   // Fluoro Lime — specialist only
+  magenta: '#FF2BD6',   // Broadcast Magenta — specialist only
+  // UI utility
+  muted:   '#8A9199',
+  border:  '#1A2A42',
+  midnight: '#020A18',
 } as const
 
-/** Prefer real Canva / fm985 exports; fall back to generated placeholders */
+/** Official logo files — dropped into /public/brand/ */
 export const LOGO = {
-  /** Original upload — archive / print */
-  source: '/brand/one-fm-logo-source.png',
-  /** Black-keyed PNG from Canva */
-  primary: '/brand/one-fm-logo-primary.png',
-  /** Transparent — best on navy site chrome */
+  /** Vector SVG extracted from supplied PDF — use for digital */
+  primarySvg:  '/brand/one-fm-logo-source.svg',
+  /** PNG from brand pack — use for social, email */
+  primary:     '/brand/one-fm-logo-primary.png',
+  /** Reversed/white-on-dark approximation */
+  reversed:    '/brand/one-fm-logo-reversed.svg',
+  /** Legacy transparent variant */
   transparent: '/brand/one-fm-logo-transparent.png',
-  primarySvg: '/brand/one-fm-logo-prestige.svg',
-  white: '/brand/one-fm-logo-transparent.png',
-  goldMark: '/brand/favicon.svg',
-  favicon: '/brand/favicon.svg',
-  /** Legacy Kimi placeholders — last resort */
-  fallbackMaster: '/one-fm-logo-master.svg',
+  /** Favicon / compact mark */
+  favicon:     '/brand/favicon.svg',
+  goldMark:    '/brand/favicon.svg',
+  /** Fallback legacy SVGs */
+  fallbackMaster:  '/one-fm-logo-master.svg',
   fallbackDefault: '/one-fm-logo.svg',
-  fallbackWhite: '/one-fm-logo-white.svg',
+  fallbackWhite:   '/one-fm-logo-white.svg',
 } as const
 
 export type LogoVariant = 'primary' | 'white' | 'mark'
 
 const VARIANT_PATHS: Record<LogoVariant, string[]> = {
-  primary: [LOGO.transparent, LOGO.primarySvg, LOGO.primary, LOGO.fallbackMaster, LOGO.fallbackDefault],
-  white: [LOGO.transparent, LOGO.white, LOGO.fallbackWhite, LOGO.fallbackMaster],
-  mark: [LOGO.favicon, LOGO.goldMark, LOGO.transparent, LOGO.primarySvg],
+  primary: [LOGO.primarySvg, LOGO.primary, LOGO.transparent, LOGO.fallbackMaster],
+  white:   [LOGO.reversed, LOGO.transparent, LOGO.fallbackWhite, LOGO.fallbackMaster],
+  mark:    [LOGO.favicon, LOGO.goldMark, LOGO.primarySvg],
 }
 
 export function logoCandidates(variant: LogoVariant = 'primary'): readonly string[] {
   return VARIANT_PATHS[variant]
 }
 
-/** Local photo drop zone — no Unsplash for people or station shots */
+/** Photo library — see stationPhotos.ts for full catalogue */
 export const PHOTO = {
-  studio: '/photos/studio-control-room.jpg',
-  hero: '/photos/hero-station.jpg',
-  hosts: '/photos/hosts/',
-  community: '/photos/community/',
-  football: '/photos/football/',
-  regional: '/photos/regional-landscape.jpg',
+  studio:    PHOTO_DEFAULTS.studio,
+  hero:      PHOTO_DEFAULTS.hero,
+  hosts:     '/photos/hosts/',
+  community: '/assets/images/',
+  football:  '/assets/images/',
+  regional:  PHOTO_DEFAULTS.regional,
 } as const

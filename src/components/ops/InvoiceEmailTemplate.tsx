@@ -34,11 +34,12 @@ export interface StripeConfig {
 
 export const STRIPE_CONFIG: StripeConfig = {
   accountId: 'acct_1J696RS3NlaEohlL',
-  needsSetup: false,
-  publishableKey: 'pk_live_placeholder',
+  // needsSetup = true until VITE_STRIPE_PUBLISHABLE_KEY is set in .env
+  needsSetup: !(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined)?.startsWith('pk_'),
+  publishableKey: (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? 'pk_live_placeholder',
   currency: 'aud',
-  successUrl: 'https://vuvsbxc5bsqi2.kimi.page/#/payment/success',
-  cancelUrl: 'https://vuvsbxc5bsqi2.kimi.page/#/payment/cancel',
+  successUrl: 'https://onefmops.netlify.app/#/payment/success',
+  cancelUrl:  'https://onefmops.netlify.app/#/payment/cancel',
 }
 
 /**
@@ -787,129 +788,183 @@ export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
 
 export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF> {
   const host = document.createElement('div')
-  host.style.position = 'absolute'
-  host.style.left = '-9999px'
-  host.style.top = '0'
-  host.style.width = '210mm'
-  host.style.background = 'white'
-  host.style.color = '#1a1a1a'
-  host.style.fontFamily = 'Arial, sans-serif'
-  host.style.padding = '20mm'
+  host.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:#fff;'
   document.body.appendChild(host)
 
+  const aud = (n: number) => `$${n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const issueDate = formatDisplayDate(new Date().toISOString())
+  const dueDate = formatDisplayDate(invoice.dueDate)
+
+  // V3 brand colours
+  const BLUE  = '#1B458F'
+  const RED   = '#E51636'
+  const GOLD  = '#D4AF37'
+  const NAVY  = '#071D3A'
+  const LIGHT = '#F5F7FA'
+
   host.innerHTML = `
-    <div style="font-family: Arial, sans-serif; color: #1a1a1a; max-width: 170mm; margin: 0 auto;">
-      <!-- Header -->
-      <div style="display: flex; justify-content: space-between; border-bottom: 3px solid #D4A853; padding-bottom: 20px; margin-bottom: 30px;">
-        <div>
-          <h1 style="font-size: 28px; font-weight: 900; color: #0A1628; margin: 0;">ONE FM <span style="color: #D4A853;">98.5</span></h1>
-          <p style="font-size: 11px; color: #666; margin: 4px 0 0 0;">Goulburn Valley's Community Radio</p>
-          <p style="font-size: 10px; color: #999; margin: 2px 0 0 0;">ABN: 92 117 291 771</p>
+  <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#1a1a1a;width:794px;min-height:1123px;background:#fff;position:relative;box-sizing:border-box;">
+
+    <!-- HEADER BAND -->
+    <div style="background:${NAVY};padding:36px 52px 28px 52px;display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <!-- Logo wordmark -->
+        <div style="display:flex;align-items:baseline;gap:0;">
+          <span style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;">ONE</span>
+          <span style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;margin:0 6px;">FM</span>
+          <span style="font-size:36px;font-weight:900;color:${RED};letter-spacing:-1px;line-height:1;">98.5</span>
         </div>
-        <div style="text-align: right;">
-          <h2 style="font-size: 22px; font-weight: 700; color: #0A1628; margin: 0;">TAX INVOICE</h2>
-          <p style="font-size: 14px; font-weight: 700; color: #D4A853; margin: 4px 0 0 0;">${invoice.number}</p>
+        <div style="color:rgba(255,255,255,0.55);font-size:11px;margin-top:5px;letter-spacing:0.5px;">Goulburn Valley's Community Radio</div>
+        <div style="color:rgba(255,255,255,0.35);font-size:10px;margin-top:2px;">ABN: 92 117 291 771</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:2px;text-transform:uppercase;">TAX INVOICE</div>
+        <div style="font-size:16px;font-weight:700;color:${GOLD};margin-top:6px;letter-spacing:0.5px;">${invoice.number}</div>
+      </div>
+    </div>
+
+    <!-- GOLD RULE -->
+    <div style="height:4px;background:linear-gradient(90deg,${BLUE} 0%,${RED} 50%,${GOLD} 100%);"></div>
+
+    <!-- BODY -->
+    <div style="padding:40px 52px;">
+
+      <!-- BILL TO / FROM -->
+      <div style="display:flex;justify-content:space-between;margin-bottom:36px;">
+        <div style="flex:1;">
+          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:8px;font-weight:700;">BILL TO</div>
+          <div style="font-size:14px;font-weight:700;color:${NAVY};">${invoice.contactName || ''}</div>
+          <div style="font-size:13px;color:#333;margin-top:2px;">${invoice.company}</div>
+          ${invoice.email ? `<div style="font-size:11px;color:#666;margin-top:2px;">${invoice.email}</div>` : ''}
+        </div>
+        <div style="flex:1;text-align:right;">
+          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:8px;font-weight:700;">FROM</div>
+          <div style="font-size:14px;font-weight:700;color:${NAVY};">ONE FM 98.5</div>
+          <div style="font-size:11px;color:#555;line-height:1.7;margin-top:2px;">
+            47 Parkside Drive, Shepparton VIC 3630<br>
+            (03) 5831 3131<br>
+            accounts@fm985.com.au
+          </div>
         </div>
       </div>
 
-      <!-- Address Block -->
-      <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 11px; line-height: 1.6;">
-        <div>
-          <p style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #999; margin: 0 0 4px 0;">BILL TO</p>
-          <p style="font-weight: 700; margin: 0;">${invoice.contactName || ''}</p>
-          <p style="margin: 0;">${invoice.company}</p>
-          <p style="margin: 0; color: #666;">${invoice.email || ''}</p>
+      <!-- DATES ROW -->
+      <div style="display:flex;gap:0;margin-bottom:36px;border-top:1px solid #e8e8e8;border-bottom:1px solid #e8e8e8;">
+        <div style="flex:1;padding:14px 0;">
+          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:5px;font-weight:700;">ISSUE DATE</div>
+          <div style="font-size:13px;font-weight:600;color:${NAVY};">${issueDate}</div>
         </div>
-        <div style="text-align: right;">
-          <p style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #999; margin: 0 0 4px 0;">FROM</p>
-          <p style="font-weight: 700; margin: 0;">ONE FM 98.5</p>
-          <p style="margin: 0;">47 Parkside Drive</p>
-          <p style="margin: 0;">Shepparton VIC 3630</p>
-          <p style="margin: 0;">(03) 5831 3131</p>
-          <p style="margin: 0;">accounts@fm985.com.au</p>
+        <div style="width:1px;background:#e8e8e8;margin:10px 32px;"></div>
+        <div style="flex:1;padding:14px 0;">
+          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:5px;font-weight:700;">DUE DATE</div>
+          <div style="font-size:13px;font-weight:700;color:${RED};">${dueDate}</div>
+        </div>
+        <div style="width:1px;background:#e8e8e8;margin:10px 32px;"></div>
+        <div style="flex:1;padding:14px 0;">
+          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:5px;font-weight:700;">REFERENCE</div>
+          <div style="font-size:13px;font-weight:600;color:${NAVY};">${invoice.number}</div>
         </div>
       </div>
 
-      <!-- Meta -->
-      <div style="display: flex; gap: 40px; margin-bottom: 30px; padding: 12px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; font-size: 11px;">
-        <div><span style="color: #999; text-transform: uppercase; font-size: 9px; letter-spacing: 1px;">Issue Date</span><br/><strong>${formatDisplayDate(new Date().toISOString())}</strong></div>
-        <div><span style="color: #999; text-transform: uppercase; font-size: 9px; letter-spacing: 1px;">Due Date</span><br/><strong style="color: #c00;">${formatDisplayDate(invoice.dueDate)}</strong></div>
-        <div><span style="color: #999; text-transform: uppercase; font-size: 9px; letter-spacing: 1px;">Reference</span><br/><strong>${invoice.number}</strong></div>
-      </div>
-
-      <!-- Description -->
-      <div style="margin-bottom: 30px;">
-        <p style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #999; margin: 0 0 4px 0;">DESCRIPTION</p>
-        <p style="font-size: 12px; margin: 0; line-height: 1.5;">${invoice.description}</p>
-        ${invoice.period ? `<p style="font-size: 10px; color: #666; margin: 4px 0 0 0;">Period: ${invoice.period}</p>` : ''}
-      </div>
-
-      <!-- Amount Table -->
-      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 11px;">
+      <!-- LINE ITEMS TABLE -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:32px;">
         <thead>
-          <tr style="border-bottom: 2px solid #D4A853;">
-            <th style="text-align: left; padding: 8px 0; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #999;">Description</th>
-            <th style="text-align: right; padding: 8px 0; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #999;">Amount (excl GST)</th>
-            <th style="text-align: right; padding: 8px 0; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #999;">GST (10%)</th>
-            <th style="text-align: right; padding: 8px 0; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #999;">Total</th>
+          <tr style="background:${NAVY};">
+            <th style="text-align:left;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;width:50%;">Description</th>
+            <th style="text-align:right;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;">Qty</th>
+            <th style="text-align:right;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;">Unit Price</th>
+            <th style="text-align:right;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;">Excl. GST</th>
+            <th style="text-align:right;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;">GST</th>
           </tr>
         </thead>
         <tbody>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 10px 0;">${invoice.description}</td>
-            <td style="text-align: right; padding: 10px 0;">$${invoice.amountExclGst.toLocaleString('en-AU', { minimumFractionDigits: 2 })}</td>
-            <td style="text-align: right; padding: 10px 0;">$${invoice.gst.toLocaleString('en-AU', { minimumFractionDigits: 2 })}</td>
-            <td style="text-align: right; padding: 10px 0; font-weight: 700;">$${invoice.total.toLocaleString('en-AU', { minimumFractionDigits: 2 })}</td>
+          <tr style="background:#fff;border-bottom:1px solid #eee;">
+            <td style="padding:14px 14px;font-size:12px;color:#1a1a1a;line-height:1.4;">
+              <div style="font-weight:600;">${invoice.description}</div>
+              ${invoice.period ? `<div style="font-size:10px;color:#777;margin-top:3px;">Period: ${invoice.period}</div>` : ''}
+            </td>
+            <td style="text-align:right;padding:14px 14px;font-size:12px;color:#333;">1</td>
+            <td style="text-align:right;padding:14px 14px;font-size:12px;color:#333;">${aud(invoice.amountExclGst)}</td>
+            <td style="text-align:right;padding:14px 14px;font-size:12px;color:#333;">${aud(invoice.amountExclGst)}</td>
+            <td style="text-align:right;padding:14px 14px;font-size:12px;color:#333;">${aud(invoice.gst)}</td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Totals -->
-      <div style="text-align: right; margin-bottom: 30px;">
-        <div style="display: inline-block; text-align: right;">
-          <div style="display: flex; justify-content: space-between; gap: 40px; padding: 6px 0; font-size: 11px;">
-            <span style="color: #666;">Subtotal (excl GST)</span>
-            <span>$${invoice.amountExclGst.toLocaleString('en-AU', { minimumFractionDigits: 2 })}</span>
+      <!-- TOTALS -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:36px;">
+        <div style="min-width:280px;">
+          <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:11.5px;color:#555;border-bottom:1px solid #eee;">
+            <span>Subtotal (excl. GST)</span>
+            <span>${aud(invoice.amountExclGst)}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; gap: 40px; padding: 6px 0; font-size: 11px;">
-            <span style="color: #666;">GST 10%</span>
-            <span>$${invoice.gst.toLocaleString('en-AU', { minimumFractionDigits: 2 })}</span>
+          <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:11.5px;color:#555;border-bottom:1px solid #eee;">
+            <span>GST (10%)</span>
+            <span>${aud(invoice.gst)}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; gap: 40px; padding: 12px 0; border-top: 2px solid #D4A853; font-size: 18px; font-weight: 800; color: #D4A853;">
-            <span>TOTAL</span>
-            <span>$${invoice.total.toLocaleString('en-AU', { minimumFractionDigits: 2 })}</span>
+          <div style="display:flex;justify-content:space-between;padding:12px 16px;font-size:18px;font-weight:800;background:${NAVY};color:#fff;margin-top:4px;border-radius:3px;">
+            <span>TOTAL DUE</span>
+            <span style="color:${GOLD};">${aud(invoice.total)}</span>
           </div>
-          <p style="font-size: 9px; color: #999; margin: 4px 0 0 0;">Total includes GST of $${invoice.gst.toLocaleString('en-AU', { minimumFractionDigits: 2 })}</p>
+          <div style="font-size:9px;color:#888;text-align:right;margin-top:5px;">Total includes GST of ${aud(invoice.gst)}</div>
         </div>
       </div>
 
-      <!-- Payment -->
-      <div style="background: #f9f9f9; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #999; margin: 0 0 12px 0;">HOW TO PAY</p>
-        <div style="font-size: 11px; line-height: 1.8;">
-          <p style="margin: 0;"><strong>Bank Transfer (Preferred)</strong></p>
-          <p style="margin: 0;">NAB | BSB: ${BANK_BSB} | Account: ${BANK_ACCOUNT}</p>
-          <p style="margin: 0;">Account Name: ${BANK_ACCOUNT_NAME}</p>
-          <p style="margin: 0; color: #c00;">Reference: ${invoice.number}</p>
+      <!-- PAYMENT DETAILS -->
+      <div style="background:${LIGHT};border-left:4px solid ${BLUE};padding:20px 24px;border-radius:3px;margin-bottom:24px;">
+        <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#666;margin-bottom:12px;font-weight:700;">PAYMENT DETAILS — BANK TRANSFER (PREFERRED)</div>
+        <div style="display:flex;gap:40px;font-size:12px;">
+          <div>
+            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Bank</div>
+            <div style="font-weight:600;color:${NAVY};">NAB</div>
+          </div>
+          <div>
+            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">BSB</div>
+            <div style="font-weight:600;color:${NAVY};">${BANK_BSB}</div>
+          </div>
+          <div>
+            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Account</div>
+            <div style="font-weight:600;color:${NAVY};">${BANK_ACCOUNT}</div>
+          </div>
+          <div>
+            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Account Name</div>
+            <div style="font-weight:600;color:${NAVY};">${BANK_ACCOUNT_NAME}</div>
+          </div>
+          <div>
+            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Reference</div>
+            <div style="font-weight:700;color:${RED};">${invoice.number}</div>
+          </div>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div style="text-align: center; font-size: 9px; color: #999; border-top: 1px solid #eee; padding-top: 15px;">
-        <p style="margin: 0;">Thank you for supporting community radio in the Goulburn Valley.</p>
-        <p style="margin: 4px 0 0 0;">Payment due within 14 days. Please email remittance advice to accounts@fm985.com.au</p>
+    </div>
+
+    <!-- FOOTER BAND -->
+    <div style="position:absolute;bottom:0;left:0;right:0;">
+      <div style="height:3px;background:linear-gradient(90deg,${BLUE} 0%,${RED} 50%,${GOLD} 100%);"></div>
+      <div style="background:${NAVY};padding:16px 52px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);">
+          Goulburn Valley Community Radio Inc. &nbsp;·&nbsp; ABN: 92 117 291 771
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);">
+          Payment due within 14 days &nbsp;·&nbsp; accounts@fm985.com.au
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);">
+          (03) 5831 3131
+        </div>
       </div>
     </div>
-  `
 
-  const canvas = await html2canvas(host, { scale: 2, useCORS: true, logging: false, width: 794 })
+  </div>`
+
+  const canvas = await html2canvas(host, { scale: 2, useCORS: true, logging: false, width: 794, backgroundColor: '#ffffff' })
   document.body.removeChild(host)
 
   const pdf = new jsPDF('p', 'mm', 'a4')
   const imageData = canvas.toDataURL('image/png')
   const pageWidthMm = 210
   const imageHeightMm = (canvas.height * pageWidthMm) / canvas.width
-  pdf.addImage(imageData, 'PNG', 0, 0, pageWidthMm, imageHeightMm)
+  pdf.addImage(imageData, 'PNG', 0, 0, pageWidthMm, Math.min(imageHeightMm, 297))
   return pdf
 }
 

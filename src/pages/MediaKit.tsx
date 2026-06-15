@@ -114,36 +114,36 @@ const platformCards = [
     icon: Radio,
     title: 'FM Radio',
     stat: '98.5 FM',
-    statLabel: 'weekly listeners',
-    reach: '2.1M',
-    coverage: 'Regional broadcast, 85km radius',
+    statLabel: 'broadcast frequency',
+    reach: '~100km radius',
+    coverage: 'Goulburn Murray region — 25 towns',
     accent: '#D4963A',
   },
   {
     icon: Headphones,
-    title: 'Digital Streaming',
-    stat: '1.8M',
-    statLabel: 'monthly streams',
-    reach: '+34% YoY',
-    coverage: 'Website, iOS, Android, Alexa',
+    title: 'Live Stream',
+    stat: 'Online',
+    statLabel: 'via fm985.com.au',
+    reach: 'Worldwide',
+    coverage: 'Radio.co stream · Community Radio Plus app',
     accent: '#2EC4B6',
   },
   {
     icon: Share2,
     title: 'Social Media',
-    stat: '168K',
-    statLabel: 'combined followers',
-    reach: '4.2%',
-    coverage: 'Instagram, TikTok, Twitter/X, Facebook',
+    stat: 'Facebook',
+    statLabel: 'community page',
+    reach: 'facebook.com/onefmshepparton',
+    coverage: 'Local news, events, community',
     accent: '#9B5DE5',
   },
   {
     icon: Mic,
-    title: 'Podcast Network',
-    stat: '320K',
-    statLabel: 'monthly downloads',
-    reach: '8 shows',
-    coverage: 'Avg. duration 38 min',
+    title: 'Interviews & Podcasts',
+    stat: 'SoundCloud',
+    statLabel: 'interview archive',
+    reach: 'soundcloud.com',
+    coverage: 'Local interviews, community voices',
     accent: '#FF6B6B',
   },
 ]
@@ -484,8 +484,8 @@ export default function MediaKit() {
                     </ResponsiveContainer>
                   </div>
                   <div className="text-center -mt-8">
-                    <div className="font-stat text-ivory">2.4M</div>
-                    <div className="font-label text-muted">Total Reach</div>
+                    <div className="font-stat text-ivory">25</div>
+                    <div className="font-label text-muted">Towns in broadcast area</div>
                   </div>
                   {/* Legend */}
                   <div className="flex flex-wrap justify-center gap-4 mt-4">

@@ -44,7 +44,7 @@ const milestones = [
     year: "1989",
     title: "ONE FM Founded",
     desc: "A small group of passionate volunteers launched 98.5 FM in Shepparton, giving the Goulburn Valley its first true community voice. Broadcasting from studios in Shepparton as 3ONE.",
-    img: "/studio-control-room.jpg",
+    img: "/assets/images/studio-exterior-rainbow.jpg",
     icon: Radio,
   },
   {
@@ -58,21 +58,21 @@ const milestones = [
     year: "2001",
     title: "Community Radio Plus App Launched",
     desc: "Pioneered digital streaming for regional community radio in Australia. Listeners could suddenly tune in from anywhere in the world, expanding the station's reach far beyond the broadcast tower.",
-    img: "/studio-control-room.jpg",
+    img: "/assets/images/studio-exterior-rainbow.jpg",
     icon: Wifi,
   },
   {
     year: "2008",
     title: "Moved to New Studios",
     desc: "Relocated to purpose-built studios with digital mixing desks, soundproofed broadcast booths and a dedicated production suite. The new home set the standard for regional radio infrastructure.",
-    img: "/studio-control-room.jpg",
+    img: "/assets/images/studio-exterior-rainbow.jpg",
     icon: Building2,
   },
   {
     year: "2014",
     title: "25th Anniversary — 25 Towns",
     desc: "Celebrated a quarter-century by visiting 25 towns across the Goulburn Valley in 25 days. A convoy of broadcast gear, live music and giveaways brought the party to every corner of the listening area.",
-    img: "/regional-landscape.jpg",
+    img: "/assets/images/geo-lake-aerial.jpg",
     icon: MapPin,
   },
   {
@@ -86,35 +86,35 @@ const milestones = [
     year: "2020",
     title: "Emergency Broadcasting",
     desc: "When bushfires raged and COVID-19 swept the nation, ONE FM became a critical information lifeline. Provided 24/7 emergency updates, relief coordination messages and community support hotlines.",
-    img: "/regional-landscape.jpg",
+    img: "/assets/images/geo-lake-aerial.jpg",
     icon: Zap,
   },
   {
     year: "2025",
     title: "36th Year — Modern Digital Expansion",
     desc: "Today ONE FM blends heritage community values with cutting-edge technology: AI-assisted scheduling, immersive audio experiences, expanded digital platforms and a growing podcast network serving the Valley.",
-    img: "/studio-control-room.jpg",
+    img: "/assets/images/studio-exterior-rainbow.jpg",
     icon: TrendingUp,
   },
 ]
 
 /* ─── Team data ─── */
 const team = [
-  { name: "Tim Ahemt", role: "Breakfast Host (Mon–Tue)", years: "2026", cat: "On-Air", img: "/on-air-host-1.jpg", quote: "Hosts ONE FM Breakfast Monday and Tuesday — community interviews and local news." },
-  { name: "Lillian Stone", role: "Breakfast Host (Wed)", years: "2026", cat: "On-Air", img: "/on-air-host-1.jpg", quote: "Hosts ONE FM Breakfast on Wednesdays." },
-  { name: "Craig Stott", role: "Breakfast (Thu) / Super Saturday Sports", years: "2026", cat: "On-Air", img: "/on-air-host-2.jpg", quote: "Thursday breakfast and Saturday GVL sports coverage." },
-  { name: "Di Hunter", role: "Breakfast Host (Fri)", years: "2026", cat: "On-Air", img: "/on-air-host-2.jpg", quote: "Hosts ONE FM Breakfast on Fridays." },
-  { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", years: "4", cat: "On-Air", img: "/on-air-host-2.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
-  { name: "Rowan Farren-Parnell", role: "Host — The Regional Voice / The Advocate", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/on-air-host-1.jpg", quote: "Member of the Mooroopna Community Planning Group. Interviews community figures and discusses local advocacy issues." },
-  { name: "Carlos Rock", role: "Host — Planet of Sound", years: "19-20", cat: "On-Air", img: "/on-air-host-3.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },
-  { name: "Ralph Whitehead", role: "Host — Friday Arvo / Friday Morning", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/on-air-host-2.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
-  { name: "Timmy Ahmet", role: "Host — Good Evening Country", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/on-air-host-3.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
-  { name: "Les 'Harro' Harrison", role: "Community Host / Various", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/on-air-host-1.jpg", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
-  { name: "Josh Revens", role: "Community Interviews / Various", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/on-air-host-2.jpg", quote: "ONE FM announcer who conducts community interviews covering local events, sports, and community initiatives." },
-  { name: "Fikiri", role: "Host — Africonnect (Swahili)", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/on-air-host-3.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
-  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/on-air-host-1.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
-  { name: "Edith", role: "Host — Filipino Music Program", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/on-air-host-2.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
-  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/on-air-host-3.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
+  { name: "Tim Ahemt", role: "Breakfast Host (Mon–Tue)", years: "2026", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts ONE FM Breakfast Monday and Tuesday — community interviews and local news." },
+  { name: "Lillian Stone", role: "Breakfast Host (Wed)", years: "2026", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts ONE FM Breakfast on Wednesdays." },
+  { name: "Craig Stott", role: "Breakfast (Thu) / Super Saturday Sports", years: "2026", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Thursday breakfast and Saturday GVL sports coverage." },
+  { name: "Di Hunter", role: "Breakfast Host (Fri)", years: "2026", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts ONE FM Breakfast on Fridays." },
+  { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", years: "4", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
+  { name: "Rowan Farren-Parnell", role: "Host — The Regional Voice / The Advocate", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Member of the Mooroopna Community Planning Group. Interviews community figures and discusses local advocacy issues." },
+  { name: "Carlos Rock", role: "Host — Planet of Sound", years: "19-20", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },
+  { name: "Ralph Whitehead", role: "Host — Friday Arvo / Friday Morning", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
+  { name: "Timmy Ahmet", role: "Host — Good Evening Country", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
+  { name: "Les 'Harro' Harrison", role: "Community Host / Various", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
+  { name: "Josh Revens", role: "Community Interviews / Various", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "ONE FM announcer who conducts community interviews covering local events, sports, and community initiatives." },
+  { name: "Fikiri", role: "Host — Africonnect (Swahili)", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
+  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
+  { name: "Edith", role: "Host — Filipino Music Program", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
+  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
 ]
 
 const teamCategories = ["All", "On-Air", "Multicultural"]
@@ -147,21 +147,21 @@ const studios = [
   },
 ]
 
-/* ─── Forward pillars ─── */
+/* ─── Forward pillars — factual station commitments only ─── */
 const pillars = [
   {
-    title: "AI-Enhanced Content",
-    desc: "Smart scheduling algorithms, automated transcription for podcasts, intelligent music rotation and real-time listener analytics to shape better programming.",
+    title: "Live & Local",
+    desc: "Continuing 24/7 community broadcasting from Shepparton, with local presenters, local news, and local music across the Goulburn Murray.",
     icon: Layers,
   },
   {
-    title: "Immersive Broadcasting",
-    desc: "Spatial 3D audio for live events, VR broadcast experiences for remote fans and binaural podcasting that puts listeners inside the stadium.",
+    title: "Online Streaming",
+    desc: "FM 98.5 plus online streaming via fm985.com.au and Radio.co, so listeners across the Valley and beyond can tune in anywhere.",
     icon: Globe,
   },
   {
-    title: "Community Platform",
-    desc: "Expanded coverage to 15+ towns, a youth broadcaster academy and mobile studio units that bring the station to regional festivals and events.",
+    title: "Community Partnership",
+    desc: "Supporting 100+ local NFPs on-air, GVL sports coverage, and emergency broadcasting for the 25 towns in our 100km broadcast area.",
     icon: Heart,
   },
 ]
@@ -182,7 +182,7 @@ export default function Story() {
       <section className="relative min-h-[85dvh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/regional-landscape.jpg"
+            src="/assets/images/geo-lake-aerial.jpg"
             alt="Goulburn Valley landscape"
             className="w-full h-full object-cover animate-ken-burns"
           />
@@ -400,7 +400,7 @@ export default function Story() {
             className="rounded-2xl overflow-hidden border border-one-border aspect-video lg:aspect-auto lg:min-h-[400px] relative"
           >
             <img
-              src="/studio-control-room.jpg"
+              src="/assets/images/studio-exterior-rainbow.jpg"
               alt="ONE FM studio control room"
               className="w-full h-full object-cover"
             />
@@ -459,8 +459,8 @@ export default function Story() {
                 <p className="font-label text-muted mt-1">Events Covered</p>
               </div>
               <div>
-                <p className="font-stat text-one-gold">$2.4M+</p>
-                <p className="font-label text-muted mt-1">Airtime Donated to NFPs</p>
+                <p className="font-stat text-one-gold">100+</p>
+                <p className="font-label text-muted mt-1">NFPs Supported On-Air</p>
               </div>
               <div>
                 <p className="font-stat text-one-gold">24/7</p>

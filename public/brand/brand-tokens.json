@@ -1,0 +1,19 @@
+{
+  "core": {
+    "ONE FM Blue": "#1B458F",
+    "Broadcast White": "#FFFFFF",
+    "98.5 Red": "#E51636"
+  },
+  "premium": {
+    "Deep Broadcast Navy": "#071D3A",
+    "Heritage Gold": "#D4AF37",
+    "Champagne Highlight": "#F4D27A"
+  },
+  "fluoro": {
+    "Electric Cyan": "#00E5FF",
+    "Neon Sky Blue": "#38BDF8",
+    "Neon Orange": "#FF6A00",
+    "Fluoro Lime": "#B6FF00",
+    "Broadcast Magenta": "#FF2BD6"
+  }
+}

@@ -74,67 +74,68 @@ const sparklineData = [
 
 const trendData = Array.from({ length: 30 }, (_, i) => ({
   day: `Day ${i + 1}`,
-  listeners: 120000 + Math.random() * 40000 + i * 800,
-  unique: 95000 + Math.random() * 30000 + i * 600,
-  forecast: i >= 23 ? 130000 + Math.random() * 35000 + i * 900 : null,
+  listeners: null, // Real streaming data not yet available — connect Radio.co analytics
+  unique: null,
+  forecast: null,
 }))
 
+// ABS 2021 age demographics for Greater Shepparton LGA (source: abs.gov.au)
 const ageDemoData = [
-  { age: '18-24', percent: 18, count: 432000, growth: '+4%' },
-  { age: '25-34', percent: 32, count: 768000, growth: '+12%' },
-  { age: '35-44', percent: 24, count: 576000, growth: '+6%' },
-  { age: '45-54', percent: 16, count: 384000, growth: '-2%' },
-  { age: '55+', percent: 10, count: 240000, growth: '+1%' },
+  { age: '0-17', percent: 24, count: null, growth: null },
+  { age: '18-34', percent: 20, count: null, growth: null },
+  { age: '35-54', percent: 26, count: null, growth: null },
+  { age: '55-74', percent: 22, count: null, growth: null },
+  { age: '75+', percent: 8, count: null, growth: null },
 ]
 
+// ABS 2021 gender — Greater Shepparton LGA
 const genderData = [
-  { name: 'Male', value: 48, color: '#2EC4B6' },
-  { name: 'Female', value: 49, color: '#D4963A' },
-  { name: 'Non-binary', value: 2, color: '#9B5DE5' },
-  { name: 'Prefer not to say', value: 1, color: '#6B6B75' },
+  { name: 'Male', value: 49, color: '#2EC4B6' },
+  { name: 'Female', value: 51, color: '#D4963A' },
 ]
 
+// Top towns by estimated weekly listeners (source: townData.ts / ABS 2021)
 const locationData = [
-  { region: 'Metro Central', listeners: 840000, pct: 35 },
-  { region: 'North Valley', listeners: 520000, pct: 22 },
-  { region: 'Coastal East', listeners: 410000, pct: 17 },
-  { region: 'South Ridge', listeners: 380000, pct: 16 },
-  { region: 'West Plains', listeners: 250000, pct: 10 },
+  { region: 'Shepparton', listeners: 16488, pct: 42 },
+  { region: 'Mooroopna', listeners: 3710, pct: 9 },
+  { region: 'Benalla', listeners: 2565, pct: 7 },
+  { region: 'Cobram', listeners: 2244, pct: 6 },
+  { region: 'Other 21 towns', listeners: 14368, pct: 36 },
 ]
 
 const platformCards = [
   {
     icon: Radio,
     title: 'FM Radio',
-    stat: '2.1M',
-    label: 'weekly',
-    share: '87% of total',
-    status: 'Stable',
+    stat: '98.5 FM',
+    label: '~100km radius',
+    share: '25 towns · Goulburn Murray',
+    status: 'Live',
     statusColor: '#2EC4B6',
     accent: '#D4963A',
-    trend: [8200, 8500, 8400, 8800, 8600, 9000, 9200],
+    trend: [],
   },
   {
     icon: Headphones,
-    title: 'Digital Streaming',
-    stat: '1.8M',
-    label: 'monthly',
-    share: 'iOS App (42%)',
-    status: 'Growing',
+    title: 'Live Stream',
+    stat: 'Online',
+    label: 'fm985.com.au',
+    share: 'Radio.co · Community Radio Plus',
+    status: 'Live',
     statusColor: '#2EC4B6',
     accent: '#2EC4B6',
-    trend: [1200, 1400, 1600, 1800, 2100, 2400, 2800],
+    trend: [],
   },
   {
     icon: Share2,
-    title: 'Social Media',
-    stat: '168K',
-    label: 'followers',
-    share: 'Instagram (65K)',
-    status: '4.2%',
+    title: 'Facebook',
+    stat: 'Community',
+    label: 'page',
+    share: 'facebook.com/onefmshepparton',
+    status: 'Active',
     statusColor: '#F0C75E',
     accent: '#9B5DE5',
-    trend: [100, 120, 150, 180, 220, 270, 330],
+    trend: [],
   },
   {
     icon: Mic,
@@ -149,17 +150,15 @@ const platformCards = [
   },
 ]
 
-const anomalyData = [
-  { time: 'Sunday 14:00', change: '+23%', reason: 'Music festival coverage', severity: 'spike' },
-  { time: 'Tuesday 09:00', change: '-8%', reason: 'Technical issue, resolved', severity: 'drop' },
-  { time: 'Podcast segment', change: '+45%', reason: 'Viral social share', severity: 'growth' },
-]
+// Anomaly data requires real Radio.co / stream analytics — not available yet
+const anomalyData: { time: string; change: string; reason: string; severity: string }[] = []
 
+// Audience segments based on typical community radio programming blocks (indicative only)
 const smartSegments = [
-  { name: 'Morning Commuters', pct: 32, color: '#D4963A' },
-  { name: 'Weekend Enthusiasts', pct: 24, color: '#2EC4B6' },
-  { name: 'Night Owls', pct: 18, color: '#9B5DE5' },
-  { name: 'Loyal Long-term', pct: 26, color: '#F0C75E' },
+  { name: 'Breakfast (6–9am)', pct: 35, color: '#D4963A' },
+  { name: 'Mornings (9am–12pm)', pct: 28, color: '#2EC4B6' },
+  { name: 'Afternoons (12–4pm)', pct: 22, color: '#9B5DE5' },
+  { name: 'Evenings (6pm+)', pct: 15, color: '#F0C75E' },
 ]
 
 /* ─────────── helpers ─────────── */
@@ -219,6 +218,9 @@ function MiniSparkline({ data, color = '#D4963A' }: { data: number[]; color?: st
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const HOURS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}`)
 
+// Relative activity index (0–100) based on typical community radio listening patterns.
+// This is indicative only — not derived from actual ONE FM streaming data.
+// Replace with real Radio.co analytics data when available.
 function generateHeatmapData() {
   const data: number[][] = []
   for (let d = 0; d < 7; d++) {
@@ -346,10 +348,10 @@ export default function AudienceAnalytics() {
             animate="visible"
           >
             {[
-              { label: 'Current Listeners', value: 12847, color: '#2EC4B6', suffix: '', sparkline: true, extra: '' },
-              { label: "Today's Total", value: 142300, color: '#D4963A', suffix: '', sparkline: false, extra: '+8.2% vs yesterday' },
-              { label: 'Peak Today', value: 18402, color: '#F0C75E', suffix: '', sparkline: false, extra: 'at 08:32' },
-              { label: 'Avg. Session', value: 47, color: '#9B5DE5', suffix: ' min', sparkline: false, extra: '+3 min vs last week' },
+              { label: 'Est. Weekly Listeners', value: 39375, color: '#2EC4B6', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
+              { label: 'Towns in Broadcast Area', value: 25, color: '#D4963A', suffix: '', sparkline: false, extra: '~100km radius from Shepparton' },
+              { label: 'Broadcast Area Population', value: 189680, color: '#F0C75E', suffix: '', sparkline: false, extra: 'Source: townData / ABS 2021' },
+              { label: 'Years Broadcasting', value: 46, color: '#9B5DE5', suffix: ' yrs', sparkline: false, extra: 'Est. 1980, licensed 1989' },
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -861,7 +863,7 @@ export default function AudienceAnalytics() {
                 </ResponsiveContainer>
               </div>
               <div className="mt-4 p-3 rounded-lg bg-one-navy/50">
-                <span className="font-label text-xs text-one-gold">Expected peak: Thursday, 19,203 listeners</span>
+                <span className="font-label text-xs text-one-gold">Est. weekly listeners: 39,375 (source: townData / ABS 2021)</span>
               </div>
             </motion.div>
 

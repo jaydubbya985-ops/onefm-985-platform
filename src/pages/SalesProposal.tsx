@@ -140,8 +140,8 @@ const DEFAULT_SECTIONS: ProposalSection[] = [
 ]
 
 const DATA_TOKENS = [
-  { token: '[CURRENT_LISTENERS]', label: 'Current Listeners', value: '847,293' },
-  { token: '[WEEKLY_REACH]', label: 'Weekly Reach', value: '39.4K' },
+  { token: '[CURRENT_LISTENERS]', label: 'Weekly Listeners (est.)', value: '39,375' },
+  { token: '[WEEKLY_REACH]', label: 'Weekly Reach', value: '~39K' },
   { token: '[AUDIENCE_AGE_25_34]', label: 'Audience 25-34', value: '38%' },
   { token: '[PACKAGE_PRICE]', label: 'Package Price', value: '$0' },
   { token: '[CUSTOMER_NAME]', label: 'Customer Name', value: '' },
@@ -1570,42 +1570,35 @@ function getDefaultContent(sectionId: string, customer: CustomerForm): string {
   const duration = customer.campaignDuration || 'the campaign period'
 
   const contents: Record<string, string> = {
-    'exec-summary': `This proposal outlines a strategic partnership between ONE FM and ${name} to achieve ${goal}. With our extensive reach of 39,375 weekly listeners across 25 towns and targeted audience segments, we are positioned to deliver exceptional results for ${duration}.`,
-    'about': `ONE FM is the region's premier heritage broadcaster, connecting communities since 1985. Our blend of classic hits, local news, and community programming has earned us the trust of over 847,000 daily listeners across the region.`,
-    'audience': `Our audience is diverse, engaged, and loyal. Key demographics include:
-• 38% aged 25-34 (Millennials)
-• 29% aged 35-44 (Established Professionals)
-• 22% aged 18-24 (Gen Z)
-• 11% aged 45+
-
-Average listening time: 2.3 hours per day`,
-    'platform': `ONE FM delivers multi-platform reach:
-• FM Broadcast: 847K daily listeners
-• Digital Streaming: 320K monthly streams
-• Podcast Network: 150K subscribers
-• Social Media: 450K combined followers
-• Website: 180K monthly visitors`,
-    'package': `Based on your ${goal} objectives and ${customer.budgetRange || 'budget range'}, we recommend a comprehensive package that includes on-air mentions, digital sponsorship, and social media integration for ${duration}.`,
-    'pricing': `All pricing is customized based on package selection, duration, and specific requirements. Your account manager will provide detailed rate cards upon package confirmation.`,
-    'case-studies': `Recent success stories include a 45% increase in brand recall for a regional retail chain and 3x ROI for a technology product launch campaign. Full case studies available upon request.`,
+    'exec-summary': `This proposal outlines a strategic partnership between ONE FM 98.5 and ${name} to achieve ${goal}. As the Goulburn Murray's community broadcaster, we reach an estimated 39,375 weekly listeners across 25 towns within our 100km broadcast area. We are positioned to deliver genuine regional results for ${duration}.`,
+    'about': `ONE FM 98.5 (callsign 3ONE) is operated by Goulburn Valley Community Radio Inc., a not-for-profit organisation licensed since 1989. Broadcasting from Shepparton, we connect communities across the Goulburn Murray region with live local content, community news, sport, and diverse multicultural programming.`,
+    'audience': `ONE FM reaches an estimated 39,375 weekly listeners across 25 towns in the Goulburn Murray region (source: townData census estimates, ABS 2021). Our audience is local, community-focused, and trusts the station to reflect their region.`,
+    'platform': `ONE FM delivers reach across:
+• FM Broadcast: 98.5 FM, ~100km radius, 25 towns
+• Live Stream: fm985.com.au · Community Radio Plus app
+• Interviews & content: SoundCloud (soundcloud.com/user-570295409)
+• Facebook: facebook.com/onefmshepparton`,
+    'package': `Based on your ${goal} objectives and ${customer.budgetRange || 'budget range'}, we recommend a package that includes on-air spots, community mentions, and digital integration for ${duration}. All packages are tailored to your business and confirmed in writing.`,
+    'pricing': `All pricing is confirmed in your contract. Rate cards are available from our sponsorship team at admin@fm985.com.au or (03) 5831 3131.`,
+    'case-studies': `Contact us at admin@fm985.com.au for case studies from current and past sponsors across the Goulburn Murray region.`,
     'timeline': `Proposed timeline:
 • Week 1: Contract finalization and creative briefing
 • Week 2-3: Asset production and approval
 • Week 4: Campaign launch
-• Ongoing: Performance monitoring and optimization
+• Ongoing: Confirmation reports from station
 
-Next steps: Schedule a kickoff meeting with our partnerships team.`,
+Next steps: Contact admin@fm985.com.au or (03) 5831 3131.`,
     'terms': `Standard terms include:
 • 50% deposit upon contract signing
 • Balance due 30 days from campaign start
 • Cancellation policy: 14 days notice required
-• All rates exclude applicable taxes`,
-    'regional-map': `ONE FM covers the entire regional area including Central CBD, North Hills, East Valley, South Coast, and West Plains. Our signal reaches 95% of the regional population.`,
-    'social-strategy': `Our social integration package includes branded content across Instagram, TikTok, Facebook, and Twitter/X. Content calendar, asset creation, and performance reporting included.`,
-    'podcast': `ONE FM's podcast network includes 5 original shows with 150K combined monthly downloads. Integration options include host reads, sponsored segments, and dedicated episodes.`,
-    'event-activation': `Event sponsorship includes on-site broadcast, branded activations, social coverage, and post-event content packages. Previous events have reached 50K+ attendees.`,
-    'competitive': `ONE FM leads the regional market with a 42% audience share, compared to 28% for Station B and 18% for Station C. Our engagement rates are 35% above industry average.`,
-    'roi': `Based on ${customer.industry || 'industry'} benchmarks and our audience data, projected ROI for this campaign is 3.2x over ${duration}, with brand awareness lift estimated at 28%.`,
+• All rates exclude applicable GST`,
+    'regional-map': `ONE FM 98.5 covers the Goulburn Murray region from Shepparton, reaching 25 towns within approximately 100km. Key communities include Shepparton, Mooroopna, Cobram, Echuca, Kyabram, Benalla, and surrounds.`,
+    'social-strategy': `ONE FM maintains an active community Facebook page at facebook.com/onefmshepparton. Social mentions can be included as part of your sponsorship package.`,
+    'podcast': `ONE FM produces local interviews available on SoundCloud (soundcloud.com/user-570295409). Sponsorship of interview segments is available — contact us for current options.`,
+    'event-activation': `ONE FM regularly broadcasts live from community events across the Goulburn Murray. Contact us to discuss outside broadcast and event sponsorship packages.`,
+    'competitive': `ONE FM is the only locally-owned community radio station broadcasting across the Goulburn Murray region, operated by Goulburn Valley Community Radio Inc.`,
+    'roi': `Return on investment varies by campaign. Our sponsorship team can discuss your objectives and provide honest guidance on expected outcomes for your business.`,
   }
 
   return contents[sectionId] || 'Section content to be customized.'
@@ -1621,13 +1614,13 @@ function generateAIContent(sectionName: string, tone: string, length: number, cu
   const lengthFactor = length / 100
 
   const templates: Record<string, string> = {
-    'Executive Summary': `ONE FM is thrilled to present this ${toneAdj} sponsorship opportunity tailored specifically for ${name}. With your focus on ${goal}, our platform of 847,000 daily listeners provides the perfect channel to amplify your message across the region. This proposal outlines a strategic partnership designed to deliver measurable results over ${customer.campaignDuration || 'the campaign period'}, leveraging our multi-platform ecosystem including FM broadcast, digital streaming, and social media integration.`,
-    'About ONE FM': `Since 1985, ONE FM has been the voice of the region — a trusted companion for commuters, families, and professionals alike. Our heritage is built on community connection, and our future is driven by innovation. With state-of-the-art studios, award-winning programming, and a team of passionate broadcasters, ONE FM delivers content that resonates. Our audience doesn't just listen — they engage, participate, and trust our brand recommendations.`,
-    'Audience Overview': `ONE FM's audience mirrors the vibrant diversity of the region we serve. Our core demographic of 25-44 represents the decision-makers, trend-setters, and purchasing powerhouses of the community. With an average daily listening time of 2.3 hours, our audience is deeply engaged. ${length > 50 ? 'We see particularly strong engagement during morning drive-time (6-9am) and afternoon commute (4-7pm), making these prime slots for impactful messaging.' : ''}`,
-    'Platform Reach': `Your message will travel far and wide through ONE FM's multi-platform ecosystem. Beyond our flagship FM broadcast reaching 847,000 daily listeners, our digital streaming platform captures 320,000 monthly active users, while our podcast network engages 150,000 subscribers. Social media amplification extends reach to 450,000 followers, and our website drives 180,000 monthly visits. ${length > 60 ? 'This integrated approach ensures your brand message maintains consistency and frequency across all touchpoints.' : ''}`,
+    'Executive Summary': `ONE FM 98.5 is proud to present this ${toneAdj} sponsorship opportunity for ${name}. As the Goulburn Murray's community broadcaster (callsign 3ONE, operated by Goulburn Valley Community Radio Inc.), we connect an estimated 39,375 weekly listeners across 25 towns. This proposal outlines a partnership designed to deliver genuine regional reach over ${customer.campaignDuration || 'the campaign period'}.`,
+    'About ONE FM': `ONE FM 98.5 has been serving the Goulburn Murray since 1980, licensed as a community broadcaster since 1989. We are a not-for-profit, volunteer-supported station operated by Goulburn Valley Community Radio Inc. Our programming includes local news, community announcements, sport, multicultural content, and music — live and local every day.`,
+    'Audience Overview': `ONE FM reaches an estimated 39,375 weekly listeners across 25 towns in the Goulburn Murray region (source: townData census estimates based on ABS 2021 population data). Our audience is local, community-connected, and loyal to a station that reflects their region. ${length > 50 ? 'Morning breakfast (6–9am) is our strongest engagement period, with consistent listenership throughout the day.' : ''}`,
+    'Platform Reach': `ONE FM 98.5 delivers reach through FM broadcast (98.5 FM, ~100km radius), live streaming via fm985.com.au and the Community Radio Plus app, community Facebook (facebook.com/onefmshepparton), and SoundCloud interview content. ${length > 60 ? 'Our integrated presence ensures your brand is heard across multiple touchpoints in the Goulburn Murray community.' : ''}`,
     'Proposed Package': `For ${name}, we recommend a ${customer.budgetRange || 'customized'} package that aligns with your ${goal} objectives. This includes prime on-air placement during high-engagement dayparts, digital companion assets for streaming and web, and social media amplification to extend reach beyond the broadcast. ${length > 50 ? 'Optional add-ons include podcast integration, event activation, and regional coverage mapping for enhanced geographic targeting.' : ''}`,
     'Pricing & Rates': `Our pricing structure is transparent and value-driven. The base package investment of ${customer.budgetRange || '$TBD'} includes all core deliverables with volume discounts available for extended campaigns. ${length > 50 ? 'Additional sections such as ROI projections, competitive analysis, and social strategy can be added à la carte. Payment terms are flexible with 50% deposit and balance due 30 days from campaign commencement.' : ''}`,
-    'Case Studies': `A regional retail chain achieved a 45% increase in brand recall after a 3-month ONE FM sponsorship. A technology brand saw 3x ROI on a product launch campaign combining on-air mentions with podcast integration. ${length > 60 ? 'These results demonstrate the power of consistent, trusted messaging delivered through a channel audiences actively choose to engage with.' : ''}`,
+    'Case Studies': `Contact us at admin@fm985.com.au for case studies and references from current and past sponsors in the Goulburn Murray region. We're happy to connect you with sponsors who can speak to their experience with ONE FM 98.5.`,
     'Timeline & Next Steps': `We propose a streamlined timeline: Week 1 for contract and creative briefing, Weeks 2-3 for production and approvals, and Week 4 for launch. ${length > 50 ? 'Our dedicated account team will provide weekly performance reports and mid-campaign optimization recommendations.' : ''} Ready to move forward? Let's schedule a kickoff call.`,
     'Terms & Conditions': `Standard terms apply: 50% deposit on contract signing, balance due 30 days from campaign start, 14-day cancellation notice. ${length > 50 ? 'All creative assets must be approved 5 business days before air date. ONE FM retains the right to refuse content that does not meet broadcast standards.' : ''}`,
   }

@@ -395,6 +395,8 @@ export const SEED_CLIENT_PAYMENTS: ClientPayment[] = [
   { id: 'cp-008', invoiceId: '', invoiceNumber: 'CASH-RCPT-08', clientName: 'MediaCOM', amount: 440, method: 'cash', date: '2026-05-30', reference: 'CASH-001', notes: 'Cash deposit at reception', status: 'completed' },
 ]
 
+// DEMO DATA — donations, members, and recurring donors below are illustrative examples.
+// Replace with real CRM data before any public/external-facing report or system integration.
 export const SEED_DONATIONS: DonationRecord[] = [
   { id: 'don-001', donorName: 'Margaret Wilson', email: 'mwilson@bigpond.com', phone: '0427 311 204', amount: 100, type: 'one_time', method: 'credit_card', date: '2026-06-10', source: 'radio_appeal', receiptNumber: 'ONE-D-2026-014', notes: 'Loves the breakfast show' },
   { id: 'don-002', donorName: 'Bruce Hartley', email: 'bruce.hartley@gmail.com', phone: '0418 552 901', amount: 50, type: 'monthly_recurring', method: 'direct_debit', date: '2026-06-08', source: 'website', receiptNumber: 'ONE-D-2026-013' },
@@ -419,6 +421,8 @@ export const SEED_RECURRING_DONATIONS: RecurringDonation[] = [
   { id: 'rec-004', donorName: 'Alice Tran', email: 'alice.tran@gmail.com', amount: 15, startDate: '2025-06-20', nextChargeDate: '2026-06-20', totalCharged: 180, status: 'active' },
 ]
 
+// DEMO DATA — member records below are illustrative examples.
+// Real member data must be loaded from Supabase/CRM, not this seed file.
 export const SEED_MEMBERS: MemberRecord[] = [
   { id: 'm1', memberId: 'ONE-M-98501', name: 'John Painter', email: 'johnnyp@fm985.com.au', phone: '0427 100 985', address: '12 Echuca Rd, Mooroopna VIC 3629', tier: 'gold', billingFrequency: 'annual', joinDate: '2024-07-01', renewalDate: '2026-07-01', amount: 200, status: 'active', autoRenew: true, paymentMethod: 'direct_debit', source: 'Station volunteer' },
   { id: 'm2', memberId: 'ONE-M-98502', name: 'Margaret Wilson', email: 'mwilson@bigpond.com', phone: '0427 311 204', address: '8 Corio St, Shepparton VIC 3630', tier: 'silver', billingFrequency: 'annual', joinDate: '2025-03-14', renewalDate: '2026-07-10', amount: 100, status: 'active', autoRenew: true, paymentMethod: 'credit_card', source: 'Radio' },
