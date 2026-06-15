@@ -1,18 +1,23 @@
 import { useState, useEffect, useRef, useMemo, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Play, Pause, Volume2, Search, Grid3X3, List, ChevronDown,
+  Play, Pause, Search, Grid3X3, List, ChevronDown,
   ChevronLeft, ChevronRight, Radio, Globe, Smartphone,
-  Headphones, Sparkles,
+  Headphones, Sparkles, Calendar,
   Instagram, Twitter, Music, ArrowRight
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { Link } from 'react-router-dom'
+import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
 import {
   FULL_SCHEDULE,
   PROGRAM_PREVIEW_CARDS,
   ALL_PRESENTERS,
+  getCurrentLiveShow,
+  getBreakfastScheduleLabel,
 } from '@/data/programGuide'
+import { useLiveStream } from '@/hooks/useLiveStream'
 
 const CATEGORY_COLORS: Record<string, string> = {
   Breakfast: '#D4963A',
@@ -83,6 +88,13 @@ const SHOW_CARDS = PROGRAM_PREVIEW_CARDS.slice(0, 6).map((card) => ({
   image: '/assets/images/commentary-box-action.jpg',
   category: card.title.includes('Breakfast') ? 'Talk' : 'Program',
 }))
+
+const BROADCAST_JOBS: PageJob[] = [
+  { label: 'Listen Live', path: '/listen', description: 'Stream now', icon: Headphones, accent: '#E51636' },
+  { label: 'Program Guide', path: '/programs', description: 'Shows & hosts', icon: Calendar, accent: '#D4AF37' },
+  { label: 'Coverage', path: '/coverage', description: 'Broadcast area', icon: Globe, accent: '#1B458F' },
+  { label: 'GVL Sport', path: '/football', description: 'Saturday coverage', icon: Sparkles, accent: '#2EC4B6' },
+]
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -167,11 +179,8 @@ const LiveWaveform = memo(function LiveWaveform() {
 
 /* ─── Section 1: Hero — Live Status ─── */
 function HeroSection() {
-  const [playing, setPlaying] = useState(false)
-  const [currentTime] = useState(() => new Date())
-  const startHour = 6
-  const endHour = 9
-  const progress = Math.max(0, Math.min(1, (currentTime.getHours() + currentTime.getMinutes() / 60 - startHour) / (endHour - startHour)))
+  const live = getCurrentLiveShow()
+  const stream = useLiveStream()
 
   return (
     <section className="relative overflow-hidden" style={{ height: '50vh', minHeight: 400 }}>
@@ -194,19 +203,19 @@ function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: easeOutExpo }}
-          className="font-h1 text-one-white mb-3"
-          style={{ textShadow: '0 0 40px rgba(212,150,58,0.3)', fontSize: 'clamp(3rem, 8vw, 5rem)' }}
+          className="font-h1 text-one-white mb-3 text-center"
+          style={{ textShadow: '0 0 40px rgba(212,150,58,0.3)', fontSize: 'clamp(1.75rem, 5vw, 3.5rem)' }}
         >
-          ONE FM BREAKFAST
+          {live.name}
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="font-h3 text-one-white mb-2"
+          className="font-h3 text-one-white mb-2 text-center"
         >
-          Tim · Lillian · Craig · Di
+          with {live.host}
         </motion.p>
 
         <motion.div
@@ -215,69 +224,37 @@ function HeroSection() {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="font-label text-one-gold mb-4"
         >
-          06:00 – 09:00
+          {live.time}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-          className="flex flex-wrap gap-2 mb-6"
-        >
-          {['NEWS', 'MUSIC', 'TALK', 'LIVE CALLS'].map((tag) => (
-            <span key={tag} className="px-3 py-1 rounded-full border border-one-border font-label text-muted text-[10px]">
-              {tag}
-            </span>
-          ))}
-        </motion.div>
-
-        {/* Progress bar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.5 }}
-          className="w-full mb-4"
+          className="flex flex-wrap items-center justify-center gap-3"
         >
-          <div className="flex justify-between font-micro text-muted mb-1">
-            <span>ELAPSED</span>
-            <span>REMAINING</span>
-          </div>
-          <div className="h-1 bg-one-navy rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-one-gold rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress * 100}%` }}
-              transition={{ duration: 1, ease: 'easeOut' }}
-            />
-          </div>
-        </motion.div>
-
-        {/* Mini player */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
-          className="flex items-center gap-4 mb-6"
-        >
-          <button onClick={() => setPlaying(!playing)} className="w-10 h-10 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform">
-            {playing ? <Pause size={16} /> : <Play size={16} />}
+          <button
+            type="button"
+            onClick={() => void stream.toggle()}
+            className="btn-primary text-xs inline-flex items-center gap-2"
+          >
+            {stream.playing ? <Pause size={14} /> : <Play size={14} />}
+            {stream.playing ? 'Pause' : 'Listen Live'}
           </button>
-          <Volume2 size={16} className="text-muted" />
-          <div className="w-20 h-1 bg-one-navy rounded-full">
-            <div className="w-3/5 h-full bg-one-gold rounded-full" />
-          </div>
+          <Link to="/programs" className="btn-secondary text-xs">
+            Program Guide
+          </Link>
         </motion.div>
 
-        {/* Up Next */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9, duration: 0.5, ease: easeOutExpo }}
-          className="glass-card px-5 py-3 flex items-center gap-4 w-full max-w-md"
+          className="glass-card px-5 py-3 flex items-center gap-4 w-full max-w-md mt-6"
         >
           <div className="font-micro text-muted">UP NEXT</div>
           <div className="flex-1">
-            <div className="font-body-small text-one-white">09:00 — Dancing through the decades with John Painter</div>
+            <div className="font-body-small text-one-white">{live.upNext}</div>
           </div>
           <ArrowRight size={16} className="text-one-gold" />
         </motion.div>
@@ -549,7 +526,7 @@ function ShowSpotlight() {
                   <div className="font-label text-one-gold text-[10px]">MON–FRI 6AM–9AM</div>
                 </div>
               </div>
-              <div className="font-label text-one-gold mb-4">Mon Tim · Tue Tim · Wed Lillian · Thu Craig · Fri Di</div>
+              <div className="font-label text-one-gold mb-4">{getBreakfastScheduleLabel()}</div>
               <p className="font-body text-one-white mb-6 line-clamp-3">
                 Community interviews, local news, and music across the Goulburn Valley. The essential morning companion for the Valley.
               </p>
@@ -561,8 +538,8 @@ function ShowSpotlight() {
                 ))}
               </div>
               <div className="flex gap-3">
-                <button className="btn-primary text-xs">Listen Live</button>
-                <button className="btn-secondary text-xs">View Episodes</button>
+                <Link to="/listen" className="btn-primary text-xs">Listen Live</Link>
+                <Link to="/programs" className="btn-secondary text-xs">Program Guide</Link>
               </div>
             </div>
           </div>
@@ -998,6 +975,7 @@ export default function BroadcastExplorer() {
     <Layout>
       <SEO title="Broadcast Explorer" description="Explore ONE FM 98.5's full program schedule with real presenters, shows, and GVL football broadcasts. Callsign 3ONE, ACMA License 1385226/1." />
       <HeroSection />
+      <PageJobsBar jobs={BROADCAST_JOBS} className="py-4 bg-one-navy border-b border-one-border/40" />
       <ScheduleSection />
       <ShowSpotlight />
       <HostRoster />

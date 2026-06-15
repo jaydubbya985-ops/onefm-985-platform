@@ -95,7 +95,30 @@ export const FOOTER_RESOURCES: NavItem[] = [
   { label: 'Program Guide', path: '/programs' },
 ]
 
-/** All internal routes for sanity checks */
+/** Programs page quick navigation */
+export const PROGRAMS_PAGE_JOBS = [
+  { label: 'Listen Live', path: '/listen', description: 'Stream now' },
+  { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule' },
+  { label: 'Coverage Map', path: '/coverage', description: '25 towns' },
+  { label: 'GVL Football', path: '/football', description: 'Season sponsorship' },
+] as const
+
+/** Broadcast page quick navigation */
+export const BROADCAST_PAGE_JOBS = [
+  { label: 'Listen Live', path: '/listen', description: 'Stream now' },
+  { label: 'Program Guide', path: '/programs', description: 'Shows & hosts' },
+  { label: 'Coverage', path: '/coverage', description: 'Broadcast area' },
+  { label: 'GVL Sport', path: '/football', description: 'Saturday coverage' },
+] as const
+
+/** Coverage page quick navigation */
+export const COVERAGE_PAGE_JOBS = [
+  { label: 'Listen Live', path: '/listen', description: 'Stream now' },
+  { label: 'Programs', path: '/programs', description: 'What we broadcast' },
+  { label: 'Broadcast', path: '/broadcast', description: 'Weekly grid' },
+  { label: 'Media Kit', path: '/media-kit', description: 'Audience stats' },
+] as const
+
 export const SITE_ROUTES = [
   '/',
   '/listen',

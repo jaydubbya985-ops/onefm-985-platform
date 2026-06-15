@@ -1,6 +1,10 @@
 import { useState, memo } from 'react'
+import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
+import { WeeklySchedule } from '@/components/WeeklySchedule'
+import { BRAND } from '@/lib/brand'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
@@ -16,14 +20,21 @@ import {
   Send,
   CheckCircle2,
   Filter,
-  Calendar,
   Trophy,
-  Smartphone,
   Play,
   Headset,
   ChevronRight,
   Wifi,
+  MapPin,
+  Radio,
 } from 'lucide-react'
+
+const PAGE_JOBS: PageJob[] = [
+  { label: 'Listen Live', path: '/listen', description: 'Stream now', icon: Headphones, accent: '#E51636' },
+  { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule', icon: Radio, accent: '#D4AF37' },
+  { label: 'Coverage Map', path: '/coverage', description: '25 towns', icon: MapPin, accent: '#1B458F' },
+  { label: 'GVL Football', path: '/football', description: 'Season sponsorship', icon: Trophy, accent: '#2EC4B6' },
+]
 
 /* ────────────────────────────────────────────────────────── */
 /*  RadioWaveBackground — isolated perpetual animation        */
@@ -311,7 +322,7 @@ const hosts = [
   { name: "James Manley",     show: "The James Manley Show",     time: "Mon–Tue, 4pm–5pm",      type: "Community",   img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
   { name: "Tim Symonds",      show: "The Essential Hits",        time: "Thu 6pm / Sun 12pm",    type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
   { name: "Tym Jeffery",      show: "The Show for Everyone",     time: "Friday, 6pm–7pm",       type: "Community",   img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Carlos Rock",      show: "Planet of Sound",           time: "Thursday, 11pm",        type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
+  { name: "Carlos Rock",      show: "Planet of Sound",           time: "Thu & Fri, 11pm",       type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
   { name: "Timmy Ahmet",      show: "Good Evening Country",      time: "Monday, 8pm",           type: "Music",       img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
   { name: "Sue",              show: "Classic Country / Sunday Night Country", time: "Tue 6pm / Sun 7pm", type: "Music", img: "/assets/images/commentary-box-action.jpg", social: { fb: true } },
   { name: "Carlo",            show: "Viva Italia / Rock 'n' Roll Fever", time: "Tue 9pm / Thu 9pm", type: "Music",   img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
@@ -327,38 +338,26 @@ const hosts = [
   { name: "Jimmy & Rainy",    show: "Mandarin Program",          time: "Monday, 10pm",          type: "Multicultural", img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
 ]
 
+const showFilters = ['All', 'Breakfast', 'Music', 'Sport', 'Community', 'Multicultural']
+
 const hostFilters = ["All", "Breakfast", "Sport", "Music", "Community", "Multicultural"]
 
-/* ────────────────────────────────────────────────────────── */
-/*  Section 4 — GVL Broadcast Schedule                        */
-/* ────────────────────────────────────────────────────────── */
-const rounds = [
+/* GVL — link to football page; live fixtures vary by season */
+const gvlSportBlocks = [
   {
-    round: "Round 2",
-    date: "April 11",
-    fixtures: [
-      { match: "Tatura Bulldogs vs Mooroopna Cats", time: "6:00PM", station: "SEN Goulburn Valley 1260AM", oneFm: false },
-      { match: "Shepp Swans vs Kyabram", time: "2:00PM", station: "ONE FM 98.5", oneFm: true },
-      { match: "Shepparton vs Seymour Lions", time: "2:00PM", station: "Seymour 103.9", oneFm: false },
-    ],
+    title: 'Saturday Sport',
+    time: 'Sat 8am–12pm',
+    desc: 'GVL Football & Netball, cricket, bowls, tennis and harness racing with The Stats Man.',
   },
   {
-    round: "Round 3",
-    date: "April 18",
-    fixtures: [
-      { match: "Echuca vs Rochester", time: "2:00PM", station: "ONE FM 98.5", oneFm: true },
-      { match: "Mansfield vs Benalla", time: "2:00PM", station: "SEN 1260AM", oneFm: false },
-      { match: "Euroa vs Shepp United", time: "6:00PM", station: "ONE FM 98.5", oneFm: true },
-    ],
+    title: 'GVL Match of the Day',
+    time: 'Sat 1pm–3pm',
+    desc: 'Live match commentary from grounds across the Goulburn Valley.',
   },
   {
-    round: "Round 4",
-    date: "April 25",
-    fixtures: [
-      { match: "ANZAC Day — Kyabram vs Mooroopna", time: "10:00AM", station: "ONE FM 98.5", oneFm: true },
-      { match: "ANZAC Day — Shepparton vs Tatura", time: "2:00PM", station: "ONE FM 98.5", oneFm: true },
-      { match: "ANZAC Day — Seymour vs Echuca", time: "2:00PM", station: "Seymour 103.9", oneFm: false },
-    ],
+    title: 'NIRS Friday Night Footy',
+    time: 'Fri 7pm–10pm',
+    desc: 'AFL coverage via the National Indigenous Radio Service network.',
   },
 ]
 
@@ -398,11 +397,16 @@ const podcasts = [
 /*  MAIN PAGE                                                 */
 /* ────────────────────────────────────────────────────────── */
 export default function Programs() {
+  const [showFilter, setShowFilter] = useState('All')
   const [hostFilter, setHostFilter] = useState("All")
   const [requestName, setRequestName] = useState("")
   const [requestSong, setRequestSong] = useState("")
   const [requestMsg, setRequestMsg] = useState("")
   const [requestSent, setRequestSent] = useState(false)
+
+  const filteredShows = showFilter === 'All'
+    ? shows
+    : shows.filter((s) => s.tag === showFilter)
 
   const filteredHosts = hostFilter === "All"
     ? hosts
@@ -410,20 +414,23 @@ export default function Programs() {
 
   const handleRequestSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (requestName && requestSong) {
-      setRequestSent(true)
-      setTimeout(() => {
-        setRequestSent(false)
-        setRequestName("")
-        setRequestSong("")
-        setRequestMsg("")
-      }, 4000)
-    }
+    if (!requestName || !requestSong) return
+    const body = encodeURIComponent(
+      `Song request from ${requestName}\n\nSong: ${requestSong}\n\nMessage: ${requestMsg || '(none)'}`,
+    )
+    window.location.href = `mailto:${BRAND.email}?subject=${encodeURIComponent('ONE FM Song Request')}&body=${body}`
+    setRequestSent(true)
+    setTimeout(() => {
+      setRequestSent(false)
+      setRequestName('')
+      setRequestSong('')
+      setRequestMsg('')
+    }, 4000)
   }
 
   return (
     <Layout>
-      <SEO title="Programs & Shows" description="ONE FM Breakfast, Dancing through the decades, The Regional Voice, GVL Game Day, podcasts, and more. Explore ONE FM 98.5's program lineup." />
+      <SEO title="Programs & Shows" description="ONE FM Breakfast, Dancing through the decades, The James Manley Show, GVL sport, multicultural programs, and more. Full guide from fm985.com.au." />
       {/* ═══════ Section 1 — Hero ═══════ */}
       <section className="relative min-h-[80dvh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
         <RadioWaveBackground />
@@ -440,9 +447,37 @@ export default function Programs() {
           </p>
         </motion.div>
         <OnAirNow />
+        <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-3">
+          <Link to="/listen" className="btn-primary text-sm inline-flex items-center gap-2">
+            <Play size={16} />
+            Listen Live
+          </Link>
+          <Link to="/broadcast" className="btn-secondary text-sm">
+            Broadcast Explorer
+          </Link>
+        </div>
       </section>
 
-      {/* ═══════ Section 2 — Featured Shows ═══════ */}
+      <PageJobsBar jobs={PAGE_JOBS} className="-mt-6 pb-8 relative z-20" />
+
+      {/* Weekly guide from fm985.com.au */}
+      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto border-b border-one-border/40">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <h2 className="font-h2 text-one-white mb-2">This Week&apos;s Guide</h2>
+          <p className="font-body text-muted max-w-2xl">
+            Full schedule sourced from fm985.com.au — select a day to see what&apos;s on.
+          </p>
+        </motion.div>
+        <WeeklySchedule />
+      </section>
+
+      {/* Featured Shows */}
       <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -451,13 +486,33 @@ export default function Programs() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="mb-12"
         >
-          <h2 className="font-h2 text-one-white mb-3">Featured Shows</h2>
-          <p className="font-body text-one-white max-w-xl">
-            From dawn till dark, our presenters keep the Valley informed, entertained and connected.
-          </p>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <h2 className="font-h2 text-one-white mb-3">Featured Shows</h2>
+              <p className="font-body text-one-white max-w-xl">
+                From dawn till dark, our presenters keep the Valley informed, entertained and connected.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {showFilters.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setShowFilter(f)}
+                  className={`font-label text-xs px-4 py-2 rounded-full border transition-all ${
+                    showFilter === f
+                      ? 'bg-one-gold text-one-navy border-one-gold'
+                      : 'bg-transparent text-one-white border-ivory/30 hover:border-ivory'
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {shows.map((show, i) => (
+          {filteredShows.map((show, i) => (
             <motion.div
               key={show.name}
               initial={{ opacity: 0, y: 30 }}
@@ -506,7 +561,7 @@ export default function Programs() {
           <div>
             <h2 className="font-h2 text-one-white mb-3">Host Roster</h2>
             <p className="font-body text-one-white max-w-xl">
-              Meet the voices behind the mic. 16 presenters keeping the Valley connected.
+              Meet the voices behind the mic. {hosts.length} presenters from the fm985.com.au program guide.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -602,57 +657,29 @@ export default function Programs() {
             <h2 className="font-h2 text-one-white">GVL FOOTBALL & NETBALL BROADCASTS</h2>
           </div>
           <p className="font-body text-one-white max-w-2xl">
-            ONE FM 98.5 is the home of Goulburn Valley League coverage. Catch every big game live across our network of partner stations.
+            ONE FM 98.5 covers Goulburn Valley League football and netball on Saturdays, plus NIRS AFL on Friday nights.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {rounds.map((round, ri) => (
+          {gvlSportBlocks.map((block, ri) => (
             <motion.div
-              key={round.round}
+              key={block.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ delay: ri * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
               className="glass-card p-6"
             >
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-one-border">
-                <div>
-                  <h3 className="font-h3 text-one-white">{round.round}</h3>
-                  <p className="font-label text-muted flex items-center gap-2 mt-1">
-                    <Calendar size={12} />
-                    {round.date}
-                  </p>
-                </div>
-                <span className="font-stat text-one-gold">{round.fixtures.length}</span>
+              <div className="flex items-center gap-2 mb-3">
+                <Trophy size={18} className="text-one-gold" />
+                <h3 className="font-h3 text-one-white">{block.title}</h3>
               </div>
-              <div className="space-y-4">
-                {round.fixtures.map((fixture, fi) => (
-                  <div
-                    key={fi}
-                    className={`p-4 rounded-lg border transition-colors ${
-                      fixture.oneFm
-                        ? "bg-one-gold/5 border-one-gold/20"
-                        : "bg-one-navy/40 border-one-border"
-                    }`}
-                  >
-                    <p className="font-body-small text-one-white font-medium">{fixture.match}</p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="font-label text-muted flex items-center gap-1.5">
-                        <Clock size={11} />
-                        {fixture.time}
-                      </span>
-                      <span className={`font-label text-[10px] px-2 py-0.5 rounded ${
-                        fixture.oneFm
-                          ? "bg-one-gold text-one-navy"
-                          : "bg-one-navy text-muted border border-one-border"
-                      }`}>
-                        {fixture.station}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <p className="font-label text-one-gold text-xs mb-2 flex items-center gap-1.5">
+                <Clock size={12} />
+                {block.time}
+              </p>
+              <p className="font-body-small text-muted">{block.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -666,21 +693,21 @@ export default function Programs() {
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-data-teal/10 flex items-center justify-center">
-              <Smartphone size={22} className="text-data-teal" />
+              <Trophy size={22} className="text-data-teal" />
             </div>
             <div>
-              <p className="font-h4 text-one-white">Live Scoring on the GVL App</p>
-              <p className="font-body-small text-one-white">Real-time scores, stats and match previews in your pocket.</p>
+              <p className="font-h4 text-one-white">GVL season sponsorship</p>
+              <p className="font-body-small text-muted">Football partnership tiers and match-day packages.</p>
             </div>
           </div>
-          <button className="btn-primary text-xs shrink-0">
-            Download the GVL App Now
+          <Link to="/football" className="btn-primary text-xs shrink-0 inline-flex items-center gap-1">
+            View GVL Packages
             <ChevronRight size={14} />
-          </button>
+          </Link>
         </motion.div>
       </section>
 
-      {/* ═══════ Section 5 — Podcasts & On-Demand ═══════ */}
+      {/* Podcasts — was Section 5 */}
       <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -689,15 +716,18 @@ export default function Programs() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="mb-12"
         >
-          <h2 className="font-h2 text-one-white mb-3">Podcasts & On-Demand</h2>
-          <p className="font-body text-one-white max-w-xl">
-            Catch up on what you missed. Our podcasts are available everywhere you listen.
+          <h2 className="font-h2 text-one-white mb-3">Interviews & On-Demand</h2>
+          <p className="font-body text-muted max-w-xl">
+            Community interviews and sport replays on SoundCloud — not separate podcast download counts.
           </p>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {podcasts.map((pod, i) => (
-            <motion.div
+            <motion.a
               key={pod.title}
+              href={pod.url}
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
@@ -715,16 +745,13 @@ export default function Programs() {
               </div>
               <p className="font-body-small text-one-white flex-1">{pod.desc}</p>
               <div className="pt-4 border-t border-one-border space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-label text-muted">{pod.eps} episodes</span>
-                  <span className="font-label text-one-gold flex items-center gap-1">
-                    <Play size={12} />
-                    Listen
-                  </span>
-                </div>
-                <p className="font-body-small text-one-white/80">Latest: {pod.latest}</p>
+                <span className="font-label text-one-gold flex items-center gap-1">
+                  <Play size={12} />
+                  Open on SoundCloud
+                </span>
+                <p className="font-body-small text-muted text-xs">Latest: {pod.latest}</p>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </section>
@@ -762,8 +789,8 @@ export default function Programs() {
               >
                 <CheckCircle2 size={56} className="text-data-teal mb-4" />
                 <h3 className="font-h3 text-one-white mb-2">Request Received!</h3>
-                <p className="font-body text-one-white max-w-md">
-                  Thanks {requestName}, your request for "{requestSong}" has been sent to the studio. Keep listening!
+                <p className="font-body text-muted max-w-md">
+                  Your email client should open with the request addressed to {BRAND.email}. You can also call the studio on {BRAND.phone}.
                 </p>
               </motion.div>
             ) : (

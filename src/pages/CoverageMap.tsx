@@ -43,6 +43,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Layout } from '@/components/Layout'
+import { Link } from 'react-router-dom'
 import { towns, broadcastArea, type Town, type SizeCategory } from '@/data/townData'
 
 /* ─────────────────────── helpers ─────────────────────── */
@@ -373,6 +374,12 @@ export default function CoverageMap() {
             </span>
           </div>
           <div className="flex-1" />
+          <div className="hidden sm:flex items-center gap-3 text-[11px] font-label">
+            <Link to="/listen" className="text-[#D4A84B] hover:text-white transition-colors">Listen</Link>
+            <Link to="/programs" className="text-[#8A9199] hover:text-[#D4A84B] transition-colors">Programs</Link>
+            <Link to="/broadcast" className="text-[#8A9199] hover:text-[#D4A84B] transition-colors">Broadcast</Link>
+            <Link to="/media-kit" className="text-[#8A9199] hover:text-[#D4A84B] transition-colors">Media Kit</Link>
+          </div>
           <div className="flex items-center gap-2">
             {!touring ? (
               <button
