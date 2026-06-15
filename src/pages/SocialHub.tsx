@@ -60,6 +60,12 @@ const TEMPLATES = [
   { name: 'First Nations Program', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
   { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
   { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
+  { name: 'TikTok Vertical — Now Playing', platform: 'TikTok', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'LinkedIn Community Partner', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Threads Quote Card', platform: 'Twitter/X', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Carousel Slide 1 — Breakfast', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Carousel)', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
+  { name: 'GVL Scoreboard Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
+  { name: 'Presenter Spotlight Reel', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
 ]
 
 const PLATFORM_FILTERS = ['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'Stories', 'Reels']

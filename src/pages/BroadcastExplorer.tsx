@@ -8,6 +8,81 @@ import {
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import {
+  FULL_SCHEDULE,
+  PROGRAM_PREVIEW_CARDS,
+  ALL_PRESENTERS,
+} from '@/data/programGuide'
+
+const CATEGORY_COLORS: Record<string, string> = {
+  Breakfast: '#D4963A',
+  Music: '#9B5DE5',
+  Community: '#2EC4B6',
+  Sport: '#E63946',
+  Multicultural: '#E63946',
+  Country: '#D4963A',
+}
+
+/** programGuide day (0=Sun) → grid day index (0=Mon) */
+function toExplorerDay(pgDay: number) {
+  return pgDay === 0 ? 6 : pgDay - 1
+}
+
+function formatHour(h: number) {
+  return `${String(h).padStart(2, '0')}:00`
+}
+
+const SHOWS = FULL_SCHEDULE.map((slot, i) => {
+  const endDisplay = slot.endHour === 24 ? '24:00' : formatHour(slot.endHour)
+  const duration =
+    slot.endHour > slot.startHour
+      ? slot.endHour - slot.startHour
+      : 24 - slot.startHour + slot.endHour
+  return {
+    id: `show-${slot.day}-${slot.startHour}-${i}`,
+    name: slot.name,
+    hosts: slot.host,
+    time: `${formatHour(slot.startHour)}–${endDisplay}`,
+    duration,
+    start: slot.startHour,
+    day: toExplorerDay(slot.day),
+    category: slot.category === 'Sport' ? 'Sports' : slot.category,
+    color: CATEGORY_COLORS[slot.category] ?? '#2EC4B6',
+    desc: `${slot.name} with ${slot.host}. Source: fm985.com.au/guide/`,
+  }
+})
+
+const HOSTS = ALL_PRESENTERS.map((p) => ({
+  name: p.name,
+  role: p.show,
+  shows: [p.show],
+  avatar: '/assets/images/commentary-box-action.jpg',
+  shift: p.shift,
+}))
+
+const SEGMENTS = PROGRAM_PREVIEW_CARDS.map((card, i) => ({
+  id: String(i + 1).padStart(2, '0'),
+  name: card.title,
+  duration: card.schedule,
+  category: card.title.includes('Breakfast') ? 'Breakfast' : 'Program',
+  desc: card.description,
+  stats: { editions: 'Weekly', avg: card.schedule, source: 'fm985.com.au' },
+}))
+
+const SHOW_CARDS = PROGRAM_PREVIEW_CARDS.slice(0, 6).map((card) => ({
+  name: card.title,
+  host: card.presenter,
+  schedule: card.schedule,
+  desc: card.description,
+  tags: card.title.includes('Breakfast')
+    ? ['Breakfast', 'Talk', 'Live']
+    : card.title.includes('Sport') || card.title.includes('GVL')
+      ? ['Sport', 'Live']
+      : ['Community', 'Local'],
+  color: card.title.includes('Breakfast') ? '#D4963A' : card.title.includes('Planet') ? '#9B5DE5' : '#2EC4B6',
+  image: '/assets/images/commentary-box-action.jpg',
+  category: card.title.includes('Breakfast') ? 'Talk' : 'Program',
+}))
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -21,85 +96,6 @@ const TIME_FILTERS = [
   { label: 'Afternoon (12–18)', value: 'afternoon' },
   { label: 'Evening (18–24)', value: 'evening' },
   { label: 'Overnight (0–6)', value: 'overnight' },
-]
-
-/* Real program guide derived from oneFmScrapedData.json */
-const SHOWS = [
-  /* Monday (day 0) */
-  { id: 'overnight-mon', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 0, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-mon', name: 'ONE FM Breakfast', hosts: 'Tim Ahemt', time: '06:00–09:00', duration: 3, start: 6, day: 0, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
-  { id: 'dancing-mon', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 0, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
-  { id: 'regional-mon', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 0, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
-  { id: 'africonnect-mon', name: 'Africonnect', hosts: 'Fikiri (Swahili)', time: '21:00–22:00', duration: 1, start: 21, day: 0, category: 'Multicultural', color: '#E63946', desc: 'Swahili language program connecting the African community in the Goulburn Valley.' },
-  { id: 'punjabi-mon', name: 'Punjabi Music Program', hosts: 'Rai, Aanchal or Sahil', time: '23:00–00:00', duration: 1, start: 23, day: 0, category: 'Multicultural', color: '#E63946', desc: 'Punjabi music program Monday nights.' },
-  /* Tuesday (day 1) */
-  { id: 'overnight-tue', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 1, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-tue', name: 'ONE FM Breakfast', hosts: 'Tim Ahemt', time: '06:00–09:00', duration: 3, start: 6, day: 1, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
-  { id: 'dancing-tue', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 1, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
-  { id: 'regional-tue', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 1, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
-  /* Wednesday (day 2) */
-  { id: 'overnight-wed', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 2, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-wed', name: 'ONE FM Breakfast', hosts: 'Lillian Stone', time: '06:00–09:00', duration: 3, start: 6, day: 2, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
-  { id: 'dancing-wed', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 2, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
-  { id: 'regional-wed', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 2, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
-  { id: 'samoan-wed', name: 'Samoan Program', hosts: 'MK', time: '21:00–22:00', duration: 1, start: 21, day: 2, category: 'Multicultural', color: '#E63946', desc: 'Samoan language program connecting the Samoan community.' },
-  { id: 'filipino-wed', name: 'Filipino Music Program', hosts: 'Edith', time: '22:00–23:00', duration: 1, start: 22, day: 2, category: 'Multicultural', color: '#E63946', desc: 'Filipino music program celebrating Filipino culture and music.' },
-  /* Thursday (day 3) */
-  { id: 'overnight-thu', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 3, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-thu', name: 'ONE FM Breakfast', hosts: 'Craig Stott', time: '06:00–09:00', duration: 3, start: 6, day: 3, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
-  { id: 'dancing-thu', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 3, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
-  { id: 'regional-thu', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 3, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
-  { id: 'planet-thu', name: 'Planet of Sound', hosts: 'Carlos Rock', time: '23:00–00:00', duration: 1, start: 23, day: 3, category: 'Music', color: '#9B5DE5', desc: 'Rock music program spanning 19-20 years on air.' },
-  /* Friday (day 4) */
-  { id: 'overnight-fri', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 4, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'breaky-fri', name: 'ONE FM Breakfast', hosts: 'Di Hunter', time: '06:00–09:00', duration: 3, start: 6, day: 4, category: 'Talk', color: '#D4963A', desc: 'Breakfast with community interviews, local news, and music.' },
-  { id: 'dancing-fri', name: 'Dancing through the decades', hosts: 'John Painter', time: '09:00–12:00', duration: 3, start: 9, day: 4, category: 'Music', color: '#9B5DE5', desc: 'Music from across the decades with John Painter.' },
-  { id: 'regional-fri', name: 'The Regional Voice', hosts: 'James Manley', time: '12:00–15:00', duration: 3, start: 12, day: 4, category: 'Talk', color: '#2EC4B6', desc: 'Community-focused programming with local interviews and advocacy.' },
-  { id: 'country-fri', name: 'Good Evening Country', hosts: 'Timmy Ahmet', time: '20:00–21:00', duration: 1, start: 20, day: 4, category: 'Music', color: '#D4963A', desc: 'Country music showcase Friday evenings.' },
-  { id: 'planet-fri', name: 'Planet of Sound', hosts: 'Carlos Rock', time: '23:00–00:00', duration: 1, start: 23, day: 4, category: 'Music', color: '#9B5DE5', desc: 'Rock music program spanning 19-20 years on air.' },
-  /* Saturday (day 5) */
-  { id: 'overnight-sat', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 5, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'sports-sat', name: 'Super Saturday Sports Show', hosts: 'Craig Stott & Various', time: '6:00AM–12:00PM', duration: 6, start: 6, day: 5, category: 'Sports', color: '#E63946', desc: 'Comprehensive local sports coverage including GVL Football & Netball, cricket, bowls, tennis and harness racing.' },
-  /* Sunday (day 6) */
-  { id: 'overnight-sun', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 6, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-]
-
-const HOSTS = [
-  { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', shows: ['ONE FM Breakfast'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Morning' },
-  { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', shows: ['ONE FM Breakfast'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Morning' },
-  { name: 'Craig Stott', role: 'Breakfast (Thu) / Sports (Sat)', shows: ['ONE FM Breakfast', 'Super Saturday Sports Show'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Morning' },
-  { name: 'Di Hunter', role: 'Breakfast Host (Fri)', shows: ['ONE FM Breakfast'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Morning' },
-  { name: 'John Painter', role: 'Music Host', shows: ['Dancing through the decades'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Daytime' },
-  { name: 'James Manley', role: 'Community Host', shows: ['The Regional Voice'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Daytime' },
-  { name: 'Carlos Rock', role: 'Rock Host — 19-20 years on air', shows: ['Planet of Sound'], avatar: '/assets/images/studio-sbs-diversity.jpg', shift: 'Evening' },
-  { name: 'Timmy Ahmet', role: 'Country Host', shows: ['Good Evening Country'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Evening' },
-  { name: 'Ralph Whitehead', role: 'Music Host', shows: ['Friday Arvo / Friday Morning'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Daytime' },
-  { name: 'Roman Koz', role: 'Music Host', shows: ['Friday Mornings'], avatar: '/assets/images/studio-sbs-diversity.jpg', shift: 'Daytime' },
-  { name: 'Fikiri', role: 'Swahili Host', shows: ['Africonnect'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Evening' },
-  { name: 'MK', role: 'Samoan Host', shows: ['Samoan Program'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Evening' },
-  { name: 'Edith', role: 'Filipino Host', shows: ['Filipino Music Program'], avatar: '/assets/images/studio-sbs-diversity.jpg', shift: 'Evening' },
-  { name: 'Jimmy', role: 'Mandarin Host', shows: ['Mandarin Program', 'Her Quiet Strength'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Specialist' },
-  { name: "Ken & Jill Gaffney", role: 'Music Hosts', shows: ['Winding Back'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Specialist' },
-  { name: "Les 'Harro' Harrison", role: 'Community Host', shows: ['Various'], avatar: '/assets/images/studio-sbs-diversity.jpg', shift: 'Specialist' },
-  { name: 'Michael Costello', role: 'Community Host', shows: ['River Allsorts'], avatar: '/assets/images/commentary-box-action.jpg', shift: 'Specialist' },
-  { name: 'Josh Revens', role: 'Community Interviewer', shows: ['Interviews / Various'], avatar: '/assets/images/studio-commentary-selfie.jpg', shift: 'Specialist' },
-]
-
-const SEGMENTS = [
-  { id: '01', name: 'ONE FM Breakfast', duration: 'Mon–Fri, 6am–9am', category: 'Breakfast', desc: 'Rotating breakfast hosts: Tim Ahemt (Mon–Tue), Lillian Stone (Wed), Craig Stott (Thu), Di Hunter (Fri). Community interviews, local news, and music across the Goulburn Valley.', stats: { editions: '5 weekly', avg: '3 hrs', completion: '94%' } },
-  { id: '02', name: 'The Regional Voice', duration: 'Mon–Fri, 12pm–3pm', category: 'Community', desc: 'Community-focused programming with local interviews and advocacy. Hosted by James Manley.', stats: { editions: '5 weekly', avg: '3 hrs', completion: '91%' } },
-  { id: '03', name: 'Planet of Sound', duration: 'Thursday & Friday, 11pm', category: 'Music', desc: 'Rock music program spanning 19-20 years on air with Carlos Rock. A Valley institution for rock fans.', stats: { editions: '2 weekly', avg: '1 hr', completion: '96%' } },
-  { id: '04', name: 'Africonnect', duration: 'Monday, 9-10pm', category: 'Multicultural', desc: 'Swahili language program connecting the African community in the Goulburn Valley. Hosted by Fikiri.', stats: { editions: '1 weekly', avg: '1 hr', completion: '92%' } },
-  { id: '05', name: 'Super Saturday Sports Show', duration: 'Saturday', category: 'Sports', desc: 'Comprehensive local sports coverage including GVL Football & Netball, cricket, bowls, tennis and harness racing. Co-hosted by Craig Stott.', stats: { editions: '1 weekly', avg: '6 hrs', completion: '95%' } },
-]
-
-const SHOW_CARDS = [
-  { name: 'ONE FM Breakfast', host: 'Rotating hosts', schedule: 'Mon–Fri, 6am – 9am', desc: 'Tim Ahemt · Lillian Stone · Craig Stott · Di Hunter — the Valley\'s essential morning companion.', tags: ['Breakfast', 'Talk', 'Live'], color: '#D4963A', image: '/assets/images/commentary-box-action.jpg', category: 'Talk' },
-  { name: 'Dancing through the decades', host: 'John Painter', schedule: 'Mon–Fri, 9am – 12pm', desc: 'Music from across the decades with John Painter. Four years on air, playing the hits that span generations.', tags: ['Music', 'Hits'], color: '#9B5DE5', image: '/assets/images/studio-commentary-selfie.jpg', category: 'Music' },
-  { name: 'The Regional Voice', host: 'James Manley', schedule: 'Mon–Fri, 12pm – 3pm', desc: 'Community-focused programming with local interviews and advocacy. The issues that matter to the Valley.', tags: ['Talk', 'Community', 'Local'], color: '#2EC4B6', image: '/assets/images/commentary-box-action.jpg', category: 'Talk' },
-  { name: 'Planet of Sound', host: 'Carlos Rock', schedule: 'Thu & Fri, 11pm', desc: 'Rock music program spanning 19-20 years on air. The definitive rock show for the Goulburn Valley.', tags: ['Music', 'Rock'], color: '#9B5DE5', image: '/assets/images/studio-sbs-diversity.jpg', category: 'Music' },
-  { name: 'Good Evening Country', host: 'Timmy Ahmet', schedule: 'Friday, 8pm', desc: 'Country music showcase Friday evenings. The best country classics and new releases.', tags: ['Music', 'Country'], color: '#D4963A', image: '/assets/images/studio-commentary-selfie.jpg', category: 'Music' },
-  { name: 'Africonnect', host: 'Fikiri', schedule: 'Monday, 9pm – 10pm', desc: 'Swahili language program connecting the African community in the Goulburn Valley.', tags: ['Multicultural', 'Swahili', 'Community'], color: '#E63946', image: '/assets/images/commentary-box-action.jpg', category: 'Multicultural' },
 ]
 
 /* ─── Live Waveform Canvas ─── */
@@ -797,12 +793,12 @@ function SegmentDeepDive() {
                           <div className="font-label text-muted text-[10px]">EDITIONS</div>
                         </div>
                         <div>
-                          <div className="font-stat text-one-gold" style={{ fontSize: '2rem' }}>{seg.stats.avg}</div>
-                          <div className="font-label text-muted text-[10px]">AVG DURATION</div>
+                          <div className="font-stat text-one-gold" style={{ fontSize: '1.1rem' }}>{seg.stats.avg}</div>
+                          <div className="font-label text-muted text-[10px]">SCHEDULE</div>
                         </div>
                         <div>
-                          <div className="font-stat text-one-gold" style={{ fontSize: '2rem' }}>{seg.stats.completion}</div>
-                          <div className="font-label text-muted text-[10px]">COMPLETION RATE</div>
+                          <div className="font-stat text-one-gold" style={{ fontSize: '1.1rem' }}>{seg.stats.source}</div>
+                          <div className="font-label text-muted text-[10px]">SOURCE</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">

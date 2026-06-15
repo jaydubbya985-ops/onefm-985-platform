@@ -64,7 +64,6 @@ export const stationStats = {
   podcastTarget: 10000,
   nfpsSupported: 100,
   yearsBroadcasting: 37, // since 1989
-  appDownloads: 100000,
 };
 
 // ROI comparison data

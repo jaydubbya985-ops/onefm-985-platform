@@ -37,7 +37,13 @@ import {
 } from 'recharts'
 import { generateMediaKitDocx } from '@/lib/docxExport'
 import { rateCard, stationStats } from '@/data/pricing'
+import { towns } from '@/data/townData'
 import { Layout } from '@/components/Layout'
+
+const topTownListeners = [...towns]
+  .sort((a, b) => b.listenersEstimate - a.listenersEstimate)
+  .slice(0, 5)
+  .map((t) => ({ region: t.name, listeners: t.listenersEstimate }))
 
 /* ─────────── easing tokens ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -90,13 +96,7 @@ const genderData = [
   { gender: 'Other', percent: 3, color: '#9B5DE5' },
 ]
 
-const locationData = [
-  { region: 'Metro Central', listeners: 840000 },
-  { region: 'North Valley', listeners: 520000 },
-  { region: 'Coastal East', listeners: 410000 },
-  { region: 'South Ridge', listeners: 380000 },
-  { region: 'West Plains', listeners: 250000 },
-]
+const locationData = topTownListeners
 
 const rateCardData = [
   { type: 'Live Read', duration: 'Host mention', peak: rateCard.liveRead, offPeak: Math.round(rateCard.liveRead * 0.6), availability: 'Limited' },
@@ -290,10 +290,10 @@ export default function MediaKit() {
       ]
 
       const platformReach = [
-        { platform: 'FM Radio', stat: '98.5 FM', reach: `${stationStats.weeklyListeners.toLocaleString()} weekly listeners` },
-        { platform: 'Digital Streaming', stat: '1.8M', reach: '+34% YoY growth' },
-        { platform: 'Social Media', stat: `${stationStats.socialFollowers.toLocaleString()}`, reach: 'Combined followers across all channels' },
-        { platform: 'Podcast Network', stat: `${stationStats.podcastDownloads.toLocaleString()}`, reach: 'Monthly downloads' },
+        { platform: 'FM Radio', stat: '98.5 FM', reach: `${stationStats.weeklyListeners.toLocaleString()} est. weekly listeners` },
+        { platform: 'Live Stream', stat: 'fm985.com.au', reach: 'Radio.co · Community Radio Plus app' },
+        { platform: 'Social Media', stat: `${stationStats.socialFollowers.toLocaleString()}`, reach: 'Facebook community page (target growth to 12,500)' },
+        { platform: 'SoundCloud', stat: 'Interview archive', reach: 'Community interviews on fm985.com.au' },
       ]
 
       const rateCardRows = rateCardData.map((row) => ({

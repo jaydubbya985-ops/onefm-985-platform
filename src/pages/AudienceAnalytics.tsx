@@ -16,7 +16,6 @@ import {
   FileText,
 } from 'lucide-react'
 import {
-  Line,
   AreaChart,
   Area,
   BarChart,
@@ -29,8 +28,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  ReferenceLine,
-  ComposedChart,
 } from 'recharts'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
@@ -63,21 +60,6 @@ const cardStagger = {
 }
 
 /* ─────────── data ─────────── */
-const sparklineData = [
-  8200, 9100, 8700, 10200, 9800, 11100, 10500, 12000, 11400, 12800,
-  12400, 11800, 13200, 12700, 13500, 14100, 13800, 14500, 14200, 14800,
-  14400, 15000, 14700, 15200, 14900, 15500, 15100, 15800, 15400, 16000,
-  15700, 16200, 15900, 16500, 16100, 16700, 16300, 16900, 16600, 17000,
-  16800, 17200, 17000, 17400, 17200, 17600, 17400, 17800, 17600, 18000,
-  17800, 18200, 18000, 18400, 18200, 18600, 18400, 18800, 18600, 19000,
-]
-
-const trendData = Array.from({ length: 30 }, (_, i) => ({
-  day: `Day ${i + 1}`,
-  listeners: null, // Real streaming data not yet available — connect Radio.co analytics
-  unique: null,
-  forecast: null,
-}))
 
 // ABS 2021 age demographics for Greater Shepparton LGA (source: abs.gov.au)
 const ageDemoData = [
@@ -139,14 +121,14 @@ const platformCards = [
   },
   {
     icon: Mic,
-    title: 'Podcast Network',
-    stat: '320K',
-    label: 'downloads',
-    share: 'The Night Shift (89K)',
-    status: 'Growing',
+    title: 'SoundCloud Archive',
+    stat: 'Interviews',
+    label: 'fm985.com.au',
+    share: 'Community interview replays',
+    status: 'Active',
     statusColor: '#2EC4B6',
     accent: '#FF6B6B',
-    trend: [200, 230, 260, 300, 340, 390, 450],
+    trend: [],
   },
 ]
 
@@ -191,26 +173,6 @@ function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; su
     <span ref={ref}>
       {prefix}{count.toLocaleString()}{suffix}
     </span>
-  )
-}
-
-/* ─────────── sparkline ─────────── */
-function MiniSparkline({ data, color = '#D4963A' }: { data: number[]; color?: string }) {
-  const chartData = data.map((v, i) => ({ i: i, v }))
-  return (
-    <div className="w-full h-[50px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData}>
-          <defs>
-            <linearGradient id={`grad-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={color} stopOpacity={0.3} />
-              <stop offset="100%" stopColor={color} stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <Area type="monotone" dataKey="v" stroke={color} fill={`url(#grad-${color.replace('#', '')})`} strokeWidth={2} dot={false} />
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
   )
 }
 
@@ -376,9 +338,6 @@ export default function AudienceAnalytics() {
                     </div>
                   )}
                 </div>
-                {stat.sparkline && (
-                  <MiniSparkline data={sparklineData.slice(-20)} color={stat.color} />
-                )}
               </motion.div>
             ))}
           </motion.div>
@@ -471,7 +430,7 @@ export default function AudienceAnalytics() {
                 <Sparkles size={18} className="text-one-gold shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="font-body-small text-one-white">
-                    <span className="text-one-gold font-medium">AI Insight:</span> Peak engagement shifts 12% later on weekends. Consider adjusting Saturday morning programming.
+                    <span className="text-one-gold font-medium">Note:</span> Live streaming analytics are not connected yet. Figures on this page use ABS 2021 regional demographics and fm985.com.au programme data.
                   </p>
                 </div>
                 <button onClick={() => setDismissInsight(true)} className="text-muted hover:text-one-white transition-colors">
@@ -513,34 +472,10 @@ export default function AudienceAnalytics() {
               </div>
 
               <div className="glass-card p-4 sm:p-6">
-                <div className="w-full h-[360px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={trendData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="areaAmber" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#D4963A" stopOpacity={0.3} />
-                          <stop offset="100%" stopColor="#D4963A" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" vertical={false} />
-                      <XAxis dataKey="day" tick={{ fill: '#6B6B75', fontSize: 10, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}K`} />
-                      <Tooltip
-                        contentStyle={{
-                          background: 'rgba(26,26,31,0.95)',
-                          border: '1px solid #2A2A30',
-                          borderRadius: '8px',
-                          fontFamily: 'JetBrains Mono, monospace',
-                          fontSize: '12px',
-                          color: '#F4F1EA',
-                        }}
-                      />
-                      <Area type="monotone" dataKey="listeners" stroke="#D4963A" fill="url(#areaAmber)" strokeWidth={2} name="Daily Listeners" />
-                      <Line type="monotone" dataKey="unique" stroke="#2EC4B6" strokeWidth={2} dot={false} name="Unique Listeners" />
-                      <Line type="monotone" dataKey="forecast" stroke="#F0C75E" strokeWidth={2} strokeDasharray="6 4" dot={false} name="AI Forecast" />
-                      <ReferenceLine x="Day 24" stroke="#6B6B75" strokeDasharray="3 3" label={{ value: 'Forecast', fill: '#F0C75E', fontSize: 10, fontFamily: 'JetBrains Mono' }} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
+                <div className="w-full h-[360px] flex items-center justify-center border border-dashed border-one-border rounded-lg">
+                  <p className="font-body-small text-muted text-center px-8 max-w-md">
+                    Daily listener trends require Radio.co analytics integration. Est. weekly audience: 39,375 (townData / ABS 2021).
+                  </p>
                 </div>
               </div>
 
@@ -566,23 +501,23 @@ export default function AudienceAnalytics() {
               <h3 className="font-h3 text-one-white mb-2">Insights</h3>
               {[
                 {
-                  title: 'Trending Up',
-                  text: 'Podcast downloads up 34%',
-                  sub: 'Driven by: The Night Shift relaunch',
+                  title: 'Broadcast Reach',
+                  text: '39,375 est. weekly listeners',
+                  sub: '25 towns · ~100km radius · source: townData / ABS 2021',
                   border: '#2EC4B6',
                   icon: TrendingUp,
                 },
                 {
-                  title: 'Watch This',
-                  text: 'ONE FM Breakfast audience growing',
-                  sub: '-2.3% this week · AI suggests: Increase music ratio',
+                  title: 'Breakfast',
+                  text: 'ONE FM Breakfast Mon–Fri 6–9am',
+                  sub: 'Tim Ahemt · The Big G · Ralph Whitehead · Josh Revens',
                   border: '#F0C75E',
-                  icon: AlertTriangle,
+                  icon: Radio,
                 },
                 {
-                  title: 'Opportunity',
-                  text: 'Untapped: 18-24 demographic',
-                  sub: 'Only 8% of current audience · TikTok cross-promotion recommended',
+                  title: 'Community',
+                  text: '25+ multicultural programs weekly',
+                  sub: 'Swahili, Samoan, Filipino, Mandarin, Punjabi & more',
                   border: '#D4963A',
                   icon: Sparkles,
                 },
@@ -835,10 +770,10 @@ export default function AudienceAnalytics() {
             variants={fadeUp}
           >
             <div>
-              <h2 className="font-h2 text-one-white">AI-POWERED INSIGHTS</h2>
-              <p className="font-body-small text-muted mt-1">Machine learning predictions and anomaly detection</p>
+              <h2 className="font-h2 text-one-white">AUDIENCE INSIGHTS</h2>
+              <p className="font-body-small text-muted mt-1">Sourced regional data — live stream analytics pending Radio.co integration</p>
             </div>
-            <span className="px-3 py-1 rounded-full bg-one-gold/20 text-one-gold font-label text-[10px] shrink-0">BETA</span>
+            <span className="px-3 py-1 rounded-full bg-one-gold/20 text-one-gold font-label text-[10px] shrink-0">SOURCED</span>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -850,17 +785,11 @@ export default function AudienceAnalytics() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: easeOutExpo }}
             >
-              <h4 className="font-h4 text-one-white mb-4">Next Week Prediction</h4>
-              <div className="w-full h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ComposedChart data={trendData.slice(17, 30).map((d, i) => ({ ...d, day: `D${i + 17}` }))}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" vertical={false} />
-                    <XAxis dataKey="day" tick={{ fill: '#6B6B75', fontSize: 10 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: '#6B6B75', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}K`} />
-                    <Area type="monotone" dataKey="listeners" stroke="#D4963A" fill="rgba(212,150,58,0.1)" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="forecast" stroke="#F0C75E" strokeWidth={2} strokeDasharray="6 4" dot={false} name="AI Forecast" />
-                  </ComposedChart>
-                </ResponsiveContainer>
+              <h4 className="font-h4 text-one-white mb-4">Streaming Trends</h4>
+              <div className="w-full h-[200px] flex items-center justify-center border border-dashed border-one-border rounded-lg">
+                <p className="font-body-small text-muted text-center px-6">
+                  Live listener trend charts will display here when Radio.co analytics are connected.
+                </p>
               </div>
               <div className="mt-4 p-3 rounded-lg bg-one-navy/50">
                 <span className="font-label text-xs text-one-gold">Est. weekly listeners: 39,375 (source: townData / ABS 2021)</span>
@@ -875,8 +804,13 @@ export default function AudienceAnalytics() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.15, ease: easeOutExpo }}
             >
-              <h4 className="font-h4 text-one-white mb-4">Recent Anomalies</h4>
+              <h4 className="font-h4 text-one-white mb-4">Stream Anomalies</h4>
               <div className="space-y-3">
+                {anomalyData.length === 0 && (
+                  <p className="font-body-small text-muted p-4 rounded-lg bg-one-navy/50">
+                    No anomaly data yet — requires live streaming analytics integration.
+                  </p>
+                )}
                 {anomalyData.map((a, i) => (
                   <motion.div
                     key={i}
@@ -913,9 +847,9 @@ export default function AudienceAnalytics() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3, ease: easeOutExpo }}
           >
-            <h4 className="font-h4 text-one-white mb-4">Smart Audience Segments</h4>
+            <h4 className="font-h4 text-one-white mb-4">Programming Blocks (Indicative)</h4>
             <p className="font-body-small text-muted mb-4">
-              AI clusters based on listening patterns, engagement, and demographics
+              Typical community radio listening distribution by daypart — not live measurement data
             </p>
             <div className="flex flex-wrap gap-3">
               {smartSegments.map((seg, i) => (
