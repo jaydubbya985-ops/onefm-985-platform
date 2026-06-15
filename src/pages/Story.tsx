@@ -92,7 +92,7 @@ const milestones = [
   {
     year: "2025",
     title: "36th Year — Modern Digital Expansion",
-    desc: "Today ONE FM blends heritage community values with cutting-edge technology: AI-assisted scheduling, immersive audio experiences, expanded digital platforms and a growing podcast network serving the Valley.",
+    desc: "36th year of community broadcasting — expanded online streaming via fm985.com.au and Radio.co, growing podcast presence, and continued GVL sports coverage for the Goulburn Murray.",
     img: "/assets/images/studio-exterior-rainbow.jpg",
     icon: TrendingUp,
   },
@@ -105,16 +105,16 @@ const team = [
   { name: "Craig Stott", role: "Breakfast (Thu) / Super Saturday Sports", years: "2026", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Thursday breakfast and Saturday GVL sports coverage." },
   { name: "Di Hunter", role: "Breakfast Host (Fri)", years: "2026", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts ONE FM Breakfast on Fridays." },
   { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", years: "4", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
-  { name: "Rowan Farren-Parnell", role: "Host — The Regional Voice / The Advocate", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Member of the Mooroopna Community Planning Group. Interviews community figures and discusses local advocacy issues." },
+  { name: "Rowan Farren-Parnell", role: "Host — The Regional Voice / The Advocate", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Member of the Mooroopna Community Planning Group. Interviews community figures and discusses local advocacy issues." },
   { name: "Carlos Rock", role: "Host — Planet of Sound", years: "19-20", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },
-  { name: "Ralph Whitehead", role: "Host — Friday Arvo / Friday Morning", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
-  { name: "Timmy Ahmet", role: "Host — Good Evening Country", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
-  { name: "Les 'Harro' Harrison", role: "Community Host / Various", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
-  { name: "Josh Revens", role: "Community Interviews / Various", years: "[DATA_MISSING_FROM_SOURCE]", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "ONE FM announcer who conducts community interviews covering local events, sports, and community initiatives." },
-  { name: "Fikiri", role: "Host — Africonnect (Swahili)", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
-  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
-  { name: "Edith", role: "Host — Filipino Music Program", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
-  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "[DATA_MISSING_FROM_SOURCE]", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
+  { name: "Ralph Whitehead", role: "Host — Friday Arvo / Friday Morning", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
+  { name: "Timmy Ahmet", role: "Host — Good Evening Country", years: "", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
+  { name: "Les 'Harro' Harrison", role: "Community Host / Various", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
+  { name: "Josh Revens", role: "Community Interviews / Various", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "ONE FM announcer who conducts community interviews covering local events, sports, and community initiatives." },
+  { name: "Fikiri", role: "Host — Africonnect (Swahili)", years: "", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
+  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", years: "", cat: "Multicultural", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
+  { name: "Edith", role: "Host — Filipino Music Program", years: "", cat: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
+  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
 ]
 
 const teamCategories = ["All", "On-Air", "Multicultural"]
@@ -363,7 +363,11 @@ export default function Story() {
                 <div className="flex items-center gap-2 mb-3">
                   <Calendar size={12} className="text-muted" />
                   <span className="font-label text-muted">
-                    {member.years === '[DATA_MISSING_FROM_SOURCE]' ? 'Years at ONE FM unknown' : `${member.years} years at ONE FM`}
+                    {member.years
+                      ? /^\d{4}$/.test(member.years)
+                        ? `On air since ${member.years}`
+                        : `${member.years} years at ONE FM`
+                      : 'Presenter at ONE FM'}
                   </span>
                 </div>
                 <div className="flex gap-2">

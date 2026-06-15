@@ -6,10 +6,10 @@ import { WeatherMini } from '@/components/WeatherWidget'
 import { MediaImage } from '@/components/MediaImage'
 import { media } from '@/lib/media'
 import {
-  BREAKFAST_SHOW,
   getBreakfastHost,
-  getBreakfastScheduleLabel,
   getCurrentLiveShow,
+  HOMEPAGE_FEATURED_SHOWS,
+  PROGRAM_PREVIEW_CARDS,
 } from '@/data/programGuide'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { motion, useInView } from 'framer-motion'
@@ -159,50 +159,10 @@ function ProgramPreview() {
   const isInView = useInView(ref, { once: true, amount: 0.15 })
   const [activeFilter, setActiveFilter] = useState('all')
 
-  const programData = [
-    {
-      title: BREAKFAST_SHOW,
-      presenter: getBreakfastScheduleLabel(),
-      schedule: 'MondayΓÇôFriday, 6AMΓÇô9AM',
-      description: 'Rotating breakfast hosts ΓÇö community interviews, local news, and music. The Valley\'s essential morning companion.',
-      color: '#D4963A',
-    },
-    {
-      title: 'Dancing through the decades',
-      presenter: 'Johnny P (John Painter)',
-      schedule: 'MondayΓÇôFriday, 9AMΓÇô12PM',
-      description: 'Music from across the decades with Johnny P. Four years on air, playing the hits that span generations.',
-      color: '#D4963A',
-    },
-    {
-      title: 'The Regional Voice',
-      presenter: 'James Manley',
-      schedule: 'MondayΓÇôFriday, 12PMΓÇô3PM',
-      description: 'Community-focused programming with local interviews and advocacy. The issues that matter to the Valley.',
-      color: '#D4963A',
-    },
-    {
-      title: 'Africonnect',
-      presenter: 'Fikiri',
-      schedule: 'Monday, 9PMΓÇô10PM',
-      description: 'Swahili language program connecting the African community in the Goulburn Valley.',
-      color: '#D4963A',
-    },
-    {
-      title: 'Planet of Sound',
-      presenter: 'Carlos Rock',
-      schedule: 'Thursday & Friday, 11PM',
-      description: 'Rock music program spanning 19-20 years on air with Carlos Rock. A Valley institution for rock fans.',
-      color: '#D4963A',
-    },
-    {
-      title: 'Good Evening Country',
-      presenter: 'Timmy Ahmet',
-      schedule: 'Friday, 8PMΓÇô9PM',
-      description: 'Country music showcase Friday evenings. The best country classics and new releases.',
-      color: '#D4963A',
-    },
-  ]
+  const programData = PROGRAM_PREVIEW_CARDS.map((p) => ({
+    ...p,
+    color: '#D4963A',
+  }))
 
   return (
     <section ref={ref} className="py-16 md:py-24 relative">
@@ -296,53 +256,36 @@ export default function Home() {
 
   // Program preview
   const todayHost = getBreakfastHost(currentTime.getDay())
-  const featuredShows = [
-    {
-      name: BREAKFAST_SHOW,
-      time: 'MonΓÇôFri 6:00AM',
-      host: todayHost,
-      image: media.onAirHost1,
-      fallback: media.presenter1,
-      isNow: currentShow.name === BREAKFAST_SHOW,
-    },
-    {
-      name: 'Dancing through the decades',
-      time: 'MonΓÇôFri 9:00AM',
-      host: 'John Painter',
-      image: media.onAirHost2,
-      fallback: media.presenter2,
-      isNow: false,
-    },
-    {
-      name: 'The Regional Voice',
-      time: 'MonΓÇôFri 12:00PM',
-      host: 'James Manley',
-      image: media.onAirHost3,
-      fallback: media.presenter3,
-      isNow: false,
-    },
-    {
-      name: 'Planet of Sound',
-      time: 'Thu & Fri 11:00PM',
-      host: 'Carlos Rock',
-      image: media.studioControlRoom,
-      fallback: media.radioStudio,
-      isNow: false,
-    },
-  ]
+  const featuredShows = HOMEPAGE_FEATURED_SHOWS.map((show, index) => {
+    const images = [
+      { image: media.onAirHost1, fallback: media.presenter1 },
+      { image: media.onAirHost2, fallback: media.presenter2 },
+      { image: media.onAirHost3, fallback: media.presenter3 },
+      { image: media.studioControlRoom, fallback: media.radioStudio },
+    ][index] ?? { image: media.onAirHost1, fallback: media.presenter1 }
+    return {
+      name: show.name,
+      time: show.time,
+      host: show.scheduleKey === 'breakfast' ? todayHost : show.hostLabel,
+      ...images,
+      isNow:
+        currentShow.name === show.name ||
+        (show.scheduleKey === 'breakfast' && currentShow.name.includes('Breakfast')),
+    }
+  })
 
   // Ticker data
   const tickerItems = [
-    { text: 'Tune in now ΓÇö live sports coverage every Saturday', url: '/programs' },
-    { text: '36 years of community broadcasting ΓÇö join the celebration', url: '/story' },
+    { text: 'Tune in now — live sports coverage every Saturday', url: '/programs' },
+    { text: '36 years of community broadcasting — join the celebration', url: '/story' },
     { text: 'ONE FM is your emergency broadcaster for the Goulburn Valley', url: '/story' },
     { text: 'Sponsorship enquiries now open for 2026', url: '/sponsorship' },
-    { text: 'Listen anywhere ΓÇö FM 98.5, online stream, smart speakers', url: '/listen' },
+    { text: 'Listen anywhere — FM 98.5, online stream, smart speakers', url: '/listen' },
   ]
 
   return (
     <Layout>
-      <SEO title="Home" description="ONE FM 98.5 ΓÇö Goulburn Valley's community radio. 24/7 local programming, live sports coverage, multicultural shows, and real community voices. Callsign 3ONE." />
+      <SEO title="Home" description="ONE FM 98.5 — Goulburn Valley's community radio. 24/7 local programming, live sports coverage, multicultural shows, and real community voices. Callsign 3ONE." />
       <KenBurnsStyle />
 
       {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ HERO ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
@@ -401,7 +344,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             className="font-body text-one-muted max-w-2xl mx-auto mb-10"
           >
-            Goulburn Valley's community radio. Local stories, local music, local voices ΓÇö 24/7. Based in Shepparton, Victoria, Australia.
+            Goulburn Valley's community radio. Local stories, local music, local voices — 24/7. Based in Shepparton, Victoria, Australia.
           </motion.p>
 
           {/* CTA buttons */}
@@ -483,7 +426,7 @@ export default function Home() {
 
                 <div className="flex-1 min-w-0">
                   <div className="font-label text-muted text-[10px] mb-1">
-                    NOW PLAYING ΓÇö {currentShow.category}
+                    NOW PLAYING — {currentShow.category}
                   </div>
                   <h3 className="font-h3 text-one-white truncate">
                     {currentShow.name}
@@ -668,7 +611,7 @@ export default function Home() {
               </span>
               <h2 className="font-h2 text-one-white mb-6">Community First</h2>
               <p className="font-body text-one-muted mb-6">
-                ONE FM is a community radio station broadcasting to 25 towns across the Goulburn Valley and surrounding regions, reaching a total population of 185,791 people. We're more than a radio station ΓÇö we're the heartbeat of the community.
+                ONE FM is a community radio station broadcasting to 25 towns across the Goulburn Valley and surrounding regions, reaching a total population of 185,791 people. We're more than a radio station — we're the heartbeat of the community.
               </p>
               <p className="font-body text-one-muted mb-8">
                 From emergency broadcasting during floods and fires to celebrating local footy on the weekend, ONE FM keeps the Valley connected, informed, and entertained.
@@ -822,10 +765,10 @@ export default function Home() {
                 25 Towns, One Voice
               </h2>
               <p className="font-body text-one-muted mb-6">
-                Since 1989, ONE FM has been the trusted voice of the Goulburn Valley ΓÇö keeping communities informed, entertained, and connected through every challenge and celebration.
+                Since 1989, ONE FM has been the trusted voice of the Goulburn Valley — keeping communities informed, entertained, and connected through every challenge and celebration.
               </p>
               <p className="font-body text-one-muted mb-8">
-                From Shepparton to Euroa, Tatura to Mansfield, our broadcast signal reaches deep into regional Victoria ΓÇö and our online stream carries the Valley's voice to the world.
+                From Shepparton to Euroa, Tatura to Mansfield, our broadcast signal reaches deep into regional Victoria — and our online stream carries the Valley's voice to the world.
               </p>
 
               <div className="grid grid-cols-2 gap-4 mb-8">
@@ -893,7 +836,7 @@ export default function Home() {
                     },
                     {
                       year: '2014',
-                      event: '25th Anniversary ΓÇö 25 Towns',
+                      event: '25th Anniversary — 25 Towns',
                       desc: 'Celebrated 25 years by visiting 25 towns across the listening area.',
                     },
                     {
@@ -959,7 +902,7 @@ export default function Home() {
                 ONE FM is the official broadcaster for the Goulburn Valley League, covering the biggest footy and netball clashes every Saturday. Live commentary, expert analysis, and all the action you can't get anywhere else.
               </p>
               <p className="font-body text-one-muted mb-8">
-                From Tatura to Mooroopna, Kyabram to Echuca ΓÇö we bring you every goal, every mark, every moment of GVL brilliance.
+                From Tatura to Mooroopna, Kyabram to Echuca — we bring you every goal, every mark, every moment of GVL brilliance.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -1026,7 +969,7 @@ export default function Home() {
 
       {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ TESTIMONIAL ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
       <section className="section-padding relative overflow-hidden">
-        {/* Studio background ΓÇö very subtle */}
+        {/* Studio background — very subtle */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <MediaImage
             src={media.studioControlRoom}
@@ -1081,7 +1024,7 @@ export default function Home() {
               Join the ONE FM Family
             </h2>
             <p className="font-body text-one-muted max-w-xl mx-auto mb-10">
-              Whether you want to volunteer, sponsor, or just tune in ΓÇö there's a place for you in the ONE FM community. Help us keep the Valley's voice strong for the next 36 years.
+              Whether you want to volunteer, sponsor, or just tune in — there's a place for you in the ONE FM community. Help us keep the Valley's voice strong for the next 36 years.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link

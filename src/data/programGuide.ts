@@ -201,3 +201,75 @@ export const ALL_PRESENTERS = [
   { name: 'Edith',              show: 'Filipino Music Program',            shift: 'Specialist' },
   { name: 'Jimmy & Rainy',      show: 'Mandarin Program',                  shift: 'Specialist' },
 ] as const
+
+/** Homepage "What's On Today" tiles — sourced from guide */
+export const HOMEPAGE_FEATURED_SHOWS = [
+  {
+    name: BREAKFAST_SHOW,
+    time: 'Mon–Fri 6:00AM',
+    hostLabel: 'Rotating hosts',
+    scheduleKey: 'breakfast' as const,
+  },
+  {
+    name: 'Dancing through the decades',
+    time: 'Mon–Fri 9:00AM',
+    hostLabel: 'Johnny P (John Painter)',
+    scheduleKey: 'dancing' as const,
+  },
+  {
+    name: 'The James Manley Show',
+    time: 'Mon–Tue 4:00PM',
+    hostLabel: 'James Manley',
+    scheduleKey: 'james-manley' as const,
+  },
+  {
+    name: 'Planet of Sound',
+    time: 'Thu & Fri 11:00PM',
+    hostLabel: 'Carlos Rock',
+    scheduleKey: 'planet' as const,
+  },
+] as const
+
+/** Homepage program preview cards */
+export const PROGRAM_PREVIEW_CARDS = [
+  {
+    title: BREAKFAST_SHOW,
+    presenter: getBreakfastScheduleLabel(),
+    schedule: 'Monday–Friday, 6AM–9AM',
+    description:
+      "Rotating breakfast hosts — community interviews, local news, and music. The Valley's essential morning companion.",
+  },
+  {
+    title: 'Dancing through the decades',
+    presenter: 'Johnny P (John Painter)',
+    schedule: 'Monday–Friday, 9AM–12PM',
+    description:
+      'Music from across the decades with Johnny P. Four years on air, playing the hits that span generations.',
+  },
+  {
+    title: 'The James Manley Show',
+    presenter: 'James Manley',
+    schedule: 'Monday–Tuesday, 4PM–5PM',
+    description:
+      'Community-focused afternoon programming with local interviews and advocacy. The issues that matter to the Valley.',
+  },
+  {
+    title: 'The Afri-Connect Program',
+    presenter: 'Fikiri',
+    schedule: 'Monday, 9PM–10PM',
+    description: 'Swahili language program connecting the African community in the Goulburn Valley.',
+  },
+  {
+    title: 'Planet of Sound',
+    presenter: 'Carlos Rock',
+    schedule: 'Thursday & Friday, 11PM',
+    description:
+      'Rock music program spanning 19–20 years on air with Carlos Rock. A Valley institution for rock fans.',
+  },
+  {
+    title: 'Good Evening Country',
+    presenter: 'Timmy Ahmet',
+    schedule: 'Monday, 8PM–9PM',
+    description: 'Country music showcase — the best country classics and new releases.',
+  },
+] as const

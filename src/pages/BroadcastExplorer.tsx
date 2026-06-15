@@ -59,7 +59,7 @@ const SHOWS = [
   { id: 'planet-fri', name: 'Planet of Sound', hosts: 'Carlos Rock', time: '23:00–00:00', duration: 1, start: 23, day: 4, category: 'Music', color: '#9B5DE5', desc: 'Rock music program spanning 19-20 years on air.' },
   /* Saturday (day 5) */
   { id: 'overnight-sat', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 5, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
-  { id: 'sports-sat', name: 'Super Saturday Sports Show', hosts: 'Craig Stott & Various', time: '[DATA_MISSING_FROM_SOURCE]', duration: 6, start: 6, day: 5, category: 'Sports', color: '#E63946', desc: 'Comprehensive local sports coverage including GVL Football & Netball, cricket, bowls, tennis and harness racing.' },
+  { id: 'sports-sat', name: 'Super Saturday Sports Show', hosts: 'Craig Stott & Various', time: '6:00AM–12:00PM', duration: 6, start: 6, day: 5, category: 'Sports', color: '#E63946', desc: 'Comprehensive local sports coverage including GVL Football & Netball, cricket, bowls, tennis and harness racing.' },
   /* Sunday (day 6) */
   { id: 'overnight-sun', name: 'Overnight Mix', hosts: 'Auto', time: '00:00–06:00', duration: 6, start: 0, day: 6, category: 'Music', color: '#D4963A', desc: 'Automated overnight music mix. 12am-6am daily.' },
 ]

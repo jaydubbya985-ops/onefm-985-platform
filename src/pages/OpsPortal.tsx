@@ -111,6 +111,14 @@ function OpsPortalContent() {
             {isSupabaseConfigured() && user && (
               <p className="text-one-muted text-xs mt-1">Signed in as {user.email}</p>
             )}
+            {!isSupabaseConfigured() && (
+              <div className="mt-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-200 max-w-2xl">
+                <strong>Demo mode.</strong> Set{' '}
+                <code className="text-amber-100">VITE_SUPABASE_URL</code> and{' '}
+                <code className="text-amber-100">VITE_SUPABASE_ANON_KEY</code> in Netlify to enable
+                live invoices and payments.
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {isSupabaseConfigured() && (
