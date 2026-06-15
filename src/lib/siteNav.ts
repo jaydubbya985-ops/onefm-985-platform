@@ -3,6 +3,8 @@
  * Audit order: Listen → Sponsor → About → Support
  */
 
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
 export interface NavItem {
   label: string
   path: string
@@ -61,24 +63,32 @@ export const HOME_JOBS = [
     path: '/listen',
     description: 'Stream ONE FM on FM, web, or app',
     accent: '#E51636',
+    image: STATION_PHOTOS.commentaryBoxAction,
+    tags: ['Live', '98.5 FM', 'Stream'],
   },
   {
     label: 'Programs',
     path: '/programs',
     description: 'Breakfast, sport, multicultural & more',
     accent: '#D4AF37',
+    image: STATION_PHOTOS.communityOutdoorMarket,
+    tags: ['Guide', 'Hosts', 'Weekly'],
   },
   {
     label: 'Broadcast',
     path: '/broadcast',
     description: 'Weekly schedule · presenters · segments',
     accent: '#2EC4B6',
+    image: STATION_PHOTOS.gvlCrowdStands,
+    tags: ['Grid', 'On Air', 'Sport'],
   },
   {
     label: 'Coverage',
     path: '/coverage',
     description: 'Map of 25 towns in our broadcast area',
     accent: '#1B458F',
+    image: STATION_PHOTOS.geoTownAerial,
+    tags: ['25 Towns', 'Valley', 'Map'],
   },
 ] as const
 

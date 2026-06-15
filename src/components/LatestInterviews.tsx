@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react'
 import { ExternalLink, Mic2, Play } from 'lucide-react'
-import {
-  fetchLatestInterviews,
-  formatInterviewDate,
-  SOUNDCLOUD_EMBED_URL,
-  type Fm985Interview,
-} from '@/lib/fm985Feed'
-import { FacebookPageEmbed } from '@/components/FacebookPageEmbed'
+import { fetchLatestInterviews, formatInterviewDate, type Fm985Interview } from '@/lib/fm985Feed'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
+import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
+import { FacebookPanel } from '@/components/social/FacebookPanel'
 
 function InterviewCard({ item }: { item: Fm985Interview }) {
   const [expanded, setExpanded] = useState(false)
 
   return (
-    <article className="glass-card rounded-xl p-5 border-one-border/60 hover:border-one-gold/30 transition-colors">
+    <article className="rounded-xl border border-one-border/80 bg-one-midnight/60 p-5 hover:border-one-gold/30 transition-colors">
       <div className="flex gap-4">
         {item.imageUrl ? (
           <img
@@ -44,7 +40,7 @@ function InterviewCard({ item }: { item: Fm985Interview }) {
               <Play size={14} /> Listen
             </button>
           ) : (
-            <audio controls preload="none" className="w-full h-10" src={item.audioUrl}>
+            <audio controls preload="none" className="w-full h-10 accent-one-gold" src={item.audioUrl}>
               <track kind="captions" />
             </audio>
           )}
@@ -88,12 +84,12 @@ export function LatestInterviews() {
   return (
     <section className="section-padding bg-one-navy relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-10">
           <div>
             <span className="font-label text-one-gold">LIVE &amp; LOCAL</span>
             <h2 className="font-h2 text-one-white mt-2">Latest Interviews</h2>
             <p className="font-body text-muted mt-2 max-w-xl">
-              Fresh from ONE FM 98.5 — synced from fm985.com.au and your SoundCloud podcast feed.
+              Fresh from ONE FM 98.5 — synced from fm985.com.au with on-demand audio on SoundCloud.
             </p>
           </div>
           <div className="flex flex-wrap gap-3 shrink-0">
@@ -101,46 +97,34 @@ export function LatestInterviews() {
               href={FACEBOOK_PAGE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-secondary inline-flex items-center gap-2"
+              className="btn-secondary text-xs inline-flex items-center gap-2"
             >
-              Facebook <ExternalLink size={16} />
+              Facebook <ExternalLink size={14} />
             </a>
             <a
               href={SOUNDCLOUD_PROFILE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-secondary inline-flex items-center gap-2"
+              className="btn-secondary text-xs inline-flex items-center gap-2"
             >
-              SoundCloud <ExternalLink size={16} />
+              SoundCloud <ExternalLink size={14} />
             </a>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="glass-card rounded-xl overflow-hidden border-one-border/60 p-1 lg:col-span-1">
-            <iframe
-              title="ONE FM 98.5 on SoundCloud"
-              width="100%"
-              height="320"
-              scrolling="no"
-              frameBorder="no"
-              allow="autoplay"
-              src={SOUNDCLOUD_EMBED_URL}
-              className="rounded-lg"
-            />
-          </div>
-
-          <div className="lg:col-span-1">
-            <FacebookPageEmbed height={320} />
-          </div>
-
-          <div className="space-y-4 lg:col-span-1">
+        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
+          <div className="lg:col-span-7 space-y-4">
             {loading &&
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="glass-card rounded-xl h-28 animate-pulse bg-one-border/20" />
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-xl h-28 border border-one-border/40 animate-pulse bg-one-border/10" />
               ))}
             {error && <p className="font-body-small text-one-red">{error}</p>}
             {!loading && !error && items.map((item) => <InterviewCard key={item.id} item={item} />)}
+          </div>
+
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <SoundCloudPanel interviews={items} />
+            <FacebookPanel />
           </div>
         </div>
       </div>

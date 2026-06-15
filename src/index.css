@@ -50,11 +50,11 @@
     --sidebar-border: 216 30% 18%;
     --sidebar-ring: 40 60% 55%;
 
-    --one-navy: #0A1628;
-    --one-blue: #1B4F8F;
-    --one-electric: #0066CC;
-    --one-gold: #D4A84B;
-    --one-red: #E31E24;
+    --one-navy: #071D3A;
+    --one-blue: #1B458F;
+    --one-electric: #00E5FF;
+    --one-gold: #D4AF37;
+    --one-red: #E51636;
     --one-white: #FFFFFF;
     --one-muted: #8A9199;
     --one-border: #1A2A42;
@@ -219,7 +219,7 @@
   }
 
   .text-gradient-spectrum {
-    background: linear-gradient(90deg, #D4A84B, #E31E24, #7A8B6E);
+    background: linear-gradient(90deg, #D4AF37, #E51636, #1B458F);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -227,13 +227,13 @@
 
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-label transition-all duration-300;
-    background: linear-gradient(135deg, #D4A84B, #B8943F);
+    background: linear-gradient(135deg, #D4AF37, #B8943F);
     color: var(--one-navy);
   }
 
   .btn-primary:hover {
     @apply scale-105;
-    background: linear-gradient(135deg, #E0B85C, #D4A84B);
+    background: linear-gradient(135deg, #F4D27A, #D4AF37);
   }
 
   .btn-primary:active {
@@ -358,7 +358,7 @@
     display: block;
     width: 40px;
     height: 3px;
-    background: linear-gradient(90deg, #D4A84B, #E0C070);
+    background: linear-gradient(90deg, #D4AF37, #F4D27A);
     border-radius: 2px;
   }
 
@@ -412,7 +412,7 @@
   }
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #D4A84B, #E0C070);
+    background: linear-gradient(90deg, #D4AF37, #F4D27A);
     border-radius: 999px;
     position: relative;
   }

@@ -6,8 +6,10 @@
 import scraped from '@/data/oneFmScrapedData.json'
 
 export const SOUNDCLOUD_PROFILE_URL = 'https://soundcloud.com/user-570295409'
+
+/** @deprecated Native SoundCloudPanel replaces the orange iframe widget. */
 export const SOUNDCLOUD_EMBED_URL =
-  'https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/user-570295409&color=%23D4A853&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true'
+  'https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/user-570295409&color=%23D4AF37&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false'
 
 const WP_PATH = '/wp-json/wp/v2'
 /** WordPress category: Interview */

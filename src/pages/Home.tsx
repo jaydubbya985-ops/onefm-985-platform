@@ -13,6 +13,8 @@ import {
 } from '@/data/programGuide'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { HomeQuickJobs } from '@/components/home/HomeQuickJobs'
+import { CinegraphBackground } from '@/components/CinegraphBackground'
+import { BRAND_COLORS } from '@/lib/brand'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { motion, useInView } from 'framer-motion'
@@ -26,7 +28,7 @@ import {
 function StationIdent() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const textRef = useRef('98.5 ONE FM')
-  const colorRef = useRef('rgba(212,150,58,0.04)')
+  const colorRef = useRef('rgba(212,175,55,0.04)')
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -136,7 +138,7 @@ function AudioWave() {
         if (x === 0) ctx.moveTo(x, y)
         else ctx.lineTo(x, y)
       }
-      ctx.strokeStyle = 'rgba(212,150,58,0.2)'
+      ctx.strokeStyle = 'rgba(212,175,55,0.2)'
       ctx.lineWidth = 1.5
       ctx.stroke()
 
@@ -164,7 +166,7 @@ function ProgramPreview() {
 
   const programData = PROGRAM_PREVIEW_CARDS.map((p) => ({
     ...p,
-    color: '#D4963A',
+    color: BRAND_COLORS.gold,
   }))
 
   return (
@@ -294,30 +296,21 @@ export default function Home() {
       <SEO title="Home" description="ONE FM 98.5 — Goulburn Valley's community radio. 24/7 local programming, live sports coverage, multicultural shows, and real community voices. Callsign 3ONE." />
       <KenBurnsStyle />
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ HERO ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
-      <section className="relative min-h-[100dvh] flex flex-col justify-center items-center overflow-hidden">
-        {/* Cinematic background */}
+      {/* ═══════ HERO ═══════ */}
+      <section className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <MediaImage
-            src={media.regionalLandscape}
-            fallbackSrc={media.australianSunset}
-            alt=""
-            priority
-            skeleton={false}
-            className="absolute inset-0 w-full h-full animate-ken-burns"
-            style={{ opacity: 0.35 }}
+          <CinegraphBackground slot="homeHero" opacity={0.42} />
+          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/70 via-one-navy/30 to-one-navy" />
+          <div className="absolute inset-0 bg-gradient-to-r from-one-navy/60 via-transparent to-one-navy/60" />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(212,175,55,0.04) 0%, transparent 65%)' }}
           />
-          {/* Multi-layer overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/60 via-one-navy/40 to-one-navy" />
-          <div className="absolute inset-0 bg-gradient-to-r from-one-navy/50 via-transparent to-one-navy/50" />
-          {/* Gold vignette hint */}
-          <div className="absolute inset-0"
-            style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(212,168,75,0.03) 0%, transparent 70%)' }} />
         </div>
 
         <StationIdent />
 
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto -mt-16 md:-mt-24">
+        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto pb-32 md:pb-36 pt-24">
           {/* Frequency */}
           <motion.div
             initial={{ scale: 0 }}
@@ -336,11 +329,11 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-            className="font-h1 text-one-white mb-6 text-shadow-hero"
+            className="font-hero text-one-white mb-6 text-shadow-hero"
           >
             THE VOICE OF
             <br />
-            THE VALLEY
+            <span className="text-one-gold">THE VALLEY</span>
           </motion.h1>
 
           {/* Tagline */}
@@ -358,7 +351,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-            className="flex flex-wrap items-center justify-center gap-4 mb-16"
+            className="flex flex-wrap items-center justify-center gap-4 mb-10"
           >
             <Link
               to="/listen"
@@ -381,7 +374,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-            className="flex flex-wrap items-center justify-center gap-8 mb-12"
+            className="flex flex-wrap items-center justify-center gap-6 md:gap-8"
           >
             <div className="flex items-center gap-2">
               <MapPin size={16} className="text-one-gold" />
@@ -401,6 +394,21 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+          className="absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none"
+          aria-hidden
+        >
+          <span className="font-label text-one-muted text-[9px] tracking-[0.2em]">scroll to explore</span>
+          <motion.span
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="w-px h-8 bg-gradient-to-b from-one-gold/60 to-transparent"
+          />
+        </motion.div>
       </section>
 
       <HomeQuickJobs />

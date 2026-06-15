@@ -9,7 +9,6 @@ import {
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { FacebookPageEmbed } from '@/components/FacebookPageEmbed'
-import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -234,23 +233,15 @@ function LiveFacebookSection() {
     <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
         <div>
-          <p className="font-label text-one-gold text-[10px] mb-2">LIVE FROM FACEBOOK</p>
+          <p className="font-label text-one-gold text-[10px] mb-2">COMMUNITY</p>
           <h2 className="font-h2 text-one-white">Follow ONE FM 98.5</h2>
           <p className="font-body text-muted mt-2 max-w-xl">
-            News, events, and community updates from our official Facebook page.
+            News, events, and Goulburn Valley updates — no clunky embeds, just our real community channels.
           </p>
         </div>
-        <a
-          href={FACEBOOK_PAGE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-secondary text-xs shrink-0"
-        >
-          Open Facebook Page
-        </a>
       </div>
-      <div className="max-w-lg mx-auto md:mx-0">
-        <FacebookPageEmbed height={420} />
+      <div className="max-w-3xl">
+        <FacebookPageEmbed />
       </div>
     </section>
   )
