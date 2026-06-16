@@ -4,5 +4,11 @@ dist
 .env
 .env.local
 
+# Google Drive sync (local rclone config lives in %APPDATA%\\rclone)
+scripts/google-drive.config.json
+
 # Local Netlify folder (state from CLI — netlify.toml at root is committed)
 .netlify
+
+# Agent skills installed via `npx skills add` (reinstall from package)
+.agents

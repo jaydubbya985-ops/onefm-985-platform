@@ -38,6 +38,49 @@ npx netlify deploy --prod --dir=dist
 | Invoices | `src/components/ops/InvoiceEmailTemplate.tsx` |
 | Ops | `src/pages/OpsPortal.tsx`, Supabase env required for live |
 
+## Ops portal (Supabase)
+
+- **Project URL:** `https://myarjdatdtchmkgdpsab.supabase.co`
+- **Project ref:** `myarjdatdtchmkgdpsab`
+- **Schema:** run `supabase-schema-all.sql` in Supabase SQL Editor (once)
+- **Netlify env:** `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` (from Project Settings → API)
+- Without env vars, `#/ops` stays in demo mode (password `onefm2026`)
+
+## Supabase MCP (Cursor)
+
+Project-scoped MCP for database, migrations, edge functions, and logs.
+
+| File | Purpose |
+|------|---------|
+| `.cursor/mcp.json` | Live MCP config (project ref only — no secrets) |
+| `.cursor/mcp.json.example` | Template for other devs |
+| `.agents/skills/supabase/` | Installed agent skills (gitignored) |
+
+**Authenticate (Jay — one-time, in Cursor UI):**
+
+1. **Settings → Tools & MCP** (or Cursor Settings → MCP)
+2. Find **supabase** server → **Connect** / **Authenticate**
+3. Browser opens → log in to Supabase → grant access to org with this project
+4. **Reload window** (Cmd/Ctrl+Shift+P → “Reload Window”)
+5. Verify: ask agent “List tables using Supabase MCP” — tools should appear under MCP
+
+Agents **cannot** complete OAuth from the terminal; this step must be done in Cursor.
+
+**Claude Code CLI equivalent** (if using Claude outside Cursor):
+
+```bash
+claude mcp add --scope project --transport http supabase "https://mcp.supabase.com/mcp?project_ref=myarjdatdtchmkgdpsab"
+claude /mcp   # then select supabase → Authenticate
+```
+
+**Install / refresh agent skills:**
+
+```bash
+npx skills add supabase/agent-skills
+```
+
+**Security:** Prefer dev project only; use `?read_only=true` on the MCP URL if querying production-adjacent data. Review each MCP tool call before approving.
+
 ## Cursor Cloud specific instructions
 
 1. Always `git pull origin main` before editing.
