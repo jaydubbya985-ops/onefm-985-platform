@@ -9,6 +9,26 @@ import type {
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
+const PLACEHOLDER_KEY_VALUES = new Set([
+  'your-anon-key-here',
+  'your-publishable-key-here',
+])
+
+/** Accepts legacy JWT anon keys and new publishable keys (sb_publishable_...). */
+export function isValidSupabaseKey(key: string): boolean {
+  if (!key || PLACEHOLDER_KEY_VALUES.has(key)) return false
+  return key.startsWith('eyJ') || key.startsWith('sb_publishable_')
+}
+
+/** True when real Supabase credentials are configured (not placeholder values). */
+export function isSupabaseConfigured(): boolean {
+  return Boolean(
+    supabaseUrl &&
+      isValidSupabaseKey(supabaseAnonKey) &&
+      !supabaseUrl.includes('your-project-id'),
+  )
+}
+
 // Supabase throws if URL is empty — use inert placeholders until env vars are set.
 const clientUrl = supabaseUrl || 'https://placeholder.supabase.co'
 const clientKey =
@@ -19,17 +39,28 @@ export const supabase = createClient(clientUrl, clientKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storageKey: 'onefm-supabase-auth',
   },
 })
 
-/** True when real Supabase credentials are configured (not placeholder values). */
-export function isSupabaseConfigured(): boolean {
-  return Boolean(
-    supabaseUrl &&
-      supabaseAnonKey &&
-      !supabaseUrl.includes('your-project-id') &&
-      supabaseAnonKey !== 'your-anon-key-here',
-  )
+let authRefreshInitialized = false
+
+/** Pause token refresh when the tab is hidden; resume when visible. */
+export function initSupabaseAuthRefresh(): void {
+  if (authRefreshInitialized || typeof document === 'undefined') return
+  authRefreshInitialized = true
+
+  const syncRefresh = () => {
+    if (document.visibilityState === 'visible') {
+      void supabase.auth.startAutoRefresh()
+    } else {
+      void supabase.auth.stopAutoRefresh()
+    }
+  }
+
+  document.addEventListener('visibilitychange', syncRefresh)
+  syncRefresh()
 }
 
 // ── Database row types ─────────────────────────────────────────

@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "npm run build && npx netlify deploy --prod --dir=dist",
-    "deploy:preview": "npm run build && npx netlify deploy --dir=dist"
+    "deploy:preview": "npm run build && npx netlify deploy --dir=dist",
+    "connect:drive": "powershell -ExecutionPolicy Bypass -File scripts/connect-google-drive.ps1",
+    "list:drive": "powershell -ExecutionPolicy Bypass -File scripts/list-google-drive.ps1",
+    "sync:drive": "powershell -ExecutionPolicy Bypass -File scripts/sync-google-drive.ps1"
   },
   "engines": {
     "node": ">=20"
@@ -48,7 +51,7 @@
     "@react-three/postprocessing": "^3.0.4",
     "@stripe/react-stripe-js": "^6.3.0",
     "@stripe/stripe-js": "^9.3.1",
-    "@supabase/supabase-js": "^2.105.1",
+    "@supabase/supabase-js": "^2.108.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
