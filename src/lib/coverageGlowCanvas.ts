@@ -14,8 +14,12 @@ export interface CoverageGlowOptions {
 /**
  * Canvas overlay: true radial gradient + sonar ripples + station halo.
  * Synced to map projection on every frame / pan / zoom.
+ *
+ * NOTE: the class body is wrapped in a factory to avoid evaluating
+ * `google.maps.OverlayView` at module-import time (before the Maps API loads).
  */
-export class CoverageGlowOverlay extends google.maps.OverlayView {
+function createGlowOverlayClass() {
+  return class CoverageGlowOverlay extends google.maps.OverlayView {
   private canvas: HTMLCanvasElement | null = null
   private ctx: CanvasRenderingContext2D | null = null
   private raf = 0
@@ -222,7 +226,17 @@ export class CoverageGlowOverlay extends google.maps.OverlayView {
     this.canvas = null
     this.ctx = null
   }
+  }  // end class
+} // end createGlowOverlayClass
+
+// Memoised so the class is only built once per session.
+let _GlowOverlayClass: ReturnType<typeof createGlowOverlayClass> | null = null
+function getGlowOverlayClass() {
+  if (!_GlowOverlayClass) _GlowOverlayClass = createGlowOverlayClass()
+  return _GlowOverlayClass
 }
+
+export type CoverageGlowOverlay = InstanceType<ReturnType<typeof createGlowOverlayClass>>
 
 function hexA(hex: string, alpha: number): string {
   const n = hex.replace('#', '')
@@ -241,7 +255,8 @@ export function mountCanvasCoverageGlow(
   map: google.maps.Map,
   options: CoverageGlowOptions,
 ): CoverageGlowHandle {
-  const overlay = new CoverageGlowOverlay(options)
+  const GlowClass = getGlowOverlayClass()
+  const overlay = new GlowClass(options)
   overlay.setMap(map)
   return {
     overlay,
