@@ -247,9 +247,7 @@ function ProgramPreview() {
   )
 }
 
-/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
-/*  HOME PAGE                                              */
-/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+/* ─────────────────────── HOME PAGE ─────────────────────── */
 export default function Home() {
   const stream = useLiveStream()
   const playerMeta = usePlayerMetadata()
@@ -531,7 +529,7 @@ export default function Home() {
             {/* Ticker */}
             <div className="px-6 py-2.5 border-t border-one-border bg-one-gold/5 overflow-hidden">
               <div className="ticker-track gap-10">
-                {/* Duplicate 4├ù so the loop looks seamless at all widths */}
+                {/* Duplicate 4x so the loop looks seamless at all widths */}
                 {[...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems].map((item, i) => (
                   <Link
                     key={i}
@@ -550,7 +548,7 @@ export default function Home() {
 
       <LatestInterviews />
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ FEATURED SHOWS ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* --- FEATURED SHOWS --- */}
       <section className="section-padding bg-[#0A0E1A] relative overflow-hidden">
         <AudioWave />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
@@ -627,10 +625,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ PROGRAM PREVIEW ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* --- PROGRAM PREVIEW --- */}
       <ProgramPreview />
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ VISION ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* --- VISION --- */}
       <section className="section-padding">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -687,7 +685,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ STATS ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* --- STATS --- */}
       <section className="py-20 md:py-28 bg-[#070F1C] relative">
         <div
           className="absolute inset-0 opacity-[0.04]"
@@ -769,7 +767,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ COMMUNITY SPOTLIGHT ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* --- COMMUNITY SPOTLIGHT --- */}
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0">
           <MediaImage
@@ -914,7 +912,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ GVL GAME DAY ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* --- GVL GAME DAY --- */}
       <section className="section-padding bg-[#0A0E1A] relative">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-one-gold/[0.02] rounded-l-full" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
@@ -1001,7 +999,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ TESTIMONIAL ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* --- TESTIMONIAL --- */}
       <section className="section-padding relative overflow-hidden">
         {/* Studio background — very subtle */}
         <div className="absolute inset-0 z-0 pointer-events-none">
@@ -1045,7 +1043,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ CTA ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* --- CTA --- */}
       <section className="section-padding bg-[#0A0E1A]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
