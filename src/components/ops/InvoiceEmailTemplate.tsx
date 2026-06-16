@@ -1,22 +1,21 @@
 /* eslint-disable react-refresh/only-export-components */
 // ---------------------------------------------------------------------------
-// InvoiceEmailTemplate — restored at full fidelity from the deployed bundle.
+// InvoiceEmailTemplate — ONE FM 98.5 Broadcast Letter System
 //
-//   • generateInvoiceEmailHtml (bundle `mo`)  — branded HTML invoice letter
-//   • generateReceiptEmailHtml (bundle `$i`)  — branded payment receipt email
-//   • generateInvoicePdf       (bundle `dp`)  — html2canvas + jsPDF A4 invoice
-//   • InvoiceEmailTemplate     (bundle `Oi`)  — interactive email preview with
-//     editable custom message, copy-to-clipboard bank details and raw HTML.
+//   • generateInvoiceEmailHtml   — navy hero + 64px gold amount + white body
+//   • generateReceiptEmailHtml   — same shell, "PAYMENT RECEIVED"
+//   • generateInvoicePdf         — pure vector jsPDF (no html2canvas)
+//   • InvoiceEmailTemplate       — interactive ops portal preview component
 // ---------------------------------------------------------------------------
 import { useState } from 'react'
-import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import { Check, Copy, CreditCard } from 'lucide-react'
 import { useToast } from './Toast'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
+import { DS } from '@/lib/invoiceDesignSystem'
 
 // ---------------------------------------------------------------------------
-// Bank + Stripe configuration (verbatim from bundle)
+// Bank + Stripe configuration
 // ---------------------------------------------------------------------------
 
 export const BANK_BSB = '083-894'
@@ -34,7 +33,6 @@ export interface StripeConfig {
 
 export const STRIPE_CONFIG: StripeConfig = {
   accountId: 'acct_1J696RS3NlaEohlL',
-  // needsSetup = true until VITE_STRIPE_PUBLISHABLE_KEY is set in .env
   needsSetup: !(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined)?.startsWith('pk_'),
   publishableKey: (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? 'pk_live_placeholder',
   currency: 'aud',
@@ -42,14 +40,8 @@ export const STRIPE_CONFIG: StripeConfig = {
   cancelUrl:  'https://onefmops.netlify.app/#/payment/cancel',
 }
 
-/**
- * Pre-configured Stripe payment links keyed by invoice number (bundle `Vt`).
- * When a link exists for an invoice the email renders a live "Pay via Stripe"
- * button; otherwise the bank-transfer-preferred fallback is shown.
- */
 export const PAYMENT_LINKS: Record<string, string> = {}
 
-/** Builds (or returns the cached) Stripe payment link for an invoice. */
 export function getStripePaymentLink(
   invoiceNumber: string,
   total: number,
@@ -66,14 +58,14 @@ export function getStripePaymentLink(
       description: `Invoice ${invoiceNumber}${company ? ` — ${company}` : ''}`,
       reference: invoiceNumber,
       success_url: `${successUrl}?ref=${encodeURIComponent(invoiceNumber)}`,
-      cancel_url: `${cancelUrl}?ref=${encodeURIComponent(invoiceNumber)}`,
+      cancel_url:  `${cancelUrl}?ref=${encodeURIComponent(invoiceNumber)}`,
     }).toString()}`
   }
   return `https://dashboard.stripe.com/payment-links/create?amount=${Math.round(total * 100)}&currency=${currency}`
 }
 
 // ---------------------------------------------------------------------------
-// Data shapes
+// Data interfaces
 // ---------------------------------------------------------------------------
 
 export interface InvoiceEmailData {
@@ -83,7 +75,6 @@ export interface InvoiceEmailData {
   amountExclGst: number
   gst: number
   total: number
-  /** Pre-formatted display date, e.g. "23 Jun 2026". */
   dueDate: string
   customMessage: string
   campaign?: string
@@ -102,7 +93,6 @@ export interface ReceiptEmailData {
   reference: string
 }
 
-/** Invoice fields required by the A4 PDF generator. */
 export interface PdfInvoiceData {
   number: string
   company: string
@@ -116,11 +106,19 @@ export interface PdfInvoiceData {
   dueDate: string
 }
 
-const formatDisplayDate = (value: string): string =>
-  new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const esc = (v?: string) =>
+  (v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+const aud = (n: number) =>
+  `$${n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 
 // ---------------------------------------------------------------------------
-// Branded HTML invoice email (bundle `mo`) — verbatim template
+// generateInvoiceEmailHtml — Broadcast Letter
+// Table-based, Outlook-safe, max 600px.
 // ---------------------------------------------------------------------------
 
 export function generateInvoiceEmailHtml(
@@ -130,846 +128,643 @@ export function generateInvoiceEmailHtml(
   accountName: string = BANK_ACCOUNT_NAME,
 ): string {
   const {
-    contactName,
-    company,
-    invoiceNumber,
-    total,
-    dueDate,
-    customMessage,
-    campaign,
-    addressLine1,
-    addressLine2,
-    addressLine3,
+    contactName, company, invoiceNumber, total, dueDate,
+    customMessage, campaign, addressLine1, addressLine2, addressLine3,
   } = data
 
-  const payLink = getStripePaymentLink(invoiceNumber, total, company)
+  const payLink       = getStripePaymentLink(invoiceNumber, total, company)
   const hasPaymentLink = !!PAYMENT_LINKS[invoiceNumber]
 
-  const today = new Date()
-  const day = today.getDate()
-  const monthName = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ][today.getMonth()]
-  const year = today.getFullYear()
-  const dateLine = `${day} ${monthName} ${year}`
-
-  const esc = (value?: string): string =>
-    (value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-
-  const name = esc(contactName) || 'there'
-  const companyName = esc(company) || ''
-  const campaignLabel = esc(campaign) || 'Sponsorship'
-  const ref = esc(invoiceNumber)
-  const addr1 = esc(addressLine1)
-  const addr2 = esc(addressLine2)
-  const addr3 = esc(addressLine3)
-  const message = esc(customMessage || DEFAULT_EMAIL_BODY).replace(
-    /\n/g,
-    "</p><p style='margin:0 0 12px 0;color:#C8C4BC;font-size:15px;line-height:1.75;'>",
-  )
-  const totalFormatted = total.toLocaleString('en-AU', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+  const dateLine = new Date().toLocaleDateString('en-AU', {
+    day: 'numeric', month: 'long', year: 'numeric',
   })
 
+  const name          = esc(contactName) || 'there'
+  const companyName   = esc(company)
+  const campaignLabel = esc(campaign) || 'Sponsorship'
+  const ref           = esc(invoiceNumber)
+  const totalFmt      = total.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+  const messageHtml = (customMessage || DEFAULT_EMAIL_BODY)
+    .split('\n')
+    .map(line => `<p style="margin:0 0 14px 0;color:#1A1A1A;font-size:15px;line-height:1.75;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">${esc(line)}</p>`)
+    .join('')
+
   let addressBlock = ''
-  if (companyName) addressBlock += `<div style="color:#C8C4BC;font-size:14px;line-height:1.7;">${companyName}</div>`
-  if (addr1) addressBlock += `<div style="color:#C8C4BC;font-size:14px;line-height:1.7;">${addr1}</div>`
-  if (addr2) addressBlock += `<div style="color:#C8C4BC;font-size:14px;line-height:1.7;">${addr2}</div>`
-  if (addr3) addressBlock += `<div style="color:#C8C4BC;font-size:14px;line-height:1.7;">${addr3}</div>`
+  if (companyName)       addressBlock += `<div style="font-size:13px;font-weight:600;color:#1A1A1A;line-height:1.7;">${companyName}</div>`
+  if (esc(addressLine1)) addressBlock += `<div style="font-size:13px;color:#3D3D3D;line-height:1.7;">${esc(addressLine1)}</div>`
+  if (esc(addressLine2)) addressBlock += `<div style="font-size:13px;color:#3D3D3D;line-height:1.7;">${esc(addressLine2)}</div>`
+  if (esc(addressLine3)) addressBlock += `<div style="font-size:13px;color:#3D3D3D;line-height:1.7;">${esc(addressLine3)}</div>`
+
+  const payRow = hasPaymentLink ? `
+      <!-- PAY NOW — red sharp rect, only when Stripe link exists -->
+      <tr>
+        <td style="padding:24px 40px 0 40px;">
+          <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td style="background-color:#E51636;">
+                <!--[if mso]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:220px;height:46px;"><v:fill type="solid" color="#E51636"/><v:textbox inset="0,0,0,0"><![endif]-->
+                <a href="${payLink}"
+                   style="display:inline-block;background-color:#E51636;color:#FFFFFF;padding:13px 32px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  Pay $${totalFmt} via Stripe
+                </a>
+                <!--[if mso]></v:textbox></v:rect><![endif]-->
+              </td>
+            </tr>
+          </table>
+          <div style="margin-top:8px;color:#6B6B6B;font-size:11px;letter-spacing:0.3px;">
+            Secure card payment &middot; SSL encrypted &middot; Powered by Stripe
+          </div>
+        </td>
+      </tr>` : ''
+
+  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Invoice ${ref} &mdash; ONE FM 98.5</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<![endif]-->
+<style type="text/css">
+  body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}
+  table,td{mso-table-lspace:0pt;mso-table-rspace:0pt;}
+  img{-ms-interpolation-mode:bicubic;border:0;outline:none;text-decoration:none;display:block;}
+  body{margin:0!important;padding:0!important;background-color:#D8D8D8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+  .wrapper{max-width:600px;margin:0 auto;}
+  @media screen and (max-width:480px){
+    .mp{padding-left:20px!important;padding-right:20px!important;}
+    .amt{font-size:44px!important;}
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#D8D8D8;">
+
+  <!-- PREHEADER -->
+  <div style="display:none;font-size:1px;color:#D8D8D8;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+    Invoice ${ref} &mdash; $${totalFmt} due ${dueDate} &middot; ONE FM 98.5
+  </div>
+
+  <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" align="center"><tr><td><![endif]-->
+  <div class="wrapper" style="max-width:600px;margin:0 auto;">
+
+    <!-- ══ HERO — NAVY FULL-BLEED ══════════════════════════════════════════ -->
+    <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" bgcolor="#071D3A"><tr><td><![endif]-->
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+           style="background-color:#071D3A;">
+      <tr>
+        <td style="padding:40px 40px 36px 40px;" class="mp">
+
+          <!-- Logo row -->
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td style="vertical-align:middle;">
+                <img src="${DS.logoUrl}"
+                     alt="ONE FM 98.5" width="110" height="auto"
+                     style="width:110px;height:auto;display:block;border:0;" />
+              </td>
+              <td style="vertical-align:middle;text-align:right;">
+                <div style="color:rgba(255,255,255,0.5);font-size:12px;line-height:1.6;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  ${dateLine}
+                </div>
+                <div style="color:rgba(255,255,255,0.3);font-size:10px;margin-top:2px;letter-spacing:0.5px;">
+                  ABN: 92 117 291 771
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- INVOICE caption -->
+          <div style="margin-top:30px;color:rgba(255,255,255,0.45);font-size:10px;text-transform:uppercase;letter-spacing:4px;font-weight:600;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Invoice
+          </div>
+
+          <!-- AMOUNT CARD — the poster moment -->
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+                 style="margin-top:12px;">
+            <tr>
+              <td style="padding:28px 32px;background-color:rgba(0,0,0,0.28);border:1px solid rgba(255,255,255,0.07);">
+                <div style="color:rgba(255,255,255,0.45);font-size:9px;text-transform:uppercase;letter-spacing:3.5px;font-weight:700;margin-bottom:10px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  Amount Due
+                </div>
+                <div class="amt" style="font-size:64px;font-weight:800;color:#D4AF37;letter-spacing:-2px;line-height:1;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  $${totalFmt}
+                </div>
+                <div style="margin-top:14px;color:rgba(255,255,255,0.5);font-size:13px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  Due&nbsp;${dueDate}&nbsp;&nbsp;&middot;&nbsp;&nbsp;Ref&nbsp;<span style="color:#D4AF37;font-weight:600;">${ref}</span>
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+    </table>
+    <!--[if mso]></td></tr></table><![endif]-->
+
+    <!-- 3px SOLID GOLD RULE -->
+    <div style="height:3px;background-color:#D4AF37;font-size:0;line-height:0;">&nbsp;</div>
+
+    <!-- ══ WHITE BODY ═══════════════════════════════════════════════════════ -->
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+           style="background-color:#FAFAF8;">
+
+      <!-- Recipient -->
+      <tr>
+        <td style="padding:40px 40px 0 40px;" class="mp">
+          <div style="color:#6B6B6B;font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:8px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Addressed To
+          </div>
+          <div style="color:#1A1A1A;font-size:14px;font-weight:700;margin-bottom:4px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            ${name}
+          </div>
+          ${addressBlock}
+        </td>
+      </tr>
+
+      <!-- Salutation -->
+      <tr>
+        <td style="padding:32px 40px 0 40px;" class="mp">
+          <div style="color:#1A1A1A;font-size:18px;font-weight:700;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Dear ${name},
+          </div>
+        </td>
+      </tr>
+
+      <!-- RE: line -->
+      <tr>
+        <td style="padding:20px 40px 0 40px;" class="mp">
+          <div style="border-left:3px solid #D4AF37;padding:10px 16px;background-color:rgba(212,175,55,0.05);">
+            <div style="color:#1A1A1A;font-size:15px;font-weight:700;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+              RE: Invoice ${ref} &mdash; ${campaignLabel}
+            </div>
+            <div style="color:#6B6B6B;font-size:12px;margin-top:3px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+              Please find your invoice details below.
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Custom message -->
+      <tr>
+        <td style="padding:28px 40px 0 40px;" class="mp">
+          ${messageHtml}
+        </td>
+      </tr>
+
+      <!-- Wire-transfer slip -->
+      <tr>
+        <td style="padding:32px 40px 0 40px;" class="mp">
+          <div style="color:#6B6B6B;font-size:10px;text-transform:uppercase;letter-spacing:2.5px;font-weight:600;margin-bottom:14px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Payment by Bank Transfer &mdash; Preferred
+          </div>
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+                 style="border:1px solid rgba(26,26,26,0.1);background-color:#FFFFFF;">
+            <tr>
+              <td style="padding:22px 24px;">
+                <div style="color:#3A6E22;font-size:11px;font-weight:600;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  National Australia Bank
+                </div>
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td style="padding:0 28px 0 0;vertical-align:top;">
+                      <div style="color:#6B6B6B;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">BSB</div>
+                      <div style="font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#071D3A;">${bsb}</div>
+                    </td>
+                    <td style="padding:0 28px 0 0;vertical-align:top;">
+                      <div style="color:#6B6B6B;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">Account</div>
+                      <div style="font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#071D3A;">${account}</div>
+                    </td>
+                    <td style="padding:0;vertical-align:top;">
+                      <div style="color:#6B6B6B;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">Reference</div>
+                      <div style="font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#D4AF37;">${ref}</div>
+                    </td>
+                  </tr>
+                </table>
+                <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(26,26,26,0.06);color:#6B6B6B;font-size:12px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  Account Name: <span style="color:#1A1A1A;font-weight:600;">${accountName}</span>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      ${payRow}
+
+      <!-- Closing -->
+      <tr>
+        <td style="padding:36px 40px 0 40px;" class="mp">
+          <p style="margin:0 0 10px 0;color:#1A1A1A;font-size:15px;line-height:1.7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            If you have any questions, please don't hesitate to contact us.
+          </p>
+          <p style="margin:0;color:#1A1A1A;font-size:15px;line-height:1.7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Thank you for your continued support of community radio.
+          </p>
+        </td>
+      </tr>
+
+      <!-- Signature -->
+      <tr>
+        <td style="padding:36px 40px 48px 40px;" class="mp">
+          <div style="width:36px;height:3px;background-color:#D4AF37;margin-bottom:18px;"></div>
+          <div style="color:#1A1A1A;font-size:15px;font-weight:700;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Jason Welsh
+          </div>
+          <div style="color:#D4AF37;font-size:13px;margin-top:3px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Vice Chair, ONE FM 98.5
+          </div>
+          <div style="color:#6B6B6B;font-size:13px;margin-top:10px;line-height:1.7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            (03) 5831 3131 &nbsp;|&nbsp; jason@onefm.com.au<br>
+            47 Parkside Drive, Shepparton VIC 3630
+          </div>
+        </td>
+      </tr>
+
+    </table>
+
+    <!-- ══ NAVY FOOTER ══════════════════════════════════════════════════════ -->
+    <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" bgcolor="#071D3A"><tr><td><![endif]-->
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+           style="background-color:#071D3A;">
+      <tr>
+        <td style="padding:28px 40px;text-align:center;" class="mp">
+          <div style="color:rgba(255,255,255,0.45);font-size:12px;line-height:1.9;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            <strong style="color:#D4AF37;letter-spacing:0.5px;">ONE FM 98.5</strong>
+            &nbsp;&middot;&nbsp;Goulburn Valley Community Radio Inc.<br>
+            ABN 92 117 291 771 &nbsp;&middot;&nbsp; (03) 5831 3131 &nbsp;&middot;&nbsp; accounts@fm985.com.au
+          </div>
+          <div style="margin-top:12px;color:rgba(255,255,255,0.18);font-size:10px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Sent via ONE FM Operations Portal
+          </div>
+        </td>
+      </tr>
+    </table>
+    <!--[if mso]></td></tr></table><![endif]-->
+
+  </div>
+  <!--[if mso]></td></tr></table><![endif]-->
+
+</body>
+</html>`
+}
+
+// ---------------------------------------------------------------------------
+// generateReceiptEmailHtml — same shell, "PAYMENT RECEIVED"
+// ---------------------------------------------------------------------------
+
+export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
+  const { contactName, company, invoiceNumber, amount, paymentDate, paymentMethod, reference } = data
+
+  const amountFmt = amount.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const name      = esc(contactName) || 'there'
+  const ref       = esc(invoiceNumber)
 
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="color-scheme" content="light dark" />
-<meta name="supported-color-schemes" content="light dark" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Invoice ${ref} &mdash; ONE FM 98.5</title>
-<!--[if mso]>
-<noscript>
-  <xml>
-    <o:OfficeDocumentSettings>
-      <o:AllowPNG/>
-      <o:PixelsPerInch>96</o:PixelsPerInch>
-    </o:OfficeDocumentSettings>
-  </xml>
-</noscript>
-<![endif]-->
+<title>Payment Receipt &mdash; ${ref}</title>
 <style type="text/css">
-  :root { color-scheme: light dark; }
-  /* Reset */
-  body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-  table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-  img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
-  /* Body */
-  body {
-    margin: 0 !important; padding: 0 !important;
-    background-color: #070E1A;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  /* Wrapper */
-  .letter-wrapper {
-    max-width: 640px;
-    margin: 0 auto;
-    background-color: #0A1628;
-  }
-  /* Letterhead gold line */
-  .letterhead-line {
-    height: 2px;
-    background-color: #D4A853;
-    font-size: 0; line-height: 0;
-  }
-  /* Typography */
-  .date-ref-text {
-    color: #9A9590; font-size: 13px; line-height: 1.8;
-  }
-  .salutation-text {
-    color: #F4F1EA; font-size: 18px; font-weight: 700;
-  }
-  .subject-line {
-    border-left: 3px solid #D4A853;
-    padding: 10px 16px;
-    background-color: rgba(212,168,83,0.05);
-  }
-  .body-text {
-    color: #C8C4BC; font-size: 15px; line-height: 1.75;
-  }
-  .body-text p {
-    margin: 0 0 12px 0;
-  }
-  .closing-text {
-    color: #C8C4BC; font-size: 15px; line-height: 1.75; margin: 0;
-  }
-  /* Invoice card */
-  .invoice-card {
-    background-color: rgba(244,241,234,0.025);
-    border: 1px solid rgba(244,241,234,0.08);
-    border-radius: 12px;
-  }
-  .invoice-total {
-    color: #D4A853; font-size: 36px; font-weight: 700;
-  }
-  .invoice-meta-label {
-    color: rgba(244,241,234,0.35); font-size: 11px;
-    text-transform: uppercase; letter-spacing: 1.5px;
-  }
-  .invoice-meta-value {
-    color: #F4F1EA; font-size: 14px; font-weight: 600;
-  }
-  /* Payment */
-  .payment-option {
-    background-color: rgba(244,241,234,0.015);
-    border: 1px solid rgba(244,241,234,0.08);
-    border-radius: 10px;
-  }
-  .bank-label {
-    color: rgba(244,241,234,0.35); font-size: 11px;
-    text-transform: uppercase; letter-spacing: 1px;
-  }
-  .bank-value {
-    color: #F4F1EA; font-size: 14px;
-    font-family: 'Courier New', Courier, monospace;
-  }
-  .pay-button {
-    display: inline-block;
-    background: linear-gradient(135deg, #D4A853 0%, #C49A4A 100%);
-    color: #0A1628 !important;
-    padding: 16px 40px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 700; font-size: 14px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    box-shadow: 0 4px 20px rgba(212,168,83,0.25);
-  }
-  /* Signature */
-  .signature-name {
-    color: #F4F1EA; font-size: 16px; font-weight: 700;
-  }
-  .signature-title {
-    color: #D4A853; font-size: 13px;
-  }
-  .signature-contact {
-    color: rgba(244,241,234,0.45); font-size: 13px; line-height: 1.7;
-  }
-  /* Footer */
-  .footer-text {
-    color: rgba(244,241,234,0.25); font-size: 12px; line-height: 1.7;
-  }
-  .footer-legal {
-    color: rgba(244,241,234,0.18); font-size: 11px;
-  }
-  /* Gold accent text */
-  .gold { color: #D4A853; }
-  .muted { color: rgba(244,241,234,0.35); }
-
-  /* Mobile */
-  @media screen and (max-width: 480px) {
-    .mobile-padding { padding-left: 20px !important; padding-right: 20px !important; }
-    .mobile-stack { display: block !important; width: 100% !important; }
-    .mobile-center { text-align: center !important; }
-    .salutation-text { font-size: 16px !important; }
-    .invoice-total { font-size: 28px !important; }
-  }
-
-  /* Light mode */
-  @media (prefers-color-scheme: light) {
-    body { background-color: #E8E8E8 !important; }
-    .letter-wrapper { background-color: #FFFFFF !important; }
-    .subject-line { background-color: rgba(212,168,83,0.06) !important; border-left-color: #D4A853 !important; }
-    .body-text, .body-text p { color: #3D3D3D !important; }
-    .closing-text { color: #3D3D3D !important; }
-    .date-ref-text { color: #6B6B6B !important; }
-    .salutation-text { color: #1A1A1A !important; }
-    .invoice-card { background-color: rgba(0,0,0,0.02) !important; border-color: rgba(0,0,0,0.06) !important; }
-    .invoice-meta-label { color: rgba(0,0,0,0.4) !important; }
-    .invoice-meta-value { color: #1A1A1A !important; }
-    .payment-option { background-color: rgba(0,0,0,0.015) !important; border-color: rgba(0,0,0,0.06) !important; }
-    .bank-label { color: rgba(0,0,0,0.4) !important; }
-    .bank-value { color: #1A1A1A !important; }
-    .signature-name { color: #1A1A1A !important; }
-    .signature-contact { color: rgba(0,0,0,0.5) !important; }
-    .footer-text { color: rgba(0,0,0,0.35) !important; }
-    .footer-legal { color: rgba(0,0,0,0.2) !important; }
-    .muted { color: rgba(0,0,0,0.4) !important; }
-    .gold { color: #B08A35 !important; }
-  }
+  body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}
+  table,td{mso-table-lspace:0pt;mso-table-rspace:0pt;}
+  img{-ms-interpolation-mode:bicubic;border:0;outline:none;text-decoration:none;display:block;}
+  body{margin:0!important;padding:0!important;background-color:#D8D8D8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+  @media screen and (max-width:480px){.mp{padding-left:20px!important;padding-right:20px!important;}}
 </style>
 </head>
-<body style="margin:0;padding:0;background-color:#070E1A;">
+<body style="margin:0;padding:0;background-color:#D8D8D8;">
 
-  <!--[if mso]>
-  <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="640" align="center" style="width:640px;">
-  <tr><td>
-  <![endif]-->
+  <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" align="center"><tr><td><![endif]-->
+  <div style="max-width:600px;margin:0 auto;">
 
-  <div class="letter-wrapper" style="max-width:640px;margin:0 auto;background-color:#0A1628;">
-
-    <!-- ===========================================
-         1. LETTERHEAD HEADER
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+    <!-- HERO — navy with green tick -->
+    <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" bgcolor="#071D3A"><tr><td><![endif]-->
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+           style="background-color:#071D3A;">
       <tr>
-        <td align="center" style="padding:40px 40px 12px 40px;" class="mobile-padding">
-          <img src="/one-fm-logo-master.svg"
-               alt="ONE FM 98.5"
-               width="auto" height="56"
-               style="height:56px;width:auto;display:block;border:0;outline:none;" />
-          <div style="margin-top:10px;color:rgba(244,241,234,0.45);font-size:12px;letter-spacing:3px;text-transform:uppercase;">
-            Goulburn Valley's Community Radio
+        <td style="padding:40px 40px 36px 40px;" class="mp">
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td style="vertical-align:middle;">
+                <img src="${DS.logoUrl}" alt="ONE FM 98.5" width="110" height="auto"
+                     style="width:110px;height:auto;display:block;border:0;" />
+              </td>
+              <td style="vertical-align:middle;text-align:right;">
+                <div style="color:rgba(255,255,255,0.45);font-size:12px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  ${new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <div style="margin-top:28px;color:rgba(255,255,255,0.45);font-size:10px;text-transform:uppercase;letter-spacing:4px;font-weight:600;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Payment Received
           </div>
-        </td>
-      </tr>
-      <tr><td class="letterhead-line" style="height:2px;background-color:#D4A853;font-size:0;line-height:0;">&nbsp;</td></tr>
-    </table>
 
-    <!-- ===========================================
-         2. DATE & REFERENCE BLOCK  (right-aligned)
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td align="right" style="padding:32px 40px 0 40px;" class="mobile-padding">
-          <div class="date-ref-text">
-            <div>${dateLine}</div>
-            <div style="margin-top:4px;">Invoice Ref: <span style="color:#D4A853;font-weight:600;">${ref}</span></div>
-            <div style="margin-top:4px;">Our ABN: 92 117 291 771</div>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <!-- ===========================================
-         3. RECIPIENT ADDRESS BLOCK  (left-aligned)
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td align="left" style="padding:32px 40px 0 40px;" class="mobile-padding">
-          <div style="color:#F4F1EA;font-size:14px;font-weight:600;margin-bottom:6px;">
-            Attention: ${name}
-          </div>
-          ${addressBlock}
-        </td>
-      </tr>
-    </table>
-
-    <!-- ===========================================
-         4. SALUTATION
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td style="padding:40px 40px 0 40px;" class="mobile-padding">
-          <div class="salutation-text">Dear ${name},</div>
-        </td>
-      </tr>
-    </table>
-
-    <!-- ===========================================
-         5. SUBJECT LINE  (gold left border accent)
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td style="padding:24px 40px 0 40px;" class="mobile-padding">
-          <div class="subject-line">
-            <div style="color:#F4F1EA;font-size:16px;font-weight:700;">
-              RE: Invoice ${ref} &mdash; ${campaignLabel}
-            </div>
-            <div style="color:rgba(244,241,234,0.35);font-size:12px;margin-top:4px;">
-              Please find attached your invoice for ${campaignLabel}
-            </div>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <!-- ===========================================
-         6. BODY  (custom message)
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td style="padding:32px 40px 0 40px;" class="mobile-padding">
-          <div class="body-text">
-            <p style="margin:0 0 12px 0;color:#C8C4BC;font-size:15px;line-height:1.75;">${message}</p>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <!-- ===========================================
-         7. INVOICE SUMMARY CARD
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td style="padding:36px 40px 0 40px;" class="mobile-padding">
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="invoice-card">
-            <tr><td style="padding:32px;">
-
-              <!-- Invoice number row -->
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td style="padding-bottom:20px;border-bottom:1px solid rgba(244,241,234,0.08);">
-                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <!-- Left: invoice number -->
-                        <td style="vertical-align:top;" class="mobile-stack">
-                          <div class="invoice-meta-label">Invoice Number</div>
-                          <div style="color:#F4F1EA;font-size:16px;font-weight:700;margin-top:6px;">${ref}</div>
-                        </td>
-                        <!-- Right: campaign tag -->
-                        <td style="vertical-align:top;text-align:right;" class="mobile-stack mobile-center" style="padding-top:12px;">
-                          <span style="display:inline-block;background:rgba(212,168,83,0.12);color:#D4A853;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:7px 16px;border-radius:20px;">
-                            ${campaignLabel}
-                          </span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Total Amount -->
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td align="center" style="padding:28px 0 20px 0;">
-                    <div class="invoice-meta-label" style="margin-bottom:10px;">Total Amount Due</div>
-                    <div class="invoice-total">$${totalFormatted}</div>
-                    <div style="color:rgba(244,241,234,0.35);font-size:13px;margin-top:8px;">Inc. GST</div>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Meta row: Due Date + Amount -->
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td style="padding-top:20px;border-top:1px solid rgba(244,241,234,0.08);">
-                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td style="padding:10px 0;vertical-align:top;" class="mobile-stack">
-                          <div class="invoice-meta-label">Due Date</div>
-                          <div class="invoice-meta-value" style="margin-top:4px;">${dueDate}</div>
-                        </td>
-                        <td style="padding:10px 0;vertical-align:top;text-align:right;" class="mobile-stack mobile-center">
-                          <div class="invoice-meta-label">Reference</div>
-                          <div class="invoice-meta-value" style="margin-top:4px;">${ref}</div>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
-            </td></tr>
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+                 style="margin-top:12px;">
+            <tr>
+              <td style="padding:28px 32px;background-color:rgba(0,0,0,0.28);border:1px solid rgba(255,255,255,0.07);">
+                <div style="color:rgba(255,255,255,0.45);font-size:9px;text-transform:uppercase;letter-spacing:3.5px;font-weight:700;margin-bottom:10px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  Amount Received
+                </div>
+                <div style="font-size:64px;font-weight:800;color:#4ADE80;letter-spacing:-2px;line-height:1;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  $${amountFmt}
+                </div>
+                <div style="margin-top:14px;color:rgba(255,255,255,0.5);font-size:13px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                  Invoice&nbsp;<span style="color:#4ADE80;font-weight:600;">${ref}</span>
+                  &nbsp;&middot;&nbsp;${esc(paymentDate)}
+                </div>
+              </td>
+            </tr>
           </table>
         </td>
       </tr>
     </table>
+    <!--[if mso]></td></tr></table><![endif]-->
 
-    <!-- ===========================================
-         8. PAYMENT OPTIONS
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+    <!-- SOLID GREEN RULE -->
+    <div style="height:3px;background-color:#4ADE80;font-size:0;line-height:0;">&nbsp;</div>
+
+    <!-- WHITE BODY -->
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+           style="background-color:#FAFAF8;">
       <tr>
-        <td style="padding:32px 40px 0 40px;" class="mobile-padding">
-
-          <!-- Section label -->
-          <div style="color:rgba(244,241,234,0.35);font-size:11px;text-transform:uppercase;letter-spacing:2.5px;font-weight:600;margin-bottom:20px;">
-            Payment Options
+        <td style="padding:40px 40px 0 40px;" class="mp">
+          <div style="color:#1A1A1A;font-size:18px;font-weight:700;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Hi ${name},
           </div>
-
-          <!-- Option A: Bank Transfer -->
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="payment-option">
-            <tr><td style="padding:24px;">
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td class="mobile-stack">
-                    <div style="margin-bottom:4px;">
-                      <span style="color:#D4A853;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Option A</span>
-                      <span style="color:rgba(244,241,234,0.6);font-size:13px;margin-left:8px;font-weight:600;">Bank Transfer &mdash; Preferred</span>
-                    </div>
-                    <div style="color:rgba(212,168,83,0.7);font-size:11px;margin-bottom:14px;">National Australia Bank</div>
-
-                    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td style="padding:5px 24px 5px 0;">
-                          <div class="bank-label">BSB</div>
-                          <div class="bank-value" style="margin-top:2px;">${bsb}</div>
-                        </td>
-                        <td style="padding:5px 24px 5px 0;">
-                          <div class="bank-label">Account</div>
-                          <div class="bank-value" style="margin-top:2px;">${account}</div>
-                        </td>
-                        <td style="padding:5px 0;">
-                          <div class="bank-label">Reference</div>
-                          <div class="bank-value" style="margin-top:2px;color:#D4A853;">${ref}</div>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding-top:10px;">
-                    <div style="color:rgba(244,241,234,0.3);font-size:11px;">
-                      Account Name: <span style="color:rgba(244,241,234,0.6);">${accountName}</span>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </td></tr>
-          </table>
-
-          <!-- Spacer between options -->
-          <div style="height:16px;"></div>
-
-          <!-- Option B: Pay Online via Stripe -->
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="payment-option">
-            <tr><td style="padding:24px;">
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td class="mobile-stack" style="vertical-align:middle;">
-                    <div style="margin-bottom:4px;">
-                      <span style="color:#D4A853;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Option B</span>
-                      <span style="color:rgba(244,241,234,0.6);font-size:13px;margin-left:8px;font-weight:600;">Pay Online</span>
-                      
-                    </div>
-                    ${hasPaymentLink ? '<div style="color:rgba(244,241,234,0.35);font-size:12px;">Secure card payment processed instantly by Stripe</div>' : '<div style="color:rgba(244,241,234,0.35);font-size:12px;">Online payment via Stripe — currently being configured</div>'}
-                  </td>
-                  <td class="mobile-stack mobile-center" style="vertical-align:middle;text-align:right;padding-top:12px;">
-                    ${hasPaymentLink ? `<a href="${payLink}" class="pay-button">Pay $${totalFormatted} via Stripe</a>` : '<div style="display:inline-block;background:rgba(244,241,234,0.06);color:rgba(244,241,234,0.3);padding:16px 40px;border-radius:50px;font-weight:700;font-size:14px;letter-spacing:0.5px;text-transform:uppercase;border:1px solid rgba(244,241,234,0.1);">Stripe — Setup Required</div>'}
-                  </td>
-                </tr>
-              </table>
-              <!-- Stripe footer note -->
-              <div style="color:rgba(244,241,234,0.2);font-size:11px;text-align:center;margin-top:14px;letter-spacing:1px;">
-                ${hasPaymentLink ? `Powered by Stripe &middot; SSL Encrypted &middot; Account: ${STRIPE_CONFIG.accountId}` : 'Bank transfer (Option A) is the preferred payment method until Stripe links are configured. Contact us for assistance.'}
-              </div>
-            </td></tr>
-          </table>
-
-          <!-- Spacer between options -->
-          <div style="height:16px;"></div>
-
-          <!-- Option C: Direct Debit (BECS) -->
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="payment-option">
-            <tr><td style="padding:24px;">
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td class="mobile-stack" style="vertical-align:middle;">
-                    <div style="margin-bottom:4px;">
-                      <span style="color:#D4A853;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Option C</span>
-                      <span style="color:rgba(244,241,234,0.6);font-size:13px;margin-left:8px;font-weight:600;">Direct Debit</span>
-                      <span style="display:inline-block;background:rgba(74,222,128,0.12);color:#4ADE80;font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:3px 10px;border-radius:10px;margin-left:8px;vertical-align:middle;">Recommended for ongoing sponsors</span>
-                    </div>
-                    <div style="color:rgba(244,241,234,0.35);font-size:12px;">Set up automatic payment from your bank account — no more invoices!</div>
-                  </td>
-                  <td class="mobile-stack mobile-center" style="vertical-align:middle;text-align:right;padding-top:12px;">
-                    <a href="https://dashboard.stripe.com/settings/payment_methods" class="pay-button" style="background:rgba(74,222,128,0.08);color:#4ADE80;border:1px solid rgba(74,222,128,0.3);">Set Up Direct Debit</a>
-                  </td>
-                </tr>
-              </table>
-              <div style="color:rgba(244,241,234,0.2);font-size:11px;text-align:center;margin-top:14px;letter-spacing:1px;">
-                Processed by Stripe BECS &middot; 3-5 business days &middot; Advance notice given
-              </div>
-            </td></tr>
-          </table>
-
-        </td>
-      </tr>
-    </table>
-
-    <!-- ===========================================
-         9. CLOSING PARAGRAPH
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td style="padding:36px 40px 0 40px;" class="mobile-padding">
-          <p class="closing-text" style="margin:0 0 10px 0;">
-            If you have any questions, please don't hesitate to contact me.
-          </p>
-          <p class="closing-text" style="margin:0;">
-            Thank you for your continued support of community radio.
+          <p style="margin:16px 0 0 0;color:#1A1A1A;font-size:15px;line-height:1.75;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            Thank you — we've received your payment of
+            <strong style="color:#1A1A1A;">$${amountFmt}</strong>
+            for invoice <strong>${ref}</strong> from
+            <strong>${esc(company)}</strong>.
+            Your support keeps community radio alive in the Goulburn Valley.
           </p>
         </td>
       </tr>
-    </table>
-
-    <!-- ===========================================
-         10. SIGNATURE BLOCK
-         =========================================== -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td style="padding:40px 40px 0 40px;" class="mobile-padding">
-          <!-- Gold accent line above signature -->
-          <div style="width:48px;height:2px;background-color:#D4A853;margin-bottom:20px;"></div>
-          <div class="signature-name">Jason Welsh</div>
-          <div class="signature-title" style="margin-top:4px;">Station Manager, ONE FM 98.5</div>
-          <div class="signature-contact" style="margin-top:10px;">
-            (03) 5831 3131 &nbsp;|&nbsp; jason@onefm.com.au
-          </div>
-          <div class="signature-contact">
-            47 Parkside Drive, Shepparton VIC 3630
+        <td style="padding:28px 40px 0 40px;" class="mp">
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+                 style="border:1px solid rgba(26,26,26,0.1);background-color:#FFFFFF;">
+            <tr>
+              <td style="padding:22px 24px;">
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                  ${[
+                    ['Invoice', ref],
+                    ['Company', esc(company)],
+                    ['Amount Paid', `$${amountFmt}`],
+                    ['Payment Date', esc(paymentDate)],
+                    ['Payment Method', esc(paymentMethod)],
+                    ['Reference', esc(reference)],
+                  ].map(([label, val]) => `
+                  <tr>
+                    <td style="padding:7px 20px 7px 0;border-bottom:1px solid rgba(26,26,26,0.05);color:#6B6B6B;font-size:11px;text-transform:uppercase;letter-spacing:1px;width:140px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                      ${label}
+                    </td>
+                    <td style="padding:7px 0;border-bottom:1px solid rgba(26,26,26,0.05);color:#1A1A1A;font-size:14px;font-weight:600;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+                      ${val}
+                    </td>
+                  </tr>`).join('')}
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:36px 40px 48px 40px;" class="mp">
+          <div style="width:36px;height:3px;background-color:#D4AF37;margin-bottom:18px;"></div>
+          <div style="color:#1A1A1A;font-size:15px;font-weight:700;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">Jason Welsh</div>
+          <div style="color:#D4AF37;font-size:13px;margin-top:3px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">Vice Chair, ONE FM 98.5</div>
+          <div style="color:#6B6B6B;font-size:13px;margin-top:10px;line-height:1.7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            (03) 5831 3131 &nbsp;|&nbsp; accounts@fm985.com.au
           </div>
         </td>
       </tr>
     </table>
 
-    <!-- =========================================
-         11. FOOTER
-         ========================================= -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+    <!-- NAVY FOOTER -->
+    <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" bgcolor="#071D3A"><tr><td><![endif]-->
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+           style="background-color:#071D3A;">
       <tr>
-        <td style="padding:48px 40px 36px 40px;text-align:center;" class="mobile-padding">
-          <!-- Gold separator -->
-          <div style="height:1px;background-color:rgba(244,241,234,0.08);margin-bottom:28px;"></div>
-          <div class="footer-text">
-            <strong style="color:#D4A853;letter-spacing:1px;">ONE FM 98.5</strong> &middot; Goulburn Valley Community Radio Inc.
-          </div>
-          <div class="footer-text" style="margin-top:4px;">
-            ABN 92 117 291 771
-          </div>
-          <div class="footer-legal" style="margin-top:16px;">
-            This email was sent via the ONE FM Operations Portal
+        <td style="padding:28px 40px;text-align:center;" class="mp">
+          <div style="color:rgba(255,255,255,0.45);font-size:12px;line-height:1.9;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+            <strong style="color:#D4AF37;">ONE FM 98.5</strong>
+            &nbsp;&middot;&nbsp;Goulburn Valley Community Radio Inc.<br>
+            ABN 92 117 291 771 &nbsp;&middot;&nbsp; (03) 5831 3131 &nbsp;&middot;&nbsp; accounts@fm985.com.au
           </div>
         </td>
       </tr>
     </table>
+    <!--[if mso]></td></tr></table><![endif]-->
 
-  </div><!-- /.letter-wrapper -->
-
-  <!--[if mso]>
-  </td></tr></table>
-  <![endif]-->
+  </div>
+  <!--[if mso]></td></tr></table><![endif]-->
 
 </body>
 </html>`
 }
 
 // ---------------------------------------------------------------------------
-// Payment receipt email (bundle `$i`) — verbatim template
-// ---------------------------------------------------------------------------
-
-export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
-  const { contactName, company, invoiceNumber, amount, paymentDate, paymentMethod, reference } = data
-
-  const esc = (value: string): string =>
-    value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-
-  const amountFormatted = amount.toLocaleString('en-AU', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })
-
-  return `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="light dark">
-<title>Payment Receipt — ${esc(invoiceNumber)}</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
-  body { margin:0; padding:0; background:linear-gradient(180deg,#0A0E1A 0%,#0F1D32 100%); font-family:'Space Grotesk',sans-serif; }
-  .wrapper { max-width:600px; margin:0 auto; background:linear-gradient(180deg,#0A1628 0%,#0F1D32 100%); }
-  .banner { height:4px; background:linear-gradient(90deg,#D4A853 0%,#F0C96C 50%,#D4A853 100%); }
-  .header { padding:40px; text-align:center; border-bottom:1px solid rgba(212,168,83,0.15); }
-  .logo { color:#F4F1EA; font-size:28px; font-weight:800; letter-spacing:-1px; margin:0; }
-  .logo span { color:#D4A853; }
-  .subtitle { color:rgba(244,241,234,0.45); font-size:11px; text-transform:uppercase; letter-spacing:3px; margin-top:8px; }
-  .body { padding:40px; }
-  .receipt-title { color:#4ADE80; font-size:14px; text-transform:uppercase; letter-spacing:3px; font-weight:600; margin-bottom:8px; }
-  .amount { color:#D4A853; font-size:56px; font-weight:800; letter-spacing:-2px; margin:0; }
-  .label { color:rgba(244,241,234,0.35); font-size:11px; text-transform:uppercase; letter-spacing:2px; font-weight:600; }
-  .details { background:rgba(244,241,234,0.025); border:1px solid rgba(244,241,234,0.08); border-radius:12px; padding:28px; margin:28px 0; }
-  .row { display:table; width:100%; margin-bottom:10px; }
-  .row:last-child { margin-bottom:0; }
-  .label-cell { display:table-cell; color:rgba(244,241,234,0.35); font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:600; width:140px; }
-  .value-cell { display:table-cell; color:#F4F1EA; font-size:14px; font-weight:600; }
-  .footer { padding:32px 40px; text-align:center; border-top:1px solid rgba(244,241,234,0.06); background:rgba(0,0,0,0.15); }
-  .footer-logo { color:#D4A853; font-size:16px; font-weight:800; letter-spacing:2px; margin-bottom:8px; }
-  .footer-text { color:rgba(244,241,234,0.3); font-size:12px; }
-  .check { width:64px; height:64px; border:3px solid #4ADE80; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; color:#4ADE80; font-size:32px; }
-  @media (prefers-color-scheme: light) {
-    body { background:#F0F0F0; }
-    .wrapper { background:#FFFFFF; }
-    .header { border-bottom-color:rgba(0,0,0,0.08); }
-    .logo { color:#0A1628; }
-    .body { color:#0A1628; }
-    .details { background:rgba(0,0,0,0.02); border-color:rgba(0,0,0,0.06); }
-    .label-cell { color:rgba(10,22,40,0.35); }
-    .value-cell { color:#0A1628; }
-    .footer { border-top-color:rgba(0,0,0,0.06); background:rgba(0,0,0,0.03); }
-  }
-</style>
-</head>
-<body>
-<div class="wrapper">
-  <div class="banner"></div>
-  <div class="header">
-    <h1 class="logo">ONE FM <span>98.5</span></h1>
-    <div class="subtitle">Goulburn Valley Community Radio</div>
-  </div>
-  <div class="body">
-    <div style="text-align:center; margin-bottom:32px;">
-      <div class="check">&#10003;</div>
-      <div class="receipt-title">Payment Received</div>
-      <div class="amount">$${amountFormatted}</div>
-    </div>
-    <p style="color:rgba(244,241,234,0.82); font-size:15px; line-height:1.75; margin-bottom:28px;">
-      Hi ${esc(contactName || 'there')},<br><br>
-      Thank you for your payment. We've received <strong style="color:#D4A853;">$${amountFormatted}</strong> for invoice <strong>${esc(invoiceNumber)}</strong>.
-    </p>
-    <div class="details">
-      <div class="row"><span class="label-cell">Invoice</span><span class="value-cell">${esc(invoiceNumber)}</span></div>
-      <div class="row"><span class="label-cell">Company</span><span class="value-cell">${esc(company)}</span></div>
-      <div class="row"><span class="label-cell">Amount Paid</span><span class="value-cell" style="color:#4ADE80;">$${amountFormatted}</span></div>
-      <div class="row"><span class="label-cell">Payment Date</span><span class="value-cell">${esc(paymentDate)}</span></div>
-      <div class="row"><span class="label-cell">Payment Method</span><span class="value-cell">${esc(paymentMethod)}</span></div>
-      <div class="row"><span class="label-cell">Reference</span><span class="value-cell">${esc(reference)}</span></div>
-    </div>
-    <p style="color:rgba(244,241,234,0.6); font-size:13px; line-height:1.7;">
-      Your support keeps community radio alive in the Goulburn Valley. If you have any questions about this receipt, please contact us anytime.
-    </p>
-  </div>
-  <div class="footer">
-    <div class="footer-logo">ONE FM 98.5</div>
-    <div class="footer-text">(03) 5831 3131 &middot; accounts@fm985.com.au<br>47 Parkside Drive, Shepparton VIC 3630</div>
-  </div>
-</div>
-</body>
-</html>`
-}
-
-// ---------------------------------------------------------------------------
-// A4 PDF generation (bundle `dp`) — html2canvas (scale 2, width 794px) into
-// jsPDF portrait/mm/A4, image placed at full 210mm width.
+// generateInvoicePdf — pure vector jsPDF (no html2canvas)
+// A4, 20mm margins, Helvetica, matches email header/footer geometry.
 // ---------------------------------------------------------------------------
 
 export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF> {
-  const host = document.createElement('div')
-  host.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:#fff;'
-  document.body.appendChild(host)
+  const doc  = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
+  const W    = 210
+  const H    = 297
+  const M    = 20
+  const CW   = W - M * 2   // 170mm content width
 
-  const aud = (n: number) => `$${n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-  const issueDate = formatDisplayDate(new Date().toISOString())
-  const dueDate = formatDisplayDate(invoice.dueDate)
+  const today     = new Date()
+  const issueDate = today.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+  const dueDate   = new Date(invoice.dueDate).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
 
-  // V3 brand colours
-  const BLUE  = '#1B458F'
-  const RED   = '#E51636'
-  const GOLD  = '#D4AF37'
-  const NAVY  = '#071D3A'
-  const LIGHT = '#F5F7FA'
+  // ── colour helpers ───────────────────────────────────────────────────────
+  const [nR,nG,nB] = DS.rgb.navy
+  const [gR,gG,gB] = DS.rgb.gold
+  const [rR,rG,rB] = DS.rgb.red
+  const [bR,bG,bB] = DS.rgb.blue
 
-  host.innerHTML = `
-  <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#1a1a1a;width:794px;min-height:1123px;background:#fff;position:relative;box-sizing:border-box;">
+  const fillNavy  = () => doc.setFillColor(nR, nG, nB)
+  const fillGold  = () => doc.setFillColor(gR, gG, gB)
+  const fillLight = () => doc.setFillColor(245, 247, 250)
 
-    <!-- HEADER BAND -->
-    <div style="background:${NAVY};padding:36px 52px 28px 52px;display:flex;justify-content:space-between;align-items:flex-start;">
-      <div>
-        <!-- Logo wordmark -->
-        <div style="display:flex;align-items:baseline;gap:0;">
-          <span style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;">ONE</span>
-          <span style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;margin:0 6px;">FM</span>
-          <span style="font-size:36px;font-weight:900;color:${RED};letter-spacing:-1px;line-height:1;">98.5</span>
-        </div>
-        <div style="color:rgba(255,255,255,0.55);font-size:11px;margin-top:5px;letter-spacing:0.5px;">Goulburn Valley's Community Radio</div>
-        <div style="color:rgba(255,255,255,0.35);font-size:10px;margin-top:2px;">ABN: 92 117 291 771</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:2px;text-transform:uppercase;">TAX INVOICE</div>
-        <div style="font-size:16px;font-weight:700;color:${GOLD};margin-top:6px;letter-spacing:0.5px;">${invoice.number}</div>
-      </div>
-    </div>
+  const inkNavy   = () => doc.setTextColor(nR, nG, nB)
+  const inkGold   = () => doc.setTextColor(gR, gG, gB)
+  const inkRed    = () => doc.setTextColor(rR, rG, rB)
+  const inkWhite  = () => doc.setTextColor(255, 255, 255)
+  const inkGrey   = () => doc.setTextColor(102, 102, 102)
+  const inkSilver = () => doc.setTextColor(160, 160, 160)
+  const inkDark   = () => doc.setTextColor(26, 26, 26)
+  const inkDim    = () => doc.setTextColor(130, 130, 130)
+  const inkNab    = () => doc.setTextColor(DS.rgb.nab[0], DS.rgb.nab[1], DS.rgb.nab[2])
 
-    <!-- GOLD RULE -->
-    <div style="height:4px;background:linear-gradient(90deg,${BLUE} 0%,${RED} 50%,${GOLD} 100%);"></div>
+  const ruleLight = () => { doc.setDrawColor(220, 220, 220); doc.setLineWidth(0.3) }
+  const ruleBlue  = () => { doc.setDrawColor(bR, bG, bB); doc.setLineWidth(1.5) }
 
-    <!-- BODY -->
-    <div style="padding:40px 52px;">
+  const bold = (sz: number) => { doc.setFont('helvetica', 'bold'); doc.setFontSize(sz) }
+  const norm = (sz: number) => { doc.setFont('helvetica', 'normal'); doc.setFontSize(sz) }
 
-      <!-- BILL TO / FROM -->
-      <div style="display:flex;justify-content:space-between;margin-bottom:36px;">
-        <div style="flex:1;">
-          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:8px;font-weight:700;">BILL TO</div>
-          <div style="font-size:14px;font-weight:700;color:${NAVY};">${invoice.contactName || ''}</div>
-          <div style="font-size:13px;color:#333;margin-top:2px;">${invoice.company}</div>
-          ${invoice.email ? `<div style="font-size:11px;color:#666;margin-top:2px;">${invoice.email}</div>` : ''}
-        </div>
-        <div style="flex:1;text-align:right;">
-          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:8px;font-weight:700;">FROM</div>
-          <div style="font-size:14px;font-weight:700;color:${NAVY};">ONE FM 98.5</div>
-          <div style="font-size:11px;color:#555;line-height:1.7;margin-top:2px;">
-            47 Parkside Drive, Shepparton VIC 3630<br>
-            (03) 5831 3131<br>
-            accounts@fm985.com.au
-          </div>
-        </div>
-      </div>
+  const box = (x: number, y: number, w: number, h: number, style: 'F'|'S'|'FD' = 'F') =>
+    doc.rect(x, y, w, h, style)
+  const tl  = (t: string, x: number, y: number) => doc.text(t, x, y)
+  const tr  = (t: string, x: number, y: number) => doc.text(t, x, y, { align: 'right' })
+  const tc  = (t: string, x: number, y: number) => doc.text(t, x, y, { align: 'center' })
 
-      <!-- DATES ROW -->
-      <div style="display:flex;gap:0;margin-bottom:36px;border-top:1px solid #e8e8e8;border-bottom:1px solid #e8e8e8;">
-        <div style="flex:1;padding:14px 0;">
-          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:5px;font-weight:700;">ISSUE DATE</div>
-          <div style="font-size:13px;font-weight:600;color:${NAVY};">${issueDate}</div>
-        </div>
-        <div style="width:1px;background:#e8e8e8;margin:10px 32px;"></div>
-        <div style="flex:1;padding:14px 0;">
-          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:5px;font-weight:700;">DUE DATE</div>
-          <div style="font-size:13px;font-weight:700;color:${RED};">${dueDate}</div>
-        </div>
-        <div style="width:1px;background:#e8e8e8;margin:10px 32px;"></div>
-        <div style="flex:1;padding:14px 0;">
-          <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:5px;font-weight:700;">REFERENCE</div>
-          <div style="font-size:13px;font-weight:600;color:${NAVY};">${invoice.number}</div>
-        </div>
-      </div>
+  // ── HEADER BAND ─────────────────────────────────────────────────────────
+  const HEADER_H = 42
+  fillNavy(); box(0, 0, W, HEADER_H)
 
-      <!-- LINE ITEMS TABLE -->
-      <table style="width:100%;border-collapse:collapse;margin-bottom:32px;">
-        <thead>
-          <tr style="background:${NAVY};">
-            <th style="text-align:left;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;width:50%;">Description</th>
-            <th style="text-align:right;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;">Qty</th>
-            <th style="text-align:right;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;">Unit Price</th>
-            <th style="text-align:right;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;">Excl. GST</th>
-            <th style="text-align:right;padding:10px 14px;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.7);font-weight:600;">GST</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="background:#fff;border-bottom:1px solid #eee;">
-            <td style="padding:14px 14px;font-size:12px;color:#1a1a1a;line-height:1.4;">
-              <div style="font-weight:600;">${invoice.description}</div>
-              ${invoice.period ? `<div style="font-size:10px;color:#777;margin-top:3px;">Period: ${invoice.period}</div>` : ''}
-            </td>
-            <td style="text-align:right;padding:14px 14px;font-size:12px;color:#333;">1</td>
-            <td style="text-align:right;padding:14px 14px;font-size:12px;color:#333;">${aud(invoice.amountExclGst)}</td>
-            <td style="text-align:right;padding:14px 14px;font-size:12px;color:#333;">${aud(invoice.amountExclGst)}</td>
-            <td style="text-align:right;padding:14px 14px;font-size:12px;color:#333;">${aud(invoice.gst)}</td>
-          </tr>
-        </tbody>
-      </table>
+  // Wordmark
+  bold(20); inkWhite(); tl('ONE FM', M, 16.5)
+  const oneW = doc.getTextWidth('ONE FM')
+  bold(18); inkRed(); tl('98.5', M + oneW + 2, 16.5)
 
-      <!-- TOTALS -->
-      <div style="display:flex;justify-content:flex-end;margin-bottom:36px;">
-        <div style="min-width:280px;">
-          <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:11.5px;color:#555;border-bottom:1px solid #eee;">
-            <span>Subtotal (excl. GST)</span>
-            <span>${aud(invoice.amountExclGst)}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:11.5px;color:#555;border-bottom:1px solid #eee;">
-            <span>GST (10%)</span>
-            <span>${aud(invoice.gst)}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;padding:12px 16px;font-size:18px;font-weight:800;background:${NAVY};color:#fff;margin-top:4px;border-radius:3px;">
-            <span>TOTAL DUE</span>
-            <span style="color:${GOLD};">${aud(invoice.total)}</span>
-          </div>
-          <div style="font-size:9px;color:#888;text-align:right;margin-top:5px;">Total includes GST of ${aud(invoice.gst)}</div>
-        </div>
-      </div>
+  norm(8); inkSilver(); tl("Goulburn Valley's Community Radio", M, 23)
+  norm(7); inkDim();    tl('ABN: 92 117 291 771', M, 28.5)
 
-      <!-- PAYMENT DETAILS -->
-      <div style="background:${LIGHT};border-left:4px solid ${BLUE};padding:20px 24px;border-radius:3px;margin-bottom:24px;">
-        <div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:#666;margin-bottom:12px;font-weight:700;">PAYMENT DETAILS — BANK TRANSFER (PREFERRED)</div>
-        <div style="display:flex;gap:40px;font-size:12px;">
-          <div>
-            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Bank</div>
-            <div style="font-weight:600;color:${NAVY};">NAB</div>
-          </div>
-          <div>
-            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">BSB</div>
-            <div style="font-weight:600;color:${NAVY};">${BANK_BSB}</div>
-          </div>
-          <div>
-            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Account</div>
-            <div style="font-weight:600;color:${NAVY};">${BANK_ACCOUNT}</div>
-          </div>
-          <div>
-            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Account Name</div>
-            <div style="font-weight:600;color:${NAVY};">${BANK_ACCOUNT_NAME}</div>
-          </div>
-          <div>
-            <div style="color:#888;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Reference</div>
-            <div style="font-weight:700;color:${RED};">${invoice.number}</div>
-          </div>
-        </div>
-      </div>
+  // TAX INVOICE label + number (right)
+  bold(14); inkWhite(); tr('TAX INVOICE', W - M, 16.5)
+  norm(10); inkGold();  tr(invoice.number, W - M, 24.5)
 
-    </div>
+  // ── GOLD RULE (3px, matches email) ──────────────────────────────────────
+  fillGold(); box(0, HEADER_H, W, 1.5)
 
-    <!-- FOOTER BAND -->
-    <div style="position:absolute;bottom:0;left:0;right:0;">
-      <div style="height:3px;background:linear-gradient(90deg,${BLUE} 0%,${RED} 50%,${GOLD} 100%);"></div>
-      <div style="background:${NAVY};padding:16px 52px;display:flex;justify-content:space-between;align-items:center;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.45);">
-          Goulburn Valley Community Radio Inc. &nbsp;·&nbsp; ABN: 92 117 291 771
-        </div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.45);">
-          Payment due within 14 days &nbsp;·&nbsp; accounts@fm985.com.au
-        </div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.45);">
-          (03) 5831 3131
-        </div>
-      </div>
-    </div>
+  // ── BODY ────────────────────────────────────────────────────────────────
+  let y = HEADER_H + 10
 
-  </div>`
+  // BILL TO / FROM
+  norm(7); inkDim()
+  tl('BILL TO', M, y); tl('FROM', W / 2 + 5, y)
+  y += 5.5
 
-  const canvas = await html2canvas(host, { scale: 2, useCORS: true, logging: false, width: 794, backgroundColor: '#ffffff' })
-  document.body.removeChild(host)
+  bold(11); inkNavy()
+  tl(invoice.contactName || '', M, y)
+  tl('ONE FM 98.5', W / 2 + 5, y)
+  y += 5
 
-  const pdf = new jsPDF('p', 'mm', 'a4')
-  const imageData = canvas.toDataURL('image/png')
-  const pageWidthMm = 210
-  const imageHeightMm = (canvas.height * pageWidthMm) / canvas.width
-  pdf.addImage(imageData, 'PNG', 0, 0, pageWidthMm, Math.min(imageHeightMm, 297))
-  return pdf
+  norm(9.5); inkGrey()
+  tl(invoice.company, M, y)
+  y += 4.5
+
+  if (invoice.email) { norm(8); inkGrey(); tl(invoice.email, M, y) }
+  norm(8); inkGrey()
+  tl('47 Parkside Drive, Shepparton VIC 3630', W / 2 + 5, y)
+  y += 4.5
+  tl('(03) 5831 3131  ·  accounts@fm985.com.au', W / 2 + 5, y)
+  y += 12
+
+  // DATES ROW
+  ruleLight(); doc.line(M, y, W - M, y); y += 5
+  const COL3 = CW / 3
+  norm(7); inkDim()
+  tl('ISSUE DATE', M, y)
+  tl('DUE DATE', M + COL3, y)
+  tl('INVOICE REFERENCE', M + COL3 * 2, y)
+  y += 5.5
+
+  bold(10); inkNavy(); tl(issueDate, M, y)
+  inkRed();            tl(dueDate, M + COL3, y)
+  inkNavy();           tl(invoice.number, M + COL3 * 2, y)
+  y += 6
+
+  ruleLight(); doc.line(M, y, W - M, y); y += 10
+
+  // LINE ITEMS — header
+  fillNavy(); box(M, y, CW, 8)
+  bold(7); inkWhite()
+  tl('DESCRIPTION', M + 2, y + 5.3)
+  tr('QTY',        M + 93,     y + 5.3)
+  tr('UNIT PRICE', M + 120,    y + 5.3)
+  tr('EXCL. GST',  M + 148,    y + 5.3)
+  tr('GST',        W - M - 1,  y + 5.3)
+  y += 8
+
+  // LINE ITEMS — row
+  ruleLight(); box(M, y, CW, invoice.period ? 18 : 13, 'S')
+  norm(10); inkDark()
+  tl(invoice.description, M + 2, y + 5.5)
+  if (invoice.period) { norm(8); inkGrey(); tl(`Period: ${invoice.period}`, M + 2, y + 11) }
+  norm(10); inkDark()
+  tr('1',                       M + 93,    y + 5.5)
+  tr(aud(invoice.amountExclGst), M + 120,  y + 5.5)
+  tr(aud(invoice.amountExclGst), M + 148,  y + 5.5)
+  tr(aud(invoice.gst),           W - M - 1, y + 5.5)
+  y += (invoice.period ? 18 : 13) + 10
+
+  // TOTALS — right-aligned 72mm block
+  const TX = M + CW - 72   // left edge of totals block
+
+  ruleLight(); doc.line(TX, y, W - M, y); y += 5
+  norm(9); inkGrey();  tl('Subtotal (excl. GST)', TX, y)
+  norm(9); inkDark();  tr(aud(invoice.amountExclGst), W - M, y)
+  y += 4
+  ruleLight(); doc.line(TX, y, W - M, y); y += 5
+  norm(9); inkGrey();  tl('GST (10%)', TX, y)
+  norm(9); inkDark();  tr(aud(invoice.gst), W - M, y)
+  y += 5.5
+
+  // TOTAL DUE — navy fill, gold figure (matches email hero)
+  fillNavy(); box(TX - 2, y, CW - (TX - M) + 2, 11, 'F')
+  bold(11.5); inkWhite(); tl('TOTAL DUE', TX, y + 7.5)
+  bold(11.5); inkGold();  tr(aud(invoice.total), W - M, y + 7.5)
+  y += 16.5
+
+  norm(7); inkDim(); tr(`Total includes GST of ${aud(invoice.gst)}`, W - M, y)
+  y += 12
+
+  // PAYMENT DETAILS SLIP
+  fillLight(); box(M, y, CW, 30)
+  ruleBlue(); doc.line(M, y, M, y + 30)   // blue left accent
+
+  bold(7); inkDim(); tl('PAYMENT DETAILS — BANK TRANSFER (PREFERRED)', M + 4, y + 6.5)
+  norm(8.5); inkNab(); tl('National Australia Bank', M + 4, y + 13)
+
+  const BX = [M + 4, M + 30, M + 62, M + 105, M + 143]
+  const BY  = y + 20.5
+  norm(7); inkDim()
+  tl('BSB',          BX[0], BY - 4.5)
+  tl('ACCOUNT',      BX[1], BY - 4.5)
+  tl('ACCOUNT NAME', BX[2], BY - 4.5)
+  tl('REFERENCE',    BX[3], BY - 4.5)
+
+  bold(9.5); inkNavy()
+  tl(BANK_BSB,          BX[0], BY + 2)
+  tl(BANK_ACCOUNT,      BX[1], BY + 2)
+  tl(BANK_ACCOUNT_NAME, BX[2], BY + 2)
+  inkRed(); tl(invoice.number, BX[3], BY + 2)
+  y += 36
+
+  // ── FOOTER BAND (matches email) ──────────────────────────────────────────
+  const FY = H - 15
+  fillGold(); box(0, FY - 1, W, 1)    // gold rule above footer
+  fillNavy(); box(0, FY, W, 15)
+
+  norm(7.5); inkSilver()
+  tl('Goulburn Valley Community Radio Inc.  ·  ABN: 92 117 291 771', M, FY + 5.5)
+  tc('Payment due within 14 days  ·  accounts@fm985.com.au', W / 2, FY + 5.5)
+  tr('(03) 5831 3131', W - M, FY + 5.5)
+
+  norm(6.5); doc.setTextColor(100, 100, 100)
+  tc(
+    `ONEFM-${invoice.number}.pdf  ·  Generated ${today.toLocaleDateString('en-AU')}`,
+    W / 2, FY + 11
+  )
+
+  return doc
 }
 
 // ---------------------------------------------------------------------------
-// Interactive email preview component (bundle `Oi`)
+// InvoiceEmailTemplate — interactive preview component (ops portal)
 // ---------------------------------------------------------------------------
 
 interface InvoiceEmailTemplateProps {
@@ -978,9 +773,9 @@ interface InvoiceEmailTemplateProps {
 }
 
 export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceEmailTemplateProps) {
-  const { toast } = useToast()
-  const [editing, setEditing] = useState(false)
-  const [message, setMessage] = useState(data.customMessage)
+  const { toast }    = useToast()
+  const [editing, setEditing]       = useState(false)
+  const [message, setMessage]       = useState(data.customMessage)
   const [copiedField, setCopiedField] = useState<string | null>(null)
   const [copiedHtml, setCopiedHtml] = useState(false)
 
@@ -999,9 +794,7 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
   const copyHtml = () => {
     const html = generateInvoiceEmailHtml(
       { ...data, customMessage: message },
-      BANK_BSB,
-      BANK_ACCOUNT,
-      BANK_ACCOUNT_NAME,
+      BANK_BSB, BANK_ACCOUNT, BANK_ACCOUNT_NAME,
     )
     navigator.clipboard.writeText(html).then(() => {
       setCopiedHtml(true)
@@ -1013,9 +806,7 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
   const paymentLinkCount = Object.keys(PAYMENT_LINKS).length
   const emailHtml = generateInvoiceEmailHtml(
     { ...data, customMessage: message },
-    BANK_BSB,
-    BANK_ACCOUNT,
-    BANK_ACCOUNT_NAME,
+    BANK_BSB, BANK_ACCOUNT, BANK_ACCOUNT_NAME,
   )
 
   return (
@@ -1069,42 +860,26 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
 
       <div className="bg-[#0F1D32] border border-[#1E293B] rounded-lg p-3 flex flex-wrap items-center gap-3 text-xs">
         <span className="text-one-muted uppercase tracking-wider font-label">Bank Details:</span>
-        <button
-          onClick={() => copyField(BANK_BSB, 'bsb')}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1E293B] hover:bg-[#2A3A52] transition-colors group"
-        >
-          <span className="text-one-muted">BSB:</span>
-          <span className="font-mono text-one-gold">{BANK_BSB}</span>
-          {copiedField === 'bsb' ? (
-            <Check className="w-3 h-3 text-emerald-400" />
-          ) : (
-            <Copy className="w-3 h-3 text-one-muted group-hover:text-one-gold transition-colors" />
-          )}
-        </button>
-        <button
-          onClick={() => copyField(BANK_ACCOUNT, 'acct')}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1E293B] hover:bg-[#2A3A52] transition-colors group"
-        >
-          <span className="text-one-muted">Acct:</span>
-          <span className="font-mono text-one-gold">{BANK_ACCOUNT}</span>
-          {copiedField === 'acct' ? (
-            <Check className="w-3 h-3 text-emerald-400" />
-          ) : (
-            <Copy className="w-3 h-3 text-one-muted group-hover:text-one-gold transition-colors" />
-          )}
-        </button>
-        <button
-          onClick={() => copyField(BANK_ACCOUNT_NAME, 'name')}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1E293B] hover:bg-[#2A3A52] transition-colors group"
-        >
-          <span className="text-one-muted">Name:</span>
-          <span className="font-mono text-one-white truncate max-w-[180px]">{BANK_ACCOUNT_NAME}</span>
-          {copiedField === 'name' ? (
-            <Check className="w-3 h-3 text-emerald-400" />
-          ) : (
-            <Copy className="w-3 h-3 text-one-muted group-hover:text-one-gold transition-colors" />
-          )}
-        </button>
+        {[
+          { label: 'BSB', value: BANK_BSB, key: 'bsb', mono: true },
+          { label: 'Acct', value: BANK_ACCOUNT, key: 'acct', mono: true },
+          { label: 'Name', value: BANK_ACCOUNT_NAME, key: 'name', mono: false },
+        ].map(({ label, value, key, mono }) => (
+          <button
+            key={key}
+            onClick={() => copyField(value, key)}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1E293B] hover:bg-[#2A3A52] transition-colors group"
+          >
+            <span className="text-one-muted">{label}:</span>
+            <span className={`${mono ? 'font-mono' : ''} text-one-gold ${key === 'name' ? 'truncate max-w-[180px]' : ''}`}>
+              {value}
+            </span>
+            {copiedField === key
+              ? <Check className="w-3 h-3 text-emerald-400" />
+              : <Copy className="w-3 h-3 text-one-muted group-hover:text-one-gold transition-colors" />
+            }
+          </button>
+        ))}
       </div>
 
       {!STRIPE_CONFIG.needsSetup && (

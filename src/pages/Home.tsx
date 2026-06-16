@@ -24,7 +24,7 @@ import {
   Quote, Wifi, Headphones, Zap, Globe, Trophy, Mic2,
 } from 'lucide-react'
 
-/* ΓöÇΓöÇΓöÇ Station Ident ΓöÇΓöÇΓöÇ */
+/* --- Station Ident --- */
 function StationIdent() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const textRef = useRef('98.5 ONE FM')
@@ -84,12 +84,12 @@ function StationIdent() {
   )
 }
 
-/* ΓöÇΓöÇΓöÇ Get Current Show ΓöÇΓöÇΓöÇ */
+/* --- Get Current Show --- */
 function getCurrentShow() {
   return getCurrentLiveShow()
 }
 
-/* ΓöÇΓöÇΓöÇ Audio Wave Canvas ΓöÇΓöÇΓöÇ */
+/* --- Audio Wave Canvas --- */
 function AudioWave() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -155,10 +155,10 @@ function AudioWave() {
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0 }} />
 }
 
-/* ΓöÇΓöÇΓöÇ Ken Burns (tailwind handles it now via animate-ken-burns) ΓöÇΓöÇΓöÇ */
+/* --- Ken Burns (tailwind handles it now via animate-ken-burns) --- */
 function KenBurnsStyle() { return null }
 
-/* ΓöÇΓöÇΓöÇ Sub-section: ProgramPreview ΓöÇΓöÇΓöÇ */
+/* --- Sub-section: ProgramPreview --- */
 function ProgramPreview() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, amount: 0.15 })
