@@ -1,0 +1,35 @@
+{
+  "remoteName": "onefm-drive",
+  "folders": [
+    {
+      "label": "ONE FM OB Photos 1",
+      "drivePath": "ONE FM OB Photos 1",
+      "localPath": "public/assets/images/one-fm-ob-photos-1",
+      "extensions": [".jpg", ".jpeg", ".png", ".webp"]
+    },
+    {
+      "label": "ONE FM OB Photos 2",
+      "drivePath": "ONE FM OB Photos 2",
+      "localPath": "public/assets/images/one-fm-ob-photos-2",
+      "extensions": [".jpg", ".jpeg", ".png", ".webp"]
+    },
+    {
+      "label": "assets one fm",
+      "drivePath": "assets one fm",
+      "localPath": "public/brand/drive-import",
+      "extensions": [".jpg", ".jpeg", ".png", ".webp", ".svg", ".pdf"]
+    },
+    {
+      "label": "GVL Grand Final",
+      "drivePath": "Rumbalara v Nathalia A Grade Grand Final",
+      "localPath": "public/assets/images/gvl-rumbalara-nathalia-gf",
+      "extensions": [".jpg", ".jpeg", ".png", ".webp", ".mp4", ".mov"]
+    },
+    {
+      "label": "Dean (presenters)",
+      "drivePath": "Dean",
+      "localPath": "public/photos/hosts/dean",
+      "extensions": [".jpg", ".jpeg", ".png", ".webp"]
+    }
+  ]
+}
