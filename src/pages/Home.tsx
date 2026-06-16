@@ -1032,10 +1032,10 @@ export default function Home() {
               </div>
               <div className="text-left">
                 <div className="font-body-small text-one-white font-medium">
-                  Margaret Tresize
+                  Rochester Community Member
                 </div>
                 <div className="font-label text-muted text-xs">
-                  Community Leader, Rochester
+                  2022 Goulburn Valley Floods
                 </div>
               </div>
             </div>
