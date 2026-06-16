@@ -27,6 +27,8 @@ create table if not exists contact_enquiries (
   updated_at       timestamptz default now()
 );
 alter table contact_enquiries enable row level security;
+drop policy if exists "Staff can manage enquiries" on contact_enquiries;
+drop policy if exists "Public can insert enquiries" on contact_enquiries;
 create policy "Staff can manage enquiries" on contact_enquiries
   for all using (auth.role() = 'authenticated');
 create policy "Public can insert enquiries" on contact_enquiries
@@ -59,6 +61,7 @@ create table if not exists crm_contacts (
   updated_at      timestamptz default now()
 );
 alter table crm_contacts enable row level security;
+drop policy if exists "Authenticated users manage contacts" on crm_contacts;
 create policy "Authenticated users manage contacts" on crm_contacts
   for all using (auth.role() = 'authenticated');
 
@@ -84,6 +87,7 @@ create table if not exists crm_deals (
   updated_at  timestamptz default now()
 );
 alter table crm_deals enable row level security;
+drop policy if exists "Authenticated users manage deals" on crm_deals;
 create policy "Authenticated users manage deals" on crm_deals
   for all using (auth.role() = 'authenticated');
 
@@ -102,6 +106,7 @@ create table if not exists crm_activities (
   created_at   timestamptz default now()
 );
 alter table crm_activities enable row level security;
+drop policy if exists "Authenticated users manage activities" on crm_activities;
 create policy "Authenticated users manage activities" on crm_activities
   for all using (auth.role() = 'authenticated');
 
@@ -132,6 +137,7 @@ create table if not exists proposals (
   updated_at    timestamptz default now()
 );
 alter table proposals enable row level security;
+drop policy if exists "Authenticated users manage proposals" on proposals;
 create policy "Authenticated users manage proposals" on proposals
   for all using (auth.role() = 'authenticated');
 
@@ -161,6 +167,7 @@ create table if not exists invoices (
   updated_at      timestamptz default now()
 );
 alter table invoices enable row level security;
+drop policy if exists "Authenticated users manage invoices" on invoices;
 create policy "Authenticated users manage invoices" on invoices
   for all using (auth.role() = 'authenticated');
 
@@ -179,6 +186,8 @@ create table if not exists donations (
   created_at              timestamptz default now()
 );
 alter table donations enable row level security;
+drop policy if exists "Authenticated users view donations" on donations;
+drop policy if exists "Public can insert donations" on donations;
 create policy "Authenticated users view donations" on donations
   for select using (auth.role() = 'authenticated');
 create policy "Public can insert donations" on donations
@@ -193,14 +202,19 @@ begin
 end;
 $$;
 
+drop trigger if exists set_updated_at on contact_enquiries;
 create trigger set_updated_at before update on contact_enquiries
   for each row execute function update_updated_at();
+drop trigger if exists set_updated_at on crm_contacts;
 create trigger set_updated_at before update on crm_contacts
   for each row execute function update_updated_at();
+drop trigger if exists set_updated_at on crm_deals;
 create trigger set_updated_at before update on crm_deals
   for each row execute function update_updated_at();
+drop trigger if exists set_updated_at on proposals;
 create trigger set_updated_at before update on proposals
   for each row execute function update_updated_at();
+drop trigger if exists set_updated_at on invoices;
 create trigger set_updated_at before update on invoices
   for each row execute function update_updated_at();
 
@@ -246,6 +260,7 @@ alter table contact_enquiries add constraint contact_enquiries_status_check
 
 -- Staff can read enquiries (needed for Ops inbox + realtime)
 drop policy if exists "Staff can manage enquiries" on contact_enquiries;
+drop policy if exists "Public can insert enquiries" on contact_enquiries;
 create policy "Staff can manage enquiries" on contact_enquiries
   for all using (auth.role() = 'authenticated');
 create policy "Public can insert enquiries" on contact_enquiries
@@ -267,6 +282,7 @@ create table if not exists ops_proposals (
   updated_at   timestamptz default now()
 );
 alter table ops_proposals enable row level security;
+drop policy if exists "Staff manage ops_proposals" on ops_proposals;
 create policy "Staff manage ops_proposals" on ops_proposals
   for all using (auth.role() = 'authenticated');
 
@@ -290,6 +306,7 @@ create table if not exists ops_contracts (
   updated_at      timestamptz default now()
 );
 alter table ops_contracts enable row level security;
+drop policy if exists "Staff manage ops_contracts" on ops_contracts;
 create policy "Staff manage ops_contracts" on ops_contracts
   for all using (auth.role() = 'authenticated');
 
@@ -321,14 +338,18 @@ create table if not exists ops_invoices (
   updated_at     timestamptz default now()
 );
 alter table ops_invoices enable row level security;
+drop policy if exists "Staff manage ops_invoices" on ops_invoices;
 create policy "Staff manage ops_invoices" on ops_invoices
   for all using (auth.role() = 'authenticated');
 
 -- â”€â”€ Auto-update triggers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+drop trigger if exists set_updated_at on ops_proposals;
 create trigger set_updated_at before update on ops_proposals
   for each row execute function update_updated_at();
+drop trigger if exists set_updated_at on ops_contracts;
 create trigger set_updated_at before update on ops_contracts
   for each row execute function update_updated_at();
+drop trigger if exists set_updated_at on ops_invoices;
 create trigger set_updated_at before update on ops_invoices
   for each row execute function update_updated_at();
 
@@ -342,10 +363,22 @@ create index if not exists idx_enquiries_source       on contact_enquiries(sourc
 create index if not exists idx_enquiries_priority     on contact_enquiries(priority);
 
 -- â”€â”€ Realtime (Ops inbox live updates) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-alter publication supabase_realtime add table contact_enquiries;
-alter publication supabase_realtime add table ops_proposals;
-alter publication supabase_realtime add table ops_contracts;
-alter publication supabase_realtime add table ops_invoices;
+do $$ begin
+  alter publication supabase_realtime add table contact_enquiries;
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  alter publication supabase_realtime add table ops_proposals;
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  alter publication supabase_realtime add table ops_contracts;
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  alter publication supabase_realtime add table ops_invoices;
+exception when duplicate_object then null;
+end $$;
 
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
