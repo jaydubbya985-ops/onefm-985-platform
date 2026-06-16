@@ -51,9 +51,9 @@ import { towns, broadcastArea, type Town, type SizeCategory } from '@/data/townD
 function getMarkerConfig(size: SizeCategory) {
   switch (size) {
     case 'hub':
-      return { fillColor: '#D4A84B', scale: 14, strokeColor: '#FFFFFF', strokeWeight: 2 }
+      return { fillColor: '#D4AF37', scale: 14, strokeColor: '#FFFFFF', strokeWeight: 2 }
     case 'major':
-      return { fillColor: '#D4A84B', scale: 10, strokeColor: '#D4A84B', strokeWeight: 1 }
+      return { fillColor: '#D4AF37', scale: 10, strokeColor: '#D4AF37', strokeWeight: 1 }
     case 'medium':
       return { fillColor: '#1B4F8F', scale: 8, strokeColor: '#1B4F8F', strokeWeight: 1 }
     case 'small':
@@ -114,12 +114,13 @@ function exportCSV() {
 
 type SortKey = 'name' | 'population' | 'distance'
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyDCWBY7YnPmk75dXdNKFoJKU-rUzbQe344'
+const GOOGLE_MAPS_API_KEY =
+  import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? 'AIzaSyDCWBY7YnPmk75dXdNKFoJKU-rUzbQe344'
 const MAP_ID = 'a0fa5e1a6343d400f9a9bb4a'
 const SHEPPARTON = { lat: -36.38, lng: 145.4 }
 
 const LGA_COLORS: Record<string, string> = {
-  'Greater Shepparton': '#D4A84B',
+  'Greater Shepparton': '#D4AF37',
   'Campaspe Shire': '#1B4F8F',
   'Benalla Rural City': '#0066CC',
   'Moira Shire': '#E31E24',
@@ -131,8 +132,8 @@ const LGA_COLORS: Record<string, string> = {
 }
 
 const SIZE_PIE_COLORS: Record<string, string> = {
-  hub: '#D4A84B',
-  major: '#F0C75E',
+  hub: '#D4AF37',
+  major: '#F4D27A',
   medium: '#1B4F8F',
   small: '#0066CC',
   village: '#8A9199',
@@ -238,10 +239,10 @@ export default function CoverageMap() {
       const circle100 = new google.maps.Circle({
         center: SHEPPARTON,
         radius: 100_000,
-        strokeColor: '#D4A84B',
+        strokeColor: '#D4AF37',
         strokeOpacity: 0.6,
         strokeWeight: 1.5,
-        fillColor: '#D4A84B',
+        fillColor: '#D4AF37',
         fillOpacity: 0.08,
         map,
         clickable: false,
@@ -249,10 +250,10 @@ export default function CoverageMap() {
       const circle50 = new google.maps.Circle({
         center: SHEPPARTON,
         radius: 50_000,
-        strokeColor: '#D4A84B',
+        strokeColor: '#D4AF37',
         strokeOpacity: 0.4,
         strokeWeight: 1,
-        fillColor: '#D4A84B',
+        fillColor: '#D4AF37',
         fillOpacity: 0.04,
         map,
         clickable: false,
@@ -341,11 +342,11 @@ export default function CoverageMap() {
   return (
     <Layout>
       <SEO title="Coverage Map" description="Interactive 3D coverage map showing ONE FM 98.5's 100km broadcast radius across 25 Goulburn Valley communities." />
-      <div className="flex flex-col h-[calc(100dvh-72px)] bg-[#0A1628]">
+      <div className="flex flex-col h-[calc(100dvh-72px)] bg-one-navy">
         {/* Stats bar */}
-        <div className="flex flex-wrap items-center gap-4 px-4 py-2.5 bg-[#0D1B2A] border-b border-[#1A2A42]">
+        <div className="flex flex-wrap items-center gap-4 px-4 py-2.5 bg-[#071D3A] border-b border-[#1A2A42]">
           <div className="flex items-center gap-2">
-            <Users size={16} className="text-[#D4A84B]" />
+            <Users size={16} className="text-[#D4AF37]" />
             <span className="text-xs text-[#E5E7EB]">
               <strong className="text-white">{broadcastArea.totalPopulation2026.toLocaleString()}</strong>{' '}
               people (2026 est.)
@@ -353,7 +354,7 @@ export default function CoverageMap() {
           </div>
           <div className="w-px h-4 bg-[#1A2A42]" />
           <div className="flex items-center gap-2">
-            <Radio size={16} className="text-[#D4A84B]" />
+            <Radio size={16} className="text-[#D4AF37]" />
             <span className="text-xs text-[#E5E7EB]">
               <strong className="text-white">{broadcastArea.weeklyListeners.toLocaleString()}</strong>{' '}
               weekly listeners
@@ -361,30 +362,30 @@ export default function CoverageMap() {
           </div>
           <div className="w-px h-4 bg-[#1A2A42]" />
           <div className="flex items-center gap-2">
-            <MapPin size={16} className="text-[#D4A84B]" />
+            <MapPin size={16} className="text-[#D4AF37]" />
             <span className="text-xs text-[#E5E7EB]">
               <strong className="text-white">{broadcastArea.totalTowns}</strong> communities
             </span>
           </div>
           <div className="w-px h-4 bg-[#1A2A42]" />
           <div className="flex items-center gap-2">
-            <Signal size={16} className="text-[#D4A84B]" />
+            <Signal size={16} className="text-[#D4AF37]" />
             <span className="text-xs text-[#E5E7EB]">
               <strong className="text-white">{broadcastArea.broadcastRadiusKm}</strong> km radius
             </span>
           </div>
           <div className="flex-1" />
           <div className="hidden sm:flex items-center gap-3 text-[11px] font-label">
-            <Link to="/listen" className="text-[#D4A84B] hover:text-white transition-colors">Listen</Link>
-            <Link to="/programs" className="text-[#8A9199] hover:text-[#D4A84B] transition-colors">Programs</Link>
-            <Link to="/broadcast" className="text-[#8A9199] hover:text-[#D4A84B] transition-colors">Broadcast</Link>
-            <Link to="/media-kit" className="text-[#8A9199] hover:text-[#D4A84B] transition-colors">Media Kit</Link>
+            <Link to="/listen" className="text-[#D4AF37] hover:text-white transition-colors">Listen</Link>
+            <Link to="/programs" className="text-[#8A9199] hover:text-[#D4AF37] transition-colors">Programs</Link>
+            <Link to="/broadcast" className="text-[#8A9199] hover:text-[#D4AF37] transition-colors">Broadcast</Link>
+            <Link to="/media-kit" className="text-[#8A9199] hover:text-[#D4AF37] transition-colors">Media Kit</Link>
           </div>
           <div className="flex items-center gap-2">
             {!touring ? (
               <button
                 onClick={startTour}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#D4A84B] text-[#0A1628] rounded-md hover:bg-[#F0C75E] transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#D4AF37] text-[#071D3A] rounded-md hover:bg-[#F0C75E] transition-colors"
               >
                 <Play size={14} /> Start Tour
               </button>
@@ -408,7 +409,7 @@ export default function CoverageMap() {
         {/* Main area */}
         <div className="flex flex-1 overflow-hidden max-md:flex-col">
           {/* Left sidebar */}
-          <div className="w-72 flex flex-col border-r border-[#1A2A42] bg-[#0D1B2A] max-md:w-full max-md:border-r-0 max-md:border-b">
+          <div className="w-72 flex flex-col border-r border-[#1A2A42] bg-[#071D3A] max-md:w-full max-md:border-r-0 max-md:border-b">
             {/* Search */}
             <div className="p-3 border-b border-[#1A2A42]">
               <div className="relative">
@@ -418,7 +419,7 @@ export default function CoverageMap() {
                   placeholder="Search town or LGA..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-8 pr-3 py-2 text-xs bg-[#0A1628] border border-[#1A2A42] rounded-md text-white placeholder-[#6B7280] focus:outline-none focus:border-[#D4A84B]"
+                  className="w-full pl-8 pr-3 py-2 text-xs bg-[#071D3A] border border-[#1A2A42] rounded-md text-white placeholder-[#6B7280] focus:outline-none focus:border-[#D4AF37]"
                 />
                 {search && (
                   <button
@@ -493,9 +494,9 @@ export default function CoverageMap() {
           <div className="flex-1 relative min-h-[300px]">
             {/* Error overlay */}
             {mapError && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0A1628]">
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#071D3A]">
                 <div className="text-center max-w-md px-6">
-                  <AlertTriangle size={40} className="mx-auto mb-4 text-[#D4A84B]" />
+                  <AlertTriangle size={40} className="mx-auto mb-4 text-[#D4AF37]" />
                   <h3 className="text-lg font-heading text-white mb-2">
                     Google Maps Not Available
                   </h3>
@@ -509,9 +510,9 @@ export default function CoverageMap() {
 
             {/* Loading overlay */}
             {!mapReady && !mapError && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0A1628]">
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#071D3A]">
                 <div className="text-center">
-                  <div className="w-8 h-8 border-2 border-[#D4A84B] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                  <div className="w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                   <p className="text-xs text-[#8A9199]">Loading map...</p>
                 </div>
               </div>
@@ -528,13 +529,13 @@ export default function CoverageMap() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: 380, opacity: 0 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  className="absolute top-3 right-3 bottom-3 w-[340px] bg-[#0D1B2A]/95 backdrop-blur-md border border-[#1A2A42] rounded-xl overflow-y-auto z-20 max-md:inset-x-0 max-md:top-auto max-md:bottom-0 max-md:w-full max-md:rounded-b-none max-md:max-h-[60vh]"
+                  className="absolute top-3 right-3 bottom-3 w-[340px] bg-[#071D3A]/95 backdrop-blur-md border border-[#1A2A42] rounded-xl overflow-y-auto z-20 max-md:inset-x-0 max-md:top-auto max-md:bottom-0 max-md:w-full max-md:rounded-b-none max-md:max-h-[60vh]"
                 >
                   {/* Hero gradient */}
                   <div
                     className="h-28 relative"
                     style={{
-                      background: `linear-gradient(135deg, ${getMarkerConfig(selectedTown.sizeCategory).fillColor}22, #0A1628)`,
+                      background: `linear-gradient(135deg, ${getMarkerConfig(selectedTown.sizeCategory).fillColor}22, #071D3A)`,
                     }}
                   >
                     <button
@@ -547,7 +548,7 @@ export default function CoverageMap() {
                       <h3 className="font-heading text-lg text-white">{selectedTown.name}</h3>
                       <Badge
                         variant="outline"
-                        className="mt-1 text-[10px] border-[#D4A84B]/40 text-[#D4A84B] bg-[#D4A84B]/10"
+                        className="mt-1 text-[10px] border-[#D4AF37]/40 text-[#D4AF37] bg-[#D4AF37]/10"
                       >
                         {selectedTown.lga}
                       </Badge>
@@ -557,7 +558,7 @@ export default function CoverageMap() {
                   {/* Stats grid */}
                   <div className="p-4 space-y-4">
                     <div className="grid grid-cols-2 gap-2.5">
-                      <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1A2A42]">
+                      <div className="bg-[#071D3A] rounded-lg p-3 border border-[#1A2A42]">
                         <div className="text-[10px] text-[#8A9199] uppercase tracking-wider mb-1">
                           Population (2026)
                         </div>
@@ -565,7 +566,7 @@ export default function CoverageMap() {
                           {selectedTown.population2026.toLocaleString()}
                         </div>
                       </div>
-                      <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1A2A42]">
+                      <div className="bg-[#071D3A] rounded-lg p-3 border border-[#1A2A42]">
                         <div className="text-[10px] text-[#8A9199] uppercase tracking-wider mb-1">
                           Median Age
                         </div>
@@ -573,7 +574,7 @@ export default function CoverageMap() {
                           {selectedTown.medianAge} yrs
                         </div>
                       </div>
-                      <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1A2A42]">
+                      <div className="bg-[#071D3A] rounded-lg p-3 border border-[#1A2A42]">
                         <div className="text-[10px] text-[#8A9199] uppercase tracking-wider mb-1">
                           Income / Week
                         </div>
@@ -581,7 +582,7 @@ export default function CoverageMap() {
                           ${selectedTown.medianIncomePerWeek.toLocaleString()}
                         </div>
                       </div>
-                      <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1A2A42]">
+                      <div className="bg-[#071D3A] rounded-lg p-3 border border-[#1A2A42]">
                         <div className="text-[10px] text-[#8A9199] uppercase tracking-wider mb-1">
                           Households
                         </div>
@@ -636,14 +637,14 @@ export default function CoverageMap() {
                     </div>
 
                     {/* Top Industry */}
-                    <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1A2A42]">
+                    <div className="bg-[#071D3A] rounded-lg p-3 border border-[#1A2A42]">
                       <div className="flex items-center gap-2 mb-1">
-                        <Briefcase size={12} className="text-[#D4A84B]" />
+                        <Briefcase size={12} className="text-[#D4AF37]" />
                         <span className="text-[10px] text-[#8A9199] uppercase tracking-wider">
                           Top Industry
                         </span>
                       </div>
-                      <span className="text-xs font-medium text-[#D4A84B]">
+                      <span className="text-xs font-medium text-[#D4AF37]">
                         {selectedTown.topIndustry}
                       </span>
                     </div>
@@ -694,7 +695,7 @@ export default function CoverageMap() {
                     />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                       {lgaChartData.map((entry) => (
-                        <Cell key={entry.name} fill={LGA_COLORS[entry.name] || '#D4A84B'} />
+                        <Cell key={entry.name} fill={LGA_COLORS[entry.name] || '#D4AF37'} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -761,7 +762,7 @@ export default function CoverageMap() {
                       }}
                       formatter={(value: number) => value.toLocaleString()}
                     />
-                    <Bar dataKey="population" fill="#D4A84B" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="population" fill="#D4AF37" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

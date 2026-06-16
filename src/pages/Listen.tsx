@@ -1,9 +1,20 @@
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LivePlayerWidget } from '@/components/home/LivePlayerWidget'
+import { CinegraphBackground } from '@/components/CinegraphBackground'
+import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
+import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
+import { FacebookPanel } from '@/components/social/FacebookPanel'
 import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { BRAND } from '@/lib/brand'
-import { ExternalLink, Headphones, Radio, Smartphone } from 'lucide-react'
+import { ExternalLink, Headphones, MapPin, Radio, Smartphone, Trophy } from 'lucide-react'
+
+const PAGE_JOBS: PageJob[] = [
+  { label: 'Programs', path: '/programs', description: 'Weekly guide', icon: Radio, accent: '#D4AF37' },
+  { label: 'Broadcast', path: '/broadcast', description: 'Schedule grid', icon: Headphones, accent: '#2EC4B6' },
+  { label: 'Coverage', path: '/coverage', description: '25 towns', icon: MapPin, accent: '#1B458F' },
+  { label: 'GVL Football', path: '/football', description: 'Game day', icon: Trophy, accent: '#E51636' },
+]
 
 const WAYS = [
   {
@@ -37,17 +48,25 @@ export default function Listen() {
         description="Listen to ONE FM 98.5 live — FM 98.5 across the Goulburn Murray, stream at fm985.com.au, or via Community Radio Plus."
       />
 
-      <section className="pt-28 pb-6 px-4 sm:px-6 bg-gradient-to-b from-one-navy to-[#0A1628]">
-        <div className="max-w-7xl mx-auto text-center">
+      <section className="relative min-h-[42vh] flex flex-col justify-end overflow-hidden pt-24">
+        <div className="absolute inset-0 z-0">
+          <CinegraphBackground slot="listenStudio" opacity={0.45} />
+          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/80 via-one-navy/50 to-one-navy" />
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-10 w-full text-center">
           <p className="font-label text-one-gold text-xs tracking-widest uppercase mb-3">Listen</p>
-          <h1 className="font-h1 text-one-white mb-4">LISTEN LIVE</h1>
+          <h1 className="font-hero text-one-white mb-4">
+            LISTEN <span className="text-one-gold">LIVE</span>
+          </h1>
           <p className="font-body text-one-muted max-w-2xl mx-auto">
             {BRAND.fullName} — {BRAND.tagline} across the {BRAND.region}. FM, online stream, and Community Radio Plus.
           </p>
         </div>
       </section>
 
-      <LivePlayerWidget className="-mt-6" />
+      <PageJobsBar jobs={PAGE_JOBS} className="-mt-4 pb-6 relative z-20" />
+
+      <LivePlayerWidget className="-mt-2" />
 
       <section className="section-padding bg-one-navy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -78,6 +97,11 @@ export default function Listen() {
                 <div key={way.title}>{inner}</div>
               )
             })}
+          </div>
+
+          <div className="mt-10 grid lg:grid-cols-2 gap-6">
+            <SoundCloudPanel compact />
+            <FacebookPanel compact />
           </div>
 
           <div className="mt-8 glass-card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

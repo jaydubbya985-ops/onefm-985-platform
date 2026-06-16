@@ -24,9 +24,6 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
-  PieChart,
-  Pie,
-  Cell,
   ResponsiveContainer,
   Tooltip,
   BarChart,
@@ -39,6 +36,7 @@ import { generateMediaKitDocx } from '@/lib/docxExport'
 import { rateCard, stationStats } from '@/data/pricing'
 import { towns } from '@/data/townData'
 import { Layout } from '@/components/Layout'
+import { BRAND } from '@/lib/brand'
 
 const topTownListeners = [...towns]
   .sort((a, b) => b.listenersEstimate - a.listenersEstimate)
@@ -74,26 +72,19 @@ const cardStagger = {
   },
 }
 
-/* ─────────── data ─────────── */
-const platformData = [
-  { name: 'FM Radio', value: 62, color: '#D4963A' },
-  { name: 'Streaming', value: 23, color: '#2EC4B6' },
-  { name: 'Podcast', value: 10, color: '#9B5DE5' },
-  { name: 'Social', value: 5, color: '#FF6B6B' },
+/* ─────────── data (sourced — no fabricated percentages) ─────────── */
+const reachChannels = [
+  { name: 'FM Radio', detail: '98.5 FM · ~100 km radius', color: '#D4AF37' },
+  { name: 'Live Stream', detail: 'fm985.com.au · Radio.co', color: '#2EC4B6' },
+  { name: 'SoundCloud', detail: 'Interview archive after broadcast', color: '#FF5500' },
+  { name: 'Facebook', detail: 'facebook.com/onefmshepparton', color: '#1877F2' },
 ]
 
-const ageData = [
-  { age: '18-24', percent: 18 },
-  { age: '25-34', percent: 32 },
-  { age: '35-44', percent: 24 },
-  { age: '45-54', percent: 16 },
-  { age: '55+', percent: 10 },
-]
-
-const genderData = [
-  { gender: 'Male', percent: 48, color: '#2EC4B6' },
-  { gender: 'Female', percent: 49, color: '#D4963A' },
-  { gender: 'Other', percent: 3, color: '#9B5DE5' },
+const audienceStats = [
+  { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString(), note: 'Regional reach estimate' },
+  { label: 'Population in broadcast area', value: stationStats.broadcastPopulation.toLocaleString(), note: '2026 est. · 25 towns' },
+  { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km`, note: 'From Shepparton' },
+  { label: 'Years on air', value: String(stationStats.yearsBroadcasting), note: 'Licensed since 1989' },
 ]
 
 const locationData = topTownListeners
@@ -117,7 +108,7 @@ const platformCards = [
     statLabel: 'broadcast frequency',
     reach: '~100km radius',
     coverage: 'Goulburn Murray region — 25 towns',
-    accent: '#D4963A',
+    accent: '#D4AF37',
   },
   {
     icon: Headphones,
@@ -218,7 +209,7 @@ function WaveformBg() {
 }
 
 /* ─────────── signal bars ─────────── */
-function SignalBars({ color = '#D4963A' }: { color?: string }) {
+function SignalBars({ color = '#D4AF37' }: { color?: string }) {
   return (
     <div className="flex items-end gap-[3px] h-6">
       {[40, 55, 70, 85, 100].map((h, i) => (
@@ -257,7 +248,7 @@ function AvailabilityPill({ status }: { status: string }) {
    MEDIA KIT PAGE
    ═══════════════════════════════════ */
 export default function MediaKit() {
-  const [demoTab, setDemoTab] = useState<'Overview' | 'Age' | 'Gender' | 'Location'>('Overview')
+  const [demoTab, setDemoTab] = useState<'Overview' | 'Reach' | 'Top Towns'>('Overview')
   const [currency, setCurrency] = useState('AUD')
   const [downloading, setDownloading] = useState<string | null>(null)
   const [docxGenerating, setDocxGenerating] = useState(false)
@@ -308,7 +299,7 @@ export default function MediaKit() {
         rateCard: rateCardRows,
         audienceStats,
         platformReach,
-        contactEmail: 'partnerships@onefm.station',
+        contactEmail: BRAND.email,
         contactPhone: '+61 2 5555 0198',
       })
 
@@ -426,7 +417,7 @@ export default function MediaKit() {
 
           {/* Tabs */}
           <div className="flex flex-wrap gap-2 mb-10">
-            {(['Overview', 'Age', 'Gender', 'Location'] as const).map((tab) => (
+            {(['Overview', 'Reach', 'Top Towns'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setDemoTab(tab)}
@@ -451,54 +442,6 @@ export default function MediaKit() {
                 transition={{ duration: 0.3 }}
                 className="grid grid-cols-1 lg:grid-cols-2 gap-10"
               >
-                {/* Donut Chart */}
-                <div className="glass-card p-6 flex flex-col items-center">
-                  <div className="w-full h-[320px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={platformData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={80}
-                          outerRadius={120}
-                          paddingAngle={3}
-                          dataKey="value"
-                          stroke="none"
-                        >
-                          {platformData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{
-                            background: 'rgba(26,26,31,0.95)',
-                            border: '1px solid #2A2A30',
-                            borderRadius: '8px',
-                            fontFamily: 'JetBrains Mono, monospace',
-                            fontSize: '12px',
-                            color: '#F4F1EA',
-                          }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="text-center -mt-8">
-                    <div className="font-stat text-ivory">25</div>
-                    <div className="font-label text-muted">Towns in broadcast area</div>
-                  </div>
-                  {/* Legend */}
-                  <div className="flex flex-wrap justify-center gap-4 mt-4">
-                    {platformData.map((item) => (
-                      <div key={item.name} className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                        <span className="font-body-small text-chalk">{item.name} {item.value}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Insight Cards */}
                 <motion.div
                   className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                   variants={staggerContainer}
@@ -506,111 +449,79 @@ export default function MediaKit() {
                   whileInView="visible"
                   viewport={{ once: true }}
                 >
-                  {[
-                    { title: 'Core Audience: 25-54', desc: 'Prime spending demographic' },
-                    { title: 'Peak Hours: 6AM–9AM, 4PM–7PM', desc: 'Drive-time dominance' },
-                    { title: 'Avg. Session: 47 min', desc: 'Above-industry retention' },
-                    { title: 'Cross-Platform: 78%', desc: 'Multi-channel engagement' },
-                  ].map((card, i) => (
+                  {audienceStats.map((stat, i) => (
                     <motion.div
                       key={i}
                       className="glass-card p-5 hover:border-amber/30 transition-all duration-300"
                       variants={cardStagger}
                     >
-                      <h4 className="font-h4 text-ivory mb-1">{card.title}</h4>
-                      <p className="font-body-small text-muted">{card.desc}</p>
+                      <div className="font-stat text-amber text-2xl">{stat.value}</div>
+                      <h4 className="font-h4 text-ivory mb-1 mt-2">{stat.label}</h4>
+                      <p className="font-body-small text-muted">{stat.note}</p>
                     </motion.div>
                   ))}
                 </motion.div>
-              </motion.div>
-            )}
 
-            {demoTab === 'Age' && (
-              <motion.div
-                key="age"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.3 }}
-                className="glass-card p-6"
-              >
-                <div className="w-full h-[360px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={ageData} layout="vertical" margin={{ left: 20 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" horizontal={false} />
-                      <XAxis type="number" tick={{ fill: '#6B6B75', fontSize: 12, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
-                      <YAxis type="category" dataKey="age" tick={{ fill: '#F4F1EA', fontSize: 13, fontFamily: 'Space Grotesk' }} axisLine={false} tickLine={false} width={60} />
-                      <Tooltip
-                        contentStyle={{
-                          background: 'rgba(26,26,31,0.95)',
-                          border: '1px solid #2A2A30',
-                          borderRadius: '8px',
-                          fontFamily: 'JetBrains Mono, monospace',
-                          fontSize: '12px',
-                          color: '#F4F1EA',
-                        }}
-                        formatter={(value: number) => [`${value}%`, 'Percentage']}
-                      />
-                      <Bar dataKey="percent" fill="#D4963A" radius={[0, 4, 4, 0]} barSize={28} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </motion.div>
-            )}
-
-            {demoTab === 'Gender' && (
-              <motion.div
-                key="gender"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.3 }}
-                className="glass-card p-8"
-              >
-                <div className="flex flex-col md:flex-row items-center gap-10">
-                  <div className="w-[280px] h-[280px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={genderData} cx="50%" cy="50%" innerRadius={60} outerRadius={110} paddingAngle={4} dataKey="percent" stroke="none">
-                          {genderData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{
-                            background: 'rgba(26,26,31,0.95)',
-                            border: '1px solid #2A2A30',
-                            borderRadius: '8px',
-                            fontFamily: 'JetBrains Mono, monospace',
-                            fontSize: '12px',
-                            color: '#F4F1EA',
-                          }}
-                          formatter={(value: number) => [`${value}%`, '']}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="text-center md:text-left">
-                    <div className="flex flex-col gap-4">
-                      {genderData.map((g) => (
-                        <div key={g.gender} className="flex items-center gap-3">
-                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: g.color }} />
-                          <span className="font-body text-chalk">{g.gender}</span>
-                          <span className="font-label text-amber">{g.percent}%</span>
+                <div className="glass-card p-6">
+                  <h3 className="font-h4 text-ivory mb-4">Where ONE FM reaches listeners</h3>
+                  <div className="space-y-3">
+                    {reachChannels.map((ch) => (
+                      <div
+                        key={ch.name}
+                        className="flex items-center gap-3 p-3 rounded-lg border border-border-dark bg-onyx/40"
+                      >
+                        <div className="w-2 h-8 rounded-full shrink-0" style={{ backgroundColor: ch.color }} />
+                        <div>
+                          <p className="font-label text-ivory text-xs">{ch.name}</p>
+                          <p className="font-body-small text-muted text-xs mt-0.5">{ch.detail}</p>
                         </div>
-                      ))}
-                    </div>
-                    <p className="font-body-small text-muted mt-6">
-                      Diverse programming ensures balanced audience
-                    </p>
+                      </div>
+                    ))}
                   </div>
+                  <p className="font-body-small text-muted mt-4 text-xs">
+                    Peak listening: breakfast (6–9am) and drive (4–7pm). Detailed demographics available on request.
+                  </p>
                 </div>
               </motion.div>
             )}
 
-            {demoTab === 'Location' && (
+            {demoTab === 'Reach' && (
               <motion.div
-                key="location"
+                key="reach"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.3 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              >
+                {platformCards.map((card) => {
+                  const Icon = card.icon
+                  return (
+                    <div key={card.title} className="glass-card p-6 hover:border-amber/30 transition-colors">
+                      <div className="flex items-start gap-4">
+                        <div
+                          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                          style={{ backgroundColor: `${card.accent}22`, color: card.accent }}
+                        >
+                          <Icon size={22} />
+                        </div>
+                        <div>
+                          <h4 className="font-h4 text-ivory">{card.title}</h4>
+                          <p className="font-stat text-amber text-lg mt-1">{card.stat}</p>
+                          <p className="font-label text-muted text-[10px]">{card.statLabel}</p>
+                          <p className="font-body-small text-chalk mt-2">{card.reach}</p>
+                          <p className="font-body-small text-muted text-xs">{card.coverage}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </motion.div>
+            )}
+
+            {demoTab === 'Top Towns' && (
+              <motion.div
+                key="top-towns"
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
@@ -634,14 +545,14 @@ export default function MediaKit() {
                         }}
                         formatter={(value: number) => [value.toLocaleString(), 'Listeners']}
                       />
-                      <Bar dataKey="listeners" fill="#D4963A" radius={[4, 4, 0, 0]} barSize={40} />
+                      <Bar dataKey="listeners" fill="#D4AF37" radius={[4, 4, 0, 0]} barSize={40} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
                 <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-3">
                   {locationData.map((loc) => (
                     <div key={loc.region} className="text-center p-3 rounded-lg bg-onyx/50">
-                      <div className="font-label text-amber text-xs">{loc.listeners.toLocaleString()}</div>
+                      <div className="font-label text-amber text-xs">{loc.listeners.toLocaleString()} est.</div>
                       <div className="font-micro text-muted">{loc.region}</div>
                     </div>
                   ))}
@@ -895,13 +806,17 @@ export default function MediaKit() {
               <div className="w-10 h-10 rounded-full bg-amber/10 flex items-center justify-center">
                 <Mail size={18} className="text-amber" />
               </div>
-              <span className="font-mono text-sm text-chalk">partnerships@onefm.station</span>
+              <a href={`mailto:${BRAND.email}`} className="font-mono text-sm text-chalk hover:text-amber transition-colors">
+                {BRAND.email}
+              </a>
             </motion.div>
             <motion.div className="flex items-center gap-3" variants={cardStagger}>
               <div className="w-10 h-10 rounded-full bg-amber/10 flex items-center justify-center">
                 <Phone size={18} className="text-amber" />
               </div>
-              <span className="font-mono text-sm text-chalk">+61 2 5555 0198</span>
+              <a href={`tel:${BRAND.phone.replace(/\s/g, '')}`} className="font-mono text-sm text-chalk hover:text-amber transition-colors">
+                {BRAND.phone}
+              </a>
             </motion.div>
           </motion.div>
 

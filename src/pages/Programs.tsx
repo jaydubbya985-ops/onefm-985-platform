@@ -11,6 +11,8 @@ import {
   getBreakfastScheduleLabel,
   getCurrentLiveShow,
 } from '@/data/programGuide'
+import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
+import { FacebookPanel } from '@/components/social/FacebookPanel'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import {
   Mic2,
@@ -721,6 +723,10 @@ export default function Programs() {
             Community interviews and sport replays on SoundCloud — not separate podcast download counts.
           </p>
         </motion.div>
+        <div className="grid lg:grid-cols-2 gap-6 mb-10">
+          <SoundCloudPanel compact />
+          <FacebookPanel compact />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {podcasts.map((pod, i) => (
             <motion.a
