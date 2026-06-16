@@ -1,18 +1,20 @@
 import { useState, useEffect, useRef, memo } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   Check, Star, TrendingUp, Users, Radio, MapPin,
   Trophy, Target, ArrowRight, Send, Phone, Mail,
   User, Building, MessageSquare, ChevronDown, Sparkles,
-  Megaphone, BarChart3, Globe, Clock, Shield, Award, FileText
+  BarChart3, Clock, Shield, Award
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { CinegraphBackground } from '@/components/CinegraphBackground'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { footballTiers, roiComparison, stationStats } from '@/data/pricing'
+import { footballTiers, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
+import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
 
 /* ─── easing helpers ─── */
@@ -60,7 +62,7 @@ const ParticleField = memo(function ParticleField() {
         if (p.y > canvas.offsetHeight) p.y = 0
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(212,168,75,${p.alpha})`
+        ctx.fillStyle = `rgba(212,175,55,${p.alpha})`
         ctx.fill()
       })
       animId = requestAnimationFrame(draw)
@@ -164,21 +166,22 @@ const tiers = footballTiers.map((t) => {
   }
 })
 
-/* ─── ROI Comparison Data (from pricing.ts) ─── */
+/* ─── ONE FM reach row (sourced from stationStats) ─── */
 const roiData = [
-  { medium: 'ONE FM Football', cpm: `$${roiComparison.oneFm.cpm.toFixed(2)}`, reach: `${roiComparison.oneFm.reach.toLocaleString()}/wk`, frequency: `${roiComparison.oneFm.frequency}x/wk`, engagement: 'High', trust: roiComparison.oneFm.trust, notes: 'Local trust, loyal audience' },
-  { medium: 'Local Newspaper', cpm: `$${roiComparison.newspaper.cpm.toFixed(2)}`, reach: `${roiComparison.newspaper.reach.toLocaleString()}/wk`, frequency: '1x/wk', engagement: 'Low', trust: roiComparison.newspaper.trust, notes: 'Declining readership' },
-  { medium: 'Digital Ads (Display)', cpm: `$${roiComparison.digitalAds.cpm.toFixed(2)}`, reach: `${roiComparison.digitalAds.reach.toLocaleString()}/wk`, frequency: 'Variable', engagement: 'Medium', trust: roiComparison.digitalAds.trust, notes: 'Ad-blockers, low CTR' },
-  { medium: 'Regional Billboard', cpm: `$${roiComparison.billboard.cpm.toFixed(2)}`, reach: `${roiComparison.billboard.reach.toLocaleString()}/day`, frequency: 'Passive', engagement: 'Low', trust: roiComparison.billboard.trust, notes: 'No targeting, hard to measure' },
-  { medium: 'Social Media Ads', cpm: `$${roiComparison.socialMedia.cpm.toFixed(2)}`, reach: `${roiComparison.socialMedia.reach.toLocaleString()}/wk`, frequency: '2-3x/wk', engagement: 'Medium', trust: roiComparison.socialMedia.trust, notes: 'Algorithm changes, fatigue' },
+  {
+    medium: 'ONE FM Football',
+    reach: `${stationStats.weeklyListeners.toLocaleString()} est./wk`,
+    frequency: 'Sat matchday + drive-time',
+    notes: 'GVL live coverage — local trust, loyal audience',
+  },
 ]
 
-/* ─── Audience Demographics ─── */
-const demoData = [
-  { label: '18-34', value: 32, color: '#D4963A' },
-  { label: '35-49', value: 38, color: '#2EC4B6' },
-  { label: '50-64', value: 22, color: '#F0C75E' },
-  { label: '65+', value: 8, color: '#9B5DE5' },
+/* ─── Regional reach facts (no unsourced age breakdown) ─── */
+const reachFacts = [
+  { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString() },
+  { label: 'Towns in broadcast area', value: String(stationStats.totalTowns) },
+  { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km` },
+  { label: 'Area population (2026 est.)', value: stationStats.broadcastPopulation.toLocaleString() },
 ]
 
 const townData = [
@@ -189,30 +192,13 @@ const townData = [
   'Barmah', 'Picola', 'Wunghnu', 'Katandra', 'Tallygaroopna',
 ]
 
-/* ─── Testimonials ─── */
-const testimonials = [
-  {
-    quote: "Since sponsoring through ONE FM, our Saturday trade has jumped 35%. The footy crowd knows our name now — it's the best local advertising decision we've made.",
-    name: 'Dave O\'Brien',
-    company: 'O\'Brien\'s Hardware & Plumbing',
-    stars: 5,
-    tier: 'Champion Partner',
-  },
-  {
-    quote: "We went with the Premier Partner package and had customers mention they heard our ad during the match call. That direct feedback never happened with online ads.",
-    name: 'Maria Santos',
-    company: 'Santos Family Bakery',
-    stars: 5,
-    tier: 'Premier Partner',
-  },
-  {
-    quote: "ONE FM gave us category exclusivity so our competitor couldn't advertise. That's gold in a small town. We've renewed for 3 seasons straight.",
-    name: 'Tim Henderson',
-    company: 'Henderson Auto Services',
-    stars: 5,
-    tier: 'Signature Partner',
-  },
-]
+/* ─── Community voice ─── */
+const communityVoice = {
+  quote:
+    "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that.",
+  name: 'Margaret Tresize',
+  role: 'Community Leader, Rochester',
+}
 
 /* ─── Enquiry Form Data (from pricing.ts) ─── */
 const tierOptions = [
@@ -234,12 +220,6 @@ export default function Football() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [activeTestimonial, setActiveTestimonial] = useState(0)
-
-  useEffect(() => {
-    const id = setInterval(() => setActiveTestimonial((p) => (p + 1) % testimonials.length), 8000)
-    return () => clearInterval(id)
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -277,9 +257,12 @@ export default function Football() {
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
       <section className="relative min-h-[65vh] flex items-center justify-center overflow-hidden bg-one-navy">
-        {/* Football field line pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.06]" style={{
-          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 59px, #D4A84B 59px, #D4A84B 60px)`,
+        <div className="absolute inset-0 z-0">
+          <CinegraphBackground slot="gvlGameDay" opacity={0.5} />
+          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/85 via-one-navy/60 to-one-navy" />
+        </div>
+        <div className="absolute inset-0 opacity-[0.06] z-[1]" style={{
+          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 59px, #D4AF37 59px, #D4AF37 60px)`,
         }} />
         <ParticleField />
 
@@ -299,9 +282,9 @@ export default function Football() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: easeOutExpo }}
-            className="font-h1 text-one-white mb-6"
+            className="font-hero text-one-white mb-6"
           >
-            FOOTBALL SPONSORSHIP
+            FOOTBALL <span className="text-one-gold">SPONSORSHIP</span>
           </motion.h1>
 
           <motion.p
@@ -467,15 +450,13 @@ export default function Football() {
             transition={{ duration: 0.6, ease: easeOutExpo }}
             className="overflow-x-auto"
           >
-            <table className="w-full min-w-[800px] border-collapse">
+            <table className="w-full min-w-[600px] border-collapse">
               <thead>
                 <tr className="border-b border-one-border">
                   <th className="text-left py-4 px-4 font-label text-muted">Medium</th>
-                  <th className="text-center py-4 px-4 font-label text-muted">CPM</th>
                   <th className="text-center py-4 px-4 font-label text-muted">Weekly Reach</th>
                   <th className="text-center py-4 px-4 font-label text-muted">Frequency</th>
-                  <th className="text-center py-4 px-4 font-label text-muted">Engagement</th>
-                  <th className="text-center py-4 px-4 font-label text-muted">Trust</th>
+                  <th className="text-left py-4 px-4 font-label text-muted">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -486,52 +467,23 @@ export default function Football() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08, duration: 0.5, ease: easeOutExpo }}
-                    className={`border-b border-one-border ${
-                      row.medium === 'ONE FM Football' ? 'bg-one-gold/5' : ''
-                    }`}
+                    className="border-b border-one-border bg-one-gold/5"
                   >
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
-                        {row.medium === 'ONE FM Football' && <Radio size={16} className="text-one-gold" />}
-                        {row.medium === 'Local Newspaper' && <FileText size={16} className="text-muted" />}
-                        {row.medium === 'Digital Ads (Display)' && <Globe size={16} className="text-muted" />}
-                        {row.medium === 'Regional Billboard' && <MapPin size={16} className="text-muted" />}
-                        {row.medium === 'Social Media Ads' && <Megaphone size={16} className="text-muted" />}
-                        <span className={`font-body-small font-medium ${
-                          row.medium === 'ONE FM Football' ? 'text-one-gold' : 'text-one-white'
-                        }`}>
-                          {row.medium}
-                        </span>
+                        <Radio size={16} className="text-one-gold" />
+                        <span className="font-body-small font-medium text-one-gold">{row.medium}</span>
                       </div>
-                    </td>
-                    <td className="text-center py-4 px-4 font-mono text-sm">
-                      <span className={row.medium === 'ONE FM Football' ? 'text-data-teal' : 'text-one-white'}>
-                        {row.cpm}
-                      </span>
                     </td>
                     <td className="text-center py-4 px-4 font-mono text-sm text-one-white">{row.reach}</td>
                     <td className="text-center py-4 px-4 font-body-small text-one-white">{row.frequency}</td>
-                    <td className="text-center py-4 px-4">
-                      <span className={`font-label text-xs px-2 py-0.5 rounded ${
-                        row.engagement === 'High' ? 'bg-data-teal/20 text-data-teal' :
-                        row.engagement === 'Medium' ? 'bg-one-gold/20 text-one-gold' :
-                        'bg-one-red/10 text-one-red'
-                      }`}>
-                        {row.engagement}
-                      </span>
-                    </td>
-                    <td className="text-center py-4 px-4 font-mono text-sm">
-                      <span className={row.medium === 'ONE FM Football' ? 'text-data-teal' : 'text-one-white'}>
-                        {row.trust}
-                      </span>
-                    </td>
+                    <td className="py-4 px-4 font-body-small text-muted">{row.notes}</td>
                   </motion.tr>
                 ))}
               </tbody>
             </table>
           </motion.div>
 
-          {/* Key takeaway */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -542,10 +494,8 @@ export default function Football() {
             <div className="flex items-start gap-3">
               <TrendingUp size={18} className="text-one-gold shrink-0 mt-0.5" />
               <p className="font-body-small text-one-white">
-                <strong className="text-one-white">The numbers speak for themselves:</strong> ONE FM delivers
-                <strong className="text-one-gold"> 4.8x the weekly reach </strong> of the local newspaper at
-                <strong className="text-data-teal"> 85% lower CPM</strong>. Local audiences trust their community radio station — 
-                that trust transfers to your brand.
+                ONE FM reaches an estimated <strong className="text-one-gold">{stationStats.weeklyListeners.toLocaleString()}</strong> listeners
+                weekly across {stationStats.totalTowns} communities. GVL packages put your brand alongside live match commentary every Saturday.
               </p>
             </div>
           </motion.div>
@@ -569,7 +519,7 @@ export default function Football() {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Age Demographics */}
+            {/* Regional reach facts */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -577,24 +527,12 @@ export default function Football() {
               transition={{ duration: 0.6, ease: easeOutExpo }}
               className="glass-card p-6"
             >
-              <h4 className="font-h4 text-one-white mb-5">Age Breakdown</h4>
+              <h4 className="font-h4 text-one-white mb-5">Regional Reach</h4>
               <div className="space-y-4">
-                {demoData.map((d) => (
-                  <div key={d.label}>
-                    <div className="flex justify-between mb-1">
-                      <span className="font-label text-xs text-one-white">{d.label}</span>
-                      <span className="font-label text-xs" style={{ color: d.color }}>{d.value}%</span>
-                    </div>
-                    <div className="w-full h-2 bg-one-navy rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${d.value}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.2, ease: easeOutExpo }}
-                        className="h-full rounded-full"
-                        style={{ backgroundColor: d.color }}
-                      />
-                    </div>
+                {reachFacts.map((d) => (
+                  <div key={d.label} className="flex items-center justify-between border-b border-one-border/50 pb-3 last:border-0">
+                    <span className="font-label text-xs text-muted">{d.label}</span>
+                    <span className="font-body-small text-one-gold font-medium">{d.value}</span>
                   </div>
                 ))}
               </div>
@@ -640,10 +578,10 @@ export default function Football() {
               <h4 className="font-h4 text-one-white mb-5">Listener Habits</h4>
               <div className="space-y-5">
                 {[
-                  { icon: Clock, label: 'Avg. Listening Time', value: '2h 15m / day', color: '#D4963A' },
-                  { icon: Target, label: 'Peak Footy Hours', value: 'Sat 1pm — 6pm', color: '#2EC4B6' },
-                  { icon: Radio, label: 'Live Match Coverage', value: 'Every weekend', color: '#F0C75E' },
-                  { icon: Users, label: 'Unique Weekly Listeners', value: stationStats.weeklyListeners.toLocaleString(), color: '#9B5DE5' },
+                  { icon: Clock, label: 'Peak Footy Hours', value: 'Sat 1pm — 6pm', color: '#D4AF37' },
+                  { icon: Target, label: 'Live Match Coverage', value: 'Every weekend', color: '#2EC4B6' },
+                  { icon: Radio, label: 'GVL Commentary', value: 'FM 98.5 + stream', color: '#F4D27A' },
+                  { icon: Users, label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners.toLocaleString(), color: '#9B5DE5' },
                 ].map((item) => {
                   const Icon = item.icon
                   return (
@@ -674,55 +612,29 @@ export default function Football() {
               <Star size={18} className="text-one-gold" />
               <span className="font-label text-one-gold">LOCAL PROOF</span>
             </div>
-            <h2 className="font-h2 text-one-white mb-3">WHAT LOCAL SPONSORS SAY</h2>
+            <h2 className="font-h2 text-one-white mb-3">COMMUNITY VOICE</h2>
             <p className="font-body-small text-muted">
-              Real businesses across the Goulburn Valley trust ONE FM with their brand.
+              Why the Goulburn Valley trusts ONE FM.
             </p>
           </ScrollReveal>
 
           <div className="max-w-3xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTestimonial}
-                initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                transition={{ duration: 0.6 }}
-                className="glass-card p-8 text-center"
-              >
-                <div className="flex justify-center gap-1 mb-5">
-                  {Array.from({ length: testimonials[activeTestimonial].stars }).map((_, i) => (
-                    <Star key={i} size={18} className="text-one-gold fill-gold" />
-                  ))}
+            <div className="glass-card p-8 text-center">
+              <p className="font-body text-one-white italic mb-6 text-lg leading-relaxed">
+                "{communityVoice.quote}"
+              </p>
+              <div className="flex items-center justify-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-one-gold/20 flex items-center justify-center">
+                  <User size={18} className="text-one-gold" />
                 </div>
-                <p className="font-body text-one-white italic mb-6 text-lg leading-relaxed">
-                  "{testimonials[activeTestimonial].quote}"
-                </p>
-                <div className="flex items-center justify-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-full bg-one-gold/20 flex items-center justify-center">
-                    <User size={18} className="text-one-gold" />
-                  </div>
-                  <div className="text-left">
-                    <p className="font-h4 text-one-gold">{testimonials[activeTestimonial].name}</p>
-                    <p className="font-label text-muted text-xs">{testimonials[activeTestimonial].company}</p>
-                  </div>
+                <div className="text-left">
+                  <p className="font-h4 text-one-gold">{communityVoice.name}</p>
+                  <p className="font-label text-muted text-xs">{communityVoice.role}</p>
                 </div>
-                <span className="inline-block mt-3 font-micro text-one-gold bg-one-gold/10 px-2 py-0.5 rounded">
-                  {testimonials[activeTestimonial].tier}
-                </span>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="flex justify-center gap-2 mt-6">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveTestimonial(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${
-                    i === activeTestimonial ? 'bg-one-gold w-6' : 'bg-muted/40 hover:bg-muted/70'
-                  }`}
-                />
-              ))}
+              </div>
+              <p className="font-body-small text-muted text-xs mt-6">
+                GVL sponsor testimonials available on request — {BRAND.email}
+              </p>
             </div>
           </div>
         </div>

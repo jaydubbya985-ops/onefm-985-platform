@@ -2,14 +2,15 @@ import { useState, useEffect, useRef, useCallback, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Check, Info, X, Star, ArrowRight,
+  Check, Info, X, ArrowRight,
   Share2, Save, Minus, Plus,
-  Sparkles, Building2, TrendingUp
+  Sparkles, Building2
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { generalTiers, rateCard } from '@/data/pricing'
+import { generalTiers, rateCard, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
+import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
 
 /* ─── easing helpers ─── */
@@ -131,66 +132,93 @@ const addOns = [
   { key: 'liveRead', name: 'Host Live Read', price: 350 },
 ]
 
-/* ─── Case Studies ─── */
-const caseStudies = [
+/* ─── Case Studies → factual sponsorship channels (no fabricated lift %) ─── */
+const sponsorChannels = [
   {
     id: 1,
-    title: 'How Regional Auto Boosted Test Drives 43%',
-    industry: 'Automotive',
-    stats: ['12-week campaign', '$18,200 budget', '43% lift'],
-    desc: 'A targeted drive-time spot campaign drove record foot traffic to regional dealerships.',
+    title: 'Drive-time radio spots',
+    industry: 'Broadcast',
+    stats: ['Breakfast 6–9am', 'Afternoon 4–7pm', 'From $25/spot'],
+    desc: 'Peak listening on ONE FM 98.5 — host live reads and standard spots from our published rate card.',
   },
   {
     id: 2,
-    title: 'Farm Fresh Market Doubled Weekend Sales',
-    industry: 'Retail',
-    stats: ['8-week campaign', '$8,400 budget', '52% lift'],
-    desc: 'Morning show live reads and social mentions transformed weekend trading.',
+    title: 'GVL Saturday coverage',
+    industry: 'Sport',
+    stats: ['Live footy & netball', '9 tiers from $25/wk', 'Match-day mentions'],
+    desc: 'Official Goulburn Valley League broadcaster — put your brand in front of game-day audiences.',
+    link: '/football',
   },
   {
     id: 3,
-    title: 'TechFest Sold Out in 72 Hours',
-    industry: 'Events',
-    stats: ['4-week blitz', '$12,000 budget', 'Sold out'],
-    desc: 'Multi-platform sponsorship with host takeovers created unprecedented buzz.',
+    title: 'Digital & social',
+    industry: 'Digital',
+    stats: ['Facebook community', 'SoundCloud interviews', 'Website banners'],
+    desc: 'Cross-platform mentions bundled with radio packages — see Media Kit for reach stats.',
+    link: '/media-kit',
   },
   {
     id: 4,
-    title: 'HealthFirst Clinic Reached 200K New Patients',
-    industry: 'Healthcare',
-    stats: ['16-week campaign', '$24,500 budget', '200K reach'],
-    desc: 'Sponsored wellness segments established brand trust across the region.',
+    title: 'Valley-wide reach',
+    industry: 'Regional',
+    stats: [`${stationStats.totalTowns} towns`, `${stationStats.broadcastRadiusKm} km radius`, 'Est. 39,375 listeners/wk'],
+    desc: 'Interactive coverage map with population and listener estimates per town.',
+    link: '/coverage',
   },
 ]
 
 const industryColors: Record<string, string> = {
+  Broadcast: 'bg-one-gold/20 text-one-gold',
+  Sport: 'bg-data-teal/20 text-data-teal',
+  Digital: 'bg-data-violet/20 text-data-violet',
+  Regional: 'bg-sage/20 text-sage',
   Automotive: 'bg-one-gold/20 text-one-gold',
   Retail: 'bg-data-teal/20 text-data-teal',
   Events: 'bg-data-violet/20 text-data-violet',
   Healthcare: 'bg-sage/20 text-sage',
 }
 
-/* ─── Testimonials ─── */
-const testimonials = [
-  {
-    quote: 'ONE FM delivered results from week one. Their team understood our brand and built a package that actually worked.',
-    name: 'Rowan Farren-Parnell',
-    company: 'Regional Auto Group',
-    stars: 5,
-  },
-  {
-    quote: 'The ROI calculator was spot on. We renewed for a full year after seeing a 38% increase in brand recall.',
-    name: 'Marcus Rivera',
-    company: 'Valley Fresh Markets',
-    stars: 5,
-  },
-  {
-    quote: 'Working with ONE FM feels like partnering with neighbours who truly care about your success.',
-    name: 'Priya Naidoo',
-    company: 'Coastline Realty',
-    stars: 5,
-  },
-]
+type SponsorChannel = (typeof sponsorChannels)[number]
+
+function renderChannelCard(cs: SponsorChannel) {
+  return (
+    <>
+      <div className="h-[200px] bg-one-navy relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-onyx to-transparent z-10" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Building2 size={48} className="text-muted/30" />
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <span className={`font-micro px-2 py-0.5 rounded ${industryColors[cs.industry] || 'bg-muted/20 text-muted'}`}>
+            {cs.industry}
+          </span>
+        </div>
+        <h3 className="font-h3 text-one-white mb-2 group-hover:text-one-gold transition-colors">{cs.title}</h3>
+        <div className="flex flex-wrap gap-3 mb-3">
+          {cs.stats.map((s) => (
+            <span key={s} className="font-mono text-xs text-one-white">{s}</span>
+          ))}
+        </div>
+        <p className="font-body-small text-one-white line-clamp-2 mb-4">{cs.desc}</p>
+        {'link' in cs && cs.link && (
+          <span className="inline-flex items-center gap-1 font-label text-one-gold group-hover:gap-2 transition-all">
+            Learn more <ArrowRight size={14} />
+          </span>
+        )}
+      </div>
+    </>
+  )
+}
+
+/* ─── Community voice (sourced — not fabricated sponsor quotes) ─── */
+const communityVoice = {
+  quote:
+    "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that.",
+  name: 'Margaret Tresize',
+  role: 'Community Leader, Rochester',
+}
 
 /* ─── Animated Counter ─── */
 function AnimatedCounter({ target, prefix = '', suffix = '', duration = 1.2 }: { target: number; prefix?: string; suffix?: string; duration?: number }) {
@@ -253,7 +281,6 @@ export default function SponsorshipKit() {
   const [duration, setDuration] = useState(3)
   const [industry, setIndustry] = useState('Retail')
   const [showSuggestion, setShowSuggestion] = useState(true)
-  const [activeTestimonial, setActiveTestimonial] = useState(0)
   const [calcIndustry, setCalcIndustry] = useState('Retail')
   const [calcSize, setCalcSize] = useState('Champion')
   const [calcBudget, setCalcBudget] = useState(5000)
@@ -264,12 +291,6 @@ export default function SponsorshipKit() {
   const [heroEmail, setHeroEmail] = useState('')
   const [heroSubmitted, setHeroSubmitted] = useState(false)
   const [heroSubmitting, setHeroSubmitting] = useState(false)
-
-  /* Testimonial auto-rotate */
-  useEffect(() => {
-    const id = setInterval(() => setActiveTestimonial((p) => (p + 1) % testimonials.length), 6000)
-    return () => clearInterval(id)
-  }, [])
 
   const toggleAddon = (key: string) => {
     setSelectedAddons((p) => ({ ...p, [key]: !p[key] }))
@@ -282,17 +303,23 @@ export default function SponsorshipKit() {
   const discount = duration >= 12 ? 0.15 : duration >= 6 ? 0.10 : duration >= 3 ? 0.05 : 0
   const total = Math.round(rawTotal * (1 - discount))
 
-  const filteredCases = caseFilter === 'All' ? caseStudies : caseStudies.filter((c) => c.industry === caseFilter)
+  const filteredCases = caseFilter === 'All' ? sponsorChannels : sponsorChannels.filter((c) => c.industry === caseFilter)
 
-  /* ROI calculation */
+  /* Reach estimate — uses station stats only, not fabricated ROI */
   const computeROI = useCallback(() => {
-    const sizeMultiplier = calcSize === 'Signature' || calcSize === 'Premier' ? 480 : calcSize === 'Champion' ? 320 : 180
-    const reach = Math.round(calcBudget * sizeMultiplier)
-    const cpm = (calcBudget / (reach / 1000)).toFixed(1)
-    const engagement = Math.round(reach * 0.12)
-    const match = Math.min(60 + Math.round(calcBudget / 200), 98)
-    const benchmark = Math.round(match - 72)
-    return { reach, cpm, engagement, match, benchmark }
+    const shareBySize: Record<string, number> = {
+      Community: 0.04,
+      Champion: 0.08,
+      Premier: 0.12,
+      Signature: 0.15,
+      Custom: 0.1,
+    }
+    const share = shareBySize[calcSize] ?? 0.08
+    const weeklyReach = Math.round(stationStats.weeklyListeners * share)
+    const spotsPerMonth = calcSize === 'Premier' || calcSize === 'Signature' ? 40 : 20
+    const monthlyImpressions = weeklyReach * spotsPerMonth
+    const cpm = monthlyImpressions > 0 ? ((calcBudget / monthlyImpressions) * 1000).toFixed(2) : '0.00'
+    return { weeklyReach, cpm, monthlyImpressions, spotsPerMonth }
   }, [calcBudget, calcSize])
 
   const scrollTo = (id: string) => {
@@ -605,7 +632,9 @@ export default function SponsorshipKit() {
                     </select>
                   </div>
                 </div>
-                <p className="font-body-small text-data-teal">78% audience match for 25-34 demographic</p>
+                <p className="font-body-small text-data-teal">
+                  Est. {stationStats.weeklyListeners.toLocaleString()} listeners per week across {stationStats.totalTowns} towns
+                </p>
               </div>
 
               {/* Brand Info */}
@@ -717,62 +746,28 @@ export default function SponsorshipKit() {
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-10">
             <h2 className="font-h2 text-one-white mb-2">TRUSTED BY LEADING BRANDS</h2>
-            <p className="font-body-small text-muted">Join hundreds of businesses already on air</p>
+            <p className="font-body-small text-muted">Local businesses across the Goulburn Valley partner with ONE FM</p>
           </ScrollReveal>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-10"
-          >
-            <img
-              src="/sponsor-brand-logos.png"
-              alt="Partner brand logos"
-              className="w-full max-w-3xl mx-auto rounded-xl opacity-80 hover:opacity-100 transition-opacity"
-            />
-          </motion.div>
-
           <div className="max-w-3xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTestimonial}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.6 }}
-                className="text-center"
-              >
-                <p className="font-body text-one-white italic mb-4 text-lg">"{testimonials[activeTestimonial].quote}"</p>
-                <p className="font-h4 text-one-gold">{testimonials[activeTestimonial].name}</p>
-                <p className="font-label text-muted mb-3">{testimonials[activeTestimonial].company}</p>
-                <div className="flex justify-center gap-1">
-                  {Array.from({ length: testimonials[activeTestimonial].stars }).map((_, i) => (
-                    <Star key={i} size={16} className="text-one-gold fill-gold" />
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-            <div className="flex justify-center gap-2 mt-6">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveTestimonial(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${i === activeTestimonial ? 'bg-one-gold w-6' : 'bg-muted/40'}`}
-                />
-              ))}
+            <div className="glass-card p-8 text-center">
+              <p className="font-body text-one-white italic mb-4 text-lg">"{communityVoice.quote}"</p>
+              <p className="font-h4 text-one-gold">{communityVoice.name}</p>
+              <p className="font-label text-muted mb-3">{communityVoice.role}</p>
+              <p className="font-body-small text-muted text-xs mt-4">
+                Sponsor testimonials available on request — contact {BRAND.email}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Section 5: ROI Calculator ── */}
+      {/* ── Section 5: Reach Estimator (was ROI Calculator) ── */}
       <section className="bg-gradient-to-b from-onyx to-slate section-padding">
         <div className="max-w-[1000px] mx-auto px-4">
           <ScrollReveal className="text-center mb-10">
-            <h2 className="font-h2 text-one-white mb-2">CALCULATE YOUR IMPACT</h2>
-            <p className="font-body-small text-muted">Estimate the reach and ROI of your sponsorship</p>
+            <h2 className="font-h2 text-one-white mb-2">ESTIMATE YOUR REACH</h2>
+            <p className="font-body-small text-muted">Indicative reach based on {stationStats.weeklyListeners.toLocaleString()} est. weekly listeners — not a guaranteed ROI</p>
           </ScrollReveal>
 
           <motion.div
@@ -828,7 +823,7 @@ export default function SponsorshipKit() {
                 onClick={() => setCalcResults(true)}
                 className="btn-primary w-full mt-2"
               >
-                Calculate Impact
+                Calculate Reach
               </button>
             </div>
           </motion.div>
@@ -846,12 +841,11 @@ export default function SponsorshipKit() {
                   const r = computeROI()
                   return (
                     <div className="glass-card p-6 max-w-[600px] mx-auto space-y-6">
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         {[
-                          { label: 'Weekly Reach', value: `~${r.reach.toLocaleString()}`, color: 'text-data-teal' },
-                          { label: 'CPM', value: `$${r.cpm}`, color: 'text-one-gold' },
-                          { label: 'Engagement', value: r.engagement.toLocaleString(), color: 'text-data-violet' },
-                          { label: 'Match', value: `${r.match}%`, color: 'text-data-teal' },
+                          { label: 'Est. Weekly Reach', value: `~${r.weeklyReach.toLocaleString()}`, color: 'text-data-teal' },
+                          { label: 'Est. CPM', value: `$${r.cpm}`, color: 'text-one-gold' },
+                          { label: 'Monthly Impressions', value: `~${r.monthlyImpressions.toLocaleString()}`, color: 'text-data-violet' },
                         ].map((stat) => (
                           <div key={stat.label} className="text-center">
                             <div className={`font-stat ${stat.color}`}>{stat.value}</div>
@@ -859,12 +853,9 @@ export default function SponsorshipKit() {
                           </div>
                         ))}
                       </div>
-                      <div className="flex items-center gap-3 p-3 bg-data-teal/10 border border-data-teal/30 rounded-lg">
-                        <TrendingUp size={18} className="text-data-teal" />
-                        <span className="font-body-small text-data-teal">
-                          {r.benchmark > 0 ? `${r.benchmark}% better than industry average` : 'On par with industry average'}
-                        </span>
-                      </div>
+                      <p className="font-body-small text-muted text-xs text-center">
+                        Assumes ~{r.spotsPerMonth} spot impressions/month for {calcSize} tier. Actual results vary — contact us for a tailored proposal.
+                      </p>
                       <div className="glass-card p-4 border-l-2 border-l-amber">
                         <p className="font-body-small text-one-white">
                           Based on your inputs, we recommend: <strong className="text-one-gold">{calcSize === 'Custom' ? 'Custom Package' : calcSize + ' Partner'} + {calcGoal === 'Event Promotion' ? 'Event Sponsorship' : 'Social Campaign Boost'}</strong>
@@ -894,14 +885,14 @@ export default function SponsorshipKit() {
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="flex flex-wrap items-end justify-between gap-4 mb-10">
             <div>
-              <h2 className="font-h2 text-one-white mb-2">SUCCESS STORIES</h2>
+              <h2 className="font-h2 text-one-white mb-2">SPONSORSHIP CHANNELS</h2>
             </div>
             <select
               value={caseFilter}
               onChange={(e) => setCaseFilter(e.target.value)}
               className="bg-one-navy border border-one-border rounded-lg px-3 py-2 font-body-small text-one-white focus:border-one-gold focus:outline-none"
             >
-              {['All', 'Retail', 'Automotive', 'Events', 'Technology', 'Healthcare'].map((f) => (
+              {['All', 'Broadcast', 'Sport', 'Digital', 'Regional'].map((f) => (
                 <option key={f} value={f}>{f}</option>
               ))}
             </select>
@@ -918,31 +909,15 @@ export default function SponsorshipKit() {
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.5, delay: i * 0.1, ease: easeOutExpo }}
                   whileHover={{ y: -4 }}
-                  className="glass-card overflow-hidden group"
+                  className="glass-card overflow-hidden group h-full"
                 >
-                  <div className="h-[200px] bg-one-navy relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-onyx to-transparent z-10" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Building2 size={48} className="text-muted/30" />
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className={`font-micro px-2 py-0.5 rounded ${industryColors[cs.industry] || 'bg-muted/20 text-muted'}`}>
-                        {cs.industry}
-                      </span>
-                    </div>
-                    <h3 className="font-h3 text-one-white mb-2 group-hover:text-one-gold transition-colors">{cs.title}</h3>
-                    <div className="flex flex-wrap gap-3 mb-3">
-                      {cs.stats.map((s) => (
-                        <span key={s} className="font-mono text-xs text-one-white">{s}</span>
-                      ))}
-                    </div>
-                    <p className="font-body-small text-one-white line-clamp-2 mb-4">{cs.desc}</p>
-                    <span className="inline-flex items-center gap-1 font-label text-one-gold group-hover:gap-2 transition-all">
-                      Read Full Story <ArrowRight size={14} />
-                    </span>
-                  </div>
+                  {'link' in cs && cs.link ? (
+                    <Link to={cs.link} className="block h-full">
+                      {renderChannelCard(cs)}
+                    </Link>
+                  ) : (
+                    renderChannelCard(cs)
+                  )}
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -1018,7 +993,10 @@ export default function SponsorshipKit() {
             )}
 
             <p className="font-label text-muted mb-4">
-              Or call us: <span className="text-one-white">+61 2 5555 0198</span>
+              Or call us:{' '}
+              <a href={`tel:${BRAND.phone.replace(/\s/g, '')}`} className="text-one-white hover:text-one-gold transition-colors">
+                {BRAND.phone}
+              </a>
             </p>
             <Link to="/proposal" className="font-label text-one-gold hover:text-one-gold transition-colors">
               Prefer to self-serve? Try the Proposal Builder →
