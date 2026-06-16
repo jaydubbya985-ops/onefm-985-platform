@@ -77,6 +77,7 @@ import {
   type SponsorContract,
 } from './invoices/contacts'
 import { dispatchInvoiceEmail } from '@/lib/invoiceSend'
+import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -744,11 +745,20 @@ export default function InvoiceGenerator() {
     setBatchMode(false)
   }
 
-  function handlePrint(invoice: GeneratedInvoice) {
-    setViewInvoice(invoice)
-    setTimeout(() => {
-      window.print()
-    }, 300)
+  async function handlePrint(invoice: GeneratedInvoice) {
+    const description = invoice.items.map(i => i.description).join(', ') || 'Sponsorship services'
+    const doc = await generateInvoicePdf({
+      number: invoice.invoiceNumber,
+      company: invoice.billTo.company,
+      contactName: invoice.billTo.name,
+      email: invoice.billTo.email,
+      description,
+      amountExclGst: invoice.subtotal,
+      gst: invoice.gst,
+      total: invoice.total,
+      dueDate: invoice.dueDate,
+    })
+    doc.save(`${invoice.invoiceNumber}.pdf`)
   }
 
   function handleDuplicate(invoice: GeneratedInvoice) {
@@ -1957,7 +1967,7 @@ export default function InvoiceGenerator() {
                   Payment is due within 14 days of invoice date. Late payments may incur a 5% late
                   fee per month. GST included at 10% where applicable.
                 </p>
-                <p className="mt-2">For queries, contact accounts@onefm985.org.au | (03) 9783 2955</p>
+                <p className="mt-2">For queries, contact accounts@fm985.com.au | (03) 5831 3131</p>
               </div>
 
               <div className="mt-6 text-center py-4 border-t border-gray-200">
