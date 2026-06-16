@@ -118,7 +118,18 @@ export function LatestInterviews() {
               Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="rounded-xl h-28 border border-one-border/40 animate-pulse bg-one-border/10" />
               ))}
-            {error && <p className="font-body-small text-one-red">{error}</p>}
+            {error && (
+              <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
+                <Mic2 className="mx-auto mb-3 text-one-muted" size={28} />
+                <p className="font-body-small text-one-muted">Interviews temporarily unavailable — check back soon or visit fm985.com.au</p>
+              </div>
+            )}
+            {!loading && !error && items.length === 0 && (
+              <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
+                <Mic2 className="mx-auto mb-3 text-one-muted" size={28} />
+                <p className="font-body-small text-one-muted">No recent interviews — check back soon.</p>
+              </div>
+            )}
             {!loading && !error && items.map((item) => <InterviewCard key={item.id} item={item} />)}
           </div>
 

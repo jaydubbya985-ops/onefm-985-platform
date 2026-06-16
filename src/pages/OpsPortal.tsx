@@ -112,11 +112,16 @@ function OpsPortalContent() {
               <p className="text-one-muted text-xs mt-1">Signed in as {user.email}</p>
             )}
             {!isSupabaseConfigured() && (
-              <div className="mt-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-200 max-w-2xl">
-                <strong>Demo mode.</strong> Set{' '}
-                <code className="text-amber-100">VITE_SUPABASE_URL</code> and{' '}
-                <code className="text-amber-100">VITE_SUPABASE_ANON_KEY</code> in Netlify to enable
-                live invoices and payments.
+              <div className="mt-4 rounded-lg border border-one-gold/30 bg-one-gold/8 px-4 py-3 max-w-2xl flex items-start gap-3">
+                <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold text-xs font-bold">D</span>
+                <div>
+                  <p className="text-sm text-one-gold font-semibold">DEMO MODE — all data is local &amp; unsaved</p>
+                  <p className="text-xs text-one-muted mt-0.5">
+                    Invoices, proposals and contacts shown here are sample data. To enable live storage add{' '}
+                    <code className="text-one-white/70">VITE_SUPABASE_URL</code> +{' '}
+                    <code className="text-one-white/70">VITE_SUPABASE_ANON_KEY</code> in Netlify → Site settings → Environment variables.
+                  </p>
+                </div>
               </div>
             )}
           </div>
