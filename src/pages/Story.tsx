@@ -179,35 +179,41 @@ export default function Story() {
       <KenBurnsStyle />
 
       {/* ═══════ Section 1 — Hero ═══════ */}
-      <section className="relative min-h-[85dvh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
+      <section className="relative min-h-[80dvh] flex items-center justify-center overflow-hidden bg-[#050D1A]">
+        <div aria-hidden className="grain-overlay" />
+        <div className="absolute inset-0 z-0">
           <img
             src="/assets/images/geo-lake-aerial.jpg"
-            alt="Goulburn Valley landscape"
+            alt=""
+            aria-hidden
             className="w-full h-full object-cover animate-ken-burns"
+            style={{ opacity: 0.38 }}
           />
-          <div className="absolute inset-0 bg-one-navy/70" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/70 via-[#050D1A]/40 to-[#050D1A]/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/60 via-transparent to-[#050D1A]/60" />
         </div>
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           >
-            <span className="inline-block font-label text-one-gold mb-6 px-4 py-2 rounded-full border border-one-gold/30 bg-one-gold/10">
-              COMMUNITY RADIO SINCE 1989
-            </span>
-            <h1 className="font-h1 text-one-white mb-6">OUR STORY</h1>
-            <p className="font-body text-one-white text-lg md:text-xl max-w-2xl mx-auto mb-8">
-              36 years of keeping the Valley connected — through flood, fire, footy finals and everything in between.
+            <span className="section-label justify-center mb-8 block">Community Radio Since 1989</span>
+            <h1 className="font-hero text-one-white text-shadow-hero mb-6">
+              OUR STORY
+            </h1>
+            <p className="font-body text-one-white/55 text-lg max-w-2xl mx-auto mb-10 italic leading-relaxed">
+              36 years of keeping the Valley connected —<br className="hidden sm:block" />
+              through flood, fire, footy finals and everything in between.
             </p>
-            <div className="flex items-center justify-center gap-4">
-              <span className="font-stat text-one-gold">1989</span>
-              <span className="w-16 h-px bg-one-gold/40" />
-              <span className="font-stat text-one-white">2025</span>
+            <div className="flex items-center justify-center gap-5">
+              <span className="font-heading font-bold text-one-gold tabular-nums" style={{ fontSize: '2rem', letterSpacing: '-0.02em' }}>1989</span>
+              <div className="flex-1 max-w-24 h-px bg-gradient-to-r from-one-gold/60 to-one-gold/20" />
+              <span className="font-heading font-bold text-one-white tabular-nums" style={{ fontSize: '2rem', letterSpacing: '-0.02em' }}>2025</span>
             </div>
           </motion.div>
         </div>
+        <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-one-navy to-transparent z-10 pointer-events-none" />
       </section>
 
       {/* ═══════ Section 2 — Station Info ═══════ */}

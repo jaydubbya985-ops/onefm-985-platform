@@ -434,17 +434,29 @@ export default function Programs() {
     <Layout>
       <SEO title="Programs & Shows" description="ONE FM Breakfast, Dancing through the decades, The James Manley Show, GVL sport, multicultural programs, and more. Full guide from fm985.com.au." />
       {/* ═══════ Section 1 — Hero ═══════ */}
-      <section className="relative min-h-[80dvh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+      <section className="relative min-h-[80dvh] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-[#050D1A]">
+        {/* Real photo bg — studio broadcast action */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/assets/images/commentary-box-action.jpg"
+            alt=""
+            aria-hidden
+            className="w-full h-full object-cover"
+            style={{ opacity: 0.22 }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/75 via-[#050D1A]/40 to-[#050D1A]/90" />
+        </div>
+        <div aria-hidden className="grain-overlay" />
         <RadioWaveBackground />
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-          className="relative z-10"
+          className="relative z-10 flex flex-col items-center"
         >
-          <p className="font-label text-one-gold mb-4">SHEPPARTON • VICTORIA • 98.5 FM</p>
-          <h1 className="font-h1 text-one-white mb-6">PROGRAMS & SHOWS</h1>
-          <p className="font-body text-one-white max-w-2xl mx-auto">
+          <span className="section-label justify-center mb-7 block">Shepparton · Victoria · 98.5 FM</span>
+          <h1 className="font-hero text-one-white mb-5">PROGRAMS <span className="text-one-gold">&amp; SHOWS</span></h1>
+          <p className="font-body text-one-white/50 max-w-xl mx-auto italic">
             Local voices, local stories, local music — 24/7.
           </p>
         </motion.div>

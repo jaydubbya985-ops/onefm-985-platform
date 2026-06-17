@@ -5,10 +5,7 @@ import { SEO } from '@/components/SEO'
 import { towns } from '@/data/townData'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Users,
   Heart,
-  Radio,
-  Calendar,
   MapPin,
   Search,
   Filter,
@@ -54,29 +51,44 @@ function AnimatedGrid() {
 /* ─── Section 1: Hero ─── */
 function CommunityHero() {
   const stats = [
-    { label: 'NFPs Supported', value: '100+', icon: Heart },
-    { label: 'People Reached', value: '185,791', icon: Users },
-    { label: 'Weekly Listeners', value: '39,375', icon: Radio },
-    { label: 'Events Covered', value: '500+', icon: Calendar },
+    { label: 'NFPs Supported', value: '100+' },
+    { label: 'People Reached', value: '185,791' },
+    { label: 'Weekly Listeners', value: '39,375' },
+    { label: 'Events Covered', value: '500+' },
   ]
 
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[90dvh] flex items-center justify-center overflow-hidden bg-[#050D1A]">
+      {/* Real photo bg */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/assets/images/community-outdoor-market.jpg"
+          alt=""
+          aria-hidden
+          className="w-full h-full object-cover"
+          style={{ opacity: 0.25 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/80 via-[#050D1A]/50 to-[#050D1A]/95" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/50 via-transparent to-[#050D1A]/50" />
+      </div>
+      {/* Subtle animated grid on top of photo */}
       <AnimatedGrid />
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center">
-        <motion.span
+      <div aria-hidden className="grain-overlay" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 text-center">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-block font-label text-one-gold mb-6"
+          className="flex justify-center mb-8"
         >
-          Since 1989
-        </motion.span>
+          <span className="section-label">Since 1989</span>
+        </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-h1 text-one-white mb-6"
+          className="font-hero text-one-white mb-5"
         >
           OUR COMMUNITY
         </motion.h1>
@@ -84,30 +96,39 @@ function CommunityHero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-body text-one-muted max-w-2xl mx-auto mb-16"
+          className="font-body text-one-white/50 max-w-xl mx-auto mb-16 italic"
         >
           25 towns. One voice. 36 years of keeping the Valley connected.
         </motion.p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        {/* Editorial stat row */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.35 }}
+          className="flex flex-wrap md:flex-nowrap items-stretch justify-center gap-0 max-w-4xl mx-auto"
+        >
           {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
-              className="glass-card p-6 md:p-8 text-center group hover:border-one-gold/30 transition-all duration-300"
-            >
-              <stat.icon
-                size={28}
-                className="text-one-gold mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="font-stat text-one-gold mb-2">{stat.value}</div>
-              <div className="font-label text-one-muted">{stat.label}</div>
-            </motion.div>
+            <div key={stat.label} className="flex items-stretch flex-1 min-w-[140px]">
+              <div className="flex flex-col items-center justify-center px-6 py-5 text-center flex-1">
+                <div
+                  className="text-one-gold font-heading font-black tabular-nums mb-1"
+                  style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
+                >
+                  {stat.value}
+                </div>
+                <div className="font-label text-one-white/40 uppercase tracking-widest text-[10px] leading-snug max-w-[90px]">
+                  {stat.label}
+                </div>
+              </div>
+              {i < stats.length - 1 && (
+                <div className="w-px self-stretch bg-gradient-to-b from-transparent via-one-gold/20 to-transparent shrink-0" />
+              )}
+            </div>
           ))}
-        </div>
+        </motion.div>
       </div>
+      <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#050D1A] to-transparent z-10 pointer-events-none" />
     </section>
   )
 }

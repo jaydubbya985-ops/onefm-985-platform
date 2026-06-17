@@ -48,17 +48,19 @@ export default function Listen() {
         description="Listen to ONE FM 98.5 live — FM 98.5 across the Goulburn Murray, stream at fm985.com.au, or via Community Radio Plus."
       />
 
-      <section className="relative min-h-[42vh] flex flex-col justify-end overflow-hidden pt-24">
+      <section className="relative min-h-[58dvh] flex flex-col justify-end overflow-hidden pt-24 bg-[#050D1A]">
+        <div aria-hidden className="grain-overlay" />
         <div className="absolute inset-0 z-0">
-          <CinegraphBackground slot="listenStudio" opacity={0.45} />
-          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/80 via-one-navy/50 to-one-navy" />
+          <CinegraphBackground slot="listenStudio" opacity={0.35} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/60 via-[#050D1A]/30 to-one-navy" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/40 via-transparent to-[#050D1A]/40" />
         </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-10 w-full text-center">
-          <p className="font-label text-one-gold text-xs tracking-widest uppercase mb-3">Listen</p>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 pb-12 w-full text-center">
+          <span className="section-label justify-center mb-6 block">On Air Now</span>
           <h1 className="font-hero text-one-white mb-4">
             LISTEN <span className="text-one-gold">LIVE</span>
           </h1>
-          <p className="font-body text-one-muted max-w-2xl mx-auto">
+          <p className="font-body text-one-white/50 max-w-2xl mx-auto italic">
             {BRAND.fullName} — {BRAND.tagline} across the {BRAND.region}. FM, online stream, and Community Radio Plus.
           </p>
         </div>
