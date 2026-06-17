@@ -68,6 +68,19 @@ export const STATION_PHOTOS = {
   communityOutdoorMarket: `${IMG}/community-outdoor-market.jpg`,
 } as const
 
+/**
+ * Root-level public assets — real ONE FM host / studio photos.
+ * Placed directly in /public/ (not /public/assets/images/).
+ */
+export const HOST_PHOTOS = {
+  onAirHost1:       '/on-air-host-1.jpg',
+  onAirHost2:       '/on-air-host-2.jpg',
+  onAirHost3:       '/on-air-host-3.jpg',
+  studioControlRoom: '/studio-control-room.jpg',
+  communityEvent:   '/community-event.jpg',
+  regionalLandscape: '/regional-landscape.jpg',
+} as const
+
 /** Common site defaults */
 export const PHOTO_DEFAULTS = {
   hero: STATION_PHOTOS.geoLakeAerial,

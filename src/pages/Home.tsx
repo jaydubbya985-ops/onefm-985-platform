@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
@@ -6,7 +6,7 @@ import { MediaImage } from '@/components/MediaImage'
 import { media } from '@/lib/media'
 import { getCurrentLiveShow } from '@/data/programGuide'
 import { LatestInterviews } from '@/components/LatestInterviews'
-import { CinegraphBackground } from '@/components/CinegraphBackground'
+import { presenterPhotoPath } from '@/lib/presenterAssets'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { motion } from 'framer-motion'
@@ -97,6 +97,42 @@ function WaveformBars({ active }: { active: boolean }) {
   )
 }
 
+/* ─── Hero background — 4-photo Ken Burns slideshow ─── */
+const HERO_SLIDES = [
+  { src: '/assets/images/event-lasers-crowd.jpg',     alt: 'ONE FM community event' },
+  { src: '/assets/images/gvl-night-panorama.jpg',     alt: 'Goulburn Valley at night' },
+  { src: '/assets/images/geo-lake-aerial.jpg',        alt: 'Goulburn Valley aerial' },
+  { src: '/assets/images/community-outdoor-market.jpg', alt: 'ONE FM community market' },
+]
+
+function HeroSlideshow() {
+  const [idx, setIdx] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => setIdx(i => (i + 1) % HERO_SLIDES.length), 5800)
+    return () => clearInterval(t)
+  }, [])
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {HERO_SLIDES.map((slide, i) => (
+        <img
+          key={slide.src}
+          src={slide.src}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-cover animate-ken-burns"
+          style={{
+            opacity: i === idx ? 0.32 : 0,
+            transition: 'opacity 2s ease-in-out',
+            animationDelay: `${i * -6}s`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 /* ─────────────────────── HOME PAGE ─────────────────────── */
@@ -122,9 +158,9 @@ export default function Home() {
 
         {/* Background layers */}
         <div className="absolute inset-0 z-0">
-          <CinegraphBackground slot="homeHero" opacity={0.28} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/85 via-[#050D1A]/50 to-[#050D1A]/95" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/80 via-transparent to-[#050D1A]/80" />
+          <HeroSlideshow />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/80 via-[#050D1A]/45 to-[#050D1A]/95" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/75 via-transparent to-[#050D1A]/75" />
         </div>
 
         {/* Waveform canvas */}
@@ -197,6 +233,52 @@ export default function Home() {
           </motion.div>
         </div>
 
+        {/* Now on Air — floating presenter card, bottom-right */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.95, ease }}
+          className="absolute right-6 sm:right-10 z-10 hidden sm:block"
+          style={{ top: 'calc(100dvh - 196px)' }}
+        >
+          <div className="glass-card px-4 py-3.5 flex items-center gap-3.5 min-w-0 max-w-[260px]">
+            {/* Presenter photo */}
+            <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-one-gold/50 shrink-0">
+              <MediaImage
+                src={presenterPhotoPath(currentShow.host)}
+                fallbackSrc={media.onAirHost1}
+                alt={currentShow.host}
+                priority
+                skeleton={false}
+                className="absolute inset-0"
+              />
+            </div>
+            {/* Show info */}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-one-red animate-pulse shrink-0" />
+                <span className="font-label text-[8px] text-one-red tracking-[0.2em]">NOW ON AIR</span>
+              </div>
+              <div className="font-heading text-one-white text-sm font-semibold leading-tight truncate">
+                {currentShow.name}
+              </div>
+              <div className="font-label text-[9px] text-one-muted tracking-wider">
+                {currentShow.host}
+              </div>
+            </div>
+            {/* Play/pause */}
+            <button
+              onClick={() => stream.toggle()}
+              className="w-8 h-8 rounded-full bg-one-gold flex items-center justify-center hover:scale-110 transition-transform shrink-0"
+              aria-label={stream.playing ? 'Pause' : 'Play'}
+            >
+              {stream.playing
+                ? <Pause size={13} className="text-one-navy" fill="currentColor" />
+                : <Play size={13} className="text-one-navy translate-x-[1px]" fill="currentColor" />}
+            </button>
+          </div>
+        </motion.div>
+
         {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -224,6 +306,18 @@ export default function Home() {
 
             {/* Left: badge + show info */}
             <div className="flex items-center gap-5 flex-1 min-w-0">
+              {/* Presenter photo */}
+              <div className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-one-gold/40 shrink-0 hidden sm:block">
+                <MediaImage
+                  src={presenterPhotoPath(currentShow.host)}
+                  fallbackSrc={media.onAirHost1}
+                  alt={currentShow.host}
+                  priority
+                  skeleton={false}
+                  className="absolute inset-0"
+                />
+              </div>
+
               {/* Live badge + frequency */}
               <div className="flex flex-col items-center gap-1.5 shrink-0">
                 <div className="live-badge">

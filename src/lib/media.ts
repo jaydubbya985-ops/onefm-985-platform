@@ -5,7 +5,7 @@
  */
 
 import { LOGO } from '@/lib/brand'
-import { STATION_PHOTOS, PHOTO_DEFAULTS } from '@/lib/stationPhotos'
+import { STATION_PHOTOS, PHOTO_DEFAULTS, HOST_PHOTOS } from '@/lib/stationPhotos'
 
 export const media = {
   /* ── Brand (official drop zone: /public/brand/) ─────── */
@@ -16,13 +16,12 @@ export const media = {
   logoOriginal:   LOGO.primarySvg,
 
   /* ── Station ──────────────────────────────────────────── */
-  studioControlRoom: STATION_PHOTOS.studioExteriorRainbow,
+  studioControlRoom: HOST_PHOTOS.studioControlRoom,
   heroWaveform:      PHOTO_DEFAULTS.hero,
-  // Presenter photos must be dropped into /public/photos/hosts/<slug>.jpg
-  // Until available, use real station photos (no stock faces)
-  onAirHost1:        STATION_PHOTOS.commentaryBoxAction,
-  onAirHost2:        STATION_PHOTOS.studioCommentarySelfie,
-  onAirHost3:        STATION_PHOTOS.studioSbsDiversity,
+  // Real on-air host photos in /public/on-air-host-*.jpg
+  onAirHost1:        HOST_PHOTOS.onAirHost1,
+  onAirHost2:        HOST_PHOTOS.onAirHost2,
+  onAirHost3:        HOST_PHOTOS.onAirHost3,
 
   /* ── Location & Community ─────────────────────────────── */
   regionalLandscape: PHOTO_DEFAULTS.regional,
@@ -63,14 +62,14 @@ export const media = {
   handshake:     STATION_PHOTOS.studioCommentarySelfie,
   salesChart:    STATION_PHOTOS.gvlCrowdStands,
 
-  /* ── Presenter placeholders ───────────────────────────── */
-  // Real presenter photos → drop into /public/photos/hosts/<slug>.jpg
-  presenter1: STATION_PHOTOS.commentaryBoxAction,
-  presenter2: STATION_PHOTOS.studioCommentarySelfie,
-  presenter3: STATION_PHOTOS.studioSbsDiversity,
-  presenter4: STATION_PHOTOS.studioChristmasBroadcast,
-  presenter5: STATION_PHOTOS.commentaryBoxAction,
-  presenter6: STATION_PHOTOS.studioCommentarySelfie,
+  /* ── Presenter photos ─────────────────────────────────── */
+  // Real on-air host photos — fallback chain when slug-based photo missing
+  presenter1: HOST_PHOTOS.onAirHost1,
+  presenter2: HOST_PHOTOS.onAirHost2,
+  presenter3: HOST_PHOTOS.onAirHost3,
+  presenter4: HOST_PHOTOS.onAirHost1,
+  presenter5: HOST_PHOTOS.onAirHost2,
+  presenter6: HOST_PHOTOS.onAirHost3,
 } as const
 
 export type MediaKey = keyof typeof media
