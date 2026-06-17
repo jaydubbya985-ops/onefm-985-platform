@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Check, Star, TrendingUp, Users, Radio, MapPin,
-  Trophy, Target, ArrowRight, Send, Phone, Mail,
+  Target, ArrowRight, Send, Phone, Mail,
   User, Building, MessageSquare, ChevronDown, Sparkles,
   BarChart3, Clock, Shield, Award
 } from 'lucide-react'
@@ -256,26 +256,25 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
-      <section className="relative min-h-[65vh] flex items-center justify-center overflow-hidden bg-one-navy">
+      <section className="relative min-h-[65vh] flex items-center justify-center overflow-hidden bg-[#050D1A]">
         <div className="absolute inset-0 z-0">
-          <CinegraphBackground slot="gvlGameDay" opacity={0.5} />
-          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/85 via-one-navy/60 to-one-navy" />
+          <CinegraphBackground slot="gvlGameDay" opacity={0.38} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/80 via-[#050D1A]/50 to-[#050D1A]/95" />
         </div>
-        <div className="absolute inset-0 opacity-[0.06] z-[1]" style={{
+        <div aria-hidden className="grain-overlay" />
+        <div className="absolute inset-0 opacity-[0.04] z-[1]" style={{
           backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 59px, #D4AF37 59px, #D4AF37 60px)`,
         }} />
         <ParticleField />
 
-        <div className="relative z-10 max-w-[900px] mx-auto px-4 text-center py-20">
+        <div className="relative z-10 max-w-[900px] mx-auto px-6 text-center py-20">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex items-center justify-center gap-2 mb-6"
+            className="flex justify-center mb-7"
           >
-            <Trophy size={20} className="text-one-gold" />
-            <span className="font-label text-muted">Goulburn Valley Football League Coverage</span>
-            <Trophy size={20} className="text-one-gold" />
+            <span className="section-label">Goulburn Valley Football League Coverage</span>
           </motion.div>
 
           <motion.h1
@@ -291,7 +290,7 @@ export default function Football() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
-            className="font-body text-one-white max-w-[600px] mx-auto mb-10"
+            className="font-body text-one-white/55 italic max-w-[600px] mx-auto mb-10"
           >
             Put your business in front of {stationStats.weeklyListeners.toLocaleString()} weekly listeners across {stationStats.totalTowns} communities
             in the Goulburn Valley. From $25/week to full naming rights — there's a tier for every budget.
