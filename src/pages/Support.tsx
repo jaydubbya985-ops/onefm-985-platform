@@ -243,18 +243,28 @@ function AnimatedCounter({
 
 function HeroSection() {
   return (
-    <section className="relative overflow-hidden">
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background:
-            'linear-gradient(135deg, rgba(212,150,58,0.25) 0%, rgba(10,22,40,1) 40%, rgba(13,13,13,1) 100%)',
-        }}
-      />
-      <div className="absolute inset-0 z-0 opacity-30">
+    <section className="relative overflow-hidden bg-[#050D1A]">
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/assets/images/community-outdoor-market.jpg"
+          alt=""
+          aria-hidden
+          className="w-full h-full object-cover"
+          style={{ opacity: 0.18 }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(212,150,58,0.12) 0%, rgba(5,13,26,0.9) 45%, rgba(5,13,26,0.98) 100%)',
+          }}
+        />
+      </div>
+      <div aria-hidden className="grain-overlay" />
+      <div className="absolute inset-0 z-0 opacity-20">
         <div
           className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px]"
-          style={{ background: 'rgba(212,168,75,0.2)' }}
+          style={{ background: 'rgba(212,168,75,0.15)' }}
         />
       </div>
 
@@ -265,14 +275,14 @@ function HeroSection() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center"
         >
-          <span className="inline-block font-label text-one-gold mb-4 tracking-widest">
-            COMMUNITY RADIO SINCE 1989
-          </span>
-          <h1 className="font-hero text-one-white mb-6 tracking-tight">
+          <div className="flex justify-center mb-7">
+            <span className="section-label">Community radio since 1989</span>
+          </div>
+          <h1 className="font-hero text-one-white mb-5 tracking-tight">
             SUPPORT{' '}
             <span className="text-gradient-spectrum">ONE FM</span>
           </h1>
-          <p className="font-body text-one-white max-w-2xl mx-auto mb-12">
+          <p className="font-body text-one-white/50 italic max-w-2xl mx-auto mb-12">
             Community radio thrives because of community support. Every dollar
             keeps local voices on air.
           </p>

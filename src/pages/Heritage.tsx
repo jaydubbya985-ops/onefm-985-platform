@@ -177,7 +177,7 @@ export default function Heritage() {
     <Layout>
       <SEO title="Our Heritage & Community" description="37 years of community broadcasting. ONE FM 98.5's story from 1989 to today." />
       {/* ── Section 1: Hero ── */}
-      <section className="relative min-h-[70vh] flex items-end overflow-hidden">
+      <section className="relative min-h-[75dvh] flex items-end overflow-hidden bg-[#050D1A]">
         <motion.div
           initial={{ scale: 1 }}
           animate={{ scale: 1.05 }}
@@ -186,41 +186,44 @@ export default function Heritage() {
         >
           <img
             src="/assets/images/geo-lake-aerial.jpg"
-            alt="Regional landscape"
+            alt=""
+            aria-hidden
             className="w-full h-full object-cover"
+            style={{ opacity: 0.32 }}
           />
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-t from-onyx via-onyx/60 to-onyx/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/55 to-[#050D1A]/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/50 via-transparent to-[#050D1A]/50" />
+        <div aria-hidden className="grain-overlay" />
 
-        <div className="relative z-10 max-w-[900px] mx-auto px-4 pb-16 pt-32">
+        <div className="relative z-10 max-w-[900px] mx-auto px-6 pb-16 pt-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex items-center gap-4 mb-6"
+            className="flex items-center gap-4 mb-8"
           >
-            <span className="h-px w-12 bg-one-gold" />
-            <span className="font-stat text-one-gold">EST. 1989</span>
-            <span className="h-px w-12 bg-one-gold" />
+            <span className="h-px w-12 bg-one-gold/60" />
+            <span className="font-label text-one-gold tracking-widest text-xs uppercase">Est. 1989</span>
+            <span className="h-px w-12 bg-one-gold/60" />
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: easeOutExpo }}
-            className="font-h1 text-one-white mb-6 drop-shadow-lg"
-            style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)' }}
+            className="font-hero text-one-white text-shadow-hero mb-6"
           >
-            BORN HERE. BUILT HERE. BELONGS HERE.
+            BORN HERE.<br />BUILT HERE.<br />BELONGS HERE.
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.0 }}
-            className="font-body text-one-white max-w-[600px] mb-10"
+            className="font-body text-one-white/50 italic max-w-[600px] mb-10"
           >
-            For nearly four decades, ONE FM has been the voice of this region — from the first crackling broadcast to today's AI-powered, multi-platform media network. The technology has evolved. The commitment never changed.
+            For nearly four decades, ONE FM has been the voice of this region — from the first crackling broadcast to today's multi-platform media network. The technology has evolved. The commitment never changed.
           </motion.p>
 
           <motion.div

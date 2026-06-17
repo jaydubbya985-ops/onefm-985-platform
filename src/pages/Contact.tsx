@@ -86,29 +86,40 @@ function ContactHero() {
   ]
 
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[72dvh] flex items-center justify-center overflow-hidden bg-[#050D1A]">
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/assets/images/studio-panel-interview.jpg"
+          alt=""
+          aria-hidden
+          className="w-full h-full object-cover"
+          style={{ opacity: 0.22 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/75 via-[#050D1A]/45 to-[#050D1A]/90" />
+      </div>
+      <div aria-hidden className="grain-overlay" />
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 z-[1] opacity-[0.03]"
         style={{
           backgroundImage:
             'radial-gradient(circle at 2px 2px, rgba(212,168,75,0.8) 1px, transparent 0)',
           backgroundSize: '40px 40px',
         }}
       />
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center">
-        <motion.span
+      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 text-center">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-block font-label text-one-gold mb-6"
+          className="flex justify-center mb-8"
         >
-          STUDIO LINE OPEN
-        </motion.span>
+          <span className="section-label">Studio line open</span>
+        </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-h1 text-one-white mb-6"
+          className="font-hero text-one-white mb-5"
         >
           GET IN TOUCH
         </motion.h1>
@@ -116,7 +127,7 @@ function ContactHero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-body text-one-muted max-w-2xl mx-auto mb-16"
+          className="font-body text-one-white/50 italic max-w-2xl mx-auto mb-14"
         >
           Whether you want to sponsor, volunteer, or just say g'day — we'd love to
           hear from you.
