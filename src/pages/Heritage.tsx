@@ -212,7 +212,8 @@ export default function Heritage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: easeOutExpo }}
-            className="font-hero text-one-white text-shadow-hero mb-6"
+            className="font-heading font-black text-one-white mb-6 drop-shadow-lg leading-[0.95]"
+            style={{ fontSize: 'clamp(3.5rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
             BORN HERE.<br />BUILT HERE.<br />BELONGS HERE.
           </motion.h1>
