@@ -183,7 +183,8 @@ function HeroSection() {
   const stream = useLiveStream()
 
   return (
-    <section className="relative overflow-hidden" style={{ height: '50vh', minHeight: 400 }}>
+    <section className="relative overflow-hidden bg-[#050D1A]" style={{ height: '50vh', minHeight: 400 }}>
+      <div aria-hidden className="grain-overlay" />
       <LiveWaveform />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4" style={{ maxWidth: 900, margin: '0 auto' }}>
         <motion.div
