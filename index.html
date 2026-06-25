@@ -32,8 +32,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=optional" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=optional" rel="stylesheet" /></noscript>
+
+    <!-- LCP element — Home hero photo (HeroAtmosphere.tsx). Not discoverable until
+         React mounts in this SPA, so preload it from static HTML. If the hero photo
+         ever changes, update this href to match. -->
+    <link rel="preload" as="image" href="/assets/images/event-lasers-crowd.jpg" fetchpriority="high" />
 
     <!-- Critical styles: prevent flash of unstyled background -->
     <style>html,body{background:#0A1628;color:#fff;margin:0}</style>

@@ -159,6 +159,7 @@ export function HeroAtmosphere() {
           src="/assets/images/event-lasers-crowd.jpg"
           alt=""
           aria-hidden
+          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover scale-[1.06] animate-ken-burns"
           style={{ animationDuration: '32s' }}
         />
