@@ -9,7 +9,6 @@ import { Marquee } from '@/components/Marquee'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
-import { StripeProvider } from '@/components/StripeProvider'
 import { BRAND } from '@/lib/brand'
 import { stationStats } from '@/data/pricing'
 import {
@@ -580,404 +579,402 @@ function DonationFormSection({
           </p>
         </div>
 
-        <StripeProvider>
-          <div className="glass-card p-6 md:p-10">
-            {/* Step indicators */}
-            <div className="flex items-center justify-between mb-10">
-              {['Amount', 'Details', 'Payment', 'Confirm'].map((label, idx) => {
-                const s = idx + 1
-                const active = s === step
-                const done = s < step || isSuccess
-                return (
-                  <div key={label} className="flex flex-col items-center gap-2">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-label text-xs transition-colors ${
-                        done
-                          ? 'bg-one-gold text-one-navy'
-                          : active
-                            ? 'bg-one-gold/20 text-one-gold ring-1 ring-one-gold'
-                            : 'bg-one-navy text-muted'
-                      }`}
-                    >
-                      {done ? <Check size={14} /> : s}
+        <div className="glass-card p-6 md:p-10">
+          {/* Step indicators */}
+          <div className="flex items-center justify-between mb-10">
+            {['Amount', 'Details', 'Payment', 'Confirm'].map((label, idx) => {
+              const s = idx + 1
+              const active = s === step
+              const done = s < step || isSuccess
+              return (
+                <div key={label} className="flex flex-col items-center gap-2">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-label text-xs transition-colors ${
+                      done
+                        ? 'bg-one-gold text-one-navy'
+                        : active
+                          ? 'bg-one-gold/20 text-one-gold ring-1 ring-one-gold'
+                          : 'bg-one-navy text-muted'
+                    }`}
+                  >
+                    {done ? <Check size={14} /> : s}
+                  </div>
+                  <span
+                    className={`font-micro hidden sm:block ${
+                      active || done ? 'text-one-white' : 'text-muted'
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {isSuccess && step === 4 ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4 }}
+                className="text-center py-10"
+              >
+                <div className="w-16 h-16 rounded-full bg-one-gold/10 flex items-center justify-center mx-auto mb-6">
+                  <Sparkles size={32} className="text-one-gold" />
+                </div>
+                <h3 className="font-h3 text-one-white mb-3">
+                  Enquiry Sent!
+                </h3>
+                <p className="font-body text-one-white max-w-md mx-auto mb-6">
+                  We'll be in touch with bank transfer details shortly. Thank you for supporting community radio in the Goulburn Valley.
+                </p>
+                <div className="glass-card inline-flex items-center gap-3 px-6 py-3">
+                  <Heart size={16} className="text-one-gold" />
+                  <span className="font-label text-one-white">
+                    {BRAND.email}
+                  </span>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Step 1: Amount */}
+                {step === 1 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-center gap-4 mb-6">
+                      <button
+                        onClick={() => update('donationType', 'monthly')}
+                        data-cursor-label="MONTHLY"
+                        className={`px-5 py-2 rounded-full font-label text-xs transition-all ${
+                          form.donationType === 'monthly'
+                            ? 'bg-one-gold text-one-navy'
+                            : 'bg-one-navy text-one-white hover:bg-one-navy/80'
+                        }`}
+                      >
+                        Monthly
+                      </button>
+                      <button
+                        onClick={() => update('donationType', 'one-off')}
+                        data-cursor-label="ONE-OFF"
+                        className={`px-5 py-2 rounded-full font-label text-xs transition-all ${
+                          form.donationType === 'one-off'
+                            ? 'bg-one-gold text-one-navy'
+                            : 'bg-one-navy text-one-white hover:bg-one-navy/80'
+                        }`}
+                      >
+                        One-off
+                      </button>
                     </div>
-                    <span
-                      className={`font-micro hidden sm:block ${
-                        active || done ? 'text-one-white' : 'text-muted'
-                      }`}
-                    >
-                      {label}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
 
-            <AnimatePresence mode="wait">
-              {isSuccess && step === 4 ? (
-                <motion.div
-                  key="success"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
-                  className="text-center py-10"
-                >
-                  <div className="w-16 h-16 rounded-full bg-one-gold/10 flex items-center justify-center mx-auto mb-6">
-                    <Sparkles size={32} className="text-one-gold" />
-                  </div>
-                  <h3 className="font-h3 text-one-white mb-3">
-                    Enquiry Sent!
-                  </h3>
-                  <p className="font-body text-one-white max-w-md mx-auto mb-6">
-                    We'll be in touch with bank transfer details shortly. Thank you for supporting community radio in the Goulburn Valley.
-                  </p>
-                  <div className="glass-card inline-flex items-center gap-3 px-6 py-3">
-                    <Heart size={16} className="text-one-gold" />
-                    <span className="font-label text-one-white">
-                      {BRAND.email}
-                    </span>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={step}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {/* Step 1: Amount */}
-                  {step === 1 && (
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-center gap-4 mb-6">
-                        <button
-                          onClick={() => update('donationType', 'monthly')}
-                          data-cursor-label="MONTHLY"
-                          className={`px-5 py-2 rounded-full font-label text-xs transition-all ${
-                            form.donationType === 'monthly'
-                              ? 'bg-one-gold text-one-navy'
-                              : 'bg-one-navy text-one-white hover:bg-one-navy/80'
-                          }`}
-                        >
-                          Monthly
-                        </button>
-                        <button
-                          onClick={() => update('donationType', 'one-off')}
-                          data-cursor-label="ONE-OFF"
-                          className={`px-5 py-2 rounded-full font-label text-xs transition-all ${
-                            form.donationType === 'one-off'
-                              ? 'bg-one-gold text-one-navy'
-                              : 'bg-one-navy text-one-white hover:bg-one-navy/80'
-                          }`}
-                        >
-                          One-off
-                        </button>
+                    {form.tier && form.tier !== 'oneoff' ? (
+                      <div className="text-center py-4">
+                        <div className="font-h3 text-one-white mb-2">
+                          {tiers.find((t) => t.id === form.tier)?.name}
+                        </div>
+                        <div className="font-stat text-gold-gradient">
+                          ${form.amount}/month
+                        </div>
                       </div>
-
-                      {form.tier && form.tier !== 'oneoff' ? (
-                        <div className="text-center py-4">
-                          <div className="font-h3 text-one-white mb-2">
-                            {tiers.find((t) => t.id === form.tier)?.name}
-                          </div>
-                          <div className="font-stat text-gold-gradient">
-                            ${form.amount}/month
-                          </div>
+                    ) : (
+                      <div>
+                        <Label className="font-label text-muted mb-2 block">
+                          Enter Amount (AUD)
+                        </Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 font-body text-one-white">
+                            $
+                          </span>
+                          <Input
+                            type="number"
+                            min={5}
+                            value={form.amount || ''}
+                            onChange={(e) =>
+                              update('amount', Number(e.target.value))
+                            }
+                            className="pl-8 glass-card border-one-border text-one-white"
+                          />
                         </div>
-                      ) : (
-                        <div>
-                          <Label className="font-label text-muted mb-2 block">
-                            Enter Amount (AUD)
-                          </Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-body text-one-white">
-                              $
-                            </span>
-                            <Input
-                              type="number"
-                              min={5}
-                              value={form.amount || ''}
-                              onChange={(e) =>
-                                update('amount', Number(e.target.value))
-                              }
-                              className="pl-8 glass-card border-one-border text-one-white"
-                            />
-                          </div>
-                        </div>
-                      )}
+                      </div>
+                    )}
 
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="coverFees"
+                        checked={form.coverFees}
+                        onCheckedChange={(checked) =>
+                          update('coverFees', Boolean(checked))
+                        }
+                      />
+                      <Label
+                        htmlFor="coverFees"
+                        className="font-body-small text-one-white cursor-pointer"
+                      >
+                        I&rsquo;d like to cover the transaction fee (+$1.50)
+                      </Label>
+                    </div>
+
+                    <div className="pt-4 flex justify-end">
+                      <button
+                        onClick={handleNext}
+                        data-cursor-label="CONTINUE"
+                        className="btn-primary"
+                      >
+                        Continue <ArrowRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 2: Personal Details */}
+                {step === 2 && (
+                  <div className="space-y-5">
+                    <div>
+                      <Label className="font-label text-muted mb-2 block">
+                        Full Name
+                      </Label>
+                      <Input
+                        value={form.name}
+                        onChange={(e) => update('name', e.target.value)}
+                        placeholder="Your name"
+                        className="glass-card border-one-border text-one-white"
+                      />
+                    </div>
+                    <div>
+                      <Label className="font-label text-muted mb-2 block">
+                        Email
+                      </Label>
+                      <Input
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => update('email', e.target.value)}
+                        placeholder="you@example.com"
+                        className="glass-card border-one-border text-one-white"
+                      />
+                    </div>
+                    <div>
+                      <Label className="font-label text-muted mb-2 block">
+                        Phone
+                      </Label>
+                      <Input
+                        type="tel"
+                        value={form.phone}
+                        onChange={(e) => update('phone', e.target.value)}
+                        placeholder="+61 ..."
+                        className="glass-card border-one-border text-one-white"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="font-label text-muted mb-2 block">
+                          Address
+                        </Label>
+                        <Input
+                          value={form.address}
+                          onChange={(e) => update('address', e.target.value)}
+                          placeholder="Street, City"
+                          className="glass-card border-one-border text-one-white"
+                        />
+                      </div>
+                      <div>
+                        <Label className="font-label text-muted mb-2 block">
+                          State / Territory
+                        </Label>
+                        <Select
+                          value={form.state}
+                          onValueChange={(v) => update('state', v)}
+                        >
+                          <SelectTrigger className="glass-card border-one-border text-one-white">
+                            <SelectValue placeholder="Select state" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="vic">Victoria</SelectItem>
+                            <SelectItem value="nsw">
+                              New South Wales
+                            </SelectItem>
+                            <SelectItem value="qld">Queensland</SelectItem>
+                            <SelectItem value="sa">
+                              South Australia
+                            </SelectItem>
+                            <SelectItem value="wa">
+                              Western Australia
+                            </SelectItem>
+                            <SelectItem value="tas">Tasmania</SelectItem>
+                            <SelectItem value="act">ACT</SelectItem>
+                            <SelectItem value="nt">
+                              Northern Territory
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
                       <div className="flex items-center gap-3">
-                        <Checkbox
-                          id="coverFees"
-                          checked={form.coverFees}
+                        <Switch
+                          id="anonymous"
+                          checked={form.anonymous}
                           onCheckedChange={(checked) =>
-                            update('coverFees', Boolean(checked))
+                            update('anonymous', Boolean(checked))
                           }
                         />
                         <Label
-                          htmlFor="coverFees"
+                          htmlFor="anonymous"
                           className="font-body-small text-one-white cursor-pointer"
                         >
-                          I&rsquo;d like to cover the transaction fee (+$1.50)
+                          Make this donation anonymous
                         </Label>
-                      </div>
-
-                      <div className="pt-4 flex justify-end">
-                        <button
-                          onClick={handleNext}
-                          data-cursor-label="CONTINUE"
-                          className="btn-primary"
-                        >
-                          Continue <ArrowRight size={16} />
-                        </button>
                       </div>
                     </div>
-                  )}
-
-                  {/* Step 2: Personal Details */}
-                  {step === 2 && (
-                    <div className="space-y-5">
-                      <div>
-                        <Label className="font-label text-muted mb-2 block">
-                          Full Name
-                        </Label>
-                        <Input
-                          value={form.name}
-                          onChange={(e) => update('name', e.target.value)}
-                          placeholder="Your name"
-                          className="glass-card border-one-border text-one-white"
-                        />
-                      </div>
-                      <div>
-                        <Label className="font-label text-muted mb-2 block">
-                          Email
-                        </Label>
-                        <Input
-                          type="email"
-                          value={form.email}
-                          onChange={(e) => update('email', e.target.value)}
-                          placeholder="you@example.com"
-                          className="glass-card border-one-border text-one-white"
-                        />
-                      </div>
-                      <div>
-                        <Label className="font-label text-muted mb-2 block">
-                          Phone
-                        </Label>
-                        <Input
-                          type="tel"
-                          value={form.phone}
-                          onChange={(e) => update('phone', e.target.value)}
-                          placeholder="+61 ..."
-                          className="glass-card border-one-border text-one-white"
-                        />
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label className="font-label text-muted mb-2 block">
-                            Address
-                          </Label>
-                          <Input
-                            value={form.address}
-                            onChange={(e) => update('address', e.target.value)}
-                            placeholder="Street, City"
-                            className="glass-card border-one-border text-one-white"
-                          />
-                        </div>
-                        <div>
-                          <Label className="font-label text-muted mb-2 block">
-                            State / Territory
-                          </Label>
-                          <Select
-                            value={form.state}
-                            onValueChange={(v) => update('state', v)}
-                          >
-                            <SelectTrigger className="glass-card border-one-border text-one-white">
-                              <SelectValue placeholder="Select state" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="vic">Victoria</SelectItem>
-                              <SelectItem value="nsw">
-                                New South Wales
-                              </SelectItem>
-                              <SelectItem value="qld">Queensland</SelectItem>
-                              <SelectItem value="sa">
-                                South Australia
-                              </SelectItem>
-                              <SelectItem value="wa">
-                                Western Australia
-                              </SelectItem>
-                              <SelectItem value="tas">Tasmania</SelectItem>
-                              <SelectItem value="act">ACT</SelectItem>
-                              <SelectItem value="nt">
-                                Northern Territory
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between py-2">
-                        <div className="flex items-center gap-3">
-                          <Switch
-                            id="anonymous"
-                            checked={form.anonymous}
-                            onCheckedChange={(checked) =>
-                              update('anonymous', Boolean(checked))
-                            }
-                          />
-                          <Label
-                            htmlFor="anonymous"
-                            className="font-body-small text-one-white cursor-pointer"
-                          >
-                            Make this donation anonymous
-                          </Label>
-                        </div>
-                      </div>
-                      <div>
-                        <Label className="font-label text-muted mb-2 block">
-                          Gift in honor / memory of (optional)
-                        </Label>
-                        <Input
-                          value={form.giftInHonor}
-                          onChange={(e) =>
-                            update('giftInHonor', e.target.value)
-                          }
-                          placeholder="Name"
-                          className="glass-card border-one-border text-one-white"
-                        />
-                      </div>
-
-                      <div className="pt-4 flex justify-between">
-                        <Button
-                          onClick={handleBack}
-                          variant="ghost"
-                          className="text-one-white hover:text-one-white"
-                        >
-                          Back
-                        </Button>
-                        <button
-                          onClick={handleNext}
-                          data-cursor-label="CONTINUE"
-                          className="btn-primary"
-                        >
-                          Continue <ArrowRight size={16} />
-                        </button>
-                      </div>
+                    <div>
+                      <Label className="font-label text-muted mb-2 block">
+                        Gift in honor / memory of (optional)
+                      </Label>
+                      <Input
+                        value={form.giftInHonor}
+                        onChange={(e) =>
+                          update('giftInHonor', e.target.value)
+                        }
+                        placeholder="Name"
+                        className="glass-card border-one-border text-one-white"
+                      />
                     </div>
-                  )}
 
-                  {/* Step 3: Payment */}
-                  {step === 3 && (
-                    <div className="space-y-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <Lock size={16} className="text-sage" />
-                        <span className="font-label text-sage">
-                          SSL SECURE PAYMENT
+                    <div className="pt-4 flex justify-between">
+                      <Button
+                        onClick={handleBack}
+                        variant="ghost"
+                        className="text-one-white hover:text-one-white"
+                      >
+                        Back
+                      </Button>
+                      <button
+                        onClick={handleNext}
+                        data-cursor-label="CONTINUE"
+                        className="btn-primary"
+                      >
+                        Continue <ArrowRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 3: Payment */}
+                {step === 3 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Lock size={16} className="text-sage" />
+                      <span className="font-label text-sage">
+                        SSL SECURE PAYMENT
+                      </span>
+                    </div>
+
+                    {/* Donation contact options */}
+                    <div className="glass-card p-5 space-y-5 border border-one-gold/20">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Heart size={18} className="text-one-gold" />
+                        <span className="font-label text-one-white">
+                          HOW TO DONATE
                         </span>
                       </div>
-
-                      {/* Donation contact options */}
-                      <div className="glass-card p-5 space-y-5 border border-one-gold/20">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Heart size={18} className="text-one-gold" />
-                          <span className="font-label text-one-white">
-                            HOW TO DONATE
-                          </span>
-                        </div>
-                        <p className="font-body-small text-one-muted">
-                          Online card payments are being set up. In the meantime, you can support us directly:
-                        </p>
-                        <div className="space-y-3">
-                          <a
-                            href={`mailto:${BRAND.email}?subject=Donation%20Enquiry&body=Hi%20ONE%20FM%2C%0A%0AI%20would%20like%20to%20donate%20%24${totalAmount.toFixed(2)}%20AUD%20to%20support%20community%20radio.%0A%0APlease%20send%20me%20your%20bank%20transfer%20details.%0A%0AThank%20you.`}
-                            data-cursor-label="EMAIL"
-                            className="flex items-center gap-3 p-4 rounded-xl border border-one-gold/30 bg-one-gold/5 hover:bg-one-gold/10 transition-colors group"
-                          >
-                            <div className="w-10 h-10 rounded-full bg-one-gold/10 flex items-center justify-center shrink-0">
-                              <CreditCard size={18} className="text-one-gold" />
-                            </div>
-                            <div>
-                              <div className="font-label text-one-white text-xs mb-0.5">Bank Transfer</div>
-                              <div className="font-body-small text-one-muted">Email us and we'll send account details for a direct bank transfer</div>
-                            </div>
-                            <ArrowRight size={16} className="text-one-gold/50 ml-auto group-hover:translate-x-1 transition-transform" />
-                          </a>
-                          <a
-                            href={`tel:${BRAND.phone.replace(/\s/g, '')}`}
-                            data-cursor-label="CALL"
-                            className="flex items-center gap-3 p-4 rounded-xl border border-one-border bg-transparent hover:bg-one-navy/30 transition-colors group"
-                          >
-                            <div className="w-10 h-10 rounded-full bg-one-white/5 flex items-center justify-center shrink-0">
-                              <Radio size={18} className="text-one-muted" />
-                            </div>
-                            <div>
-                              <div className="font-label text-one-white text-xs mb-0.5">Call the Station</div>
-                              <div className="font-body-small text-one-muted">{BRAND.phone} — our team can take card payments over the phone</div>
-                            </div>
-                            <ArrowRight size={16} className="text-one-muted/50 ml-auto group-hover:translate-x-1 transition-transform" />
-                          </a>
-                        </div>
-                        <p className="font-micro text-muted pt-1">
-                          All donations are tax-deductible. You'll receive a receipt via email.
-                        </p>
-                      </div>
-
-                      <div className="glass-card p-4 flex items-center justify-between">
-                        <div>
-                          <div className="font-label text-muted">
-                            {form.donationType === 'monthly'
-                              ? 'Monthly Donation'
-                              : 'One-off Donation'}
-                          </div>
-                          <div className="font-h3 text-one-white">
-                            ${totalAmount.toFixed(2)} AUD
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-body-small text-one-white">
-                            {form.coverFees && form.donationType === 'one-off'
-                              ? 'Includes $1.50 fee'
-                              : 'Tax deductible'}
-                          </div>
-                        </div>
-                      </div>
-
-                      <Card className="bg-transparent border-one-border">
-                        <CardContent className="p-4 flex items-start gap-2">
-                          <FileText
-                            size={16}
-                            className="text-one-gold mt-0.5 shrink-0"
-                          />
-                          <span className="font-body-small text-one-white">
-                            You&rsquo;ll receive a tax-deductible receipt via
-                            email after confirmation.
-                          </span>
-                        </CardContent>
-                      </Card>
-
-                      <div className="pt-4 flex justify-between">
-                        <Button
-                          onClick={handleBack}
-                          variant="ghost"
-                          className="text-one-white hover:text-one-white"
-                        >
-                          Back
-                        </Button>
+                      <p className="font-body-small text-one-muted">
+                        Online card payments are being set up. In the meantime, you can support us directly:
+                      </p>
+                      <div className="space-y-3">
                         <a
-                          href={`mailto:${BRAND.email}?subject=Donation%20Enquiry%20-%20%24${totalAmount.toFixed(2)}%20AUD&body=Hi%20ONE%20FM%2C%0A%0AI%20would%20like%20to%20donate%20%24${totalAmount.toFixed(2)}%20AUD%20to%20support%20community%20radio%20in%20the%20Goulburn%20Valley.%0A%0APlease%20send%20me%20your%20bank%20transfer%20details.%0A%0AThank%20you.`}
+                          href={`mailto:${BRAND.email}?subject=Donation%20Enquiry&body=Hi%20ONE%20FM%2C%0A%0AI%20would%20like%20to%20donate%20%24${totalAmount.toFixed(2)}%20AUD%20to%20support%20community%20radio.%0A%0APlease%20send%20me%20your%20bank%20transfer%20details.%0A%0AThank%20you.`}
                           data-cursor-label="EMAIL"
-                          className="btn-primary"
+                          className="flex items-center gap-3 p-4 rounded-xl border border-one-gold/30 bg-one-gold/5 hover:bg-one-gold/10 transition-colors group"
                         >
-                          Send Donation Enquiry <ArrowRight size={16} />
+                          <div className="w-10 h-10 rounded-full bg-one-gold/10 flex items-center justify-center shrink-0">
+                            <CreditCard size={18} className="text-one-gold" />
+                          </div>
+                          <div>
+                            <div className="font-label text-one-white text-xs mb-0.5">Bank Transfer</div>
+                            <div className="font-body-small text-one-muted">Email us and we'll send account details for a direct bank transfer</div>
+                          </div>
+                          <ArrowRight size={16} className="text-one-gold/50 ml-auto group-hover:translate-x-1 transition-transform" />
+                        </a>
+                        <a
+                          href={`tel:${BRAND.phone.replace(/\s/g, '')}`}
+                          data-cursor-label="CALL"
+                          className="flex items-center gap-3 p-4 rounded-xl border border-one-border bg-transparent hover:bg-one-navy/30 transition-colors group"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-one-white/5 flex items-center justify-center shrink-0">
+                            <Radio size={18} className="text-one-muted" />
+                          </div>
+                          <div>
+                            <div className="font-label text-one-white text-xs mb-0.5">Call the Station</div>
+                            <div className="font-body-small text-one-muted">{BRAND.phone} — our team can take card payments over the phone</div>
+                          </div>
+                          <ArrowRight size={16} className="text-one-muted/50 ml-auto group-hover:translate-x-1 transition-transform" />
                         </a>
                       </div>
+                      <p className="font-micro text-muted pt-1">
+                        All donations are tax-deductible. You'll receive a receipt via email.
+                      </p>
                     </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </StripeProvider>
+
+                    <div className="glass-card p-4 flex items-center justify-between">
+                      <div>
+                        <div className="font-label text-muted">
+                          {form.donationType === 'monthly'
+                            ? 'Monthly Donation'
+                            : 'One-off Donation'}
+                        </div>
+                        <div className="font-h3 text-one-white">
+                          ${totalAmount.toFixed(2)} AUD
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-body-small text-one-white">
+                          {form.coverFees && form.donationType === 'one-off'
+                            ? 'Includes $1.50 fee'
+                            : 'Tax deductible'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <Card className="bg-transparent border-one-border">
+                      <CardContent className="p-4 flex items-start gap-2">
+                        <FileText
+                          size={16}
+                          className="text-one-gold mt-0.5 shrink-0"
+                        />
+                        <span className="font-body-small text-one-white">
+                          You&rsquo;ll receive a tax-deductible receipt via
+                          email after confirmation.
+                        </span>
+                      </CardContent>
+                    </Card>
+
+                    <div className="pt-4 flex justify-between">
+                      <Button
+                        onClick={handleBack}
+                        variant="ghost"
+                        className="text-one-white hover:text-one-white"
+                      >
+                        Back
+                      </Button>
+                      <a
+                        href={`mailto:${BRAND.email}?subject=Donation%20Enquiry%20-%20%24${totalAmount.toFixed(2)}%20AUD&body=Hi%20ONE%20FM%2C%0A%0AI%20would%20like%20to%20donate%20%24${totalAmount.toFixed(2)}%20AUD%20to%20support%20community%20radio%20in%20the%20Goulburn%20Valley.%0A%0APlease%20send%20me%20your%20bank%20transfer%20details.%0A%0AThank%20you.`}
+                        data-cursor-label="EMAIL"
+                        className="btn-primary"
+                      >
+                        Send Donation Enquiry <ArrowRight size={16} />
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   )
