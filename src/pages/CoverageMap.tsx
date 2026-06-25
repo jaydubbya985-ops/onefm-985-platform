@@ -20,6 +20,12 @@ import {
   ChevronDown,
   Trophy,
   Sparkles,
+  Satellite,
+  Mountain,
+  Map as MapIcon,
+  Plus,
+  Minus,
+  Crosshair,
 } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
@@ -46,17 +52,24 @@ import {
 } from '@/components/ui/select'
 import { Layout } from '@/components/Layout'
 import { Link } from 'react-router-dom'
+import { WeatherWidget } from '@/components/WeatherWidget'
+import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
+import { MagneticButton } from '@/components/MagneticButton'
 import { towns, broadcastArea, type Town, type SizeCategory } from '@/data/townData'
 import { coveragePins, coveragePinCounts, type CoveragePin } from '@/data/coverageMapPins'
 import {
   mountCoverageGlow,
   pinMarkerIcon,
+  combinedClusterRenderer,
   buildAdvertiserTour,
   fitMapToPins,
   flyTo,
 } from '@/lib/coverageMapVisuals'
+import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 import type { CoverageGlowHandle } from '@/lib/coverageGlowCanvas'
 import { BRAND, BRAND_COLORS } from '@/lib/brand'
+import { WordReveal } from '@/components/WordReveal'
+import { TiltCard } from '@/components/TiltCard'
 
 /* ─────────────────────── helpers ─────────────────────── */
 
@@ -129,8 +142,19 @@ type SortKey = 'name' | 'population' | 'distance'
 
 const GOOGLE_MAPS_API_KEY =
   import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? 'AIzaSyDCWBY7YnPmk75dXdNKFoJKU-rUzbQe344'
-const MAP_ID = 'a0fa5e1a6343d400f9a9bb4a'
 const SHEPPARTON = { lat: -36.38, lng: 145.4 }
+
+// Hides Google's own default point-of-interest icons/labels (real businesses,
+// landmarks etc. near the towns we cover) so only our branded station/football/
+// sponsor/town markers show. A Cloud-based Map ID would normally own this via
+// the Cloud Console style editor, but that's an external dependency outside
+// this codebase — a local style array gives the same result and is verifiable
+// here. (Style arrays are ignored if a mapId is also set, so we don't use one.)
+const MAP_STYLES: google.maps.MapTypeStyle[] = [
+  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+  { featureType: 'poi.business', stylers: [{ visibility: 'off' }] },
+  { featureType: 'transit', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+]
 
 const LGA_COLORS: Record<string, string> = {
   'Greater Shepparton': BRAND_COLORS.gold,
@@ -160,6 +184,8 @@ export default function CoverageMap() {
   const markersRef = useRef<google.maps.Marker[]>([])
   const pinMarkersRef = useRef<Map<string, google.maps.Marker>>(new Map())
   const stationMarkerRef = useRef<google.maps.Marker | null>(null)
+  const hubTownMarkerRef = useRef<google.maps.Marker | null>(null)
+  const clustererRef = useRef<MarkerClusterer | null>(null)
   const glowHandleRef = useRef<CoverageGlowHandle | null>(null)
   const tourTimeoutsRef = useRef<number[]>([])
   const tourAbortRef = useRef(false)
@@ -176,6 +202,7 @@ export default function CoverageMap() {
   const [showSponsorPins, setShowSponsorPins] = useState(true)
   const [mobileListOpen, setMobileListOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [mapTypeId, setMapTypeIdState] = useState<'satellite' | 'terrain' | 'roadmap'>('satellite')
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)')
@@ -240,11 +267,13 @@ export default function CoverageMap() {
   /* ── init Google Map ── */
   const initMap = useCallback(async () => {
     try {
-      setOptions({
-        key: GOOGLE_MAPS_API_KEY,
-        v: 'weekly',
-        libraries: ['geometry'],
-      })
+      if (!window.google?.maps) {
+        setOptions({
+          key: GOOGLE_MAPS_API_KEY,
+          v: 'weekly',
+          libraries: ['geometry'],
+        })
+      }
       await importLibrary('maps')
       await importLibrary('geometry')
 
@@ -254,14 +283,14 @@ export default function CoverageMap() {
         center: SHEPPARTON,
         zoom: 9,
         mapTypeId: 'satellite',
-        tilt: 45,
-        mapId: MAP_ID,
+        // 45deg tilt imagery on satellite/hybrid maps was deprecated by
+        // Google as of Maps JS API v3.65 — requesting it now returns
+        // missing-tile checkerboard placeholders instead of real imagery.
+        tilt: 0,
+        styles: MAP_STYLES,
         streetViewControl: false,
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-          style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-          mapTypeIds: ['satellite', 'terrain', 'roadmap'],
-        },
+        mapTypeControl: false,
+        zoomControl: false,
         fullscreenControl: false,
       })
       mapInstanceRef.current = map
@@ -271,9 +300,13 @@ export default function CoverageMap() {
 
       towns.forEach((town) => {
         const config = getMarkerConfig(town.sizeCategory)
+        // A few towns sit only 2-5km apart in reality (Echuca/Moama,
+        // Tocumwal/Picola, Shepparton/Mooroopna) \u2014 close enough to stack
+        // directly on top of each other at this map's default zoom. Leave
+        // off the map here and let the TownClusterer below own visibility,
+        // same fix already proven for the football/sponsor pins.
         const marker = new google.maps.Marker({
           position: { lat: town.lat, lng: town.lng },
-          map,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             fillColor: config.fillColor,
@@ -286,6 +319,7 @@ export default function CoverageMap() {
           zIndex: town.sizeCategory === 'hub' ? 200 : 100,
           animation: town.sizeCategory === 'hub' ? google.maps.Animation.DROP : undefined,
         })
+        if (town.sizeCategory === 'hub') hubTownMarkerRef.current = marker
         marker.addListener('click', () => {
           setSelectedTown(town)
           setSelectedPin(null)
@@ -296,9 +330,15 @@ export default function CoverageMap() {
       })
 
       coveragePins.forEach((pin) => {
+        // Several sponsor pins are anchored within ~1km of the studio's true
+        // coordinate, so a standalone "always on the map" station marker can
+        // end up rendering almost exactly on top of a separate cluster badge.
+        // Leave every pin (including the station) off the map here and let
+        // the MarkerClusterer below own visibility — it merges close pins
+        // into one badge, which is the only way to guarantee two circles
+        // never visually overlap regardless of zoom or real-world proximity.
         const marker = new google.maps.Marker({
           position: { lat: pin.lat, lng: pin.lng },
-          map,
           icon: pinMarkerIcon(pin.type),
           title: pin.name,
           zIndex: pin.type === 'station' ? 1000 : pin.type === 'sponsor' ? 500 : 400,
@@ -319,6 +359,45 @@ export default function CoverageMap() {
         pinMarkersRef.current.set(pin.id, marker)
       })
 
+      const clusterablePins = coveragePins
+        .map((p) => pinMarkersRef.current.get(p.id))
+        .filter((m): m is google.maps.Marker => !!m)
+      const townMarkerSet = new Set(markersRef.current)
+      // Towns and pins used to run through two separate clusterers that had
+      // no awareness of each other's rendered positions — close pairs like
+      // Shepparton's hub badge and the station's "FM" badge (the studio is
+      // physically inside Shepparton) could still land on top of one
+      // another even though each layer was internally collision-free. One
+      // shared clusterer makes that structurally impossible: anything close
+      // enough on screen to collide gets merged into the same cluster.
+      clustererRef.current = new MarkerClusterer({
+        map,
+        markers: [...markersRef.current, ...clusterablePins],
+        // Default supercluster radius (40px) still left separate cluster
+        // badges close enough to visually touch each other in some viewport/
+        // zoom combinations. 60px was the smallest radius that measured
+        // zero overlap across the full combined town+pin marker set at
+        // 1280/1366/1920px viewports — kept low (vs. the 110 the pin-only
+        // layer once used) so 25 towns don't collapse into a handful of
+        // badges once merged with the larger pin set.
+        algorithm: new SuperClusterAlgorithm({ radius: 60 }),
+        renderer: combinedClusterRenderer(stationMarkerRef.current, hubTownMarkerRef.current, townMarkerSet),
+      })
+
+      // Fixed center/zoom left outlying pins (e.g. the Benalla GVL club,
+      // ~56km east of Shepparton) sitting at or past the map div's edge on
+      // narrower containers. Fit to every marker instead so nothing can ever
+      // render outside the visible area, capped so we don't over-zoom past
+      // the original framing on wide viewports.
+      const bounds = new google.maps.LatLngBounds()
+      towns.forEach((t) => bounds.extend({ lat: t.lat, lng: t.lng }))
+      coveragePins.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }))
+      map.fitBounds(bounds, 56)
+      google.maps.event.addListenerOnce(map, 'idle', () => {
+        const z = map.getZoom()
+        if (z && z > 9) map.setZoom(9)
+      })
+
       setMapReady(true)
     } catch {
       setMapError(true)
@@ -333,6 +412,8 @@ export default function CoverageMap() {
       tourTimeoutsRef.current = []
       glowHandleRef.current?.destroy()
       glowHandleRef.current = null
+      clustererRef.current?.clearMarkers()
+      clustererRef.current = null
       markersRef.current.forEach((m) => m.setMap(null))
       pinMarkersRef.current.forEach((m) => m.setMap(null))
       pinMarkersRef.current.clear()
@@ -340,17 +421,18 @@ export default function CoverageMap() {
   }, [initMap])
 
   useEffect(() => {
-    if (!mapReady || !mapInstanceRef.current) return
-    const map = mapInstanceRef.current
-    coveragePins.forEach((pin) => {
-      const marker = pinMarkersRef.current.get(pin.id)
-      if (!marker) return
-      const visible =
-        pin.type === 'station' ||
-        (pin.type === 'football' && showFootballPins) ||
-        (pin.type === 'sponsor' && showSponsorPins)
-      marker.setMap(visible ? map : null)
-    })
+    if (!mapReady || !clustererRef.current) return
+    const activePins = coveragePins
+      .filter(
+        (pin) =>
+          pin.type === 'station' ||
+          (pin.type === 'football' && showFootballPins) ||
+          (pin.type === 'sponsor' && showSponsorPins),
+      )
+      .map((pin) => pinMarkersRef.current.get(pin.id))
+      .filter((m): m is google.maps.Marker => !!m)
+    clustererRef.current.clearMarkers()
+    clustererRef.current.addMarkers([...markersRef.current, ...activePins])
   }, [mapReady, showFootballPins, showSponsorPins])
 
   const runTourStepRef = useRef<(index: number) => void>(() => {})
@@ -419,6 +501,31 @@ export default function CoverageMap() {
     setTourCaption('')
   }, [])
 
+  /* ── custom branded map controls (replace native Google UI) ── */
+  const handleSetMapType = useCallback((type: 'satellite' | 'terrain' | 'roadmap') => {
+    mapInstanceRef.current?.setMapTypeId(type)
+    setMapTypeIdState(type)
+  }, [])
+
+  const handleZoomBy = useCallback((delta: number) => {
+    const map = mapInstanceRef.current
+    if (!map) return
+    map.setZoom((map.getZoom() ?? 9) + delta)
+  }, [])
+
+  const handleRecenter = useCallback(() => {
+    const map = mapInstanceRef.current
+    if (!map) return
+    const bounds = new google.maps.LatLngBounds()
+    towns.forEach((t) => bounds.extend({ lat: t.lat, lng: t.lng }))
+    coveragePins.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }))
+    map.fitBounds(bounds, 56)
+    google.maps.event.addListenerOnce(map, 'idle', () => {
+      const z = map.getZoom()
+      if (z && z > 9) map.setZoom(9)
+    })
+  }, [])
+
   /* ── select town from sidebar ── */
   const handleSelectTown = useCallback(
     (town: Town) => {
@@ -445,7 +552,8 @@ export default function CoverageMap() {
 
       <div className="flex flex-col min-h-[calc(100dvh-72px)] bg-one-navy">
         {/* Hero intro */}
-        <section className="relative shrink-0 overflow-hidden border-b border-one-border bg-one-navy px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <section className="relative shrink-0 overflow-hidden border-b border-one-border bg-[#050D1A] px-4 py-8 sm:px-6 sm:py-10 lg:px-8" data-cursor-label="COVERAGE MAP">
+          <div aria-hidden className="grain-overlay" />
           <div className="absolute inset-x-0 top-0 h-[2px] bg-one-gold" aria-hidden />
           <div
             className="absolute right-0 top-0 h-px w-1/4 max-w-xs"
@@ -454,23 +562,39 @@ export default function CoverageMap() {
           />
 
           <div className="relative mx-auto max-w-7xl">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-2xl">
-                <p className="mb-2 font-label text-[11px] uppercase tracking-[0.2em] text-one-gold">
-                  Broadcast reach
-                </p>
-                <h1 className="font-heading text-2xl text-one-white sm:text-3xl lg:text-4xl">
-                  Goulburn Valley Coverage
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <motion.div
+                className="max-w-2xl"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <span className="section-label mb-4 block">Broadcast reach</span>
+                <h1 className="font-hero text-one-white mb-4">
+                  GOULBURN VALLEY <span className="text-gold-gradient">COVERAGE</span>
                 </h1>
-                <p className="mt-2 text-sm leading-relaxed text-one-muted sm:mt-3">
+                <p className="font-body text-one-white/55 leading-relaxed">
                   See where your brand lands — {broadcastArea.totalTowns} communities,{' '}
                   {broadcastArea.totalPopulation2026.toLocaleString()} people, and an estimated{' '}
                   {broadcastArea.weeklyListeners.toLocaleString()} weekly listeners across{' '}
                   {broadcastArea.broadcastRadiusKm}&nbsp;km from {BRAND.fullName}.
                 </p>
-              </div>
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <MagneticButton strength={6} cursorLabel="MEDIA KIT">
+                    <Link to="/media-kit" className="btn-secondary text-xs">Request media kit</Link>
+                  </MagneticButton>
+                  <Link to="/proposal" data-cursor-label="BUILD" className="font-label text-[10px] text-one-gold hover:text-one-gold transition-colors link-hover">
+                    Build a proposal →
+                  </Link>
+                </div>
+              </motion.div>
 
-              <div className="flex flex-wrap gap-2 sm:gap-3">
+              <motion.div
+                className="flex flex-wrap gap-2 sm:gap-3"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              >
                 {[
                   { icon: Users, label: 'Population', value: broadcastArea.totalPopulation2026.toLocaleString() },
                   { icon: Radio, label: 'Listeners/wk', value: broadcastArea.weeklyListeners.toLocaleString() },
@@ -484,18 +608,48 @@ export default function CoverageMap() {
                     <Icon size={14} className="shrink-0 text-one-gold" />
                     <div>
                       <div className="text-[10px] uppercase tracking-wider text-one-muted">{label}</div>
-                      <div className="text-sm font-semibold text-one-white">{value}</div>
+                      <div className="text-sm font-semibold text-gold-gradient">{value}</div>
                     </div>
                   </div>
                 ))}
-              </div>
+              </motion.div>
             </div>
 
-            <p className="mt-4 text-[10px] text-one-muted/80">
+            {/* Live conditions strip */}
+            <motion.div
+              className="mt-5 flex items-center gap-3 px-3 py-2 rounded-lg border border-one-border/60 bg-one-midnight/50 w-fit"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/70 uppercase whitespace-nowrap">Live · Shepparton</span>
+              <div className="flex items-end gap-[2px]" aria-hidden style={{ height: 16 }}>
+                {[4, 8, 12, 16].map((h, i) => (
+                  <motion.div
+                    key={i}
+                    className="w-[3px] rounded-sm bg-one-gold"
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
+                    transition={{ delay: 0.35 + i * 0.07, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ height: h, originY: 1 }}
+                  />
+                ))}
+              </div>
+              <div className="h-3 w-px bg-one-border/60 shrink-0" />
+              <WeatherWidget />
+            </motion.div>
+
+            <p className="relative mt-4 text-[10px] text-one-muted/80">
               Population: ABS Census 2021 with local projections · Listener estimates: regional reach model
             </p>
           </div>
         </section>
+
+        <SponsorCommercialCta
+          headline="Pin your brand on the map"
+          subline="Sponsor pins highlight partners across the valley. Explore tiers or request the full media kit."
+          className="shrink-0"
+        />
 
         {/* Toolbar */}
         <div className="shrink-0 border-b border-one-border bg-one-midnight/60">
@@ -503,6 +657,7 @@ export default function CoverageMap() {
             <button
               type="button"
               onClick={() => setMobileListOpen((o) => !o)}
+              data-cursor-label="TOWNS"
               className="flex shrink-0 items-center gap-1.5 rounded-md border border-one-border px-3 py-1.5 text-xs font-medium text-one-white transition-colors hover:border-one-gold/50 md:hidden"
             >
               <MapPin size={14} className="text-one-gold" />
@@ -510,16 +665,16 @@ export default function CoverageMap() {
             </button>
 
             <div className="hidden items-center gap-3 text-[11px] font-label md:flex">
-              <Link to="/listen" className="text-one-gold transition-colors hover:text-one-white">
+              <Link to="/listen" data-cursor-label="LISTEN" className="text-one-gold transition-colors hover:text-one-white">
                 Listen
               </Link>
-              <Link to="/programs" className="text-one-muted transition-colors hover:text-one-gold">
+              <Link to="/programs" data-cursor-label="PROGRAMS" className="text-one-muted transition-colors hover:text-one-gold">
                 Programs
               </Link>
-              <Link to="/broadcast" className="text-one-muted transition-colors hover:text-one-gold">
+              <Link to="/broadcast" data-cursor-label="BROADCAST" className="text-one-muted transition-colors hover:text-one-gold">
                 Broadcast
               </Link>
-              <Link to="/media-kit" className="text-one-muted transition-colors hover:text-one-gold">
+              <Link to="/media-kit" data-cursor-label="MEDIA KIT" className="text-one-muted transition-colors hover:text-one-gold">
                 Media Kit
               </Link>
             </div>
@@ -528,6 +683,7 @@ export default function CoverageMap() {
               <button
                 type="button"
                 onClick={() => setShowFootballPins((v) => !v)}
+                data-cursor-label={showFootballPins ? 'HIDE GVL' : 'SHOW GVL'}
                 className={cn(
                   'flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium transition-colors',
                   showFootballPins
@@ -541,6 +697,7 @@ export default function CoverageMap() {
               <button
                 type="button"
                 onClick={() => setShowSponsorPins((v) => !v)}
+                data-cursor-label={showSponsorPins ? 'HIDE SPONSORS' : 'SHOW SPONSORS'}
                 className={cn(
                   'flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium transition-colors',
                   showSponsorPins
@@ -560,6 +717,7 @@ export default function CoverageMap() {
                 <button
                   type="button"
                   onClick={startTour}
+                  data-cursor-label="START TOUR"
                   className="flex items-center gap-1.5 rounded-md bg-one-gold px-3 py-1.5 text-xs font-medium text-one-navy transition-colors hover:bg-one-champagne"
                 >
                   <Play size={14} /> <span className="hidden sm:inline">Start</span> Tour
@@ -568,6 +726,7 @@ export default function CoverageMap() {
                 <button
                   type="button"
                   onClick={stopTour}
+                  data-cursor-label="STOP TOUR"
                   className="flex items-center gap-1.5 rounded-md bg-one-red px-3 py-1.5 text-xs font-medium text-one-white transition-colors hover:opacity-90"
                 >
                   <Square size={14} /> Stop
@@ -576,6 +735,7 @@ export default function CoverageMap() {
               <button
                 type="button"
                 onClick={exportCSV}
+                data-cursor-label="EXPORT"
                 className="flex items-center gap-1.5 rounded-md border border-one-border px-3 py-1.5 text-xs font-medium text-one-white transition-colors hover:bg-one-border/40"
               >
                 <Download size={14} />
@@ -586,7 +746,7 @@ export default function CoverageMap() {
         </div>
 
         {/* Map workspace */}
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row" data-cursor-label="EXPLORE MAP">
           {/* Town sidebar — drawer on mobile, column on desktop */}
           <div
             className={cn(
@@ -611,6 +771,7 @@ export default function CoverageMap() {
                   <button
                     type="button"
                     onClick={() => setSearch('')}
+                    data-cursor-label="CLEAR"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 text-one-muted hover:text-one-white"
                   >
                     <X size={12} />
@@ -647,6 +808,7 @@ export default function CoverageMap() {
                       key={town.name}
                       type="button"
                       onClick={() => handleSelectTown(town)}
+                      data-cursor-label="VIEW"
                       className={cn(
                         'flex w-full items-center gap-2.5 rounded-md px-2.5 py-2.5 text-left transition-colors',
                         selectedTown?.name === town.name
@@ -722,15 +884,86 @@ export default function CoverageMap() {
             {/* Map legend */}
             <div className="pointer-events-none absolute bottom-3 left-3 z-10 hidden rounded-lg border border-one-border/80 bg-one-navy/90 px-3 py-2 text-[10px] text-one-muted backdrop-blur-sm sm:block">
               <div className="mb-1 font-medium text-one-white">Map key</div>
-              <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-one-gold" /> Town · population</div>
-              <div className="flex items-center gap-2"><img src="/brand/favicon.svg" alt="" className="h-3 w-3" /> ONE FM studio</div>
-              <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-one-red" /> GVL club</div>
-              <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-one-gold" /> Local sponsor</div>
+              <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full border border-white" style={{ backgroundColor: BRAND_COLORS.gold }} /> Hub town</div>
+              <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: BRAND_COLORS.gold }} /> Major town</div>
+              <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: BRAND_COLORS.blue }} /> Medium town</div>
+              <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-[#0066CC]" /> Small town</div>
+              <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-one-muted" /> Village</div>
+              <div className="mt-1.5 space-y-0.5 border-t border-one-border/50 pt-1.5">
+                <div className="flex items-center gap-2"><img src="/brand/favicon.svg" alt="" className="h-3 w-3" /> ONE FM studio</div>
+                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-one-red" /> GVL club</div>
+                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-one-gold" /> Local sponsor</div>
+              </div>
               <div className="mt-1.5 space-y-0.5 border-t border-one-border/50 pt-1.5">
                 <div className="text-one-gold/90">Gradient glow = broadcast reach</div>
                 <div className="text-one-electric/80">Cyan ripples = live signal</div>
               </div>
             </div>
+
+            {/* Custom branded map controls — replaces native Google UI chrome */}
+            {mapReady && (
+              <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-2">
+                {/* Map type switcher */}
+                <div className="flex items-center gap-0.5 rounded-full border border-one-border/80 bg-one-navy/90 p-1 backdrop-blur-md">
+                  {([
+                    { id: 'satellite', icon: Satellite, label: 'SATELLITE' },
+                    { id: 'terrain', icon: Mountain, label: 'TERRAIN' },
+                    { id: 'roadmap', icon: MapIcon, label: 'ROADMAP' },
+                  ] as const).map(({ id, icon: Icon, label }) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => handleSetMapType(id)}
+                      data-cursor-label={label}
+                      aria-label={label}
+                      aria-pressed={mapTypeId === id}
+                      className={cn(
+                        'flex h-7 w-7 items-center justify-center rounded-full transition-colors',
+                        mapTypeId === id
+                          ? 'bg-one-gold text-one-navy'
+                          : 'text-one-muted hover:bg-one-border/60 hover:text-one-white',
+                      )}
+                    >
+                      <Icon size={13} />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Zoom stack */}
+                <div className="flex flex-col overflow-hidden rounded-lg border border-one-border/80 bg-one-navy/90 backdrop-blur-md">
+                  <button
+                    type="button"
+                    onClick={() => handleZoomBy(1)}
+                    data-cursor-label="ZOOM IN"
+                    aria-label="Zoom in"
+                    className="flex h-7 w-7 items-center justify-center text-one-muted transition-colors hover:bg-one-border/60 hover:text-one-white"
+                  >
+                    <Plus size={14} />
+                  </button>
+                  <span className="h-px bg-one-border/60" />
+                  <button
+                    type="button"
+                    onClick={() => handleZoomBy(-1)}
+                    data-cursor-label="ZOOM OUT"
+                    aria-label="Zoom out"
+                    className="flex h-7 w-7 items-center justify-center text-one-muted transition-colors hover:bg-one-border/60 hover:text-one-white"
+                  >
+                    <Minus size={14} />
+                  </button>
+                </div>
+
+                {/* Recenter / fit all pins */}
+                <button
+                  type="button"
+                  onClick={handleRecenter}
+                  data-cursor-label="RECENTER"
+                  aria-label="Recenter map"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-one-border/80 bg-one-navy/90 text-one-muted backdrop-blur-md transition-colors hover:bg-one-border/60 hover:text-one-gold"
+                >
+                  <Crosshair size={13} />
+                </button>
+              </div>
+            )}
 
             {/* Tour caption */}
             <AnimatePresence>
@@ -764,7 +997,7 @@ export default function CoverageMap() {
                     exit={isMobile ? { y: '100%', opacity: 0 } : { x: 380, opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 320, damping: 32 }}
                     className={cn(
-                      'absolute z-30 overflow-y-auto border-one-border bg-one-navy/98 backdrop-blur-md',
+                      'absolute z-30 overflow-y-auto border-one-border bg-one-navy/95 backdrop-blur-md',
                       'max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[50dvh] max-md:rounded-t-2xl max-md:border-t',
                       'md:bottom-3 md:right-3 md:top-auto md:w-[320px] md:rounded-xl md:border',
                     )}
@@ -796,6 +1029,7 @@ export default function CoverageMap() {
                         <button
                           type="button"
                           onClick={() => setSelectedPin(null)}
+                          data-cursor-label="CLOSE"
                           className="rounded-md bg-one-border/60 p-1.5 text-one-white hover:bg-one-border"
                         >
                           <X size={14} />
@@ -812,6 +1046,7 @@ export default function CoverageMap() {
                       {selectedPin.link && (
                         <Link
                           to={selectedPin.link}
+                          data-cursor-label={selectedPin.type === 'football' ? 'GVL' : 'ADVERTISE'}
                           className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-one-gold hover:text-one-white"
                         >
                           {selectedPin.type === 'football' ? 'View GVL packages' : 'Advertise with ONE FM'}
@@ -842,7 +1077,7 @@ export default function CoverageMap() {
                     exit={isMobile ? { y: '100%', opacity: 0 } : { x: 380, opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 320, damping: 32 }}
                     className={cn(
-                      'absolute z-30 overflow-y-auto border-one-border bg-one-navy/98 backdrop-blur-md',
+                      'absolute z-30 overflow-y-auto border-one-border bg-one-navy/95 backdrop-blur-md',
                       'max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[72dvh] max-md:rounded-t-2xl max-md:border-t',
                       'md:bottom-3 md:right-3 md:top-3 md:w-[340px] md:rounded-xl md:border',
                       selectedPin && 'md:top-auto md:bottom-3',
@@ -862,6 +1097,7 @@ export default function CoverageMap() {
                       <button
                         type="button"
                         onClick={() => setSelectedTown(null)}
+                        data-cursor-label="CLOSE"
                         className="absolute right-2.5 top-2.5 rounded-md bg-black/40 p-1.5 text-one-white transition-colors hover:bg-black/60"
                       >
                         <X size={14} />
@@ -950,10 +1186,12 @@ export default function CoverageMap() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 text-center">
             <p className="mb-2 font-label text-[11px] uppercase tracking-[0.2em] text-one-gold">Area analytics</p>
-            <h2 className="font-heading text-2xl text-one-white sm:text-3xl">Coverage by the numbers</h2>
+            <WordReveal text="Coverage by the numbers" as="h2" className="font-heading text-2xl text-one-white sm:text-3xl block" stagger={0.04} />
           </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
-            <div className="rounded-xl border border-one-border bg-one-navy p-5">
+            <TiltCard maxTilt={4} className="h-full">
+            <div className="glass-card p-5 h-full group relative overflow-hidden">
+              <div aria-hidden className="explore-tile-scan" />
               <h3 className="mb-4 font-heading text-sm text-one-white">Population by LGA (2026 est.)</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -986,9 +1224,12 @@ export default function CoverageMap() {
                 </ResponsiveContainer>
               </div>
             </div>
+            </TiltCard>
 
             {/* Towns by Size */}
-            <div className="bg-one-navy rounded-xl border border-one-border p-5">
+            <TiltCard maxTilt={4} className="h-full">
+            <div className="glass-card p-5 h-full group relative overflow-hidden">
+              <div aria-hidden className="explore-tile-scan" />
               <h3 className="font-heading text-sm text-one-white mb-4">Towns by Size Category</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -1020,9 +1261,12 @@ export default function CoverageMap() {
                 </ResponsiveContainer>
               </div>
             </div>
+            </TiltCard>
 
             {/* Top 10 Towns */}
-            <div className="bg-one-navy rounded-xl border border-one-border p-5">
+            <TiltCard maxTilt={4} className="h-full">
+            <div className="glass-card p-5 h-full group relative overflow-hidden">
+              <div aria-hidden className="explore-tile-scan" />
               <h3 className="font-heading text-sm text-one-white mb-4">Top 10 Towns by Population (2026)</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -1051,6 +1295,7 @@ export default function CoverageMap() {
                 </ResponsiveContainer>
               </div>
             </div>
+            </TiltCard>
           </div>
         </div>
       </div>

@@ -1,7 +1,13 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { WordReveal } from '@/components/WordReveal'
+import { stationStats } from '@/data/pricing'
+import { TiltCard } from '@/components/TiltCard'
+import { AnimatedNumber } from '@/components/AnimatedNumber'
+import { Marquee } from '@/components/Marquee'
+import { LatestInterviews } from '@/components/LatestInterviews'
 import {
   Radio,
   Mic,
@@ -22,22 +28,6 @@ import {
   Layers,
 } from 'lucide-react'
 
-/* ─── Ken Burns keyframes (scoped style block) ─── */
-function KenBurnsStyle() {
-  return (
-    <style>{`
-      @keyframes ken-burns {
-        0% { transform: scale(1) translate(0, 0); }
-        50% { transform: scale(1.08) translate(-1%, -1%); }
-        100% { transform: scale(1) translate(0, 0); }
-      }
-      .animate-ken-burns {
-        animation: ken-burns 20s ease-in-out infinite;
-      }
-    `}</style>
-  )
-}
-
 /* ─── Timeline data ─── */
 const milestones = [
   {
@@ -51,21 +41,21 @@ const milestones = [
     year: "1995",
     title: "First GVL Broadcast Partnership",
     desc: "Signed a landmark agreement with the Goulburn Valley League to broadcast live football and netball matches. The partnership continues strong three decades later, making ONE FM the trusted voice of local sport.",
-    img: "/assets/images/community-outdoor-market.jpg",
+    img: "/assets/images/gvl-championship-mcg.jpg",
     icon: Mic,
   },
   {
-    year: "2001",
-    title: "Community Radio Plus App Launched",
-    desc: "Pioneered digital streaming for regional community radio in Australia. Listeners could suddenly tune in from anywhere in the world, expanding the station's reach far beyond the broadcast tower.",
-    img: "/assets/images/studio-exterior-rainbow.jpg",
+    year: "2005",
+    title: "Online Streaming Launched",
+    desc: "ONE FM began streaming live at fm985.com.au — allowing listeners across Australia and the world to tune in to their Goulburn Murray station from any device, anywhere.",
+    img: "/assets/images/studio-presenter-mic.jpg",
     icon: Wifi,
   },
   {
     year: "2008",
     title: "Moved to New Studios",
     desc: "Relocated to purpose-built studios with digital mixing desks, soundproofed broadcast booths and a dedicated production suite. The new home set the standard for regional radio infrastructure.",
-    img: "/assets/images/studio-exterior-rainbow.jpg",
+    img: "/assets/images/studio-commentary-selfie.jpg",
     icon: Building2,
   },
   {
@@ -79,42 +69,62 @@ const milestones = [
     year: "2019",
     title: "30th Anniversary Special Broadcast",
     desc: "A 30-hour non-stop broadcast marathon featuring every host in the station's history, live music from 30 local acts, and a fundraising drive that raised over $120,000 for regional mental health services.",
-    img: "/assets/images/community-outdoor-market.jpg",
+    img: "/assets/images/event-lasers-crowd.jpg",
     icon: Award,
   },
   {
     year: "2020",
     title: "Emergency Broadcasting",
     desc: "When bushfires raged and COVID-19 swept the nation, ONE FM became a critical information lifeline. Provided 24/7 emergency updates, relief coordination messages and community support hotlines.",
-    img: "/assets/images/geo-lake-aerial.jpg",
+    img: "/assets/images/geo-rolling-green-hills.jpg",
     icon: Zap,
   },
   {
-    year: "2025",
-    title: "36th Year — Modern Digital Expansion",
-    desc: "36th year of community broadcasting — expanded online streaming via fm985.com.au and Radio.co, growing podcast presence, and continued GVL sports coverage for the Goulburn Murray.",
-    img: "/assets/images/studio-exterior-rainbow.jpg",
+    year: "2026",
+    title: `${stationStats.yearsBroadcasting}th Year — Live Local & Connected`,
+    desc: `${stationStats.yearsBroadcasting}th year on air — expanded multicultural programming, a refreshed digital presence at fm985.com.au, growing GVL sports coverage, and a stronger volunteer community than ever.`,
+    img: "/assets/images/studio-sbs-visit.jpg",
     icon: TrendingUp,
   },
 ]
+
+/* ─── Deterministic gradient avatars (same palette as Programs page) ─── */
+const TEAM_PALETTES = [
+  { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
+  { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
+  { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
+  { from: '#2EC4B6', to: '#0A2030', accent: '#7FFFD4' },
+  { from: '#9B5DE5', to: '#1A0A30', accent: '#DDB3FF' },
+  { from: '#FF6B6B', to: '#2A0A10', accent: '#FFB3B3' },
+  { from: '#1B458F', to: '#0D2A18', accent: '#6EE7B7' },
+]
+
+function getTeamAvatar(name: string) {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = (hash * 37 + name.charCodeAt(i)) >>> 0
+  const palette = TEAM_PALETTES[hash % TEAM_PALETTES.length]
+  const words = name.trim().replace(/[^a-zA-Z\s]/g, '').split(/\s+/).filter(Boolean)
+  const initials = words.length === 1
+    ? words[0].slice(0, 2).toUpperCase()
+    : (words[0][0] + words[words.length - 1][0]).toUpperCase()
+  return { ...palette, initials }
+}
 
 /* ─── Team data ─── */
 const team = [
   { name: "Tim Ahemt", role: "Breakfast Host (Mon–Tue)", years: "2026", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts ONE FM Breakfast Monday and Tuesday — community interviews and local news." },
   { name: "The Big G (Craig Stott)", role: "Breakfast (Wed) / Tuesday Mornings", years: "2026", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Wednesday breakfast and Tuesday morning music on ONE FM." },
-  { name: "Ralph Whitehead", role: "Breakfast (Thu) / Friday Arvo", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Thursday breakfast and Friday afternoon music. Long-time community radio presenter in Shepparton." },
-  { name: "Josh Revens", role: "Breakfast (Fri) / Monday Nights", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Friday breakfast and Monday night community programming." },
+  { name: "Ralph Whitehead", role: "Thu Breakfast / Friday Arvo / Friday Morning", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
+  { name: "Josh Revens", role: "Fri Breakfast / Monday Nights / Community Interviews", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Friday breakfast, Monday night community programming, and community interviews covering local events, sports and initiatives." },
   { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", years: "4", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
   { name: "James Manley", role: "Host — The James Manley Show", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Community-focused afternoon programming Mon–Tue with local interviews and advocacy." },
   { name: "Carlos Rock", role: "Host — Planet of Sound", years: "19-20", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },
-  { name: "Ralph Whitehead", role: "Host — Friday Arvo / Friday Morning", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
   { name: "Timmy Ahmet", role: "Host — Good Evening Country", years: "", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
   { name: "Les 'Harro' Harrison", role: "Community Host / Various", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
-  { name: "Josh Revens", role: "Community Interviews / Various", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "ONE FM announcer who conducts community interviews covering local events, sports, and community initiatives." },
   { name: "Fikiri", role: "Host — Africonnect (Swahili)", years: "", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
   { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", years: "", cat: "Multicultural", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
   { name: "Edith", role: "Host — Filipino Music Program", years: "", cat: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
-  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
+  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "", cat: "Multicultural", img: "/assets/images/studio-presenter-mic.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
 ]
 
 const teamCategories = ["All", "On-Air", "Multicultural"]
@@ -173,70 +183,136 @@ export default function Story() {
     ? team
     : team.filter((t) => t.cat === teamFilter)
 
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
+
   return (
     <Layout>
       <SEO title="Our Story" description="The story of ONE FM 98.5 — from 1989 to today. Callsign 3ONE, ACMA License 1385226/1. Meet the real presenters behind the mic." />
-      <KenBurnsStyle />
-
       {/* ═══════ Section 1 — Hero ═══════ */}
-      <section className="relative min-h-[80dvh] flex items-center justify-center overflow-hidden bg-[#050D1A]">
+      <section ref={heroRef} className="relative min-h-[85dvh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="THE STORY">
         <div aria-hidden className="grain-overlay" />
         <div className="absolute inset-0 z-0">
-          <img
-            src="/assets/images/geo-lake-aerial.jpg"
-            alt=""
-            aria-hidden
-            className="w-full h-full object-cover animate-ken-burns"
-            style={{ opacity: 0.38 }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/70 via-[#050D1A]/40 to-[#050D1A]/90" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/60 via-transparent to-[#050D1A]/60" />
-        </div>
-        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
-            <span className="section-label justify-center mb-8 block">Community Radio Since 1989</span>
-            <h1 className="font-hero text-one-white text-shadow-hero mb-6">
-              OUR STORY
-            </h1>
-            <p className="font-body text-one-white/55 text-lg max-w-2xl mx-auto mb-10 italic leading-relaxed">
-              36 years of keeping the Valley connected —<br className="hidden sm:block" />
-              through flood, fire, footy finals and everything in between.
-            </p>
-            <div className="flex items-center justify-center gap-5">
-              <span className="font-heading font-bold text-one-gold tabular-nums" style={{ fontSize: '2rem', letterSpacing: '-0.02em' }}>1989</span>
-              <div className="flex-1 max-w-24 h-px bg-gradient-to-r from-one-gold/60 to-one-gold/20" />
-              <span className="font-heading font-bold text-one-white tabular-nums" style={{ fontSize: '2rem', letterSpacing: '-0.02em' }}>2025</span>
-            </div>
+            <img
+              src="/assets/images/geo-town-aerial-lake.jpg"
+              alt=""
+              aria-hidden
+              loading="eager"
+              fetchPriority="high"
+              className="w-full h-full object-cover animate-ken-burns"
+              style={{ opacity: 0.60 }}
+            />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/55 via-transparent to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 pt-36 pb-16 w-full">
+          <motion.span
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
+          >
+            Community Radio Since 1989
+          </motion.span>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex items-end gap-[1.5px] mb-5"
+            aria-hidden
+          >
+            {Array.from({ length: 20 }, (_, i) => (
+              <div
+                key={i}
+                className="w-[1.5px] rounded-sm"
+                style={{
+                  height: 3 + Math.floor(Math.abs(Math.sin(i * 0.6)) * 12 + 2),
+                  backgroundColor: 'rgba(201,162,39,0.35)',
+                  animation: `freq-bar ${0.7 + (i % 6) * 0.13}s ${(i * 0.08) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
+          </motion.div>
+
+          <h1
+            className="font-heading font-black leading-none mb-8"
+            style={{ fontSize: 'clamp(3.5rem, 10vw, 8rem)', letterSpacing: '-0.03em' }}
+          >
+            <WordReveal text="Our" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
+            <WordReveal text="Story." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+          </h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.65, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            className="font-body text-one-white/65 max-w-[520px] mb-10 italic leading-relaxed"
+          >
+            {stationStats.yearsBroadcasting} years of keeping the Valley connected — through flood, fire, footy finals and everything in between.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.9 }}
+            className="flex items-center gap-5"
+          >
+            <span className="font-heading font-bold text-gold-gradient tabular-nums" style={{ fontSize: '2rem', letterSpacing: '-0.02em' }}>1989</span>
+            <div className="flex-1 max-w-24 h-px bg-gradient-to-r from-one-gold/60 to-one-gold/20" />
+            <span className="font-heading font-bold text-one-white tabular-nums" style={{ fontSize: '2rem', letterSpacing: '-0.02em' }}>2026</span>
           </motion.div>
         </div>
+
         <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-one-navy to-transparent z-10 pointer-events-none" />
       </section>
 
+      {/* ── Story Marquee Strip ── */}
+      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+        <Marquee
+          speed={25}
+          items={[
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BORN 1989 · CALLSIGN: 3ONE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">SHEPPARTON · GOULBURN VALLEY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">THROUGH FLOOD · FIRE · FOOTY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE CONNECTED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · NON-PROFIT</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">ACMA LICENSED · 98.5 FM</span>,
+          ]}
+        />
+      </div>
+
       {/* ═══════ Section 2 — Station Info ═══════ */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto bg-surface-lift" data-cursor-label="STATION INFO">
+        <TiltCard maxTilt={3} className="mb-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-          className="glass-card p-8 mb-16"
+          className="glass-card p-8 group relative overflow-hidden"
         >
+          <div aria-hidden className="explore-tile-scan" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             <div>
               <div className="font-micro text-one-muted mb-1">Callsign</div>
-              <div className="font-stat text-one-gold text-2xl">3ONE</div>
+              <div className="font-stat text-gold-gradient text-2xl">3ONE</div>
             </div>
             <div>
               <div className="font-micro text-one-muted mb-1">Frequency</div>
-              <div className="font-stat text-one-gold text-2xl">98.5 FM</div>
+              <div className="font-stat text-gold-gradient text-2xl">98.5 FM</div>
             </div>
             <div>
               <div className="font-micro text-one-muted mb-1">ACMA License</div>
-              <div className="font-stat text-one-gold text-2xl">1385226/1</div>
+              <div className="font-stat text-gold-gradient text-2xl">1385226/1</div>
             </div>
             <div>
               <div className="font-micro text-one-muted mb-1">Organisation</div>
@@ -245,6 +321,7 @@ export default function Story() {
             </div>
           </div>
         </motion.div>
+        </TiltCard>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -253,7 +330,7 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-16"
         >
-          <h2 className="font-h2 text-one-white mb-3">Our Heritage</h2>
+          <WordReveal text="Our Heritage" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white max-w-2xl mx-auto">
             From a single studio above a shop to the region's most trusted broadcaster — the journey of ONE FM 98.5.
           </p>
@@ -269,10 +346,10 @@ export default function Story() {
             return (
               <motion.div
                 key={m.year}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+                transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
                 className={`relative flex items-start gap-6 md:gap-0 mb-16 last:mb-0 ${
                   isLeft ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
@@ -282,24 +359,27 @@ export default function Story() {
 
                 {/* content card */}
                 <div className={`pl-10 md:pl-0 md:w-1/2 ${isLeft ? "md:pr-12" : "md:pl-12"}`}>
+                  <TiltCard maxTilt={4}>
                   <div className="glass-card p-6 group">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-10 h-10 rounded-full bg-one-gold/10 flex items-center justify-center">
                         <Icon size={18} className="text-one-gold" />
                       </div>
-                      <span className="font-stat text-one-gold">{m.year}</span>
+                      <span className="font-stat text-gold-gradient">{m.year}</span>
                     </div>
                     <h3 className="font-h3 text-one-white mb-2">{m.title}</h3>
                     <p className="font-body-small text-one-white mb-4">{m.desc}</p>
-                    <div className="rounded-lg overflow-hidden border border-one-border aspect-video">
+                    <div className="relative rounded-lg overflow-hidden border border-one-border aspect-video">
                       <img
                         src={m.img}
                         alt={m.title}
                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
                         loading="lazy"
                       />
+                      <div aria-hidden className="explore-tile-scan" />
                     </div>
                   </div>
+                  </TiltCard>
                 </div>
               </motion.div>
             )
@@ -308,7 +388,7 @@ export default function Story() {
       </section>
 
       {/* ═══════ Section 3 — The Team ═══════ */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto bg-surface-deep" data-cursor-label="MEET THE TEAM">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -317,7 +397,7 @@ export default function Story() {
           className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12"
         >
           <div>
-            <h2 className="font-h2 text-one-white mb-3">Meet the Voices of the Valley</h2>
+            <WordReveal text="Meet the Voices of the Valley" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white max-w-xl">
               Our team is a mix of lifelong locals and passionate broadcasters who found their home at ONE FM.
             </p>
@@ -326,6 +406,7 @@ export default function Story() {
             {teamCategories.map((c) => (
               <button
                 key={c}
+                type="button"
                 onClick={() => setTeamFilter(c)}
                 className={`font-label text-xs px-4 py-2 rounded-full border transition-all duration-200 ${
                   teamFilter === c
@@ -341,30 +422,40 @@ export default function Story() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredTeam.map((member, i) => (
+            <TiltCard key={member.name} maxTilt={6} className="h-full">
             <motion.div
-              key={member.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ delay: i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-              className="glass-card overflow-hidden group"
+              data-cursor-label="PRESENTER"
+              className="glass-card overflow-hidden group h-full"
             >
-              <div className="relative aspect-[4/5] overflow-hidden">
-                <img
-                  src={member.img}
-                  alt={member.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/40 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <span className="font-label text-[10px] px-2 py-0.5 rounded bg-one-gold text-one-navy mb-2 inline-block">
-                    {member.cat}
-                  </span>
-                  <h4 className="font-h4 text-one-white">{member.name}</h4>
-                  <p className="font-body-small text-one-gold">{member.role}</p>
-                </div>
-              </div>
+              {(() => {
+                const av = getTeamAvatar(member.name)
+                return (
+                  <div className="relative aspect-[4/5] overflow-hidden">
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${av.from} 0%, ${av.to} 100%)` }} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span
+                        className="font-heading font-black select-none"
+                        style={{ fontSize: 'clamp(2.5rem, 6vw, 3.5rem)', color: av.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
+                      >
+                        {av.initials}
+                      </span>
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-one-navy/75 via-transparent to-transparent" />
+                    <div aria-hidden className="explore-tile-scan" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <span className="font-label text-[10px] px-2 py-0.5 rounded bg-one-gold text-one-navy mb-2 inline-block">
+                        {member.cat}
+                      </span>
+                      <h4 className="font-h4 text-one-white">{member.name}</h4>
+                      <p className="font-body-small text-one-muted">{member.role}</p>
+                    </div>
+                  </div>
+                )
+              })()}
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <Calendar size={12} className="text-muted" />
@@ -382,12 +473,13 @@ export default function Story() {
                 </div>
               </div>
             </motion.div>
+            </TiltCard>
           ))}
         </div>
       </section>
 
       {/* ═══════ Section 4 — Studio & Facilities ═══════ */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto bg-surface-lift" data-cursor-label="THE STUDIO">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -395,7 +487,7 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="mb-12"
         >
-          <h2 className="font-h2 text-one-white mb-3">Behind the Scenes</h2>
+          <WordReveal text="Behind the Scenes" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white max-w-xl">
             Our facilities combine heritage warmth with modern broadcast technology.
           </p>
@@ -407,16 +499,17 @@ export default function Story() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl overflow-hidden border border-one-border aspect-video lg:aspect-auto lg:min-h-[400px] relative"
+            className="rounded-2xl overflow-hidden border border-one-border aspect-video lg:aspect-auto lg:min-h-[400px] relative group"
           >
             <img
-              src="/assets/images/studio-exterior-rainbow.jpg"
-              alt="ONE FM studio control room"
-              className="w-full h-full object-cover"
+              src="/assets/images/studio-presenter-mic.jpg"
+              alt="ONE FM presenter on air"
+              className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-one-navy/80 via-transparent to-transparent" />
+            <div aria-hidden className="explore-tile-scan" />
             <div className="absolute bottom-6 left-6 right-6">
-              <h3 className="font-h3 text-one-white mb-1">Studio Control Room</h3>
+              <h3 className="font-h3 text-one-white mb-1">Live On Air</h3>
               <p className="font-body-small text-one-white">Where the magic happens, every single day.</p>
             </div>
           </motion.div>
@@ -425,14 +518,15 @@ export default function Story() {
             {studios.map((studio, i) => {
               const Icon = studio.icon
               return (
+                <TiltCard key={studio.title} maxTilt={5}>
                 <motion.div
-                  key={studio.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-                  className="glass-card p-5 flex flex-col gap-3"
+                  className="glass-card p-5 flex flex-col gap-3 group relative overflow-hidden"
                 >
+                  <div aria-hidden className="explore-tile-scan" />
                   <div className="w-10 h-10 rounded-full bg-one-gold/10 flex items-center justify-center">
                     <Icon size={18} className="text-one-gold" />
                   </div>
@@ -447,6 +541,7 @@ export default function Story() {
                     ))}
                   </ul>
                 </motion.div>
+                </TiltCard>
               )
             })}
           </div>
@@ -454,7 +549,7 @@ export default function Story() {
       </section>
 
       {/* ═══════ Section 5 — Community Impact ═══════ */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto bg-surface-warm" data-cursor-label="COMMUNITY IMPACT">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -462,26 +557,27 @@ export default function Story() {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-h2 text-one-white mb-6">Community Impact</h2>
+            <WordReveal text="Community Impact" className="font-h2 text-one-white mb-6 block" as="h2" />
             <div className="grid grid-cols-2 gap-6 mb-8">
               <div>
-                <p className="font-stat text-one-gold">500+</p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={500} suffix="+" /></p>
                 <p className="font-label text-muted mt-1">Events Covered</p>
               </div>
               <div>
-                <p className="font-stat text-one-gold">100+</p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={100} suffix="+" /></p>
                 <p className="font-label text-muted mt-1">NFPs Supported On-Air</p>
               </div>
               <div>
-                <p className="font-stat text-one-gold">24/7</p>
+                <p className="font-stat text-gold-gradient">24/7</p>
                 <p className="font-label text-muted mt-1">Emergency Alerts</p>
               </div>
               <div>
-                <p className="font-stat text-one-gold">12,000+</p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={12000} suffix="+" /></p>
                 <p className="font-label text-muted mt-1">Youth Engaged</p>
               </div>
             </div>
-            <div className="glass-card p-6 border-l-4 border-l-amber">
+            <TiltCard maxTilt={4}>
+            <div className="glass-card p-6 border-l-4 border-l-one-gold">
               <Quote size={24} className="text-one-gold/40 mb-3" />
               <p className="font-body text-one-white italic mb-4">
                 "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that."
@@ -496,6 +592,7 @@ export default function Story() {
                 </div>
               </div>
             </div>
+            </TiltCard>
           </motion.div>
 
           <motion.div
@@ -506,7 +603,7 @@ export default function Story() {
             className="rounded-2xl overflow-hidden border border-one-border aspect-[4/3] relative"
           >
             <img
-              src="/community-outdoor-market.jpg"
+              src="/assets/images/community-outdoor-market.jpg"
               alt="ONE FM community event"
               className="w-full h-full object-cover"
             />
@@ -516,7 +613,7 @@ export default function Story() {
       </section>
 
       {/* ═══════ Section 6 — Looking Forward ═══════ */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto pb-32">
+      <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto pb-32 bg-surface-glow" data-cursor-label="LOOKING AHEAD">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -524,7 +621,7 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-16"
         >
-          <h2 className="font-h2 text-one-white mb-3">Looking Forward</h2>
+          <WordReveal text="Looking Forward" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white max-w-2xl mx-auto">
             The next chapter of ONE FM blends our heritage values with tomorrow's technology.
           </p>
@@ -534,29 +631,33 @@ export default function Story() {
           {pillars.map((pillar, i) => {
             const Icon = pillar.icon
             return (
-              <motion.div
-                key={pillar.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ delay: i * 0.12, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-                whileHover={{ y: -6 }}
-                className="glass-card p-8 flex flex-col items-center text-center gap-5 group cursor-default"
-              >
-                <div className="w-16 h-16 rounded-full bg-one-gold/10 flex items-center justify-center group-hover:bg-one-gold/20 transition-colors duration-300">
-                  <Icon size={28} className="text-one-gold" />
-                </div>
-                <div>
-                  <h3 className="font-h3 text-one-white group-hover:text-one-gold transition-colors duration-200">
-                    {pillar.title}
-                  </h3>
-                  <p className="font-body-small text-one-white mt-3">{pillar.desc}</p>
-                </div>
-              </motion.div>
+              <TiltCard key={pillar.title} maxTilt={4} className="h-full">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ delay: i * 0.12, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+                  data-cursor-label={pillar.title.toUpperCase()}
+                  className="glass-card p-8 flex flex-col items-center text-center gap-5 group h-full relative overflow-hidden"
+                >
+                  <div aria-hidden className="explore-tile-scan" />
+                  <div className="w-16 h-16 rounded-full bg-one-gold/10 flex items-center justify-center group-hover:bg-one-gold/20 transition-colors duration-300">
+                    <Icon size={28} className="text-one-gold" />
+                  </div>
+                  <div>
+                    <h3 className="font-h3 text-one-white group-hover:text-one-gold transition-colors duration-200">
+                      {pillar.title}
+                    </h3>
+                    <p className="font-body-small text-one-white mt-3">{pillar.desc}</p>
+                  </div>
+                </motion.div>
+              </TiltCard>
             )
           })}
         </div>
       </section>
+
+      <LatestInterviews />
     </Layout>
   )
 }

@@ -1,10 +1,17 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import type { ElementType } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { WordReveal } from '@/components/WordReveal'
+import { Marquee } from '@/components/Marquee'
+import { MagneticButton } from '@/components/MagneticButton'
+import { TiltCard } from '@/components/TiltCard'
+import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { StripeProvider } from '@/components/StripeProvider'
+import { BRAND } from '@/lib/brand'
+import { stationStats } from '@/data/pricing'
 import {
   Heart,
   Radio,
@@ -27,7 +34,6 @@ import {
   Trophy,
   Crown,
   DollarSign,
-  Loader2,
   TrendingUp,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -182,76 +188,30 @@ const otherWays = [
 ]
 
 /* ------------------------------------------------------------------ */
-/*  Animated Counter                                                   */
-/* ------------------------------------------------------------------ */
-
-function AnimatedCounter({
-  end,
-  duration = 2000,
-  prefix = '',
-  suffix = '',
-}: {
-  end: number
-  duration?: number
-  prefix?: string
-  suffix?: string
-}) {
-  const [count, setCount] = useState(0)
-  const [started, setStarted] = useState(false)
-  const ref = useRef<HTMLSpanElement>(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setStarted(true)
-      },
-      { threshold: 0.3 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
-    if (!started) return
-    let startTime: number | null = null
-    let raf: number
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp
-      const progress = Math.min((timestamp - startTime) / duration, 1)
-      setCount(Math.floor(progress * end))
-      if (progress < 1) raf = requestAnimationFrame(animate)
-    }
-    raf = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(raf)
-  }, [started, end, duration])
-
-  const formatted = count.toLocaleString()
-  return (
-    <span ref={ref}>
-      {prefix}
-      {formatted}
-      {suffix}
-    </span>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /*  Section 1 — Hero                                                  */
 /* ------------------------------------------------------------------ */
 
 function HeroSection() {
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
+
   return (
-    <section className="relative overflow-hidden bg-[#050D1A]">
+    <section ref={heroRef} className="relative overflow-hidden bg-[#050D1A]" data-cursor-label="SUPPORT US">
       <div className="absolute inset-0 z-0">
-        <img
-          src="/assets/images/community-outdoor-market.jpg"
-          alt=""
-          aria-hidden
-          className="w-full h-full object-cover"
-          style={{ opacity: 0.18 }}
-        />
+        <motion.div
+          style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
+        >
+          <img
+            src="/assets/images/studio-exterior-rainbow.jpg"
+            alt=""
+            aria-hidden
+            loading="eager"
+            fetchPriority="high"
+            className="w-full h-full object-cover"
+            style={{ opacity: 0.32 }}
+          />
+        </motion.div>
         <div
           className="absolute inset-0"
           style={{
@@ -275,8 +235,21 @@ function HeroSection() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center"
         >
-          <div className="flex justify-center mb-7">
+          <div className="flex justify-center mb-4">
             <span className="section-label">Community radio since 1989</span>
+          </div>
+          <div className="flex justify-center items-end gap-[1.5px] mb-5" aria-hidden>
+            {Array.from({ length: 18 }, (_, i) => (
+              <div
+                key={i}
+                className="w-[1.5px] rounded-sm"
+                style={{
+                  height: 3 + Math.floor(Math.abs(Math.sin(i * 0.6 + 0.5)) * 11 + 2),
+                  backgroundColor: 'rgba(212,168,75,0.3)',
+                  animation: `freq-bar ${0.72 + (i % 6) * 0.12}s ${(i * 0.085) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
           </div>
           <h1 className="font-hero text-one-white mb-5 tracking-tight">
             SUPPORT{' '}
@@ -290,13 +263,13 @@ function HeroSection() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
           {[
-            { value: 39375, label: 'Weekly Listeners', suffix: '' },
-            { value: 100, label: 'NFPs Supported', suffix: '+' },
-            { value: 25, label: 'Communities', suffix: '' },
-            { value: 37, label: 'Years on Air', suffix: '' },
+            { value: stationStats.weeklyListeners, label: 'Weekly Listeners', suffix: '' },
+            { value: stationStats.nfpsSupported, label: 'NFPs Supported', suffix: '+' },
+            { value: stationStats.totalTowns, label: 'Communities', suffix: '' },
+            { value: stationStats.yearsBroadcasting, label: 'Years on Air', suffix: '' },
           ].map((stat, i) => (
+            <TiltCard key={stat.label} maxTilt={6} className="h-full">
             <motion.div
-              key={stat.label}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
@@ -304,13 +277,15 @@ function HeroSection() {
                 delay: 0.3 + i * 0.1,
                 ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
               }}
-              className="glass-card p-6 text-center"
+              className="glass-card p-6 text-center h-full group relative overflow-hidden"
             >
-              <div className="font-stat text-one-gold mb-1">
-                <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+              <div aria-hidden className="explore-tile-scan" />
+              <div className="font-stat text-gold-gradient mb-1">
+                <AnimatedNumber value={stat.value} suffix={stat.suffix} />
               </div>
               <div className="font-label text-muted">{stat.label}</div>
             </motion.div>
+            </TiltCard>
           ))}
         </div>
 
@@ -329,8 +304,8 @@ function HeroSection() {
             <span className="font-label text-one-white">
               TOTAL COMMUNITY SUPPORT
             </span>
-            <span className="font-stat text-one-white">
-              <AnimatedCounter prefix="$" end={124580} />
+            <span className="font-stat text-gold-gradient">
+              <AnimatedNumber prefix="$" value={124580} />
             </span>
           </div>
         </motion.div>
@@ -345,10 +320,10 @@ function HeroSection() {
 
 function WhySupportSection() {
   return (
-    <section className="section-padding bg-one-navy">
+    <section className="section-padding section-bleed-top bg-surface-mid" data-cursor-label="WHY SUPPORT">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
-          <h2 className="font-h2 text-one-white mb-4">Why Support ONE FM?</h2>
+          <WordReveal text="Why Support ONE FM?" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-white max-w-xl mx-auto">
             Your contribution directly strengthens the Goulburn Valley&rsquo;s
             most trusted community voice.
@@ -370,13 +345,16 @@ function WhySupportSection() {
                   ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
                 }}
               >
-                <div className="glass-card p-6 h-full transition-all duration-300 hover:border-one-gold/30 hover:scale-[1.01]">
+                <TiltCard maxTilt={5} className="h-full">
+                <div className="glass-card p-6 h-full transition-all duration-300 hover:border-one-gold/30 group relative overflow-hidden">
+                  <div aria-hidden className="explore-tile-scan" />
                   <div className="w-12 h-12 rounded-lg bg-one-gold/10 flex items-center justify-center mb-4">
                     <Icon size={24} className="text-one-gold" />
                   </div>
                   <h3 className="font-h4 text-one-white mb-2">{card.title}</h3>
                   <p className="font-body-small text-one-white">{card.desc}</p>
                 </div>
+                </TiltCard>
               </motion.div>
             )
           })}
@@ -404,12 +382,15 @@ function TierCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+      data-cursor-label="DONATE"
     >
+      <TiltCard maxTilt={5} className="h-full">
       <div
-        className={`glass-card p-6 h-full relative overflow-hidden transition-all duration-300 hover:border-one-gold/30 hover:scale-[1.01] ${
-          tier.popular ? 'ring-2 ring-amber/40' : ''
+        className={`glass-card p-6 h-full relative overflow-hidden group transition-all duration-300 hover:border-one-gold/30 ${
+          tier.popular ? 'ring-2 ring-one-gold/40' : ''
         }`}
       >
+        <div aria-hidden className="explore-tile-scan" />
         {tier.popular && (
           <div className="absolute top-0 right-0 bg-one-gold text-one-navy font-label text-xs px-3 py-1 rounded-bl-lg">
             Most Popular
@@ -424,28 +405,30 @@ function TierCard({
           </div>
           <h3 className="font-h3 text-one-white mb-1">{tier.name}</h3>
           <div className="flex items-baseline gap-1 mb-4">
-            <span className="font-stat text-one-gold">${tier.amount}</span>
+            <span className="font-stat text-gold-gradient">${tier.amount}</span>
             <span className="font-body-small text-one-white">/month</span>
           </div>
           <p className="font-body-small text-one-white mb-6">{tier.benefits}</p>
           <button
             onClick={() => onSelect(tier.id)}
+            data-cursor-label="SELECT"
             className="w-full btn-primary"
           >
             Select <ChevronRight size={16} />
           </button>
         </div>
       </div>
+      </TiltCard>
     </motion.div>
   )
 }
 
 function TiersSection({ onSelect }: { onSelect: (id: string) => void }) {
   return (
-    <section className="section-padding bg-one-navy">
+    <section className="section-padding section-bleed-top bg-surface-lift" data-cursor-label="SUPPORT">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
-          <h2 className="font-h2 text-one-white mb-4">Choose Your Impact</h2>
+          <WordReveal text="Choose Your Impact" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-white max-w-xl mx-auto">
             Monthly supporters power our station year-round. Every tier is
             fully tax-deductible.
@@ -466,7 +449,8 @@ function TiersSection({ onSelect }: { onSelect: (id: string) => void }) {
               ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
             }}
           >
-            <div className="glass-card p-6 h-full relative overflow-hidden transition-all duration-300 hover:border-one-gold/30 hover:scale-[1.01]">
+            <div className="glass-card p-6 h-full relative overflow-hidden group transition-all duration-300 hover:border-one-gold/30 hover:scale-[1.01]">
+              <div aria-hidden className="explore-tile-scan" />
               <div className="absolute top-0 left-0 bg-sage/80 text-one-navy font-label text-xs px-3 py-1 rounded-br-lg">
                 Tax Deductible
               </div>
@@ -478,7 +462,7 @@ function TiersSection({ onSelect }: { onSelect: (id: string) => void }) {
                   {oneOffTier.name}
                 </h3>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="font-stat text-one-gold">Any</span>
+                  <span className="font-stat text-gold-gradient">Any</span>
                   <span className="font-body-small text-one-white">amount</span>
                 </div>
                 <p className="font-body-small text-one-white mb-6">
@@ -486,6 +470,7 @@ function TiersSection({ onSelect }: { onSelect: (id: string) => void }) {
                 </p>
                 <button
                   onClick={() => onSelect(oneOffTier.id)}
+                  data-cursor-label="SELECT"
                   className="w-full btn-secondary"
                 >
                   Donate Once <ChevronRight size={16} />
@@ -525,7 +510,7 @@ function DonationFormSection({
   initialAmount?: number
 }) {
   const [step, setStep] = useState(1)
-  const [isProcessing, setIsProcessing] = useState(false)
+
   const [isSuccess, setIsSuccess] = useState(false)
 
   const tierMap = useMemo(() => {
@@ -578,16 +563,6 @@ function DonationFormSection({
   const handleNext = () => setStep((s) => Math.min(s + 1, 4))
   const handleBack = () => setStep((s) => Math.max(s - 1, 1))
 
-  const handleSubmit = useCallback(() => {
-    setIsProcessing(true)
-    // Stripe backend integration required — connect to your Stripe account and backend API
-    setTimeout(() => {
-      setIsProcessing(false)
-      setIsSuccess(true)
-      setStep(4)
-    }, 2500)
-  }, [])
-
   const update = useCallback(
     (field: keyof FormData, value: unknown) => {
       setForm((f) => ({ ...f, [field]: value }))
@@ -596,10 +571,10 @@ function DonationFormSection({
   )
 
   return (
-    <section className="section-padding bg-one-navy">
+    <section className="section-padding section-bleed-top bg-surface-deep" data-cursor-label="DONATE NOW">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
-          <h2 className="font-h2 text-one-white mb-4">Complete Your Donation</h2>
+          <WordReveal text="Complete Your Donation" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-white">
             Secure, tax-deductible, and powering local radio.
           </p>
@@ -620,7 +595,7 @@ function DonationFormSection({
                         done
                           ? 'bg-one-gold text-one-navy'
                           : active
-                            ? 'bg-one-gold/20 text-one-gold ring-1 ring-amber'
+                            ? 'bg-one-gold/20 text-one-gold ring-1 ring-one-gold'
                             : 'bg-one-navy text-muted'
                       }`}
                     >
@@ -652,17 +627,15 @@ function DonationFormSection({
                     <Sparkles size={32} className="text-one-gold" />
                   </div>
                   <h3 className="font-h3 text-one-white mb-3">
-                    Thank You!
+                    Enquiry Sent!
                   </h3>
                   <p className="font-body text-one-white max-w-md mx-auto mb-6">
-                    Your support keeps the Valley connected. A tax-deductible
-                    receipt has been sent to your email.
+                    We'll be in touch with bank transfer details shortly. Thank you for supporting community radio in the Goulburn Valley.
                   </p>
                   <div className="glass-card inline-flex items-center gap-3 px-6 py-3">
-                    <Lock size={16} className="text-sage" />
+                    <Heart size={16} className="text-one-gold" />
                     <span className="font-label text-one-white">
-                      Receipt #{' '}
-                      {Math.random().toString(36).slice(2, 10).toUpperCase()}
+                      {BRAND.email}
                     </span>
                   </div>
                 </motion.div>
@@ -680,6 +653,7 @@ function DonationFormSection({
                       <div className="flex items-center justify-center gap-4 mb-6">
                         <button
                           onClick={() => update('donationType', 'monthly')}
+                          data-cursor-label="MONTHLY"
                           className={`px-5 py-2 rounded-full font-label text-xs transition-all ${
                             form.donationType === 'monthly'
                               ? 'bg-one-gold text-one-navy'
@@ -690,6 +664,7 @@ function DonationFormSection({
                         </button>
                         <button
                           onClick={() => update('donationType', 'one-off')}
+                          data-cursor-label="ONE-OFF"
                           className={`px-5 py-2 rounded-full font-label text-xs transition-all ${
                             form.donationType === 'one-off'
                               ? 'bg-one-gold text-one-navy'
@@ -705,7 +680,7 @@ function DonationFormSection({
                           <div className="font-h3 text-one-white mb-2">
                             {tiers.find((t) => t.id === form.tier)?.name}
                           </div>
-                          <div className="font-stat text-one-gold">
+                          <div className="font-stat text-gold-gradient">
                             ${form.amount}/month
                           </div>
                         </div>
@@ -750,6 +725,7 @@ function DonationFormSection({
                       <div className="pt-4 flex justify-end">
                         <button
                           onClick={handleNext}
+                          data-cursor-label="CONTINUE"
                           className="btn-primary"
                         >
                           Continue <ArrowRight size={16} />
@@ -881,6 +857,7 @@ function DonationFormSection({
                         </Button>
                         <button
                           onClick={handleNext}
+                          data-cursor-label="CONTINUE"
                           className="btn-primary"
                         >
                           Continue <ArrowRight size={16} />
@@ -899,47 +876,49 @@ function DonationFormSection({
                         </span>
                       </div>
 
-                      {/* Stripe Elements placeholder */}
-                      <div className="glass-card p-5 space-y-4 border border-one-border">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CreditCard size={18} className="text-one-gold" />
+                      {/* Donation contact options */}
+                      <div className="glass-card p-5 space-y-5 border border-one-gold/20">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Heart size={18} className="text-one-gold" />
                           <span className="font-label text-one-white">
-                            CARD DETAILS
+                            HOW TO DONATE
                           </span>
                         </div>
-                        <div>
-                          <Label className="font-label text-muted mb-2 block">
-                            Card Number
-                          </Label>
-                          <Input
-                            placeholder="0000 0000 0000 0000"
-                            className="glass-card border-one-border text-one-white"
-                          />
+                        <p className="font-body-small text-one-muted">
+                          Online card payments are being set up. In the meantime, you can support us directly:
+                        </p>
+                        <div className="space-y-3">
+                          <a
+                            href={`mailto:${BRAND.email}?subject=Donation%20Enquiry&body=Hi%20ONE%20FM%2C%0A%0AI%20would%20like%20to%20donate%20%24${totalAmount.toFixed(2)}%20AUD%20to%20support%20community%20radio.%0A%0APlease%20send%20me%20your%20bank%20transfer%20details.%0A%0AThank%20you.`}
+                            data-cursor-label="EMAIL"
+                            className="flex items-center gap-3 p-4 rounded-xl border border-one-gold/30 bg-one-gold/5 hover:bg-one-gold/10 transition-colors group"
+                          >
+                            <div className="w-10 h-10 rounded-full bg-one-gold/10 flex items-center justify-center shrink-0">
+                              <CreditCard size={18} className="text-one-gold" />
+                            </div>
+                            <div>
+                              <div className="font-label text-one-white text-xs mb-0.5">Bank Transfer</div>
+                              <div className="font-body-small text-one-muted">Email us and we'll send account details for a direct bank transfer</div>
+                            </div>
+                            <ArrowRight size={16} className="text-one-gold/50 ml-auto group-hover:translate-x-1 transition-transform" />
+                          </a>
+                          <a
+                            href={`tel:${BRAND.phone.replace(/\s/g, '')}`}
+                            data-cursor-label="CALL"
+                            className="flex items-center gap-3 p-4 rounded-xl border border-one-border bg-transparent hover:bg-one-navy/30 transition-colors group"
+                          >
+                            <div className="w-10 h-10 rounded-full bg-one-white/5 flex items-center justify-center shrink-0">
+                              <Radio size={18} className="text-one-muted" />
+                            </div>
+                            <div>
+                              <div className="font-label text-one-white text-xs mb-0.5">Call the Station</div>
+                              <div className="font-body-small text-one-muted">{BRAND.phone} — our team can take card payments over the phone</div>
+                            </div>
+                            <ArrowRight size={16} className="text-one-muted/50 ml-auto group-hover:translate-x-1 transition-transform" />
+                          </a>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label className="font-label text-muted mb-2 block">
-                              Expiry
-                            </Label>
-                            <Input
-                              placeholder="MM / YY"
-                              className="glass-card border-one-border text-one-white"
-                            />
-                          </div>
-                          <div>
-                            <Label className="font-label text-muted mb-2 block">
-                              CVC
-                            </Label>
-                            <Input
-                              placeholder="123"
-                              className="glass-card border-one-border text-one-white"
-                            />
-                          </div>
-                        </div>
-                        <p className="font-micro text-muted pt-2">
-                          {/* Stripe backend integration required — connect to your Stripe account and backend API */}
-                          Stripe Elements placeholder — backend integration
-                          required for live processing.
+                        <p className="font-micro text-muted pt-1">
+                          All donations are tax-deductible. You'll receive a receipt via email.
                         </p>
                       </div>
 
@@ -984,26 +963,13 @@ function DonationFormSection({
                         >
                           Back
                         </Button>
-                        <button
-                          onClick={handleSubmit}
-                          disabled={isProcessing}
-                          className={`btn-primary ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        <a
+                          href={`mailto:${BRAND.email}?subject=Donation%20Enquiry%20-%20%24${totalAmount.toFixed(2)}%20AUD&body=Hi%20ONE%20FM%2C%0A%0AI%20would%20like%20to%20donate%20%24${totalAmount.toFixed(2)}%20AUD%20to%20support%20community%20radio%20in%20the%20Goulburn%20Valley.%0A%0APlease%20send%20me%20your%20bank%20transfer%20details.%0A%0AThank%20you.`}
+                          data-cursor-label="EMAIL"
+                          className="btn-primary"
                         >
-                          {isProcessing ? (
-                            <>
-                              <Loader2
-                                size={16}
-                                className="animate-spin"
-                              />
-                              Processing...
-                            </>
-                          ) : (
-                            <>
-                              Donate ${totalAmount.toFixed(2)}{' '}
-                              <Lock size={16} />
-                            </>
-                          )}
-                        </button>
+                          Send Donation Enquiry <ArrowRight size={16} />
+                        </a>
                       </div>
                     </div>
                   )}
@@ -1023,12 +989,10 @@ function DonationFormSection({
 
 function OtherWaysSection() {
   return (
-    <section className="section-padding bg-one-navy">
+    <section className="section-padding section-bleed-top bg-surface-peak" data-cursor-label="OTHER WAYS">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
-          <h2 className="font-h2 text-one-white mb-4">
-            Not Ready to Donate?
-          </h2>
+          <WordReveal text="Not Ready to Donate?" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-white">
             You can still help keep local radio alive.
           </p>
@@ -1047,8 +1011,10 @@ function OtherWaysSection() {
                   delay: i * 0.1,
                   ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
                 }}
-                className="glass-card p-6 h-full transition-all duration-300 hover:border-one-gold/30 hover:scale-[1.02]"
+                data-cursor-label={way.action.toUpperCase()}
+                className="glass-card p-6 h-full transition-all duration-300 hover:border-one-gold/30 hover:scale-[1.02] group relative overflow-hidden"
               >
+                <div aria-hidden className="explore-tile-scan" />
                 <div className="w-12 h-12 rounded-lg bg-one-gold/10 flex items-center justify-center mb-4">
                   <Icon size={24} className="text-one-gold" />
                 </div>
@@ -1061,11 +1027,11 @@ function OtherWaysSection() {
             )
 
             return way.href.startsWith('/') ? (
-              <Link key={way.title} to={way.href} className="block">
+              <Link key={way.title} to={way.href} data-cursor-label={way.action.toUpperCase()} className="block">
                 {inner}
               </Link>
             ) : (
-              <a key={way.title} href={way.href} className="block">
+              <a key={way.title} href={way.href} data-cursor-label={way.action.toUpperCase()} className="block">
                 {inner}
               </a>
             )
@@ -1082,10 +1048,10 @@ function OtherWaysSection() {
 
 function SupporterWallSection() {
   return (
-    <section className="section-padding bg-one-navy">
+    <section className="section-padding section-bleed-top bg-surface-warm" data-cursor-label="OUR PATRONS">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
-          <h2 className="font-h2 text-one-white mb-4">Our Community Patrons</h2>
+          <WordReveal text="Our Community Patrons" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-white">
             The families, businesses, and groups making local radio possible.
           </p>
@@ -1093,8 +1059,8 @@ function SupporterWallSection() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
           {patronNames.map((name, i) => (
+            <TiltCard key={name} maxTilt={8} className="h-full">
             <motion.div
-              key={name}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -1103,10 +1069,11 @@ function SupporterWallSection() {
                 delay: i * 0.05,
                 ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
               }}
-              className="glass-card px-4 py-5 text-center"
+              className="glass-card px-4 py-5 text-center h-full"
             >
               <p className="font-body-small text-one-white">{name}</p>
             </motion.div>
+            </TiltCard>
           ))}
         </div>
 
@@ -1129,13 +1096,11 @@ function TransparencySection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   return (
-    <section className="section-padding bg-one-navy">
+    <section className="section-padding section-bleed-top bg-surface-lift" data-cursor-label="IMPACT">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <h2 className="font-h2 text-one-white mb-6">
-              Where Your Money Goes
-            </h2>
+            <WordReveal text="Where Your Money Goes" className="font-h2 text-one-white mb-6 block" as="h2" stagger={0.05} />
             <p className="font-body text-one-white mb-8">
               We believe in radical transparency. Every dollar is accounted for
               and directed toward keeping community radio on air and serving
@@ -1183,13 +1148,13 @@ function TransparencySection() {
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 font-label text-xs text-one-gold hover:text-one-gold transition-colors"
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 font-label text-xs text-one-gold hover:text-one-gold transition-colors link-hover"
               >
                 <FileText size={16} />
-                Download Annual Report
-              </a>
+                Request Annual Report
+              </Link>
               <div className="flex items-center gap-2 glass-card px-4 py-2">
                 <Shield size={16} className="text-sage" />
                 <span className="font-label text-xs text-one-white">
@@ -1233,7 +1198,7 @@ function TransparencySection() {
             </ResponsiveContainer>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="text-center">
-                <div className="font-stat text-one-white">100%</div>
+                <div className="font-stat text-gold-gradient">100%</div>
                 <div className="font-label text-muted">Accountable</div>
               </div>
             </div>
@@ -1263,7 +1228,7 @@ function FinalCTASection({
   ]
 
   return (
-    <section className="py-24 md:py-32 bg-one-navy relative overflow-hidden">
+    <section className="py-24 md:py-32 bg-surface-glow section-bleed-top relative overflow-hidden" data-cursor-label="AMPLIFY">
       <div
         className="absolute inset-0 opacity-20"
         style={{
@@ -1292,6 +1257,7 @@ function FinalCTASection({
               <button
                 key={tierId}
                 onClick={() => onSelectTier(tierId)}
+                data-cursor-label={`$${amount}`}
                 className="px-6 py-3 rounded-full font-label text-sm bg-one-navy text-one-white hover:bg-one-gold hover:text-one-navy transition-all duration-300"
               >
                 ${amount}
@@ -1299,18 +1265,21 @@ function FinalCTASection({
             ))}
             <button
               onClick={onSelectCustom}
+              data-cursor-label="CUSTOM"
               className="px-6 py-3 rounded-full font-label text-sm btn-secondary"
             >
               Custom
             </button>
           </div>
 
-          <button
-            onClick={() => onSelectTier('silver')}
-            className="btn-primary text-base px-10 py-4"
-          >
-            Support ONE FM <ArrowRight size={18} />
-          </button>
+          <MagneticButton strength={10} cursorLabel="DONATE">
+            <button
+              onClick={() => onSelectTier('silver')}
+              className="btn-primary text-base px-10 py-4"
+            >
+              Support ONE FM <ArrowRight size={18} />
+            </button>
+          </MagneticButton>
         </motion.div>
       </div>
     </section>
@@ -1354,6 +1323,24 @@ export default function Support() {
     <Layout>
       <SEO title="Support ONE FM" description="Donate to ONE FM 98.5 community radio. Monthly tiers from $10. Tax deductible. Keep local voices alive." />
       <HeroSection />
+
+      {/* ── Support Marquee Strip ── */}
+      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+        <Marquee
+          speed={32}
+          items={[
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">KEEP LOCAL RADIO ALIVE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY SUPPORTED · SINCE 1989</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.weeklyListeners.toLocaleString()} WEEKLY LISTENERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">TAX-DEDUCTIBLE DONATIONS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.totalTowns} COMMUNITIES SERVED · GOULBURN VALLEY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FROM $10/MONTH</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">NOT-FOR-PROFIT · ACMA LICENSED</span>,
+          ]}
+        />
+      </div>
+
       <WhySupportSection />
       <TiersSection onSelect={scrollToForm} />
       <div ref={formRef}>

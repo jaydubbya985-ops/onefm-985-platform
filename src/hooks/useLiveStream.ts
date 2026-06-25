@@ -1,66 +1,63 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { STREAM_URL } from '@/lib/streamConfig'
 
+/* ─── Module-level singleton ──────────────────────────────────────────────
+   One Audio element is shared across all useLiveStream() callers.
+   State changes broadcast via a CustomEvent so every subscriber re-renders.
+─────────────────────────────────────────────────────────────────────────── */
+
+type StreamState = { playing: boolean; loading: boolean; error: string | null }
+
+let audio: HTMLAudioElement | null = null
+let state: StreamState = { playing: false, loading: false, error: null }
+const bus = typeof window !== 'undefined' ? new EventTarget() : null
+
+function getAudio(): HTMLAudioElement {
+  if (!audio) {
+    audio = new Audio(STREAM_URL)
+    audio.preload = 'none'
+
+    audio.addEventListener('play',    () => emit({ playing: true,  loading: false, error: null }))
+    audio.addEventListener('pause',   () => emit({ playing: false, loading: false, error: state.error }))
+    audio.addEventListener('waiting', () => emit({ ...state, loading: true }))
+    audio.addEventListener('playing', () => emit({ ...state, loading: false }))
+    audio.addEventListener('error',   () => emit({ playing: false, loading: false, error: 'Stream unavailable — try fm985.com.au/audio-player/' }))
+  }
+  return audio
+}
+
+function emit(next: StreamState) {
+  state = next
+  bus?.dispatchEvent(new CustomEvent('stream-state', { detail: next }))
+}
+
 export function useLiveStream() {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [playing, setPlaying] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [local, setLocal] = useState<StreamState>(state)
 
   useEffect(() => {
-    const audio = new Audio(STREAM_URL)
-    audio.preload = 'none'
-    audioRef.current = audio
+    // Sync in case state changed before mount
+    setLocal(state)
 
-    const onPlay = () => {
-      setPlaying(true)
-      setLoading(false)
-      setError(null)
-    }
-    const onPause = () => setPlaying(false)
-    const onWaiting = () => setLoading(true)
-    const onPlaying = () => setLoading(false)
-    const onError = () => {
-      setPlaying(false)
-      setLoading(false)
-      setError('Stream unavailable — try fm985.com.au/audio-player/')
-    }
-
-    audio.addEventListener('play', onPlay)
-    audio.addEventListener('pause', onPause)
-    audio.addEventListener('waiting', onWaiting)
-    audio.addEventListener('playing', onPlaying)
-    audio.addEventListener('error', onError)
-
-    return () => {
-      audio.pause()
-      audio.removeEventListener('play', onPlay)
-      audio.removeEventListener('pause', onPause)
-      audio.removeEventListener('waiting', onWaiting)
-      audio.removeEventListener('playing', onPlaying)
-      audio.removeEventListener('error', onError)
-      audioRef.current = null
-    }
+    const handler = (e: Event) => setLocal((e as CustomEvent<StreamState>).detail)
+    bus?.addEventListener('stream-state', handler)
+    return () => bus?.removeEventListener('stream-state', handler)
   }, [])
 
   const toggle = useCallback(async () => {
-    const audio = audioRef.current
-    if (!audio) return
+    const a = getAudio()
 
-    if (playing) {
-      audio.pause()
+    if (state.playing) {
+      a.pause()
       return
     }
 
-    setLoading(true)
-    setError(null)
+    emit({ ...state, loading: true, error: null })
     try {
-      await audio.play()
+      await a.play()
     } catch {
-      setLoading(false)
-      setError('Playback blocked — open the web player instead.')
+      emit({ playing: false, loading: false, error: 'Playback blocked — open the web player instead.' })
     }
-  }, [playing])
+  }, [])
 
-  return { playing, loading, error, toggle }
+  return { playing: local.playing, loading: local.loading, error: local.error, toggle }
 }

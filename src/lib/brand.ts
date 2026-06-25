@@ -18,6 +18,7 @@ export const BRAND = {
   tagline: 'Live and Local',
   region: 'Goulburn Valley',
   callsign: '3ONE',
+  acma: '1385226/1',
   org: 'Goulburn Valley Community Radio Inc.',
   abn: '92 117 291 771',
   established: 1980,

@@ -1,11 +1,16 @@
-import { useState, memo } from 'react'
+import { useState, memo, useRef } from 'react'
+import { TiltCard } from '@/components/TiltCard'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { WordReveal } from '@/components/WordReveal'
+import { MagneticButton } from '@/components/MagneticButton'
+import { Marquee } from '@/components/Marquee'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
 import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { BRAND } from '@/lib/brand'
-import { motion, AnimatePresence } from 'framer-motion'
+import { HOST_PHOTOS } from '@/lib/stationPhotos'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
   getBreakfastScheduleLabel,
@@ -41,17 +46,23 @@ const PAGE_JOBS: PageJob[] = [
 /* ────────────────────────────────────────────────────────── */
 /*  RadioWaveBackground — isolated perpetual animation        */
 /* ────────────────────────────────────────────────────────── */
+// Deterministic pseudo-random heights/durations — fixed on load, no mount jitter
+const WAVE_BARS = Array.from({ length: 40 }, (_, i) => ({
+  height: 20 + ((i * 37 + 13) % 61),
+  duration: 0.8 + ((i * 17 + 7) % 13) / 20,
+}))
+
 const RadioWaveBackground = memo(function RadioWaveBackground() {
   return (
-    <div className="absolute inset-0 flex items-end justify-center gap-1 opacity-20 pointer-events-none overflow-hidden pb-12">
-      {Array.from({ length: 40 }).map((_, i) => (
+    <div aria-hidden className="absolute inset-0 flex items-end justify-center gap-1 opacity-20 pointer-events-none overflow-hidden pb-12">
+      {WAVE_BARS.map((bar, i) => (
         <div
           key={i}
-          className="w-1.5 bg-gradient-to-t from-one-gold to-one-gold rounded-full animate-waveform"
+          className="w-1.5 bg-gradient-to-t from-one-gold to-one-electric rounded-full animate-waveform motion-reduce:animate-none"
           style={{
-            height: `${Math.random() * 60 + 20}%`,
+            height: `${bar.height}%`,
             animationDelay: `${i * 0.05}s`,
-            animationDuration: `${0.8 + Math.random() * 0.6}s`,
+            animationDuration: `${bar.duration}s`,
           }}
         />
       ))}
@@ -60,17 +71,40 @@ const RadioWaveBackground = memo(function RadioWaveBackground() {
 })
 
 /* ────────────────────────────────────────────────────────── */
+/*  Mini waveform — 8 bars, on-hover reveal, category color   */
+/* ────────────────────────────────────────────────────────── */
+function MiniWaveform({ color, seed }: { color: string; seed: number }) {
+  const bars = Array.from({ length: 8 }, (_, j) => ({
+    h: 20 + (seed * 13 + j * 19 + 7) % 60,
+    dur: (0.65 + ((seed * 7 + j * 11) % 9) * 0.07).toFixed(2),
+    del: (j * 0.09).toFixed(2),
+  }))
+  return (
+    <div aria-hidden className="flex items-end gap-[3px] h-5 opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none">
+      {bars.map((bar, j) => (
+        <div
+          key={j}
+          className="w-1 rounded-full animate-waveform motion-reduce:animate-none"
+          style={{ backgroundColor: color, height: `${bar.h}%`, animationDuration: `${bar.dur}s`, animationDelay: `${bar.del}s` }}
+        />
+      ))}
+    </div>
+  )
+}
+
+/* ────────────────────────────────────────────────────────── */
 /*  ON AIR NOW indicator                                      */
 /* ────────────────────────────────────────────────────────── */
 function OnAirNow() {
   const live = getCurrentLiveShow()
 
   return (
+    <TiltCard maxTilt={4} className="max-w-md">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-      className="glass-card px-6 py-4 flex items-center gap-4 max-w-md mx-auto mt-10"
+      className="glass-card px-6 py-4 flex items-center gap-4"
     >
       <span className="relative flex h-3 w-3 shrink-0">
         <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
@@ -83,6 +117,7 @@ function OnAirNow() {
       </div>
       <Wifi size={20} className="text-one-gold ml-auto shrink-0" />
     </motion.div>
+    </TiltCard>
   )
 }
 
@@ -344,6 +379,36 @@ const showFilters = ['All', 'Breakfast', 'Music', 'Sport', 'Community', 'Multicu
 
 const hostFilters = ["All", "Breakfast", "Sport", "Music", "Community", "Multicultural"]
 
+const CATEGORY_COLORS: Record<string, string> = {
+  Breakfast: '#D4AF37',
+  Music: '#9B5DE5',
+  Community: '#2EC4B6',
+  Sport: '#E51636',
+  Multicultural: '#FF6B6B',
+}
+
+/* Deterministic gradient avatar for host cards */
+const HOST_PALETTES = [
+  { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
+  { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
+  { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
+  { from: '#2EC4B6', to: '#0A2030', accent: '#7FFFD4' },
+  { from: '#9B5DE5', to: '#1A0A30', accent: '#DDB3FF' },
+  { from: '#FF6B6B', to: '#2A0A10', accent: '#FFB3B3' },
+  { from: '#1B458F', to: '#0D2A18', accent: '#6EE7B7' },
+]
+
+function getHostAvatar(name: string): { from: string; to: string; accent: string; initials: string } {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = (hash * 37 + name.charCodeAt(i)) >>> 0
+  const palette = HOST_PALETTES[hash % HOST_PALETTES.length]
+  const words = name.trim().replace(/[^a-zA-Z\s]/g, '').split(/\s+/).filter(Boolean)
+  const initials = words.length === 1
+    ? words[0].slice(0, 2).toUpperCase()
+    : (words[0][0] + words[words.length - 1][0]).toUpperCase()
+  return { ...palette, initials }
+}
+
 /* GVL — link to football page; live fixtures vary by season */
 const gvlSportBlocks = [
   {
@@ -376,6 +441,10 @@ const podcasts = [
     latest: "Latest community interviews — soundcloud.com/user-570295409",
     desc: "Local interviews, community stories and Goulburn Valley voices. Available on SoundCloud after broadcast.",
     url: "https://soundcloud.com/user-570295409",
+    color: '#D4AF37',
+    colorRgb: '212, 175, 55',
+    Icon: Mic2,
+    label: 'Broadcast',
   },
   {
     title: "GVL Football & Netball",
@@ -384,6 +453,10 @@ const podcasts = [
     latest: "Match commentary and post-match interviews",
     desc: "GVL Football & Netball match coverage, player interviews and round analysis during the season.",
     url: "https://soundcloud.com/user-570295409",
+    color: '#E51636',
+    colorRgb: '229, 22, 54',
+    Icon: Trophy,
+    label: 'Sport',
   },
   {
     title: "Community Interviews",
@@ -392,27 +465,44 @@ const podcasts = [
     latest: "Local community voices",
     desc: "Community members, local events, and the stories that matter to the Goulburn Murray region.",
     url: "https://soundcloud.com/user-570295409",
+    color: '#2EC4B6',
+    colorRgb: '46, 196, 182',
+    Icon: Radio,
+    label: 'Community',
   },
 ]
 
 /* ────────────────────────────────────────────────────────── */
 /*  MAIN PAGE                                                 */
 /* ────────────────────────────────────────────────────────── */
+const SHOWS_INITIAL = 9
+const HOSTS_INITIAL = 8
+
 export default function Programs() {
   const [showFilter, setShowFilter] = useState('All')
   const [hostFilter, setHostFilter] = useState("All")
+  const [showAllShows, setShowAllShows] = useState(false)
+  const [showAllHosts, setShowAllHosts] = useState(false)
   const [requestName, setRequestName] = useState("")
   const [requestSong, setRequestSong] = useState("")
   const [requestMsg, setRequestMsg] = useState("")
   const [requestSent, setRequestSent] = useState(false)
 
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
+
   const filteredShows = showFilter === 'All'
     ? shows
     : shows.filter((s) => s.tag === showFilter)
 
+  const visibleShows = showAllShows ? filteredShows : filteredShows.slice(0, SHOWS_INITIAL)
+
   const filteredHosts = hostFilter === "All"
     ? hosts
     : hosts.filter((h) => h.type === hostFilter)
+
+  const visibleHosts = showAllHosts ? filteredHosts : filteredHosts.slice(0, HOSTS_INITIAL)
 
   const handleRequestSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -434,48 +524,117 @@ export default function Programs() {
     <Layout>
       <SEO title="Programs & Shows" description="ONE FM Breakfast, Dancing through the decades, The James Manley Show, GVL sport, multicultural programs, and more. Full guide from fm985.com.au." />
       {/* ═══════ Section 1 — Hero ═══════ */}
-      <section className="relative min-h-[80dvh] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-[#050D1A]">
-        {/* Real photo bg — studio broadcast action */}
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="ON AIR NOW">
         <div className="absolute inset-0 z-0">
-          <img
-            src="/assets/images/commentary-box-action.jpg"
-            alt=""
-            aria-hidden
-            className="w-full h-full object-cover"
-            style={{ opacity: 0.22 }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/75 via-[#050D1A]/40 to-[#050D1A]/90" />
+          <motion.div
+            style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
+          >
+            <img
+              src={HOST_PHOTOS.studioControlRoom}
+              alt=""
+              aria-hidden
+              loading="eager"
+              fetchPriority="high"
+              className="w-full h-full object-cover"
+              style={{ opacity: 0.55 }}
+            />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/60 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
         <RadioWaveBackground />
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-          className="relative z-10 flex flex-col items-center"
-        >
-          <span className="section-label justify-center mb-7 block">Shepparton · Victoria · 98.5 FM</span>
-          <h1 className="font-hero text-one-white mb-5">PROGRAMS <span className="text-one-gold">&amp; SHOWS</span></h1>
-          <p className="font-body text-one-white/50 max-w-xl mx-auto italic">
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 pb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
+          >
+            On Air · Shepparton · Victoria · 98.5 FM
+          </motion.span>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.28 }}
+            className="flex items-end gap-[1.5px] mb-5"
+            aria-hidden
+          >
+            {Array.from({ length: 20 }, (_, i) => (
+              <div
+                key={i}
+                className="w-[1.5px] rounded-sm"
+                style={{
+                  height: 3 + Math.floor(Math.abs(Math.sin(i * 0.61 + 0.4)) * 12 + 2),
+                  backgroundColor: 'rgba(201,162,39,0.35)',
+                  animation: `freq-bar ${0.7 + (i % 6) * 0.13}s ${(i * 0.086) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
+          </motion.div>
+
+          <h1
+            className="font-heading font-black leading-none mb-8"
+            style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
+          >
+            <WordReveal text="Programs" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
+            <WordReveal text="& Shows." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+          </h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            className="font-body text-one-white/50 max-w-xl mb-8 italic"
+          >
             Local voices, local stories, local music — 24/7.
-          </p>
-        </motion.div>
-        <OnAirNow />
-        <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/listen" className="btn-primary text-sm inline-flex items-center gap-2">
-            <Play size={16} />
-            Listen Live
-          </Link>
-          <Link to="/broadcast" className="btn-secondary text-sm">
-            Broadcast Explorer
-          </Link>
+          </motion.p>
+
+          <OnAirNow />
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.55, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            className="flex flex-wrap gap-3 mt-8"
+          >
+            <MagneticButton strength={10} cursorLabel="LISTEN">
+              <Link to="/listen" className="btn-primary text-sm inline-flex items-center gap-2">
+                <Play size={16} />
+                Listen Live
+              </Link>
+            </MagneticButton>
+            <MagneticButton strength={6} cursorLabel="EXPLORE">
+              <Link to="/broadcast" className="btn-secondary text-sm">
+                Broadcast Explorer
+              </Link>
+            </MagneticButton>
+          </motion.div>
         </div>
       </section>
 
-      <PageJobsBar jobs={PAGE_JOBS} className="-mt-6 pb-8 relative z-20" />
+      {/* Marquee strip */}
+      <div className="py-4 bg-[#050D1A] border-y border-one-gold/10 overflow-hidden">
+        <Marquee
+          speed={36}
+          items={[
+            <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-gold/60">Breakfast Show · Mon–Fri 6am</span>,
+            <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-white/35">Dancing Through the Decades</span>,
+            <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-gold/60">GVL Football Coverage</span>,
+            <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-white/35">Multicultural Broadcasting</span>,
+            <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-gold/60">24/7 · 98.5 FM · Shepparton</span>,
+            <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-white/35">The James Manley Show</span>,
+          ]}
+        />
+      </div>
+
+      <PageJobsBar jobs={PAGE_JOBS} className="-mt-0 pb-8 relative z-20" />
 
       {/* Weekly guide from fm985.com.au */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto border-b border-one-border/40">
+      <section className="section-padding bg-surface-mid border-b border-one-border/40" data-cursor-label="WEEK'S GUIDE">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -483,16 +642,18 @@ export default function Programs() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h2 className="font-h2 text-one-white mb-2">This Week&apos;s Guide</h2>
+          <WordReveal text="This Week's Guide" className="font-h2 text-one-white mb-2 block" as="h2" />
           <p className="font-body text-muted max-w-2xl">
             Full schedule sourced from fm985.com.au — select a day to see what&apos;s on.
           </p>
         </motion.div>
         <WeeklySchedule />
+        </div>
       </section>
 
       {/* Featured Shows */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="section-padding section-bleed-top bg-surface-lift" data-cursor-label="EXPLORE SHOWS">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -502,69 +663,117 @@ export default function Programs() {
         >
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
-              <h2 className="font-h2 text-one-white mb-3">Featured Shows</h2>
+              <WordReveal text="Featured Shows" className="font-h2 text-one-white mb-3 block" as="h2" />
               <p className="font-body text-one-white max-w-xl">
                 From dawn till dark, our presenters keep the Valley informed, entertained and connected.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {showFilters.map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setShowFilter(f)}
-                  className={`font-label text-xs px-4 py-2 rounded-full border transition-all ${
-                    showFilter === f
-                      ? 'bg-one-gold text-one-navy border-one-gold'
-                      : 'bg-transparent text-one-white border-ivory/30 hover:border-ivory'
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
+              {showFilters.map((f) => {
+                const color = CATEGORY_COLORS[f]
+                const active = showFilter === f
+                return (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => { setShowFilter(f); setShowAllShows(false) }}
+                    data-cursor-label={f.toUpperCase()}
+                    className="font-label text-xs px-4 py-2 rounded-full border transition-all"
+                    style={active && color
+                      ? { backgroundColor: color, color: '#040B14', borderColor: color }
+                      : active
+                        ? { backgroundColor: '#D4AF37', color: '#040B14', borderColor: '#D4AF37' }
+                        : { backgroundColor: 'transparent', color: 'white', borderColor: 'rgba(244,241,234,0.3)' }
+                    }
+                  >
+                    {f}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredShows.map((show, i) => (
-            <motion.div
-              key={show.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ delay: i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-              whileHover={{ scale: 1.02, y: -4 }}
-              className="glass-card p-6 flex flex-col gap-4 group cursor-pointer"
-            >
-              <div className="flex items-start justify-between">
-                <div className="w-12 h-12 rounded-full bg-one-gold/10 flex items-center justify-center">
-                  <show.icon size={22} className="text-one-gold" />
+          {visibleShows.map((show, i) => (
+            <TiltCard key={show.name} maxTilt={6}>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ delay: (i % SHOWS_INITIAL) * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+                data-cursor-label={show.tag.toUpperCase()}
+                className="glass-card p-6 flex flex-col gap-4 group cursor-pointer relative overflow-hidden h-full"
+              >
+                {/* Category accent bar */}
+                <div
+                  className="absolute left-0 top-0 bottom-0 rounded-l"
+                  style={{ width: '3px', backgroundColor: CATEGORY_COLORS[show.tag] ?? '#2EC4B6' }}
+                />
+                <div aria-hidden className="explore-tile-scan" />
+                <div className="flex items-start justify-between">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: `${CATEGORY_COLORS[show.tag] ?? '#2EC4B6'}18` }}
+                  >
+                    <show.icon size={22} style={{ color: CATEGORY_COLORS[show.tag] ?? '#2EC4B6' }} />
+                  </div>
+                  <span
+                    className="font-label text-xs px-3 py-1 rounded-full border"
+                    style={{
+                      color: CATEGORY_COLORS[show.tag] ?? '#2EC4B6',
+                      backgroundColor: `${CATEGORY_COLORS[show.tag] ?? '#2EC4B6'}18`,
+                      borderColor: `${CATEGORY_COLORS[show.tag] ?? '#2EC4B6'}30`,
+                    }}
+                  >
+                    {show.tag}
+                  </span>
                 </div>
-                <span className="font-label text-xs px-3 py-1 rounded-full bg-one-gold/10 text-one-gold border border-one-gold/20">
-                  {show.tag}
-                </span>
-              </div>
-              <div>
-                <h3 className="font-h3 text-one-white group-hover:text-one-gold transition-colors duration-200">
-                  {show.name}
-                </h3>
-                <p className="font-label text-muted mt-1 flex items-center gap-2">
-                  <Clock size={12} />
-                  {show.time}
-                </p>
-              </div>
-              <p className="font-body-small text-one-white flex-1">{show.desc}</p>
-              <div className="pt-4 border-t border-one-border flex items-center gap-2">
-                <Mic2 size={14} className="text-muted" />
-                <span className="font-body-small text-muted">{show.host}</span>
-              </div>
-            </motion.div>
+                <div>
+                  <h3 className="font-h3 text-one-white group-hover:text-one-gold transition-colors duration-200">
+                    {show.name}
+                  </h3>
+                  <p className="font-label text-muted mt-1 flex items-center gap-2">
+                    <Clock size={12} />
+                    {show.time}
+                  </p>
+                </div>
+                <p className="font-body-small text-one-white flex-1">{show.desc}</p>
+                <div className="pt-4 border-t border-one-border flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Mic2 size={14} className="text-muted" />
+                    <span className="font-body-small text-muted">{show.host}</span>
+                  </div>
+                  <MiniWaveform color={CATEGORY_COLORS[show.tag] ?? '#2EC4B6'} seed={i} />
+                </div>
+              </motion.div>
+            </TiltCard>
           ))}
+        </div>
+
+        {filteredShows.length > SHOWS_INITIAL && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-10 flex justify-center"
+          >
+            <button
+              type="button"
+              onClick={() => setShowAllShows(v => !v)}
+              data-cursor-label={showAllShows ? 'COLLAPSE' : 'EXPAND'}
+              className="font-label text-xs px-8 py-3 rounded-full border border-one-gold/30 text-one-gold hover:bg-one-gold/10 transition-all flex items-center gap-2"
+            >
+              {showAllShows ? 'Show fewer shows' : `View all ${filteredShows.length} shows`}
+              <ChevronRight size={14} className={`transition-transform ${showAllShows ? 'rotate-90' : ''}`} />
+            </button>
+          </motion.div>
+        )}
         </div>
       </section>
 
       {/* ═══════ Section 3 — Host Roster ═══════ */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="section-padding section-bleed-top bg-surface-deep" data-cursor-label="HOST ROSTER">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -573,32 +782,40 @@ export default function Programs() {
           className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12"
         >
           <div>
-            <h2 className="font-h2 text-one-white mb-3">Host Roster</h2>
+            <WordReveal text="Host Roster" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white max-w-xl">
               Meet the voices behind the mic. {hosts.length} presenters from the fm985.com.au program guide.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {hostFilters.map((f) => (
-              <button
-                key={f}
-                onClick={() => setHostFilter(f)}
-                className={`font-label text-xs px-4 py-2 rounded-full border transition-all duration-200 flex items-center gap-2 ${
-                  hostFilter === f
-                    ? "bg-one-gold text-one-navy border-one-gold"
-                    : "bg-transparent text-one-white border-ivory/30 hover:border-ivory hover:bg-ivory/5"
-                }`}
-              >
-                {f === "All" && <Filter size={12} />}
-                {f}
-              </button>
-            ))}
+            {hostFilters.map((f) => {
+              const color = CATEGORY_COLORS[f]
+              const active = hostFilter === f
+              return (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => { setHostFilter(f); setShowAllHosts(false) }}
+                  data-cursor-label={f.toUpperCase()}
+                  className="font-label text-xs px-4 py-2 rounded-full border transition-all duration-200 flex items-center gap-2"
+                  style={active && color
+                    ? { backgroundColor: color, color: '#040B14', borderColor: color }
+                    : active
+                      ? { backgroundColor: '#D4AF37', color: '#040B14', borderColor: '#D4AF37' }
+                      : { backgroundColor: 'transparent', color: 'white', borderColor: 'rgba(244,241,234,0.3)' }
+                  }
+                >
+                  {f === "All" && <Filter size={12} />}
+                  {f}
+                </button>
+              )
+            })}
           </div>
         </motion.div>
 
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <AnimatePresence mode="popLayout">
-            {filteredHosts.map((host) => (
+            {visibleHosts.map((host, hi) => (
               <motion.div
                 key={host.name + host.show}
                 layout
@@ -606,34 +823,52 @@ export default function Programs() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-                className="glass-card p-5 group"
               >
-                <div className="relative mb-4 overflow-hidden rounded-lg aspect-[4/5]">
-                  <img
-                    src={host.img}
-                    alt={host.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-one-navy/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <span className="font-label text-[10px] px-2 py-0.5 rounded bg-one-gold text-one-navy">
-                      {host.type}
-                    </span>
-                  </div>
-                </div>
+              <TiltCard maxTilt={7} className="h-full">
+              <div className="glass-card p-5 group h-full" data-cursor-label="PRESENTER">
+                {(() => {
+                  const avatar = getHostAvatar(host.name)
+                  return (
+                    <div className="relative mb-4 overflow-hidden rounded-lg aspect-[4/5] group-hover:scale-[1.02] transition-transform duration-500">
+                      <div
+                        className="absolute inset-0"
+                        style={{ background: `linear-gradient(135deg, ${avatar.from} 0%, ${avatar.to} 100%)` }}
+                      />
+                      <div className="absolute inset-0 opacity-[0.06]"
+                        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span
+                          className="font-heading font-black select-none"
+                          style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: avatar.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
+                        >
+                          {avatar.initials}
+                        </span>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-one-navy/75 via-transparent to-transparent" />
+                      <div aria-hidden className="explore-tile-scan" />
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <span className="font-label text-[10px] px-2 py-0.5 rounded bg-one-gold text-one-navy">
+                          {host.type}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })()}
                 <h4 className="font-h4 text-one-white">{host.name}</h4>
                 <p className="font-body-small text-one-gold mt-1">{host.show}</p>
                 <p className="font-body-small text-muted mt-0.5 flex items-center gap-1.5">
                   <Clock size={12} />
                   {host.time}
                 </p>
-                <div className="flex items-center gap-3 mt-3 pt-3 border-t border-one-border">
+                <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-one-border">
+                  <div className="flex items-center gap-3">
                   {host.social.fb && (
                     <a
                       href={FACEBOOK_PAGE_URL}
                       target="_blank"
                       rel="noopener noreferrer"
+                      data-cursor-label="FACEBOOK"
                       className="text-muted hover:text-one-white transition-colors"
                       aria-label={`${host.name} on Facebook`}
                     >
@@ -650,15 +885,40 @@ export default function Programs() {
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
                     </span>
                   )}
+                  </div>
+                  <MiniWaveform color="#D4AF37" seed={hi} />
                 </div>
+              </div>
+              </TiltCard>
               </motion.div>
             ))}
           </AnimatePresence>
         </motion.div>
+
+        {filteredHosts.length > HOSTS_INITIAL && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-10 flex justify-center"
+          >
+            <button
+              type="button"
+              onClick={() => setShowAllHosts(v => !v)}
+              data-cursor-label={showAllHosts ? 'COLLAPSE' : 'EXPAND'}
+              className="font-label text-xs px-8 py-3 rounded-full border border-one-gold/30 text-one-gold hover:bg-one-gold/10 transition-all flex items-center gap-2"
+            >
+              {showAllHosts ? 'Show fewer presenters' : `See all ${filteredHosts.length} presenters`}
+              <ChevronRight size={14} className={`transition-transform ${showAllHosts ? 'rotate-90' : ''}`} />
+            </button>
+          </motion.div>
+        )}
+        </div>
       </section>
 
       {/* ═══════ Section 4 — GVL Broadcast Schedule ═══════ */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="section-padding section-bleed-top bg-surface-peak" data-cursor-label="GVL SPORT">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -668,7 +928,7 @@ export default function Programs() {
         >
           <div className="flex items-center gap-3 mb-3">
             <Trophy size={28} className="text-one-gold" />
-            <h2 className="font-h2 text-one-white">GVL FOOTBALL & NETBALL BROADCASTS</h2>
+            <WordReveal text="GVL FOOTBALL & NETBALL BROADCASTS" className="font-h2 text-one-white block" as="h2" stagger={0.04} />
           </div>
           <p className="font-body text-one-white max-w-2xl">
             ONE FM 98.5 covers Goulburn Valley League football and netball on Saturdays, plus NIRS AFL on Friday nights.
@@ -677,33 +937,38 @@ export default function Programs() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {gvlSportBlocks.map((block, ri) => (
+            <TiltCard key={block.title} maxTilt={5}>
             <motion.div
-              key={block.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ delay: ri * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-              className="glass-card p-6"
+              data-cursor-label={block.title.toUpperCase()}
+              className="glass-card p-6 relative overflow-hidden h-full group"
             >
+              <div aria-hidden className="explore-tile-scan" />
+              <div className="absolute left-0 top-0 bottom-0 rounded-l" style={{ width: '3px', backgroundColor: '#E51636' }} />
               <div className="flex items-center gap-2 mb-3">
-                <Trophy size={18} className="text-one-gold" />
+                <Trophy size={18} className="text-one-red" />
                 <h3 className="font-h3 text-one-white">{block.title}</h3>
               </div>
-              <p className="font-label text-one-gold text-xs mb-2 flex items-center gap-1.5">
+              <p className="font-label text-one-red/80 text-xs mb-2 flex items-center gap-1.5">
                 <Clock size={12} />
                 {block.time}
               </p>
               <p className="font-body-small text-muted">{block.desc}</p>
             </motion.div>
+            </TiltCard>
           ))}
         </div>
 
+        <TiltCard maxTilt={3} className="mt-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="mt-10 glass-card p-5 flex flex-col sm:flex-row items-center justify-between gap-4"
+          className="glass-card p-5 flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-data-teal/10 flex items-center justify-center">
@@ -714,15 +979,20 @@ export default function Programs() {
               <p className="font-body-small text-muted">Football partnership tiers and match-day packages.</p>
             </div>
           </div>
-          <Link to="/football" className="btn-primary text-xs shrink-0 inline-flex items-center gap-1">
-            View GVL Packages
-            <ChevronRight size={14} />
-          </Link>
+          <MagneticButton strength={6} cursorLabel="GVL PACKAGES">
+            <Link to="/football" className="btn-primary text-xs shrink-0 inline-flex items-center gap-1">
+              View GVL Packages
+              <ChevronRight size={14} />
+            </Link>
+          </MagneticButton>
         </motion.div>
+        </TiltCard>
+        </div>
       </section>
 
       {/* Podcasts — was Section 5 */}
-      <section className="section-padding px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="section-padding section-bleed-top bg-surface-warm" data-cursor-label="ON DEMAND">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -730,12 +1000,12 @@ export default function Programs() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="mb-12"
         >
-          <h2 className="font-h2 text-one-white mb-3">Interviews & On-Demand</h2>
+          <WordReveal text="Interviews & On-Demand" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-muted max-w-xl">
             Community interviews and sport replays on SoundCloud — not separate podcast download counts.
           </p>
         </motion.div>
-        <div className="grid lg:grid-cols-2 gap-6 mb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           <SoundCloudPanel compact />
           <FacebookPanel compact />
         </div>
@@ -753,9 +1023,64 @@ export default function Programs() {
               whileHover={{ scale: 1.02, y: -4 }}
               className="glass-card p-6 flex flex-col gap-4 group cursor-pointer"
             >
-              <div className="w-full aspect-square rounded-lg bg-one-navy/60 border border-one-border flex items-center justify-center overflow-hidden relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-one-gold/10 to-sage/10" />
-                <Headphones size={48} className="text-one-gold/40 relative z-10" />
+              <div
+                className="w-full aspect-square rounded-lg overflow-hidden relative"
+                style={{ background: 'linear-gradient(135deg, #071D3A 0%, #020A18 100%)' }}
+              >
+                {/* Category-color radial glow from below */}
+                <div className="absolute inset-0" style={{
+                  background: `radial-gradient(ellipse at 50% 115%, rgba(${pod.colorRgb}, 0.38) 0%, transparent 65%)`,
+                  pointerEvents: 'none',
+                }} />
+                {/* CRT scanlines */}
+                <div className="absolute inset-0" style={{
+                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px)',
+                  pointerEvents: 'none',
+                }} />
+                {/* Animated spectrum bars */}
+                <div className="absolute inset-x-0 bottom-0 flex items-end gap-[2px] px-3 pb-0" style={{ height: '48%' }}>
+                  {[36, 60, 80, 50, 90, 42, 68, 84, 47, 72, 38, 78, 54, 88, 44].map((h, bi) => (
+                    <div
+                      key={bi}
+                      style={{
+                        flex: 1,
+                        height: `${h}%`,
+                        backgroundColor: `rgba(${pod.colorRgb}, ${0.22 + (h / 100) * 0.55})`,
+                        borderRadius: '2px 2px 0 0',
+                        animation: `waveform ${0.85 + (bi % 5) * 0.17}s ease-in-out ${bi * 0.07}s infinite`,
+                        transformOrigin: 'bottom',
+                      }}
+                    />
+                  ))}
+                </div>
+                {/* Centre icon */}
+                <div className="absolute inset-0 flex items-center justify-center" style={{ paddingBottom: '28%' }}>
+                  <div style={{
+                    width: 56, height: 56, borderRadius: '50%',
+                    background: `rgba(${pod.colorRgb}, 0.12)`,
+                    border: `1.5px solid rgba(${pod.colorRgb}, 0.45)`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <pod.Icon size={28} style={{ color: pod.color }} />
+                  </div>
+                </div>
+                {/* Category label chip */}
+                <div className="absolute top-3 left-3">
+                  <span style={{
+                    fontFamily: 'JetBrains Mono, monospace',
+                    fontSize: '0.52rem',
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    color: `rgba(${pod.colorRgb}, 0.85)`,
+                    background: `rgba(${pod.colorRgb}, 0.1)`,
+                    border: `1px solid rgba(${pod.colorRgb}, 0.25)`,
+                    padding: '2px 8px',
+                    borderRadius: 3,
+                  }}>
+                    {pod.label}
+                  </span>
+                </div>
+                <div aria-hidden className="explore-tile-scan" />
               </div>
               <div>
                 <h3 className="font-h3 text-one-white group-hover:text-one-gold transition-colors">{pod.title}</h3>
@@ -772,10 +1097,12 @@ export default function Programs() {
             </motion.a>
           ))}
         </div>
+        </div>
       </section>
 
       {/* ═══════ Section 6 — Request a Song ═══════ */}
-      <section className="section-padding px-4 sm:px-6 max-w-3xl mx-auto pb-32">
+      <section className="section-padding section-bleed-top bg-surface-glow pb-32" data-cursor-label="REQUEST">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -783,7 +1110,7 @@ export default function Programs() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-12"
         >
-          <h2 className="font-h2 text-one-white mb-3">Request a Song / Shoutout</h2>
+          <WordReveal text="Request a Song / Shoutout" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white">
             Want to hear your favourite track? Send a dedication to someone special? Drop your request below.
           </p>
@@ -820,38 +1147,41 @@ export default function Programs() {
                 className="space-y-6"
               >
                 <div>
-                  <label className="font-label text-muted mb-2 block">Your Name</label>
+                  <label htmlFor="req-name" className="font-label text-muted mb-2 block">Your Name</label>
                   <input
+                    id="req-name"
                     type="text"
                     value={requestName}
                     onChange={(e) => setRequestName(e.target.value)}
                     placeholder="e.g. Jamie from Tatura"
-                    className="w-full bg-one-navy/60 border border-one-border rounded-lg px-4 py-3 font-body text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold focus:ring-2 focus:ring-amber/15 transition-all"
+                    className="w-full bg-one-navy/60 border border-one-border rounded-lg px-4 py-3 font-body text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold focus:ring-2 focus:ring-one-gold/15 transition-all"
                     required
                   />
                 </div>
                 <div>
-                  <label className="font-label text-muted mb-2 block">Song Request</label>
+                  <label htmlFor="req-song" className="font-label text-muted mb-2 block">Song Request</label>
                   <input
+                    id="req-song"
                     type="text"
                     value={requestSong}
                     onChange={(e) => setRequestSong(e.target.value)}
                     placeholder="Song title and artist"
-                    className="w-full bg-one-navy/60 border border-one-border rounded-lg px-4 py-3 font-body text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold focus:ring-2 focus:ring-amber/15 transition-all"
+                    className="w-full bg-one-navy/60 border border-one-border rounded-lg px-4 py-3 font-body text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold focus:ring-2 focus:ring-one-gold/15 transition-all"
                     required
                   />
                 </div>
                 <div>
-                  <label className="font-label text-muted mb-2 block">Dedication Message</label>
+                  <label htmlFor="req-message" className="font-label text-muted mb-2 block">Dedication Message</label>
                   <textarea
+                    id="req-message"
                     value={requestMsg}
                     onChange={(e) => setRequestMsg(e.target.value)}
                     placeholder="Who is this for? Any special message?"
                     rows={4}
-                    className="w-full bg-one-navy/60 border border-one-border rounded-lg px-4 py-3 font-body text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold focus:ring-2 focus:ring-amber/15 transition-all resize-none"
+                    className="w-full bg-one-navy/60 border border-one-border rounded-lg px-4 py-3 font-body text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold focus:ring-2 focus:ring-one-gold/15 transition-all resize-none"
                   />
                 </div>
-                <button type="submit" className="btn-primary w-full justify-center">
+                <button type="submit" data-cursor-label="SEND" className="btn-primary w-full justify-center">
                   <Send size={16} />
                   Send Request
                 </button>
@@ -859,6 +1189,7 @@ export default function Programs() {
             )}
           </AnimatePresence>
         </motion.div>
+        </div>
       </section>
     </Layout>
   )

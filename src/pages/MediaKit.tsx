@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   Download,
   ChevronDown,
@@ -36,7 +36,17 @@ import { generateMediaKitDocx } from '@/lib/docxExport'
 import { rateCard, stationStats } from '@/data/pricing'
 import { towns } from '@/data/townData'
 import { Layout } from '@/components/Layout'
+import { SEO } from '@/components/SEO'
 import { BRAND } from '@/lib/brand'
+import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
+import { WordReveal } from '@/components/WordReveal'
+import { MagneticButton } from '@/components/MagneticButton'
+import { Marquee } from '@/components/Marquee'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { MediaImage } from '@/components/MediaImage'
+import { TiltCard } from '@/components/TiltCard'
+import { AnimatedNumber } from '@/components/AnimatedNumber'
+import { CredibilityStrip } from '@/components/home/CredibilityStrip'
 
 const topTownListeners = [...towns]
   .sort((a, b) => b.listenersEstimate - a.listenersEstimate)
@@ -149,58 +159,26 @@ const assetCards = [
 ]
 
 /* ─────────── helpers ─────────── */
-function useCountUp(end: number, duration = 1200, startOnView = true) {
-  const [count, setCount] = useState(0)
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-50px' })
-  const hasRun = useRef(false)
-
-  useEffect(() => {
-    if (!startOnView || inView) {
-      if (hasRun.current) return
-      hasRun.current = true
-      const start = performance.now()
-      const tick = (now: number) => {
-        const p = Math.min((now - start) / duration, 1)
-        const eased = 1 - Math.pow(1 - p, 3)
-        setCount(Math.floor(eased * end))
-        if (p < 1) requestAnimationFrame(tick)
-      }
-      requestAnimationFrame(tick)
-    }
-  }, [inView, end, duration, startOnView])
-
-  return { count, ref }
-}
-
-function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
-  const { count, ref } = useCountUp(value)
-  return (
-    <span ref={ref}>
-      {prefix}{count.toLocaleString()}{suffix}
-    </span>
-  )
-}
 
 /* ─────────── waveform background ─────────── */
+const WAVEFORM_BARS = Array.from({ length: 60 }, (_, i) => ({
+  lo:      20 + ((i * 31 + 7) % 31),
+  hi:      40 + ((i * 23 + 13) % 51),
+  loEnd:   20 + ((i * 37 + 17) % 31),
+  duration: 2 + ((i * 17 + 5) % 20) / 10,
+  delay:    ((i * 11 + 3) % 20) / 10,
+}))
+
 function WaveformBg() {
-  const bars = Array.from({ length: 60 }, (_, i) => i)
   return (
-    <div className="absolute inset-0 overflow-hidden opacity-[0.08] pointer-events-none">
+    <div aria-hidden className="absolute inset-0 overflow-hidden opacity-[0.08] pointer-events-none">
       <div className="flex items-end justify-center gap-[2px] h-full px-8">
-        {bars.map((i) => (
+        {WAVEFORM_BARS.map((bar, i) => (
           <motion.div
             key={i}
-            className="w-[3px] bg-amber rounded-full"
-            animate={{
-              height: [`${20 + Math.random() * 30}%`, `${40 + Math.random() * 50}%`, `${20 + Math.random() * 30}%`],
-            }}
-            transition={{
-              duration: 2 + Math.random() * 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: Math.random() * 2,
-            }}
+            className="w-[3px] bg-one-gold rounded-full"
+            animate={{ height: [`${bar.lo}%`, `${bar.hi}%`, `${bar.loEnd}%`] }}
+            transition={{ duration: bar.duration, repeat: Infinity, ease: 'easeInOut', delay: bar.delay }}
           />
         ))}
       </div>
@@ -244,6 +222,63 @@ function AvailabilityPill({ status }: { status: string }) {
   )
 }
 
+/* ─── Studio Photo Strip ─── */
+const STUDIO_PHOTOS = [
+  { src: STATION_PHOTOS.commentaryCallAction,  alt: 'Commentary team live on air',        caption: 'Live on Air' },
+  { src: STATION_PHOTOS.commentaryTeamSelfie,  alt: 'Commentary team behind the scenes',  caption: 'Behind the Mic' },
+  { src: STATION_PHOTOS.obSetupFull,           alt: 'Outside broadcast full setup',        caption: 'OB Ready' },
+  { src: STATION_PHOTOS.studioExteriorRainbow, alt: 'ONE FM studio exterior with rainbow', caption: 'The Studio' },
+]
+
+function StudioPhotoStrip() {
+  return (
+    <section className="py-16 bg-[#020810]" data-cursor-label="STUDIO">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex items-end justify-between mb-8"
+        >
+          <div>
+            <p className="font-label text-one-gold text-[10px] tracking-widest uppercase mb-2">Behind the Signal</p>
+            <WordReveal text="The Station. The Team." className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+          </div>
+          <span className="hidden sm:block font-label text-one-muted text-[10px] tracking-widest uppercase">ONE FM 98.5</span>
+        </motion.div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-[200px] lg:auto-rows-[220px]">
+          {STUDIO_PHOTOS.map((photo, i) => (
+            <TiltCard key={photo.alt} maxTilt={6} className="h-full">
+              <motion.div
+                className="relative overflow-hidden rounded-xl group h-full"
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: i * 0.08, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <MediaImage
+                  src={photo.src}
+                  fallbackSrc={STATION_PHOTOS.commentaryBoxAction}
+                  alt={photo.alt}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div aria-hidden className="explore-tile-scan" />
+                <div className="absolute bottom-0 inset-x-0 p-4 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <span className="font-label text-[10px] tracking-[0.2em] text-one-white uppercase">{photo.caption}</span>
+                </div>
+                <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </motion.div>
+            </TiltCard>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ═══════════════════════════════════
    MEDIA KIT PAGE
    ═══════════════════════════════════ */
@@ -261,6 +296,10 @@ export default function MediaKit() {
     const symbols: Record<string, string> = { AUD: '$', USD: '$', GBP: '£', EUR: '€' }
     return `${symbols[currency] || '$'}${converted.toLocaleString()}`
   }
+
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
 
   const handleDownload = (name: string) => {
     setDownloading(name)
@@ -321,33 +360,76 @@ export default function MediaKit() {
 
   return (
     <Layout>
+      <SEO
+        title="Media Kit"
+        description="ONE FM 98.5 media kit — rate card, audience reach, sponsorship packages, and brand assets for advertisers in the Goulburn Valley."
+      />
       {/* ═══════ HERO ═══════ */}
-      <section className="relative min-h-[60vh] flex items-center bg-onyx overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end bg-[#050D1A] overflow-hidden" data-cursor-label="MEDIA KIT">
+        {/* Background image */}
+        <motion.div
+          style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
+        >
+          <img
+            src={STATION_PHOTOS.obVanBranded}
+            alt=""
+            aria-hidden
+            loading="eager"
+            fetchPriority="high"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: 0.58 }}
+          />
+        </motion.div>
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/65 via-transparent to-transparent" />
+        {/* Waveform overlay */}
         <WaveformBg />
-        <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 py-24 w-full">
-          <motion.p
-            className="font-label text-muted mb-4"
+        <div aria-hidden className="grain-overlay" />
+
+        <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 pt-32 pb-16 w-full">
+          <motion.span
+            className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: easeOutExpo }}
+          >
+            Advertise with ONE FM · Shepparton
+          </motion.span>
+
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="flex items-end gap-[1.5px] mb-5"
+            aria-hidden
           >
-            Home / Media Kit
-          </motion.p>
+            {Array.from({ length: 20 }, (_, i) => (
+              <div
+                key={i}
+                className="w-[1.5px] rounded-sm"
+                style={{
+                  height: 3 + Math.floor(Math.abs(Math.sin(i * 0.62 + 0.8)) * 12 + 2),
+                  backgroundColor: 'rgba(201,162,39,0.35)',
+                  animation: `freq-bar ${0.7 + (i % 6) * 0.13}s ${(i * 0.085) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
+          </motion.div>
 
-          <motion.h1
-            className="font-h1 text-ivory mb-6 max-w-[700px]"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3, ease: easeOutExpo }}
+          <h1
+            className="font-heading font-black leading-none mb-8"
+            style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            MEDIA KIT
-          </motion.h1>
+            <WordReveal text="Media" as="span" className="block text-ivory" delay={0.15} stagger={0.12} />
+            <WordReveal text="Kit." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+          </h1>
 
           <motion.p
-            className="font-body text-chalk max-w-[600px] mb-8"
-            initial={{ opacity: 0, y: 20 }}
+            className="font-body text-chalk/80 max-w-[520px] mb-8"
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5, ease: easeOutExpo }}
+            transition={{ duration: 0.5, delay: 0.65, ease: easeOutExpo }}
           >
             Everything you need to know about ONE FM's audience, reach, and advertising
             opportunities. Download the complete kit or explore sections below.
@@ -355,32 +437,39 @@ export default function MediaKit() {
 
           <motion.div
             className="flex flex-wrap gap-4 mb-10"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.7, ease: easeOutExpo }}
+            transition={{ duration: 0.5, delay: 0.8, ease: easeOutExpo }}
           >
-            <button className="btn-primary text-sm">
-              <Download size={16} />
-              Download Full Kit (PDF)
-            </button>
-            <button
-              className="btn-primary text-sm"
-              onClick={handleDownloadDocx}
-              disabled={docxGenerating}
-            >
-              {docxGenerating ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
-              Download Media Kit (DOCX)
-            </button>
-            <a href="#rate-card" className="btn-secondary text-sm">
-              View Rate Card
-            </a>
+            <MagneticButton strength={10}>
+              <button data-cursor-label="DOWNLOAD PDF" className="btn-primary text-sm flex items-center gap-2">
+                <Download size={16} />
+                Download Full Kit (PDF)
+              </button>
+            </MagneticButton>
+            <MagneticButton strength={8}>
+              <button
+                data-cursor-label="DOWNLOAD DOCX"
+                className="btn-primary text-sm flex items-center gap-2"
+                onClick={handleDownloadDocx}
+                disabled={docxGenerating}
+              >
+                {docxGenerating ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
+                Download Media Kit (DOCX)
+              </button>
+            </MagneticButton>
+            <MagneticButton strength={6} cursorLabel="RATE CARD">
+              <a href="#rate-card" className="btn-secondary text-sm">
+                View Rate Card
+              </a>
+            </MagneticButton>
           </motion.div>
 
           <motion.div
             className="flex flex-wrap items-center gap-6 md:gap-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
           >
             {[
               { value: stationStats.weeklyListeners, label: 'Listeners', suffix: '' },
@@ -390,7 +479,7 @@ export default function MediaKit() {
             ].map((stat, i) => (
               <div key={i} className="flex items-center gap-6 md:gap-8">
                 <div>
-                  <div className="font-stat text-amber">
+                  <div className="font-stat text-gold-gradient">
                     <AnimatedNumber value={stat.value} prefix={stat.prefix || ''} suffix={stat.suffix || ''} />
                   </div>
                   <div className="font-label text-muted">{stat.label}</div>
@@ -402,18 +491,32 @@ export default function MediaKit() {
         </div>
       </section>
 
+      <CredibilityStrip />
+
+      {/* ── Media Kit Marquee Strip ── */}
+      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+        <Marquee
+          speed={30}
+          items={[
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ADVERTISING RATES 2026</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">GOULBURN VALLEY · VICTORIA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE READS · SPOT ADS · SPONSORSHIP</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">~{stationStats.broadcastRadiusKm} KM BROADCAST RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · CALLSIGN: 3ONE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
+          ]}
+        />
+      </div>
+
+      {/* ─── Studio Photo Strip ─── */}
+      <StudioPhotoStrip />
+
       {/* ═══════ AUDIENCE DEMOGRAPHICS ═══════ */}
-      <section className="bg-slate section-padding">
+      <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="AUDIENCE DATA">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-          <motion.h2
-            className="font-h2 text-ivory mb-8"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeUp}
-          >
-            WHO'S LISTENING
-          </motion.h2>
+          <WordReveal text="WHO'S LISTENING" className="font-h2 text-ivory mb-8 block" as="h2" stagger={0.05} />
 
           {/* Tabs */}
           <div className="flex flex-wrap gap-2 mb-10">
@@ -421,9 +524,10 @@ export default function MediaKit() {
               <button
                 key={tab}
                 onClick={() => setDemoTab(tab)}
+                data-cursor-label={tab.toUpperCase()}
                 className={`px-5 py-2.5 rounded-full font-label text-xs transition-all duration-300 ${
                   demoTab === tab
-                    ? 'text-amber bg-amber/10 border border-amber/30'
+                    ? 'text-one-gold bg-one-gold/10 border border-one-gold/30'
                     : 'text-ivory/60 border border-border-dark hover:text-ivory hover:border-ivory/20'
                 }`}
               >
@@ -449,19 +553,21 @@ export default function MediaKit() {
                   whileInView="visible"
                   viewport={{ once: true }}
                 >
-                  {audienceStats.map((stat, i) => (
-                    <motion.div
-                      key={i}
-                      className="glass-card p-5 hover:border-amber/30 transition-all duration-300"
-                      variants={cardStagger}
-                    >
-                      <div className="font-stat text-amber text-2xl">{stat.value}</div>
-                      <h4 className="font-h4 text-ivory mb-1 mt-2">{stat.label}</h4>
-                      <p className="font-body-small text-muted">{stat.note}</p>
-                    </motion.div>
+                  {audienceStats.map((stat) => (
+                    <TiltCard key={stat.label} maxTilt={5} className="h-full">
+                      <motion.div
+                        className="glass-card p-5 hover:border-one-gold/30 transition-all duration-300 h-full"
+                        variants={cardStagger}
+                      >
+                        <div className="font-stat text-gold-gradient text-2xl">{stat.value}</div>
+                        <h4 className="font-h4 text-ivory mb-1 mt-2">{stat.label}</h4>
+                        <p className="font-body-small text-muted">{stat.note}</p>
+                      </motion.div>
+                    </TiltCard>
                   ))}
                 </motion.div>
 
+                <TiltCard maxTilt={4}>
                 <div className="glass-card p-6">
                   <h3 className="font-h4 text-ivory mb-4">Where ONE FM reaches listeners</h3>
                   <div className="space-y-3">
@@ -482,6 +588,7 @@ export default function MediaKit() {
                     Peak listening: breakfast (6–9am) and drive (4–7pm). Detailed demographics available on request.
                   </p>
                 </div>
+                </TiltCard>
               </motion.div>
             )}
 
@@ -497,7 +604,8 @@ export default function MediaKit() {
                 {platformCards.map((card) => {
                   const Icon = card.icon
                   return (
-                    <div key={card.title} className="glass-card p-6 hover:border-amber/30 transition-colors">
+                    <TiltCard key={card.title} maxTilt={5} className="h-full">
+                    <div className="glass-card p-6 hover:border-one-gold/30 transition-colors h-full">
                       <div className="flex items-start gap-4">
                         <div
                           className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
@@ -507,13 +615,14 @@ export default function MediaKit() {
                         </div>
                         <div>
                           <h4 className="font-h4 text-ivory">{card.title}</h4>
-                          <p className="font-stat text-amber text-lg mt-1">{card.stat}</p>
+                          <p className="font-stat text-gold-gradient text-lg mt-1">{card.stat}</p>
                           <p className="font-label text-muted text-[10px]">{card.statLabel}</p>
                           <p className="font-body-small text-chalk mt-2">{card.reach}</p>
                           <p className="font-body-small text-muted text-xs">{card.coverage}</p>
                         </div>
                       </div>
                     </div>
+                    </TiltCard>
                   )
                 })}
               </motion.div>
@@ -552,7 +661,7 @@ export default function MediaKit() {
                 <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-3">
                   {locationData.map((loc) => (
                     <div key={loc.region} className="text-center p-3 rounded-lg bg-onyx/50">
-                      <div className="font-label text-amber text-xs">{loc.listeners.toLocaleString()} est.</div>
+                      <div className="font-label text-one-gold text-xs">{loc.listeners.toLocaleString()} est.</div>
                       <div className="font-micro text-muted">{loc.region}</div>
                     </div>
                   ))}
@@ -564,7 +673,7 @@ export default function MediaKit() {
       </section>
 
       {/* ═══════ PLATFORM REACH ═══════ */}
-      <section className="bg-onyx section-padding">
+      <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="PLATFORM REACH">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
           <motion.div
             className="mb-10"
@@ -573,7 +682,7 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <h2 className="font-h2 text-ivory">PLATFORM REACH</h2>
+            <WordReveal text="PLATFORM REACH" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mt-2">Where your message travels</p>
           </motion.div>
 
@@ -589,12 +698,13 @@ export default function MediaKit() {
               return (
                 <motion.div
                   key={i}
-                  className="glass-card p-6 hover:scale-[1.02] transition-all duration-300 group"
+                  className="glass-card p-6 hover:scale-[1.02] transition-all duration-300 group relative overflow-hidden"
                   variants={cardStagger}
                   whileHover={{ borderColor: `${card.accent}50` }}
                 >
+                  <div aria-hidden className="explore-tile-scan" />
                   <Icon size={40} style={{ color: card.accent }} className="mb-4" />
-                  <div className="font-stat text-ivory mb-1">{card.stat}</div>
+                  <div className="font-stat text-gold-gradient mb-1">{card.stat}</div>
                   <div className="font-label text-muted mb-3">{card.statLabel}</div>
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingUp size={14} className="text-data-teal" />
@@ -614,7 +724,7 @@ export default function MediaKit() {
       </section>
 
       {/* ═══════ RATE CARD ═══════ */}
-      <section id="rate-card" className="bg-slate section-padding">
+      <section id="rate-card" className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="RATE CARD">
         <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
           <motion.div
             className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10"
@@ -624,14 +734,14 @@ export default function MediaKit() {
             variants={fadeUp}
           >
             <div>
-              <h2 className="font-h2 text-ivory">ADVERTISING RATES</h2>
-              <p className="font-micro text-muted mt-2">Effective Q2 2025 — All rates in selected currency, GST exclusive</p>
+              <WordReveal text="ADVERTISING RATES" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
+              <p className="font-micro text-muted mt-2">Effective Q1 2026 — All rates in selected currency, GST exclusive</p>
             </div>
             <div className="relative">
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="appearance-none glass-card px-4 py-2.5 pr-10 font-label text-xs text-ivory bg-transparent cursor-pointer focus:outline-none focus:border-amber/50"
+                className="appearance-none glass-card px-4 py-2.5 pr-10 font-label text-xs text-ivory bg-transparent cursor-pointer focus:outline-none focus:border-one-gold/50"
               >
                 <option value="AUD">AUD</option>
                 <option value="USD">USD</option>
@@ -650,7 +760,7 @@ export default function MediaKit() {
             variants={staggerContainer}
           >
             {/* Table Header */}
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 p-4 border-b border-border-dark bg-glass font-label text-xs text-muted uppercase">
+            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 p-4 border-b border-border-dark bg-one-navy/50 font-label text-xs text-muted uppercase">
               <span>Spot Type</span>
               <span>Duration</span>
               <span>Peak Rate</span>
@@ -661,7 +771,7 @@ export default function MediaKit() {
             {rateCardData.map((row, i) => (
               <motion.div
                 key={i}
-                className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 p-4 border-b border-border-dark/50 hover:bg-amber/5 transition-colors duration-200 items-center"
+                className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 p-4 border-b border-border-dark/50 hover:bg-one-gold/5 transition-colors duration-200 items-center"
                 variants={{
                   hidden: { opacity: 0, x: -20 },
                   visible: {
@@ -673,7 +783,7 @@ export default function MediaKit() {
               >
                 <span className="font-body-small text-ivory">{row.type}</span>
                 <span className="font-mono text-sm text-chalk">{row.duration}</span>
-                <span className="font-mono text-sm text-amber">{formatPrice(row.peak)}</span>
+                <span className="font-mono text-sm text-one-gold">{formatPrice(row.peak)}</span>
                 <span className="font-mono text-sm text-chalk">{formatPrice(row.offPeak)}</span>
                 <AvailabilityPill status={row.availability} />
               </motion.div>
@@ -691,20 +801,24 @@ export default function MediaKit() {
               Volume discounts available for packages of 10+ spots. Custom packages and annual agreements receive preferential rates.
             </p>
             <div className="flex gap-3 shrink-0">
-              <Link to="/proposal" className="btn-primary text-xs">
-                Request Custom Quote
-              </Link>
-              <button className="btn-secondary text-xs">
-                <Download size={14} />
-                Rate Card
-              </button>
+              <MagneticButton strength={10}>
+                <Link to="/proposal" data-cursor-label="QUOTE" className="btn-primary text-xs">
+                  Request Custom Quote
+                </Link>
+              </MagneticButton>
+              <MagneticButton strength={6}>
+                <button data-cursor-label="DOWNLOAD" className="btn-secondary text-xs">
+                  <Download size={14} />
+                  Rate Card
+                </button>
+              </MagneticButton>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* ═══════ BRAND ASSETS ═══════ */}
-      <section className="bg-onyx section-padding">
+      <section className="bg-surface-peak section-bleed-top section-padding" data-cursor-label="BRAND ASSETS">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
           <motion.div
             className="mb-10"
@@ -713,7 +827,7 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <h2 className="font-h2 text-ivory">BRAND ASSETS</h2>
+            <WordReveal text="BRAND ASSETS" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mt-2">Logos, guidelines, and creative resources</p>
           </motion.div>
 
@@ -728,9 +842,9 @@ export default function MediaKit() {
               const Icon = asset.icon
               const isDownloading = downloading === asset.name
               return (
+                <TiltCard key={asset.name} maxTilt={5} className="h-full">
                 <motion.div
-                  key={i}
-                  className="glass-card p-6 hover:-translate-y-1 hover:shadow-glow hover:border-amber/30 transition-all duration-300 group"
+                  className="glass-card p-6 hover:shadow-glow hover:border-one-gold/30 transition-all duration-300 group h-full relative overflow-hidden"
                   variants={{
                     hidden: { opacity: 0, scale: 0.95 },
                     visible: {
@@ -740,9 +854,10 @@ export default function MediaKit() {
                     },
                   }}
                 >
+                  <div aria-hidden className="explore-tile-scan" />
                   <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-lg bg-amber/10 flex items-center justify-center">
-                      <Icon size={24} className="text-amber" />
+                    <div className="w-12 h-12 rounded-lg bg-one-gold/10 flex items-center justify-center">
+                      <Icon size={24} className="text-one-gold" />
                     </div>
                     {asset.popular && (
                       <span className="px-3 py-1 rounded-full bg-gold/20 text-gold font-label text-[10px]">
@@ -755,6 +870,7 @@ export default function MediaKit() {
                   <p className="font-micro text-muted mb-4">{asset.size}</p>
                   <button
                     onClick={() => handleDownload(asset.name)}
+                    data-cursor-label={isDownloading ? 'DONE' : 'DOWNLOAD'}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-label text-xs transition-all duration-300 ${
                       asset.popular
                         ? 'btn-primary text-xs'
@@ -774,6 +890,7 @@ export default function MediaKit() {
                     )}
                   </button>
                 </motion.div>
+                </TiltCard>
               )
             })}
           </motion.div>
@@ -781,7 +898,7 @@ export default function MediaKit() {
       </section>
 
       {/* ═══════ CONTACT ═══════ */}
-      <section className="relative bg-gradient-to-b from-onyx to-slate section-padding">
+      <section className="relative bg-surface-glow section-bleed-top section-padding" data-cursor-label="GET IN TOUCH">
         <div className="max-w-[640px] mx-auto px-4 sm:px-6 text-center">
           <motion.div
             initial="hidden"
@@ -789,7 +906,7 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <h2 className="font-h2 text-ivory mb-4">READY TO AMPLIFY?</h2>
+            <WordReveal text="READY TO AMPLIFY?" className="font-h2 text-ivory mb-4 block" as="h2" stagger={0.05} />
             <p className="font-body text-chalk mb-10">
               Our partnerships team is ready to build a campaign that works for your brand.
             </p>
@@ -803,18 +920,18 @@ export default function MediaKit() {
             viewport={{ once: true }}
           >
             <motion.div className="flex items-center gap-3" variants={cardStagger}>
-              <div className="w-10 h-10 rounded-full bg-amber/10 flex items-center justify-center">
-                <Mail size={18} className="text-amber" />
+              <div className="w-10 h-10 rounded-full bg-one-gold/10 flex items-center justify-center">
+                <Mail size={18} className="text-one-gold" />
               </div>
-              <a href={`mailto:${BRAND.email}`} className="font-mono text-sm text-chalk hover:text-amber transition-colors">
+              <a href={`mailto:${BRAND.email}`} data-cursor-label="EMAIL" className="font-mono text-sm text-chalk hover:text-one-gold transition-colors link-hover">
                 {BRAND.email}
               </a>
             </motion.div>
             <motion.div className="flex items-center gap-3" variants={cardStagger}>
-              <div className="w-10 h-10 rounded-full bg-amber/10 flex items-center justify-center">
-                <Phone size={18} className="text-amber" />
+              <div className="w-10 h-10 rounded-full bg-one-gold/10 flex items-center justify-center">
+                <Phone size={18} className="text-one-gold" />
               </div>
-              <a href={`tel:${BRAND.phone.replace(/\s/g, '')}`} className="font-mono text-sm text-chalk hover:text-amber transition-colors">
+              <a href={`tel:${BRAND.phone.replace(/\s/g, '')}`} data-cursor-label="CALL" className="font-mono text-sm text-chalk hover:text-one-gold transition-colors link-hover">
                 {BRAND.phone}
               </a>
             </motion.div>
@@ -827,17 +944,25 @@ export default function MediaKit() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <button className="btn-primary text-sm">
-              <Calendar size={16} />
-              Book a Meeting
-            </button>
-            <Link to="/proposal" className="flex items-center gap-2 font-label text-xs text-amber hover:text-gold transition-colors">
-              Or build a custom proposal yourself
-              <ArrowRight size={14} />
-            </Link>
+            <MagneticButton strength={10} cursorLabel="BOOK">
+              <button className="btn-primary text-sm">
+                <Calendar size={16} />
+                Book a Meeting
+              </button>
+            </MagneticButton>
+            <MagneticButton strength={6} cursorLabel="BUILD">
+              <Link to="/proposal" className="flex items-center gap-2 font-label text-xs text-one-gold hover:text-gold transition-colors link-hover">
+                Or build a custom proposal yourself
+                <ArrowRight size={14} />
+              </Link>
+            </MagneticButton>
           </motion.div>
         </div>
       </section>
+      <SponsorCommercialCta
+        headline="From stats to signed campaign"
+        subline="Download the kit, explore coverage by town, or build a custom proposal online."
+      />
     </Layout>
   )
 }

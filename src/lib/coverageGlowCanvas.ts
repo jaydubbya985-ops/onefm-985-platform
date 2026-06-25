@@ -82,7 +82,15 @@ function createGlowOverlayClass() {
     const centerPx = projection.fromLatLngToDivPixel(centerLatLng)
     if (!centerPx) return
 
-    const radiusPx = this.radiusInPixels(projection, centerLatLng, centerPx)
+    // True geographic radius (100km from Shepparton) only looks right at one
+    // specific zoom level — at every other zoom it's either a tiny dot or a
+    // circle far bigger than the viewport, which renders as a giant arc
+    // slicing across the screen with no visible center. Cap it so the whole
+    // glow/ring effect always draws as a complete, contained circle instead.
+    const radiusPx = Math.min(
+      this.radiusInPixels(projection, centerLatLng, centerPx),
+      Math.min(w, h) * 0.46,
+    )
     if (radiusPx < 8) return
 
     this.ctx.clearRect(0, 0, w, h)
@@ -119,11 +127,11 @@ function createGlowOverlayClass() {
     const ctx = this.ctx!
     const cx = w / 2
     const cy = h / 2
-    const inner = Math.min(w, h) * 0.2
-    const outer = Math.max(w, h) * 0.72
+    const inner = Math.min(w, h) * 0.45
+    const outer = Math.max(w, h) * 0.85
     const grad = ctx.createRadialGradient(cx, cy, inner, cx, cy, outer)
     grad.addColorStop(0, 'rgba(0,0,0,0)')
-    grad.addColorStop(1, 'rgba(2, 10, 24, 0.42)')
+    grad.addColorStop(1, 'rgba(2, 10, 24, 0.22)')
     ctx.fillStyle = grad
     ctx.fillRect(0, 0, w, h)
   }

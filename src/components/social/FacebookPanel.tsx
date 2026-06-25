@@ -21,7 +21,7 @@ const HIGHLIGHTS = [
     icon: Calendar,
   },
   {
-    image: STATION_PHOTOS.studioSbsDiversity,
+    image: STATION_PHOTOS.studioPresenterMic,
     label: 'Behind the mic',
     caption: 'Studio moments and multicultural programming.',
     icon: Users,
@@ -66,6 +66,7 @@ export function FacebookPanel({ compact, className }: FacebookPanelProps) {
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-one-navy/20 group-hover:bg-one-navy/10 transition-colors" />
+                <div aria-hidden className="explore-tile-scan" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">

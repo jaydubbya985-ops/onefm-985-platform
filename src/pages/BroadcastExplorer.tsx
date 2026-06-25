@@ -6,10 +6,14 @@ import {
   Headphones, Sparkles, Calendar,
   Instagram, Twitter, Music, ArrowRight
 } from 'lucide-react'
+import { WordReveal } from '@/components/WordReveal'
+import { TiltCard } from '@/components/TiltCard'
+import { Marquee } from '@/components/Marquee'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { Link } from 'react-router-dom'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
+import { HOST_PHOTOS, STATION_PHOTOS } from '@/lib/stationPhotos'
 import {
   FULL_SCHEDULE,
   PROGRAM_PREVIEW_CARDS,
@@ -20,12 +24,12 @@ import {
 import { useLiveStream } from '@/hooks/useLiveStream'
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Breakfast: '#D4963A',
+  Breakfast: '#D4AF37',
   Music: '#9B5DE5',
   Community: '#2EC4B6',
-  Sport: '#E63946',
-  Multicultural: '#E63946',
-  Country: '#D4963A',
+  Sport: '#E51636',
+  Multicultural: '#FF6B6B',
+  Country: '#D4AF37',
 }
 
 /** programGuide day (0=Sun) → grid day index (0=Mon) */
@@ -57,11 +61,20 @@ const SHOWS = FULL_SCHEDULE.map((slot, i) => {
   }
 })
 
+const HOST_AVATARS: Record<string, string> = {
+  Morning:    STATION_PHOTOS.commentaryBoxAction,
+  Daytime:    STATION_PHOTOS.studioCommentarySelfie,
+  Afternoon:  STATION_PHOTOS.commentaryBoxWide,
+  Evening:    HOST_PHOTOS.onAirHost2,
+  Weekend:    STATION_PHOTOS.gvlNightPanorama,
+  Specialist: STATION_PHOTOS.studioSbsDiversity,
+}
+
 const HOSTS = ALL_PRESENTERS.map((p) => ({
   name: p.name,
   role: p.show,
   shows: [p.show],
-  avatar: '/assets/images/commentary-box-action.jpg',
+  avatar: HOST_AVATARS[p.shift] ?? STATION_PHOTOS.studioCommentarySelfie,
   shift: p.shift,
 }))
 
@@ -74,20 +87,28 @@ const SEGMENTS = PROGRAM_PREVIEW_CARDS.map((card, i) => ({
   stats: { editions: 'Weekly', avg: card.schedule, source: 'fm985.com.au' },
 }))
 
-const SHOW_CARDS = PROGRAM_PREVIEW_CARDS.slice(0, 6).map((card) => ({
-  name: card.title,
-  host: card.presenter,
-  schedule: card.schedule,
-  desc: card.description,
-  tags: card.title.includes('Breakfast')
-    ? ['Breakfast', 'Talk', 'Live']
-    : card.title.includes('Sport') || card.title.includes('GVL')
-      ? ['Sport', 'Live']
-      : ['Community', 'Local'],
-  color: card.title.includes('Breakfast') ? '#D4963A' : card.title.includes('Planet') ? '#9B5DE5' : '#2EC4B6',
-  image: '/assets/images/commentary-box-action.jpg',
-  category: card.title.includes('Breakfast') ? 'Talk' : 'Program',
-}))
+const SHOW_CARDS = PROGRAM_PREVIEW_CARDS.slice(0, 6).map((card) => {
+  const cat = card.title.includes('Breakfast')
+    ? 'Breakfast'
+    : card.title.includes('Sport') || card.title.includes('GVL') || card.title.includes('AFL')
+      ? 'Sport'
+      : card.title.includes('Multicultural') || card.title.includes('Samoan') || card.title.includes('Punjabi')
+        ? 'Multicultural'
+        : card.title.includes('Country')
+          ? 'Music'
+          : card.title.includes('Community') || card.title.includes('James Manley')
+            ? 'Community'
+            : 'Music'
+  return {
+    name: card.title,
+    host: card.presenter,
+    schedule: card.schedule,
+    desc: card.description,
+    tags: [cat, 'Live'],
+    color: CATEGORY_COLORS[cat] ?? '#2EC4B6',
+    category: cat,
+  }
+})
 
 const BROADCAST_JOBS: PageJob[] = [
   { label: 'Listen Live', path: '/listen', description: 'Stream now', icon: Headphones, accent: '#E51636' },
@@ -95,6 +116,28 @@ const BROADCAST_JOBS: PageJob[] = [
   { label: 'Coverage', path: '/coverage', description: 'Broadcast area', icon: Globe, accent: '#1B458F' },
   { label: 'GVL Sport', path: '/football', description: 'Saturday coverage', icon: Sparkles, accent: '#2EC4B6' },
 ]
+
+/* ─── Deterministic gradient avatar ─── */
+const AVATAR_PALETTES = [
+  { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
+  { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
+  { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
+  { from: '#2EC4B6', to: '#0A2030', accent: '#7FFFD4' },
+  { from: '#9B5DE5', to: '#1A0A30', accent: '#DDB3FF' },
+  { from: '#FF6B6B', to: '#2A0A10', accent: '#FFB3B3' },
+  { from: '#1B458F', to: '#0D2A18', accent: '#6EE7B7' },
+]
+
+function getPresenterAvatar(name: string) {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = (hash * 37 + name.charCodeAt(i)) >>> 0
+  const palette = AVATAR_PALETTES[hash % AVATAR_PALETTES.length]
+  const words = name.trim().replace(/[^a-zA-Z\s]/g, '').split(/\s+/).filter(Boolean)
+  const initials = words.length === 1
+    ? words[0].slice(0, 2).toUpperCase()
+    : (words[0][0] + words[words.length - 1][0]).toUpperCase()
+  return { ...palette, initials }
+}
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -183,7 +226,7 @@ function HeroSection() {
   const stream = useLiveStream()
 
   return (
-    <section className="relative overflow-hidden bg-[#050D1A]" style={{ height: '50vh', minHeight: 400 }}>
+    <section className="relative overflow-hidden bg-[#050D1A]" style={{ height: '50vh', minHeight: 400 }} data-cursor-label="ON AIR NOW">
       <div aria-hidden className="grain-overlay" />
       <LiveWaveform />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4" style={{ maxWidth: 900, margin: '0 auto' }}>
@@ -223,7 +266,7 @@ function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.5 }}
-          className="font-label text-one-gold mb-4"
+          className="font-label text-one-electric mb-4"
         >
           {live.time}
         </motion.div>
@@ -237,21 +280,23 @@ function HeroSection() {
           <button
             type="button"
             onClick={() => void stream.toggle()}
+            data-cursor-label={stream.playing ? 'PAUSE' : 'LISTEN LIVE'}
             className="btn-primary text-xs inline-flex items-center gap-2"
           >
             {stream.playing ? <Pause size={14} /> : <Play size={14} />}
             {stream.playing ? 'Pause' : 'Listen Live'}
           </button>
-          <Link to="/programs" className="btn-secondary text-xs">
+          <Link to="/programs" data-cursor-label="PROGRAMS" className="btn-secondary text-xs">
             Program Guide
           </Link>
         </motion.div>
 
+        <TiltCard maxTilt={4} className="w-full max-w-md mt-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9, duration: 0.5, ease: easeOutExpo }}
-          className="glass-card px-5 py-3 flex items-center gap-4 w-full max-w-md mt-6"
+          className="glass-card px-5 py-3 flex items-center gap-4"
         >
           <div className="font-micro text-muted">UP NEXT</div>
           <div className="flex-1">
@@ -259,6 +304,7 @@ function HeroSection() {
           </div>
           <ArrowRight size={16} className="text-one-gold" />
         </motion.div>
+        </TiltCard>
       </div>
     </section>
   )
@@ -289,7 +335,7 @@ function ScheduleSection() {
   }, [activeDay, timeFilter, search])
 
   return (
-    <section className="bg-one-navy section-padding">
+    <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="SCHEDULE GRID">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         {/* Controls */}
         <motion.div
@@ -297,7 +343,7 @@ function ScheduleSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: easeOutExpo }}
-          className="flex flex-wrap items-center gap-3 mb-8 sticky top-[72px] z-30 bg-one-navy/90 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:rounded-xl"
+          className="flex flex-wrap items-center gap-3 mb-8 sticky top-[72px] z-30 bg-[#071D3A]/90 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:rounded-xl"
         >
           {/* Day selector */}
           <div className="flex gap-1 flex-wrap">
@@ -305,6 +351,7 @@ function ScheduleSection() {
               <button
                 key={day}
                 onClick={() => setActiveDay(i)}
+                data-cursor-label={day.toUpperCase()}
                 className={`px-3 py-1.5 rounded-full font-label text-[11px] transition-all duration-200 ${
                   activeDay === i ? 'bg-one-gold text-one-navy' : 'border border-one-border text-muted hover:text-one-white'
                 }`}
@@ -318,6 +365,7 @@ function ScheduleSection() {
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
+              data-cursor-label="FILTER"
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-one-border font-label text-[11px] text-muted hover:text-one-white transition-colors"
             >
               {TIME_FILTERS.find((f) => f.value === timeFilter)?.label}
@@ -336,6 +384,7 @@ function ScheduleSection() {
                     <button
                       key={f.value}
                       onClick={() => { setTimeFilter(f.value); setDropdownOpen(false) }}
+                      data-cursor-label={f.label.toUpperCase()}
                       className={`block w-full text-left px-4 py-2 font-label text-[11px] transition-colors ${
                         timeFilter === f.value ? 'text-one-gold' : 'text-muted hover:text-one-white hover:bg-one-gold/10'
                       }`}
@@ -352,12 +401,14 @@ function ScheduleSection() {
           <div className="flex gap-1 ml-auto">
             <button
               onClick={() => setViewMode('grid')}
+              data-cursor-label="GRID"
               className={`p-1.5 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-one-gold/20 text-one-gold' : 'text-muted hover:text-one-white'}`}
             >
               <Grid3X3 size={16} />
             </button>
             <button
               onClick={() => setViewMode('list')}
+              data-cursor-label="LIST"
               className={`p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'bg-one-gold/20 text-one-gold' : 'text-muted hover:text-one-white'}`}
             >
               <List size={16} />
@@ -405,10 +456,16 @@ function ScheduleSection() {
                     <span className="font-label text-[10px] text-muted">{DAYS[activeDay]}</span>
                   </div>
                   <div className="flex-1 relative">
-                    {/* Current time indicator */}
-                    <div className="absolute top-0 bottom-0 w-px bg-one-gold z-20" style={{ left: `${((new Date().getHours() / 24) * 100)}%` }}>
-                      <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-one-gold animate-pulse" />
-                    </div>
+                    {/* Current time indicator (includes minutes for precision) */}
+                    {(() => {
+                      const now = new Date()
+                      const pct = ((now.getHours() + now.getMinutes() / 60) / 24) * 100
+                      return (
+                        <div className="absolute top-0 bottom-0 w-px bg-one-gold z-20" style={{ left: `${pct}%` }}>
+                          <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-one-gold animate-pulse" />
+                        </div>
+                      )
+                    })()}
 
                     {/* Show blocks */}
                     {filteredShows.map((show, i) => (
@@ -428,6 +485,7 @@ function ScheduleSection() {
                           borderLeft: `3px solid ${show.color}`,
                         }}
                       >
+                        <div aria-hidden className="explore-tile-scan" />
                         <div className="px-2 py-1 h-full flex flex-col justify-center">
                           <div className="font-h4 text-one-white text-sm truncate">{show.name}</div>
                           <div className="font-micro text-muted">{show.time}</div>
@@ -468,7 +526,14 @@ function ScheduleSection() {
                     <div className="font-h4 text-one-white text-sm">{show.name}</div>
                     <div className="font-body-small text-muted text-xs">{show.hosts}</div>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full font-label text-[10px] text-muted border border-one-border shrink-0">
+                  <span
+                    className="px-2 py-0.5 rounded-full font-label text-[10px] shrink-0 border"
+                    style={{
+                      color: show.color,
+                      backgroundColor: `${show.color}18`,
+                      borderColor: `${show.color}30`,
+                    }}
+                  >
                     {show.category}
                   </span>
                   <div className="font-label text-[10px] text-muted w-16 shrink-0">{show.duration}h</div>
@@ -496,32 +561,36 @@ function ShowSpotlight() {
   }
 
   return (
-    <section className="bg-one-navy section-padding">
+    <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="FEATURED SHOWS">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         {/* Featured show */}
+        <TiltCard maxTilt={2} className="mb-12">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.7, ease: easeOutExpo }}
-          className="glass-card overflow-hidden mb-12"
+          className="glass-card overflow-hidden group"
         >
           <div className="flex flex-col md:flex-row" style={{ minHeight: 400 }}>
             <div className="md:w-[45%] relative overflow-hidden">
               <img
                 src="/assets/images/commentary-box-action.jpg"
                 alt="ONE FM Breakfast"
-                className="w-full h-full object-cover md:absolute md:inset-0 hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover md:absolute md:inset-0 group-hover:scale-105 transition-transform duration-700"
                 style={{ maxHeight: 400 }}
               />
+              <div aria-hidden className="explore-tile-scan" />
               <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-data-violet/90 text-one-white font-label text-[10px]">
                 BREAKFAST
               </div>
             </div>
             <div className="md:w-[55%] p-6 md:p-8 flex flex-col justify-center">
-              <h2 className="font-h2 text-one-white mb-3">ONE FM BREAKFAST</h2>
+              <WordReveal text="ONE FM BREAKFAST" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
               <div className="flex items-center gap-3 mb-4">
-                <img src="/assets/images/commentary-box-action.jpg" alt="Breakfast hosts" className="w-12 h-12 rounded-full object-cover border-2 border-one-gold/30" />
+                <div className="w-12 h-12 rounded-full border-2 border-one-gold/30 flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, #1B458F 0%, #D4AF37 100%)' }}>
+                  <span className="font-heading font-black text-sm text-one-white/90 leading-none select-none" style={{ letterSpacing: '-0.04em' }}>OB</span>
+                </div>
                 <div>
                   <div className="font-h4 text-one-white">Rotating hosts</div>
                   <div className="font-label text-one-gold text-[10px]">MON–FRI 6AM–9AM</div>
@@ -539,21 +608,22 @@ function ShowSpotlight() {
                 ))}
               </div>
               <div className="flex gap-3">
-                <Link to="/listen" className="btn-primary text-xs">Listen Live</Link>
-                <Link to="/programs" className="btn-secondary text-xs">Program Guide</Link>
+                <Link to="/listen" data-cursor-label="LISTEN" className="btn-primary text-xs">Listen Live</Link>
+                <Link to="/programs" data-cursor-label="PROGRAMS" className="btn-secondary text-xs">Program Guide</Link>
               </div>
             </div>
           </div>
         </motion.div>
+        </TiltCard>
 
         {/* Carousel header */}
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-h3 text-one-white">More Shows</h3>
           <div className="flex gap-2">
-            <button onClick={() => scroll('left')} className="w-8 h-8 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold hover:bg-one-gold/40 transition-colors">
+            <button onClick={() => scroll('left')} data-cursor-label="PREV" className="w-8 h-8 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold hover:bg-one-gold/40 transition-colors">
               <ChevronLeft size={16} />
             </button>
-            <button onClick={() => scroll('right')} className="w-8 h-8 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold hover:bg-one-gold/40 transition-colors">
+            <button onClick={() => scroll('right')} data-cursor-label="NEXT" className="w-8 h-8 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold hover:bg-one-gold/40 transition-colors">
               <ChevronRight size={16} />
             </button>
           </div>
@@ -562,18 +632,30 @@ function ShowSpotlight() {
         {/* Carousel */}
         <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
           {SHOW_CARDS.map((show, i) => (
+            <TiltCard key={show.name} maxTilt={6} className="shrink-0 snap-start" style={{ width: 280, minHeight: 340 }}>
             <motion.div
-              key={show.name}
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5, ease: easeOutExpo }}
-              whileHover={{ y: -6 }}
-              className="glass-card overflow-hidden shrink-0 snap-start cursor-pointer group"
-              style={{ width: 280, minHeight: 340 }}
+              data-cursor-label="SHOW"
+              className="glass-card overflow-hidden cursor-pointer group h-full"
             >
               <div className="relative h-[180px] overflow-hidden">
-                <img src={show.image} alt={show.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                {/* Gradient feature visual derived from category color */}
+                <div
+                  className="absolute inset-0 group-hover:scale-105 transition-transform duration-500"
+                  style={{ background: `linear-gradient(135deg, ${show.color}33 0%, #040B14 60%)` }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <span
+                    className="font-heading font-black select-none opacity-20"
+                    style={{ fontSize: '5rem', color: show.color, letterSpacing: '-0.04em' }}
+                  >
+                    FM
+                  </span>
+                </div>
+                <div aria-hidden className="explore-tile-scan" />
                 <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md font-label text-[10px] text-one-white" style={{ backgroundColor: show.color + 'CC' }}>
                   {show.category || 'MUSIC'}
                 </div>
@@ -581,20 +663,30 @@ function ShowSpotlight() {
               <div className="p-4">
                 <h4 className="font-h4 text-one-white mb-2">{show.name}</h4>
                 <div className="flex items-center gap-2 mb-2">
-                  <img src={show.image} alt={show.host} className="w-5 h-5 rounded-full object-cover" />
+                  {(() => {
+                    const av = getPresenterAvatar(show.host)
+                    return (
+                      <div className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center overflow-hidden" style={{ background: `linear-gradient(135deg, ${av.from} 0%, ${av.to} 100%)` }}>
+                        <span className="font-heading font-black text-[8px] leading-none select-none" style={{ color: av.accent }}>
+                          {av.initials}
+                        </span>
+                      </div>
+                    )
+                  })()}
                   <span className="font-body-small text-muted text-xs">{show.host}</span>
                 </div>
                 <div className="font-label text-muted text-[10px] mb-3">{show.schedule}</div>
                 <div className="h-1 rounded-full" style={{ backgroundColor: show.color }} />
               </div>
             </motion.div>
+            </TiltCard>
           ))}
         </div>
 
         <div className="text-right mt-4">
-          <a href="#" className="inline-flex items-center gap-1 font-label text-one-gold text-xs hover:text-one-gold transition-colors">
+          <Link to="/programs" data-cursor-label="SHOWS" className="inline-flex items-center gap-1 font-label text-one-gold text-xs hover:text-one-gold transition-colors link-hover">
             View All Shows <ArrowRight size={14} />
-          </a>
+          </Link>
         </div>
       </div>
     </section>
@@ -613,25 +705,18 @@ function HostRoster() {
     : HOSTS.filter((h) => h.shift === hostFilter)
 
   return (
-    <section className="bg-one-navy section-padding">
+    <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="MEET THE VOICES">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: easeOutExpo }}
-              className="font-h2 text-one-white mb-2"
-            >
-              MEET THE VOICES
-            </motion.h2>
+            <WordReveal text="MEET THE VOICES" className="font-h2 text-one-white mb-2 block" as="h2" />
             <p className="font-body-small text-muted">16 real presenters behind the microphone</p>
           </div>
 
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
+              data-cursor-label="FILTER"
               className="flex items-center gap-2 px-4 py-2 rounded-lg glass-card font-label text-[11px] text-muted hover:text-one-white transition-colors"
             >
               {hostFilter}
@@ -650,6 +735,7 @@ function HostRoster() {
                     <button
                       key={f}
                       onClick={() => { setHostFilter(f); setDropdownOpen(false) }}
+                      data-cursor-label={f.toUpperCase()}
                       className={`block w-full text-left px-4 py-2 font-label text-[11px] transition-colors ${
                         hostFilter === f ? 'text-one-gold' : 'text-muted hover:text-one-white hover:bg-one-gold/10'
                       }`}
@@ -673,19 +759,29 @@ function HostRoster() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: i * 0.08, duration: 0.5, ease: easeOutExpo }}
                 whileHover={{ y: -4 }}
+                data-cursor-label="PRESENTER"
                 className="group"
               >
-                <div className="relative mb-4 mx-auto" style={{ width: 200, height: 200 }}>
-                  <img
-                    src={host.avatar}
-                    alt={host.name}
-                    className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 rounded-2xl border-2 border-one-gold/30 group-hover:border-one-gold transition-colors duration-300" />
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: '0 0 40px rgba(212,150,58,0.15)' }} />
-                </div>
+                {(() => {
+                  const av = getPresenterAvatar(host.name)
+                  return (
+                    <div className="relative mb-4 mx-auto rounded-2xl overflow-hidden border-2 border-one-gold/30 group-hover:border-one-gold transition-colors duration-300 group-hover:scale-105 transition-transform duration-500" style={{ width: 200, height: 200 }}>
+                      <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${av.from} 0%, ${av.to} 100%)` }} />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span
+                          className="font-heading font-black select-none"
+                          style={{ fontSize: '3.5rem', color: av.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
+                        >
+                          {av.initials}
+                        </span>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-one-navy/40 via-transparent to-transparent" />
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: '0 0 40px rgba(212,175,55,0.15)' }} />
+                    </div>
+                  )
+                })()}
                 <h3 className="font-h3 text-one-white text-center group-hover:translate-x-1 transition-transform duration-300">{host.name}</h3>
-                <div className="font-label text-one-gold text-[10px] text-center mt-1">{host.role}</div>
+                <div className="font-label text-one-muted text-[10px] text-center mt-1">{host.role}</div>
                 <div className="font-body-small text-muted text-xs text-center mt-2">{host.shows.join(', ')}</div>
                 <div className="flex justify-center gap-3 mt-3 opacity-50 group-hover:opacity-100 transition-opacity">
                   <Twitter size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
@@ -693,7 +789,7 @@ function HostRoster() {
                   <Music size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
                 </div>
                 <div className="text-center mt-3">
-                  <a href="#" className="font-label text-one-gold text-[10px] hover:text-one-gold transition-colors">Profile →</a>
+                  <Link to="/programs" data-cursor-label="PROGRAMS" className="font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">View Programs →</Link>
                 </div>
               </motion.div>
             ))}
@@ -709,7 +805,7 @@ function SegmentDeepDive() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="bg-one-navy section-padding">
+    <section className="bg-surface-peak section-bleed-top section-padding" data-cursor-label="SIGNATURE SEGMENTS">
       <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -718,7 +814,7 @@ function SegmentDeepDive() {
           transition={{ duration: 0.5, ease: easeOutExpo }}
           className="mb-10"
         >
-          <h2 className="font-h2 text-one-white mb-2">SIGNATURE SEGMENTS</h2>
+          <WordReveal text="SIGNATURE SEGMENTS" className="font-h2 text-one-white mb-2 block" as="h2" />
           <p className="font-body-small text-muted">What makes ONE FM unmissable</p>
         </motion.div>
 
@@ -734,6 +830,7 @@ function SegmentDeepDive() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                data-cursor-label={openIndex === i ? 'CLOSE' : 'EXPAND'}
                 className={`w-full flex items-center gap-4 py-5 px-2 transition-colors duration-200 ${
                   openIndex === i ? 'bg-one-gold/5' : 'hover:bg-one-gold/[0.02]'
                 }`}
@@ -767,7 +864,7 @@ function SegmentDeepDive() {
                       <p className="font-body text-one-white mb-4 max-w-2xl">{seg.desc}</p>
                       <div className="flex flex-wrap gap-6 mb-4">
                         <div>
-                          <div className="font-stat text-one-gold" style={{ fontSize: '2rem' }}>{seg.stats.editions}</div>
+                          <div className="font-stat text-gold-gradient" style={{ fontSize: '2rem' }}>{seg.stats.editions}</div>
                           <div className="font-label text-muted text-[10px]">EDITIONS</div>
                         </div>
                         <div>
@@ -780,13 +877,13 @@ function SegmentDeepDive() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <button className="w-8 h-8 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform">
+                        <button data-cursor-label="PREVIEW" className="w-8 h-8 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform">
                           <Play size={14} />
                         </button>
                         <span className="font-label text-muted text-[10px]">PREVIEW</span>
-                        <a href="#" className="ml-4 font-label text-one-gold text-[10px] hover:text-one-gold transition-colors">
+                        <Link to="/broadcast" data-cursor-label="SCHEDULE" className="ml-4 font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">
                           See Full Schedule →
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </motion.div>
@@ -803,7 +900,7 @@ function SegmentDeepDive() {
 /* ─── Section 6: Behind the Scenes ─── */
 function BehindTheScenes() {
   return (
-    <section className="bg-one-navy section-padding" style={{ background: 'linear-gradient(180deg, #1A1A1F, #0D0D0D)' }}>
+    <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="BEHIND THE MIC">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -811,27 +908,34 @@ function BehindTheScenes() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: easeOutExpo }}
-            className="relative"
+            className="relative flex flex-col gap-3"
           >
-            <img
-              src="/assets/images/studio-exterior-rainbow.jpg"
-              alt="Studio A"
-              className="w-full rounded-2xl object-cover hover:scale-[1.03] transition-transform duration-700"
-              style={{ maxHeight: 480 }}
-            />
-            <p className="font-micro text-muted mt-3">Studio A — Where the magic happens</p>
+            <div className="relative overflow-hidden rounded-2xl">
+              <img
+                src={STATION_PHOTOS.commentaryTeamUniform}
+                alt="ONE FM broadcast team in the commentary box"
+                className="w-full object-cover hover:scale-[1.03] transition-transform duration-700"
+                style={{ height: 300 }}
+              />
+              <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent">
+                <p className="font-micro text-one-white/80">The ONE FM team — ready to call the game</p>
+              </div>
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <img
+                src={STATION_PHOTOS.commentaryCallAction}
+                alt="ONE FM commentator calling the game live"
+                className="w-full object-cover hover:scale-[1.03] transition-transform duration-700"
+                style={{ height: 170 }}
+              />
+              <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent">
+                <p className="font-micro text-one-white/80">Calling the game — live from the ground</p>
+              </div>
+            </div>
           </motion.div>
 
           <div>
-            <motion.h2
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: easeOutExpo }}
-              className="font-h2 text-one-white mb-6"
-            >
-              BEHIND THE MIC
-            </motion.h2>
+            <WordReveal text="BEHIND THE MIC" className="font-h2 text-one-white mb-6 block" as="h2" />
             <motion.p
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -852,10 +956,12 @@ function BehindTheScenes() {
                   key={item.title}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
+                  whileHover={{ x: 4 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 + i * 0.08, duration: 0.5, ease: easeOutExpo }}
-                  className="glass-card p-4 flex items-center gap-4 hover:border-one-gold/30 transition-colors"
+                  className="glass-card p-4 flex items-center gap-4 hover:border-one-gold/30 transition-colors cursor-default group relative overflow-hidden"
                 >
+                  <div aria-hidden className="explore-tile-scan" />
                   <div className="w-10 h-10 rounded-lg bg-one-gold/20 flex items-center justify-center text-one-gold shrink-0">
                     <Sparkles size={18} />
                   </div>
@@ -868,10 +974,10 @@ function BehindTheScenes() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <button className="btn-secondary text-xs">Tour the Studio</button>
-              <a href="#" className="inline-flex items-center gap-1 font-label text-one-gold text-xs hover:text-one-gold transition-colors pt-3">
-                View Tech Specs →
-              </a>
+              <Link to="/contact" data-cursor-label="CONTACT" className="btn-secondary text-xs">Tour the Studio</Link>
+              <Link to="/heritage" data-cursor-label="HERITAGE" className="inline-flex items-center gap-1 font-label text-one-gold text-xs hover:text-one-gold transition-colors pt-3 link-hover">
+                View Station Heritage →
+              </Link>
             </div>
           </div>
         </div>
@@ -891,32 +997,24 @@ function ListenLiveCTA() {
   ]
 
   return (
-    <section className="relative bg-one-navy section-padding overflow-hidden">
+    <section className="relative bg-surface-glow section-bleed-top section-padding overflow-hidden" data-cursor-label="LISTEN LIVE">
       {/* Decorative spectrum bars at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 flex items-end justify-center gap-1 opacity-20 pointer-events-none h-24">
+      <div aria-hidden className="absolute bottom-0 left-0 right-0 flex items-end justify-center gap-1 opacity-25 pointer-events-none h-24">
         {Array.from({ length: 40 }, (_, i) => (
           <div
             key={i}
-            className="w-2 rounded-t-sm bg-one-gold animate-waveform"
+            className="w-2 rounded-t-sm bg-one-electric animate-waveform motion-reduce:animate-none"
             style={{
-              height: `${20 + Math.random() * 60}px`,
+              height: `${20 + ((i * 41 + 11) % 61)}px`,
               animationDelay: `${i * 0.05}s`,
-              animationDuration: `${0.8 + Math.random() * 0.6}s`,
+              animationDuration: `${0.8 + ((i * 19 + 3) % 13) / 20}s`,
             }}
           />
         ))}
       </div>
 
       <div className="max-w-[600px] mx-auto px-4 sm:px-6 text-center relative z-10">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: easeOutExpo }}
-          className="font-h2 text-one-white mb-4"
-        >
-          TUNE IN ANYWHERE
-        </motion.h2>
+        <WordReveal text="TUNE IN ANYWHERE" className="font-h2 text-one-white mb-4 block" as="h2" />
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -953,7 +1051,7 @@ function ListenLiveCTA() {
         >
           <div className="relative">
             <div className="absolute inset-0 rounded-full bg-one-gold animate-ping opacity-30" />
-            <button className="relative w-20 h-20 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform">
+            <button className="relative w-20 h-20 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform" data-cursor-label="PLAY">
               <Play size={32} fill="currentColor" />
             </button>
           </div>
@@ -976,6 +1074,24 @@ export default function BroadcastExplorer() {
     <Layout>
       <SEO title="Broadcast Explorer" description="Explore ONE FM 98.5's full program schedule with real presenters, shows, and GVL football broadcasts. Callsign 3ONE, ACMA License 1385226/1." />
       <HeroSection />
+
+      {/* ── Broadcast Marquee Strip ── */}
+      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+        <Marquee
+          speed={34}
+          items={[
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE &amp; LOCAL · 24/7</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BREAKFAST · MUSIC · SPORT · CULTURE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">CALLSIGN 3ONE · SINCE 1989</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL FOOTBALL LIVE COMMENTARY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">ACMA LICENSE 1385226/1 · COMMUNITY RADIO</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ETHNIC &amp; MULTICULTURAL PROGRAMS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">REAL VOICES · REAL STORIES</span>,
+          ]}
+        />
+      </div>
+
       <PageJobsBar jobs={BROADCAST_JOBS} className="py-4 bg-one-navy border-b border-one-border/40" />
       <ScheduleSection />
       <ShowSpotlight />

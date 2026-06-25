@@ -27,6 +27,7 @@ export function FeaturePortal({
   return (
     <Link
       to={to}
+      data-cursor-label={title.toUpperCase()}
       className={`group relative block overflow-hidden rounded-2xl border border-one-border bg-one-midnight aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] hover:border-one-gold/40 transition-all duration-500 ${className}`}
     >
       <MediaImage

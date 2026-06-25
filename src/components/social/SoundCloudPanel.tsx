@@ -164,7 +164,7 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
       {!loading && playable.length === 0 && (
         <p className="font-body-small text-one-muted text-sm">
           Latest interviews play on{' '}
-          <a href={SOUNDCLOUD_PROFILE_URL} target="_blank" rel="noopener noreferrer" className="text-one-gold hover:underline">
+          <a href={SOUNDCLOUD_PROFILE_URL} target="_blank" rel="noopener noreferrer" className="text-one-gold link-hover">
             SoundCloud
           </a>{' '}
           and fm985.com.au — check back after the next broadcast.

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, memo } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import {
   Check, Star, TrendingUp, Users, Radio, MapPin,
   Target, ArrowRight, Send, Phone, Mail,
@@ -16,6 +16,14 @@ import { footballTiers, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
+import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { WordReveal } from '@/components/WordReveal'
+import { MagneticButton } from '@/components/MagneticButton'
+import { Marquee } from '@/components/Marquee'
+import { MediaImage } from '@/components/MediaImage'
+import { TiltCard } from '@/components/TiltCard'
+import { AnimatedNumber } from '@/components/AnimatedNumber'
 
 /* ─── easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -83,42 +91,6 @@ const ParticleField = memo(function ParticleField() {
     />
   )
 })
-
-/* ─── Animated Counter ─── */
-function AnimatedCounter({ target, prefix = '', suffix = '', duration = 1.2 }: { target: number; prefix?: string; suffix?: string; duration?: number }) {
-  const [val, setVal] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const triggered = useRef(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !triggered.current) {
-          triggered.current = true
-          const start = performance.now()
-          const tick = (now: number) => {
-            const p = Math.min((now - start) / (duration * 1000), 1)
-            const eased = 1 - Math.pow(1 - p, 3)
-            setVal(Math.floor(eased * target))
-            if (p < 1) requestAnimationFrame(tick)
-          }
-          requestAnimationFrame(tick)
-        }
-      },
-      { threshold: 0.3 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [target, duration])
-
-  return (
-    <span ref={ref}>
-      {prefix}{val.toLocaleString()}{suffix}
-    </span>
-  )
-}
 
 /* ─── ScrollReveal wrapper ─── */
 function ScrollReveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -206,6 +178,65 @@ const tierOptions = [
   'Not sure — need advice',
 ]
 
+/* ─── GVL Photo Gallery ─── */
+const GVL_GALLERY = [
+  { src: STATION_PHOTOS.gvlActionSprint,       alt: 'GVL player sprinting at full pace',       caption: 'Full Pace',        className: 'col-span-2 lg:col-span-2 row-span-2' },
+  { src: STATION_PHOTOS.gvlPlayerHighFive,     alt: 'Players sharing a high five after the siren', caption: 'The Siren',    className: '' },
+  { src: STATION_PHOTOS.commentaryBoxAction,   alt: 'Commentary team calling the action',      caption: 'On the Call',      className: '' },
+  { src: STATION_PHOTOS.gvlCrowdStands,        alt: 'Passionate GVL crowd in the stands',      caption: 'The Faithful',     className: '' },
+  { src: STATION_PHOTOS.gvlPlayerCelebration,  alt: 'Player celebrating a goal',               caption: 'The Moment',       className: '' },
+  { src: STATION_PHOTOS.gvlGoalCelebration,    alt: 'Team goal celebration',                   caption: 'We Score',         className: 'col-span-1 lg:col-span-2' },
+]
+
+function GVLGalleryStrip() {
+  return (
+    <section className="py-20 bg-[#020810]" data-cursor-label="GVL SPORT">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex items-end justify-between mb-8"
+        >
+          <div>
+            <p className="font-label text-one-gold text-[10px] tracking-widest uppercase mb-2">Matchday · In Frame</p>
+            <WordReveal text="The Game. The Moment." className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+          </div>
+          <span className="hidden sm:block font-label text-one-muted text-[10px] tracking-widest uppercase">GVL Coverage</span>
+        </motion.div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-3 auto-rows-[190px] lg:auto-rows-[210px] gap-3">
+          {GVL_GALLERY.map((photo, i) => (
+            <TiltCard key={photo.alt} maxTilt={5} className={`h-full ${photo.className}`}>
+              <motion.div
+                className="relative overflow-hidden rounded-xl group h-full"
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: i * 0.07, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <MediaImage
+                  src={photo.src}
+                  fallbackSrc={STATION_PHOTOS.gvlNightPanorama}
+                  alt={photo.alt}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div aria-hidden className="explore-tile-scan" />
+                <div className="absolute bottom-0 inset-x-0 p-4 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <span className="font-label text-[10px] tracking-[0.2em] text-one-white uppercase">{photo.caption}</span>
+                </div>
+                <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </motion.div>
+            </TiltCard>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ═══════════════════════════════════════════ */
 /*  MAIN PAGE                                  */
 /* ═══════════════════════════════════════════ */
@@ -220,6 +251,10 @@ export default function Football() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -256,94 +291,141 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
-      <section className="relative min-h-[65vh] flex items-center justify-center overflow-hidden bg-[#050D1A]">
+      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="GAME DAY">
         <div className="absolute inset-0 z-0">
-          <CinegraphBackground slot="gvlGameDay" opacity={0.38} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/80 via-[#050D1A]/50 to-[#050D1A]/95" />
+          <motion.div
+            style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
+          >
+            <CinegraphBackground slot="gvlGameDay" opacity={0.6} />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/55 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
-        <div className="absolute inset-0 opacity-[0.04] z-[1]" style={{
-          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 59px, #D4AF37 59px, #D4AF37 60px)`,
-        }} />
         <ParticleField />
 
-        <div className="relative z-10 max-w-[900px] mx-auto px-6 text-center py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex justify-center mb-7"
+        <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 pt-32 pb-16 w-full">
+          <motion.span
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: easeOutExpo }}
+            className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
           >
-            <span className="section-label">Goulburn Valley Football League Coverage</span>
+            Goulburn Valley Football League Coverage
+          </motion.span>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex items-end gap-[1.5px] mb-5"
+            aria-hidden
+          >
+            {Array.from({ length: 20 }, (_, i) => (
+              <div
+                key={i}
+                className="w-[1.5px] rounded-sm"
+                style={{
+                  height: 3 + Math.floor(Math.abs(Math.sin(i * 0.65)) * 12 + 3),
+                  backgroundColor: 'rgba(201,162,39,0.38)',
+                  animation: `freq-bar ${0.7 + (i % 6) * 0.13}s ${(i * 0.08) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: easeOutExpo }}
-            className="font-hero text-one-white mb-6"
+          <h1
+            className="font-heading font-black leading-none mb-8"
+            style={{ fontSize: 'clamp(3rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            FOOTBALL <span className="text-one-gold">SPONSORSHIP</span>
-          </motion.h1>
+            <WordReveal text="Football" as="span" className="block text-one-white" delay={0.15} stagger={0.1} />
+            <WordReveal text="Sponsorship." as="span" className="block text-one-gold" delay={0.4} stagger={0.08} />
+          </h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
-            className="font-body text-one-white/55 italic max-w-[600px] mx-auto mb-10"
+            transition={{ duration: 0.5, delay: 0.65, ease: easeOutExpo }}
+            className="font-body text-one-white/70 max-w-[520px] mb-10"
           >
             Put your business in front of {stationStats.weeklyListeners.toLocaleString()} weekly listeners across {stationStats.totalTowns} communities
             in the Goulburn Valley. From $25/week to full naming rights — there's a tier for every budget.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3, ease: easeOutExpo }}
-            className="flex flex-wrap justify-center gap-8 mb-12"
+            transition={{ duration: 0.6, delay: 0.8, ease: easeOutExpo }}
+            className="flex flex-wrap gap-8 mb-10"
           >
             {[
               { num: stationStats.weeklyListeners, label: 'Weekly Listeners', suffix: '' },
-              { num: stationStats.totalTowns, label: 'Communities Covered', suffix: '' },
-              { num: stationStats.broadcastRadiusKm, label: 'Kilometre Radius', suffix: 'km' },
-              { num: stationStats.broadcastPopulation, label: 'Area Population (2026)', suffix: '' },
-            ].map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="font-stat text-one-gold">
-                  <AnimatedCounter target={s.num} suffix={s.suffix} />
+              { num: stationStats.totalTowns, label: 'Communities', suffix: '' },
+              { num: stationStats.broadcastRadiusKm, label: 'km Radius', suffix: 'km' },
+            ].map((s, i) => (
+              <div key={s.label} className="flex items-center gap-8">
+                <div>
+                  <div className="font-stat text-gold-gradient">
+                    <AnimatedNumber value={s.num} suffix={s.suffix} />
+                  </div>
+                  <div className="font-label text-muted mt-1">{s.label}</div>
                 </div>
-                <div className="font-label text-muted mt-1">{s.label}</div>
+                {i < 2 && <div className="hidden sm:block w-px h-10 bg-one-border/40" />}
               </div>
             ))}
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.5, ease: easeOutExpo }}
-            className="flex flex-wrap justify-center gap-4"
+            transition={{ duration: 0.5, delay: 1.0, ease: easeOutExpo }}
+            className="flex flex-wrap gap-4"
           >
-            <a href="#tiers" className="btn-primary">
-              View Packages
-            </a>
-            <Link to="/proposal" className="btn-secondary">
-              Build Custom Proposal
-            </Link>
+            <MagneticButton strength={10}>
+              <a href="#tiers" data-cursor-label="PACKAGES" className="btn-primary">
+                View Packages
+              </a>
+            </MagneticButton>
+            <MagneticButton strength={8}>
+              <Link to="/proposal" data-cursor-label="PROPOSAL" className="btn-secondary">
+                Build Custom Proposal
+              </Link>
+            </MagneticButton>
           </motion.div>
         </div>
       </section>
 
+      {/* ── Football Marquee Strip ── */}
+      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+        <Marquee
+          speed={30}
+          items={[
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL FOOTBALL LEAGUE COVERAGE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE MATCH COMMENTARY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.totalTowns} COMMUNITIES · GOULBURN VALLEY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FROM $25/WEEK · NAMING RIGHTS AVAILABLE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">ROUND-BY-ROUND BROADCAST</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.weeklyListeners.toLocaleString()} WEEKLY LISTENERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">COMMENTARY TEAM · MATCHDAY PRESENCE</span>,
+          ]}
+        />
+      </div>
+
+      {/* ─── GVL Sports Photo Strip ─── */}
+      <GVLGalleryStrip />
+
       {/* ═══════════════════════════════════════════
           SECTION 2 — THE 9 TIERS
           ═══════════════════════════════════════════ */}
-      <section id="tiers" className="bg-one-navy section-padding">
+      <section id="tiers" className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="BROADCAST PACKAGES">
         <div className="max-w-[1400px] mx-auto px-4">
           <ScrollReveal className="text-center mb-14">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Shield size={18} className="text-one-gold" />
-              <span className="font-label text-one-gold">9 SPONSORSHIP LEVELS</span>
+              <Shield size={18} className="text-one-electric" />
+              <span className="font-label text-one-electric">9 SPONSORSHIP LEVELS</span>
             </div>
-            <h2 className="font-h2 text-one-white mb-3">CHOOSE YOUR IMPACT</h2>
+            <WordReveal text="CHOOSE YOUR IMPACT" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               From community supporters to naming rights partners — every dollar goes toward
               supporting local football and getting your brand heard.
@@ -360,6 +442,7 @@ export default function Football() {
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.6, delay: i * 0.06, ease: easeOutExpo }}
                 whileHover={{ y: tier.popular || tier.bestValue ? -14 : -6, transition: { duration: 0.3 } }}
+                data-cursor-label="SELECT"
                 className={`glass-card p-6 relative transition-shadow duration-300 ${
                   tier.popular || tier.bestValue ? 'border-one-gold/40 shadow-glow' : ''
                 } ${tier.crown ? 'border-one-gold/50' : ''}`}
@@ -393,7 +476,7 @@ export default function Football() {
 
                 {/* Price */}
                 <div className="text-center mb-5">
-                  <span className="font-stat text-one-white">${tier.price}</span>
+                  <span className="font-stat text-gold-gradient">${tier.price}</span>
                   <span className="font-label text-muted">/week</span>
                   <p className="font-micro text-muted mt-1">${(tier.price * 52).toLocaleString()}/year</p>
                 </div>
@@ -429,14 +512,14 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 3 — ROI COMPARISON
           ═══════════════════════════════════════════ */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="ROI COMPARISON">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
               <BarChart3 size={18} className="text-data-teal" />
               <span className="font-label text-data-teal">WHY RADIO WINS</span>
             </div>
-            <h2 className="font-h2 text-one-white mb-3">BETTER VALUE THAN THE ALTERNATIVES</h2>
+            <WordReveal text="BETTER VALUE THAN THE ALTERNATIVES" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.04} />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               See how ONE FM football sponsorship stacks up against other local advertising options.
             </p>
@@ -483,12 +566,13 @@ export default function Football() {
             </table>
           </motion.div>
 
+          <TiltCard maxTilt={3} className="mt-8 max-w-2xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-8 glass-card p-5 border-l-2 border-l-amber max-w-2xl mx-auto"
+            className="glass-card p-5 border-l-2 border-l-one-gold"
           >
             <div className="flex items-start gap-3">
               <TrendingUp size={18} className="text-one-gold shrink-0 mt-0.5" />
@@ -498,20 +582,21 @@ export default function Football() {
               </p>
             </div>
           </motion.div>
+          </TiltCard>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════
           SECTION 4 — AUDIENCE DATA
           ═══════════════════════════════════════════ */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="AUDIENCE DATA">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Users size={18} className="text-one-gold" />
-              <span className="font-label text-one-gold">WHO IS LISTENING</span>
+              <Users size={18} className="text-one-electric" />
+              <span className="font-label text-one-electric">WHO IS LISTENING</span>
             </div>
-            <h2 className="font-h2 text-one-white mb-3">YOUR AUDIENCE, YOUR COMMUNITY</h2>
+            <WordReveal text="YOUR AUDIENCE, YOUR COMMUNITY" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a projected population of {stationStats.broadcastPopulation.toLocaleString()}.
             </p>
@@ -519,13 +604,15 @@ export default function Football() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Regional reach facts */}
+            <TiltCard maxTilt={5} className="h-full">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: easeOutExpo }}
-              className="glass-card p-6"
+              className="glass-card p-6 h-full group relative overflow-hidden"
             >
+              <div aria-hidden className="explore-tile-scan" />
               <h4 className="font-h4 text-one-white mb-5">Regional Reach</h4>
               <div className="space-y-4">
                 {reachFacts.map((d) => (
@@ -536,15 +623,18 @@ export default function Football() {
                 ))}
               </div>
             </motion.div>
+            </TiltCard>
 
             {/* Regional Coverage */}
+            <TiltCard maxTilt={5} className="h-full">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1, ease: easeOutExpo }}
-              className="glass-card p-6"
+              className="glass-card p-6 h-full group relative overflow-hidden"
             >
+              <div aria-hidden className="explore-tile-scan" />
               <h4 className="font-h4 text-one-white mb-4">{stationStats.totalTowns} Communities Covered</h4>
               <div className="flex flex-wrap gap-1.5 mb-4">
                 {townData.map((town, i) => (
@@ -561,19 +651,22 @@ export default function Football() {
                 ))}
               </div>
               <div className="flex items-center gap-2 mt-4">
-                <MapPin size={14} className="text-one-gold" />
-                <span className="font-label text-xs text-one-gold">{stationStats.broadcastRadiusKm}km broadcast radius from Shepparton</span>
+                <MapPin size={14} className="text-one-electric" />
+                <span className="font-label text-xs text-one-electric">{stationStats.broadcastRadiusKm}km broadcast radius from Shepparton</span>
               </div>
             </motion.div>
+            </TiltCard>
 
             {/* Listener Habits */}
+            <TiltCard maxTilt={5} className="h-full">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
-              className="glass-card p-6"
+              className="glass-card p-6 h-full group relative overflow-hidden"
             >
+              <div aria-hidden className="explore-tile-scan" />
               <h4 className="font-h4 text-one-white mb-5">Listener Habits</h4>
               <div className="space-y-5">
                 {[
@@ -597,6 +690,74 @@ export default function Football() {
                 })}
               </div>
             </motion.div>
+            </TiltCard>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          SECTION 4a — GVL ACTION STRIP
+          ═══════════════════════════════════════════ */}
+      <section className="bg-surface-deep pt-6 overflow-hidden" data-cursor-label="GVL ACTION">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { src: STATION_PHOTOS.gvlGoalCelebration,     caption: 'GVL — where footy means everything' },
+              { src: STATION_PHOTOS.gvlTownersCelebration,  caption: 'ONE FM celebrates every premiership moment' },
+            ].map((photo, i) => (
+              <motion.div
+                key={photo.caption}
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="relative overflow-hidden rounded-xl group"
+                style={{ height: 220 }}
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.caption}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div aria-hidden className="explore-tile-scan" />
+                <p className="absolute bottom-2 left-3 right-3 font-micro text-one-white/80 leading-tight">{photo.caption}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          SECTION 4b — MATCH DAY PHOTO STRIP
+          ═══════════════════════════════════════════ */}
+      <section className="bg-surface-mid py-6 overflow-hidden" data-cursor-label="MATCH DAY">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { src: STATION_PHOTOS.commentaryBoxView,    caption: 'Ready for kick-off — the broadcaster\'s view' },
+              { src: STATION_PHOTOS.obSetupFull,          caption: 'ONE FM 98.5 on location — every match day' },
+              { src: STATION_PHOTOS.commentaryTeamSelfie, caption: 'The broadcast team — live from the box' },
+            ].map((photo, i) => (
+              <motion.div
+                key={photo.caption}
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="relative overflow-hidden rounded-xl group"
+                style={{ height: 180 }}
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.caption}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div aria-hidden className="explore-tile-scan" />
+                <p className="absolute bottom-2 left-3 right-3 font-micro text-one-white/80 leading-tight">{photo.caption}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -604,30 +765,31 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 5 — TESTIMONIALS
           ═══════════════════════════════════════════ */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="TESTIMONIALS">
         <div className="max-w-[1000px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Star size={18} className="text-one-gold" />
-              <span className="font-label text-one-gold">LOCAL PROOF</span>
+              <Star size={18} className="text-one-electric" />
+              <span className="font-label text-one-electric">LOCAL PROOF</span>
             </div>
-            <h2 className="font-h2 text-one-white mb-3">COMMUNITY VOICE</h2>
+            <WordReveal text="COMMUNITY VOICE" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">
               Why the Goulburn Valley trusts ONE FM.
             </p>
           </ScrollReveal>
 
           <div className="max-w-3xl mx-auto">
+            <TiltCard maxTilt={3}>
             <div className="glass-card p-8 text-center">
               <p className="font-body text-one-white italic mb-6 text-lg leading-relaxed">
                 "{communityVoice.quote}"
               </p>
               <div className="flex items-center justify-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-one-gold/20 flex items-center justify-center">
-                  <User size={18} className="text-one-gold" />
+                <div className="w-10 h-10 rounded-full bg-one-white/10 flex items-center justify-center">
+                  <User size={18} className="text-one-muted" />
                 </div>
                 <div className="text-left">
-                  <p className="font-h4 text-one-gold">{communityVoice.name}</p>
+                  <p className="font-h4 text-one-white">{communityVoice.name}</p>
                   <p className="font-label text-muted text-xs">{communityVoice.role}</p>
                 </div>
               </div>
@@ -635,6 +797,7 @@ export default function Football() {
                 GVL sponsor testimonials available on request — {BRAND.email}
               </p>
             </div>
+            </TiltCard>
           </div>
         </div>
       </section>
@@ -642,14 +805,14 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 6 — ENQUIRY FORM
           ═══════════════════════════════════════════ */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="ENQUIRE NOW">
         <div className="max-w-[700px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Send size={18} className="text-data-teal" />
               <span className="font-label text-data-teal">GET STARTED</span>
             </div>
-            <h2 className="font-h2 text-one-white mb-3">ENQUIRE NOW</h2>
+            <WordReveal text="ENQUIRE NOW" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">
               Tell us about your business and we'll recommend the perfect sponsorship tier.
             </p>
@@ -666,67 +829,72 @@ export default function Football() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <Label className="font-label text-muted text-xs">Business Name</Label>
+                    <Label htmlFor="ftbl-business" className="font-label text-muted text-xs">Business Name</Label>
                     <div className="relative">
                       <Building size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                       <Input
+                        id="ftbl-business"
                         placeholder="Your Business"
                         value={formData.businessName}
                         onChange={(e) => handleInputChange('businessName', e.target.value)}
-                        className="pl-9 bg-one-navy border-one-border text-one-white placeholder:text-muted/60 focus:border-one-gold focus:ring-amber/15"
+                        className="pl-9 bg-one-navy border-one-border text-one-white placeholder:text-muted/60 focus:border-one-gold focus:ring-one-gold/15"
                         required
                       />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="font-label text-muted text-xs">Contact Name</Label>
+                    <Label htmlFor="ftbl-contact" className="font-label text-muted text-xs">Contact Name</Label>
                     <div className="relative">
                       <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                       <Input
+                        id="ftbl-contact"
                         placeholder="Your Name"
                         value={formData.contactName}
                         onChange={(e) => handleInputChange('contactName', e.target.value)}
-                        className="pl-9 bg-one-navy border-one-border text-one-white placeholder:text-muted/60 focus:border-one-gold focus:ring-amber/15"
+                        className="pl-9 bg-one-navy border-one-border text-one-white placeholder:text-muted/60 focus:border-one-gold focus:ring-one-gold/15"
                         required
                       />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="font-label text-muted text-xs">Email</Label>
+                    <Label htmlFor="ftbl-email" className="font-label text-muted text-xs">Email</Label>
                     <div className="relative">
                       <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                       <Input
+                        id="ftbl-email"
                         type="email"
                         placeholder="you@business.com"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
-                        className="pl-9 bg-one-navy border-one-border text-one-white placeholder:text-muted/60 focus:border-one-gold focus:ring-amber/15"
+                        className="pl-9 bg-one-navy border-one-border text-one-white placeholder:text-muted/60 focus:border-one-gold focus:ring-one-gold/15"
                         required
                       />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="font-label text-muted text-xs">Phone</Label>
+                    <Label htmlFor="ftbl-phone" className="font-label text-muted text-xs">Phone</Label>
                     <div className="relative">
                       <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                       <Input
+                        id="ftbl-phone"
                         type="tel"
                         placeholder="04XX XXX XXX"
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className="pl-9 bg-one-navy border-one-border text-one-white placeholder:text-muted/60 focus:border-one-gold focus:ring-amber/15"
+                        className="pl-9 bg-one-navy border-one-border text-one-white placeholder:text-muted/60 focus:border-one-gold focus:ring-one-gold/15"
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="font-label text-muted text-xs">Interested Tier</Label>
+                  <Label htmlFor="ftbl-tier" className="font-label text-muted text-xs">Interested Tier</Label>
                   <div className="relative">
                     <select
+                      id="ftbl-tier"
                       value={formData.tier}
                       onChange={(e) => handleInputChange('tier', e.target.value)}
-                      className="w-full bg-one-navy border border-one-border rounded-md px-3 py-2.5 font-body-small text-one-white focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-amber/15 transition-all appearance-none"
+                      className="w-full bg-one-navy border border-one-border rounded-md px-3 py-2.5 font-body-small text-one-white focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-one-gold/15 transition-all appearance-none"
                       required
                     >
                       <option value="" disabled>Select a sponsorship tier</option>
@@ -739,20 +907,21 @@ export default function Football() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="font-label text-muted text-xs">Message</Label>
+                  <Label htmlFor="ftbl-message" className="font-label text-muted text-xs">Message</Label>
                   <div className="relative">
                     <MessageSquare size={14} className="absolute left-3 top-3 text-muted" />
                     <textarea
+                      id="ftbl-message"
                       placeholder="Tell us about your business and goals..."
                       value={formData.message}
                       onChange={(e) => handleInputChange('message', e.target.value)}
                       rows={4}
-                      className="w-full bg-one-navy border border-one-border rounded-md pl-9 pr-3 py-2.5 font-body-small text-one-white placeholder:text-muted/60 focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-amber/15 transition-all resize-none"
+                      className="w-full bg-one-navy border border-one-border rounded-md pl-9 pr-3 py-2.5 font-body-small text-one-white placeholder:text-muted/60 focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-one-gold/15 transition-all resize-none"
                     />
                   </div>
                 </div>
 
-                <button type="submit" disabled={submitting} className="btn-primary w-full flex items-center justify-center gap-2">
+                <button type="submit" disabled={submitting} data-cursor-label={submitting ? 'SENDING' : 'SEND'} className="btn-primary w-full flex items-center justify-center gap-2">
                   <Send size={14} />
                   {submitting ? 'Sending…' : 'Submit Enquiry'}
                 </button>
@@ -780,7 +949,7 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 7 — FINAL CTA
           ═══════════════════════════════════════════ */}
-      <section className="relative bg-one-navy section-padding overflow-hidden">
+      <section className="relative bg-surface-glow section-bleed-top section-padding overflow-hidden" data-cursor-label="PARTNER UP">
         {/* Subtle pattern */}
         <div className="absolute inset-0 opacity-[0.08]" style={{
           backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(212,150,58,0.03) 20px, rgba(212,150,58,0.03) 21px)',
@@ -791,23 +960,27 @@ export default function Football() {
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles size={20} className="text-one-gold" />
             </div>
-            <h2 className="font-h2 text-one-white mb-4">READY TO SPONSOR LOCAL FOOTBALL?</h2>
+            <WordReveal text="READY TO SPONSOR LOCAL FOOTBALL?" className="font-h2 text-one-white mb-4 block" as="h2" />
             <p className="font-body text-one-white mb-8">
               Join the local businesses keeping community football alive. Every sponsorship
               dollar supports grassroots sport and puts your brand in front of thousands.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/proposal" className="btn-primary">
+              <Link to="/proposal" data-cursor-label="PROPOSAL" className="btn-primary">
                 Get Proposal
                 <ArrowRight size={14} />
               </Link>
-              <Link to="/contact" className="btn-secondary">
+              <Link to="/contact" data-cursor-label="CONTACT" className="btn-secondary">
                 Contact Us
               </Link>
             </div>
           </ScrollReveal>
         </div>
       </section>
+      <SponsorCommercialCta
+        headline="Game day meets regional reach"
+        subline="Pair GVL football sponsorship with valley-wide FM coverage — see the map or request the media kit."
+      />
     </Layout>
   )
 }

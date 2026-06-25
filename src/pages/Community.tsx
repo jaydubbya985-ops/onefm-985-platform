@@ -1,9 +1,19 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { WordReveal } from '@/components/WordReveal'
+import { Marquee } from '@/components/Marquee'
+import { LatestInterviews } from '@/components/LatestInterviews'
+import { SignalDivider } from '@/components/SignalDivider'
 import { towns } from '@/data/townData'
-import { motion, AnimatePresence } from 'framer-motion'
+import { stationStats } from '@/data/pricing'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { MediaImage } from '@/components/MediaImage'
+import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
+import { TiltCard } from '@/components/TiltCard'
+import { MagneticButton } from '@/components/MagneticButton'
+import { AnimatedNumber } from '@/components/AnimatedNumber'
 import {
   Heart,
   MapPin,
@@ -51,84 +61,226 @@ function AnimatedGrid() {
 /* ─── Section 1: Hero ─── */
 function CommunityHero() {
   const stats = [
-    { label: 'NFPs Supported', value: '100+' },
-    { label: 'People Reached', value: '185,791' },
-    { label: 'Weekly Listeners', value: '39,375' },
-    { label: 'Events Covered', value: '500+' },
+    { label: 'NFPs Supported', value: stationStats.nfpsSupported, suffix: '+' },
+    { label: 'People Reached', value: stationStats.broadcastPopulation, suffix: '' },
+    { label: 'Weekly Listeners', value: stationStats.weeklyListeners, suffix: '' },
+    { label: 'Events Covered', value: 500, suffix: '+' },
   ]
 
-  return (
-    <section className="relative min-h-[90dvh] flex items-center justify-center overflow-hidden bg-[#050D1A]">
-      {/* Real photo bg */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src="/assets/images/community-outdoor-market.jpg"
-          alt=""
-          aria-hidden
-          className="w-full h-full object-cover"
-          style={{ opacity: 0.25 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/80 via-[#050D1A]/50 to-[#050D1A]/95" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/50 via-transparent to-[#050D1A]/50" />
-      </div>
-      {/* Subtle animated grid on top of photo */}
-      <AnimatedGrid />
-      <div aria-hidden className="grain-overlay" />
+  const marqueeItems = [
+    { text: `${stationStats.nfpsSupported}+ NFPs Supported`, cls: 'text-one-gold/60' },
+    { text: `${stationStats.broadcastPopulation.toLocaleString()} People Reached`, cls: 'text-one-white/40' },
+    { text: `${stationStats.weeklyListeners.toLocaleString()} Weekly Listeners`, cls: 'text-one-gold/60' },
+    { text: '500+ Events Covered', cls: 'text-one-white/40' },
+    { text: `${stationStats.totalTowns} Towns Across the Valley`, cls: 'text-one-gold/60' },
+    { text: `${stationStats.yearsBroadcasting} Years of Community Radio`, cls: 'text-one-white/40' },
+  ]
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 text-center">
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
+
+  return (
+    <>
+      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="DISCOVER">
+        <div className="absolute inset-0 z-0">
+          <motion.div
+            style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
+          >
+            <img
+              src="/assets/images/community-outdoor-market.jpg"
+              alt=""
+              aria-hidden
+              loading="eager"
+              fetchPriority="high"
+              className="w-full h-full object-cover"
+              style={{ opacity: 0.55 }}
+            />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/60 via-transparent to-transparent" />
+        </div>
+        <AnimatedGrid />
+        <div aria-hidden className="grain-overlay" />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 pb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
+          >
+            Community Radio Since 1989 · 25 Towns Across the Valley
+          </motion.span>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="flex items-end gap-[1.5px] mb-5"
+            aria-hidden
+          >
+            {Array.from({ length: 20 }, (_, i) => (
+              <div
+                key={i}
+                className="w-[1.5px] rounded-sm"
+                style={{
+                  height: 3 + Math.floor(Math.abs(Math.sin(i * 0.58 + 0.3)) * 11 + 2),
+                  backgroundColor: 'rgba(201,162,39,0.33)',
+                  animation: `freq-bar ${0.72 + (i % 5) * 0.14}s ${(i * 0.09) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
+          </motion.div>
+
+          <h1
+            className="font-heading font-black leading-none mb-8"
+            style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
+          >
+            <WordReveal text="Our" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
+            <WordReveal text="Community." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+          </h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="font-body text-one-white/50 max-w-xl mb-12 italic"
+          >
+            {stationStats.totalTowns} towns. One voice. {stationStats.yearsBroadcasting} years of keeping the Valley connected.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.45 }}
+            className="flex flex-wrap md:flex-nowrap items-stretch gap-0"
+          >
+            {stats.map((stat, i) => (
+              <div key={stat.label} className="flex items-stretch min-w-[130px]">
+                <div className="flex flex-col justify-center px-6 py-4">
+                  <div
+                    className="text-gold-gradient font-heading font-black tabular-nums mb-1"
+                    style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
+                  >
+                    <AnimatedNumber value={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <div className="font-label text-one-white/40 uppercase tracking-widest text-[10px] leading-snug">
+                    {stat.label}
+                  </div>
+                </div>
+                {i < stats.length - 1 && (
+                  <div className="w-px self-stretch bg-gradient-to-b from-transparent via-one-gold/20 to-transparent shrink-0" />
+                )}
+              </div>
+            ))}
+          </motion.div>
+        </div>
+        <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-[#050D1A] to-transparent z-10 pointer-events-none" />
+      </section>
+
+      <div className="py-4 bg-[#050D1A] border-y border-one-gold/10 overflow-hidden">
+        <Marquee
+          speed={35}
+          items={marqueeItems.map((item) => (
+            <span className={`mx-12 font-label text-[10px] tracking-[0.25em] uppercase ${item.cls}`}>
+              {item.text}
+            </span>
+          ))}
+        />
+      </div>
+    </>
+  )
+}
+
+/* ─── Section 1.5: Photo Mosaic ─── */
+const MOSAIC_PHOTOS = [
+  {
+    src: STATION_PHOTOS.eventLasersCrowd,
+    alt: 'Community festival with laser lights',
+    caption: 'Live Events',
+    className: 'col-span-2 lg:col-span-2',
+  },
+  {
+    src: STATION_PHOTOS.cultureAlbanianDancers,
+    alt: 'Albanian cultural dancers in traditional costume',
+    caption: 'Cultural Celebrations',
+    className: 'col-span-1 lg:row-span-2',
+  },
+  {
+    src: STATION_PHOTOS.communityBookStall,
+    alt: 'Community book stall',
+    caption: 'Grassroots Community',
+    className: 'col-span-1',
+  },
+  {
+    src: STATION_PHOTOS.eventOutdoorCinema,
+    alt: 'Outdoor cinema event at dusk',
+    caption: 'Valley Experiences',
+    className: 'col-span-1',
+  },
+  {
+    src: STATION_PHOTOS.eventFoodTrucks,
+    alt: 'Local food trucks at a community event',
+    caption: 'Local Flavours',
+    className: 'col-span-1',
+  },
+  {
+    src: STATION_PHOTOS.cultureSiloArtBirds,
+    alt: 'Shepparton silo art mural with birds',
+    caption: 'Valley Art',
+    className: 'col-span-1 lg:col-span-2',
+  },
+]
+
+function CommunityPhotoMosaic() {
+  return (
+    <section className="py-16 bg-[#050D1A]" data-cursor-label="EXPLORE">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex justify-center mb-8"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex items-end justify-between mb-8"
         >
-          <span className="section-label">Since 1989</span>
+          <div>
+            <p className="font-label text-one-electric text-[10px] tracking-widest uppercase mb-2">Glimpse</p>
+            <WordReveal text="Life in the Valley" className="font-h2 text-one-white block" as="h2" />
+          </div>
+          <span className="hidden sm:block font-label text-one-muted text-[10px] tracking-widest uppercase">
+            {MOSAIC_PHOTOS.length} photos
+          </span>
         </motion.div>
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-hero text-one-white mb-5"
-        >
-          OUR COMMUNITY
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-body text-one-white/50 max-w-xl mx-auto mb-16 italic"
-        >
-          25 towns. One voice. 36 years of keeping the Valley connected.
-        </motion.p>
 
-        {/* Editorial stat row */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          className="flex flex-wrap md:flex-nowrap items-stretch justify-center gap-0 max-w-4xl mx-auto"
-        >
-          {stats.map((stat, i) => (
-            <div key={stat.label} className="flex items-stretch flex-1 min-w-[140px]">
-              <div className="flex flex-col items-center justify-center px-6 py-5 text-center flex-1">
-                <div
-                  className="text-one-gold font-heading font-black tabular-nums mb-1"
-                  style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
-                >
-                  {stat.value}
-                </div>
-                <div className="font-label text-one-white/40 uppercase tracking-widest text-[10px] leading-snug max-w-[90px]">
-                  {stat.label}
-                </div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 auto-rows-[200px] lg:auto-rows-[220px] gap-3">
+          {MOSAIC_PHOTOS.map((photo, i) => (
+            <motion.div
+              key={photo.alt}
+              className={`relative overflow-hidden rounded-xl group ${photo.className}`}
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ delay: i * 0.07, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <MediaImage
+                src={photo.src}
+                fallbackSrc={PHOTO_DEFAULTS.community}
+                alt={photo.alt}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div aria-hidden className="explore-tile-scan" />
+              <div className="absolute bottom-0 inset-x-0 p-4 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                <span className="font-label text-[10px] tracking-[0.2em] text-one-white uppercase">
+                  {photo.caption}
+                </span>
               </div>
-              {i < stats.length - 1 && (
-                <div className="w-px self-stretch bg-gradient-to-b from-transparent via-one-gold/20 to-transparent shrink-0" />
-              )}
-            </div>
+              <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
-      <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#050D1A] to-transparent z-10 pointer-events-none" />
     </section>
   )
 }
@@ -186,7 +338,7 @@ function TownDirectory() {
   }
 
   return (
-    <section className="section-padding bg-[#070F1C]">
+    <section className="section-padding bg-surface-mid" data-cursor-label="TOWNS DIRECTORY">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -195,7 +347,7 @@ function TownDirectory() {
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <h2 className="font-h2 text-one-white mb-4">Town Directory</h2>
+          <WordReveal text="Town Directory" className="font-h2 text-one-white mb-4 block" as="h2" />
           <p className="font-body text-one-muted max-w-xl">
             Every community we serve across the Goulburn Valley and beyond.
           </p>
@@ -247,8 +399,10 @@ function TownDirectory() {
               >
                 <Link
                   to={`/coverage?town=${encodeURIComponent(town.name)}`}
-                  className={`block glass-card p-5 hover:scale-[1.02] hover:border-one-gold/30 transition-all duration-300 group border-l-4 ${sizeColor(town.sizeCategory)}`}
+                  data-cursor-label="EXPLORE"
+                  className={`block glass-card p-5 hover:scale-[1.02] hover:border-one-gold/30 transition-all duration-300 group border-l-4 relative overflow-hidden ${sizeColor(town.sizeCategory)}`}
                 >
+                  <div aria-hidden className="explore-tile-scan" />
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="font-h4 text-one-white group-hover:text-one-gold transition-colors">
                       {town.name}
@@ -354,7 +508,7 @@ function NFPImpact() {
   ]
 
   return (
-    <section className="section-padding">
+    <section className="section-padding section-bleed-top bg-surface-lift" data-cursor-label="COMMUNITY IMPACT">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -364,9 +518,7 @@ function NFPImpact() {
           className="text-center mb-16"
         >
           <span className="inline-block font-label text-sage mb-4">IMPACT</span>
-          <h2 className="font-h2 text-one-white mb-4">
-            100+ Not-for-Profits Supported
-          </h2>
+          <WordReveal text="100+ Not-for-Profits Supported" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-muted max-w-2xl mx-auto">
             From emergency responders to arts festivals, ONE FM is the backbone of
             community communication across the Goulburn Valley.
@@ -375,14 +527,15 @@ function NFPImpact() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat, i) => (
+            <TiltCard key={cat.title} maxTilt={5} className="h-full">
             <motion.div
-              key={cat.title}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="glass-card p-6 hover:border-sage/40 transition-all duration-300 group"
+              className="glass-card p-6 hover:border-sage/40 transition-all duration-300 group h-full relative overflow-hidden"
             >
+              <div aria-hidden className="explore-tile-scan" />
               <div className="w-12 h-12 rounded-lg bg-sage/10 flex items-center justify-center mb-5 group-hover:bg-sage/20 transition-colors">
                 <cat.icon size={24} className="text-sage" />
               </div>
@@ -405,6 +558,7 @@ function NFPImpact() {
                 <span className="font-label text-sage">{cat.stat}</span>
               </div>
             </motion.div>
+            </TiltCard>
           ))}
         </div>
       </div>
@@ -460,7 +614,7 @@ function CulturalDiversity() {
   ]
 
   return (
-    <section className="section-padding bg-[#070F1C]">
+    <section className="section-padding section-bleed-top bg-surface-deep" data-cursor-label="CULTURAL DIVERSITY">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -469,10 +623,10 @@ function CulturalDiversity() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-block font-label text-one-gold mb-4">
+          <span className="inline-block font-label text-one-electric mb-4">
             MULTICULTURAL VALLEY
           </span>
-          <h2 className="font-h2 text-one-white mb-4">Cultural Diversity</h2>
+          <WordReveal text="Cultural Diversity" className="font-h2 text-one-white mb-4 block" as="h2" />
           <p className="font-body text-one-muted max-w-2xl mx-auto">
             The Goulburn Valley is home to rich multicultural communities that
             make our region unique. ONE FM proudly broadcasts programming in
@@ -482,14 +636,16 @@ function CulturalDiversity() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {communities.map((comm, i) => (
+            <TiltCard key={comm.name} maxTilt={6} className="h-full">
             <motion.div
-              key={comm.name}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="glass-card p-6 hover:border-one-gold/30 transition-all duration-300"
+              data-cursor-label={comm.name.toUpperCase()}
+              className="glass-card p-6 hover:border-one-gold/30 transition-all duration-300 h-full group relative overflow-hidden"
             >
+              <div aria-hidden className="explore-tile-scan" />
               <div className="flex items-center gap-3 mb-4">
                 <Globe size={22} className="text-one-gold" />
                 <h3 className="font-h4 text-one-white">{comm.name} Community</h3>
@@ -506,6 +662,7 @@ function CulturalDiversity() {
                 <span>{comm.towns.join(', ')}</span>
               </div>
             </motion.div>
+            </TiltCard>
           ))}
         </div>
       </div>
@@ -561,7 +718,7 @@ function EthnicPrograms() {
   ]
 
   return (
-    <section className="section-padding">
+    <section className="section-padding section-bleed-top bg-surface-peak" data-cursor-label="MULTICULTURAL RADIO">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -570,10 +727,10 @@ function EthnicPrograms() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-block font-label text-one-gold mb-4">
+          <span className="inline-block font-label text-one-electric mb-4">
             ON AIR
           </span>
-          <h2 className="font-h2 text-one-white mb-4">Ethnic & Multicultural Programming</h2>
+          <WordReveal text="Ethnic & Multicultural Programming" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-muted max-w-2xl mx-auto">
             ONE FM broadcasts in 5+ languages, serving the diverse communities of the Goulburn Valley.
           </p>
@@ -581,14 +738,15 @@ function EthnicPrograms() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {programs.map((prog, i) => (
+            <TiltCard key={`${prog.show}-${prog.presenter}`} maxTilt={5} className="h-full">
             <motion.div
-              key={`${prog.show}-${prog.presenter}`}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="glass-card p-6 hover:border-one-gold/30 transition-all duration-300 group"
+              className="glass-card p-6 hover:border-one-gold/30 transition-all duration-300 group h-full relative overflow-hidden"
             >
+              <div aria-hidden className="explore-tile-scan" />
               <div className="flex items-center gap-3 mb-4">
                 <Mic2 size={22} className="text-one-gold" />
                 <div>
@@ -610,6 +768,7 @@ function EthnicPrograms() {
                 </div>
               </div>
             </motion.div>
+            </TiltCard>
           ))}
         </div>
       </div>
@@ -623,49 +782,44 @@ function EventsCalendar() {
 
   const events = [
     {
-      date: '2026-05-11',
-      month: 'MAY',
-      day: '11',
-      title: 'Shepparton Mother\'s Day Classic Fun Run',
-      location: 'Shepparton',
+      date: '2026-06-28',
+      month: 'JUN',
+      day: '28',
+      title: 'GVL Finals Series — Round 1',
+      location: 'Shepparton · GVL Grounds',
       description:
-        'Annual fun run supporting breast cancer research, with community participation across the Goulburn Valley.',
+        'Goulburn Valley League football and netball finals kick off — ONE FM broadcasts live from the ground all day.',
+      upcoming: true,
     },
     {
-      date: '2026-03-14',
-      month: 'MAR',
-      day: '14',
-      title: 'Shepparton Italian Festa 2026',
-      location: 'Shepparton',
+      date: '2026-07-12',
+      month: 'JUL',
+      day: '12',
+      title: 'Shepparton Community Multicultural Festival',
+      location: 'Shepparton CBD',
       description:
-        'Annual celebration of Italian culture with food, music, and community performances.',
+        'Celebrating the diversity of the Goulburn Valley with food, live music, dance and cultural performances from 10+ communities.',
+      upcoming: true,
     },
     {
-      date: '2026-03-10',
-      month: 'MAR',
-      day: '10',
-      title: 'Shepparton Albanian Harvest Festival 2026',
-      location: 'Shepparton',
+      date: '2026-08-15',
+      month: 'AUG',
+      day: '15',
+      title: 'GVL Grand Final Day',
+      location: 'Shepparton · GVL Grounds',
       description:
-        'Celebrating Albanian culture and the agricultural harvest with traditional food, dance, and music.',
+        'The biggest day on the Goulburn Valley sporting calendar — ONE FM provides full live commentary from first bounce to the siren.',
+      upcoming: true,
     },
     {
-      date: '2026-04-25',
-      month: 'APR',
-      day: '25',
-      title: 'ANZAC Day Commemorations',
-      location: 'Shepparton Cenotaph & GVL Grounds',
+      date: '2026-09-20',
+      month: 'SEP',
+      day: '20',
+      title: 'Deniliquin Ute Muster — ONE FM Broadcast',
+      location: 'Deniliquin, NSW',
       description:
-        'Dawn service and commemorative events across the Goulburn Valley, including special GVL matches.',
-    },
-    {
-      date: '2026-05',
-      month: 'MAY',
-      day: 'TBC',
-      title: 'Salvation Army Under the Same Stars VIP Sleepout',
-      location: 'Shepparton',
-      description:
-        'Annual sleepout event raising awareness and funds for homelessness in the Goulburn Valley.',
+        'ONE FM heads south for the annual Deni Ute Muster — remote live crosses, community interviews, and non-stop country music.',
+      upcoming: true,
     },
     {
       date: '2026-10',
@@ -674,12 +828,23 @@ function EventsCalendar() {
       title: 'Fire Relief Festival Community Concert & Fun Day',
       location: 'Cobram',
       description:
-        'Community concert and fun day supporting fire recovery efforts, featuring local performers.',
+        'Community concert and fun day supporting fire recovery efforts across the region, featuring local performers and ONE FM live.',
+      upcoming: true,
+    },
+    {
+      date: '2026-05-11',
+      month: 'MAY',
+      day: '11',
+      title: "Shepparton Mother's Day Classic Fun Run",
+      location: 'Shepparton',
+      description:
+        'Annual fun run supporting breast cancer research, with community participation across the Goulburn Valley.',
+      upcoming: false,
     },
   ]
 
   return (
-    <section className="section-padding bg-[#070F1C]">
+    <section className="section-padding section-bleed-top bg-surface-warm" data-cursor-label="EVENTS CALENDAR">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
           <motion.div
@@ -688,10 +853,10 @@ function EventsCalendar() {
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-block font-label text-one-gold mb-4">
+            <span className="inline-block font-label text-one-electric mb-4">
               WHAT'S ON
             </span>
-            <h2 className="font-h2 text-one-white">Events Calendar</h2>
+            <WordReveal text="Events Calendar" className="font-h2 text-one-white block" as="h2" />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -702,6 +867,7 @@ function EventsCalendar() {
           >
             <button
               onClick={() => setView('month')}
+              data-cursor-label="MONTH"
               className={`px-4 py-2 rounded-md font-label text-xs transition-all ${
                 view === 'month'
                   ? 'bg-one-gold text-one-navy'
@@ -712,6 +878,7 @@ function EventsCalendar() {
             </button>
             <button
               onClick={() => setView('list')}
+              data-cursor-label="LIST"
               className={`px-4 py-2 rounded-md font-label text-xs transition-all ${
                 view === 'list'
                   ? 'bg-one-gold text-one-navy'
@@ -729,31 +896,55 @@ function EventsCalendar() {
               key={event.date + event.title}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
+              whileHover={{ x: 3 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="glass-card p-5 md:p-6 flex flex-col md:flex-row gap-5 md:gap-8 hover:border-one-gold/30 transition-all duration-300 group"
+              data-cursor-label={event.upcoming ? 'EVENT' : undefined}
+              className={`glass-card p-5 md:p-6 flex flex-col md:flex-row gap-5 md:gap-8 transition-all duration-300 group relative overflow-hidden cursor-default ${
+                event.upcoming
+                  ? 'hover:border-one-gold/30'
+                  : 'opacity-50 hover:opacity-70'
+              }`}
             >
-              <div className="flex items-center md:flex-col md:items-center md:justify-center gap-3 md:gap-1 md:w-20 shrink-0">
-                <span className="font-label text-one-gold">{event.month}</span>
-                <span className="font-stat text-one-white text-3xl">
+              {/* Left accent bar for upcoming events */}
+              {event.upcoming && (
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-one-gold/60 rounded-l" />
+              )}
+              <div className="flex items-center md:flex-col md:items-center md:justify-center gap-3 md:gap-1 md:w-20 shrink-0 pl-2 md:pl-0">
+                <span className={`font-label ${event.upcoming ? 'text-one-gold' : 'text-one-muted'}`}>{event.month}</span>
+                <span className={`font-stat text-3xl ${event.upcoming ? 'text-gold-gradient' : 'text-one-muted'}`}>
                   {event.day}
                 </span>
               </div>
               <div className="flex-1">
-                <h3 className="font-h4 text-one-white mb-1 group-hover:text-one-gold transition-colors">
-                  {event.title}
-                </h3>
+                <div className="flex items-start gap-2 mb-1">
+                  <h3 className="font-h4 text-one-white group-hover:text-one-gold transition-colors flex-1">
+                    {event.title}
+                  </h3>
+                  {!event.upcoming && (
+                    <span className="font-label text-[9px] px-2 py-0.5 rounded-full border border-one-muted/40 text-one-muted shrink-0">
+                      PAST
+                    </span>
+                  )}
+                  {event.upcoming && (
+                    <span className="font-label text-[9px] px-2 py-0.5 rounded-full border border-one-gold/40 text-one-gold bg-one-gold/10 shrink-0">
+                      UPCOMING
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center gap-2 font-body-small text-one-muted mb-3">
                   <MapPin size={14} />
                   <span>{event.location}</span>
                 </div>
-                <p className="font-body-small text-one-white mb-4">
+                <p className="font-body-small text-one-muted mb-4">
                   {event.description}
                 </p>
-                <button className="inline-flex items-center gap-2 font-label text-one-gold hover:text-one-white transition-colors">
-                  More Info
-                  <ArrowRight size={14} />
-                </button>
+                {event.upcoming && (
+                  <button data-cursor-label="INFO" className="inline-flex items-center gap-2 font-label text-one-gold hover:text-one-white transition-colors">
+                    More Info
+                    <ArrowRight size={14} />
+                  </button>
+                )}
               </div>
             </motion.div>
           ))}
@@ -766,7 +957,7 @@ function EventsCalendar() {
 /* ─── Section 7: Get Involved CTA ─── */
 function GetInvolvedCTA() {
   return (
-    <section className="section-padding bg-[#070F1C]">
+    <section className="section-padding section-bleed-top bg-surface-glow" data-cursor-label="GET INVOLVED">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -774,24 +965,30 @@ function GetInvolvedCTA() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="font-h2 text-one-white mb-6">Be Part of the Story</h2>
+          <WordReveal text="Be Part of the Story" className="font-h2 text-one-white mb-6 block" as="h2" />
           <p className="font-body text-one-muted max-w-xl mx-auto mb-10">
             Whether you want to volunteer behind the mic, sponsor a local program,
             or help keep community radio alive — there is a place for you at ONE FM.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/contact" className="btn-primary w-full sm:w-auto">
-              <HandHeart size={18} />
-              Volunteer
-            </Link>
-            <Link to="/sponsorship" className="btn-secondary w-full sm:w-auto">
-              <Heart size={18} />
-              Sponsor
-            </Link>
-            <Link to="/support" className="btn-secondary w-full sm:w-auto">
-              <ArrowRight size={18} />
-              Donate
-            </Link>
+            <MagneticButton strength={10}>
+              <Link to="/contact" data-cursor-label="VOLUNTEER" className="btn-primary w-full sm:w-auto">
+                <HandHeart size={18} />
+                Volunteer
+              </Link>
+            </MagneticButton>
+            <MagneticButton strength={8}>
+              <Link to="/sponsorship" data-cursor-label="SPONSOR" className="btn-secondary w-full sm:w-auto">
+                <Heart size={18} />
+                Sponsor
+              </Link>
+            </MagneticButton>
+            <MagneticButton strength={8}>
+              <Link to="/support" data-cursor-label="DONATE" className="btn-secondary w-full sm:w-auto">
+                <ArrowRight size={18} />
+                Donate
+              </Link>
+            </MagneticButton>
           </div>
         </motion.div>
       </div>
@@ -805,11 +1002,14 @@ export default function Community() {
     <Layout>
       <SEO title="Community Directory" description="25 towns, 100+ NFPs, multicultural programming in 5+ languages, and community events across the Goulburn Valley. ONE FM 98.5's community hub." />
       <CommunityHero />
+      <CommunityPhotoMosaic />
+      <SignalDivider className="bg-[#050D1A]" />
       <TownDirectory />
       <NFPImpact />
       <CulturalDiversity />
       <EthnicPrograms />
       <EventsCalendar />
+      <LatestInterviews />
       <GetInvolvedCTA />
     </Layout>
   )

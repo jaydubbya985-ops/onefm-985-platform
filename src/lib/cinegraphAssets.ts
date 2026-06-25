@@ -9,7 +9,7 @@
  * When a file is ready: set `videoActive: true` on that slot (or we auto-fallback to poster).
  */
 
-import { STATION_PHOTOS, PHOTO_DEFAULTS } from '@/lib/stationPhotos'
+import { STATION_PHOTOS, PHOTO_DEFAULTS, HOST_PHOTOS } from '@/lib/stationPhotos'
 
 const CG = '/assets/cinegraphs'
 
@@ -36,8 +36,8 @@ export const CINEGRAPHS = {
   },
   listenStudio: {
     video: `${CG}/listen-studio.mp4`,
-    poster: STATION_PHOTOS.commentaryBoxAction,
-    fallback: STATION_PHOTOS.gvlCrowdStands,
+    poster: HOST_PHOTOS.studioControlRoom,
+    fallback: STATION_PHOTOS.commentaryBoxAction,
     videoActive: false,
     brief: 'Commentary box or studio mic — soft LED blink, shallow depth. No faces if unclear rights.',
   },
@@ -50,8 +50,8 @@ export const CINEGRAPHS = {
   },
   gvlGameDay: {
     video: `${CG}/gvl-game-day.mp4`,
-    poster: STATION_PHOTOS.gvlNightPanorama,
-    fallback: STATION_PHOTOS.gvlCrowdStands,
+    poster: STATION_PHOTOS.commentaryBoxWide,
+    fallback: STATION_PHOTOS.gvlNightPanorama,
     videoActive: false,
     brief: 'GVL night panorama — stadium lights flicker, crowd subtle sway.',
   },

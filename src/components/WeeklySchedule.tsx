@@ -39,10 +39,15 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 export function WeeklySchedule() {
-  const today = new Date().getDay()
+  const now = new Date()
+  const today = now.getDay()
+  const currentHour = now.getHours()
   const defaultDay = DAY_TABS.find((d) => d.index === today)?.index ?? 1
   const [activeDay, setActiveDay] = useState(defaultDay)
   const slots = slotsForDay(activeDay)
+
+  const isLiveSlot = (slot: ScheduleSlot) =>
+    activeDay === today && slot.startHour <= currentHour && currentHour < slot.endHour
 
   return (
     <div>
@@ -52,6 +57,7 @@ export function WeeklySchedule() {
             key={day.index}
             type="button"
             onClick={() => setActiveDay(day.index)}
+            data-cursor-label={day.label.toUpperCase()}
             className={`font-label text-xs px-4 py-2 rounded-full border transition-all ${
               activeDay === day.index
                 ? 'bg-one-gold text-one-navy border-one-gold'
@@ -78,30 +84,56 @@ export function WeeklySchedule() {
           {slots.length === 0 ? (
             <li className="font-body-small text-muted py-8 text-center">No scheduled programs this day.</li>
           ) : (
-            slots.map((slot, i) => (
-              <li
-                key={`${slot.startHour}-${slot.name}-${i}`}
-                className="glass-card px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
-              >
-                <span className="font-label text-muted text-xs flex items-center gap-1.5 sm:w-28 shrink-0">
-                  <Clock size={12} />
-                  {formatSlotTime(slot)}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="font-body-small text-one-white font-medium truncate">{slot.name}</p>
-                  <p className="font-body-small text-muted text-xs truncate">with {slot.host}</p>
-                </div>
-                <span
-                  className="font-label text-[10px] px-2 py-0.5 rounded-full shrink-0 self-start sm:self-center"
-                  style={{
-                    color: CATEGORY_COLORS[slot.category] ?? '#2EC4B6',
-                    backgroundColor: `${CATEGORY_COLORS[slot.category] ?? '#2EC4B6'}18`,
-                  }}
+            slots.map((slot, i) => {
+              const live = isLiveSlot(slot)
+              const accentColor = CATEGORY_COLORS[slot.category] ?? '#2EC4B6'
+              return (
+                <motion.li
+                  key={`${slot.startHour}-${slot.name}-${i}`}
+                  whileHover={{ x: 4 }}
+                  transition={{ duration: 0.15 }}
+                  className="glass-card pl-0 pr-4 py-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 overflow-hidden relative group"
+                  style={live ? {
+                    boxShadow: `inset 0 0 0 1px ${accentColor}35`,
+                    background: `linear-gradient(to right, ${accentColor}14 0%, ${accentColor}04 50%, transparent 100%)`,
+                  } : {}}
                 >
-                  {slot.category}
-                </span>
-              </li>
-            ))
+                  <div aria-hidden className="explore-tile-scan" />
+                  <div
+                    className="absolute left-0 top-0 bottom-0 shrink-0 rounded-l"
+                    style={{ backgroundColor: accentColor, width: live ? '4px' : '3px' }}
+                  />
+                  <span className="font-label text-muted text-xs flex items-center gap-1.5 sm:w-28 shrink-0 pl-4">
+                    <Clock size={12} />
+                    {formatSlotTime(slot)}
+                  </span>
+                  <div className="flex-1 min-w-0 pl-4 sm:pl-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-body-small text-one-white font-medium truncate">{slot.name}</p>
+                      {live && (
+                        <span className="flex items-center gap-1 font-label text-[9px] text-one-red shrink-0">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
+                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-one-red" />
+                          </span>
+                          LIVE
+                        </span>
+                      )}
+                    </div>
+                    <p className="font-body-small text-muted text-xs truncate">with {slot.host}</p>
+                  </div>
+                  <span
+                    className="font-label text-[10px] px-2 py-0.5 rounded-full shrink-0 self-start sm:self-center"
+                    style={{
+                      color: accentColor,
+                      backgroundColor: `${accentColor}18`,
+                    }}
+                  >
+                    {slot.category}
+                  </span>
+                </motion.li>
+              )
+            })
           )}
         </motion.ul>
       </AnimatePresence>
@@ -112,12 +144,13 @@ export function WeeklySchedule() {
           href="https://fm985.com.au/guide/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-one-gold hover:underline"
+          data-cursor-label="OPEN"
+          className="text-one-gold link-hover"
         >
           fm985.com.au/guide/
         </a>
         {' · '}
-        <Link to="/broadcast" className="text-one-gold hover:underline inline-flex items-center gap-1">
+        <Link to="/broadcast" data-cursor-label="EXPLORE" className="text-one-gold link-hover inline-flex items-center gap-1">
           Open broadcast explorer <ArrowRight size={12} />
         </Link>
       </p>

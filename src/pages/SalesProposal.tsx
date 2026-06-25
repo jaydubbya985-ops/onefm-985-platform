@@ -6,7 +6,9 @@ import { jsPDF } from 'jspdf'
 import { Toaster, toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { SEO } from '@/components/SEO'
-import { proposalTemplates, generalTiers } from '@/data/pricing'
+import { WordReveal } from '@/components/WordReveal'
+import { TiltCard } from '@/components/TiltCard'
+import { proposalTemplates, generalTiers, stationStats } from '@/data/pricing'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -140,8 +142,8 @@ const DEFAULT_SECTIONS: ProposalSection[] = [
 ]
 
 const DATA_TOKENS = [
-  { token: '[CURRENT_LISTENERS]', label: 'Weekly Listeners (est.)', value: '39,375' },
-  { token: '[WEEKLY_REACH]', label: 'Weekly Reach', value: '~39K' },
+  { token: '[CURRENT_LISTENERS]', label: 'Weekly Listeners (est.)', value: stationStats.weeklyListeners.toLocaleString() },
+  { token: '[WEEKLY_REACH]', label: 'Weekly Reach', value: `~${Math.round(stationStats.weeklyListeners / 1000)}K` },
   { token: '[AUDIENCE_AGE_25_34]', label: 'Audience 25-34', value: '38%' },
   { token: '[PACKAGE_PRICE]', label: 'Package Price', value: '$0' },
   { token: '[CUSTOMER_NAME]', label: 'Customer Name', value: '' },
@@ -332,7 +334,7 @@ export default function SalesProposal() {
   }
 
   const handleGenerateShareLink = () => {
-    const url = `https://onefm.station/proposal/share/${Math.random().toString(36).substring(2, 10)}`
+    const url = `https://fm985.com.au/proposal/share/${Date.now().toString(36)}`
     setShareUrl(url)
   }
 
@@ -379,8 +381,9 @@ export default function SalesProposal() {
       <Toaster position="bottom-right" toastOptions={{ style: { background: 'rgba(26,26,31,0.95)', border: '1px solid #2A2A30', color: '#F4F1EA' } }} />
 
       {/* ========== SECTION 1: HERO ========== */}
-      <section id="proposal-hero" className="relative min-h-[45vh] flex items-center justify-center overflow-hidden">
+      <section id="proposal-hero" className="relative min-h-[45vh] flex items-center justify-center overflow-hidden" data-cursor-label="PROPOSAL BUILDER">
         <FloatingDocs />
+        <div aria-hidden className="grain-overlay" />
         <div className="relative z-10 text-center max-w-[800px] mx-auto px-4 py-24">
           <motion.p
             initial={{ opacity: 0 }}
@@ -451,6 +454,7 @@ export default function SalesProposal() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.5, ease: easeOutExpo }}
             onClick={() => scrollToId('templates-section')}
+            data-cursor-label="START"
             className="btn-primary"
           >
             Start Building <ChevronRight size={16} />
@@ -459,7 +463,7 @@ export default function SalesProposal() {
       </section>
 
       {/* ========== SECTION 2: TEMPLATES ========== */}
-      <section id="templates-section" className="bg-one-navy section-padding">
+      <section id="templates-section" className="bg-surface-mid section-padding" data-cursor-label="TEMPLATES">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -467,7 +471,7 @@ export default function SalesProposal() {
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6, ease: easeOutExpo }}
           >
-            <h2 className="font-h2 text-one-white mb-2">CHOOSE A TEMPLATE</h2>
+            <WordReveal text="CHOOSE A TEMPLATE" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mb-8">Start with a pre-built structure, then make it yours</p>
           </motion.div>
 
@@ -478,7 +482,7 @@ export default function SalesProposal() {
                 placeholder="Search templates..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20"
+                className="pl-10 bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20"
               />
             </div>
             <Select value={filterCategory} onValueChange={setFilterCategory}>
@@ -495,18 +499,20 @@ export default function SalesProposal() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTemplates.map((template, i) => (
+              <TiltCard key={template.id} maxTilt={5} className="h-full">
               <motion.div
-                key={template.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: i * 0.1, ease: easeOutExpo }}
+                data-cursor-label="SELECT"
                 className={cn(
-                  'glass-card p-6 relative group cursor-pointer transition-all duration-300',
+                  'glass-card p-6 relative overflow-hidden group cursor-pointer transition-all duration-300 h-full',
                   selectedTemplate?.id === template.id && 'border-one-gold/60'
                 )}
                 onClick={() => handleSelectTemplate(template)}
               >
+                <div aria-hidden className="explore-tile-scan" />
                 {template.badge && (
                   <Badge className="absolute top-4 right-4 bg-one-gold/20 text-one-gold border-one-gold/30 font-label text-[10px]">
                     {template.badge}
@@ -547,13 +553,14 @@ export default function SalesProposal() {
                   Use Template
                 </Button>
               </motion.div>
+              </TiltCard>
             ))}
           </div>
         </div>
       </section>
 
       {/* ========== SECTION 3: CUSTOMER FORM ========== */}
-      <section id="customer-section" className="bg-one-navy section-padding">
+      <section id="customer-section" className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="CLIENT DETAILS">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -561,7 +568,7 @@ export default function SalesProposal() {
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6, ease: easeOutExpo }}
           >
-            <h2 className="font-h2 text-one-white mb-2">WHO IS THIS FOR?</h2>
+            <WordReveal text="WHO IS THIS FOR?" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.06} />
             <p className="font-body-small text-muted mb-4">Tell us about your customer and we&apos;ll tailor the proposal</p>
           </motion.div>
 
@@ -570,7 +577,7 @@ export default function SalesProposal() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="glass-card p-4 mb-8 border-l-2 border-l-amber"
+            className="glass-card p-4 mb-8 border-l-2 border-l-one-gold"
           >
             <div className="flex items-center gap-2 text-one-gold font-label text-xs">
               <Sparkles size={14} />
@@ -614,7 +621,7 @@ export default function SalesProposal() {
                   value={customer.companyName}
                   onChange={(e) => setCustomer((c) => ({ ...c, companyName: e.target.value }))}
                   placeholder="Enter company name"
-                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20"
+                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20"
                 />
               </FormField>
 
@@ -649,7 +656,7 @@ export default function SalesProposal() {
                   value={customer.contactName}
                   onChange={(e) => setCustomer((c) => ({ ...c, contactName: e.target.value }))}
                   placeholder="Full name"
-                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20"
+                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20"
                 />
               </FormField>
 
@@ -658,7 +665,7 @@ export default function SalesProposal() {
                   value={customer.contactTitle}
                   onChange={(e) => setCustomer((c) => ({ ...c, contactTitle: e.target.value }))}
                   placeholder="Job title"
-                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20"
+                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20"
                 />
               </FormField>
 
@@ -668,7 +675,7 @@ export default function SalesProposal() {
                   value={customer.contactEmail}
                   onChange={(e) => setCustomer((c) => ({ ...c, contactEmail: e.target.value }))}
                   placeholder="email@company.com"
-                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20"
+                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20"
                 />
               </FormField>
 
@@ -677,7 +684,7 @@ export default function SalesProposal() {
                   value={customer.contactPhone}
                   onChange={(e) => setCustomer((c) => ({ ...c, contactPhone: e.target.value }))}
                   placeholder="+1 (555) 000-0000"
-                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20"
+                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20"
                 />
               </FormField>
             </div>
@@ -751,7 +758,7 @@ export default function SalesProposal() {
                   onChange={(e) => setCustomer((c) => ({ ...c, notes: e.target.value }))}
                   placeholder="Any specific requirements or context..."
                   rows={4}
-                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20 resize-none"
+                  className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20 resize-none"
                 />
               </FormField>
             </div>
@@ -760,6 +767,7 @@ export default function SalesProposal() {
           <div className="flex items-center justify-between mt-10">
             <button
               onClick={() => { setCurrentStep(1); scrollToId('templates-section') }}
+              data-cursor-label="BACK"
               className="font-label text-xs text-muted hover:text-one-white transition-colors flex items-center gap-1"
             >
               <ArrowLeft size={14} /> Back to Templates
@@ -788,7 +796,7 @@ export default function SalesProposal() {
       </section>
 
       {/* ========== SECTION 4: PACKAGE BUILDER ========== */}
-      <section id="builder-section" className="bg-one-navy section-padding">
+      <section id="builder-section" className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="BUILD PACKAGE">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -796,7 +804,7 @@ export default function SalesProposal() {
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6, ease: easeOutExpo }}
           >
-            <h2 className="font-h2 text-one-white mb-2">BUILD THE PACKAGE</h2>
+            <WordReveal text="BUILD THE PACKAGE" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mb-8">Customize what goes into this proposal</p>
           </motion.div>
 
@@ -864,6 +872,7 @@ export default function SalesProposal() {
                             <button
                               className="text-muted hover:text-one-gold transition-colors"
                               onClick={(e) => { e.stopPropagation(); setActiveSectionId(section.id); scrollToId('editor-section') }}
+                              data-cursor-label="EDIT"
                               title="Edit content"
                             >
                               <Edit3 size={14} />
@@ -917,7 +926,7 @@ export default function SalesProposal() {
 
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-one-border">
                   <span className="font-label text-muted text-xs">Estimated Total</span>
-                  <span className="font-stat text-one-gold text-2xl">{formatCurrency(totalPrice)}</span>
+                  <span className="font-stat text-gold-gradient text-2xl">{formatCurrency(totalPrice)}</span>
                 </div>
 
                 {/* AI Suggestion */}
@@ -936,11 +945,12 @@ export default function SalesProposal() {
                     </div>
                     <button
                       className="text-muted hover:text-one-white"
+                      data-cursor-label="ADD"
                       onClick={() => setSections((prev) => prev.map((s) => s.id === 'roi' ? { ...s, included: true } : s))}
                     >
                       <Plus size={14} />
                     </button>
-                    <button className="text-muted hover:text-one-white" onClick={() => {}}>
+                    <button className="text-muted hover:text-one-white" data-cursor-label="DISMISS" onClick={() => {}}>
                       <X size={14} />
                     </button>
                   </motion.div>
@@ -952,6 +962,7 @@ export default function SalesProposal() {
           <div className="flex items-center justify-between mt-10 max-w-[1200px]">
             <button
               onClick={() => { setCurrentStep(2); scrollToId('customer-section') }}
+              data-cursor-label="BACK"
               className="font-label text-xs text-muted hover:text-one-white transition-colors flex items-center gap-1"
             >
               <ArrowLeft size={14} /> Back to Customer
@@ -960,6 +971,7 @@ export default function SalesProposal() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => { setCurrentStep(4); scrollToId('preview-section') }}
+              data-cursor-label="PREVIEW"
               className="btn-primary"
             >
               Next: Preview & Export <ChevronRight size={16} />
@@ -970,7 +982,7 @@ export default function SalesProposal() {
 
       {/* ========== SECTION 5: CONTENT EDITOR ========== */}
       {activeSectionId && (
-        <section id="editor-section" className="bg-one-navy py-20 md:py-24">
+        <section id="editor-section" className="bg-surface-peak section-bleed-top py-20 md:py-24" data-cursor-label="EDIT CONTENT">
           <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -978,7 +990,7 @@ export default function SalesProposal() {
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6, ease: easeOutExpo }}
             >
-              <h2 className="font-h2 text-one-white mb-2">REFINE THE CONTENT</h2>
+              <WordReveal text="REFINE THE CONTENT" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
               <p className="font-body-small text-muted mb-8">Edit, generate, or polish every section</p>
             </motion.div>
 
@@ -990,6 +1002,7 @@ export default function SalesProposal() {
                     <button
                       key={section.id}
                       onClick={() => setActiveSectionId(section.id)}
+                      data-cursor-label={section.name.toUpperCase().split(' ')[0]}
                       className={cn(
                         'px-4 py-2 rounded-full font-label text-xs transition-all shrink-0',
                         activeSectionId === section.id
@@ -1027,18 +1040,18 @@ export default function SalesProposal() {
                       transition={{ duration: 0.3 }}
                     >
                       <div className="flex items-center gap-2 mb-3 bg-one-navy rounded-lg p-2">
-                        <button className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors font-bold text-sm">B</button>
-                        <button className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors italic text-sm">I</button>
-                        <button className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors text-sm">H</button>
-                        <button className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors text-sm">•</button>
-                        <button className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors text-sm">🔗</button>
+                        <button data-cursor-label="BOLD" className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors font-bold text-sm">B</button>
+                        <button data-cursor-label="ITALIC" className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors italic text-sm">I</button>
+                        <button data-cursor-label="HEADING" className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors text-sm">H</button>
+                        <button data-cursor-label="LIST" className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors text-sm">•</button>
+                        <button data-cursor-label="LINK" className="p-1.5 rounded hover:bg-one-gold/20 text-one-white hover:text-one-gold transition-colors text-sm">🔗</button>
                       </div>
                       <Textarea
                         value={sections.find((s) => s.id === activeSectionId)?.customText || ''}
                         onChange={(e) => setSections((prev) => prev.map((s) => s.id === activeSectionId ? { ...s, customText: e.target.value, contentMode: 'custom' } : s))}
                         placeholder={`Write content for ${sections.find((s) => s.id === activeSectionId)?.name}...`}
                         rows={12}
-                        className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20 resize-none font-body"
+                        className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20 resize-none font-body"
                       />
                       <div className="flex justify-between mt-2">
                         <span className="font-label text-[10px] text-muted">
@@ -1071,7 +1084,7 @@ export default function SalesProposal() {
                           onChange={(e) => setAiPrompt(e.target.value)}
                           placeholder="Describe what this section should say..."
                           rows={3}
-                          className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-amber/20 resize-none"
+                          className="bg-one-navy border-one-border text-one-white placeholder:text-muted focus:border-one-gold focus:ring-one-gold/20 resize-none"
                         />
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1148,8 +1161,10 @@ export default function SalesProposal() {
                           <button
                             key={token.token}
                             onClick={() => insertToken(token.token)}
-                            className="glass-card p-3 text-left hover:border-one-gold/40 transition-colors group"
+                            data-cursor-label="INSERT"
+                            className="glass-card p-3 text-left hover:border-one-gold/40 transition-colors group relative overflow-hidden"
                           >
+                            <div aria-hidden className="explore-tile-scan" />
                             <span className="font-label text-[10px] text-one-gold group-hover:text-one-gold transition-colors">{token.token}</span>
                             <p className="font-body-small text-one-white text-xs mt-1">{token.label}</p>
                             <p className="font-mono text-[10px] text-muted mt-0.5">
@@ -1170,7 +1185,7 @@ export default function SalesProposal() {
       )}
 
       {/* ========== SECTION 6: PROPOSAL PREVIEW ========== */}
-      <section id="preview-section" className="bg-one-navy section-padding">
+      <section id="preview-section" className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="PREVIEW">
         <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -1178,7 +1193,7 @@ export default function SalesProposal() {
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6, ease: easeOutExpo }}
           >
-            <h2 className="font-h2 text-one-white mb-2">PREVIEW YOUR PROPOSAL</h2>
+            <WordReveal text="PREVIEW YOUR PROPOSAL" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mb-8">See exactly what your customer will receive</p>
           </motion.div>
 
@@ -1225,14 +1240,14 @@ export default function SalesProposal() {
 
           {/* Zoom controls */}
           <div className="flex items-center gap-2 mb-4 justify-end">
-            <button onClick={() => setPreviewZoom((z) => Math.max(0.5, z - 0.25))} className="p-1.5 rounded hover:bg-ivory/10 text-muted hover:text-one-white transition-colors">
+            <button onClick={() => setPreviewZoom((z) => Math.max(0.5, z - 0.25))} data-cursor-label="ZOOM OUT" className="p-1.5 rounded hover:bg-ivory/10 text-muted hover:text-one-white transition-colors">
               <ZoomOut size={14} />
             </button>
             <span className="font-label text-[10px] text-muted w-12 text-center">{Math.round(previewZoom * 100)}%</span>
-            <button onClick={() => setPreviewZoom((z) => Math.min(1.5, z + 0.25))} className="p-1.5 rounded hover:bg-ivory/10 text-muted hover:text-one-white transition-colors">
+            <button onClick={() => setPreviewZoom((z) => Math.min(1.5, z + 0.25))} data-cursor-label="ZOOM IN" className="p-1.5 rounded hover:bg-ivory/10 text-muted hover:text-one-white transition-colors">
               <ZoomIn size={14} />
             </button>
-            <button onClick={() => setPreviewZoom(1)} className="p-1.5 rounded hover:bg-ivory/10 text-muted hover:text-one-white transition-colors">
+            <button onClick={() => setPreviewZoom(1)} data-cursor-label="FIT" className="p-1.5 rounded hover:bg-ivory/10 text-muted hover:text-one-white transition-colors">
               <Maximize2 size={14} />
             </button>
           </div>
@@ -1288,7 +1303,7 @@ export default function SalesProposal() {
                 {includedSections.map((section, idx) => (
                   <div key={section.id} className="mb-8 pb-6 border-b border-border-light/50">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="font-stat text-one-gold text-2xl">{String(idx + 1).padStart(2, '0')}</span>
+                      <span className="font-stat text-gold-gradient text-2xl">{String(idx + 1).padStart(2, '0')}</span>
                       <h3 className="font-h3 text-one-navy">{section.name}</h3>
                     </div>
                     <div className="font-body text-one-navy/80 leading-relaxed whitespace-pre-wrap">
@@ -1306,14 +1321,14 @@ export default function SalesProposal() {
                   </div>
                   <div className="flex items-center justify-between py-4">
                     <span className="font-h4 text-one-navy">Total Investment</span>
-                    <span className="font-stat text-one-gold text-3xl">{formatCurrency(totalPrice)}</span>
+                    <span className="font-stat text-gold-gradient text-3xl">{formatCurrency(totalPrice)}</span>
                   </div>
                 </div>
 
                 {/* Footer */}
                 <div className="mt-12 pt-6 border-t border-border-light/30 text-center">
                   <p className="font-label text-[10px] text-muted">
-                    ONE FM • 100 Broadcast Plaza • Regional CBD • partnerships@onefm.station
+                    ONE FM 98.5 • 47 Parkside Drive, Shepparton VIC 3630 • admin@fm985.com.au
                   </p>
                 </div>
               </div>
@@ -1323,7 +1338,7 @@ export default function SalesProposal() {
       </section>
 
       {/* ========== SECTION 7: EXPORT & SHARE ========== */}
-      <section id="export-section" className="bg-one-navy py-20 md:py-24">
+      <section id="export-section" className="bg-surface-glow section-bleed-top py-20 md:py-24" data-cursor-label="EXPORT">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 text-center">
           {!successState ? (
             <>
@@ -1333,22 +1348,26 @@ export default function SalesProposal() {
                 viewport={{ once: true, margin: '-100px' }}
                 transition={{ duration: 0.6, ease: easeOutExpo }}
               >
-                <h2 className="font-h2 text-one-white mb-3">EXPORT & SHARE</h2>
+                <WordReveal text="EXPORT & SHARE" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.06} />
                 <p className="font-body text-one-white mb-10">Your proposal is ready. Choose how to deliver it.</p>
               </motion.div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <TiltCard maxTilt={5} className="h-full">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0, ease: easeOutExpo }}
+                  className="h-full"
                 >
                   <button
                     onClick={handleExportPDF}
                     disabled={pdfGenerating}
-                    className="glass-card p-6 w-full h-full flex flex-col items-center gap-3 hover:border-one-gold/40 transition-all group"
+                    data-cursor-label={pdfGenerating ? 'GENERATING' : 'PDF'}
+                    className="glass-card p-6 w-full h-full flex flex-col items-center gap-3 hover:border-one-gold/40 transition-all group relative overflow-hidden"
                   >
+                    <div aria-hidden className="explore-tile-scan" />
                     <div className="w-12 h-12 rounded-full bg-one-gold/20 flex items-center justify-center group-hover:bg-one-gold/30 transition-colors">
                       <FileDown size={24} className="text-one-gold" />
                     </div>
@@ -1356,17 +1375,22 @@ export default function SalesProposal() {
                     <span className="font-body-small text-muted text-xs">Export as printable document</span>
                   </button>
                 </motion.div>
+                </TiltCard>
 
+                <TiltCard maxTilt={5} className="h-full">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1, ease: easeOutExpo }}
+                  className="h-full"
                 >
                   <button
                     onClick={() => setEmailModalOpen(true)}
-                    className="glass-card p-6 w-full h-full flex flex-col items-center gap-3 hover:border-one-gold/40 transition-all group"
+                    data-cursor-label="EMAIL"
+                    className="glass-card p-6 w-full h-full flex flex-col items-center gap-3 hover:border-one-gold/40 transition-all group relative overflow-hidden"
                   >
+                    <div aria-hidden className="explore-tile-scan" />
                     <div className="w-12 h-12 rounded-full bg-ivory/10 flex items-center justify-center group-hover:bg-ivory/20 transition-colors">
                       <Mail size={24} className="text-one-white" />
                     </div>
@@ -1374,17 +1398,22 @@ export default function SalesProposal() {
                     <span className="font-body-small text-muted text-xs">Send directly to {customer.contactEmail || 'customer'}</span>
                   </button>
                 </motion.div>
+                </TiltCard>
 
+                <TiltCard maxTilt={5} className="h-full">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.2, ease: easeOutExpo }}
+                  className="h-full"
                 >
                   <button
                     onClick={() => { setShareModalOpen(true); handleGenerateShareLink() }}
-                    className="glass-card p-6 w-full h-full flex flex-col items-center gap-3 hover:border-one-gold/40 transition-all group"
+                    data-cursor-label="SHARE"
+                    className="glass-card p-6 w-full h-full flex flex-col items-center gap-3 hover:border-one-gold/40 transition-all group relative overflow-hidden"
                   >
+                    <div aria-hidden className="explore-tile-scan" />
                     <div className="w-12 h-12 rounded-full bg-ivory/10 flex items-center justify-center group-hover:bg-ivory/20 transition-colors">
                       <LinkIcon size={24} className="text-one-white" />
                     </div>
@@ -1392,6 +1421,7 @@ export default function SalesProposal() {
                     <span className="font-body-small text-muted text-xs">Create a shareable preview URL</span>
                   </button>
                 </motion.div>
+                </TiltCard>
               </div>
             </>
           ) : (
@@ -1411,11 +1441,12 @@ export default function SalesProposal() {
               <div className="flex items-center justify-center gap-4">
                 <button
                   onClick={() => { setSuccessState(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-                  className="font-label text-xs text-one-gold hover:text-one-gold transition-colors"
+                  data-cursor-label="NEW"
+                  className="font-label text-xs text-one-gold hover:text-one-gold transition-colors link-hover"
                 >
                   Create another proposal
                 </button>
-                <Link to="/" className="font-label text-xs text-muted hover:text-one-white transition-colors">
+                <Link to="/" data-cursor-label="HOME" className="font-label text-xs text-muted hover:text-one-white transition-colors">
                   Back to Dashboard
                 </Link>
               </div>
@@ -1493,7 +1524,7 @@ The ONE FM Partnerships Team`}
               <div className="bg-one-navy border border-one-border rounded-lg p-3 flex items-center gap-2">
                 <LinkIcon size={14} className="text-muted shrink-0" />
                 <span className="font-mono text-xs text-one-white truncate flex-1">{shareUrl}</span>
-                <button onClick={handleCopyLink} className="p-1.5 rounded hover:bg-one-gold/20 text-one-gold transition-colors">
+                <button onClick={handleCopyLink} data-cursor-label="COPY" className="p-1.5 rounded hover:bg-one-gold/20 text-one-gold transition-colors">
                   <Copy size={14} />
                 </button>
               </div>
@@ -1570,11 +1601,11 @@ function getDefaultContent(sectionId: string, customer: CustomerForm): string {
   const duration = customer.campaignDuration || 'the campaign period'
 
   const contents: Record<string, string> = {
-    'exec-summary': `This proposal outlines a strategic partnership between ONE FM 98.5 and ${name} to achieve ${goal}. As the Goulburn Murray's community broadcaster, we reach an estimated 39,375 weekly listeners across 25 towns within our 100km broadcast area. We are positioned to deliver genuine regional results for ${duration}.`,
+    'exec-summary': `This proposal outlines a strategic partnership between ONE FM 98.5 and ${name} to achieve ${goal}. As the Goulburn Murray's community broadcaster, we reach an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns within our ${stationStats.broadcastRadiusKm}km broadcast area. We are positioned to deliver genuine regional results for ${duration}.`,
     'about': `ONE FM 98.5 (callsign 3ONE) is operated by Goulburn Valley Community Radio Inc., a not-for-profit organisation licensed since 1989. Broadcasting from Shepparton, we connect communities across the Goulburn Murray region with live local content, community news, sport, and diverse multicultural programming.`,
-    'audience': `ONE FM reaches an estimated 39,375 weekly listeners across 25 towns in the Goulburn Murray region (source: townData census estimates, ABS 2021). Our audience is local, community-focused, and trusts the station to reflect their region.`,
+    'audience': `ONE FM reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns in the Goulburn Murray region (source: townData census estimates, ABS 2021). Our audience is local, community-focused, and trusts the station to reflect their region.`,
     'platform': `ONE FM delivers reach across:
-• FM Broadcast: 98.5 FM, ~100km radius, 25 towns
+• FM Broadcast: 98.5 FM, ~${stationStats.broadcastRadiusKm}km radius, ${stationStats.totalTowns} towns
 • Live Stream: fm985.com.au · Community Radio Plus app
 • Interviews & content: SoundCloud (soundcloud.com/user-570295409)
 • Facebook: facebook.com/onefmshepparton`,
@@ -1614,10 +1645,10 @@ function generateAIContent(sectionName: string, tone: string, length: number, cu
   const lengthFactor = length / 100
 
   const templates: Record<string, string> = {
-    'Executive Summary': `ONE FM 98.5 is proud to present this ${toneAdj} sponsorship opportunity for ${name}. As the Goulburn Murray's community broadcaster (callsign 3ONE, operated by Goulburn Valley Community Radio Inc.), we connect an estimated 39,375 weekly listeners across 25 towns. This proposal outlines a partnership designed to deliver genuine regional reach over ${customer.campaignDuration || 'the campaign period'}.`,
+    'Executive Summary': `ONE FM 98.5 is proud to present this ${toneAdj} sponsorship opportunity for ${name}. As the Goulburn Murray's community broadcaster (callsign 3ONE, operated by Goulburn Valley Community Radio Inc.), we connect an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns. This proposal outlines a partnership designed to deliver genuine regional reach over ${customer.campaignDuration || 'the campaign period'}.`,
     'About ONE FM': `ONE FM 98.5 has been serving the Goulburn Murray since 1980, licensed as a community broadcaster since 1989. We are a not-for-profit, volunteer-supported station operated by Goulburn Valley Community Radio Inc. Our programming includes local news, community announcements, sport, multicultural content, and music — live and local every day.`,
-    'Audience Overview': `ONE FM reaches an estimated 39,375 weekly listeners across 25 towns in the Goulburn Murray region (source: townData census estimates based on ABS 2021 population data). Our audience is local, community-connected, and loyal to a station that reflects their region. ${length > 50 ? 'Morning breakfast (6–9am) is our strongest engagement period, with consistent listenership throughout the day.' : ''}`,
-    'Platform Reach': `ONE FM 98.5 delivers reach through FM broadcast (98.5 FM, ~100km radius), live streaming via fm985.com.au and the Community Radio Plus app, community Facebook (facebook.com/onefmshepparton), and SoundCloud interview content. ${length > 60 ? 'Our integrated presence ensures your brand is heard across multiple touchpoints in the Goulburn Murray community.' : ''}`,
+    'Audience Overview': `ONE FM reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns in the Goulburn Murray region (source: townData census estimates based on ABS 2021 population data). Our audience is local, community-connected, and loyal to a station that reflects their region. ${length > 50 ? 'Morning breakfast (6–9am) is our strongest engagement period, with consistent listenership throughout the day.' : ''}`,
+    'Platform Reach': `ONE FM 98.5 delivers reach through FM broadcast (98.5 FM, ~${stationStats.broadcastRadiusKm}km radius), live streaming via fm985.com.au and the Community Radio Plus app, community Facebook (facebook.com/onefmshepparton), and SoundCloud interview content. ${length > 60 ? 'Our integrated presence ensures your brand is heard across multiple touchpoints in the Goulburn Murray community.' : ''}`,
     'Proposed Package': `For ${name}, we recommend a ${customer.budgetRange || 'customized'} package that aligns with your ${goal} objectives. This includes prime on-air placement during high-engagement dayparts, digital companion assets for streaming and web, and social media amplification to extend reach beyond the broadcast. ${length > 50 ? 'Optional add-ons include podcast integration, event activation, and regional coverage mapping for enhanced geographic targeting.' : ''}`,
     'Pricing & Rates': `Our pricing structure is transparent and value-driven. The base package investment of ${customer.budgetRange || '$TBD'} includes all core deliverables with volume discounts available for extended campaigns. ${length > 50 ? 'Additional sections such as ROI projections, competitive analysis, and social strategy can be added à la carte. Payment terms are flexible with 50% deposit and balance due 30 days from campaign commencement.' : ''}`,
     'Case Studies': `Contact us at admin@fm985.com.au for case studies and references from current and past sponsors in the Goulburn Murray region. We're happy to connect you with sponsors who can speak to their experience with ONE FM 98.5.`,

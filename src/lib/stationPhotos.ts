@@ -1,6 +1,6 @@
 /**
- * Canonical ONE FM photo library — /public/assets/images/
- * Filenames match the locked asset naming spec.
+ * Canonical ONE FM photo library — /public/assets/images/ (60 files on disk)
+ * Root-level host/studio photos in /public/
  */
 
 const IMG = '/assets/images'
@@ -16,18 +16,22 @@ export const STATION_PHOTOS = {
   gvlPlayerCelebration: `${IMG}/gvl-player-celebration.jpg`,
   gvlTownersWin: `${IMG}/gvl-towners-win.jpg`,
   gvlTeamCelebration: `${IMG}/gvl-team-celebration.jpg`,
-  gvlSpectacularMark: `${IMG}/gvl-spectacular-mark.jpg`,
+  gvlSpectacularMark: `${IMG}/gvl-spectacular-mark.png`,
   gvlChampionshipMcg: `${IMG}/gvl-championship-mcg.jpg`,
-  fieldReporterHeadset: `${IMG}/field-reporter-headset.png`,
+  /** Alias — awaiting Drive sync */
+  fieldReporterHeadset: `${IMG}/commentary-box-action.jpg`,
 
   // Studio & volunteer faces
   studioChristmasBroadcast: `${IMG}/studio-christmas-broadcast.jpg`,
   studioExteriorRainbow: `${IMG}/studio-exterior-rainbow.jpg`,
   studioCommentarySelfie: `${IMG}/studio-commentary-selfie.jpg`,
   studioSbsDiversity: `${IMG}/studio-sbs-diversity.jpg`,
-  studioPanelInterview: `${IMG}/studio-panel-interview.jpg`,
-  studioAnnouncerMic: `${IMG}/studio-announcer-mic.png`,
-  communityDinnerTeam: `${IMG}/community-dinner-team.png`,
+  /** Alias — awaiting Drive sync */
+  studioPanelInterview: `${IMG}/studio-sbs-diversity.jpg`,
+  /** Alias — awaiting Drive sync */
+  studioAnnouncerMic: `${IMG}/commentary-box-action.jpg`,
+  /** Alias — awaiting Drive sync */
+  communityDinnerTeam: `${IMG}/community-outdoor-market.jpg`,
 
   // Broadcast hardware
   towerMountMajorDay: `${IMG}/tower-mount-major-day.png`,
@@ -42,7 +46,7 @@ export const STATION_PHOTOS = {
   cultureIndigenousElders: `${IMG}/culture-indigenous-elders.jpg`,
   cultureSiloArtFaces: `${IMG}/culture-silo-art-faces.png`,
   cultureSiloArtBirds: `${IMG}/culture-silo-art-birds.png`,
-  cultureRiverboatMurray: `${IMG}/culture-riverboat-murray.jpg`,
+  cultureRiverboatMurray: `${IMG}/culture-riverboat-scenic.jpg`,
   eventOutdoorCinema: `${IMG}/event-outdoor-cinema.png`,
   eventFestivalTents: `${IMG}/event-festival-tents.png`,
   cultureAlbanianDancers: `${IMG}/culture-albanian-dancers.png`,
@@ -58,7 +62,7 @@ export const STATION_PHOTOS = {
   geoRollingGreenHills: `${IMG}/geo-rolling-green-hills.jpg`,
   geoPinkOrchard: `${IMG}/geo-pink-orchard.jpg`,
   geoTownAerial: `${IMG}/geo-town-aerial.jpg`,
-  geoCanolaFence: `${IMG}/geo-canola-fence.png`,
+  geoCanolaFence: `${IMG}/geo-cyclists-canola.jpg`,
   geoCanolaTree: `${IMG}/geo-canola-tree.png`,
   ecoSolarFarm: `${IMG}/eco-solar-farm.png`,
   ecoTractorSunrise: `${IMG}/eco-tractor-sunrise.png`,
@@ -66,11 +70,33 @@ export const STATION_PHOTOS = {
   // Community grassroots
   communityBookStall: `${IMG}/community-book-stall.jpg`,
   communityOutdoorMarket: `${IMG}/community-outdoor-market.jpg`,
+
+  // GVL additional action
+  gvlTownersCelebration: `${IMG}/gvl-towners-celebration.jpg`,
+  gvlGoalCelebration: `${IMG}/gvl-goal-celebration.jpg`,
+
+  // Studio & presenter additions
+  studioPresenterMic: `${IMG}/studio-presenter-mic.jpg`,
+  studioSbsVisit: `${IMG}/studio-sbs-visit.jpg`,
+
+  // Geographic additions
+  geoTownAerialLake: `${IMG}/geo-town-aerial-lake.jpg`,
+
+  // ONE FM OB & branded presence — real station content
+  obSetupFull: `${IMG}/ob-setup-full.jpg`,
+  commentaryTeamUniform: `${IMG}/commentary-team-uniform.jpg`,
+  commentaryBoxView: `${IMG}/commentary-box-view.jpg`,
+  obVanBranded: `${IMG}/ob-van-branded.jpg`,
+  obMatchDayBanner: `${IMG}/ob-match-day-banner.jpg`,
+  commentaryBoxWide: `${IMG}/commentary-box-wide.jpg`,
+  obTruckBranded: `${IMG}/ob-truck-branded.jpg`,
+  matchDayFlag: `${IMG}/match-day-flag.jpg`,
+  commentaryTeamSelfie: `${IMG}/commentary-team-selfie.jpg`,
+  commentaryCallAction: `${IMG}/commentary-call-action.jpg`,
 } as const
 
 /**
  * Root-level public assets — real ONE FM host / studio photos.
- * Placed directly in /public/ (not /public/assets/images/).
  */
 export const HOST_PHOTOS = {
   onAirHost1:       '/on-air-host-1.jpg',
@@ -81,11 +107,11 @@ export const HOST_PHOTOS = {
   regionalLandscape: '/regional-landscape.jpg',
 } as const
 
-/** Common site defaults */
+/** Common site defaults — per photo-assignment-board.md */
 export const PHOTO_DEFAULTS = {
-  hero: STATION_PHOTOS.geoLakeAerial,
-  regional: STATION_PHOTOS.geoLakeAerial,
-  studio: STATION_PHOTOS.studioExteriorRainbow,
+  hero: HOST_PHOTOS.regionalLandscape,
+  regional: HOST_PHOTOS.regionalLandscape,
+  studio: HOST_PHOTOS.studioControlRoom,
   football: STATION_PHOTOS.gvlNightPanorama,
   community: STATION_PHOTOS.communityOutdoorMarket,
 } as const

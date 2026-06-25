@@ -47,6 +47,6 @@ export const DS = {
     accountsEmail: 'accounts@fm985.com.au',
     sigName:       'Jason Welsh',
     sigTitle:      'Vice Chair, ONE FM 98.5',
-    sigEmail:      'jason@onefm.com.au',
+    sigEmail:      'admin@fm985.com.au',
   },
 } as const

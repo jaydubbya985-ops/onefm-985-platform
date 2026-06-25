@@ -119,9 +119,9 @@ export function AuthModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-slate border-border-dark text-ivory max-w-md">
+      <DialogContent className="bg-one-navy border-border-dark text-ivory max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-h3 text-ivory text-center">
+          <DialogTitle className="font-h3 text-gold-gradient text-center">
             {tab === 'login' && 'Welcome Back'}
             {tab === 'signup' && 'Create Account'}
             {tab === 'reset' && 'Reset Password'}
@@ -144,19 +144,19 @@ export function AuthModal({
           <TabsList className="grid w-full grid-cols-3 bg-onyx">
             <TabsTrigger
               value="login"
-              className="font-label text-xs data-[state=active]:bg-amber data-[state=active]:text-onyx"
+              className="font-label text-xs data-[state=active]:bg-one-gold data-[state=active]:text-onyx"
             >
               Sign In
             </TabsTrigger>
             <TabsTrigger
               value="signup"
-              className="font-label text-xs data-[state=active]:bg-amber data-[state=active]:text-onyx"
+              className="font-label text-xs data-[state=active]:bg-one-gold data-[state=active]:text-onyx"
             >
               Sign Up
             </TabsTrigger>
             <TabsTrigger
               value="reset"
-              className="font-label text-xs data-[state=active]:bg-amber data-[state=active]:text-onyx"
+              className="font-label text-xs data-[state=active]:bg-one-gold data-[state=active]:text-onyx"
             >
               Reset
             </TabsTrigger>
@@ -194,7 +194,7 @@ export function AuthModal({
               <Button
                 type="submit"
                 disabled={isSubmitting || loading}
-                className="w-full bg-amber text-onyx hover:bg-gold font-label text-xs rounded-full"
+                className="w-full bg-one-gold text-onyx hover:bg-gold font-label text-xs rounded-full"
               >
                 {isSubmitting ? (
                   <>
@@ -214,7 +214,7 @@ export function AuthModal({
                   <div className="w-full border-t border-border-dark" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-slate px-2 font-label text-muted">
+                  <span className="bg-one-navy px-2 font-label text-muted">
                     Or continue with
                   </span>
                 </div>
@@ -298,7 +298,7 @@ export function AuthModal({
               <Button
                 type="submit"
                 disabled={isSubmitting || loading}
-                className="w-full bg-amber text-onyx hover:bg-gold font-label text-xs rounded-full"
+                className="w-full bg-one-gold text-onyx hover:bg-gold font-label text-xs rounded-full"
               >
                 {isSubmitting ? (
                   <>
@@ -350,7 +350,7 @@ export function AuthModal({
                 <Button
                   type="submit"
                   disabled={isSubmitting || loading}
-                  className="w-full bg-amber text-onyx hover:bg-gold font-label text-xs rounded-full"
+                  className="w-full bg-one-gold text-onyx hover:bg-gold font-label text-xs rounded-full"
                 >
                   {isSubmitting ? (
                     <>

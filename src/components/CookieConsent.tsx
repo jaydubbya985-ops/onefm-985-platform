@@ -44,7 +44,7 @@ export function CookieConsent() {
                   </p>
                   <Link
                     to="/privacy"
-                    className="inline-flex items-center gap-1 text-xs text-one-gold hover:underline"
+                    className="inline-flex items-center gap-1 text-xs text-one-gold link-hover"
                   >
                     Privacy Policy
                   </Link>
@@ -53,6 +53,7 @@ export function CookieConsent() {
               <div className="flex gap-3 shrink-0">
                 <button
                   onClick={accept}
+                  data-cursor-label="ACCEPT"
                   className="btn-primary text-xs px-5 py-2.5 whitespace-nowrap"
                 >
                   Accept

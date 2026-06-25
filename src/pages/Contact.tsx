@@ -1,12 +1,18 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { motion } from 'framer-motion'
+import { WordReveal } from '@/components/WordReveal'
+import { Marquee } from '@/components/Marquee'
+import { MagneticButton } from '@/components/MagneticButton'
+import { TiltCard } from '@/components/TiltCard'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { submitEnquiry } from '@/lib/enquiries'
+import { stationStats } from '@/data/pricing'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import {
   Phone,
@@ -57,27 +63,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 /* ─── Section 1: Hero ─── */
 function ContactHero() {
-  const contactCards = [
-    {
-      icon: Phone,
-      label: 'Phone',
-      value: '(+613) 58313131',
-      href: 'tel:+61358313131',
-    },
-    {
-      icon: Mail,
-      label: 'Email',
-      value: 'admin@fm985.com.au',
-      href: 'mailto:admin@fm985.com.au',
-    },
-    {
-      icon: MapPin,
-      label: 'Studio Address',
-      value: 'ONE FM 98.5, Shepparton, Victoria, Australia',
-      href: '#map-mini',
-    },
-  ]
-
   const socials = [
     { icon: Instagram, label: 'Instagram', href: '#' },
     { icon: Facebook, label: 'Facebook', href: FACEBOOK_PAGE_URL, external: true },
@@ -85,96 +70,150 @@ function ContactHero() {
     { icon: Youtube, label: 'YouTube', href: '#' },
   ]
 
+  const marqueeItems = [
+    { text: 'Phone: (03) 5831 3131', cls: 'text-one-gold/60' },
+    { text: 'Email: admin@fm985.com.au', cls: 'text-one-white/40' },
+    { text: 'Shepparton · Victoria · Australia', cls: 'text-one-gold/60' },
+    { text: 'Sponsorship · Volunteering · Programming', cls: 'text-one-white/40' },
+    { text: 'Open 7 Days', cls: 'text-one-gold/60' },
+  ]
+
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
+
   return (
-    <section className="relative min-h-[72dvh] flex items-center justify-center overflow-hidden bg-[#050D1A]">
-      <div className="absolute inset-0 z-0">
-        <img
-          src="/assets/images/studio-panel-interview.jpg"
-          alt=""
-          aria-hidden
-          className="w-full h-full object-cover"
-          style={{ opacity: 0.22 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/75 via-[#050D1A]/45 to-[#050D1A]/90" />
-      </div>
-      <div aria-hidden className="grain-overlay" />
-      <div
-        className="absolute inset-0 z-[1] opacity-[0.03]"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 2px 2px, rgba(212,168,75,0.8) 1px, transparent 0)',
-          backgroundSize: '40px 40px',
-        }}
-      />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex justify-center mb-8"
-        >
-          <span className="section-label">Studio line open</span>
-        </motion.div>
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-hero text-one-white mb-5"
-        >
-          GET IN TOUCH
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-body text-one-white/50 italic max-w-2xl mx-auto mb-14"
-        >
-          Whether you want to sponsor, volunteer, or just say g'day — we'd love to
-          hear from you.
-        </motion.p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12">
-          {contactCards.map((card, i) => (
-            <motion.a
-              key={card.label}
-              href={card.href}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
-              className="glass-card p-6 text-center hover:border-one-gold/30 transition-all duration-300 group"
-            >
-              <card.icon
-                size={28}
-                className="text-one-gold mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="font-label text-one-muted mb-2">{card.label}</div>
-              <div className="font-body-small text-one-white">{card.value}</div>
-            </motion.a>
-          ))}
+    <>
+      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="GET IN TOUCH">
+        <div className="absolute inset-0 z-0">
+          <motion.div
+            style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
+          >
+            <img
+              src={STATION_PHOTOS.studioPresenterMic}
+              alt=""
+              aria-hidden
+              loading="eager"
+              fetchPriority="high"
+              className="w-full h-full object-cover object-center"
+              style={{ opacity: 0.55 }}
+            />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/65 via-transparent to-transparent" />
         </div>
+        <div aria-hidden className="grain-overlay" />
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="flex items-center justify-center gap-6"
-        >
-          {socials.map((social) => (
-            <a
-              key={social.label}
-              href={social.href}
-              aria-label={social.label}
-              {...('external' in social && social.external
-                ? { target: '_blank', rel: 'noopener noreferrer' }
-                : {})}
-              className="text-one-muted hover:text-one-gold transition-colors duration-300"
-            >
-              <social.icon size={22} />
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 pb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
+          >
+            Studio Line Open · Shepparton
+          </motion.span>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.12 }}
+            className="flex items-end gap-[1.5px] mb-5"
+            aria-hidden
+          >
+            {Array.from({ length: 20 }, (_, i) => (
+              <div key={i} className="w-[1.5px] rounded-sm" style={{
+                height: 3 + Math.floor(Math.abs(Math.sin(i * 0.61 + 0.6)) * 12 + 2),
+                backgroundColor: 'rgba(201,162,39,0.35)',
+                animation: `freq-bar ${0.7 + (i % 6) * 0.13}s ${(i * 0.086) % 1}s ease-in-out infinite`,
+              }} />
+            ))}
+          </motion.div>
+
+          <h1
+            className="font-heading font-black leading-none mb-8"
+            style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
+          >
+            <WordReveal text="Get in" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
+            <WordReveal text="Touch." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+          </h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="font-body text-one-white/50 italic max-w-xl mb-10"
+          >
+            Whether you want to sponsor, volunteer, or just say g'day — we'd love to hear from you.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.42 }}
+            className="flex flex-wrap gap-x-8 gap-y-3 mb-10"
+          >
+            <a href="tel:+61358313131" data-cursor-label="CALL" className="flex items-center gap-2.5 group">
+              <Phone size={13} className="text-one-gold flex-shrink-0" />
+              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/60 group-hover:text-one-white transition-colors">(03) 5831 3131</span>
             </a>
+            <a href="mailto:admin@fm985.com.au" data-cursor-label="EMAIL" className="flex items-center gap-2.5 group">
+              <Mail size={13} className="text-one-gold flex-shrink-0" />
+              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/60 group-hover:text-one-white transition-colors">admin@fm985.com.au</span>
+            </a>
+            <div className="flex items-center gap-2.5">
+              <MapPin size={13} className="text-one-gold flex-shrink-0" />
+              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/40">Shepparton, Victoria</span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.55 }}
+            className="flex flex-wrap items-center gap-6"
+          >
+            <MagneticButton>
+              <a href="#contact-form" data-cursor-label="ENQUIRY" className="btn-primary px-8 py-3.5 rounded-full font-label text-[11px] tracking-[0.2em] uppercase">
+                Send an Enquiry
+              </a>
+            </MagneticButton>
+            <MagneticButton>
+              <a href="tel:+61358313131" data-cursor-label="CALL" className="btn-ghost px-8 py-3.5 rounded-full font-label text-[11px] tracking-[0.2em] uppercase">
+                Call the Studio
+              </a>
+            </MagneticButton>
+            <div className="flex items-center gap-5 ml-2">
+              {socials.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  aria-label={social.label}
+                  data-cursor-label={social.label.toUpperCase()}
+                  {...('external' in social && social.external
+                    ? { target: '_blank', rel: 'noopener noreferrer' }
+                    : {})}
+                  className="text-one-muted hover:text-one-gold transition-colors duration-300"
+                >
+                  <social.icon size={20} />
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <div className="py-4 bg-[#050D1A] border-y border-one-gold/10 overflow-hidden">
+        <Marquee
+          speed={35}
+          items={marqueeItems.map((item) => (
+            <span className={`mx-12 font-label text-[10px] tracking-[0.25em] uppercase ${item.cls}`}>
+              {item.text}
+            </span>
           ))}
-        </motion.div>
+        />
       </div>
-    </section>
+    </>
   )
 }
 
@@ -254,7 +293,7 @@ function ContactForm() {
 
   if (submitted) {
     return (
-      <section className="section-padding bg-[#070F1C]">
+      <section className="section-padding bg-surface-mid">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -263,7 +302,7 @@ function ContactForm() {
             className="glass-card p-12"
           >
             <CheckCircle2 size={64} className="text-one-gold mx-auto mb-6" />
-            <h2 className="font-h2 text-one-white mb-4">Thanks for reaching out!</h2>
+            <WordReveal text="Thanks for reaching out!" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
             <p className="font-body text-one-muted">
               We'll get back to you within 24 hours.
             </p>
@@ -274,7 +313,7 @@ function ContactForm() {
   }
 
   return (
-    <section className="section-padding bg-[#070F1C]">
+    <section id="contact-form" className="section-padding section-bleed-top bg-surface-mid" data-cursor-label="SEND MESSAGE">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -283,10 +322,23 @@ function ContactForm() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <span className="inline-block font-label text-one-gold mb-4">
+          <span className="inline-block font-label text-one-electric mb-3">
             SEND A MESSAGE
           </span>
-          <h2 className="font-h2 text-one-white mb-4">Multi-Pathway Enquiry</h2>
+          <div aria-hidden className="flex justify-center items-end gap-[2.5px] mb-4" style={{ height: 16 }}>
+            {[5, 8, 6, 12, 7, 10, 5, 9, 7, 11, 6, 8, 5, 10, 7].map((h, i) => (
+              <div
+                key={i}
+                style={{
+                  width: 2, height: h, borderRadius: 1,
+                  background: 'rgba(46,196,182,0.32)',
+                  transformOrigin: 'bottom',
+                  animation: `freq-bar ${0.8 + (i % 5) * 0.15}s ${(i * 0.09) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
+          </div>
+          <WordReveal text="Multi-Pathway Enquiry" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-muted max-w-xl mx-auto">
             Choose the path that fits your needs and we'll route your message to the
             right team.
@@ -511,6 +563,7 @@ function ContactForm() {
               <button
                 type="submit"
                 disabled={loading}
+                data-cursor-label="SEND"
                 className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? (
@@ -549,12 +602,12 @@ function FAQSection() {
     {
       question: 'How do I request a song?',
       answer:
-        'Call the studio line on (+613) 58313131 during broadcast hours, or message us on social media. Our hosts love taking requests — especially for local artists.',
+        'Call the studio line on (03) 5831 3131 during broadcast hours, or message us on social media. Our hosts love taking requests — especially for local artists.',
     },
     {
       question: 'What area does ONE FM cover?',
       answer:
-        'ONE FM broadcasts to 25 towns across the Goulburn Valley and surrounding regions, reaching a total population of 185,791 people within a 100km radius of Shepparton.',
+        `ONE FM broadcasts to ${stationStats.totalTowns} towns across the Goulburn Valley and surrounding regions, reaching a total population of ${stationStats.broadcastPopulation.toLocaleString()} people within a ${stationStats.broadcastRadiusKm}km radius of Shepparton.`,
     },
     {
       question: 'How do I submit community news?',
@@ -579,7 +632,7 @@ function FAQSection() {
   ]
 
   return (
-    <section className="section-padding">
+    <section className="section-padding section-bleed-top bg-surface-lift" data-cursor-label="FAQ">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -588,10 +641,10 @@ function FAQSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="inline-block font-label text-one-gold mb-4">
+          <span className="inline-block font-label text-one-electric mb-4">
             QUESTIONS?
           </span>
-          <h2 className="font-h2 text-one-white mb-4">Frequently Asked</h2>
+          <WordReveal text="Frequently Asked" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-muted max-w-xl mx-auto">
             Everything you need to know about connecting with ONE FM.
           </p>
@@ -610,7 +663,7 @@ function FAQSection() {
                 value={`item-${i}`}
                 className="glass-card border-one-border rounded-xl px-6 overflow-hidden data-[state=open]:border-one-gold/30"
               >
-                <AccordionTrigger className="font-h4 text-one-white hover:text-one-gold py-5 transition-colors [&>svg]:text-one-gold">
+                <AccordionTrigger data-cursor-label="EXPAND" className="font-h4 text-one-white hover:text-one-gold py-5 transition-colors [&>svg]:text-one-gold">
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="font-body-small text-one-muted pb-5">
@@ -628,7 +681,7 @@ function FAQSection() {
 /* ─── Section 4: Emergency Info ─── */
 function EmergencyInfo() {
   return (
-    <section className="section-padding bg-[#070F1C]">
+    <section className="section-padding section-bleed-top bg-surface-deep">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -643,9 +696,7 @@ function EmergencyInfo() {
               <Flame size={32} className="text-one-red" />
             </div>
             <div className="flex-1">
-              <h2 className="font-h2 text-one-white mb-4">
-                Emergency Broadcasting
-              </h2>
+              <WordReveal text="Emergency Broadcasting" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
               <p className="font-body text-one-muted mb-6 max-w-xl">
                 During emergencies, ONE FM is your official emergency broadcaster
                 for the Goulburn Valley. We work directly with emergency services to
@@ -692,7 +743,7 @@ function EmergencyInfo() {
 /* ─── Section 5: Map Mini ─── */
 function MapMini() {
   return (
-    <section id="map-mini" className="section-padding">
+    <section id="map-mini" className="section-padding section-bleed-top bg-surface-peak">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -701,10 +752,10 @@ function MapMini() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="inline-block font-label text-one-gold mb-4">
+          <span className="inline-block font-label text-one-electric mb-4">
             FIND US
           </span>
-          <h2 className="font-h2 text-one-white mb-4">Studio Location</h2>
+          <WordReveal text="Studio Location" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-muted max-w-xl mx-auto">
             ONE FM 98.5, Shepparton, Victoria, Australia
           </p>
@@ -736,32 +787,42 @@ function MapMini() {
           </div>
         </motion.div>
 
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="glass-card p-5 text-center">
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4" data-cursor-label="STATION INFO">
+          <TiltCard maxTilt={5} className="h-full">
+          <div className="glass-card p-5 text-center h-full group relative overflow-hidden">
+            <div aria-hidden className="explore-tile-scan" />
             <Clock size={20} className="text-one-gold mx-auto mb-3" />
             <div className="font-label text-one-muted mb-1">Office Hours</div>
             <div className="font-body-small text-one-white">
               Mon – Fri: 9AM – 5PM
             </div>
           </div>
-          <div className="glass-card p-5 text-center">
+          </TiltCard>
+          <TiltCard maxTilt={5} className="h-full">
+          <div className="glass-card p-5 text-center h-full group relative overflow-hidden">
+            <div aria-hidden className="explore-tile-scan" />
             <Radio size={20} className="text-one-gold mx-auto mb-3" />
             <div className="font-label text-one-muted mb-1">Broadcast Hours</div>
-            <div className="font-body-small text-one-white">24 / 7 / 365</div>
+            <div className="font-body-small text-gold-gradient">24 / 7 / 365</div>
           </div>
-          <div className="glass-card p-5 text-center">
+          </TiltCard>
+          <TiltCard maxTilt={5} className="h-full">
+          <div className="glass-card p-5 text-center h-full group relative overflow-hidden">
+            <div aria-hidden className="explore-tile-scan" />
             <Headphones size={20} className="text-one-gold mx-auto mb-3" />
             <div className="font-label text-one-muted mb-1">Studio Line</div>
-            <div className="font-body-small text-one-white">(+613) 58313131</div>
+            <div className="font-body-small text-one-white">(03) 5831 3131</div>
           </div>
+          </TiltCard>
         </div>
 
+        <TiltCard maxTilt={3} className="mt-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-8 glass-card p-6 text-center"
+          className="glass-card p-6 text-center"
         >
           <div className="flex flex-wrap items-center justify-center gap-6 text-one-muted">
             <div className="flex items-center gap-2">
@@ -782,6 +843,7 @@ function MapMini() {
             </div>
           </div>
         </motion.div>
+        </TiltCard>
       </div>
     </section>
   )
@@ -791,7 +853,7 @@ function MapMini() {
 export default function Contact() {
   return (
     <Layout>
-      <SEO title="Contact Us" description="Get in touch with ONE FM 98.5. Phone: (+613) 58313131. Email: admin@fm985.com.au. Sponsorship, volunteering, programming, or general enquiries." />
+      <SEO title="Contact Us" description="Get in touch with ONE FM 98.5. Phone: (03) 5831 3131. Email: admin@fm985.com.au. Sponsorship, volunteering, programming, or general enquiries." />
       <ContactHero />
       <ContactForm />
       <FAQSection />

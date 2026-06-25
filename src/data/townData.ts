@@ -1,3 +1,5 @@
+import { stationStats } from '@/data/pricing'
+
 export type SizeCategory = 'hub' | 'major' | 'medium' | 'small' | 'village'
 
 export interface Town {
@@ -533,7 +535,7 @@ export const towns: Town[] = [
 
 export const broadcastArea: BroadcastArea = {
   totalPopulation2026: 189680,
-  weeklyListeners: 39375,
-  totalTowns: 25,
-  broadcastRadiusKm: 100,
+  weeklyListeners: stationStats.weeklyListeners,
+  totalTowns: stationStats.totalTowns,
+  broadcastRadiusKm: stationStats.broadcastRadiusKm,
 }

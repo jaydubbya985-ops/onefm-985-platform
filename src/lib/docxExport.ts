@@ -399,7 +399,7 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
             },
           }),
           new Paragraph({
-            children: [new TextRun({ text: 'Effective Q2 2025 — All rates in AUD, GST exclusive', size: 20, color: mutedColor, italics: true })],
+            children: [new TextRun({ text: 'Effective Q1 2026 — All rates in AUD, GST exclusive', size: 20, color: mutedColor, italics: true })],
             spacing: { after: 200 },
           }),
           buildRateCardTable(data.rateCard),
@@ -445,7 +445,7 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
           new Paragraph({
             children: [
               new TextRun({ text: 'Address: ', size: 22, color: mutedColor }),
-              new TextRun({ text: '100 Broadcast Plaza, Regional CBD', size: 22, color: darkColor }),
+              new TextRun({ text: '47 Parkside Drive, Shepparton VIC 3630', size: 22, color: darkColor }),
             ],
             spacing: { after: 80 },
           }),

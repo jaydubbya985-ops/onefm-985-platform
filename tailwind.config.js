@@ -54,13 +54,16 @@ module.exports = {
         "one-blue-bright": "#0A5EB7",
         "one-deep-blue": "#0A2A5E",
         "one-midnight": "#020A18",
-        "one-electric": "#00E5FF",  // Electric Cyan (digital glow)
+        "one-electric": ({ opacityValue }) =>
+          opacityValue === undefined
+            ? 'var(--one-electric)'
+            : `rgba(var(--one-electric-rgb), ${opacityValue})`,
         "one-neon-sky": "#38BDF8",  // Neon Sky Blue (daily UI accent)
         "one-gold":    "#D4AF37",   // Heritage Gold (premium accent only)
         "one-champagne": "#F4D27A",
         "one-red":     "#E51636",   // 98.5 Red (core identity)
         "one-white":   "#FFFFFF",
-        "one-muted":   "#8A9199",
+        "one-muted":   "#9EA6AE",
         "one-border":  "#1A2A42",
         "one-neon-orange": "#FF6A00", // Sport/event alert only
         "one-fluoro-lime": "#B6FF00", // Specialist accent only
@@ -73,6 +76,14 @@ module.exports = {
         "data-coral": "#FF6B6B",
         "data-violet": "#9B5DE5",
         "data-ice": "#00BBF9",
+        "sage": "#74BF8A",
+        // ── Design system aliases (MediaKit, AuthModal, etc.) ──
+        "gold": "#D4AF37",       // same as one-gold; used by MediaKit/Auth
+        "onyx": "#0A1628",       // deep navy-black (input bg, dialog bg)
+        "chalk": "#C4CFDB",      // muted blue-white body text
+        "ivory": "#EEE8DC",      // warm off-white text on dark surfaces
+        "signal-red": "#E51636", // alias for one-red
+        "border-dark": "#1A2A42", // alias for one-border
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],

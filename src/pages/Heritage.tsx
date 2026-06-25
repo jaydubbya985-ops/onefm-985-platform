@@ -1,49 +1,30 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   Waves, Mountain, Building2, TreePine, Sparkles,
   Headphones, Users, ArrowDown, ChevronRight, Radio
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
+import { WordReveal } from '@/components/WordReveal'
+import { MagneticButton } from '@/components/MagneticButton'
+import { Marquee } from '@/components/Marquee'
+import { HorizontalGallery } from '@/components/HorizontalGallery'
+import { CredibilityStrip } from '@/components/home/CredibilityStrip'
+import { LatestInterviews } from '@/components/LatestInterviews'
+import { TiltCard } from '@/components/TiltCard'
+import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
+import { stationStats } from '@/data/pricing'
 
 /* ─── easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
 const easeOutBack = [0.34, 1.56, 0.64, 1] as [number, number, number, number]
-
-/* ─── Animated Counter ─── */
-function AnimatedCounter({ target, prefix = '', suffix = '', duration = 1.5 }: { target: number; prefix?: string; suffix?: string; duration?: number }) {
-  const [val, setVal] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const triggered = useRef(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !triggered.current) {
-          triggered.current = true
-          const start = performance.now()
-          const tick = (now: number) => {
-            const p = Math.min((now - start) / (duration * 1000), 1)
-            const eased = 1 - Math.pow(1 - p, 3)
-            setVal(Math.floor(eased * target))
-            if (p < 1) requestAnimationFrame(tick)
-          }
-          requestAnimationFrame(tick)
-        }
-      },
-      { threshold: 0.3 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [target, duration])
-
-  return <span ref={ref}>{prefix}{val.toLocaleString()}{suffix}</span>
-}
 
 /* ─── Scroll Reveal ─── */
 function ScrollReveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -115,7 +96,7 @@ const timeline = [
 
 /* ─── Regional Data ─── */
 const regions = [
-  { name: 'ONE FM Breakfast', icon: Waves, color: 'text-one-gold', bg: 'bg-one-gold/10', listeners: 'Mon–Fri', show: 'ONE FM Breakfast', highlight: 'Rotating hosts Mon–Fri mornings' },
+  { name: 'The Coast', icon: Waves, color: 'text-one-gold', bg: 'bg-one-gold/10', listeners: 'Daily', show: 'ONE FM Breakfast', highlight: 'Murray River communities and lakeside towns' },
   { name: 'The Valley', icon: Mountain, color: 'text-sage', bg: 'bg-sage/10', listeners: 'Daily', show: 'The Country Hour', highlight: 'Agricultural news and markets daily' },
   { name: 'The City', icon: Building2, color: 'text-data-teal', bg: 'bg-data-teal/10', listeners: 'Nightly', show: 'The Night Shift', highlight: 'Live music and late nights' },
   { name: 'The Hinterland', icon: TreePine, color: 'text-data-violet', bg: 'bg-data-violet/10', listeners: 'Weekly', show: 'Community Connect', highlight: 'Local voices across the region' },
@@ -128,7 +109,7 @@ const team = {
     { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', since: '2026', img: '/assets/images/commentary-box-action.jpg' },
     { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', since: '2026', img: '/assets/images/studio-commentary-selfie.jpg' },
     { name: 'Craig Stott', role: 'Breakfast (Thu)', since: '2026', img: '/assets/images/commentary-box-action.jpg' },
-    { name: 'Di Hunter', role: 'Breakfast Host (Fri)', since: '2026', img: '/assets/images/studio-sbs-diversity.jpg' },
+    { name: 'Di Hunter', role: 'Breakfast Host (Fri)', since: '2026', img: '/assets/images/studio-exterior-rainbow.jpg' },
     { name: 'Johnny P', role: 'Dancing through the decades', since: '4 years on air', img: '/assets/images/commentary-box-action.jpg' },
     { name: 'Rowan Farren-Parnell', role: 'The Regional Voice', since: 'Community advocate', img: '/assets/images/studio-commentary-selfie.jpg' },
   ],
@@ -152,48 +133,100 @@ const socials = [
   { label: 'YouTube', path: 'M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17', href: '#' },
 ]
 
+/* ─── Deterministic gradient avatar ─── */
+const HERITAGE_PALETTES = [
+  { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
+  { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
+  { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
+  { from: '#2EC4B6', to: '#0A2030', accent: '#7FFFD4' },
+  { from: '#9B5DE5', to: '#1A0A30', accent: '#DDB3FF' },
+  { from: '#FF6B6B', to: '#2A0A10', accent: '#FFB3B3' },
+  { from: '#1B458F', to: '#0D2A18', accent: '#6EE7B7' },
+]
+
+function getHeritageMemberAvatar(name: string) {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = (hash * 37 + name.charCodeAt(i)) >>> 0
+  const palette = HERITAGE_PALETTES[hash % HERITAGE_PALETTES.length]
+  const words = name.trim().replace(/[^a-zA-Z\s]/g, '').split(/\s+/).filter(Boolean)
+  const initials = words.length === 1
+    ? words[0].slice(0, 2).toUpperCase()
+    : (words[0][0] + words[words.length - 1][0]).toUpperCase()
+  return { ...palette, initials }
+}
+
 /* ═══════════════════════════════════════════ */
 /*  MAIN PAGE                                  */
 /* ═══════════════════════════════════════════ */
 export default function Heritage() {
-  const [activeTimeline, setActiveTimeline] = useState(0)
   const [mobileTimelineOpen, setMobileTimelineOpen] = useState<number | null>(null)
+  const hScrollRef = useRef<HTMLElement>(null)
+  const hTrackRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
 
-  /* Auto-advance timeline on scroll (desktop) */
-  useEffect(() => {
-    const onScroll = () => {
-      const section = document.getElementById('timeline-section')
-      if (!section) return
-      const rect = section.getBoundingClientRect()
-      const progress = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)))
-      const idx = Math.min(timeline.length - 1, Math.floor(progress * timeline.length))
-      setActiveTimeline(idx)
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+  /* Pinned horizontal scroll — desktop only, respects reduced-motion */
+  useLayoutEffect(() => {
+    const section = hScrollRef.current
+    const track = hTrackRef.current
+    if (!section || !track) return
+    if (window.matchMedia('(max-width: 1023px)').matches) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    // Force above HorizontalGallery's sticky/will-change compositing layer
+    section.style.zIndex = '20'
+
+    const ctx = gsap.context(() => {
+      const getScrollDist = () => track.scrollWidth - window.innerWidth
+
+      gsap.to(track, {
+        x: () => -getScrollDist(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${getScrollDist()}`,
+          scrub: 1.2,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      })
+    }, section)
+
+    return () => ctx.revert()
   }, [])
 
   return (
     <Layout>
-      <SEO title="Our Heritage & Community" description="37 years of community broadcasting. ONE FM 98.5's story from 1989 to today." />
+      <SEO title="Our Heritage & Community" description={`${stationStats.yearsBroadcasting} years of community broadcasting. ONE FM 98.5's story from 1989 to today.`} />
       {/* ── Section 1: Hero ── */}
-      <section className="relative min-h-[75dvh] flex items-end overflow-hidden bg-[#050D1A]">
+      <section ref={heroRef} className="relative min-h-[75dvh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="EXPLORE">
+        {/* Scroll parallax wrapper — extends 28% above so image never gaps when shifted down */}
         <motion.div
-          initial={{ scale: 1 }}
-          animate={{ scale: 1.05 }}
-          transition={{ duration: 20, ease: 'linear', repeat: Infinity, repeatType: 'reverse' }}
-          className="absolute inset-0"
+          style={{ y: heroImgY, top: '-28%', bottom: 0, left: 0, right: 0, position: 'absolute', willChange: 'transform' }}
         >
-          <img
-            src="/assets/images/geo-lake-aerial.jpg"
-            alt=""
-            aria-hidden
-            className="w-full h-full object-cover"
-            style={{ opacity: 0.32 }}
-          />
+          <motion.div
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.05 }}
+            transition={{ duration: 20, ease: 'linear', repeat: Infinity, repeatType: 'reverse' }}
+            className="absolute inset-0"
+          >
+            <img
+              src="/assets/images/geo-cyclists-canola.jpg"
+              alt=""
+              aria-hidden
+              loading="eager"
+              fetchPriority="high"
+              className="w-full h-full object-cover object-center"
+              style={{ opacity: 0.72 }}
+            />
+          </motion.div>
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/55 to-[#050D1A]/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/50 via-transparent to-[#050D1A]/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/30 via-transparent to-[#050D1A]/30" />
         <div aria-hidden className="grain-overlay" />
 
         <div className="relative z-10 max-w-[900px] mx-auto px-6 pb-16 pt-32">
@@ -201,21 +234,43 @@ export default function Heritage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex items-center gap-4 mb-8"
+            className="flex items-center gap-4 mb-4"
           >
             <span className="h-px w-12 bg-one-gold/60" />
             <span className="font-label text-one-gold tracking-widest text-xs uppercase">Est. 1989</span>
             <span className="h-px w-12 bg-one-gold/60" />
           </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.35 }}
+            className="flex items-end gap-[1.5px] mb-6"
+            aria-hidden
+          >
+            {Array.from({ length: 22 }, (_, i) => (
+              <div
+                key={i}
+                className="w-[1.5px] rounded-sm"
+                style={{
+                  height: 2 + Math.floor(Math.abs(Math.sin(i * 0.55 + 1)) * 14 + 2),
+                  backgroundColor: 'rgba(212,175,55,0.32)',
+                  animation: `freq-bar ${0.75 + (i % 5) * 0.14}s ${(i * 0.09) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: easeOutExpo }}
-            className="font-heading font-black text-one-white mb-6 drop-shadow-lg leading-[0.95]"
+            className="font-heading font-black mb-6 drop-shadow-lg leading-[0.95]"
             style={{ fontSize: 'clamp(3.5rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            BORN HERE.<br />BUILT HERE.<br />BELONGS HERE.
+            <span className="text-one-white block">BORN HERE.</span>
+            <span className="text-one-white block">BUILT HERE.</span>
+            <span className="text-gold-gradient block">BELONGS HERE.</span>
           </motion.h1>
 
           <motion.p
@@ -244,69 +299,145 @@ export default function Heritage() {
         </div>
       </section>
 
-      {/* ── Section 2: Timeline ── */}
-      <section id="timeline-section" className="bg-one-navy py-24 md:py-48">
-        <div className="max-w-[1200px] mx-auto px-4">
-          <ScrollReveal className="text-center mb-16">
-            <h2 className="font-h2 text-one-white mb-2">OUR JOURNEY</h2>
-            <p className="font-body-small text-muted">The milestones that shaped ONE FM</p>
-          </ScrollReveal>
+      {/* ── Heritage Marquee Strip ── */}
+      <div className="bg-[#020810] border-y border-one-border/20 py-3 overflow-hidden">
+        <Marquee
+          speed={28}
+          items={[
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">EST. 1989</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">CALLSIGN: 3ONE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-electric/60">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GOULBURN VALLEY · VICTORIA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">24/7 BROADCAST</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-electric/60">COMMUNITY RADIO</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+          ]}
+        />
+      </div>
 
-          {/* Desktop horizontal timeline */}
-          <div className="hidden lg:block relative">
-            {/* Line */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 1.5, ease: easeOutExpo }}
-              className="absolute top-[60px] left-0 right-0 h-0.5 bg-one-gold origin-left"
-            />
+      {/* ── Station Fact Bar ── */}
+      <CredibilityStrip />
 
-            <div className="flex justify-between relative">
-              {timeline.map((node, i) => (
-                <motion.div
-                  key={node.year}
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.2, ease: easeOutBack }}
-                  className="flex flex-col items-center text-center w-[140px]"
-                >
-                  <button
-                    onClick={() => setActiveTimeline(i)}
-                    className={`w-4 h-4 rounded-full border-[3px] border-onyx mb-4 transition-all duration-300 ${
-                      activeTimeline === i
-                        ? 'bg-one-gold scale-150 shadow-[0_0_20px_rgba(212,150,58,0.4)]'
-                        : 'bg-one-gold hover:scale-125'
-                    }`}
-                  />
-                  <span className="font-stat text-one-gold mb-1">{node.year}</span>
-                  <h4 className="font-h4 text-one-white mb-1">{node.title}</h4>
-                  <p className="font-body-small text-one-white max-w-[140px] mb-2 leading-snug">{node.desc}</p>
-                  <span className="font-micro border border-one-border text-muted px-2 py-0.5 rounded">{node.label}</span>
-                </motion.div>
-              ))}
+      {/* ── Section 1.5: Station Archive — full-screen sticky horizontal gallery ── */}
+      <HorizontalGallery />
+
+      {/* ── Section 2: Timeline — pinned horizontal scroll (desktop) ── */}
+      <section
+        ref={hScrollRef}
+        id="timeline-section"
+        className="hidden lg:block relative bg-[#040C1A]"
+        style={{ zIndex: 20 }}
+        data-cursor-label="SCROLL"
+      >
+        <div
+          ref={hTrackRef}
+          className="flex h-screen items-stretch will-change-transform bg-[#040C1A]"
+          style={{ width: `${35 + timeline.length * 42}vw` }}
+        >
+          {/* Intro panel */}
+          <div className="w-[35vw] h-full flex flex-col justify-center pl-[8vw] pr-12 shrink-0 border-r border-one-border/20">
+            <span className="section-label mb-5">Heritage</span>
+            <h2
+              className="font-heading font-black text-one-white leading-none"
+              style={{ fontSize: 'clamp(3rem, 5.5vw, 5rem)', letterSpacing: '-0.03em' }}
+            >
+              OUR<br />JOURNEY
+            </h2>
+            <div className="w-12 h-0.5 bg-one-gold/60 my-6" />
+            <p className="font-body text-one-white/35 text-sm max-w-[24ch] leading-relaxed">
+              {timeline[0].year}–{timeline[timeline.length - 1].year}<br />
+              {timeline.length} milestones that shaped the Valley's voice.
+            </p>
+            <div className="flex items-center gap-2 mt-10 text-one-white/20">
+              <Radio size={12} />
+              <span className="font-label text-[9px] tracking-[0.22em]">SCROLL TO EXPLORE</span>
             </div>
           </div>
 
-          {/* Mobile vertical timeline */}
-          <div className="lg:hidden space-y-4">
+          {/* Timeline cards */}
+          {timeline.map((node, i) => (
+            <div
+              key={node.year}
+              className="w-[42vw] h-full flex items-center px-14 shrink-0 border-r border-one-border/15 relative overflow-hidden"
+            >
+              {/* Year as background texture */}
+              <div
+                aria-hidden
+                className="absolute right-8 top-1/2 -translate-y-1/2 font-heading font-black text-one-white select-none pointer-events-none"
+                style={{
+                  fontSize: 'clamp(8rem, 16vw, 14rem)',
+                  lineHeight: 1,
+                  letterSpacing: '-0.06em',
+                  opacity: 0.038,
+                }}
+              >
+                {node.year}
+              </div>
+
+              <div className="relative z-10 max-w-[440px]">
+                {/* Meta row */}
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="font-label text-[9px] tracking-[0.28em] text-one-gold/60 uppercase">{node.label}</span>
+                  <div className="flex-1 h-px bg-one-border/30" />
+                  <span className="font-label text-[9px] tracking-wider text-one-white/20">
+                    {String(i + 1).padStart(2, '0')}&thinsp;/&thinsp;{String(timeline.length).padStart(2, '0')}
+                  </span>
+                </div>
+
+                {/* Year */}
+                <div
+                  className="font-heading font-black text-gold-gradient tabular-nums"
+                  style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', lineHeight: 1, letterSpacing: '-0.04em' }}
+                >
+                  {node.year}
+                </div>
+
+                {/* Title */}
+                <h3
+                  className="font-heading font-bold text-one-white mt-2"
+                  style={{ fontSize: 'clamp(1.5rem, 2.8vw, 2.5rem)', lineHeight: 1.05, letterSpacing: '-0.02em' }}
+                >
+                  {node.title}
+                </h3>
+
+                <div className="w-10 h-0.5 bg-one-gold/50 my-5" />
+
+                {/* Description */}
+                <p className="font-body text-one-white/55 leading-relaxed max-w-[44ch]">
+                  {node.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Section 2 (mobile): Timeline accordion ── */}
+      <section className="lg:hidden bg-surface-mid py-20 px-4">
+        <div className="max-w-[600px] mx-auto">
+          <div className="text-center mb-12">
+            <WordReveal text="OUR JOURNEY" className="font-h2 text-one-white mb-2 block" as="h2" />
+            <p className="font-body-small text-muted">The milestones that shaped ONE FM</p>
+          </div>
+          <div className="space-y-3">
             {timeline.map((node, i) => (
+              <TiltCard key={node.year} maxTilt={5}>
               <motion.div
-                key={node.year}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="glass-card p-4"
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="glass-card p-4 group relative overflow-hidden"
               >
+                <div aria-hidden className="explore-tile-scan" />
                 <button
                   onClick={() => setMobileTimelineOpen(mobileTimelineOpen === i ? null : i)}
+                  data-cursor-label={mobileTimelineOpen === i ? 'CLOSE' : 'EXPAND'}
                   className="flex items-center justify-between w-full"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="font-stat text-one-gold text-2xl">{node.year}</span>
+                    <span className="font-stat text-gold-gradient text-2xl">{node.year}</span>
                     <h4 className="font-h4 text-one-white">{node.title}</h4>
                   </div>
                   <ChevronRight size={16} className={`text-muted transition-transform ${mobileTimelineOpen === i ? 'rotate-90' : ''}`} />
@@ -326,13 +457,14 @@ export default function Heritage() {
                   )}
                 </AnimatePresence>
               </motion.div>
+              </TiltCard>
             ))}
           </div>
         </div>
       </section>
 
       {/* ── Section 3: Community Impact ── */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="COMMUNITY IMPACT">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
             {/* Left stats */}
@@ -357,8 +489,8 @@ export default function Heritage() {
                     transition={{ delay: i * 0.2, duration: 0.4 }}
                     className="h-0.5 w-12 bg-one-gold origin-left mb-3"
                   />
-                  <div className="font-stat text-one-gold">
-                    <AnimatedCounter target={stat.num} prefix={stat.prefix || ''} suffix={stat.suffix || ''} duration={1.5} />
+                  <div className="font-stat text-gold-gradient">
+                    <AnimatedNumber value={stat.num} prefix={stat.prefix || ''} suffix={stat.suffix || ''} duration={1500} />
                   </div>
                   <div className="font-label text-muted mt-1">{stat.label}</div>
                 </motion.div>
@@ -373,29 +505,31 @@ export default function Heritage() {
               transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
               className="lg:col-span-3"
             >
-              <h2 className="font-h2 text-one-white mb-4">MORE THAN A STATION</h2>
+              <WordReveal text="MORE THAN A STATION" className="font-h2 text-one-white mb-4 block" as="h2" />
               <p className="font-body text-one-white mb-8">
                 ONE FM isn't just a frequency on the dial — it's a community lifeline. When floods hit in 2019, we were the only broadcast still on air for 72 hours. When local businesses struggled in 2020, we provided free advertising to 200+ shops. When young creatives needed a platform, we gave them the mic.
               </p>
 
+              <TiltCard maxTilt={3} className="mb-8">
               <motion.div
                 initial={{ opacity: 0, x: 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4, ease: easeOutExpo }}
-                className="glass-card border-l-2 border-l-amber p-5 mb-8"
+                className="glass-card border-l-2 border-l-one-gold p-5"
               >
                 <p className="font-body text-one-white italic mb-3">
                   "ONE FM was there when no one else was. That antenna on the hill isn't just broadcasting — it's watching over us."
                 </p>
-                <p className="font-h4 text-one-gold">Maria Santos, Local Business Owner</p>
+                <p className="font-h4 text-one-white">Maria Santos, Local Business Owner</p>
               </motion.div>
+              </TiltCard>
 
               <div className="flex flex-wrap gap-4">
-                <Link to="/sponsorship" className="btn-primary">
+                <Link to="/sponsorship" data-cursor-label="PARTNER" className="btn-primary">
                   Partner With Us
                 </Link>
-                <button className="btn-secondary">
+                <button data-cursor-label="NOMINATE" className="btn-secondary">
                   Nominate a Cause
                 </button>
               </div>
@@ -405,10 +539,10 @@ export default function Heritage() {
       </section>
 
       {/* ── Section 4: Regional Identity ── */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="REGIONAL IDENTITY">
         <div className="max-w-[1400px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
-            <h2 className="font-h2 text-one-white mb-2">OUR REGION</h2>
+            <WordReveal text="OUR REGION" className="font-h2 text-one-white mb-2 block" as="h2" />
             <p className="font-body-small text-muted">Four unique areas, one voice</p>
           </ScrollReveal>
 
@@ -498,24 +632,26 @@ export default function Heritage() {
             {regions.map((region, i) => {
               const Icon = region.icon
               return (
-                <motion.div
-                  key={region.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5, ease: easeOutExpo }}
-                  whileHover={{ y: -4 }}
-                  className="glass-card p-5 text-center group"
-                >
-                  <div className={`w-12 h-12 rounded-xl ${region.bg} flex items-center justify-center mx-auto mb-3 group-hover:rotate-6 transition-transform duration-200`}>
-                    <Icon size={24} className={region.color} />
-                  </div>
-                  <h4 className="font-h4 text-one-white mb-1">{region.name}</h4>
-                  <div className={`font-stat ${region.color} mb-1`}>{region.listeners}</div>
-                  <div className="font-label text-muted mb-1">Listeners</div>
-                  <div className="font-body-small text-one-white mb-2">Top show: <span className="text-one-white">{region.show}</span></div>
-                  <div className="font-micro text-muted">{region.highlight}</div>
-                </motion.div>
+                <TiltCard key={region.name} maxTilt={5} className="h-full">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1, duration: 0.5, ease: easeOutExpo }}
+                    data-cursor-label={region.name.toUpperCase()}
+                    className="glass-card p-5 text-center group h-full relative overflow-hidden"
+                  >
+                    <div aria-hidden className="explore-tile-scan" />
+                    <div className={`w-12 h-12 rounded-xl ${region.bg} flex items-center justify-center mx-auto mb-3 group-hover:rotate-6 transition-transform duration-200`}>
+                      <Icon size={24} className={region.color} />
+                    </div>
+                    <h4 className="font-h4 text-one-white mb-1">{region.name}</h4>
+                    <div className={`font-stat ${region.color} mb-1`}>{region.listeners}</div>
+                    <div className="font-label text-muted mb-1">Listeners</div>
+                    <div className="font-body-small text-one-white mb-2">Top show: <span className="text-one-white">{region.show}</span></div>
+                    <div className="font-micro text-muted">{region.highlight}</div>
+                  </motion.div>
+                </TiltCard>
               )
             })}
           </div>
@@ -523,10 +659,10 @@ export default function Heritage() {
       </section>
 
       {/* ── Section 5: Team ── */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="THE TEAM">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
-            <h2 className="font-h2 text-one-white mb-2">THE PEOPLE BEHIND THE SIGNAL</h2>
+            <WordReveal text="THE PEOPLE BEHIND THE SIGNAL" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">Engineers, producers, hosts, and storytellers</p>
           </ScrollReveal>
 
@@ -537,7 +673,7 @@ export default function Heritage() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                className="font-label text-one-gold mb-4"
+                className="font-label text-one-electric mb-4"
               >
                 LEADERSHIP
               </motion.div>
@@ -551,16 +687,27 @@ export default function Heritage() {
                     transition={{ delay: i * 0.08, duration: 0.5, ease: easeOutExpo }}
                     className="group relative"
                   >
-                    <div className="overflow-hidden rounded-2xl mb-3">
-                      <img
-                        src={member.img}
-                        alt={member.name}
-                        className="w-full h-[280px] object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-one-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none rounded-2xl" />
-                    </div>
+                    {(() => {
+                      const av = getHeritageMemberAvatar(member.name)
+                      return (
+                        <div className="overflow-hidden rounded-2xl mb-3 relative" style={{ height: 280 }}>
+                          <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${av.from} 0%, ${av.to} 100%)` }} />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span
+                              className="font-heading font-black select-none"
+                              style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: av.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
+                            >
+                              {av.initials}
+                            </span>
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-one-navy/50 via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-one-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none" />
+                          <div aria-hidden className="explore-tile-scan" />
+                        </div>
+                      )
+                    })()}
                     <h4 className="font-h4 text-one-white">{member.name}</h4>
-                    <p className="font-label text-one-gold">{member.role}</p>
+                    <p className="font-label text-one-muted">{member.role}</p>
                     <p className="font-body-small text-muted">{member.since}</p>
                     <span className="inline-flex items-center gap-1 font-label text-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-250 mt-1">
                       Bio →
@@ -576,7 +723,7 @@ export default function Heritage() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                className="font-label text-one-gold mb-4"
+                className="font-label text-one-electric mb-4"
               >
                 ON-AIR
               </motion.div>
@@ -590,16 +737,27 @@ export default function Heritage() {
                     transition={{ delay: i * 0.08, duration: 0.5, ease: easeOutExpo }}
                     className="group relative"
                   >
-                    <div className="overflow-hidden rounded-2xl mb-3">
-                      <img
-                        src={member.img}
-                        alt={member.name}
-                        className="w-full h-[280px] object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-one-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none rounded-2xl" />
-                    </div>
+                    {(() => {
+                      const av = getHeritageMemberAvatar(member.name)
+                      return (
+                        <div className="overflow-hidden rounded-2xl mb-3 relative" style={{ height: 280 }}>
+                          <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${av.from} 0%, ${av.to} 100%)` }} />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span
+                              className="font-heading font-black select-none"
+                              style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: av.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
+                            >
+                              {av.initials}
+                            </span>
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-one-navy/50 via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-one-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none" />
+                          <div aria-hidden className="explore-tile-scan" />
+                        </div>
+                      )
+                    })()}
                     <h4 className="font-h4 text-one-white">{member.name}</h4>
-                    <p className="font-label text-one-gold">{member.role}</p>
+                    <p className="font-label text-one-muted">{member.role}</p>
                     <p className="font-body-small text-muted">{member.since}</p>
                     <span className="inline-flex items-center gap-1 font-label text-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-250 mt-1">
                       Bio →
@@ -609,92 +767,15 @@ export default function Heritage() {
               </div>
             </div>
 
-            {/* Production */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="font-label text-one-gold mb-4"
-              >
-                PRODUCTION
-              </motion.div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {team.production.map((member, i) => (
-                  <motion.div
-                    key={member.name}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08, duration: 0.5, ease: easeOutExpo }}
-                    className="group relative"
-                  >
-                    <div className="overflow-hidden rounded-2xl mb-3">
-                      <img
-                        src={member.img}
-                        alt={member.name}
-                        className="w-full h-[280px] object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-one-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none rounded-2xl" />
-                    </div>
-                    <h4 className="font-h4 text-one-white">{member.name}</h4>
-                    <p className="font-label text-one-gold">{member.role}</p>
-                    <p className="font-body-small text-muted">{member.since}</p>
-                    <span className="inline-flex items-center gap-1 font-label text-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-250 mt-1">
-                      Bio →
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Engineering */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="font-label text-one-gold mb-4"
-              >
-                ENGINEERING
-              </motion.div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {team.engineering.map((member, i) => (
-                  <motion.div
-                    key={member.name}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08, duration: 0.5, ease: easeOutExpo }}
-                    className="group relative"
-                  >
-                    <div className="overflow-hidden rounded-2xl mb-3">
-                      <img
-                        src={member.img}
-                        alt={member.name}
-                        className="w-full h-[280px] object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-one-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none rounded-2xl" />
-                    </div>
-                    <h4 className="font-h4 text-one-white">{member.name}</h4>
-                    <p className="font-label text-one-gold">{member.role}</p>
-                    <p className="font-body-small text-muted">{member.since}</p>
-                    <span className="inline-flex items-center gap-1 font-label text-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-250 mt-1">
-                      Bio →
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* ── Section 6: Looking Forward ── */}
-      <section className="bg-gradient-to-b from-slate to-onyx section-padding">
+      <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="LOOKING AHEAD">
         <div className="max-w-[1000px] mx-auto px-4 text-center">
           <ScrollReveal>
-            <h2 className="font-h2 text-one-white mb-4">THE NEXT CHAPTER</h2>
+            <WordReveal text="THE NEXT CHAPTER" className="font-h2 text-one-white mb-4 block" as="h2" />
             <p className="font-body text-one-white mb-12 max-w-[700px] mx-auto">
               AI-powered programming. Predictive audience analytics. Smart sponsorship matching. Interactive broadcast experiences. The future of regional radio isn't about replacing what makes us special — it's about amplifying it. We're building the most advanced community media platform in the country, without losing the human connection that got us here.
             </p>
@@ -704,38 +785,47 @@ export default function Heritage() {
             {pillars.map((pillar, i) => {
               const Icon = pillar.icon
               return (
-                <motion.div
-                  key={pillar.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.15, duration: 0.6, ease: easeOutExpo }}
-                  whileHover={{ y: -4 }}
-                  className="glass-card p-6 text-left group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-one-gold/10 flex items-center justify-center mb-4 group-hover:shadow-[0_0_24px_rgba(212,150,58,0.25)] transition-shadow duration-200">
-                    <Icon size={24} className="text-one-gold group-hover:scale-110 transition-transform duration-200" />
-                  </div>
-                  <h3 className="font-h3 text-one-white mb-2">{pillar.title}</h3>
-                  <p className="font-body-small text-one-white">{pillar.desc}</p>
-                </motion.div>
+                <TiltCard key={pillar.title} maxTilt={4} className="h-full">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.15, duration: 0.6, ease: easeOutExpo }}
+                    data-cursor-label={pillar.title.toUpperCase()}
+                    className="glass-card p-6 text-left group h-full relative overflow-hidden"
+                  >
+                    <div aria-hidden className="explore-tile-scan" />
+                    <div className="w-12 h-12 rounded-xl bg-one-gold/10 flex items-center justify-center mb-4 group-hover:shadow-[0_0_24px_rgba(212,150,58,0.25)] transition-shadow duration-200">
+                      <Icon size={24} className="text-one-gold group-hover:scale-110 transition-transform duration-200" />
+                    </div>
+                    <h3 className="font-h3 text-one-white mb-2">{pillar.title}</h3>
+                    <p className="font-body-small text-one-white">{pillar.desc}</p>
+                  </motion.div>
+                </TiltCard>
               )
             })}
           </div>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/broadcast" className="btn-secondary">
-              Explore the Tech
-            </Link>
-            <Link to="/sponsorship" className="btn-primary">
-              Partner With Us
-            </Link>
+            <MagneticButton strength={8}>
+              <Link to="/broadcast" data-cursor-label="BROADCAST" className="btn-secondary">
+                Explore the Tech
+              </Link>
+            </MagneticButton>
+            <MagneticButton strength={10}>
+              <Link to="/sponsorship" data-cursor-label="PARTNER" className="btn-primary">
+                Partner With Us
+              </Link>
+            </MagneticButton>
           </div>
         </div>
       </section>
 
-      {/* ── Section 7: CTA / Connect ── */}
-      <section className="relative section-padding overflow-hidden">
+      {/* ── Section 7: Latest Interviews ── */}
+      <LatestInterviews />
+
+      {/* ── Section 8: CTA / Connect ── */}
+      <section className="relative bg-surface-lift section-bleed-top section-padding overflow-hidden" data-cursor-label="CONNECT">
         <div className="absolute inset-0">
           <img
             src="/assets/images/community-outdoor-market.jpg"
@@ -748,19 +838,23 @@ export default function Heritage() {
 
         <div className="relative z-10 max-w-[700px] mx-auto px-4 text-center">
           <ScrollReveal>
-            <h2 className="font-h2 text-one-white mb-4">BE PART OF THE STORY</h2>
+            <WordReveal text="BE PART OF THE STORY" className="font-h2 text-one-white mb-4 block" as="h2" />
             <p className="font-body text-one-white mb-8">
               Whether you're a listener, a partner, or a community champion — there's a place for you in the ONE FM story.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 mb-10">
-              <Link to="/" className="btn-primary">
-                <Radio size={16} /> Listen Live
-              </Link>
-              <Link to="/sponsorship" className="btn-secondary">
-                Sponsor
-              </Link>
-              <a href="mailto:hello@onefm.station" className="font-label text-one-gold hover:text-one-gold transition-colors flex items-center gap-1">
+              <MagneticButton strength={10}>
+                <Link to="/" data-cursor-label="LISTEN" className="btn-primary">
+                  <Radio size={16} /> Listen Live
+                </Link>
+              </MagneticButton>
+              <MagneticButton strength={8}>
+                <Link to="/sponsorship" data-cursor-label="SPONSOR" className="btn-secondary">
+                  Sponsor
+                </Link>
+              </MagneticButton>
+              <a href="mailto:admin@fm985.com.au" data-cursor-label="EMAIL" className="font-label text-one-gold hover:text-one-gold transition-colors flex items-center gap-1 link-hover">
                 Contact Us <ChevronRight size={14} />
               </a>
             </div>
@@ -770,6 +864,7 @@ export default function Heritage() {
                 <motion.a
                   key={social.label}
                   href={social.href}
+                  data-cursor-label={social.label.toUpperCase()}
                   {...('external' in social && social.external
                     ? { target: '_blank', rel: 'noopener noreferrer' }
                     : {})}

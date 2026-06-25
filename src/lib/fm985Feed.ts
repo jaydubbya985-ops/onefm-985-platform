@@ -44,8 +44,10 @@ interface WpPost {
 }
 
 function stripHtml(html: string): string {
-  const doc = html.replace(/<[^>]+>/g, ' ').replace(/&[^;]+;/g, ' ')
-  return doc.replace(/\s+/g, ' ').trim()
+  // Use DOM parsing to decode entities (&#8217; → ' etc.) then extract text only
+  const el = document.createElement('div')
+  el.innerHTML = html
+  return (el.textContent ?? '').replace(/\s+/g, ' ').trim()
 }
 
 /** Pull SoundCloud stream MP3 from Divi / WordPress post HTML. */

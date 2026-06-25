@@ -124,6 +124,14 @@ export async function fetchStreamMetadata(_streamUrl?: string): Promise<{
     const raw = data.current_track?.title?.trim()
     if (!raw) return null
 
+    // Reject raw technical IDs like "SHE60C@BB9" — no spaces, contains @ or
+    // is all-uppercase alphanumeric (internal stream callsigns/track IDs).
+    if (/^[A-Z0-9@_-]{4,}$/.test(raw)) return null
+
+    // Reject weather forecast strings broadcast as "now playing"
+    // e.g. "Forecast — Partly Cloudy 18c Tomorrow: Partly Cloudy 19c"
+    if (/^forecast/i.test(raw) || /\b\d+[°c]\b/i.test(raw) || /partly cloudy|mostly cloudy|thunderstorm|shower|drizzle|overcast/i.test(raw)) return null
+
     const dash = raw.indexOf(' - ')
     if (dash > 0) {
       return {

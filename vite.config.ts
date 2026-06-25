@@ -38,6 +38,14 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('@supabase')) return 'vendor-supabase'
           if (id.includes('framer-motion')) return 'vendor-motion'
           if (id.includes('lucide-react')) return 'vendor-icons'
+          if (id.includes('gsap')) return 'vendor-gsap'
+          if (id.includes('react-router') || id.includes('@remix-run')) return 'vendor-router'
+          if (id.includes('lenis')) return 'vendor-scroll'
+          // recharts/d3 depend on react — keep them in the same chunk as
+          // react/react-dom to avoid a vendor-react <-> vendor-charts circular
+          // chunk, which crashes with "Cannot access 'X' before initialization"
+          // in production (Rollup ESM live-binding ordering issue).
+          if (id.includes('recharts') || id.includes('d3-') || id.includes('react-dom') || id.includes('react/')) return 'vendor-react'
         },
       },
     },

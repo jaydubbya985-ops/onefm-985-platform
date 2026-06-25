@@ -3,7 +3,7 @@
  * Audit order: Listen → Sponsor → About → Support
  */
 
-import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { STATION_PHOTOS, HOST_PHOTOS } from '@/lib/stationPhotos'
 
 export interface NavItem {
   label: string
@@ -71,7 +71,7 @@ export const HOME_JOBS = [
     path: '/programs',
     description: 'Breakfast, sport, multicultural & more',
     accent: '#D4AF37',
-    image: STATION_PHOTOS.communityOutdoorMarket,
+    image: STATION_PHOTOS.studioPresenterMic,
     tags: ['Guide', 'Hosts', 'Weekly'],
   },
   {
@@ -79,7 +79,7 @@ export const HOME_JOBS = [
     path: '/broadcast',
     description: 'Weekly schedule · presenters · segments',
     accent: '#2EC4B6',
-    image: STATION_PHOTOS.gvlCrowdStands,
+    image: HOST_PHOTOS.studioControlRoom,
     tags: ['Grid', 'On Air', 'Sport'],
   },
   {

@@ -93,9 +93,10 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                       <p className="font-body text-one-white text-sm truncate">{meta.nowPlaying}</p>
                     </div>
                   ) : (
-                    <p className="font-body-small text-muted mb-4 italic">
-                      Song metadata unavailable — showing program schedule.
-                    </p>
+                    <div className="glass-card rounded-lg px-4 py-3 mb-4 border-one-gold/10">
+                      <p className="font-label text-[10px] text-one-gold/60 mb-1">LIVE ON AIR</p>
+                      <p className="font-body text-one-muted text-sm">Tune in live on 98.5 FM</p>
+                    </div>
                   )}
 
                   <p className="font-label text-[10px] text-muted">
@@ -109,8 +110,10 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                   type="button"
                   onClick={() => void toggle()}
                   disabled={loading}
+                  data-cursor-label={loading ? 'CONNECTING' : playing ? 'PAUSE' : 'LISTEN LIVE'}
                   className="btn-primary inline-flex items-center gap-2 min-w-[140px] justify-center disabled:opacity-70"
                   aria-pressed={playing}
+                  title="Play / pause (Space)"
                 >
                   {loading ? (
                     <Loader2 size={18} className="animate-spin" />
@@ -125,12 +128,17 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                   href={LISTEN_LINKS.web.href!}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-cursor-label="WEB PLAYER"
                   className="btn-secondary inline-flex items-center gap-2 text-xs"
                 >
                   <Radio size={14} />
                   Web player
                 </a>
               </div>
+
+              <p className="hidden sm:block mt-1 font-mono text-[9px] text-one-muted/50 select-none" aria-hidden>
+                Press <kbd className="border border-one-border/40 rounded px-1 py-px bg-one-navy/40">Space</kbd> to play / pause
+              </p>
 
               {error && (
                 <p className="mt-3 font-body-small text-one-red">{error}</p>
@@ -144,7 +152,7 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                 </a>
                 <span className="text-one-border">|</span>
                 <a href={LISTEN_LINKS.phone.href!} className="hover:text-one-gold transition-colors">
-                  {LISTEN_LINKS.phone.href!.replace('tel:', '')}
+                  {LISTEN_LINKS.phone.description}
                 </a>
               </div>
             </div>

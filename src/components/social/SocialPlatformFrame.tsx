@@ -35,8 +35,9 @@ export function SocialPlatformFrame({
 }: SocialPlatformFrameProps) {
   return (
     <article
+      data-cursor-label={eyebrow}
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-one-border bg-one-midnight',
+        'relative overflow-hidden rounded-2xl border border-one-border bg-one-midnight group',
         'hover:border-one-gold/25 transition-colors duration-300',
         className
       )}
@@ -46,7 +47,7 @@ export function SocialPlatformFrame({
           src={image}
           fallbackSrc={imageFallback ?? image}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out"
         />
         <div
           className="absolute inset-0"
@@ -60,6 +61,7 @@ export function SocialPlatformFrame({
             background: `radial-gradient(ellipse at 100% 0%, ${accent}33 0%, transparent 55%)`,
           }}
         />
+        <div aria-hidden className="explore-tile-scan" />
         <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between">
           <div className="flex items-start justify-between gap-3">
             <div

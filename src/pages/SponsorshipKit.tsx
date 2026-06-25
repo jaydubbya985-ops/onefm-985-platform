@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useCallback, memo } from 'react'
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   Check, Info, X, ArrowRight,
   Share2, Save, Minus, Plus,
-  Sparkles, Building2
+  Sparkles, Radio, Trophy, Globe, MapPin,
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
@@ -12,6 +12,15 @@ import { generalTiers, rateCard, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
+import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
+import { WordReveal } from '@/components/WordReveal'
+import { MagneticButton } from '@/components/MagneticButton'
+import { Marquee } from '@/components/Marquee'
+import { STATION_PHOTOS, PHOTO_DEFAULTS } from '@/lib/stationPhotos'
+import { MediaImage } from '@/components/MediaImage'
+import { TiltCard } from '@/components/TiltCard'
+import { CredibilityStrip } from '@/components/home/CredibilityStrip'
+import { AnimatedNumber } from '@/components/AnimatedNumber'
 
 /* ─── easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -106,7 +115,7 @@ const tierMap: MappedTier[] = Object.entries(generalTiers).map(([key, tier]) => 
   return {
     key,
     name: tier.name.toUpperCase(),
-    color: key === 'communityPartner' ? 'text-one-white' : key === 'championPartner' ? 'text-one-gold' : 'text-one-gold',
+    color: key === 'communityPartner' ? 'text-one-white' : 'text-gold-gradient',
     monthly: tier.weeklyPrice * 4,
     annual: Math.round(tier.weeklyPrice * 52 * (1 - rateCard.packageDiscount)),
     desc: `${tier.spots} radio spots, ${tier.socialPosts} social posts per month.${hasExclusivity ? ' Category exclusivity included.' : ''}`,
@@ -138,6 +147,7 @@ const sponsorChannels = [
     id: 1,
     title: 'Drive-time radio spots',
     industry: 'Broadcast',
+    image: STATION_PHOTOS.obSetupFull,
     stats: ['Breakfast 6–9am', 'Afternoon 4–7pm', 'From $25/spot'],
     desc: 'Peak listening on ONE FM 98.5 — host live reads and standard spots from our published rate card.',
   },
@@ -145,6 +155,7 @@ const sponsorChannels = [
     id: 2,
     title: 'GVL Saturday coverage',
     industry: 'Sport',
+    image: STATION_PHOTOS.gvlNightPanorama,
     stats: ['Live footy & netball', '9 tiers from $25/wk', 'Match-day mentions'],
     desc: 'Official Goulburn Valley League broadcaster — put your brand in front of game-day audiences.',
     link: '/football',
@@ -153,6 +164,7 @@ const sponsorChannels = [
     id: 3,
     title: 'Digital & social',
     industry: 'Digital',
+    image: STATION_PHOTOS.eventLasersCrowd,
     stats: ['Facebook community', 'SoundCloud interviews', 'Website banners'],
     desc: 'Cross-platform mentions bundled with radio packages — see Media Kit for reach stats.',
     link: '/media-kit',
@@ -161,7 +173,8 @@ const sponsorChannels = [
     id: 4,
     title: 'Valley-wide reach',
     industry: 'Regional',
-    stats: [`${stationStats.totalTowns} towns`, `${stationStats.broadcastRadiusKm} km radius`, 'Est. 39,375 listeners/wk'],
+    image: STATION_PHOTOS.geoTownAerial,
+    stats: [`${stationStats.totalTowns} towns`, `${stationStats.broadcastRadiusKm} km radius`, `Est. ${stationStats.weeklyListeners.toLocaleString()} listeners/wk`],
     desc: 'Interactive coverage map with population and listener estimates per town.',
     link: '/coverage',
   },
@@ -178,30 +191,62 @@ const industryColors: Record<string, string> = {
   Healthcare: 'bg-sage/20 text-sage',
 }
 
+const industryColorHex: Record<string, string> = {
+  Broadcast: '#D4AF37',
+  Sport: '#2EC4B6',
+  Digital: '#9B5DE5',
+  Regional: '#6DB05E',
+}
+
+const INDUSTRY_ICONS: Record<string, React.ElementType> = {
+  Broadcast: Radio,
+  Sport: Trophy,
+  Digital: Globe,
+  Regional: MapPin,
+}
+
 type SponsorChannel = (typeof sponsorChannels)[number]
 
 function renderChannelCard(cs: SponsorChannel) {
+  const accent = industryColorHex[cs.industry] ?? '#D4AF37'
+  const HeroIcon = INDUSTRY_ICONS[cs.industry] ?? Radio
   return (
     <>
-      <div className="h-[200px] bg-one-navy relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-onyx to-transparent z-10" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Building2 size={48} className="text-muted/30" />
-        </div>
-      </div>
-      <div className="p-5">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="h-[200px] relative overflow-hidden">
+        <MediaImage
+          src={cs.image}
+          fallbackSrc={PHOTO_DEFAULTS.regional}
+          alt={cs.title}
+          className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700"
+        />
+        {/* Dark gradient base */}
+        <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/50 to-transparent z-10" />
+        {/* Industry colour tint — top-left corner bleed */}
+        <div
+          className="absolute inset-0 z-10 opacity-25"
+          style={{ background: `linear-gradient(135deg, ${accent} 0%, transparent 55%)` }}
+        />
+        {/* Industry badge */}
+        <div className="absolute top-3 left-3 z-20">
           <span className={`font-micro px-2 py-0.5 rounded ${industryColors[cs.industry] || 'bg-muted/20 text-muted'}`}>
             {cs.industry}
           </span>
         </div>
+        {/* Icon badge bottom-right */}
+        <div className="absolute bottom-3 right-3 z-20">
+          <div className="w-9 h-9 rounded-lg bg-one-navy/60 backdrop-blur-sm border border-one-border/50 flex items-center justify-center">
+            <HeroIcon size={18} style={{ color: accent }} />
+          </div>
+        </div>
+      </div>
+      <div className="p-5">
         <h3 className="font-h3 text-one-white mb-2 group-hover:text-one-gold transition-colors">{cs.title}</h3>
         <div className="flex flex-wrap gap-3 mb-3">
           {cs.stats.map((s) => (
-            <span key={s} className="font-mono text-xs text-one-white">{s}</span>
+            <span key={s} className="font-mono text-xs text-one-white/70">{s}</span>
           ))}
         </div>
-        <p className="font-body-small text-one-white line-clamp-2 mb-4">{cs.desc}</p>
+        <p className="font-body-small text-one-muted line-clamp-2 mb-4">{cs.desc}</p>
         {'link' in cs && cs.link && (
           <span className="inline-flex items-center gap-1 font-label text-one-gold group-hover:gap-2 transition-all">
             Learn more <ArrowRight size={14} />
@@ -220,42 +265,6 @@ const communityVoice = {
   role: 'Community Leader, Rochester',
 }
 
-/* ─── Animated Counter ─── */
-function AnimatedCounter({ target, prefix = '', suffix = '', duration = 1.2 }: { target: number; prefix?: string; suffix?: string; duration?: number }) {
-  const [val, setVal] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const triggered = useRef(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !triggered.current) {
-          triggered.current = true
-          const start = performance.now()
-          const tick = (now: number) => {
-            const p = Math.min((now - start) / (duration * 1000), 1)
-            const eased = 1 - Math.pow(1 - p, 3)
-            setVal(Math.floor(eased * target))
-            if (p < 1) requestAnimationFrame(tick)
-          }
-          requestAnimationFrame(tick)
-        }
-      },
-      { threshold: 0.3 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [target, duration])
-
-  return (
-    <span ref={ref}>
-      {prefix}{val.toLocaleString()}{suffix}
-    </span>
-  )
-}
-
 /* ─── Section wrapper with scroll reveal ─── */
 function ScrollReveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   return (
@@ -268,6 +277,65 @@ function ScrollReveal({ children, className = '', delay = 0 }: { children: React
     >
       {children}
     </motion.div>
+  )
+}
+
+/* ─── Sponsorship In Action Gallery ─── */
+const SPONSOR_GALLERY = [
+  { src: STATION_PHOTOS.eventFoodTrucks,     alt: 'Local food trucks at a community event',     caption: 'Community Presence', className: 'col-span-2 lg:col-span-2 row-span-2' },
+  { src: STATION_PHOTOS.matchDayFlag,        alt: 'ONE FM match day flag at the stadium',        caption: 'Brand Exposure',     className: '' },
+  { src: STATION_PHOTOS.gvlTownersCelebration, alt: 'GVL Towners celebrating together',          caption: 'With the Crowd',     className: '' },
+  { src: STATION_PHOTOS.eventOutdoorCinema,  alt: 'Outdoor cinema event at dusk',               caption: 'Live Events',        className: '' },
+  { src: STATION_PHOTOS.eventLasersCrowd,    alt: 'Community festival with laser lights',        caption: 'Festival Energy',    className: '' },
+  { src: STATION_PHOTOS.obSetupFull,         alt: 'ONE FM outside broadcast setup on location',  caption: 'On Location OB',     className: 'col-span-1 lg:col-span-2' },
+]
+
+function SponsorGallery() {
+  return (
+    <section className="py-20 bg-[#020810]" data-cursor-label="IN ACTION">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex items-end justify-between mb-8"
+        >
+          <div>
+            <p className="font-label text-one-gold text-[10px] tracking-widest uppercase mb-2">Your Brand · Our Reach</p>
+            <WordReveal text="Sponsorship in Action" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+          </div>
+          <span className="hidden sm:block font-label text-one-muted text-[10px] tracking-widest uppercase">GV Community</span>
+        </motion.div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-3 auto-rows-[190px] lg:auto-rows-[210px] gap-3">
+          {SPONSOR_GALLERY.map((photo, i) => (
+            <TiltCard key={photo.alt} maxTilt={5} className={`h-full ${photo.className}`}>
+              <motion.div
+                className="relative overflow-hidden rounded-xl group h-full"
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: i * 0.07, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <MediaImage
+                  src={photo.src}
+                  fallbackSrc={PHOTO_DEFAULTS.community}
+                  alt={photo.alt}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div aria-hidden className="explore-tile-scan" />
+                <div className="absolute bottom-0 inset-x-0 p-4 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <span className="font-label text-[10px] tracking-[0.2em] text-one-white uppercase">{photo.caption}</span>
+                </div>
+                <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </motion.div>
+            </TiltCard>
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -291,6 +359,10 @@ export default function SponsorshipKit() {
   const [heroEmail, setHeroEmail] = useState('')
   const [heroSubmitted, setHeroSubmitted] = useState(false)
   const [heroSubmitting, setHeroSubmitting] = useState(false)
+
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
 
   const toggleAddon = (key: string) => {
     setSelectedAddons((p) => ({ ...p, [key]: !p[key] }))
@@ -331,77 +403,145 @@ export default function SponsorshipKit() {
     <Layout>
       <SEO title="Sponsorship Packages" description="Partner with ONE FM 98.5. Bronze, Silver, Gold packages. Interactive package builder with ROI calculator." />
       {/* ── Section 1: Hero ── */}
-      <section className="relative min-h-[55vh] flex items-center justify-center overflow-hidden bg-one-navy">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="PARTNER WITH US">
+        {/* Background image */}
+        <motion.div
+          style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
+        >
+          <img
+            src={STATION_PHOTOS.obSetupFull}
+            alt=""
+            aria-hidden
+            loading="eager"
+            fetchPriority="high"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: 0.52 }}
+          />
+        </motion.div>
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/60 via-transparent to-transparent" />
+        {/* Subtle particle layer still active */}
         <ParticleField />
-        <div className="relative z-10 max-w-[800px] mx-auto px-4 text-center py-20">
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="font-label text-muted mb-4"
-          >
-            Home / Sponsorship
-          </motion.p>
+        <div aria-hidden className="grain-overlay" />
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: easeOutExpo }}
-            className="font-h1 text-one-white mb-6"
+        <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 pt-32 pb-16 w-full">
+          <motion.span
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: easeOutExpo }}
+            className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
           >
-            PARTNER WITH ONE
-          </motion.h1>
+            Sponsorship Opportunities · ONE FM 98.5
+          </motion.span>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex items-end gap-[1.5px] mb-5"
+            aria-hidden
+          >
+            {Array.from({ length: 20 }, (_, i) => (
+              <div
+                key={i}
+                className="w-[1.5px] rounded-sm"
+                style={{
+                  height: 3 + Math.floor(Math.abs(Math.sin(i * 0.63 + 0.6)) * 12 + 2),
+                  backgroundColor: 'rgba(201,162,39,0.36)',
+                  animation: `freq-bar ${0.71 + (i % 6) * 0.13}s ${(i * 0.088) % 1}s ease-in-out infinite`,
+                }}
+              />
+            ))}
+          </motion.div>
+
+          <h1
+            className="font-heading font-black leading-none mb-8"
+            style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
+          >
+            <WordReveal text="Partner" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
+            <WordReveal text="with ONE." as="span" className="block text-one-gold" delay={0.4} stagger={0.1} />
+          </h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
-            className="font-body text-one-white max-w-[600px] mx-auto mb-10"
+            transition={{ duration: 0.5, delay: 0.65, ease: easeOutExpo }}
+            className="font-body text-one-white/70 max-w-[520px] mb-10"
           >
             Premium sponsorship opportunities tailored to your brand. From local businesses to national campaigns — we build packages that deliver results.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3, ease: easeOutExpo }}
-            className="flex flex-wrap justify-center gap-8 mb-10"
+            transition={{ duration: 0.6, delay: 0.8, ease: easeOutExpo }}
+            className="flex flex-wrap gap-8 mb-10"
           >
             {[
               { num: 500, label: 'Active Partners', suffix: '+' },
-              { num: 94, label: 'Renewal Rate', suffix: '%' },
-              { num: 2400000, label: 'Weekly Reach', prefix: '', suffix: '' },
-            ].map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="font-stat text-one-gold">
-                  <AnimatedCounter target={s.num} prefix={s.prefix || ''} suffix={s.suffix || ''} />
+              { num: stationStats.weeklyListeners, label: 'Weekly Listeners', suffix: '' },
+              { num: stationStats.broadcastPopulation, label: 'People Reached', suffix: '' },
+            ].map((s, i) => (
+              <div key={s.label} className="flex items-center gap-8">
+                <div>
+                  <div className="font-stat text-gold-gradient">
+                    <AnimatedNumber value={s.num} suffix={s.suffix || ''} />
+                  </div>
+                  <div className="font-label text-muted mt-1">{s.label}</div>
                 </div>
-                <div className="font-label text-muted mt-1">{s.label}</div>
+                {i < 2 && <div className="hidden sm:block w-px h-10 bg-one-border/40" />}
               </div>
             ))}
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.5, ease: easeOutExpo }}
-            className="flex flex-wrap justify-center gap-4"
+            transition={{ duration: 0.5, delay: 1.0, ease: easeOutExpo }}
+            className="flex flex-wrap gap-4"
           >
-            <button onClick={() => scrollTo('builder')} className="btn-primary">
-              Build Custom Package
-            </button>
-            <button onClick={() => scrollTo('tiers')} className="text-one-gold font-label hover:text-one-gold transition-colors">
-              View Tier Comparison →
-            </button>
+            <MagneticButton strength={10} cursorLabel="BUILD">
+              <button onClick={() => scrollTo('builder')} className="btn-primary">
+                Build Custom Package
+              </button>
+            </MagneticButton>
+            <MagneticButton strength={8} cursorLabel="COMPARE">
+              <button onClick={() => scrollTo('tiers')} className="text-one-gold font-label hover:text-one-gold transition-colors link-hover">
+                View Tier Comparison →
+              </button>
+            </MagneticButton>
           </motion.div>
         </div>
       </section>
 
+      <CredibilityStrip />
+
+      {/* ── Sponsorship Marquee Strip ── */}
+      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+        <Marquee
+          speed={28}
+          items={[
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE READS · SPOT ADS · SPONSORSHIP PACKAGES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">500+ ACTIVE PARTNERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">GOULBURN VALLEY · VICTORIA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">94% RENEWAL RATE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">COMMUNITY RADIO · {stationStats.yearsBroadcasting} YEARS ON AIR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">CALLSIGN: 3ONE · ACMA LICENSED</span>,
+          ]}
+        />
+      </div>
+
+      {/* ── Sponsorship Gallery ── */}
+      <SponsorGallery />
+
       {/* ── Section 2: Tiers ── */}
-      <section id="tiers" className="bg-one-navy section-padding">
+      <section id="tiers" className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="PACKAGES">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
-            <h2 className="font-h2 text-one-white mb-2">SPONSORSHIP TIERS</h2>
+            <WordReveal text="SPONSORSHIP TIERS" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mb-6">Choose your level of partnership</p>
             <div className="inline-flex items-center gap-3 bg-one-navy rounded-full p-1 border border-one-border">
               <button
@@ -444,7 +584,7 @@ export default function SponsorshipKit() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.3 }}
-                      className="font-stat text-one-white"
+                      className="font-stat text-gold-gradient"
                     >
                       ${isAnnual ? tier.annual.toLocaleString() : tier.monthly.toLocaleString()}
                     </motion.span>
@@ -478,10 +618,10 @@ export default function SponsorshipKit() {
       </section>
 
       {/* ── Section 3: Package Builder ── */}
-      <section id="builder" className="bg-one-navy section-padding">
+      <section id="builder" className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="BUILD PACKAGE">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-10">
-            <h2 className="font-h2 text-one-white mb-2">BUILD YOUR PACKAGE</h2>
+            <WordReveal text="BUILD YOUR PACKAGE" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mb-4">Customize every element of your sponsorship</p>
             <AnimatePresence>
               {showSuggestion && (
@@ -490,7 +630,7 @@ export default function SponsorshipKit() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -12, scale: 0.98 }}
                   transition={{ duration: 0.4, ease: easeOutBack }}
-                  className="glass-card inline-flex items-center gap-3 px-4 py-3 text-left border-l-2 border-l-amber max-w-xl mx-auto"
+                  className="glass-card inline-flex items-center gap-3 px-4 py-3 text-left border-l-2 border-l-one-gold max-w-xl mx-auto"
                 >
                   <Sparkles size={16} className="text-one-gold shrink-0" />
                   <span className="font-body-small text-one-white">
@@ -579,7 +719,7 @@ export default function SponsorshipKit() {
                   <button onClick={() => setDuration(Math.max(1, duration - 1))} className="w-8 h-8 rounded-full border border-one-border flex items-center justify-center text-one-white hover:border-one-gold transition-colors">
                     <Minus size={14} />
                   </button>
-                  <span className="font-stat text-one-white w-16 text-center">{duration}</span>
+                  <span className="font-stat text-gold-gradient w-16 text-center">{duration}</span>
                   <span className="font-label text-muted">months</span>
                   <button onClick={() => setDuration(Math.min(12, duration + 1))} className="w-8 h-8 rounded-full border border-one-border flex items-center justify-center text-one-white hover:border-one-gold transition-colors">
                     <Plus size={14} />
@@ -608,8 +748,9 @@ export default function SponsorshipKit() {
                 <h4 className="font-h4 text-one-white mb-3">Target Audience</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
                   <div>
-                    <label className="font-label text-muted mb-1 block">Primary Demographic</label>
+                    <label htmlFor="skit-demographic" className="font-label text-muted mb-1 block">Primary Demographic</label>
                     <select
+                      id="skit-demographic"
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
                       className="w-full bg-one-navy border border-one-border rounded-lg px-3 py-2.5 font-body-small text-one-white focus:border-one-gold focus:outline-none transition-colors"
@@ -620,8 +761,9 @@ export default function SponsorshipKit() {
                     </select>
                   </div>
                   <div>
-                    <label className="font-label text-muted mb-1 block">Industry</label>
+                    <label htmlFor="skit-industry" className="font-label text-muted mb-1 block">Industry</label>
                     <select
+                      id="skit-industry"
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
                       className="w-full bg-one-navy border border-one-border rounded-lg px-3 py-2.5 font-body-small text-one-white focus:border-one-gold focus:outline-none transition-colors"
@@ -641,16 +783,20 @@ export default function SponsorshipKit() {
               <div className="glass-card p-5">
                 <h4 className="font-h4 text-one-white mb-3">Brand Information</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {['Company Name', 'Contact Name', 'Email', 'Phone'].map((label) => (
-                    <div key={label}>
-                      <label className="font-label text-muted mb-1 block">{label}</label>
-                      <input
-                        type="text"
-                        placeholder={label}
-                        className="w-full bg-one-navy border border-one-border rounded-lg px-3 py-2.5 font-body-small text-one-white placeholder:text-muted/60 focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-amber/15 transition-all"
-                      />
-                    </div>
-                  ))}
+                  {['Company Name', 'Contact Name', 'Email', 'Phone'].map((label) => {
+                    const fieldId = `skit-${label.toLowerCase().replace(/\s+/g, '-')}`
+                    return (
+                      <div key={label}>
+                        <label htmlFor={fieldId} className="font-label text-muted mb-1 block">{label}</label>
+                        <input
+                          id={fieldId}
+                          type="text"
+                          placeholder={label}
+                          className="w-full bg-one-navy border border-one-border rounded-lg px-3 py-2.5 font-body-small text-one-white placeholder:text-muted/60 focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-one-gold/15 transition-all"
+                        />
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </motion.div>
@@ -663,7 +809,8 @@ export default function SponsorshipKit() {
               transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
               className="lg:col-span-2"
             >
-              <div className="glass-card p-6 sticky top-24">
+              <div className="glass-card p-6 sticky top-24 group relative overflow-hidden">
+                <div aria-hidden className="explore-tile-scan" />
                 <h3 className="font-h3 text-one-white mb-4">Your Package Summary</h3>
                 <div className="space-y-3 mb-5">
                   <div className="flex justify-between items-center">
@@ -693,7 +840,7 @@ export default function SponsorshipKit() {
                         key={total}
                         initial={{ opacity: 0, y: 4 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="font-stat text-one-gold"
+                        className="font-stat text-gold-gradient"
                       >
                         ${total.toLocaleString()}
                       </motion.span>
@@ -719,18 +866,18 @@ export default function SponsorshipKit() {
 
                 <div className="mb-5">
                   <div className="font-label text-muted mb-1">Estimated Reach</div>
-                  <div className="font-stat text-one-white">
-                    <AnimatedCounter target={Math.round(total * (isAnnual ? 0.5 : 2.1))} prefix="~" suffix=" weekly" />
+                  <div className="font-stat text-gold-gradient">
+                    <AnimatedNumber value={Math.round(total * (isAnnual ? 0.5 : 2.1))} prefix="~" suffix=" weekly" />
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <button className="btn-primary w-full">Generate Proposal</button>
+                  <button data-cursor-label="GENERATE" className="btn-primary w-full">Generate Proposal</button>
                   <div className="flex gap-3">
-                    <button className="btn-secondary flex-1">
+                    <button data-cursor-label="SAVE" className="btn-secondary flex-1">
                       <Save size={14} /> Save
                     </button>
-                    <button className="btn-secondary flex-1">
+                    <button data-cursor-label="SHARE" className="btn-secondary flex-1">
                       <Share2 size={14} /> Share
                     </button>
                   </div>
@@ -742,31 +889,33 @@ export default function SponsorshipKit() {
       </section>
 
       {/* ── Section 4: Partner Showcase ── */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="PARTNER SHOWCASE">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-10">
-            <h2 className="font-h2 text-one-white mb-2">TRUSTED BY LEADING BRANDS</h2>
+            <WordReveal text="TRUSTED BY LEADING BRANDS" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">Local businesses across the Goulburn Valley partner with ONE FM</p>
           </ScrollReveal>
 
           <div className="max-w-3xl mx-auto">
+            <TiltCard maxTilt={3}>
             <div className="glass-card p-8 text-center">
               <p className="font-body text-one-white italic mb-4 text-lg">"{communityVoice.quote}"</p>
-              <p className="font-h4 text-one-gold">{communityVoice.name}</p>
+              <p className="font-h4 text-one-white">{communityVoice.name}</p>
               <p className="font-label text-muted mb-3">{communityVoice.role}</p>
               <p className="font-body-small text-muted text-xs mt-4">
                 Sponsor testimonials available on request — contact {BRAND.email}
               </p>
             </div>
+            </TiltCard>
           </div>
         </div>
       </section>
 
       {/* ── Section 5: Reach Estimator (was ROI Calculator) ── */}
-      <section className="bg-gradient-to-b from-onyx to-slate section-padding">
+      <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="REACH ESTIMATOR">
         <div className="max-w-[1000px] mx-auto px-4">
           <ScrollReveal className="text-center mb-10">
-            <h2 className="font-h2 text-one-white mb-2">ESTIMATE YOUR REACH</h2>
+            <WordReveal text="ESTIMATE YOUR REACH" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">Indicative reach based on {stationStats.weeklyListeners.toLocaleString()} est. weekly listeners — not a guaranteed ROI</p>
           </ScrollReveal>
 
@@ -782,36 +931,41 @@ export default function SponsorshipKit() {
                 { label: 'Industry', value: calcIndustry, options: ['Retail', 'Automotive', 'Food & Beverage', 'Technology', 'Healthcare', 'Entertainment', 'Other'], setter: setCalcIndustry },
                 { label: 'Campaign Size', value: calcSize, options: ['Community', 'Champion', 'Premier', 'Signature', 'Custom'], setter: setCalcSize },
                 { label: 'Target Action', value: calcGoal, options: ['Brand Awareness', 'Lead Generation', 'Event Promotion', 'Product Launch'], setter: setCalcGoal },
-              ].map((field, i) => (
-                <motion.div
-                  key={field.label}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.5 }}
-                >
-                  <label className="font-label text-muted mb-1.5 block">{field.label}</label>
-                  <select
-                    value={field.value}
-                    onChange={(e) => field.setter(e.target.value)}
-                    className="w-full bg-one-navy border border-one-border rounded-lg px-3 py-2.5 font-body-small text-one-white focus:border-one-gold focus:outline-none transition-colors"
+              ].map((field, i) => {
+                const fieldId = `roi-${field.label.toLowerCase().replace(/\s+/g, '-')}`
+                return (
+                  <motion.div
+                    key={field.label}
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08, duration: 0.5 }}
                   >
-                    {field.options.map((opt) => (
-                      <option key={opt} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                </motion.div>
-              ))}
+                    <label htmlFor={fieldId} className="font-label text-muted mb-1.5 block">{field.label}</label>
+                    <select
+                      id={fieldId}
+                      value={field.value}
+                      onChange={(e) => field.setter(e.target.value)}
+                      className="w-full bg-one-navy border border-one-border rounded-lg px-3 py-2.5 font-body-small text-one-white focus:border-one-gold focus:outline-none transition-colors"
+                    >
+                      {field.options.map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  </motion.div>
+                )
+              })}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.24, duration: 0.5 }}
               >
-                <label className="font-label text-muted mb-1.5 block">Monthly Budget</label>
+                <label htmlFor="roi-budget" className="font-label text-muted mb-1.5 block">Monthly Budget</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-muted">$</span>
                   <input
+                    id="roi-budget"
                     type="number"
                     value={calcBudget}
                     onChange={(e) => setCalcBudget(Number(e.target.value))}
@@ -821,6 +975,7 @@ export default function SponsorshipKit() {
               </motion.div>
               <button
                 onClick={() => setCalcResults(true)}
+                data-cursor-label="CALCULATE"
                 className="btn-primary w-full mt-2"
               >
                 Calculate Reach
@@ -840,7 +995,8 @@ export default function SponsorshipKit() {
                 {(() => {
                   const r = computeROI()
                   return (
-                    <div className="glass-card p-6 max-w-[600px] mx-auto space-y-6">
+                    <div className="glass-card p-6 max-w-[600px] mx-auto space-y-6 group relative overflow-hidden">
+                      <div aria-hidden className="explore-tile-scan" />
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         {[
                           { label: 'Est. Weekly Reach', value: `~${r.weeklyReach.toLocaleString()}`, color: 'text-data-teal' },
@@ -856,7 +1012,7 @@ export default function SponsorshipKit() {
                       <p className="font-body-small text-muted text-xs text-center">
                         Assumes ~{r.spotsPerMonth} spot impressions/month for {calcSize} tier. Actual results vary — contact us for a tailored proposal.
                       </p>
-                      <div className="glass-card p-4 border-l-2 border-l-amber">
+                      <div className="glass-card p-4 border-l-2 border-l-one-gold">
                         <p className="font-body-small text-one-white">
                           Based on your inputs, we recommend: <strong className="text-one-gold">{calcSize === 'Custom' ? 'Custom Package' : calcSize + ' Partner'} + {calcGoal === 'Event Promotion' ? 'Event Sponsorship' : 'Social Campaign Boost'}</strong>
                         </p>
@@ -867,6 +1023,7 @@ export default function SponsorshipKit() {
                           setSelectedTier(sizeMap[calcSize.toLowerCase()] || 'championPartner')
                           scrollTo('builder')
                         }}
+                        data-cursor-label="BUILD"
                         className="btn-primary w-full"
                       >
                         Build This Package
@@ -881,11 +1038,11 @@ export default function SponsorshipKit() {
       </section>
 
       {/* ── Section 6: Case Studies ── */}
-      <section className="bg-one-navy section-padding">
+      <section className="bg-surface-peak section-bleed-top section-padding" data-cursor-label="CASE STUDIES">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="flex flex-wrap items-end justify-between gap-4 mb-10">
             <div>
-              <h2 className="font-h2 text-one-white mb-2">SPONSORSHIP CHANNELS</h2>
+              <WordReveal text="SPONSORSHIP CHANNELS" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             </div>
             <select
               value={caseFilter}
@@ -911,8 +1068,9 @@ export default function SponsorshipKit() {
                   whileHover={{ y: -4 }}
                   className="glass-card overflow-hidden group h-full"
                 >
+                  <div aria-hidden className="explore-tile-scan" />
                   {'link' in cs && cs.link ? (
-                    <Link to={cs.link} className="block h-full">
+                    <Link to={cs.link} data-cursor-label="VIEW" className="block h-full">
                       {renderChannelCard(cs)}
                     </Link>
                   ) : (
@@ -926,11 +1084,11 @@ export default function SponsorshipKit() {
       </section>
 
       {/* ── Section 7: Final CTA ── */}
-      <section className="relative bg-one-navy section-padding overflow-hidden">
+      <section className="relative bg-surface-glow section-bleed-top section-padding overflow-hidden" data-cursor-label="LET'S TALK">
         <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(212,150,58,0.03) 20px, rgba(212,150,58,0.03) 21px)' }} />
         <div className="relative z-10 max-w-[700px] mx-auto px-4 text-center">
           <ScrollReveal>
-            <h2 className="font-h2 text-one-white mb-4">READY TO GO ON AIR?</h2>
+            <WordReveal text="READY TO GO ON AIR?" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
             <p className="font-body text-one-white mb-8">
               Let's build a sponsorship package that delivers real results for your brand.
             </p>
@@ -965,7 +1123,7 @@ export default function SponsorshipKit() {
                   placeholder="Your Name"
                   value={heroName}
                   onChange={(e) => setHeroName(e.target.value)}
-                  className="flex-1 bg-one-navy border border-one-border rounded-lg px-4 py-3 font-body-small text-one-white placeholder:text-muted/60 focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-amber/15 transition-all"
+                  className="flex-1 bg-one-navy border border-one-border rounded-lg px-4 py-3 font-body-small text-one-white placeholder:text-muted/60 focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-one-gold/15 transition-all"
                   required
                 />
                 <input
@@ -973,10 +1131,10 @@ export default function SponsorshipKit() {
                   placeholder="Business Email"
                   value={heroEmail}
                   onChange={(e) => setHeroEmail(e.target.value)}
-                  className="flex-1 bg-one-navy border border-one-border rounded-lg px-4 py-3 font-body-small text-one-white placeholder:text-muted/60 focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-amber/15 transition-all"
+                  className="flex-1 bg-one-navy border border-one-border rounded-lg px-4 py-3 font-body-small text-one-white placeholder:text-muted/60 focus:border-one-gold focus:outline-none focus:ring-2 focus:ring-one-gold/15 transition-all"
                   required
                 />
-                <button type="submit" disabled={heroSubmitting} className="btn-primary whitespace-nowrap">
+                <button type="submit" disabled={heroSubmitting} data-cursor-label={heroSubmitting ? 'SENDING' : 'START'} className="btn-primary whitespace-nowrap">
                   {heroSubmitting ? 'Sending…' : 'Get Started'}
                 </button>
               </form>
@@ -984,7 +1142,7 @@ export default function SponsorshipKit() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="p-6 glass-card border-l-2 border-l-amber max-w-lg mx-auto mb-4"
+                className="p-6 glass-card border-l-2 border-l-one-gold max-w-lg mx-auto mb-4"
               >
                 <Sparkles size={24} className="text-one-gold mx-auto mb-2" />
                 <p className="font-h4 text-one-white mb-1">Thanks, {heroName}!</p>
@@ -994,16 +1152,20 @@ export default function SponsorshipKit() {
 
             <p className="font-label text-muted mb-4">
               Or call us:{' '}
-              <a href={`tel:${BRAND.phone.replace(/\s/g, '')}`} className="text-one-white hover:text-one-gold transition-colors">
+              <a href={`tel:${BRAND.phone.replace(/\s/g, '')}`} data-cursor-label="CALL" className="text-one-white hover:text-one-gold transition-colors">
                 {BRAND.phone}
               </a>
             </p>
-            <Link to="/proposal" className="font-label text-one-gold hover:text-one-gold transition-colors">
+            <Link to="/proposal" data-cursor-label="PROPOSAL" className="font-label text-one-gold hover:text-one-gold transition-colors link-hover">
               Prefer to self-serve? Try the Proposal Builder →
             </Link>
           </ScrollReveal>
         </div>
       </section>
+      <SponsorCommercialCta
+        headline="See your reach before you commit"
+        subline="Map 25 communities, compare packages, or speak with our partnerships team."
+      />
     </Layout>
   )
 }

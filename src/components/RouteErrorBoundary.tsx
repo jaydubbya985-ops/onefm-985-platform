@@ -38,7 +38,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
             <p className="text-one-muted text-sm">
               {this.state.error?.message ?? 'An unexpected error occurred.'}
             </p>
-            <Link to="/" className="btn-primary inline-block text-sm">
+            <Link to="/" data-cursor-label="HOME" className="btn-primary inline-block text-sm">
               Return Home
             </Link>
           </div>

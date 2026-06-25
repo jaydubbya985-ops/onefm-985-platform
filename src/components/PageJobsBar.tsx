@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, type LucideIcon } from 'lucide-react'
+import { TiltCard } from '@/components/TiltCard'
 
 export interface PageJob {
   label: string
@@ -25,10 +26,13 @@ export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; classNa
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06, duration: 0.4 }}
               >
+                <TiltCard maxTilt={6} className="h-full">
                 <Link
                   to={job.path}
-                  className="flex items-center gap-3 glass-card p-3 md:p-4 rounded-xl hover:border-one-gold/40 transition-colors group h-full"
+                  data-cursor-label={job.label.toUpperCase()}
+                  className="flex items-center gap-3 glass-card p-3 md:p-4 rounded-xl hover:border-one-gold/40 transition-colors group h-full relative overflow-hidden"
                 >
+                  <div aria-hidden className="explore-tile-scan" />
                   <div
                     className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                     style={{ backgroundColor: `${accent}22` }}
@@ -43,6 +47,7 @@ export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; classNa
                   </div>
                   <ArrowRight size={14} className="text-one-gold opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                 </Link>
+                </TiltCard>
               </motion.div>
             )
           })}

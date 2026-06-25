@@ -3,9 +3,48 @@
 @tailwind utilities;
 
 /* ── Keyframes (defined here so @layer components can reference them) ── */
+@keyframes scanDown {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+@keyframes tunedPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
 @keyframes shimmer {
   0%   { background-position: 200% center; }
   100% { background-position: -200% center; }
+}
+
+@keyframes shimmerBar {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marqueeReverse {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes mini-bar {
+  0%, 100% { height: 3px; }
+  50%       { height: 14px; }
+}
+
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes signal-flicker {
+  0%, 100% { opacity: 0.72; }
+  38%       { opacity: 0.22; }
+  62%       { opacity: 0.48; }
 }
 
 @keyframes ken-burns {
@@ -14,9 +53,62 @@
   100% { transform: scale(1) translate(0, 0); }
 }
 
+@keyframes hero-mist-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+  50%      { transform: translate(-4%, 3%) scale(1.08); opacity: 0.75; }
+}
+
+@keyframes hero-mist-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1.05); opacity: 0.35; }
+  50%      { transform: translate(5%, -2%) scale(1); opacity: 0.5; }
+}
+
+@keyframes hero-mist-drift-c {
+  0%, 100% { transform: translate(-2%, 0) scale(1.1); opacity: 0.25; }
+  50%      { transform: translate(3%, 4%) scale(1.02); opacity: 0.4; }
+}
+
 @keyframes marquee {
   0%   { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
+}
+
+@keyframes electric-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(var(--one-electric-rgb),0.15), 0 0 20px rgba(var(--one-electric-rgb),0.08); border-color: rgba(var(--one-electric-rgb),0.25); }
+  50%       { box-shadow: 0 0 0 1px rgba(var(--one-electric-rgb),0.35), 0 0 32px rgba(var(--one-electric-rgb),0.18); border-color: rgba(var(--one-electric-rgb),0.5); }
+}
+
+@keyframes deadAirGlitchR {
+  0%   { clip-path: inset(48% 0 42% 0); transform: translateX(-4px); }
+  10%  { clip-path: inset(12% 0 78% 0); transform: translateX(3px); }
+  20%  { clip-path: inset(72% 0 14% 0); transform: translateX(-2px); }
+  30%  { clip-path: inset(35% 0 55% 0); transform: translateX(5px); }
+  40%, 100% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+}
+@keyframes deadAirGlitchC {
+  0%, 40%  { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+  50%  { clip-path: inset(25% 0 60% 0); transform: translateX(5px); }
+  60%  { clip-path: inset(65% 0 22% 0); transform: translateX(-3px); }
+  70%  { clip-path: inset(8% 0 82% 0); transform: translateX(2px); }
+  80%  { clip-path: inset(55% 0 35% 0); transform: translateX(-4px); }
+  90%, 100% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+}
+
+@keyframes freq-bar {
+  0%, 100% { transform: scaleY(0.15); }
+  50%       { transform: scaleY(1); }
+}
+
+@keyframes scan-sweep {
+  0%   { top: -2px; opacity: 1; }
+  85%  { opacity: 0.6; }
+  100% { top: 100%;  opacity: 0; }
+}
+
+@keyframes gold-shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @layer base {
@@ -31,8 +123,8 @@
     --primary-foreground: 216 45% 9%;
     --secondary: 216 30% 15%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 213 8% 57%;
-    --muted-foreground: 216 10% 25%;
+    --muted: 213 8% 62%;
+    --muted-foreground: 216 10% 60%;
     --accent: 40 60% 55%;
     --accent-foreground: 216 45% 9%;
     --destructive: 358 82% 50%;
@@ -53,6 +145,7 @@
     --one-navy: #071D3A;
     --one-blue: #1B458F;
     --one-electric: #00E5FF;
+    --one-electric-dim: rgba(0, 229, 255, 0.65);
     --one-gold: #D4AF37;
     --one-red: #E51636;
     --one-white: #FFFFFF;
@@ -66,22 +159,116 @@
     --ease-dramatic: cubic-bezier(0.7, 0, 0.3, 1);
   }
 
+  /* ── Time-of-day theming (Shepparton AEST/AEDT local time) ── */
+  :root {
+    --one-electric-rgb: 0, 229, 255;
+    --one-scanline: rgba(0, 229, 255, 0.9);
+    --one-scanline-glow: rgba(0, 229, 255, 0.6);
+    --one-scanline-glow2: rgba(0, 229, 255, 0.2);
+  }
+  :root[data-time="night"] {
+    --one-electric: #7B5EF8;
+    --one-electric-rgb: 123, 94, 248;
+    --one-electric-dim: rgba(123,94,248,0.65);
+    --one-scanline: rgba(123, 94, 248, 0.9);
+    --one-scanline-glow: rgba(123, 94, 248, 0.6);
+    --one-scanline-glow2: rgba(123, 94, 248, 0.2);
+  }
+  :root[data-time="breakfast"] {
+    --one-electric: #F59E0B;
+    --one-electric-rgb: 245, 158, 11;
+    --one-electric-dim: rgba(245,158,11,0.65);
+    --one-scanline: rgba(245, 158, 11, 0.9);
+    --one-scanline-glow: rgba(245, 158, 11, 0.6);
+    --one-scanline-glow2: rgba(245, 158, 11, 0.2);
+  }
+  :root[data-time="midday"] {
+    --one-electric: #06D6A0;
+    --one-electric-rgb: 6, 214, 160;
+    --one-electric-dim: rgba(6,214,160,0.65);
+    --one-scanline: rgba(6, 214, 160, 0.9);
+    --one-scanline-glow: rgba(6, 214, 160, 0.6);
+    --one-scanline-glow2: rgba(6, 214, 160, 0.2);
+  }
+  :root[data-time="drive"] {
+    --one-electric: #FF8C42;
+    --one-electric-rgb: 255, 140, 66;
+    --one-electric-dim: rgba(255,140,66,0.65);
+    --one-scanline: rgba(255, 140, 66, 0.9);
+    --one-scanline-glow: rgba(255, 140, 66, 0.6);
+    --one-scanline-glow2: rgba(255, 140, 66, 0.2);
+  }
+
   * {
     @apply border-one-border;
   }
 
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
   }
 
   body {
     @apply bg-one-navy text-one-white font-body antialiased;
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (pointer: fine) {
+    *, *::before, *::after {
+      cursor: none !important;
+    }
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.032;
+    mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
+  }
+
+  /* ── Skip-to-content link (accessibility) ── */
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 1rem;
+    z-index: 100000;
+    padding: 0.5rem 1.25rem;
+    background: #D4AF37;
+    color: #040B14;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: auto !important;
+  }
+  .skip-to-content:focus {
+    left: 1rem;
+    outline: 2px solid #D4AF37;
+    outline-offset: 2px;
+  }
+
+  /* ── Keyboard focus rings ── */
+  :focus-visible {
+    outline: 2px solid rgba(212, 175, 55, 0.8);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  /* Suppress focus ring on mouse click (focus-visible already handles this, but belt-and-braces) */
+  :focus:not(:focus-visible) {
+    outline: none;
   }
 }
 
@@ -97,6 +284,7 @@
       0 8px 32px rgba(0, 0, 0, 0.35),
       0 1px 0 rgba(255, 255, 255, 0.04) inset,
       0 -1px 0 rgba(0, 0, 0, 0.2) inset;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   .glass-card:hover {
@@ -104,8 +292,8 @@
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.4),
       0 0 0 1px rgba(212, 168, 75, 0.1),
+      0 0 32px rgba(var(--one-electric-rgb), 0.04),
       0 1px 0 rgba(255, 255, 255, 0.05) inset;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   /* Hero-level glass — more opaque, stronger blur */
@@ -225,15 +413,47 @@
     background-clip: text;
   }
 
+  .text-gold-gradient {
+    background: linear-gradient(90deg, #C9A227 0%, #F0C75E 25%, #FFF0AA 45%, #D4AF37 60%, #F4D27A 80%, #C9A227 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gold-shimmer 6s ease-in-out infinite;
+  }
+
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-label transition-all duration-300;
     background: linear-gradient(135deg, #D4AF37, #B8943F);
     color: var(--one-navy);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%);
+    transform: skewX(-20deg);
+    transition: left 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .btn-primary:hover::before {
+    left: 160%;
+  }
+  .btn-primary > * {
+    position: relative;
+    z-index: 2;
   }
 
   .btn-primary:hover {
     @apply scale-105;
     background: linear-gradient(135deg, #F4D27A, #D4AF37);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
   }
 
   .btn-primary:active {
@@ -246,6 +466,13 @@
 
   .btn-secondary:hover {
     @apply bg-one-white/10 border-one-white;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 font-label text-one-white/60 bg-transparent border border-one-white/20 transition-all duration-300;
+  }
+  .btn-ghost:hover {
+    @apply text-one-white border-one-white/50 bg-one-white/5;
   }
 
   .section-padding {
@@ -474,6 +701,31 @@
     background-size: 220px 220px;
   }
 
+  /* ── Explore tile scan-line — sweeps on hover ───────────
+     A single gold line sweeps top→bottom like a TV signal
+     tuning. Lives inside overflow-hidden tiles so it's clipped.
+  ──────────────────────────────────────────────────────── */
+  .explore-tile-scan {
+    position: absolute;
+    inset-x: 0;
+    top: -2px;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(212,175,55,0.7) 20%,
+      rgba(255,255,255,0.5) 50%,
+      rgba(212,175,55,0.7) 80%,
+      transparent 100%
+    );
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10;
+  }
+  .group:hover .explore-tile-scan {
+    animation: scan-sweep 0.55s ease-in forwards;
+  }
+
   /* ── Horizontal gold gradient rule ──────────────────── */
   .gold-rule-h {
     display: block;
@@ -482,13 +734,198 @@
     background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.35) 30%, rgba(212,175,55,0.5) 50%, rgba(212,175,55,0.35) 70%, transparent 100%);
   }
 
+  /* ── Sliding underline — editorial link hover ───────────
+     Usage: add `link-hover` to any <a> or <Link>.
+     A thin gold line slides in from left on hover, out to right on leave.
+  ──────────────────────────────────────────────────────── */
+  .link-hover {
+    position: relative;
+    display: inline-block;
+  }
+  .link-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-hover:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
   /* ── Waveform bars (live strip) ──────────────────────── */
   .wave-bar {
     width: 3px;
     border-radius: 2px;
-    background: var(--one-gold);
+    background: var(--one-electric);
+    box-shadow: 0 0 6px rgba(var(--one-electric-rgb), 0.5);
     animation: waveform 1.2s ease-in-out infinite;
     transform-origin: bottom;
+  }
+
+  /* ── Hero atmospheric mist (Home) ───────────────────── */
+  .hero-mist {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .hero-mist__veil {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(56px);
+    will-change: transform, opacity;
+  }
+
+  .hero-mist__veil--a {
+    width: 85%;
+    height: 55%;
+    bottom: -12%;
+    left: -8%;
+    background: radial-gradient(ellipse, rgba(255, 255, 255, 0.16) 0%, transparent 68%);
+    animation: hero-mist-drift-a 24s ease-in-out infinite;
+  }
+
+  .hero-mist__veil--b {
+    width: 65%;
+    height: 45%;
+    top: 5%;
+    right: -6%;
+    background: radial-gradient(ellipse, rgba(27, 69, 143, 0.22) 0%, transparent 62%);
+    animation: hero-mist-drift-b 31s ease-in-out infinite;
+  }
+
+  .hero-mist__veil--c {
+    width: 50%;
+    height: 35%;
+    bottom: 20%;
+    right: 15%;
+    background: radial-gradient(ellipse, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    animation: hero-mist-drift-c 19s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-mist__veil {
+      animation: none !important;
+      opacity: 0.4;
+    }
+    .ticker-track {
+      animation: none !important;
+    }
+    .wave-bar {
+      animation: none !important;
+      height: 30% !important;
+    }
+    [style*="freq-bar"] {
+      animation: none !important;
+      transform: scaleY(0.4) !important;
+    }
+    .explore-tile-scan {
+      animation: none !important;
+      opacity: 0 !important;
+    }
+    /* Decorative Tailwind animate-* classes — functional animate-spin is excluded */
+    .animate-waveform,
+    .animate-ping,
+    .animate-pulse,
+    .animate-bounce,
+    .animate-pulse-dot,
+    .animate-signal-pulse,
+    .animate-float,
+    .animate-gradient-rotate,
+    .animate-glow-pulse,
+    .animate-shimmer,
+    .animate-marquee,
+    .animate-marquee-fast,
+    .animate-marquee-slow,
+    .animate-marquee-reverse {
+      animation: none !important;
+    }
+    .text-gold-gradient {
+      animation: none !important;
+      background-position: 0% 50% !important;
+    }
+  }
+
+  /* ── Section surface depth ───────────────────────────
+     Use these instead of flat bg-one-navy to give pages
+     visual altitude variation. Deep → Mid → Lift → Peak.
+  ─────────────────────────────────────────────────────── */
+  .bg-surface-deep {
+    background: #040C17;
+  }
+  .bg-surface-mid {
+    background: #071D3A;
+  }
+  .bg-surface-lift {
+    background: linear-gradient(180deg, #0A2245 0%, #071D3A 100%);
+  }
+  .bg-surface-peak {
+    background: linear-gradient(180deg, #0D2850 0%, #0A2245 100%);
+  }
+  /* Subtle side-lit variant for hero-adjacent sections */
+  .bg-surface-glow {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(var(--one-electric-rgb),0.04) 0%, transparent 60%),
+      #071D3A;
+  }
+  /* Gold-warmth variant for premium/sponsor sections */
+  .bg-surface-warm {
+    background:
+      radial-gradient(ellipse 70% 40% at 50% 100%, rgba(212,175,55,0.05) 0%, transparent 60%),
+      #071D3A;
+  }
+
+  /* ── Electric glow utilities ──────────────────────────── */
+  .glow-electric-sm  { box-shadow: 0 0 12px rgba(var(--one-electric-rgb), 0.25); }
+  .glow-electric-md  { box-shadow: 0 0 24px rgba(var(--one-electric-rgb), 0.35), 0 0 48px rgba(var(--one-electric-rgb), 0.10); }
+  .glow-electric-lg  { box-shadow: 0 0 40px rgba(var(--one-electric-rgb), 0.40), 0 0 80px rgba(var(--one-electric-rgb), 0.15); }
+
+  /* ── Live / streaming electric text ──────────────────── */
+  .text-live-electric {
+    color: var(--one-electric);
+    text-shadow: 0 0 12px rgba(var(--one-electric-rgb), 0.45);
+  }
+
+  /* ── Electric border pulse (for live/active cards) ───── */
+  .border-electric-pulse {
+    border-color: rgba(var(--one-electric-rgb), 0.3);
+    box-shadow:
+      0 0 0 1px rgba(var(--one-electric-rgb), 0.15),
+      0 0 20px rgba(var(--one-electric-rgb), 0.08);
+    animation: electric-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* ── Section separator gradient bleeds ───────────────── */
+  .section-bleed-top {
+    position: relative;
+  }
+  .section-bleed-top::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(var(--one-electric-rgb), 0.15) 30%,
+      rgba(var(--one-electric-rgb), 0.25) 50%,
+      rgba(var(--one-electric-rgb), 0.15) 70%,
+      transparent 100%
+    );
+  }
+
+  /* ── Gold discipline — reserved accent only ───────────── */
+  /* Use .text-accent-gold for premium/sponsor headings only */
+  .text-accent-gold {
+    color: #D4AF37;
+    letter-spacing: 0.02em;
   }
 }
 

@@ -107,9 +107,9 @@ function renderVariant(variant: SkeletonVariant) {
 
 export function SkeletonLoader({ variant = 'card', count = 1, className }: SkeletonLoaderProps) {
   return (
-    <div className={cn('space-y-4', className)}>
+    <div role="status" aria-label="Loading content" className={cn('space-y-4', className)}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i}>{renderVariant(variant)}</div>
+        <div key={i} aria-hidden>{renderVariant(variant)}</div>
       ))}
     </div>
   )

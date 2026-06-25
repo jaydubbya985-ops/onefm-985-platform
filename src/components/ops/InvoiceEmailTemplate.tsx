@@ -378,7 +378,7 @@ export function generateInvoiceEmailHtml(
             Vice Chair, ONE FM 98.5
           </div>
           <div style="color:#6B6B6B;font-size:13px;margin-top:10px;line-height:1.7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            (03) 5831 3131 &nbsp;|&nbsp; jason@onefm.com.au<br>
+            (03) 5831 3131 &nbsp;|&nbsp; admin@fm985.com.au<br>
             47 Parkside Drive, Shepparton VIC 3630
           </div>
         </td>

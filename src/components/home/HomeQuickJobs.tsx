@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { HOME_JOBS } from '@/lib/siteNav'
 import { FeaturePortal } from '@/components/FeaturePortal'
+import { TiltCard } from '@/components/TiltCard'
 
 export function HomeQuickJobs() {
   return (
@@ -22,14 +23,16 @@ export function HomeQuickJobs() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55 + i * 0.08, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             >
-              <FeaturePortal
-                to={job.path}
-                title={job.label}
-                description={job.description}
-                image={job.image}
-                tags={[...job.tags]}
-                accent={job.accent}
-              />
+              <TiltCard maxTilt={6}>
+                <FeaturePortal
+                  to={job.path}
+                  title={job.label}
+                  description={job.description}
+                  image={job.image}
+                  tags={[...job.tags]}
+                  accent={job.accent}
+                />
+              </TiltCard>
             </motion.div>
           ))}
         </div>
