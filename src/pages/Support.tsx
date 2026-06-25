@@ -912,7 +912,7 @@ function DonationFormSection({
                             <div className="font-label text-one-white text-xs mb-0.5">Call the Station</div>
                             <div className="font-body-small text-one-muted">{BRAND.phone} — our team can take card payments over the phone</div>
                           </div>
-                          <ArrowRight size={16} className="text-one-muted/50 ml-auto group-hover:translate-x-1 transition-transform" />
+                          <ArrowRight size={16} className="text-one-muted/85 ml-auto group-hover:translate-x-1 transition-transform" />
                         </a>
                       </div>
                       <p className="font-micro text-muted pt-1">
@@ -1327,13 +1327,13 @@ export default function Support() {
           speed={32}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">KEEP LOCAL RADIO ALIVE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY SUPPORTED · SINCE 1989</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.weeklyListeners.toLocaleString()} WEEKLY LISTENERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.weeklyListeners.toLocaleString()} WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">TAX-DEDUCTIBLE DONATIONS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.totalTowns} COMMUNITIES SERVED · GOULBURN VALLEY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES SERVED · GOULBURN VALLEY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FROM $10/MONTH</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">NOT-FOR-PROFIT · ACMA LICENSED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">NOT-FOR-PROFIT · ACMA LICENSED</span>,
           ]}
         />
       </div>

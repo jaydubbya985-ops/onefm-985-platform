@@ -376,13 +376,13 @@ export default function Home() {
         <Marquee
           speed={32}
           items={[
-            <span className="font-label text-[10px] tracking-[0.18em] text-one-muted/70">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
-            <span className="font-label text-[10px] tracking-[0.18em] text-one-electric/60">LIVE &amp; LOCAL SINCE 1989</span>,
-            <span className="font-label text-[10px] tracking-[0.18em] text-one-muted/70">{stationStats.totalTowns} TOWNS · {stationStats.broadcastRadiusKm} KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.18em] text-one-muted/88">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
+            <span className="font-label text-[10px] tracking-[0.18em] text-one-electric/85">LIVE &amp; LOCAL SINCE 1989</span>,
+            <span className="font-label text-[10px] tracking-[0.18em] text-one-muted/88">{stationStats.totalTowns} TOWNS · {stationStats.broadcastRadiusKm} KM RADIUS</span>,
             <span className="font-label text-[10px] tracking-[0.18em] text-one-gold/60">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.18em] text-one-muted/70">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
-            <span className="font-label text-[10px] tracking-[0.18em] text-one-electric/60">GVL FOOTBALL &amp; NETBALL COVERAGE</span>,
-            <span className="font-label text-[10px] tracking-[0.18em] text-one-muted/70">COMMUNITY RADIO · CALLSIGN 3ONE</span>,
+            <span className="font-label text-[10px] tracking-[0.18em] text-one-muted/88">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
+            <span className="font-label text-[10px] tracking-[0.18em] text-one-electric/85">GVL FOOTBALL &amp; NETBALL COVERAGE</span>,
+            <span className="font-label text-[10px] tracking-[0.18em] text-one-muted/88">COMMUNITY RADIO · CALLSIGN 3ONE</span>,
             <span className="font-label text-[10px] tracking-[0.18em] text-one-gold/60">MULTICULTURAL BROADCASTING</span>,
           ]}
         />
@@ -627,7 +627,7 @@ export default function Home() {
                 'ON AIR 24/7',
               ].map((item) => (
                 <span key={item} className="flex items-center gap-7 shrink-0 pr-7">
-                  <span className="font-label text-[9px] tracking-[0.28em] text-one-muted/50 uppercase whitespace-nowrap">
+                  <span className="font-label text-[9px] tracking-[0.28em] text-one-muted/85 uppercase whitespace-nowrap">
                     {item}
                   </span>
                   <span className="block w-[3px] h-[3px] rounded-full bg-one-electric/25 shrink-0" />
@@ -823,7 +823,7 @@ export default function Home() {
                 <div className="flex items-start justify-between mb-8">
                   <span
                     className={`font-heading font-bold leading-none tabular-nums ${
-                      accent ? 'text-one-gold/30' : 'text-one-white/10'
+                      accent ? 'text-one-gold/55' : 'text-one-white/40'
                     }`}
                     style={{ fontSize: '3.5rem', letterSpacing: '-0.03em' }}
                   >
@@ -850,7 +850,7 @@ export default function Home() {
                 <Link
                   to={to}
                   className={`inline-flex items-center gap-2 font-label text-[11px] tracking-wider transition-all duration-300 group-hover:gap-3 ${
-                    accent ? 'text-one-gold' : 'text-one-white/40 group-hover:text-one-white/70'
+                    accent ? 'text-one-gold' : 'text-one-white/55 group-hover:text-one-white/80'
                   }`}
                 >
                   {cta}

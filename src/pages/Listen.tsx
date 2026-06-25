@@ -467,7 +467,7 @@ export default function Listen() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.35, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           >
-            <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/70 uppercase whitespace-nowrap">Live · Shepparton</span>
+            <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/88 uppercase whitespace-nowrap">Live · Shepparton</span>
             <div className="h-3 w-px bg-one-border/60 shrink-0" />
             <WeatherWidget />
           </motion.div>
@@ -518,11 +518,11 @@ export default function Listen() {
           speed={30}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">STREAMING 24/7</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FM · ONLINE · APP · SMART SPEAKER</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">GOULBURN VALLEY · SINCE 1989</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY · SINCE 1989</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO PLUS · AVAILABLE NOW</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">TUNE IN · STREAM ON · PLAY ANYWHERE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">TUNE IN · STREAM ON · PLAY ANYWHERE</span>,
           ]}
         />
       </div>

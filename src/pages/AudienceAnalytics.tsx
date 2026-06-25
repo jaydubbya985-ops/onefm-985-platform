@@ -377,13 +377,13 @@ export default function AudienceAnalytics() {
           speed={30}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">REAL-TIME AUDIENCE INTELLIGENCE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DEMOGRAPHICS · REACH · PERFORMANCE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 POPULATION · LICENSED 1989</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.broadcastPopulation.toLocaleString()} BROADCAST AREA POPULATION</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} BROADCAST AREA POPULATION</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DATA UPDATED · EVERY 2 SECONDS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.yearsBroadcasting} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.yearsBroadcasting} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
           ]}
         />
       </div>

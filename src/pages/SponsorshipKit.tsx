@@ -523,13 +523,13 @@ export default function SponsorshipKit() {
           speed={28}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE READS · SPOT ADS · SPONSORSHIP PACKAGES</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">500+ ACTIVE PARTNERS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">GOULBURN VALLEY · VICTORIA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY · VICTORIA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">94% RENEWAL RATE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">COMMUNITY RADIO · {stationStats.yearsBroadcasting} YEARS ON AIR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">COMMUNITY RADIO · {stationStats.yearsBroadcasting} YEARS ON AIR</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">CALLSIGN: 3ONE · ACMA LICENSED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CALLSIGN: 3ONE · ACMA LICENSED</span>,
           ]}
         />
       </div>

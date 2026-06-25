@@ -72,7 +72,7 @@ function PipelineIndicator() {
     <div className="flex items-center gap-1 flex-wrap mt-3">
       {stages.map((stage, idx) => (
         <div key={stage.id} className="flex items-center gap-1">
-          {idx > 0 && <ChevronRight className="w-3.5 h-3.5 text-one-muted/50" />}
+          {idx > 0 && <ChevronRight className="w-3.5 h-3.5 text-one-muted/85" />}
           <button
             onClick={() => setActiveTab(stage.id)}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs transition-colors ${

@@ -243,7 +243,7 @@ export default function EnquiryDashboard() {
                 <span
                   className={cn(
                     'ml-1.5 text-[10px] tabular-nums',
-                    active ? 'text-one-gold/70' : 'text-one-muted/50',
+                    active ? 'text-one-gold/70' : 'text-one-muted/85',
                   )}
                 >
                   {tabCount(tab.key)}

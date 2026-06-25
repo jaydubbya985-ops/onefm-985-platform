@@ -126,7 +126,7 @@ export function Footer() {
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.55, delay: 0.08, ease }}
           >
-            <h4 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">LISTEN</h4>
+            <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">LISTEN</h3>
             <ul className="space-y-3">
               {FOOTER_LISTEN.map((link) => (
                 <li key={link.path}>
@@ -145,7 +145,7 @@ export function Footer() {
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.55, delay: 0.14, ease }}
           >
-            <h4 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">SPONSOR</h4>
+            <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">SPONSOR</h3>
             <ul className="space-y-3">
               {FOOTER_SPONSOR.map((link) => (
                 <li key={link.path}>
@@ -164,7 +164,7 @@ export function Footer() {
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.55, delay: 0.2, ease }}
           >
-            <h4 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">ABOUT</h4>
+            <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">ABOUT</h3>
             <ul className="space-y-3 mb-6">
               {FOOTER_ABOUT.map((link) => (
                 <li key={link.path}>
@@ -174,7 +174,7 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            <h4 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-4">SUPPORT</h4>
+            <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-4">SUPPORT</h3>
             <ul className="space-y-3">
               {FOOTER_SUPPORT.map((link) => (
                 <li key={link.path}>
@@ -194,7 +194,7 @@ export function Footer() {
             transition={{ duration: 0.55, delay: 0.26, ease }}
             data-cursor-label="CONTACT"
           >
-            <h4 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">CONTACT</h4>
+            <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">CONTACT</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <Mail size={14} className="text-one-muted mt-0.5 shrink-0" />
@@ -246,25 +246,25 @@ export function Footer() {
       {/* ── Bottom bar (pb-20 leaves clearance for MiniPlayer) ── */}
       <div className="border-t border-one-border/20" data-cursor-label="LEGAL">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 pb-20 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="font-label text-[10px] text-one-muted/50 tracking-wider">
+          <p className="font-label text-[10px] text-one-muted/85 tracking-wider">
             &copy; {new Date().getFullYear()} {BRAND.fullName} · ABN {BRAND.abn}
           </p>
           <div className="flex items-center gap-6">
             {FOOTER_RESOURCES.map((link) => (
-              <Link key={link.label} to={link.path} className="font-label text-[10px] text-one-muted/50 hover:text-one-muted transition-colors tracking-wider link-hover">
+              <Link key={link.label} to={link.path} className="font-label text-[10px] text-one-muted/85 hover:text-one-muted transition-colors tracking-wider link-hover">
                 {link.label}
               </Link>
             ))}
           </div>
           <div className="flex items-center gap-4">
-            <span className="font-label text-[10px] text-one-muted/40 tracking-wider">
+            <span className="font-label text-[10px] text-one-muted/85 tracking-wider">
               {BRAND.callsign} · ACMA {BRAND.acma}
             </span>
             <button
               type="button"
               onClick={scrollToTop}
               data-cursor-label="TOP"
-              className="p-2 rounded-full border border-one-border/40 text-one-muted/50 hover:text-one-white hover:border-one-gold/40 transition-all"
+              className="p-2 rounded-full border border-one-border/40 text-one-muted/85 hover:text-one-white hover:border-one-gold/40 transition-all"
               aria-label="Back to top"
             >
               <ArrowUp size={14} />

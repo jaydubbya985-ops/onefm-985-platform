@@ -279,13 +279,13 @@ export default function Story() {
           speed={25}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BORN 1989 · CALLSIGN: 3ONE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">SHEPPARTON · GOULBURN VALLEY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">SHEPPARTON · GOULBURN VALLEY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">THROUGH FLOOD · FIRE · FOOTY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD · FIRE · FOOTY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE CONNECTED</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · NON-PROFIT</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">ACMA LICENSED · 98.5 FM</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSED · 98.5 FM</span>,
           ]}
         />
       </div>

@@ -68,7 +68,7 @@ function SignalCanvas() {
         const ring = rings[i]
         const age = (now - ring.born) / 6000
         if (age >= 1) { rings.splice(i, 1); continue }
-        const r = age * maxR
+        const r = Math.max(0, age) * maxR
         const alpha = 0.22 * (1 - age) * (1 - age)
         ctx.beginPath()
         ctx.arc(ring.ox, ring.oy, r, 0, Math.PI * 2)

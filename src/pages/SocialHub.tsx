@@ -285,13 +285,13 @@ function HeroSection() {
           speed={28}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK · INSTAGRAM · X · SOUNDCLOUD</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">24 CONTENT TEMPLATES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24 CONTENT TEMPLATES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">120+ BRAND IMAGES</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">AI CAPTION GENERATOR</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">CAMPAIGN CALENDAR TOOLS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CAMPAIGN CALENDAR TOOLS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BRAND KIT DOWNLOAD</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">GOULBURN VALLEY · COMMUNITY RADIO</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY · COMMUNITY RADIO</span>,
           ]}
         />
       </div>

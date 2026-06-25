@@ -10,7 +10,7 @@ export default function Privacy() {
         description="ONE FM 98.5 privacy policy — how we collect, use, and protect your information."
       />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-        <p className="font-label text-[10px] tracking-[0.22em] text-one-electric/60 uppercase mb-4">
+        <p className="font-label text-[10px] tracking-[0.22em] text-one-electric/85 uppercase mb-4">
           Last updated: June 2026
         </p>
         <h1 className="font-h1 text-one-white mb-4">Privacy Policy</h1>
@@ -113,7 +113,7 @@ export default function Privacy() {
               communications, please contact us:
             </p>
             <div className="mt-3 glass-card p-5 inline-block">
-              <p className="font-label text-[10px] tracking-[0.2em] text-one-electric/60 mb-2">PRIVACY OFFICER</p>
+              <p className="font-label text-[10px] tracking-[0.2em] text-one-electric/85 mb-2">PRIVACY OFFICER</p>
               <p className="font-body-small text-one-white">{BRAND.org}</p>
               <a href={`mailto:${BRAND.email}`} data-cursor-label="EMAIL" className="font-mono text-[11px] text-one-gold link-hover block mt-1">
                 {BRAND.email}

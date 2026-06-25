@@ -136,7 +136,7 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                 </a>
               </div>
 
-              <p className="hidden sm:block mt-1 font-mono text-[9px] text-one-muted/50 select-none" aria-hidden>
+              <p className="hidden sm:block mt-1 font-mono text-[9px] text-one-muted/85 select-none" aria-hidden>
                 Press <kbd className="border border-one-border/40 rounded px-1 py-px bg-one-navy/40">Space</kbd> to play / pause
               </p>
 

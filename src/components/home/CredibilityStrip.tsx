@@ -27,7 +27,7 @@ export function CredibilityStrip() {
               transition={{ delay: i * 0.07, duration: 0.5, ease }}
               className="group"
             >
-              <p className="font-label text-[9px] text-one-electric/60 uppercase tracking-[0.2em] mb-1.5">
+              <p className="font-label text-[9px] text-one-electric/85 uppercase tracking-[0.2em] mb-1.5">
                 {f.label}
               </p>
               {f.scramble ? (

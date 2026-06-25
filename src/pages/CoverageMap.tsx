@@ -622,7 +622,7 @@ export default function CoverageMap() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/70 uppercase whitespace-nowrap">Live · Shepparton</span>
+              <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/88 uppercase whitespace-nowrap">Live · Shepparton</span>
               <div className="flex items-end gap-[2px]" aria-hidden style={{ height: 16 }}>
                 {[4, 8, 12, 16].map((h, i) => (
                   <motion.div

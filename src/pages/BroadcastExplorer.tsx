@@ -1081,13 +1081,13 @@ export default function BroadcastExplorer() {
           speed={34}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE &amp; LOCAL · 24/7</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BREAKFAST · MUSIC · SPORT · CULTURE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">CALLSIGN 3ONE · SINCE 1989</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CALLSIGN 3ONE · SINCE 1989</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL FOOTBALL LIVE COMMENTARY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">ACMA LICENSE 1385226/1 · COMMUNITY RADIO</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSE 1385226/1 · COMMUNITY RADIO</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ETHNIC &amp; MULTICULTURAL PROGRAMS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/50">REAL VOICES · REAL STORIES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">REAL VOICES · REAL STORIES</span>,
           ]}
         />
       </div>
