@@ -4,6 +4,7 @@
  */
 
 import { getCurrentLiveShow, type LiveShowInfo } from '@/data/programGuide'
+import { STREAM_STATUS_URL } from '@/lib/streamConfig'
 
 export type MetadataSource = 'schedule' | 'rds' | 'stream' | 'manual' | 'unavailable'
 
@@ -110,7 +111,6 @@ export async function fetchStreamMetadata(_streamUrl?: string): Promise<{
   artist: string | null
 } | null> {
   try {
-    const { STREAM_STATUS_URL } = await import('@/lib/streamConfig')
     const res = await fetch(STREAM_STATUS_URL)
     if (!res.ok) return null
 

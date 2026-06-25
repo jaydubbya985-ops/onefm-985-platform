@@ -30,9 +30,22 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020',
     sourcemap: false,
     chunkSizeWarningLimit: 600,
+    modulePreload: {
+      // vendor-pdf (jspdf + html2canvas) is only reachable through the
+      // lazy-loaded SalesProposal/ops invoice routes — eagerly preloading
+      // it on every page forces all visitors to download 174KB gzip they
+      // may never need.
+      resolveDependencies: (_filename, deps) => deps.filter((d) => !d.includes('vendor-pdf')),
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Vite's dynamic-import preload helper is a virtual module (not under
+          // node_modules) — left unassigned, Rollup's default heuristic dropped it
+          // into vendor-pdf, forcing every page (which all use SOME dynamic import)
+          // to load the 174KB-gzip PDF vendor chunk just for this helper. Pin it to
+          // vendor-react, which every page already loads anyway.
+          if (id.includes('vite/preload-helper')) return 'vendor-react'
           if (!id.includes('node_modules')) return
           if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf'
           if (id.includes('@supabase')) return 'vendor-supabase'
