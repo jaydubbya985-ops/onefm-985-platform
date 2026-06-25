@@ -198,7 +198,7 @@ export default function Story() {
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
             <img
-              src="/assets/images/geo-town-aerial-lake.jpg"
+              src="/assets/images/geo-lake-aerial.jpg"
               alt=""
               aria-hidden
               loading="eager"

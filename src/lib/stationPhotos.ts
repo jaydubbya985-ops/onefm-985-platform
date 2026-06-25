@@ -46,7 +46,7 @@ export const STATION_PHOTOS = {
   cultureIndigenousElders: `${IMG}/culture-indigenous-elders.jpg`,
   cultureSiloArtFaces: `${IMG}/culture-silo-art-faces.png`,
   cultureSiloArtBirds: `${IMG}/culture-silo-art-birds.png`,
-  cultureRiverboatMurray: `${IMG}/culture-riverboat-scenic.jpg`,
+  cultureRiverboatMurray: `${IMG}/culture-riverboat-murray.jpg`,
   eventOutdoorCinema: `${IMG}/event-outdoor-cinema.png`,
   eventFestivalTents: `${IMG}/event-festival-tents.png`,
   cultureAlbanianDancers: `${IMG}/culture-albanian-dancers.png`,
@@ -72,15 +72,15 @@ export const STATION_PHOTOS = {
   communityOutdoorMarket: `${IMG}/community-outdoor-market.jpg`,
 
   // GVL additional action
-  gvlTownersCelebration: `${IMG}/gvl-towners-celebration.jpg`,
-  gvlGoalCelebration: `${IMG}/gvl-goal-celebration.jpg`,
+  gvlTownersCelebration: `${IMG}/gvl-towners-win.jpg`,
+  gvlGoalCelebration: `${IMG}/gvl-towners-win.jpg`,
 
   // Studio & presenter additions
   studioPresenterMic: `${IMG}/studio-presenter-mic.jpg`,
   studioSbsVisit: `${IMG}/studio-sbs-visit.jpg`,
 
   // Geographic additions
-  geoTownAerialLake: `${IMG}/geo-town-aerial-lake.jpg`,
+  geoTownAerialLake: `${IMG}/geo-lake-aerial.jpg`,
 
   // ONE FM OB & branded presence — real station content
   obSetupFull: `${IMG}/ob-setup-full.jpg`,
@@ -100,11 +100,11 @@ export const STATION_PHOTOS = {
  */
 export const HOST_PHOTOS = {
   onAirHost1:       '/on-air-host-1.jpg',
-  onAirHost2:       '/on-air-host-2.jpg',
-  onAirHost3:       '/on-air-host-3.jpg',
+  onAirHost2:       `${IMG}/studio-commentary-selfie.jpg`,
+  onAirHost3:       `${IMG}/studio-sbs-diversity.jpg`,
   studioControlRoom: '/studio-control-room.jpg',
-  communityEvent:   '/community-event.jpg',
-  regionalLandscape: '/regional-landscape.jpg',
+  communityEvent:   `${IMG}/community-outdoor-market.jpg`,
+  regionalLandscape: `${IMG}/geo-rolling-green-hills.jpg`,
 } as const
 
 /** Common site defaults — per photo-assignment-board.md */
