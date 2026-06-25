@@ -165,13 +165,17 @@ export function HeroAtmosphere() {
         />
       </div>
 
-      {/* Layer 1: cinematic dark overlays — stay fixed */}
+      {/* Layer 1: cinematic dark overlays — stay fixed.
+          These two gradients stack (combined opacity), so the previous
+          values (0.72/0.80 at the darkest corner) left the photo almost
+          entirely obscured. Reduced so the real photo is actually visible
+          while keeping enough contrast for the white hero text. */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           zIndex: 1,
           background:
-            'linear-gradient(to bottom, rgba(5,13,26,0.72) 0%, rgba(5,13,26,0.38) 40%, rgba(4,11,20,0.94) 100%)',
+            'linear-gradient(to bottom, rgba(5,13,26,0.48) 0%, rgba(5,13,26,0.20) 40%, rgba(4,11,20,0.82) 100%)',
         }}
       />
       <div
@@ -179,7 +183,7 @@ export function HeroAtmosphere() {
         style={{
           zIndex: 1,
           background:
-            'linear-gradient(to right, rgba(5,13,26,0.80) 0%, rgba(7,29,58,0.18) 50%, rgba(5,13,26,0.38) 100%)',
+            'linear-gradient(to right, rgba(5,13,26,0.55) 0%, rgba(7,29,58,0.10) 50%, rgba(5,13,26,0.22) 100%)',
         }}
       />
 

@@ -34,7 +34,9 @@ const TILES = [
     desc: 'Latest from fm985.com.au',
     path: 'https://fm985.com.au',
     external: true,
-    image: STATION_PHOTOS.cultureFirstNationsDancer,
+    // cultureFirstNationsDancer is only 196x257px (thumbnail-res) -- visibly
+    // pixelated at full grid-tile size. No higher-res original exists.
+    image: STATION_PHOTOS.cultureIndigenousElders,
     fallback: PHOTO_DEFAULTS.regional,
   },
   {
@@ -62,7 +64,9 @@ const TILES = [
     title: 'Contact',
     desc: 'Get involved',
     path: '/contact',
-    image: STATION_PHOTOS.cultureSiloArtFaces,
+    // cultureSiloArtFaces is only 287x175px (thumbnail-res). No higher-res
+    // original exists.
+    image: STATION_PHOTOS.communityBookStall,
     fallback: PHOTO_DEFAULTS.regional,
   },
 ] as const

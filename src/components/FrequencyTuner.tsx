@@ -139,8 +139,10 @@ export function FrequencyTuner({ onDemodChange, className = '', autoSweep = fals
       aria-valuenow={freq}
       aria-label="Frequency tuner — drag to tune"
     >
-      {/* Readout row */}
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 18 }}>
+      {/* Readout row — capped width so the status badge sits near the
+          frequency number instead of drifting to the far edge of the
+          (much wider) dial track below it. */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 18, maxWidth: 280 }}>
         <span
           style={{
             fontFamily: 'JetBrains Mono, monospace',

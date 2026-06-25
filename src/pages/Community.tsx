@@ -202,10 +202,13 @@ const MOSAIC_PHOTOS = [
     className: 'col-span-2 lg:col-span-2',
   },
   {
+    // Only 300x168px source (no higher-res original exists) -- kept at
+    // standard tile size instead of a featured double-height span, which
+    // would stretch it well past native resolution.
     src: STATION_PHOTOS.cultureAlbanianDancers,
     alt: 'Albanian cultural dancers in traditional costume',
     caption: 'Cultural Celebrations',
-    className: 'col-span-1 lg:row-span-2',
+    className: 'col-span-1',
   },
   {
     src: STATION_PHOTOS.communityBookStall,
@@ -226,10 +229,12 @@ const MOSAIC_PHOTOS = [
     className: 'col-span-1',
   },
   {
+    // Only 259x194px source (no higher-res original exists) -- kept at
+    // standard tile size instead of a featured wide span.
     src: STATION_PHOTOS.cultureSiloArtBirds,
     alt: 'Shepparton silo art mural with birds',
     caption: 'Valley Art',
-    className: 'col-span-1 lg:col-span-2',
+    className: 'col-span-1',
   },
 ]
 
