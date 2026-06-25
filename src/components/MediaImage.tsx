@@ -98,18 +98,23 @@ export function MediaImage({
         <div className="absolute inset-0 skeleton" />
       )}
 
-      <img
-        ref={imgRef}
-        src={currentSrc}
-        alt={alt}
-        loading={priority ? 'eager' : 'lazy'}
-        decoding="async"
-        onLoad={() => setLoaded(true)}
-        onError={handleError}
-        className={`w-full h-full object-cover transition-opacity duration-700 ${
-          loaded ? 'opacity-100' : 'opacity-0'
-        }`}
-      />
+      <picture>
+        {/\.(jpe?g|png)$/i.test(currentSrc) && (
+          <source srcSet={currentSrc.replace(/\.(jpe?g|png)$/i, '.webp')} type="image/webp" />
+        )}
+        <img
+          ref={imgRef}
+          src={currentSrc}
+          alt={alt}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          onError={handleError}
+          className={`w-full h-full object-cover transition-opacity duration-700 ${
+            loaded ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      </picture>
     </div>
   )
 }
