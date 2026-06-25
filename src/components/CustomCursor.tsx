@@ -79,6 +79,9 @@ export function CustomCursor() {
     const onLeave = () => { trail.current = [] }
     const onDown = () => setPressed(true)
     const onUp = () => setPressed(false)
+    // mousedown with no matching mouseup (window loses focus mid-press,
+    // e.g. switching tabs/apps) would otherwise leave the dot stuck gold.
+    const onBlur = () => setPressed(false)
 
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
@@ -105,6 +108,13 @@ export function CustomCursor() {
           isHovering.current = false
           setHovering(false)
         }
+        // Without this, the dot/ring/spotlight glow stay rendered at the
+        // last mousemove position indefinitely -- e.g. scrolling via mouse
+        // wheel with no mousemove leaves a frozen glowing dot floating over
+        // the content as the page scrolls past it.
+        pos.current = { x: -100, y: -100 }
+        ring.current = { x: -100, y: -100 }
+        spot.current = { x: -100, y: -100 }
       }
 
       const dot = dotRef.current
@@ -176,6 +186,7 @@ export function CustomCursor() {
     document.addEventListener('mousedown', onDown)
     document.addEventListener('mouseup', onUp)
     document.addEventListener('click', onClick)
+    window.addEventListener('blur', onBlur)
 
     return () => {
       cancelAnimationFrame(rafId.current)
@@ -185,6 +196,7 @@ export function CustomCursor() {
       document.removeEventListener('mouseup', onUp)
       document.removeEventListener('click', onClick)
       window.removeEventListener('resize', setSize)
+      window.removeEventListener('blur', onBlur)
     }
   }, [])
 

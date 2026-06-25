@@ -702,7 +702,7 @@ export default function Home() {
                 <MediaImage
                   src={media.communityEvent}
                   fallbackSrc={media.communityGathering}
-                  alt="ONE FM community event"
+                  alt="GVL players celebrating a goal, called live on ONE FM"
                   className="absolute inset-0 scale-[1.15] group-hover:scale-[1.19] transition-transform duration-700 ease-out"
                 />
                 <div className="absolute inset-0 cinematic-overlay" />

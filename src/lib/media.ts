@@ -25,7 +25,9 @@ export const media = {
 
   /* ── Location & Community ─────────────────────────────── */
   regionalLandscape: PHOTO_DEFAULTS.regional,
-  communityEvent:    STATION_PHOTOS.communityOutdoorMarket,
+  // "the voice the Valley turns to when it matters most" copy on Home —
+  // needs a photo with real stakes/emotion, not a sunny market stall.
+  communityEvent:    STATION_PHOTOS.gvlTeamCelebration,
 
   /* ── Sales & Social ───────────────────────────────────── */
   socialTemplateMockup: STATION_PHOTOS.cultureSiloArtFaces,
@@ -43,7 +45,7 @@ export const media = {
   australianFields:  STATION_PHOTOS.geoPinkOrchard,
 
   /* ── Community & Events ───────────────────────────────── */
-  communityGathering: STATION_PHOTOS.communityOutdoorMarket,
+  communityGathering: STATION_PHOTOS.gvlNightPanorama,
   audienceCrowd:      STATION_PHOTOS.gvlCrowdStands,
   townHall:           STATION_PHOTOS.communityOutdoorMarket,
 
