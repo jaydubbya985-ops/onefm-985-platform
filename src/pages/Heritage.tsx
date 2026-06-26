@@ -831,7 +831,6 @@ export default function Heritage() {
             src="/assets/images/community-outdoor-market.jpg"
             alt="Community event"
             className="w-full h-full object-cover opacity-15"
-            style={{ position: 'fixed', top: 0, left: 0 }}
           />
         </div>
         <div className="absolute inset-0 bg-one-navy/80" />

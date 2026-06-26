@@ -881,8 +881,11 @@ export default function CoverageMap() {
 
             <div ref={mapRef} className="h-full w-full min-h-[48dvh]" />
 
-            {/* Map legend */}
-            <div className="pointer-events-none absolute bottom-3 left-3 z-10 hidden rounded-lg border border-one-border/80 bg-one-navy/90 px-3 py-2 text-[10px] text-one-muted backdrop-blur-sm sm:block">
+            {/* Map legend — only shown once the map has its guaranteed 420px
+                desktop height (lg breakpoint). Below that, min-h-[48dvh] can
+                be too short to fit this box plus the top-left control stack
+                without them overlapping. */}
+            <div className="pointer-events-none absolute bottom-3 left-3 z-10 hidden rounded-lg border border-one-border/80 bg-one-navy/90 px-3 py-2 text-[10px] text-one-muted backdrop-blur-sm lg:block">
               <div className="mb-1 font-medium text-one-white">Map key</div>
               <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full border border-white" style={{ backgroundColor: BRAND_COLORS.gold }} /> Hub town</div>
               <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: BRAND_COLORS.gold }} /> Major town</div>

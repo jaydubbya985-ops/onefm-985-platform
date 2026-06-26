@@ -390,7 +390,10 @@ export default function Listen() {
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
-            <CinegraphBackground slot="listenStudio" opacity={isDemod ? 0.2 : 0.50} />
+            {/* studio-control-room.jpg's actual subject (the presenter) sits in
+                the left third of the frame -- default object-cover centers on
+                the studio monitor behind him instead. Bias left. */}
+            <CinegraphBackground slot="listenStudio" opacity={isDemod ? 0.2 : 0.50} imageClassName="object-left" />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/55 via-[#050D1A]/25 to-[#050D1A]/90" />
         </div>

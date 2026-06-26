@@ -12,6 +12,7 @@ export interface FeaturePortalProps {
   tags?: string[]
   accent?: string
   className?: string
+  imageClassName?: string
 }
 
 export function FeaturePortal({
@@ -23,6 +24,7 @@ export function FeaturePortal({
   tags = [],
   accent = BRAND_COLORS.gold,
   className = '',
+  imageClassName = '',
 }: FeaturePortalProps) {
   return (
     <Link
@@ -34,7 +36,7 @@ export function FeaturePortal({
         src={image}
         fallbackSrc={imageFallback ?? image}
         alt=""
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${imageClassName}`}
       />
       <div
         className="absolute inset-0"

@@ -529,13 +529,16 @@ export default function Programs() {
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
+            {/* Presenter (the actual subject) sits in the left third of the
+                source photo -- default center-crop shows the studio monitor
+                behind him instead. Bias left. */}
             <img
               src={HOST_PHOTOS.studioControlRoom}
               alt=""
               aria-hidden
               loading="eager"
               fetchPriority="high"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-left"
               style={{ opacity: 0.55 }}
             />
           </motion.div>
