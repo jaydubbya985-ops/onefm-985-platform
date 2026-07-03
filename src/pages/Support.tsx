@@ -227,7 +227,7 @@ function HeroSection() {
         />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-24 md:pt-32 md:pb-32">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-40 md:pt-32 md:pb-48">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}

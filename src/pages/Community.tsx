@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react'
+﻿import { useState, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
@@ -33,7 +33,7 @@ import {
   Mic2,
 } from 'lucide-react'
 
-/* ─── Animated Grid Background (subtle CSS animation) ─── */
+/* â”€â”€â”€ Animated Grid Background (subtle CSS animation) â”€â”€â”€ */
 function AnimatedGrid() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -58,7 +58,7 @@ function AnimatedGrid() {
   )
 }
 
-/* ─── Section 1: Hero ─── */
+/* â”€â”€â”€ Section 1: Hero â”€â”€â”€ */
 function CommunityHero() {
   const stats = [
     { label: 'NFPs Supported', value: stationStats.nfpsSupported, suffix: '+' },
@@ -88,7 +88,7 @@ function CommunityHero() {
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
             <img
-              src="/assets/images/community-outdoor-market.jpg"
+              src="/assets/images/community-book-stall.jpg"
               alt=""
               aria-hidden
               loading="eager"
@@ -103,14 +103,14 @@ function CommunityHero() {
         <AnimatedGrid />
         <div aria-hidden className="grain-overlay" />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 pb-16">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 pb-40">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
           >
-            Community Radio Since 1989 · 25 Towns Across the Valley
+            Community Radio Since 1989 Â· 25 Towns Across the Valley
           </motion.span>
 
           <motion.div
@@ -193,7 +193,7 @@ function CommunityHero() {
   )
 }
 
-/* ─── Section 1.5: Photo Mosaic ─── */
+/* â”€â”€â”€ Section 1.5: Photo Mosaic â”€â”€â”€ */
 const MOSAIC_PHOTOS = [
   {
     src: STATION_PHOTOS.eventLasersCrowd,
@@ -290,7 +290,7 @@ function CommunityPhotoMosaic() {
   )
 }
 
-/* ─── Section 2: Town Directory ─── */
+/* â”€â”€â”€ Section 2: Town Directory â”€â”€â”€ */
 function TownDirectory() {
   const [search, setSearch] = useState('')
   const [lgaFilter, setLgaFilter] = useState('All')
@@ -459,7 +459,7 @@ function TownDirectory() {
   )
 }
 
-/* ─── Section 3: NFP Impact Engine ─── */
+/* â”€â”€â”€ Section 3: NFP Impact Engine â”€â”€â”€ */
 function NFPImpact() {
   const categories = [
     {
@@ -467,7 +467,7 @@ function NFPImpact() {
       title: 'Emergency Services',
       description:
         'Supporting CFA, SES, and local emergency responders with real-time broadcast coordination and community alerts.',
-      examples: ['Country Fire Authority — Shepparton', 'Victoria State Emergency Service', 'RoadSafe Goulburn Valley'],
+      examples: ['Country Fire Authority â€” Shepparton', 'Victoria State Emergency Service', 'RoadSafe Goulburn Valley'],
       stat: '12,000+ emergency broadcasts annually',
     },
     {
@@ -483,7 +483,7 @@ function NFPImpact() {
       title: 'Youth & Education',
       description:
         'Amplifying schools, TAFEs, and youth programs to inspire the next generation of Valley leaders.',
-      examples: ['Greater Shepparton Secondary College', 'La Trobe University — Shepparton', 'Mooroopna Education & Activity Centre (MEAC)'],
+      examples: ['Greater Shepparton Secondary College', 'La Trobe University â€” Shepparton', 'Mooroopna Education & Activity Centre (MEAC)'],
       stat: '8,200+ young people engaged',
     },
     {
@@ -500,7 +500,7 @@ function NFPImpact() {
       description:
         'Live coverage, sponsorship, and promotion for grassroots clubs across football, netball, cricket, and more.',
       examples: ['Goulburn Valley League', 'Cricket Shepparton', 'Shepparton United Football Club'],
-      stat: 'GVL — 12 clubs, 500+ games covered',
+      stat: 'GVL â€” 12 clubs, 500+ games covered',
     },
     {
       icon: TreePine,
@@ -571,7 +571,7 @@ function NFPImpact() {
   )
 }
 
-/* ─── Section 4: Cultural Diversity ─── */
+/* â”€â”€â”€ Section 4: Cultural Diversity â”€â”€â”€ */
 function CulturalDiversity() {
   const communities = [
     {
@@ -584,35 +584,35 @@ function CulturalDiversity() {
     {
       name: 'Punjabi',
       towns: ['Shepparton', 'Mooroopna', 'Cobram'],
-      program: 'Punjabi Music Program — Monday 11pm',
+      program: 'Punjabi Music Program â€” Monday 11pm',
       description:
         'A vibrant and growing South Asian community, enriching the Valley with culture, business, and sport.',
     },
     {
       name: 'Samoan',
       towns: ['Shepparton'],
-      program: 'Samoan Program — Wednesday 9-10pm',
+      program: 'Samoan Program â€” Wednesday 9-10pm',
       description:
         'Hosted by MK (Muagutauti\'a Faletoese Lemamea), connecting the Samoan community through language and music.',
     },
     {
       name: 'Filipino',
       towns: ['Shepparton'],
-      program: 'Filipino Music Program — Wednesday 10-11pm',
+      program: 'Filipino Music Program â€” Wednesday 10-11pm',
       description:
         'Hosted by Edith, celebrating Filipino music and culture in the Goulburn Valley.',
     },
     {
       name: 'Swahili / African',
       towns: ['Shepparton'],
-      program: 'Africonnect — Monday 9-10pm',
+      program: 'Africonnect â€” Monday 9-10pm',
       description:
         'Hosted by Fikiri in Swahili, connecting the African community in the Goulburn Valley.',
     },
     {
       name: 'Chinese / Mandarin',
       towns: ['Shepparton'],
-      program: 'Mandarin Program — Various times',
+      program: 'Mandarin Program â€” Various times',
       description:
         'Hosted by Jimmy with co-host Ivy, featuring Mandarin language programming and "Her Quiet Strength" segment.',
     },
@@ -675,7 +675,7 @@ function CulturalDiversity() {
   )
 }
 
-/* ─── Section 5: Ethnic Programming ─── */
+/* â”€â”€â”€ Section 5: Ethnic Programming â”€â”€â”€ */
 function EthnicPrograms() {
   const programs = [
     {
@@ -781,7 +781,7 @@ function EthnicPrograms() {
   )
 }
 
-/* ─── Section 6: Events Calendar ─── */
+/* â”€â”€â”€ Section 6: Events Calendar â”€â”€â”€ */
 function EventsCalendar() {
   const [view, setView] = useState<'month' | 'list'>('list')
 
@@ -790,10 +790,10 @@ function EventsCalendar() {
       date: '2026-06-28',
       month: 'JUN',
       day: '28',
-      title: 'GVL Finals Series — Round 1',
-      location: 'Shepparton · GVL Grounds',
+      title: 'GVL Finals Series â€” Round 1',
+      location: 'Shepparton Â· GVL Grounds',
       description:
-        'Goulburn Valley League football and netball finals kick off — ONE FM broadcasts live from the ground all day.',
+        'Goulburn Valley League football and netball finals kick off â€” ONE FM broadcasts live from the ground all day.',
       upcoming: true,
     },
     {
@@ -811,19 +811,19 @@ function EventsCalendar() {
       month: 'AUG',
       day: '15',
       title: 'GVL Grand Final Day',
-      location: 'Shepparton · GVL Grounds',
+      location: 'Shepparton Â· GVL Grounds',
       description:
-        'The biggest day on the Goulburn Valley sporting calendar — ONE FM provides full live commentary from first bounce to the siren.',
+        'The biggest day on the Goulburn Valley sporting calendar â€” ONE FM provides full live commentary from first bounce to the siren.',
       upcoming: true,
     },
     {
       date: '2026-09-20',
       month: 'SEP',
       day: '20',
-      title: 'Deniliquin Ute Muster — ONE FM Broadcast',
+      title: 'Deniliquin Ute Muster â€” ONE FM Broadcast',
       location: 'Deniliquin, NSW',
       description:
-        'ONE FM heads south for the annual Deni Ute Muster — remote live crosses, community interviews, and non-stop country music.',
+        'ONE FM heads south for the annual Deni Ute Muster â€” remote live crosses, community interviews, and non-stop country music.',
       upcoming: true,
     },
     {
@@ -959,7 +959,7 @@ function EventsCalendar() {
   )
 }
 
-/* ─── Section 7: Get Involved CTA ─── */
+/* â”€â”€â”€ Section 7: Get Involved CTA â”€â”€â”€ */
 function GetInvolvedCTA() {
   return (
     <section className="section-padding section-bleed-top bg-surface-glow" data-cursor-label="GET INVOLVED">
@@ -973,7 +973,7 @@ function GetInvolvedCTA() {
           <WordReveal text="Be Part of the Story" className="font-h2 text-one-white mb-6 block" as="h2" />
           <p className="font-body text-one-muted max-w-xl mx-auto mb-10">
             Whether you want to volunteer behind the mic, sponsor a local program,
-            or help keep community radio alive — there is a place for you at ONE FM.
+            or help keep community radio alive â€” there is a place for you at ONE FM.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <MagneticButton strength={10}>
@@ -1001,7 +1001,7 @@ function GetInvolvedCTA() {
   )
 }
 
-/* ─── Page ─── */
+/* â”€â”€â”€ Page â”€â”€â”€ */
 export default function Community() {
   return (
     <Layout>
@@ -1019,3 +1019,4 @@ export default function Community() {
     </Layout>
   )
 }
+

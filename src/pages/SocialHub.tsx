@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, memo } from 'react'
+﻿import { useState, useEffect, useRef, memo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   Search, ChevronDown, Download, Copy, Check, Instagram, Twitter, Facebook,
@@ -25,11 +25,11 @@ import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { stationStats } from '@/data/pricing'
 
-/* ─── Easing helpers ─── */
+/* â”€â”€â”€ Easing helpers â”€â”€â”€ */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
 const easeOutBack = [0.34, 1.56, 0.64, 1] as [number, number, number, number]
 
-/* ─── Data ─── */
+/* â”€â”€â”€ Data â”€â”€â”€ */
 const ASSET_CATEGORIES = ['All', 'Logos', 'Colors', 'Typography', 'Patterns', 'Photography']
 
 const ASSETS = [
@@ -47,39 +47,39 @@ const ASSETS = [
   { name: 'Social Media Kit', format: 'PSD, Canva', category: 'Patterns', preview: 'bg-data-violet' },
 ]
 
-// V3 Brand System colours — source: ONE_FM_brand_system_v3
+// V3 Brand System colours â€” source: ONE_FM_brand_system_v3
 const BRAND_COLORS = [
-  { name: 'ONE FM Blue', hex: '#1B458F', usage: 'Core identity — wordmark, headers' },
+  { name: 'ONE FM Blue', hex: '#1B458F', usage: 'Core identity â€” wordmark, headers' },
   { name: 'Deep Navy', hex: '#071D3A', usage: 'Backgrounds, email header band' },
-  { name: '98.5 Red', hex: '#E51636', usage: 'Core identity — frequency, accents' },
-  { name: 'Broadcast White', hex: '#FFFFFF', usage: 'Core identity — reversed lockup' },
-  { name: 'Heritage Gold', hex: '#D4AF37', usage: 'Premium accent — totals, highlights' },
-  { name: 'Champagne', hex: '#F4D27A', usage: 'Gold light — hover, decorative' },
-  { name: 'Electric Cyan', hex: '#00E5FF', usage: 'Digital glow — stream, live signal' },
+  { name: '98.5 Red', hex: '#E51636', usage: 'Core identity â€” frequency, accents' },
+  { name: 'Broadcast White', hex: '#FFFFFF', usage: 'Core identity â€” reversed lockup' },
+  { name: 'Heritage Gold', hex: '#D4AF37', usage: 'Premium accent â€” totals, highlights' },
+  { name: 'Champagne', hex: '#F4D27A', usage: 'Gold light â€” hover, decorative' },
+  { name: 'Electric Cyan', hex: '#00E5FF', usage: 'Digital glow â€” stream, live signal' },
   { name: 'Neon Sky Blue', hex: '#38BDF8', usage: 'Safe daily UI accent' },
   { name: 'Neon Orange', hex: '#FF6A00', usage: 'Sport & event alerts only' },
 ]
 
-// 2026 on-trend template formats — square, vertical story, horizontal, reel cover
+// 2026 on-trend template formats â€” square, vertical story, horizontal, reel cover
 const TEMPLATES = [
-  { name: 'Breakfast Live Card', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
-  { name: 'GVL Match Day Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Matchday'], image: '/assets/images/gvl-night-panorama.jpg' },
-  { name: 'Community Event Reel Cover', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Event', 'Community', 'Reel'], image: '/assets/images/community-outdoor-market.jpg' },
-  { name: 'Multicultural Program Tile', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'Program', 'Community'], image: '/assets/images/culture-first-nations-dancer.png' },
-  { name: 'Studio Behind the Mic', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['BTS', 'Studio', 'Presenter'], image: '/assets/images/studio-commentary-selfie.jpg' },
-  { name: 'Goulburn Valley Heritage', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Heritage', 'Regional', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
-  { name: 'Live Stream Now Playing', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
-  { name: 'Sponsor Thank You', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Sponsor', 'Community', 'Thank You'], image: '/assets/images/gvl-player-high-five.jpg' },
-  { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
-  { name: 'First Nations Program', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
-  { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
-  { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-scenic.jpg' },
-  { name: 'TikTok Vertical — Now Playing', platform: 'TikTok', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
-  { name: 'LinkedIn Community Partner', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
-  { name: 'Threads Quote Card', platform: 'Twitter/X', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
-  { name: 'Carousel Slide 1 — Breakfast', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Carousel)', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
-  { name: 'GVL Scoreboard Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
-  { name: 'Presenter Spotlight Reel', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
+  { name: 'Breakfast Live Card', platform: 'Instagram', dimensions: '1080Ã—1080', format: 'Canva (Square)', tags: ['Live', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
+  { name: 'GVL Match Day Story', platform: 'Instagram', dimensions: '1080Ã—1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Matchday'], image: '/assets/images/gvl-night-panorama.jpg' },
+  { name: 'Community Event Reel Cover', platform: 'Instagram', dimensions: '1080Ã—1920', format: 'Canva (Reel)', tags: ['Event', 'Community', 'Reel'], image: '/assets/images/community-book-stall.jpg' },
+  { name: 'Multicultural Program Tile', platform: 'Facebook', dimensions: '1200Ã—630', format: 'Canva (Landscape)', tags: ['Multicultural', 'Program', 'Community'], image: '/assets/images/culture-first-nations-dancer.png' },
+  { name: 'Studio Behind the Mic', platform: 'Facebook', dimensions: '1200Ã—630', format: 'Canva (Landscape)', tags: ['BTS', 'Studio', 'Presenter'], image: '/assets/images/studio-commentary-selfie.jpg' },
+  { name: 'Goulburn Valley Heritage', platform: 'Instagram', dimensions: '1080Ã—1350', format: 'Canva (Portrait)', tags: ['Heritage', 'Regional', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Live Stream Now Playing', platform: 'Instagram', dimensions: '1080Ã—1080', format: 'Canva (Square)', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'Sponsor Thank You', platform: 'Facebook', dimensions: '1200Ã—630', format: 'Canva (Landscape)', tags: ['Sponsor', 'Community', 'Thank You'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080Ã—1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
+  { name: 'First Nations Program', platform: 'Facebook', dimensions: '1200Ã—630', format: 'Canva (Landscape)', tags: ['Multicultural', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
+  { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080Ã—1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
+  { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080Ã—1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-scenic.jpg' },
+  { name: 'TikTok Vertical â€” Now Playing', platform: 'TikTok', dimensions: '1080Ã—1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'LinkedIn Community Partner', platform: 'Facebook', dimensions: '1200Ã—627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Threads Quote Card', platform: 'Twitter/X', dimensions: '1080Ã—1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Carousel Slide 1 â€” Breakfast', platform: 'Instagram', dimensions: '1080Ã—1080', format: 'Canva (Carousel)', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
+  { name: 'GVL Scoreboard Story', platform: 'Instagram', dimensions: '1080Ã—1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
+  { name: 'Presenter Spotlight Reel', platform: 'Instagram', dimensions: '1080Ã—1920', format: 'Canva (Reel)', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
 ]
 
 const PLATFORM_FILTERS = ['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'Stories', 'Reels']
@@ -91,19 +91,19 @@ const GUIDES = [
   { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: '10 pages', path: '/contact' },
 ]
 
-// Real ONE FM Facebook/social post examples — localised Goulburn Murray content
+// Real ONE FM Facebook/social post examples â€” localised Goulburn Murray content
 const FEED_POSTS = [
-  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage is LIVE on ONE FM 98.5! Follow every bounce on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM', likes: '87', comments: '14', time: '2d' },
-  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton', likes: '42', comments: '6', time: '4d' },
-  { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley', likes: '63', comments: '9', time: '1w' },
+  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage is LIVE on ONE FM 98.5! Follow every bounce on 98.5 FM or stream at fm985.com.au ðŸ“» #GVL #OneFM', likes: '87', comments: '14', time: '2d' },
+  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in â€” catch the replay on SoundCloud. #OneFM985 #Shepparton', likes: '42', comments: '6', time: '4d' },
+  { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site â€” come say g\'day. ðŸŒ® #Shepparton #GoulburnValley', likes: '63', comments: '9', time: '1w' },
   { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community', likes: '58', comments: '7', time: '1w' },
-  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL — nothing beats local footy on a Friday night. Catch us on 98.5 FM 🔴 #GVL #LocalFooty', likes: '91', comments: '11', time: '2w' },
-  { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM', likes: '74', comments: '8', time: '2w' },
-  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: 'Live and local — 25 multicultural programs weekly keeping every corner of the Goulburn Valley connected. #OneFM985 #Community', likes: '39', comments: '5', time: '3w' },
-  { platform: 'Facebook', image: '/assets/images/culture-riverboat-scenic.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️', likes: '66', comments: '7', time: '3w' },
+  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL â€” nothing beats local footy on a Friday night. Catch us on 98.5 FM ðŸ”´ #GVL #LocalFooty', likes: '91', comments: '11', time: '2w' },
+  { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley â€” this is why we call it home ðŸŒ¸ #GoulburnValley #OneFM', likes: '74', comments: '8', time: '2w' },
+  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: 'Live and local â€” 25 multicultural programs weekly keeping every corner of the Goulburn Valley connected. #OneFM985 #Community', likes: '39', comments: '5', time: '3w' },
+  { platform: 'Facebook', image: '/assets/images/culture-riverboat-scenic.jpg', caption: 'The Murray River â€” heart of our region. Stream ONE FM anywhere in the world at fm985.com.au ðŸŽ™ï¸', likes: '66', comments: '7', time: '3w' },
 ]
 
-// Content calendar — GVL events & ONE FM programming (update monthly)
+// Content calendar â€” GVL events & ONE FM programming (update monthly)
 const CALENDAR_EVENTS = [
   { day: 1,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
   { day: 5,  type: 'Content', color: '#9B5DE5', name: 'Multicultural Program Spotlight' },
@@ -114,12 +114,12 @@ const CALENDAR_EVENTS = [
   { day: 18, type: 'Content', color: '#1B458F', name: 'Goulburn Valley Heritage Post' },
   { day: 20, type: 'Partner', color: '#2EC4B6', name: 'Community Org Feature' },
   { day: 22, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
-  { day: 25, type: 'Content', color: '#9B5DE5', name: 'Regional Feature — Town of the Week' },
+  { day: 25, type: 'Content', color: '#9B5DE5', name: 'Regional Feature â€” Town of the Week' },
   { day: 27, type: 'Partner', color: '#2EC4B6', name: 'Sponsor Spotlight' },
   { day: 29, type: 'Live',    color: '#E51636', name: 'GVL Final / Major Event' },
 ]
 
-/* ─── Animated Grid Pattern Background ─── */
+/* â”€â”€â”€ Animated Grid Pattern Background â”€â”€â”€ */
 const GridPattern = memo(function GridPattern() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -170,7 +170,7 @@ const GridPattern = memo(function GridPattern() {
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0 }} />
 })
 
-/* ─── Section 1: Hero ─── */
+/* â”€â”€â”€ Section 1: Hero â”€â”€â”€ */
 function HeroSection() {
   const stats = [
     { value: '18', label: 'Templates' },
@@ -199,14 +199,14 @@ function HeroSection() {
         <GridPattern />
         <div aria-hidden className="grain-overlay" />
 
-        <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 pt-32 pb-16 w-full">
+        <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 pt-32 pb-40 w-full">
           <motion.span
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, ease: easeOutExpo }}
             className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
           >
-            Brand Assets · Content Tools · Campaign Templates
+            Brand Assets Â· Content Tools Â· Campaign Templates
           </motion.span>
 
           <motion.div
@@ -279,19 +279,19 @@ function HeroSection() {
         </div>
       </section>
 
-      {/* ── Social Hub Marquee ── */}
+      {/* â”€â”€ Social Hub Marquee â”€â”€ */}
       <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={28}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK · INSTAGRAM · X · SOUNDCLOUD</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK Â· INSTAGRAM Â· X Â· SOUNDCLOUD</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24 CONTENT TEMPLATES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">120+ BRAND IMAGES</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM Â· SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">AI CAPTION GENERATOR</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CAMPAIGN CALENDAR TOOLS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BRAND KIT DOWNLOAD</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY · COMMUNITY RADIO</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY Â· COMMUNITY RADIO</span>,
           ]}
         />
       </div>
@@ -299,7 +299,7 @@ function HeroSection() {
   )
 }
 
-/* ─── Live Facebook feed ─── */
+/* â”€â”€â”€ Live Facebook feed â”€â”€â”€ */
 function LiveFacebookSection() {
   return (
     <section className="bg-surface-mid section-bleed-top section-padding px-4 sm:px-6 max-w-7xl mx-auto" data-cursor-label="FOLLOW US">
@@ -308,7 +308,7 @@ function LiveFacebookSection() {
           <p className="font-label text-one-electric text-[10px] mb-2">COMMUNITY</p>
           <WordReveal text="Follow ONE FM 98.5" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
           <p className="font-body text-muted mt-2 max-w-xl">
-            News, events, and Goulburn Valley updates — no clunky embeds, just our real community channels.
+            News, events, and Goulburn Valley updates â€” no clunky embeds, just our real community channels.
           </p>
         </div>
       </div>
@@ -319,7 +319,7 @@ function LiveFacebookSection() {
   )
 }
 
-/* ─── Section 2: Brand Asset Library ─── */
+/* â”€â”€â”€ Section 2: Brand Asset Library â”€â”€â”€ */
 function AssetLibrary() {
   const [filter, setFilter] = useState('All')
   const [search, setSearch] = useState('')
@@ -438,7 +438,7 @@ function AssetLibrary() {
           <h3 className="font-h3 text-one-white mb-4">Color Palette</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
             {BRAND_COLORS.map((color) => (
-              <div key={color.hex} className="group cursor-pointer" role="button" tabIndex={0} aria-label={`Copy ${color.name} — ${color.hex}`} onClick={() => copyHex(color.hex)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && copyHex(color.hex)}>
+              <div key={color.hex} className="group cursor-pointer" role="button" tabIndex={0} aria-label={`Copy ${color.name} â€” ${color.hex}`} onClick={() => copyHex(color.hex)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && copyHex(color.hex)}>
                 <div
                   className="h-16 rounded-lg mb-2 relative overflow-hidden"
                   style={{ backgroundColor: color.hex }}
@@ -481,19 +481,19 @@ function AssetLibrary() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <div className="font-display text-3xl text-one-white mb-1">Bebas Neue</div>
-              <div className="font-label text-muted text-[10px]">DISPLAY — HERO HEADLINES</div>
+              <div className="font-label text-muted text-[10px]">DISPLAY â€” HERO HEADLINES</div>
             </div>
             <div>
               <div className="font-heading text-2xl text-one-white mb-1" style={{ fontWeight: 700 }}>Space Grotesk</div>
-              <div className="font-label text-muted text-[10px]">HEADING — SECTION TITLES</div>
+              <div className="font-label text-muted text-[10px]">HEADING â€” SECTION TITLES</div>
             </div>
             <div>
               <div className="font-body text-xl text-one-white mb-1">Inter</div>
-              <div className="font-label text-muted text-[10px]">BODY — PARAGRAPHS</div>
+              <div className="font-label text-muted text-[10px]">BODY â€” PARAGRAPHS</div>
             </div>
             <div>
               <div className="font-mono text-lg text-one-white mb-1">JetBrains Mono</div>
-              <div className="font-label text-muted text-[10px]">MONO — DATA &amp; LABELS</div>
+              <div className="font-label text-muted text-[10px]">MONO â€” DATA &amp; LABELS</div>
             </div>
           </div>
         </motion.div>
@@ -503,7 +503,7 @@ function AssetLibrary() {
   )
 }
 
-/* ─── Section 3: Content Templates ─── */
+/* â”€â”€â”€ Section 3: Content Templates â”€â”€â”€ */
 function TemplatesSection() {
   const [platformFilter, setPlatformFilter] = useState('All')
   const [modalOpen, setModalOpen] = useState(false)
@@ -563,9 +563,9 @@ function TemplatesSection() {
           />
           <div aria-hidden className="explore-tile-scan" />
           <div className="absolute inset-0 bg-one-navy/60 flex flex-col justify-end p-6 md:p-8">
-            <h3 className="font-h3 text-one-white mb-3">Event Promo — Instagram Post</h3>
+            <h3 className="font-h3 text-one-white mb-3">Event Promo â€” Instagram Post</h3>
             <div className="flex flex-wrap gap-2 mb-4">
-              {['1080×1080', 'PSD + Canva', 'Event'].map((tag) => (
+              {['1080Ã—1080', 'PSD + Canva', 'Event'].map((tag) => (
                 <span key={tag} className="px-3 py-1 rounded-full border border-one-border font-label text-muted text-[10px]">
                   {tag}
                 </span>
@@ -609,7 +609,7 @@ function TemplatesSection() {
                     <Smartphone size={12} className="text-muted" />
                     <span className="font-label text-muted text-[10px]">{template.platform}</span>
                   </div>
-                  <div className="font-label text-muted text-[10px] mb-2">{template.dimensions} · {template.format}</div>
+                  <div className="font-label text-muted text-[10px] mb-2">{template.dimensions} Â· {template.format}</div>
                   <div className="flex gap-1 flex-wrap">
                     {template.tags.map((tag) => (
                       <span key={tag} className="px-2 py-0.5 rounded-full border border-one-border font-label text-muted text-[9px]">
@@ -686,7 +686,7 @@ function TemplatesSection() {
   )
 }
 
-/* ─── Section 4: Campaign Calendar ─── */
+/* â”€â”€â”€ Section 4: Campaign Calendar â”€â”€â”€ */
 function CampaignCalendar() {
   const [calendarView, setCalendarView] = useState<'month' | 'week' | 'list'>('month')
   const [currentMonth] = useState(() => new Date())
@@ -798,7 +798,7 @@ function CampaignCalendar() {
                     ))}
                     {getEventsForDay(i + 1).length === 0 && (
                       <div className="h-12 rounded-lg border border-one-border border-dashed flex items-center justify-center">
-                        <span className="font-label text-[10px] text-muted">—</span>
+                        <span className="font-label text-[10px] text-muted">â€”</span>
                       </div>
                     )}
                   </div>
@@ -866,7 +866,7 @@ function CampaignCalendar() {
   )
 }
 
-/* ─── Section 5: Posting Toolkit ─── */
+/* â”€â”€â”€ Section 5: Posting Toolkit â”€â”€â”€ */
 function PostingToolkit() {
   return (
     <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="POSTING TIPS">
@@ -900,7 +900,7 @@ function PostingToolkit() {
                 <p className="font-body-small text-one-white text-sm mb-4">{guide.desc}</p>
                 <div className="flex items-center justify-between">
                   <span className="font-label text-muted text-[10px]">{guide.pages}</span>
-                  <Link to={guide.path} data-cursor-label="READ" className="font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">Read Guide →</Link>
+                  <Link to={guide.path} data-cursor-label="READ" className="font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">Read Guide â†’</Link>
                 </div>
               </motion.div>
             </TiltCard>
@@ -917,7 +917,7 @@ function PostingToolkit() {
   )
 }
 
-/* ─── Section 6: AI Caption Generator ─── */
+/* â”€â”€â”€ Section 6: AI Caption Generator â”€â”€â”€ */
 function CaptionGenerator() {
   const [platform, setPlatform] = useState('Instagram')
   const [topic, setTopic] = useState('')
@@ -932,20 +932,20 @@ function CaptionGenerator() {
     setTimeout(() => {
       const captions: Record<string, string[]> = {
         Instagram: [
-          '🔥 The beats are dropping and the vibes are rising! Tune into ONE FM now for your daily dose of energy. #ONEFMBreakfast #LiveRadio #OneFM',
-          '🎙️ Your favorite hosts are LIVE and ready to make your morning unforgettable. Join the conversation! 📻✨ #OneFM #RadioLife',
+          'ðŸ”¥ The beats are dropping and the vibes are rising! Tune into ONE FM now for your daily dose of energy. #ONEFMBreakfast #LiveRadio #OneFM',
+          'ðŸŽ™ï¸ Your favorite hosts are LIVE and ready to make your morning unforgettable. Join the conversation! ðŸ“»âœ¨ #OneFM #RadioLife',
         ],
         TikTok: [
-          'POV: you just found the best radio station ever 🔥 #OneFM #RadioTok #Viral',
-          'When the DJ drops THAT track and the whole studio loses it 🎧💥 #OneFM #MusicTok',
+          'POV: you just found the best radio station ever ðŸ”¥ #OneFM #RadioTok #Viral',
+          'When the DJ drops THAT track and the whole studio loses it ðŸŽ§ðŸ’¥ #OneFM #MusicTok',
         ],
         'Twitter/X': [
-          '🎵 LIVE NOW: ONE FM Breakfast on ONE FM 98.5. News, music, and your calls. Tune in → ONE FM 98.5 #ONEFMBreakfast',
-          'The Night Shift is about to get started. Indie, electronica, and zero sleep required 🌙 #TheNightShift #OneFM',
+          'ðŸŽµ LIVE NOW: ONE FM Breakfast on ONE FM 98.5. News, music, and your calls. Tune in â†’ ONE FM 98.5 #ONEFMBreakfast',
+          'The Night Shift is about to get started. Indie, electronica, and zero sleep required ðŸŒ™ #TheNightShift #OneFM',
         ],
         Facebook: [
-          'Join thousands of listeners who start their day with ONE FM. ONE FM Breakfast is live from 6AM — news, music, and community. 🎙️',
-          'Weekend Warmup is here! Two hours of feel-good anthems to kick off your Saturday right. Tune in now! 🎉',
+          'Join thousands of listeners who start their day with ONE FM. ONE FM Breakfast is live from 6AM â€” news, music, and community. ðŸŽ™ï¸',
+          'Weekend Warmup is here! Two hours of feel-good anthems to kick off your Saturday right. Tune in now! ðŸŽ‰',
         ],
         LinkedIn: [
           'ONE FM continues to lead regional broadcasting with cutting-edge programming and community-focused content. Learn more about our latest initiatives.',
@@ -1123,7 +1123,7 @@ function CaptionGenerator() {
   )
 }
 
-/* ─── Section 7: Social Feed Preview ─── */
+/* â”€â”€â”€ Section 7: Social Feed Preview â”€â”€â”€ */
 function SocialFeedPreview() {
   const [feedFilter, setFeedFilter] = useState('All')
   const [visibleCount, setVisibleCount] = useState(4)
@@ -1223,11 +1223,11 @@ function SocialFeedPreview() {
   )
 }
 
-/* ─── Section: Mailchimp Export ─── */
+/* â”€â”€â”€ Section: Mailchimp Export â”€â”€â”€ */
 function MailchimpExportSection() {
   const handleExport = () => {
     downloadMailchimpLeadsCsv(MOCK_ENQUIRIES)
-    toast.success('Mailchimp CSV downloaded — import to One FM Sales audience')
+    toast.success('Mailchimp CSV downloaded â€” import to One FM Sales audience')
   }
 
   const handleCopySnippet = async () => {
@@ -1238,7 +1238,7 @@ function MailchimpExportSection() {
       ctaUrl: 'https://fm985.com.au/#/media-kit',
     })
     const ok = await copyMailchimpSnippetToClipboard(snippet)
-    toast[ok ? 'success' : 'error'](ok ? 'HTML snippet copied — paste into Mailchimp' : 'Copy failed — check browser permissions')
+    toast[ok ? 'success' : 'error'](ok ? 'HTML snippet copied â€” paste into Mailchimp' : 'Copy failed â€” check browser permissions')
   }
 
   return (
@@ -1274,7 +1274,7 @@ function MailchimpExportSection() {
             <div aria-hidden className="explore-tile-scan" />
             <Copy size={24} className="text-one-gold mb-3 group-hover:scale-110 transition-transform" />
             <h4 className="font-h4 text-one-white mb-1">Copy HTML snippet</h4>
-            <p className="font-body-small text-muted text-sm">Brand V3 newsletter block — paste into Mailchimp drag-and-drop editor.</p>
+            <p className="font-body-small text-muted text-sm">Brand V3 newsletter block â€” paste into Mailchimp drag-and-drop editor.</p>
           </button>
           </TiltCard>
         </div>
@@ -1288,7 +1288,7 @@ function MailchimpExportSection() {
   )
 }
 
-/* ─── Main Page ─── */
+/* â”€â”€â”€ Main Page â”€â”€â”€ */
 export default function SocialHub() {
   return (
     <Layout>
@@ -1305,3 +1305,4 @@ export default function SocialHub() {
     </Layout>
   )
 }
+

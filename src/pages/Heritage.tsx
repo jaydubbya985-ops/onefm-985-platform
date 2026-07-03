@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from 'react'
+﻿import { useState, useRef, useLayoutEffect } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -22,11 +22,11 @@ import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import { stationStats } from '@/data/pricing'
 
-/* ─── easing helpers ─── */
+/* â”€â”€â”€ easing helpers â”€â”€â”€ */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
 const easeOutBack = [0.34, 1.56, 0.64, 1] as [number, number, number, number]
 
-/* ─── Scroll Reveal ─── */
+/* â”€â”€â”€ Scroll Reveal â”€â”€â”€ */
 function ScrollReveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   return (
     <motion.div
@@ -41,60 +41,76 @@ function ScrollReveal({ children, className = '', delay = 0 }: { children: React
   )
 }
 
-/* ─── Timeline Data ─── */
+/* â”€â”€â”€ Timeline Data â”€â”€â”€ */
 // Source: ACMA licence records, station history, fm985.com.au
 const timeline = [
   {
     year: 1980,
     title: 'Founded',
-    desc: 'Goulburn Valley Community Radio Inc. established in Shepparton, Victoria — one of the early community broadcasting organisations in regional Australia.',
+    desc: 'Goulburn Valley Community Radio Inc. established in Shepparton, Victoria â€” one of the early community broadcasting organisations in regional Australia.',
     label: 'Foundation',
+    img: '/assets/images/heritage-original-panel-1988.jpg',
+    imgCaption: 'The original mixing panel, built in 1988',
   },
   {
     year: 1989,
     title: 'Licensed Broadcaster',
     desc: 'Granted community broadcasting licence by ACMA. ONE FM 98.5 (callsign 3ONE) begins licensed transmissions from Shepparton across the Goulburn Murray.',
     label: 'Licensed',
+    img: '/assets/images/heritage-ob-mall-1989.jpg',
+    imgCaption: 'Live OB broadcast at the Shepparton Mall opening, 1989',
   },
   {
     year: 1990,
     title: 'Multicultural Programming',
-    desc: 'ONE FM begins dedicated multicultural programming — Italian, Samoan, and community language shows connecting diverse communities across the Valley.',
+    desc: 'ONE FM begins dedicated multicultural programming â€” Italian, Samoan, and community language shows connecting diverse communities across the Valley.',
     label: 'Community',
+    img: '/assets/images/heritage-sally-nayler-90s.jpg',
+    imgCaption: 'Sally Nayler on air in Studio A, Shepparton East, 1990s',
   },
   {
     year: 1998,
     title: '24/7 Broadcasting',
     desc: 'Around-the-clock programming launches. Overnight Mix ensures the Valley is never without a voice, even through the night.',
     label: 'Evolution',
+    img: undefined as string | undefined,
+    imgCaption: undefined as string | undefined,
   },
   {
     year: 2005,
     title: 'Online Streaming',
-    desc: 'ONE FM begins streaming live at fm985.com.au — allowing listeners across Australia and the world to tune in to their Goulburn Murray station.',
+    desc: 'ONE FM begins streaming live at fm985.com.au â€” allowing listeners across Australia and the world to tune in to their Goulburn Murray station.',
     label: 'Innovation',
+    img: '/assets/images/heritage-truck-2005.jpg',
+    imgCaption: 'The ONE FM outside broadcast truck, 2005',
   },
   {
     year: 2010,
     title: 'GVL Football & Netball',
     desc: 'ONE FM becomes the dedicated broadcast partner for Goulburn Valley Football League, bringing live match commentary to homes across the region every weekend.',
     label: 'Sport',
+    img: undefined as string | undefined,
+    imgCaption: undefined as string | undefined,
   },
   {
     year: 2019,
     title: 'SoundCloud Archive',
     desc: 'Interviews and community content made available on SoundCloud, preserving Goulburn Valley voices and making programming accessible after broadcast.',
     label: 'Digital',
+    img: undefined as string | undefined,
+    imgCaption: undefined as string | undefined,
   },
   {
     year: 2026,
-    title: 'Live & Local — Always',
-    desc: 'ONE FM 98.5 continues broadcasting live and local from Shepparton — 24 presenters, 25 communities, one station. The Valley\'s community radio for over 45 years.',
+    title: 'Live & Local â€” Always',
+    desc: 'ONE FM 98.5 continues broadcasting live and local from Shepparton â€” 24 presenters, 25 communities, one station. The Valley\'s community radio for over 45 years.',
     label: 'Today',
+    img: undefined as string | undefined,
+    imgCaption: undefined as string | undefined,
   },
 ]
 
-/* ─── Regional Data ─── */
+/* â”€â”€â”€ Regional Data â”€â”€â”€ */
 const regions = [
   { name: 'The Coast', icon: Waves, color: 'text-one-gold', bg: 'bg-one-gold/10', listeners: 'Daily', show: 'ONE FM Breakfast', highlight: 'Murray River communities and lakeside towns' },
   { name: 'The Valley', icon: Mountain, color: 'text-sage', bg: 'bg-sage/10', listeners: 'Daily', show: 'The Country Hour', highlight: 'Agricultural news and markets daily' },
@@ -102,29 +118,29 @@ const regions = [
   { name: 'The Hinterland', icon: TreePine, color: 'text-data-violet', bg: 'bg-data-violet/10', listeners: 'Weekly', show: 'Community Connect', highlight: 'Local voices across the region' },
 ]
 
-/* ─── Team Data ─── */
+/* â”€â”€â”€ Team Data â”€â”€â”€ */
 const team = {
   leadership: [{ name: 'Station Manager', role: 'Goulburn Valley Community Radio Inc.', since: 'Since 1989', img: '/assets/images/studio-exterior-rainbow.jpg' }],
   onAir: [
-    { name: 'Tim Ahemt', role: 'Breakfast Host (Mon–Tue)', since: '2026', img: '/assets/images/commentary-box-action.jpg' },
-    { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', since: '2026', img: '/assets/images/studio-commentary-selfie.jpg' },
-    { name: 'Craig Stott', role: 'Breakfast (Thu)', since: '2026', img: '/assets/images/commentary-box-action.jpg' },
-    { name: 'Di Hunter', role: 'Breakfast Host (Fri)', since: '2026', img: '/assets/images/studio-exterior-rainbow.jpg' },
-    { name: 'Johnny P', role: 'Dancing through the decades', since: '4 years on air', img: '/assets/images/commentary-box-action.jpg' },
-    { name: 'Rowan Farren-Parnell', role: 'The Regional Voice', since: 'Community advocate', img: '/assets/images/studio-commentary-selfie.jpg' },
+    { name: 'Tim Ahemt', role: 'Breakfast Host (Monâ€“Tue)', since: '2026', img: '/assets/images/commentary-box-action.jpg', realPhoto: false },
+    { name: 'Lillian Stone', role: 'Breakfast Host (Wed)', since: '2026', img: '/assets/images/studio-commentary-selfie.jpg', realPhoto: false },
+    { name: 'Craig Stott', role: 'Breakfast (Thu)', since: '2026', img: '/assets/images/commentary-box-action.jpg', realPhoto: false },
+    { name: 'Di Hunter', role: 'Breakfast Host (Fri)', since: '2026', img: '/assets/images/heritage-di-hunter-carols-2014.jpg', realPhoto: true },
+    { name: 'Johnny P', role: 'Dancing through the decades', since: '4 years on air', img: '/assets/images/commentary-box-action.jpg', realPhoto: false },
+    { name: 'Rowan Farren-Parnell', role: 'The Regional Voice', since: 'Community advocate', img: '/assets/images/studio-commentary-selfie.jpg', realPhoto: false },
   ],
   production: [] as { name: string; role: string; since: string; img: string }[],
   engineering: [] as { name: string; role: string; since: string; img: string }[],
 }
 
-/* ─── Future Pillars — real station commitments ─── */
+/* â”€â”€â”€ Future Pillars â€” real station commitments â”€â”€â”€ */
 const pillars = [
-  { icon: Sparkles, title: 'Live & Local Programming', desc: 'Continuing 45+ years of live local content — real presenters, real community voices, real Goulburn Murray' },
-  { icon: Headphones, title: 'Online Streaming', desc: 'Listen anywhere on fm985.com.au, Community Radio Plus app, or direct stream — the Valley travels with you' },
+  { icon: Sparkles, title: 'Live & Local Programming', desc: 'Continuing 45+ years of live local content â€” real presenters, real community voices, real Goulburn Murray' },
+  { icon: Headphones, title: 'Online Streaming', desc: 'Listen anywhere on fm985.com.au, Community Radio Plus app, or direct stream â€” the Valley travels with you' },
   { icon: Users, title: 'Community Partnership', desc: 'Supporting NFPs, multicultural communities, GVL sport and local business across 25 towns' },
 ]
 
-/* ─── Social Icons ─── */
+/* â”€â”€â”€ Social Icons â”€â”€â”€ */
 const socials = [
   { label: 'Instagram', path: 'M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z', href: '#' },
   { label: 'TikTok', path: 'M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5', href: '#' },
@@ -133,7 +149,7 @@ const socials = [
   { label: 'YouTube', path: 'M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17', href: '#' },
 ]
 
-/* ─── Deterministic gradient avatar ─── */
+/* â”€â”€â”€ Deterministic gradient avatar â”€â”€â”€ */
 const HERITAGE_PALETTES = [
   { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
   { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
@@ -155,9 +171,9 @@ function getHeritageMemberAvatar(name: string) {
   return { ...palette, initials }
 }
 
-/* ═══════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 /*  MAIN PAGE                                  */
-/* ═══════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function Heritage() {
   const [mobileTimelineOpen, setMobileTimelineOpen] = useState<number | null>(null)
   const hScrollRef = useRef<HTMLElement>(null)
@@ -166,7 +182,7 @@ export default function Heritage() {
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
 
-  /* Pinned horizontal scroll — desktop only, respects reduced-motion */
+  /* Pinned horizontal scroll â€” desktop only, respects reduced-motion */
   useLayoutEffect(() => {
     const section = hScrollRef.current
     const track = hTrackRef.current
@@ -201,9 +217,9 @@ export default function Heritage() {
   return (
     <Layout>
       <SEO title="Our Heritage & Community" description={`${stationStats.yearsBroadcasting} years of community broadcasting. ONE FM 98.5's story from 1989 to today.`} />
-      {/* ── Section 1: Hero ── */}
+      {/* â”€â”€ Section 1: Hero â”€â”€ */}
       <section ref={heroRef} className="relative min-h-[75dvh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="EXPLORE">
-        {/* Scroll parallax wrapper — extends 28% above so image never gaps when shifted down */}
+        {/* Scroll parallax wrapper â€” extends 28% above so image never gaps when shifted down */}
         <motion.div
           style={{ y: heroImgY, top: '-28%', bottom: 0, left: 0, right: 0, position: 'absolute', willChange: 'transform' }}
         >
@@ -229,7 +245,7 @@ export default function Heritage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/30 via-transparent to-[#050D1A]/30" />
         <div aria-hidden className="grain-overlay" />
 
-        <div className="relative z-10 max-w-[900px] mx-auto px-6 pb-16 pt-32">
+        <div className="relative z-10 max-w-[900px] mx-auto px-6 pb-40 pt-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -279,7 +295,7 @@ export default function Heritage() {
             transition={{ duration: 0.6, delay: 1.0 }}
             className="font-body text-one-white/50 italic max-w-[600px] mb-10"
           >
-            For nearly four decades, ONE FM has been the voice of this region — from the first crackling broadcast to today's multi-platform media network. The technology has evolved. The commitment never changed.
+            For nearly four decades, ONE FM has been the voice of this region â€” from the first crackling broadcast to today's multi-platform media network. The technology has evolved. The commitment never changed.
           </motion.p>
 
           <motion.div
@@ -299,7 +315,7 @@ export default function Heritage() {
         </div>
       </section>
 
-      {/* ── Heritage Marquee Strip ── */}
+      {/* â”€â”€ Heritage Marquee Strip â”€â”€ */}
       <div className="bg-[#020810] border-y border-one-border/20 py-3 overflow-hidden">
         <Marquee
           speed={28}
@@ -308,21 +324,21 @@ export default function Heritage() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CALLSIGN: 3ONE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-electric/85">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GOULBURN VALLEY · VICTORIA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GOULBURN VALLEY Â· VICTORIA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24/7 BROADCAST</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-electric/85">COMMUNITY RADIO</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM Â· SHEPPARTON</span>,
           ]}
         />
       </div>
 
-      {/* ── Station Fact Bar ── */}
+      {/* â”€â”€ Station Fact Bar â”€â”€ */}
       <CredibilityStrip />
 
-      {/* ── Section 1.5: Station Archive — full-screen sticky horizontal gallery ── */}
+      {/* â”€â”€ Section 1.5: Station Archive â€” full-screen sticky horizontal gallery â”€â”€ */}
       <HorizontalGallery />
 
-      {/* ── Section 2: Timeline — pinned horizontal scroll (desktop) ── */}
+      {/* â”€â”€ Section 2: Timeline â€” pinned horizontal scroll (desktop) â”€â”€ */}
       <section
         ref={hScrollRef}
         id="timeline-section"
@@ -346,7 +362,7 @@ export default function Heritage() {
             </h2>
             <div className="w-12 h-0.5 bg-one-gold/60 my-6" />
             <p className="font-body text-one-white/35 text-sm max-w-[24ch] leading-relaxed">
-              {timeline[0].year}–{timeline[timeline.length - 1].year}<br />
+              {timeline[0].year}â€“{timeline[timeline.length - 1].year}<br />
               {timeline.length} milestones that shaped the Valley's voice.
             </p>
             <div className="flex items-center gap-2 mt-10 text-one-white/20">
@@ -361,19 +377,35 @@ export default function Heritage() {
               key={node.year}
               className="w-[42vw] h-full flex items-center px-14 shrink-0 border-r border-one-border/15 relative overflow-hidden"
             >
-              {/* Year as background texture */}
-              <div
-                aria-hidden
-                className="absolute right-8 top-1/2 -translate-y-1/2 font-heading font-black text-one-white select-none pointer-events-none"
-                style={{
-                  fontSize: 'clamp(8rem, 16vw, 14rem)',
-                  lineHeight: 1,
-                  letterSpacing: '-0.06em',
-                  opacity: 0.038,
-                }}
-              >
-                {node.year}
-              </div>
+              {/* Year as background texture, or archival photo when available */}
+              {node.img ? (
+                <div aria-hidden className="absolute inset-0 pointer-events-none">
+                  <img
+                    src={node.img}
+                    alt=""
+                    loading="lazy"
+                    className="absolute right-0 top-0 h-full w-[58%] object-cover"
+                    style={{ filter: 'grayscale(0.35) sepia(0.18) brightness(0.6)', opacity: 0.6 }}
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: 'linear-gradient(90deg, rgba(8,13,24,1) 0%, rgba(8,13,24,0.88) 35%, rgba(8,13,24,0.2) 65%, transparent 100%)' }}
+                  />
+                </div>
+              ) : (
+                <div
+                  aria-hidden
+                  className="absolute right-8 top-1/2 -translate-y-1/2 font-heading font-black text-one-white select-none pointer-events-none"
+                  style={{
+                    fontSize: 'clamp(8rem, 16vw, 14rem)',
+                    lineHeight: 1,
+                    letterSpacing: '-0.06em',
+                    opacity: 0.038,
+                  }}
+                >
+                  {node.year}
+                </div>
+              )}
 
               <div className="relative z-10 max-w-[440px]">
                 {/* Meta row */}
@@ -407,13 +439,19 @@ export default function Heritage() {
                 <p className="font-body text-one-white/55 leading-relaxed max-w-[44ch]">
                   {node.desc}
                 </p>
+
+                {node.imgCaption && (
+                  <p className="font-label text-[9px] tracking-wider text-one-white/30 mt-4 italic">
+                    {node.imgCaption}
+                  </p>
+                )}
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── Section 2 (mobile): Timeline accordion ── */}
+      {/* â”€â”€ Section 2 (mobile): Timeline accordion â”€â”€ */}
       <section className="lg:hidden bg-surface-mid py-20 px-4">
         <div className="max-w-[600px] mx-auto">
           <div className="text-center mb-12">
@@ -451,7 +489,21 @@ export default function Heritage() {
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <p className="font-body-small text-one-white mt-3 pt-3 border-t border-one-border">{node.desc}</p>
+                      {node.img && (
+                        <div className="mt-3 pt-3 border-t border-one-border">
+                          <img
+                            src={node.img}
+                            alt={node.imgCaption || node.title}
+                            loading="lazy"
+                            className="w-full h-40 object-cover rounded-lg"
+                            style={{ filter: 'sepia(0.12) saturate(0.92)' }}
+                          />
+                          {node.imgCaption && (
+                            <p className="font-label text-[9px] text-muted/70 mt-1.5 italic">{node.imgCaption}</p>
+                          )}
+                        </div>
+                      )}
+                      <p className={`font-body-small text-one-white pt-3 ${node.img ? '' : 'mt-3 border-t border-one-border'}`}>{node.desc}</p>
                       <span className="font-micro border border-one-border text-muted px-2 py-0.5 rounded mt-2 inline-block">{node.label}</span>
                     </motion.div>
                   )}
@@ -463,7 +515,7 @@ export default function Heritage() {
         </div>
       </section>
 
-      {/* ── Section 3: Community Impact ── */}
+      {/* â”€â”€ Section 3: Community Impact â”€â”€ */}
       <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="COMMUNITY IMPACT">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
@@ -507,7 +559,7 @@ export default function Heritage() {
             >
               <WordReveal text="MORE THAN A STATION" className="font-h2 text-one-white mb-4 block" as="h2" />
               <p className="font-body text-one-white mb-8">
-                ONE FM isn't just a frequency on the dial — it's a community lifeline. When floods hit in 2019, we were the only broadcast still on air for 72 hours. When local businesses struggled in 2020, we provided free advertising to 200+ shops. When young creatives needed a platform, we gave them the mic.
+                ONE FM isn't just a frequency on the dial â€” it's a community lifeline. When floods hit in 2019, we were the only broadcast still on air for 72 hours. When local businesses struggled in 2020, we provided free advertising to 200+ shops. When young creatives needed a platform, we gave them the mic.
               </p>
 
               <TiltCard maxTilt={3} className="mb-8">
@@ -519,7 +571,7 @@ export default function Heritage() {
                 className="glass-card border-l-2 border-l-one-gold p-5"
               >
                 <p className="font-body text-one-white italic mb-3">
-                  "ONE FM was there when no one else was. That antenna on the hill isn't just broadcasting — it's watching over us."
+                  "ONE FM was there when no one else was. That antenna on the hill isn't just broadcasting â€” it's watching over us."
                 </p>
                 <p className="font-h4 text-one-white">Maria Santos, Local Business Owner</p>
               </motion.div>
@@ -538,7 +590,7 @@ export default function Heritage() {
         </div>
       </section>
 
-      {/* ── Section 4: Regional Identity ── */}
+      {/* â”€â”€ Section 4: Regional Identity â”€â”€ */}
       <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="REGIONAL IDENTITY">
         <div className="max-w-[1400px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
@@ -574,7 +626,7 @@ export default function Heritage() {
                 </linearGradient>
               </defs>
 
-              {/* Coast — top right blob */}
+              {/* Coast â€” top right blob */}
               <motion.path
                 d="M450 20 Q650 10 750 60 Q780 120 720 160 Q600 180 500 140 Q420 100 450 20Z"
                 fill="url(#coastGrad)"
@@ -585,7 +637,7 @@ export default function Heritage() {
                 viewport={{ once: true }}
                 transition={{ duration: 1.2, delay: 0 }}
               />
-              {/* Valley — left center */}
+              {/* Valley â€” left center */}
               <motion.path
                 d="M50 120 Q180 80 280 140 Q320 200 260 260 Q140 280 80 220 Q20 180 50 120Z"
                 fill="url(#valleyGrad)"
@@ -596,7 +648,7 @@ export default function Heritage() {
                 viewport={{ once: true }}
                 transition={{ duration: 1.2, delay: 0.2 }}
               />
-              {/* City — center */}
+              {/* City â€” center */}
               <motion.path
                 d="M320 160 Q440 130 520 180 Q560 240 500 300 Q400 320 340 280 Q280 240 320 160Z"
                 fill="url(#cityGrad)"
@@ -607,7 +659,7 @@ export default function Heritage() {
                 viewport={{ once: true }}
                 transition={{ duration: 1.2, delay: 0.4 }}
               />
-              {/* Hinterland — bottom right */}
+              {/* Hinterland â€” bottom right */}
               <motion.path
                 d="M550 220 Q680 200 740 260 Q780 320 720 370 Q620 390 560 340 Q500 300 550 220Z"
                 fill="url(#hinterGrad)"
@@ -658,7 +710,7 @@ export default function Heritage() {
         </div>
       </section>
 
-      {/* ── Section 5: Team ── */}
+      {/* â”€â”€ Section 5: Team â”€â”€ */}
       <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="THE TEAM">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
@@ -710,7 +762,7 @@ export default function Heritage() {
                     <p className="font-label text-one-muted">{member.role}</p>
                     <p className="font-body-small text-muted">{member.since}</p>
                     <span className="inline-flex items-center gap-1 font-label text-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-250 mt-1">
-                      Bio →
+                      Bio â†’
                     </span>
                   </motion.div>
                 ))}
@@ -738,6 +790,21 @@ export default function Heritage() {
                     className="group relative"
                   >
                     {(() => {
+                      if (member.realPhoto) {
+                        return (
+                          <div className="overflow-hidden rounded-2xl mb-3 relative" style={{ height: 280 }}>
+                            <img
+                              src={member.img}
+                              alt={member.name}
+                              loading="lazy"
+                              className="absolute inset-0 w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-one-navy/60 via-transparent to-transparent" />
+                            <div className="absolute inset-0 bg-one-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none" />
+                            <div aria-hidden className="explore-tile-scan" />
+                          </div>
+                        )
+                      }
                       const av = getHeritageMemberAvatar(member.name)
                       return (
                         <div className="overflow-hidden rounded-2xl mb-3 relative" style={{ height: 280 }}>
@@ -760,7 +827,7 @@ export default function Heritage() {
                     <p className="font-label text-one-muted">{member.role}</p>
                     <p className="font-body-small text-muted">{member.since}</p>
                     <span className="inline-flex items-center gap-1 font-label text-one-gold opacity-0 group-hover:opacity-100 transition-opacity duration-250 mt-1">
-                      Bio →
+                      Bio â†’
                     </span>
                   </motion.div>
                 ))}
@@ -771,13 +838,13 @@ export default function Heritage() {
         </div>
       </section>
 
-      {/* ── Section 6: Looking Forward ── */}
+      {/* â”€â”€ Section 6: Looking Forward â”€â”€ */}
       <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="LOOKING AHEAD">
         <div className="max-w-[1000px] mx-auto px-4 text-center">
           <ScrollReveal>
             <WordReveal text="THE NEXT CHAPTER" className="font-h2 text-one-white mb-4 block" as="h2" />
             <p className="font-body text-one-white mb-12 max-w-[700px] mx-auto">
-              AI-powered programming. Predictive audience analytics. Smart sponsorship matching. Interactive broadcast experiences. The future of regional radio isn't about replacing what makes us special — it's about amplifying it. We're building the most advanced community media platform in the country, without losing the human connection that got us here.
+              AI-powered programming. Predictive audience analytics. Smart sponsorship matching. Interactive broadcast experiences. The future of regional radio isn't about replacing what makes us special â€” it's about amplifying it. We're building the most advanced community media platform in the country, without losing the human connection that got us here.
             </p>
           </ScrollReveal>
 
@@ -821,14 +888,14 @@ export default function Heritage() {
         </div>
       </section>
 
-      {/* ── Section 7: Latest Interviews ── */}
+      {/* â”€â”€ Section 7: Latest Interviews â”€â”€ */}
       <LatestInterviews />
 
-      {/* ── Section 8: CTA / Connect ── */}
+      {/* â”€â”€ Section 8: CTA / Connect â”€â”€ */}
       <section className="relative bg-surface-lift section-bleed-top section-padding overflow-hidden" data-cursor-label="CONNECT">
         <div className="absolute inset-0">
           <img
-            src="/assets/images/community-outdoor-market.jpg"
+            src="/assets/images/community-book-stall.jpg"
             alt="Community event"
             className="w-full h-full object-cover opacity-15"
           />
@@ -839,7 +906,7 @@ export default function Heritage() {
           <ScrollReveal>
             <WordReveal text="BE PART OF THE STORY" className="font-h2 text-one-white mb-4 block" as="h2" />
             <p className="font-body text-one-white mb-8">
-              Whether you're a listener, a partner, or a community champion — there's a place for you in the ONE FM story.
+              Whether you're a listener, a partner, or a community champion â€” there's a place for you in the ONE FM story.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 mb-10">
@@ -887,4 +954,5 @@ export default function Heritage() {
     </Layout>
   )
 }
+
 

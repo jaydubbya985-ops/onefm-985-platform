@@ -31,7 +31,7 @@ export const STATION_PHOTOS = {
   /** Alias — awaiting Drive sync */
   studioAnnouncerMic: `${IMG}/commentary-box-action.jpg`,
   /** Alias — awaiting Drive sync */
-  communityDinnerTeam: `${IMG}/community-outdoor-market.jpg`,
+  communityDinnerTeam: `${IMG}/community-book-stall.jpg`,
 
   // Broadcast hardware
   towerMountMajorDay: `${IMG}/tower-mount-major-day.png`,
@@ -69,7 +69,7 @@ export const STATION_PHOTOS = {
 
   // Community grassroots
   communityBookStall: `${IMG}/community-book-stall.jpg`,
-  communityOutdoorMarket: `${IMG}/community-outdoor-market.jpg`,
+  communityOutdoorMarket: `${IMG}/community-book-stall.jpg`,
 
   // GVL additional action
   gvlTownersCelebration: `${IMG}/gvl-towners-win.jpg`,
@@ -103,7 +103,7 @@ export const HOST_PHOTOS = {
   onAirHost2:       `${IMG}/studio-commentary-selfie.jpg`,
   onAirHost3:       `${IMG}/studio-sbs-diversity.jpg`,
   studioControlRoom: '/studio-control-room.jpg',
-  communityEvent:   `${IMG}/community-outdoor-market.jpg`,
+  communityEvent:   `${IMG}/community-book-stall.jpg`,
   regionalLandscape: `${IMG}/geo-rolling-green-hills.jpg`,
 } as const
 

@@ -104,7 +104,7 @@ function ContactHero() {
         </div>
         <div aria-hidden className="grain-overlay" />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 pb-16">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 pb-40">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
