@@ -5,8 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { BrandLogo } from '@/components/BrandLogo'
 import { useOpsAccess } from '@/hooks/useOpsAccess'
 import { NAV_GROUPS, type NavGroup } from '@/lib/siteNav'
-import { useBOMWeather } from '@/hooks/useBOM'
-import { formatTemp } from '@/lib/bom'
+import { useWeatherCycle } from '@/hooks/useWeatherCycle'
+import { gvWeatherTowns } from '@/data/weatherLocations'
+import { formatTempC } from '@/lib/weather'
+
+const SHEPPARTON_ONLY = gvWeatherTowns.slice(0, 1)
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -43,11 +46,11 @@ function SignalMeter() {
 }
 
 function NavWeather() {
-  const { current } = useBOMWeather()
-  if (!current) return null
+  const { weather } = useWeatherCycle(SHEPPARTON_ONLY)
+  if (!weather) return null
   return (
     <span
-      title={`Shepparton ${formatTemp(current.air_temp)}`}
+      title={`Shepparton ${formatTempC(weather.tempC)}`}
       style={{
         fontFamily: 'JetBrains Mono, monospace',
         fontSize: '0.6rem',
@@ -58,7 +61,7 @@ function NavWeather() {
         whiteSpace: 'nowrap',
       }}
     >
-      {formatTemp(current.air_temp)}
+      {formatTempC(weather.tempC)}
     </span>
   )
 }
