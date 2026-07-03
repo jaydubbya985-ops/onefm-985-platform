@@ -118,6 +118,7 @@ function rowToSendPayload(row: BatchRow, overrideEmail?: string): InvoiceSendPay
     description: row.description,
     period: row.period,
     dueDate: row.dueDate,
+    issueDate: row.createdAt,
     emailSubject: row.emailSubject,
     emailBody: row.emailBody,
     invoiceId: row.id,
@@ -564,7 +565,10 @@ export default function InvoiceBatchSender() {
         ...rowToSendPayload(row, recipient),
         testMode: true,
       })
-      if (result.success) {
+      if (result.devMode) {
+        updateStatus(id, 'tested')
+        toast(`Not actually sent — no email service configured (dev mode)`, 'warning')
+      } else if (result.success) {
         updateStatus(id, 'tested')
         toast(`Test invoice sent to ${recipient}`, 'success')
       } else if (result.usedMailtoFallback) {
@@ -594,12 +598,14 @@ export default function InvoiceBatchSender() {
     setSending(true)
     try {
       const result = await dispatchInvoiceEmail(rowToSendPayload(row))
-      if (result.success) {
+      if (result.success && !result.devMode) {
+        // Real Resend send succeeded
         sendBatch([row.id])
         notify(`Invoice ${row.number} sent to ${row.email} with PDF attached`, 'success')
-      } else if (result.usedMailtoFallback) {
+      } else {
+        // devMode (no email service) or usedMailtoFallback — download PDF and open email client
         try {
-          const pdf = await generateInvoicePdf(row)
+          const pdf = await generateInvoicePdf({ ...row, issueDate: row.createdAt })
           pdf.save(`${row.number}.pdf`)
         } catch {
           notify('Failed to generate PDF', 'error')
@@ -607,12 +613,9 @@ export default function InvoiceBatchSender() {
         window.location.href = buildMailtoInvoiceUrl(rowToSendPayload(row))
         sendBatch([row.id])
         notify(
-          `Resend unavailable — email client opened. Attach the downloaded PDF for ${row.number}.`,
+          `PDF downloaded. Email client opened — attach ${row.number}.pdf before sending.`,
           'warning',
         )
-      } else {
-        notify(result.error ?? 'Failed to send invoice', 'error')
-        return
       }
     } finally {
       setSending(false)
@@ -644,7 +647,9 @@ export default function InvoiceBatchSender() {
       paymentMethod: 'Bank Transfer',
       reference: row.number,
     })
-    if (result.success) {
+    if (result.devMode) {
+      notify(`NOT sent — no email service configured yet. Receipt was NOT emailed to ${row.email}.`, 'error')
+    } else if (result.success) {
       notify(`Receipt sent to ${row.email}`, 'success')
     } else if (result.usedMailtoFallback) {
       const html = generateReceiptEmailHtml({
@@ -687,17 +692,27 @@ export default function InvoiceBatchSender() {
     setSending(true)
     try {
       let sent = 0
+      let devMode = 0
       for (const r of selected) {
         const result = await dispatchInvoiceEmail({
           ...rowToSendPayload(r, recipient),
           testMode: true,
         })
-        if (result.success || result.usedMailtoFallback) {
+        if (result.devMode) {
+          devMode++
+        } else if (result.success || result.usedMailtoFallback) {
           updateStatus(r.id, 'tested')
           sent++
         }
       }
-      notify(`${sent} test invoices sent to ${recipient}`, sent > 0 ? 'success' : 'error')
+      if (devMode > 0) {
+        notify(
+          `${devMode} NOT sent — no email service configured (dev mode)${sent ? `; ${sent} sent to ${recipient}` : ''}`,
+          'error',
+        )
+      } else {
+        notify(`${sent} test invoices sent to ${recipient}`, sent > 0 ? 'success' : 'error')
+      }
     } finally {
       setSending(false)
     }
@@ -726,12 +741,26 @@ export default function InvoiceBatchSender() {
         setSending(true)
         try {
           const payloads = selected.map((r) => rowToSendPayload(r))
-          const result = await dispatchInvoiceBatch(payloads)
-          sendBatch(selected.map((r) => r.id))
-          notify(
-            `Batch complete: ${result.sent} sent${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
-            result.failed > 0 ? 'warning' : 'success',
-          )
+          const actuallySentIds: string[] = []
+          const result = await dispatchInvoiceBatch(payloads, (index, _total, itemResult) => {
+            if (itemResult.success && !itemResult.devMode) {
+              actuallySentIds.push(selected[index - 1].id)
+            } else if (itemResult.usedMailtoFallback) {
+              actuallySentIds.push(selected[index - 1].id)
+            }
+          })
+          if (actuallySentIds.length > 0) sendBatch(actuallySentIds)
+          if (result.devMode > 0) {
+            notify(
+              `${result.devMode} invoice(s) NOT sent — no email service configured (dev mode). ${result.sent} real send(s) succeeded.`,
+              'error',
+            )
+          } else {
+            notify(
+              `Batch complete: ${result.sent} sent${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
+              result.failed > 0 ? 'warning' : 'success',
+            )
+          }
         } finally {
           setSending(false)
         }
@@ -970,8 +999,8 @@ export default function InvoiceBatchSender() {
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <ScrollArea className="h-[calc(100vh-520px)] min-h-[400px]">
-                    <Table>
+                  <div className="overflow-x-auto overflow-y-auto h-[calc(100vh-520px)] min-h-[400px]">
+                    <Table className="min-w-[860px]">
                       <TableHeader>
                         <TableRow className="border-[#1E293B] hover:bg-transparent">
                           <TableHead className="w-10">
@@ -1225,7 +1254,7 @@ export default function InvoiceBatchSender() {
                         })}
                       </TableBody>
                     </Table>
-                  </ScrollArea>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -1317,7 +1346,7 @@ export default function InvoiceBatchSender() {
                         </TabsList>
 
                         <TabsContent value="invoice" className="mt-0 space-y-4">
-                          <ScrollArea className="h-[calc(100vh-400px)] min-h-[350px]">
+                          <ScrollArea className="h-[calc(100vh-544px)] min-h-[200px]">
                             <InvoicePreview invoice={active} />
                           </ScrollArea>
                           <div className="flex gap-2 pt-2">
@@ -1338,7 +1367,7 @@ export default function InvoiceBatchSender() {
                               className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#0A1628] font-semibold gap-1.5"
                               onClick={async () => {
                                 try {
-                                  const pdf = await generateInvoicePdf(active)
+                                  const pdf = await generateInvoicePdf({ ...active, issueDate: active.createdAt })
                                   pdf.save(`${active.number}.pdf`)
                                   toast(`Downloaded ${active.number}.pdf`, 'success')
                                 } catch {
@@ -1372,7 +1401,7 @@ export default function InvoiceBatchSender() {
                               className="h-7 text-xs bg-[#0A1628] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853]"
                             />
                           </div>
-                          <ScrollArea className="h-[calc(100vh-460px)] min-h-[290px]">
+                          <ScrollArea className="h-[calc(100vh-592px)] min-h-[130px]">
                             <InvoiceEmailTemplate
                               data={{
                                 contactName: active.contactName,

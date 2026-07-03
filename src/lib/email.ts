@@ -205,17 +205,18 @@ export function buildProposalEmailHtml(data: ProposalEmailData): string {
  * For production: proxy this through a Supabase Edge Function
  * so RESEND_API_KEY never touches the browser.
  */
-export async function sendEmail(payload: EmailPayload): Promise<{ success: boolean; error?: string; messageId?: string }> {
+export async function sendEmail(payload: EmailPayload): Promise<{ success: boolean; error?: string; messageId?: string; devMode?: boolean }> {
   const apiKey = import.meta.env.VITE_RESEND_API_KEY
 
   if (!apiKey) {
-    // Dev mode — log and succeed silently
-    console.info('[EmailService] Dev mode — email not sent (no VITE_RESEND_API_KEY):', {
+    // Dev mode — no email service configured, nothing actually sent.
+    // Caller MUST surface devMode honestly — do not present this as a real send.
+    console.warn('[EmailService] DEV MODE — email NOT sent (no VITE_RESEND_API_KEY):', {
       to: payload.to,
       subject: payload.subject,
       attachments: payload.attachments?.length ?? 0,
     })
-    return { success: true }
+    return { success: true, devMode: true }
   }
 
   try {

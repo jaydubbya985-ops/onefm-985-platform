@@ -13,6 +13,7 @@ import { Check, Copy, CreditCard } from 'lucide-react'
 import { useToast } from './Toast'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
+import { LOGO_PDF_DATA_URL } from '@/lib/logoBase64'
 
 // ---------------------------------------------------------------------------
 // Bank + Stripe configuration
@@ -104,6 +105,8 @@ export interface PdfInvoiceData {
   gst: number
   total: number
   dueDate: string
+  /** Actual invoice issue date (ISO). Falls back to today if omitted. */
+  issueDate?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -112,6 +115,7 @@ export interface PdfInvoiceData {
 
 const esc = (v?: string) =>
   (v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
 
 const aud = (n: number) =>
   `$${n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -585,7 +589,8 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   const CW   = W - M * 2   // 170mm content width
 
   const today     = new Date()
-  const issueDate = today.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+  const issueDate = (invoice.issueDate ? new Date(invoice.issueDate) : today)
+    .toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
   const dueDate   = new Date(invoice.dueDate).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
 
   // ── colour helpers ───────────────────────────────────────────────────────
@@ -624,13 +629,16 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   const HEADER_H = 42
   fillNavy(); box(0, 0, W, HEADER_H)
 
-  // Wordmark
-  bold(20); inkWhite(); tl('ONE FM', M, 16.5)
-  const oneW = doc.getTextWidth('ONE FM')
-  bold(18); inkRed(); tl('98.5', M + oneW + 2, 16.5)
-
-  norm(8); inkSilver(); tl("Goulburn Valley's Community Radio", M, 23)
-  norm(7); inkDim();    tl('ABN: 92 117 291 771', M, 28.5)
+  // Wordmark — embedded JPEG (white-bg composite, 400px wide).
+  const LOGO_H = 13
+  const LOGO_W = LOGO_H * (1800 / 805)
+  const LOGO_X = M
+  const LOGO_Y = 7
+  doc.setFillColor(255, 255, 255)
+  doc.roundedRect(LOGO_X - 3, LOGO_Y - 2, LOGO_W + 6, LOGO_H + 4, 1.5, 1.5, 'F')
+  doc.addImage(LOGO_PDF_DATA_URL, 'JPEG', LOGO_X, LOGO_Y, LOGO_W, LOGO_H)
+  norm(8); inkSilver(); tl("Goulburn Valley's Community Radio", M, 27)
+  norm(7); inkDim();    tl('ABN: 92 117 291 771', M, 32.5)
 
   // TAX INVOICE label + number (right)
   bold(14); inkWhite(); tr('TAX INVOICE', W - M, 16.5)
@@ -690,16 +698,28 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   y += 8
 
   // LINE ITEMS — row
-  ruleLight(); box(M, y, CW, invoice.period ? 18 : 13, 'S')
-  norm(10); inkDark()
-  tl(invoice.description, M + 2, y + 5.5)
-  if (invoice.period) { norm(8); inkGrey(); tl(`Period: ${invoice.period}`, M + 2, y + 11) }
+  // Description gets wrapped so long text never bleeds into the QTY/price
+  // columns (those start around M+93).
+  norm(10)
+  const DESC_MAX_W = 82
+  const descLines = doc.splitTextToSize(invoice.description, DESC_MAX_W) as string[]
+  const DESC_LINE_H = 4.5
+  const baseRowH = invoice.period ? 18 : 13
+  const rowH = baseRowH + Math.max(0, descLines.length - 1) * DESC_LINE_H
+
+  ruleLight(); box(M, y, CW, rowH, 'S')
+  inkDark()
+  descLines.forEach((line, i) => tl(line, M + 2, y + 5.5 + i * DESC_LINE_H))
+  if (invoice.period) {
+    norm(8); inkGrey()
+    tl(`Period: ${invoice.period}`, M + 2, y + 5.5 + descLines.length * DESC_LINE_H + 1)
+  }
   norm(10); inkDark()
   tr('1',                       M + 93,    y + 5.5)
   tr(aud(invoice.amountExclGst), M + 120,  y + 5.5)
   tr(aud(invoice.amountExclGst), M + 148,  y + 5.5)
   tr(aud(invoice.gst),           W - M - 1, y + 5.5)
-  y += (invoice.period ? 18 : 13) + 10
+  y += rowH + 10
 
   // TOTALS — right-aligned 72mm block
   const TX = M + CW - 72   // left edge of totals block
@@ -745,19 +765,18 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   y += 36
 
   // ── FOOTER BAND (matches email) ──────────────────────────────────────────
-  const FY = H - 15
+  const FY = H - 18
   fillGold(); box(0, FY - 1, W, 1)    // gold rule above footer
-  fillNavy(); box(0, FY, W, 15)
+  fillNavy(); box(0, FY, W, 18)
 
   norm(7.5); inkSilver()
-  tl('Goulburn Valley Community Radio Inc.  ·  ABN: 92 117 291 771', M, FY + 5.5)
-  tc('Payment due within 14 days  ·  accounts@fm985.com.au', W / 2, FY + 5.5)
-  tr('(03) 5831 3131', W - M, FY + 5.5)
+  tc('Goulburn Valley Community Radio Inc.  ·  ABN: 92 117 291 771  ·  (03) 5831 3131', W / 2, FY + 6)
+  tc('Payment due within 14 days  ·  accounts@fm985.com.au', W / 2, FY + 10.5)
 
   norm(6.5); doc.setTextColor(100, 100, 100)
   tc(
     `ONEFM-${invoice.number}.pdf  ·  Generated ${today.toLocaleDateString('en-AU')}`,
-    W / 2, FY + 11
+    W / 2, FY + 15
   )
 
   return doc

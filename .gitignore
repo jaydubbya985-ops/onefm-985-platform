@@ -12,3 +12,4 @@ scripts/google-drive.config.json
 
 # Agent skills installed via `npx skills add` (reinstall from package)
 .agents
+.drive-scratch/

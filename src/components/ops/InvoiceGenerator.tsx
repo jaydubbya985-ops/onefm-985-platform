@@ -686,16 +686,26 @@ export default function InvoiceGenerator() {
       description,
       period: '',
       dueDate: inv.dueDate,
+      issueDate: inv.date,
       emailSubject: `Invoice ${inv.invoiceNumber} from ONE FM 98.5 — ${inv.billTo.company}`,
       emailBody: inv.notes,
       invoiceId: inv.id,
     })
+
+    if (result.devMode) {
+      window.alert(
+        `NOT sent — no email service is configured yet. Invoice ${inv.invoiceNumber} was NOT emailed to ${inv.billTo.email}.`,
+      )
+      return
+    }
 
     if (result.success) {
       setLocalInvoices((list) =>
         list.map((i) => (i.id === id ? { ...i, status: 'sent' } : i)),
       )
       updateInvoice(id, { status: 'sent' })
+    } else if (!result.usedMailtoFallback) {
+      window.alert(result.error ?? `Failed to send invoice ${inv.invoiceNumber}.`)
     }
   }
 
@@ -757,6 +767,7 @@ export default function InvoiceGenerator() {
       gst: invoice.gst,
       total: invoice.total,
       dueDate: invoice.dueDate,
+      issueDate: invoice.date,
     })
     doc.save(`${invoice.invoiceNumber}.pdf`)
   }

@@ -1,9 +1,8 @@
 /**
- * Invoice + receipt email dispatch — Resend via Edge Function (preferred),
- * direct Resend API (dev), or mailto fallback.
+ * Invoice + receipt email dispatch — Netlify function (production),
+ * direct Resend API (dev fallback), or mailto last resort.
  */
 import type { jsPDF } from 'jspdf'
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { sendEmail } from '@/lib/email'
 import {
   BANK_ACCOUNT,
@@ -39,6 +38,8 @@ export interface SendResult {
   messageId?: string
   usedMailtoFallback?: boolean
   error?: string
+  /** True when no real email service is configured — nothing was actually sent. */
+  devMode?: boolean
 }
 
 function pdfToBase64(pdf: jsPDF): string {
@@ -64,7 +65,7 @@ function buildInvoiceHtml(payload: InvoiceSendPayload): string {
   )
 }
 
-/** Send invoice email with PDF attachment via Edge Function or Resend. */
+/** Send invoice email with PDF attachment via Netlify function (production) or Resend direct (dev). */
 export async function dispatchInvoiceEmail(
   payload: InvoiceSendPayload,
 ): Promise<SendResult> {
@@ -80,36 +81,32 @@ export async function dispatchInvoiceEmail(
     console.warn('[InvoiceSend] PDF generation failed:', err)
   }
 
-  // 1. Supabase Edge Function (production — API key stays server-side)
-  if (isSupabaseConfigured()) {
-    try {
-      const { data, error } = await supabase.functions.invoke('send-invoice', {
-        body: {
-          to: recipient,
-          subject,
-          html,
-          pdfBase64,
-          filename: `${payload.number}.pdf`,
-          replyTo: 'accounts@fm985.com.au',
-          invoiceId: payload.invoiceId,
-        },
-      })
+  // 1. Netlify serverless function (production — RESEND_API_KEY stays server-side)
+  try {
+    const res = await fetch('/.netlify/functions/send-invoice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: recipient,
+        subject,
+        html,
+        pdfBase64,
+        filename: `${payload.number}.pdf`,
+        replyTo: 'accounts@fm985.com.au',
+      }),
+    })
 
-      if (!error && data?.success) {
-        return { success: true, messageId: data.messageId }
-      }
-
-      if (error) {
-        console.warn('[InvoiceSend] Edge function failed:', error.message)
-      } else if (data?.error) {
-        console.warn('[InvoiceSend] Edge function error:', data.error)
-      }
-    } catch (err) {
-      console.warn('[InvoiceSend] Edge function unavailable:', err)
+    if (res.ok) {
+      const data = await res.json() as { success?: boolean; messageId?: string }
+      if (data.success) return { success: true, messageId: data.messageId }
+    } else {
+      console.warn('[InvoiceSend] Netlify function responded:', res.status)
     }
+  } catch (err) {
+    console.warn('[InvoiceSend] Netlify function unavailable (dev mode?):', err)
   }
 
-  // 2. Direct Resend (dev / staging with VITE_RESEND_API_KEY)
+  // 2. Direct Resend (local dev with VITE_RESEND_API_KEY in .env.local)
   const directResult = await sendEmail({
     to: recipient,
     subject,
@@ -124,9 +121,8 @@ export async function dispatchInvoiceEmail(
     return { success: true, messageId: directResult.messageId }
   }
 
-  if (directResult.success && !import.meta.env.VITE_RESEND_API_KEY) {
-    // Dev log mode — treat as success for UX testing
-    return { success: true }
+  if (directResult.success && directResult.devMode) {
+    return { success: true, devMode: true }
   }
 
   return {
@@ -152,22 +148,18 @@ export async function dispatchReceiptEmail(
 
   const subject = `Payment Received — ${payload.invoiceNumber} | ONE FM 98.5`
 
-  if (isSupabaseConfigured()) {
-    try {
-      const { data, error } = await supabase.functions.invoke('send-invoice', {
-        body: {
-          to: payload.to,
-          subject,
-          html,
-          replyTo: 'accounts@fm985.com.au',
-        },
-      })
-      if (!error && data?.success) {
-        return { success: true, messageId: data.messageId }
-      }
-    } catch {
-      // fall through
+  try {
+    const res = await fetch('/.netlify/functions/send-invoice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: payload.to, subject, html, replyTo: 'accounts@fm985.com.au' }),
+    })
+    if (res.ok) {
+      const data = await res.json() as { success?: boolean; messageId?: string }
+      if (data.success) return { success: true, messageId: data.messageId }
     }
+  } catch {
+    // fall through to direct send
   }
 
   const result = await sendEmail({
@@ -177,34 +169,31 @@ export async function dispatchReceiptEmail(
     replyTo: 'accounts@fm985.com.au',
   })
 
-  if (result.success) return { success: true, messageId: result.messageId }
+  if (result.success) return { success: true, messageId: result.messageId, devMode: result.devMode }
   return { success: false, usedMailtoFallback: true, error: result.error }
 }
 
 /** Build mailto URL as last-resort fallback when Resend is unavailable. */
 export function buildMailtoInvoiceUrl(payload: InvoiceSendPayload): string {
-  const html = buildInvoiceHtml(payload)
   const body = encodeURIComponent(`Hi ${payload.contactName || 'there'},
 
-Please find your invoice from ONE FM 98.5 attached.
+Please find your ONE FM 98.5 invoice attached (PDF downloaded to your Downloads folder).
 
-INVOICE DETAILS:
-• Invoice #: ${payload.number}
-• Company: ${payload.company}
-• Amount: $${payload.total.toLocaleString('en-AU', { minimumFractionDigits: 2 })} (inc GST)
-• Due Date: ${payload.dueDate}
+Invoice #: ${payload.number}
+Company: ${payload.company}
+Amount: $${payload.total.toLocaleString('en-AU', { minimumFractionDigits: 2 })} (inc GST)
+Due: ${payload.dueDate}
 
-PAYMENT — Bank Transfer (Preferred):
-  NAB | BSB: ${BANK_BSB} | Account: ${BANK_ACCOUNT}
-  Account Name: ${BANK_ACCOUNT_NAME}
-  Reference: ${payload.number}
+Payment by bank transfer:
+NAB | BSB: ${BANK_BSB} | Account: ${BANK_ACCOUNT}
+Account Name: ${BANK_ACCOUNT_NAME}
+Reference: ${payload.number}
 
----
-${html}
----
+Thank you for supporting ONE FM 98.5.
 
 Jason Welsh
-Station Manager, ONE FM 98.5`)
+Station Manager, ONE FM 98.5
+accounts@fm985.com.au`)
 
   return `mailto:${payload.to}?subject=${encodeURIComponent(payload.emailSubject)}&body=${body}`
 }
@@ -213,16 +202,19 @@ Station Manager, ONE FM 98.5`)
 export async function dispatchInvoiceBatch(
   items: InvoiceSendPayload[],
   onProgress?: (index: number, total: number, result: SendResult) => void,
-): Promise<{ sent: number; failed: number; mailtoFallback: number }> {
+): Promise<{ sent: number; failed: number; mailtoFallback: number; devMode: number }> {
   let sent = 0
   let failed = 0
   let mailtoFallback = 0
+  let devMode = 0
 
   for (let i = 0; i < items.length; i++) {
     const result = await dispatchInvoiceEmail(items[i])
     onProgress?.(i + 1, items.length, result)
 
-    if (result.success) {
+    if (result.devMode) {
+      devMode++
+    } else if (result.success) {
       sent++
     } else if (result.usedMailtoFallback) {
       mailtoFallback++
@@ -237,5 +229,5 @@ export async function dispatchInvoiceBatch(
     }
   }
 
-  return { sent, failed, mailtoFallback }
+  return { sent, failed, mailtoFallback, devMode }
 }
