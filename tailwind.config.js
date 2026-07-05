@@ -48,23 +48,25 @@ module.exports = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // ── ONE FM V3 Brand System (source: brand_system_v3) ──
-        "one-navy":    "#071D3A",   // Deep Broadcast Navy
-        "one-blue":    "#1B458F",   // ONE FM Blue (core identity)
+        // ── ON AIR design system (Direction A, 2026-07-05) ──
+        // Legacy navy/gold tokens remapped to the black/red/white system so
+        // every existing page re-skins without per-file edits. Red stays rare.
+        "one-navy":    "#101010",   // was Deep Broadcast Navy → ink surface
+        "one-blue":    "#1B458F",   // logo blue (imagery only)
         "one-blue-bright": "#0A5EB7",
-        "one-deep-blue": "#0A2A5E",
-        "one-midnight": "#020A18",
+        "one-deep-blue": "#0D0D0D",
+        "one-midnight": "#050505",
         "one-electric": ({ opacityValue }) =>
           opacityValue === undefined
             ? 'var(--one-electric)'
             : `rgba(var(--one-electric-rgb), ${opacityValue})`,
         "one-neon-sky": "#38BDF8",  // Neon Sky Blue (daily UI accent)
-        "one-gold":    "#D4AF37",   // Heritage Gold (premium accent only)
-        "one-champagne": "#F4D27A",
-        "one-red":     "#E51636",   // 98.5 Red (core identity)
+        "one-gold":    "#F2F2F2",   // was Heritage Gold → paper white accents
+        "one-champagne": "#F2F2F2",
+        "one-red":     "#E51636",   // 98.5 Red (core identity — THE accent)
         "one-white":   "#FFFFFF",
-        "one-muted":   "#9EA6AE",
-        "one-border":  "#1A2A42",
+        "one-muted":   "#9A9A9A",
+        "one-border":  "#242424",
         "one-neon-orange": "#FF6A00", // Sport/event alert only
         "one-fluoro-lime": "#B6FF00", // Specialist accent only
         "one-magenta": "#FF2BD6",     // Specialist accent only
@@ -78,18 +80,20 @@ module.exports = {
         "data-ice": "#00BBF9",
         "sage": "#74BF8A",
         // ── Design system aliases (MediaKit, AuthModal, etc.) ──
-        "gold": "#D4AF37",       // same as one-gold; used by MediaKit/Auth
-        "onyx": "#0A1628",       // deep navy-black (input bg, dialog bg)
-        "chalk": "#C4CFDB",      // muted blue-white body text
-        "ivory": "#EEE8DC",      // warm off-white text on dark surfaces
+        "gold": "#F2F2F2",       // same as one-gold; used by MediaKit/Auth
+        "onyx": "#101010",       // ink (input bg, dialog bg)
+        "chalk": "#C9C9C9",      // muted body text on dark
+        "ivory": "#F2EFE9",      // warm off-white text on dark surfaces
         "signal-red": "#E51636", // alias for one-red
-        "border-dark": "#1A2A42", // alias for one-border
+        "border-dark": "#242424", // alias for one-border
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
-        heading: ['"Space Grotesk"', 'sans-serif'],
-        // ON AIR design system (Direction A, approved 2026-07-05): poster display type
+        // ON AIR design system (Direction A, approved 2026-07-05):
+        // headings/display are poster type (Anton); grotesk stays for body-adjacent use
+        display: ['Anton', 'sans-serif'],
+        heading: ['Anton', 'sans-serif'],
         poster: ['Anton', 'sans-serif'],
+        grotesk: ['"Space Grotesk"', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },

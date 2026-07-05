@@ -113,44 +113,44 @@
 
 @layer base {
   :root {
-    --background: 216 45% 9%;
+    --background: 0 0% 4%;
     --foreground: 0 0% 100%;
-    --card: 216 45% 9%;
+    --card: 0 0% 4%;
     --card-foreground: 0 0% 100%;
-    --popover: 216 45% 9%;
+    --popover: 0 0% 4%;
     --popover-foreground: 0 0% 100%;
-    --primary: 40 60% 55%;
-    --primary-foreground: 216 45% 9%;
-    --secondary: 216 30% 15%;
+    --primary: 351 82% 52%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 213 8% 62%;
-    --muted-foreground: 216 10% 60%;
-    --accent: 40 60% 55%;
-    --accent-foreground: 216 45% 9%;
+    --muted: 0 0% 62%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 351 82% 52%;
+    --accent-foreground: 0 0% 4%;
     --destructive: 358 82% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 216 30% 18%;
-    --input: 216 30% 18%;
-    --ring: 40 60% 55%;
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 351 82% 52%;
     --radius: 0.625rem;
-    --sidebar-background: 216 45% 9%;
+    --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 40 60% 55%;
-    --sidebar-primary-foreground: 216 45% 9%;
-    --sidebar-accent: 216 30% 15%;
+    --sidebar-primary: 351 82% 52%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 216 30% 18%;
-    --sidebar-ring: 40 60% 55%;
+    --sidebar-border: 0 0% 14%;
+    --sidebar-ring: 351 82% 52%;
 
     --one-navy: #071D3A;
     --one-blue: #1B458F;
     --one-electric: #00E5FF;
     --one-electric-dim: rgba(0, 229, 255, 0.65);
-    --one-gold: #D4AF37;
+    --one-gold: #E51636; /* ON AIR: legacy gold token now maps to signal red */
     --one-red: #E51636;
     --one-white: #FFFFFF;
     --one-muted: #8A9199;
-    --one-border: #1A2A42;
+    --one-border: #242424;
 
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
@@ -213,6 +213,8 @@
     -webkit-font-smoothing: antialiased;
     overflow-x: clip;
     -moz-osx-font-smoothing: grayscale;
+    /* Anton has a single weight — never synthesize faux bold/italic */
+    font-synthesis: none;
   }
 
   @media (pointer: fine) {
@@ -244,7 +246,7 @@
     top: 1rem;
     z-index: 100000;
     padding: 0.5rem 1.25rem;
-    background: #D4AF37;
+    background: #E51636;
     color: #040B14;
     font-size: 0.8125rem;
     font-weight: 600;
@@ -256,7 +258,7 @@
   }
   .skip-to-content:focus {
     left: 1rem;
-    outline: 2px solid #D4AF37;
+    outline: 2px solid #E51636;
     outline-offset: 2px;
   }
 
@@ -275,10 +277,10 @@
 @layer components {
   /* ── Glass System ─────────────────────────────────────── */
   .glass-card {
-    background: rgba(10, 22, 40, 0.75);
-    backdrop-filter: blur(20px) saturate(160%) brightness(0.95);
-    -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(0.95);
-    border: 1px solid rgba(26, 42, 66, 0.9);
+    background: rgba(16, 16, 16, 0.8);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 16px;
     box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.35),
@@ -325,20 +327,23 @@
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   }
 
+  /* ON AIR: hero + h1 are poster type (Anton) — uppercase, tight, loud */
   .font-hero {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(5rem, 13vw, 11rem);
-    font-weight: 700;
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(4.5rem, 12vw, 10.5rem);
+    font-weight: 400;
     line-height: 0.92;
-    letter-spacing: -0.03em;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
   }
 
   .font-h1 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(3rem, 6vw, 5rem);
-    font-weight: 700;
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(2.75rem, 5.5vw, 4.5rem);
+    font-weight: 400;
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
   }
 
   .font-h2 {
@@ -407,24 +412,20 @@
   }
 
   .text-gradient-spectrum {
-    background: linear-gradient(90deg, #D4AF37, #E51636, #1B458F);
+    background: #E51636;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
+  /* ON AIR: stats and display numbers are clean white — accent stays rare */
   .text-gold-gradient {
-    background: linear-gradient(90deg, #C9A227 0%, #F0C75E 25%, #FFF0AA 45%, #D4AF37 60%, #F4D27A 80%, #C9A227 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gold-shimmer 6s ease-in-out infinite;
+    color: #FFFFFF;
   }
 
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-label transition-all duration-300;
-    background: linear-gradient(135deg, #D4AF37, #B8943F);
+    background: #E51636;
     color: var(--one-navy);
     position: relative;
     overflow: hidden;
@@ -452,7 +453,7 @@
 
   .btn-primary:hover {
     @apply scale-105;
-    background: linear-gradient(135deg, #F4D27A, #D4AF37);
+    background: #E51636;
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
   }
 
@@ -585,7 +586,7 @@
     display: block;
     width: 40px;
     height: 3px;
-    background: linear-gradient(90deg, #D4AF37, #F4D27A);
+    background: #E51636;
     border-radius: 2px;
   }
 
@@ -639,7 +640,7 @@
   }
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #D4AF37, #F4D27A);
+    background: #E51636;
     border-radius: 999px;
     position: relative;
   }
@@ -713,9 +714,9 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      rgba(212,175,55,0.7) 20%,
+      rgba(229,22,54,0.7) 20%,
       rgba(255,255,255,0.5) 50%,
-      rgba(212,175,55,0.7) 80%,
+      rgba(229,22,54,0.7) 80%,
       transparent 100%
     );
     pointer-events: none;
@@ -731,7 +732,7 @@
     display: block;
     width: 100%;
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.35) 30%, rgba(212,175,55,0.5) 50%, rgba(212,175,55,0.35) 70%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(229,22,54,0.35) 30%, rgba(229,22,54,0.5) 50%, rgba(229,22,54,0.35) 70%, transparent 100%);
   }
 
   /* ── Sliding underline — editorial link hover ───────────
@@ -880,7 +881,7 @@
   /* Gold-warmth variant for premium/sponsor sections */
   .bg-surface-warm {
     background:
-      radial-gradient(ellipse 70% 40% at 50% 100%, rgba(212,175,55,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 40% at 50% 100%, rgba(229,22,54,0.04) 0%, transparent 60%),
       #071D3A;
   }
 
@@ -925,7 +926,7 @@
   /* ── Gold discipline — reserved accent only ───────────── */
   /* Use .text-accent-gold for premium/sponsor headings only */
   .text-accent-gold {
-    color: #D4AF37;
+    color: #E51636;
     letter-spacing: 0.02em;
   }
 }
