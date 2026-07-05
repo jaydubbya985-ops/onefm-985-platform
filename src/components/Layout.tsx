@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pause, Play } from 'lucide-react'
-import { Navbar } from './Navbar'
+import { OnAirNav } from './OnAirNav'
 import { Footer } from './Footer'
 import { MiniPlayer } from './MiniPlayer'
 import { useLiveStream } from '@/hooks/useLiveStream'
@@ -90,7 +90,7 @@ export function Layout({ children, hideFooter = false }: LayoutProps) {
     <>
       <div className="min-h-[100dvh] bg-surface-deep text-one-white">
         <a href="#main-content" className="skip-to-content">Skip to content</a>
-        <Navbar />
+        <OnAirNav />
         <motion.main
           id="main-content"
           className="pt-[72px]"
