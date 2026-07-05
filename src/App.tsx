@@ -22,7 +22,6 @@ const Football = lazy(() => import('./pages/Football'))
 const CoverageMap = lazy(() => import('./pages/CoverageMap'))
 const SponsorshipKit = lazy(() => import('./pages/SponsorshipKit'))
 const AudienceAnalytics = lazy(() => import('./pages/AudienceAnalytics'))
-const SocialHub = lazy(() => import('./pages/SocialHub'))
 const SalesProposal = lazy(() => import('./pages/SalesProposal'))
 const Heritage = lazy(() => import('./pages/Heritage'))
 const Community = lazy(() => import('./pages/Community'))
@@ -216,14 +215,8 @@ export default function App() {
             </LazyRoute>
           }
         />
-        <Route
-          path="/social"
-          element={
-            <LazyRoute variant="card" routeName="Social Hub">
-              <SocialHub />
-            </LazyRoute>
-          }
-        />
+        {/* Absorbed into /community per REBUILD-SPEC.md */}
+        <Route path="/social" element={<Navigate to="/community" replace />} />
         <Route
           path="/proposal"
           element={
