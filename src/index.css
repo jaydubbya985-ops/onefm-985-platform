@@ -144,8 +144,8 @@
 
     --one-navy: #071D3A;
     --one-blue: #1B458F;
-    --one-electric: #00E5FF;
-    --one-electric-dim: rgba(0, 229, 255, 0.65);
+    --one-electric: #B6FF00; /* ON AIR: fluoro lime — the one electric */
+    --one-electric-dim: rgba(182, 255, 0, 0.65);
     --one-gold: #E51636; /* ON AIR: legacy gold token now maps to signal red */
     --one-red: #E51636;
     --one-white: #FFFFFF;
@@ -161,42 +161,10 @@
 
   /* ── Time-of-day theming (Shepparton AEST/AEDT local time) ── */
   :root {
-    --one-electric-rgb: 0, 229, 255;
-    --one-scanline: rgba(0, 229, 255, 0.9);
-    --one-scanline-glow: rgba(0, 229, 255, 0.6);
-    --one-scanline-glow2: rgba(0, 229, 255, 0.2);
-  }
-  :root[data-time="night"] {
-    --one-electric: #7B5EF8;
-    --one-electric-rgb: 123, 94, 248;
-    --one-electric-dim: rgba(123,94,248,0.65);
-    --one-scanline: rgba(123, 94, 248, 0.9);
-    --one-scanline-glow: rgba(123, 94, 248, 0.6);
-    --one-scanline-glow2: rgba(123, 94, 248, 0.2);
-  }
-  :root[data-time="breakfast"] {
-    --one-electric: #F59E0B;
-    --one-electric-rgb: 245, 158, 11;
-    --one-electric-dim: rgba(245,158,11,0.65);
-    --one-scanline: rgba(245, 158, 11, 0.9);
-    --one-scanline-glow: rgba(245, 158, 11, 0.6);
-    --one-scanline-glow2: rgba(245, 158, 11, 0.2);
-  }
-  :root[data-time="midday"] {
-    --one-electric: #06D6A0;
-    --one-electric-rgb: 6, 214, 160;
-    --one-electric-dim: rgba(6,214,160,0.65);
-    --one-scanline: rgba(6, 214, 160, 0.9);
-    --one-scanline-glow: rgba(6, 214, 160, 0.6);
-    --one-scanline-glow2: rgba(6, 214, 160, 0.2);
-  }
-  :root[data-time="drive"] {
-    --one-electric: #FF8C42;
-    --one-electric-rgb: 255, 140, 66;
-    --one-electric-dim: rgba(255,140,66,0.65);
-    --one-scanline: rgba(255, 140, 66, 0.9);
-    --one-scanline-glow: rgba(255, 140, 66, 0.6);
-    --one-scanline-glow2: rgba(255, 140, 66, 0.2);
+    --one-electric-rgb: 182, 255, 0;
+    --one-scanline: rgba(182, 255, 0, 0.9);
+    --one-scanline-glow: rgba(182, 255, 0, 0.6);
+    --one-scanline-glow2: rgba(182, 255, 0, 0.2);
   }
 
   * {
@@ -223,6 +191,8 @@
     }
   }
 
+  ::selection { background: #B6FF00; color: #0A0A0A; }
+
   body::after {
     content: '';
     position: fixed;
@@ -247,7 +217,7 @@
     z-index: 100000;
     padding: 0.5rem 1.25rem;
     background: #E51636;
-    color: #040B14;
+    color: #FFFFFF;
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -264,7 +234,7 @@
 
   /* ── Keyboard focus rings ── */
   :focus-visible {
-    outline: 2px solid rgba(212, 175, 55, 0.8);
+    outline: 2px solid rgba(182, 255, 0, 0.8); /* fluoro: interaction spark */
     outline-offset: 3px;
     border-radius: 4px;
   }

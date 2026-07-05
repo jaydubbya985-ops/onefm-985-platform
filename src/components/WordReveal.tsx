@@ -74,32 +74,25 @@ export function WordReveal({
     )
   }
 
-  // Default: word-by-word mask reveal
-  const words = text.split(' ')
+  // Default (ON AIR silk): the whole line rises from a clipped baseline —
+  // calmer than per-word stagger, the poster-type standard. `stagger` is
+  // retained in the API but line reveals ignore it by design.
   return (
     <Tag className={className} style={style} aria-label={text}>
-      {words.map((word, i) => (
-        <span
-          key={i}
-          className="inline-block overflow-hidden"
-          style={{
-            marginRight: i < words.length - 1 ? '0.28em' : 0,
-            verticalAlign: 'bottom',
-            paddingBottom: '0.08em',
-            marginBottom: '-0.08em',
-          }}
+      <span
+        className="inline-block overflow-hidden"
+        style={{ verticalAlign: 'bottom', paddingBottom: '0.08em', marginBottom: '-0.08em', maxWidth: '100%' }}
+      >
+        <motion.span
+          className="inline-block"
+          initial={prefersReducedMotion ? false : { y: '110%' }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={prefersReducedMotion ? { duration: 0 } : { delay, duration: 0.65, ease }}
         >
-          <motion.span
-            className="inline-block"
-            initial={prefersReducedMotion ? false : { y: '105%' }}
-            whileInView={{ y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={prefersReducedMotion ? { duration: 0 } : { delay: delay + i * (stagger ?? 0.07), duration: 0.65, ease }}
-          >
-            {word}
-          </motion.span>
-        </span>
-      ))}
+          {text}
+        </motion.span>
+      </span>
     </Tag>
   )
 }

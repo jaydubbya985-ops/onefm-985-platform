@@ -84,8 +84,8 @@ export function MiniPlayer() {
               {/* Now playing pill */}
               {meta.nowPlaying && (
                 <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/15 min-w-0 max-w-[200px]">
-                  <Radio size={10} className="text-[#E51636] shrink-0" />
-                  <span className="font-label text-[10px] text-white/80 truncate">{meta.nowPlaying}</span>
+                  <Radio size={10} className="shrink-0" style={{ color: '#B6FF00' }} />
+                  <span className="font-label text-[10px] truncate" style={{ color: '#B6FF00' }}>{meta.nowPlaying}</span>
                 </div>
               )}
 

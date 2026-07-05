@@ -12,6 +12,7 @@ import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { stationStats } from '@/data/pricing'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
+import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
 
 const RED = '#E51636'
 const INK = '#0A0A0A'
@@ -44,13 +45,20 @@ function Ticker() {
   ]
   const line = items.join('   ·   ')
   return (
-    <div className="overflow-hidden" style={{ background: RED }} aria-hidden>
+    <motion.div
+      className="overflow-hidden"
+      style={{ background: RED }}
+      aria-hidden
+      initial={{ y: '-100%' }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
+    >
       <div className="flex whitespace-nowrap py-2 font-bold text-[13px] tracking-[0.12em] uppercase text-white animate-marquee">
         {[0, 1].map((i) => (
           <span key={i} className="pr-12">{line}   ·   </span>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -68,12 +76,16 @@ function Hero() {
         {meta.isLive ? 'On Air Now · Listen Live' : 'Listen Live · 98.5 FM'}
       </Link>
       <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]">
-        The Voice<br />
-        of the{' '}
-        <span style={{ color: 'transparent', WebkitTextStroke: '2px #fff' }}>Goulburn</span>
-        <br />
-        <span style={{ color: 'transparent', WebkitTextStroke: '2px #fff' }}>Valley</span>
-        <span style={{ color: RED }}>.</span>
+        <PosterReveal
+          lines={[
+            <>The Voice</>,
+            <>of the <StrokeFill delay={1.0}>Goulburn</StrokeFill></>,
+            <>
+              <StrokeFill delay={1.15}>Valley</StrokeFill>
+              <span style={{ color: RED }}>.</span>
+            </>,
+          ]}
+        />
       </h1>
       <p className="mt-7 max-w-[520px] text-[17px] leading-relaxed text-white/60">
         Volunteer-run, community-owned. From emergency broadcasts during the 2022 floods to
@@ -101,14 +113,15 @@ function Hero() {
 function NameWall() {
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16">
-      <div className="font-bold text-[13px] tracking-[0.18em] uppercase mb-8" style={{ color: RED }}>
-        — On Air This Week
-      </div>
+      <LabelReveal className="mb-8">On Air This Week</LabelReveal>
       <div>
         {ON_AIR_WALL.map((p, i) => (
           <motion.div
             key={p.name}
-            {...reveal}
+            initial={{ opacity: 0, x: i % 2 === 1 ? 48 : -48 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className={`flex items-stretch gap-5 mb-3.5 ${i % 2 === 1 ? 'flex-row-reverse' : ''}`}
           >
             <div className="font-poster uppercase leading-none whitespace-nowrap text-white text-[clamp(40px,7vw,104px)]">
@@ -195,9 +208,7 @@ export default function Home() {
           <LatestInterviews />
         </section>
         <section className="px-6 md:px-12 lg:px-20 pb-32">
-          <div className="font-bold text-[13px] tracking-[0.18em] uppercase mb-8" style={{ color: RED }}>
-            — Explore ONE FM
-          </div>
+          <LabelReveal className="mb-8">Explore ONE FM</LabelReveal>
           <ExploreOneFMGrid />
         </section>
       </div>
