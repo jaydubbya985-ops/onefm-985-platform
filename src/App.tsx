@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { CookieConsent } from '@/components/CookieConsent'
@@ -21,13 +21,11 @@ const Listen = lazy(() => import('./pages/Listen'))
 const Football = lazy(() => import('./pages/Football'))
 const CoverageMap = lazy(() => import('./pages/CoverageMap'))
 const SponsorshipKit = lazy(() => import('./pages/SponsorshipKit'))
-const BroadcastExplorer = lazy(() => import('./pages/BroadcastExplorer'))
 const AudienceAnalytics = lazy(() => import('./pages/AudienceAnalytics'))
 const SocialHub = lazy(() => import('./pages/SocialHub'))
 const SalesProposal = lazy(() => import('./pages/SalesProposal'))
 const Heritage = lazy(() => import('./pages/Heritage'))
 const Community = lazy(() => import('./pages/Community'))
-const Programs = lazy(() => import('./pages/Programs'))
 const Story = lazy(() => import('./pages/Story'))
 const Support = lazy(() => import('./pages/Support'))
 const Contact = lazy(() => import('./pages/Contact'))
@@ -208,14 +206,8 @@ export default function App() {
             </LazyRoute>
           }
         />
-        <Route
-          path="/broadcast"
-          element={
-            <LazyRoute variant="list" routeName="Broadcast Explorer">
-              <BroadcastExplorer />
-            </LazyRoute>
-          }
-        />
+        {/* Absorbed into /listen per REBUILD-SPEC.md */}
+        <Route path="/broadcast" element={<Navigate to="/listen" replace />} />
         <Route
           path="/audience"
           element={
@@ -256,14 +248,8 @@ export default function App() {
             </LazyRoute>
           }
         />
-        <Route
-          path="/programs"
-          element={
-            <LazyRoute variant="list" routeName="Programs">
-              <Programs />
-            </LazyRoute>
-          }
-        />
+        {/* Absorbed into /listen per REBUILD-SPEC.md */}
+        <Route path="/programs" element={<Navigate to="/listen" replace />} />
         <Route
           path="/story"
           element={
