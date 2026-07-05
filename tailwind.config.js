@@ -88,6 +88,8 @@ module.exports = {
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],
         heading: ['"Space Grotesk"', 'sans-serif'],
+        // ON AIR design system (Direction A, approved 2026-07-05): poster display type
+        poster: ['Anton', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
