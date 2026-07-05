@@ -21,7 +21,7 @@ export function Footer() {
     <footer className="relative bg-surface-deep section-bleed-top overflow-hidden">
 
       {/* ── Large editorial statement ── */}
-      <div ref={editorialRef} className="relative border-b border-one-border/20 overflow-hidden py-16 md:py-20" data-cursor-label="LISTEN LIVE">
+      <div ref={editorialRef} className="relative border-b border-white/10 overflow-hidden py-16 md:py-20" data-cursor-label="LISTEN LIVE">
         <motion.div aria-hidden style={{ x: ghostX }} className="pointer-events-none absolute inset-0 select-none flex items-center overflow-hidden">
           <span
             className="font-heading font-bold text-one-white/[0.025] whitespace-nowrap leading-none"
@@ -46,7 +46,7 @@ export function Footer() {
               style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', lineHeight: 1, letterSpacing: '-0.02em' }}
             >
               <WordReveal text="The valley's voice," as="span" className="block text-one-white" delay={0.1} stagger={0.022} variant="char" />
-              <WordReveal text="on air 24/7." as="span" className="block text-one-gold" delay={0.65} stagger={0.028} variant="char" />
+              <WordReveal text="on air 24/7." as="span" className="block text-[#E51636]" delay={0.65} stagger={0.028} variant="char" />
             </h2>
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -93,7 +93,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-cursor-label="FACEBOOK"
-                className="text-one-muted hover:text-one-gold transition-colors"
+                className="text-one-muted hover:text-[#E51636] transition-colors"
                 aria-label="Facebook"
                 whileHover={{ scale: 1.15, y: -1 }}
                 transition={{ duration: 0.18, ease }}
@@ -107,7 +107,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-cursor-label="SOUNDCLOUD"
-                className="text-one-muted hover:text-one-gold transition-colors"
+                className="text-one-muted hover:text-[#E51636] transition-colors"
                 aria-label="SoundCloud"
                 whileHover={{ scale: 1.15, y: -1 }}
                 transition={{ duration: 0.18, ease }}
@@ -221,7 +221,7 @@ export function Footer() {
       {/* ── EQ bars — broadcast signature ── */}
       <div
         aria-hidden
-        className="flex items-end justify-center gap-[2px] py-5 border-t border-one-border/10"
+        className="flex items-end justify-center gap-[2px] py-5 border-t border-white/8"
       >
         {Array.from({ length: 56 }, (_, i) => {
           const dur = 0.85 + (i % 7) * 0.17
@@ -244,7 +244,7 @@ export function Footer() {
       </div>
 
       {/* ── Bottom bar (pb-20 leaves clearance for MiniPlayer) ── */}
-      <div className="border-t border-one-border/20" data-cursor-label="LEGAL">
+      <div className="border-t border-white/10" data-cursor-label="LEGAL">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 pb-20 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="font-label text-[10px] text-one-muted/85 tracking-wider">
             &copy; {new Date().getFullYear()} {BRAND.fullName} · ABN {BRAND.abn}
@@ -264,7 +264,7 @@ export function Footer() {
               type="button"
               onClick={scrollToTop}
               data-cursor-label="TOP"
-              className="p-2 rounded-full border border-one-border/40 text-one-muted/85 hover:text-one-white hover:border-one-gold/40 transition-all"
+              className="p-2 rounded-full border border-white/10 text-one-muted/85 hover:text-one-white hover:border-[#E51636]/40 transition-all"
               aria-label="Back to top"
             >
               <ArrowUp size={14} />

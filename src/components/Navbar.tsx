@@ -128,7 +128,7 @@ function NavDropdown({ group }: { group: NavGroup }) {
         aria-haspopup="true"
         data-cursor-label={group.label.toUpperCase()}
         className={`relative flex items-center gap-1 px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors duration-150 ${
-          isActive || open ? 'text-one-gold' : 'text-one-white hover:text-one-gold'
+          isActive || open ? 'text-[#E51636]' : 'text-one-white hover:text-white'
         }`}
       >
         {group.label}
@@ -140,7 +140,7 @@ function NavDropdown({ group }: { group: NavGroup }) {
           <ChevronDown className="w-3 h-3" />
         </motion.span>
         {(isActive || open) && (
-          <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-one-gold rounded-full" />
+          <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-[#E51636] rounded-full" />
         )}
       </button>
 
@@ -151,7 +151,7 @@ function NavDropdown({ group }: { group: NavGroup }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
             transition={{ duration: 0.18, ease }}
-            className="absolute top-full left-0 mt-1 w-56 bg-[#0F1D30]/95 backdrop-blur-xl border border-[#1E3A5F]/40 rounded-lg shadow-2xl overflow-hidden z-50"
+            className="absolute top-full left-0 mt-1 w-56 bg-[#0F0F0F]/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-2xl overflow-hidden z-50"
           >
             {group.items.map((item, i) => {
               const active = location.pathname === item.path
@@ -164,10 +164,10 @@ function NavDropdown({ group }: { group: NavGroup }) {
                 >
                   <Link
                     to={item.path}
-                    className={`block px-4 py-3 transition-colors border-b border-one-border/30 last:border-0 ${
+                    className={`block px-4 py-3 transition-colors border-b border-white/10 last:border-0 ${
                       active
-                        ? 'text-one-gold bg-[#1E3A5F]/30'
-                        : 'text-[#F4F1EA]/80 hover:text-one-gold hover:bg-[#1E3A5F]/20'
+                        ? 'text-[#E51636] bg-white/10'
+                        : 'text-[#F4F1EA]/80 hover:text-white hover:bg-white/5'
                     }`}
                   >
                     <span className="font-body text-sm block">{item.label}</span>
@@ -235,12 +235,12 @@ function OpsAccessModal({
       onClick={onClose}
     >
       <div
-        className="bg-[#0F1D32] border border-[#1E3A5F]/40 rounded-xl max-w-sm w-full mx-4 shadow-2xl p-6"
+        className="bg-[#111111] border border-white/10 rounded-xl max-w-sm w-full mx-4 shadow-2xl p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-one-gold/10 flex items-center justify-center">
-            <Lock className="w-5 h-5 text-one-gold" />
+          <div className="w-10 h-10 rounded-lg bg-[#E51636]/12 flex items-center justify-center">
+            <Lock className="w-5 h-5 text-[#E51636]" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-one-white">Operations Portal</h3>
@@ -258,7 +258,7 @@ function OpsAccessModal({
               onChange={(e) => { setEmail(e.target.value); setError(false) }}
               placeholder="you@fm985.com.au"
               required
-              className="w-full bg-one-navy border border-one-border rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-one-gold focus:outline-none"
+              className="w-full bg-[#111111] border border-white/15 rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-[#E51636] focus:outline-none"
             />
           )}
           <input
@@ -268,7 +268,7 @@ function OpsAccessModal({
             onChange={(e) => { setPassword(e.target.value); setError(false) }}
             placeholder="Enter password"
             required
-            className="w-full bg-one-navy border border-one-border rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-one-gold focus:outline-none"
+            className="w-full bg-[#111111] border border-white/15 rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-[#E51636] focus:outline-none"
           />
           {error && (
             <p className="text-xs text-red-400">
@@ -280,7 +280,7 @@ function OpsAccessModal({
               type="button"
               onClick={onClose}
               data-cursor-label="CANCEL"
-              className="flex-1 px-4 py-2.5 rounded-lg border border-one-border text-one-white text-sm font-label hover:bg-one-slate transition-colors"
+              className="flex-1 px-4 py-2.5 rounded-lg border border-white/15 text-one-white text-sm font-label hover:bg-one-slate transition-colors"
             >
               Cancel
             </button>
@@ -288,7 +288,7 @@ function OpsAccessModal({
               type="submit"
               disabled={submitting}
               data-cursor-label={useAuthGate ? 'SIGN IN' : 'UNLOCK'}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-one-gold text-one-navy text-sm font-label font-bold hover:bg-[#F4F1EA] transition-colors disabled:opacity-60"
+              className="flex-1 px-4 py-2.5 rounded-lg bg-[#E51636] text-white text-sm font-label font-bold hover:bg-[#F4F1EA] transition-colors disabled:opacity-60"
             >
               {useAuthGate ? (submitting ? 'Signing in…' : 'Sign In') : 'Unlock'}
             </button>
@@ -343,7 +343,7 @@ export function Navbar() {
           className="absolute bottom-0 left-0 h-[1.5px] transition-none pointer-events-none"
           style={{
             width: `${scrollPct * 100}%`,
-            background: 'linear-gradient(90deg, #D4AF37 0%, var(--one-electric) 50%, #D4AF37 100%)',
+            background: '#E51636',
             opacity: scrolled ? 1 : 0,
             transition: 'opacity 0.3s',
           }}
@@ -351,12 +351,12 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="ONE FM 98.5 — Home" data-cursor-label="HOME">
             <BrandLogo
-              variant="primary"
+              variant="white"
               className="h-11 sm:h-12 w-auto object-contain drop-shadow-lg max-w-[min(200px,42vw)]"
             />
             <span className="relative flex h-2.5 w-2.5 hidden sm:flex">
-              <span className="animate-signal-pulse absolute inline-flex h-full w-full rounded-full bg-one-gold opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-one-gold" />
+              <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-[#E51636] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E51636]" />
             </span>
           </Link>
 
@@ -365,13 +365,13 @@ export function Navbar() {
               to="/"
               className={`relative px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors ${
                 location.pathname === '/'
-                  ? 'text-one-gold'
-                  : 'text-one-white hover:text-one-gold'
+                  ? 'text-[#E51636]'
+                  : 'text-one-white hover:text-white'
               }`}
             >
               Home
               {location.pathname === '/' && (
-                <span className="block h-0.5 bg-one-gold rounded-full mt-0.5" />
+                <span className="block h-0.5 bg-[#E51636] rounded-full mt-0.5" />
               )}
             </Link>
             {NAV_GROUPS.map((group) => (
@@ -380,10 +380,10 @@ export function Navbar() {
             <button
               type="button"
               onClick={goToOps}
-              className={`relative flex items-center gap-1.5 px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors border-l border-one-border ml-1 pl-4 ${
+              className={`relative flex items-center gap-1.5 px-3 py-2 font-label text-xs uppercase tracking-wider transition-colors border-l border-white/15 ml-1 pl-4 ${
                 location.pathname === '/ops'
-                  ? 'text-one-gold'
-                  : 'text-one-muted hover:text-one-gold'
+                  ? 'text-[#E51636]'
+                  : 'text-one-muted hover:text-white'
               }`}
             >
               <Lock className="w-3 h-3" />
@@ -403,7 +403,7 @@ export function Navbar() {
             <Link to="/proposal" className="btn-secondary text-xs px-4 py-2.5 whitespace-nowrap" data-cursor-label="BUILD">
               Build Proposal
             </Link>
-            <div className="flex items-center gap-2 pl-2 border-l border-one-border" data-cursor-label="LIVE STATUS">
+            <div className="flex items-center gap-2 pl-2 border-l border-white/15" data-cursor-label="LIVE STATUS">
               <span className="relative flex h-2 w-2">
                 <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-one-red" />
@@ -467,7 +467,7 @@ export function Navbar() {
             animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
             exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
             transition={{ duration: 0.38, ease }}
-            className="fixed inset-0 z-40 bg-[#0A1628]/95 backdrop-blur-xl pt-20 px-6 pb-8 overflow-y-auto lg:hidden"
+            className="fixed inset-0 z-40 bg-[#0A0A0A]/97 backdrop-blur-xl pt-20 px-6 pb-8 overflow-y-auto lg:hidden"
           >
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -484,16 +484,16 @@ export function Navbar() {
               </Link>
               <Link
                 to="/"
-                className={`block py-3 font-heading text-xl ${location.pathname === '/' ? 'text-one-gold' : 'text-one-white hover:text-one-gold'}`}
+                className={`block py-3 font-heading text-xl ${location.pathname === '/' ? 'text-[#E51636]' : 'text-one-white hover:text-white'}`}
               >
                 Home
                 {location.pathname === '/' && (
-                  <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-one-gold align-middle" />
+                  <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-[#E51636] align-middle" />
                 )}
               </Link>
               {NAV_GROUPS.map((group, gi) => (
                 <div key={group.label} className="mt-4">
-                  <p className="font-label text-xs text-one-gold uppercase tracking-wider mb-2">
+                  <p className="font-label text-xs text-[#E51636] uppercase tracking-wider mb-2">
                     {group.label}
                   </p>
                   {group.items.map((item, ii) => {
@@ -507,11 +507,11 @@ export function Navbar() {
                     >
                       <Link
                         to={item.path}
-                        className={`block py-2.5 pl-2 border-b border-one-border/30 ${active ? 'border-l-2 border-l-one-gold pl-3' : ''}`}
+                        className={`block py-2.5 pl-2 border-b border-white/10 ${active ? 'border-l-2 border-l-[#E51636] pl-3' : ''}`}
                       >
-                        <span className={`font-body text-lg block ${active ? 'text-one-gold' : 'text-one-white hover:text-one-gold'}`}>
+                        <span className={`font-body text-lg block ${active ? 'text-[#E51636]' : 'text-one-white hover:text-white'}`}>
                           {item.label}
-                          {active && <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-one-gold align-middle" />}
+                          {active && <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-[#E51636] align-middle" />}
                         </span>
                         {item.description && (
                           <span className="font-body-small text-muted text-xs">{item.description}</span>
@@ -526,7 +526,7 @@ export function Navbar() {
                 type="button"
                 onClick={goToOps}
                 data-cursor-label="OPS"
-                className="mt-6 flex items-center gap-2 font-heading text-xl text-one-muted hover:text-one-gold"
+                className="mt-6 flex items-center gap-2 font-heading text-xl text-one-muted hover:text-white"
               >
                 <Lock className="w-4 h-4" />
                 Ops Portal

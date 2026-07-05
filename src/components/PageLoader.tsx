@@ -9,6 +9,11 @@ interface PageLoaderProps {
   isReady?: boolean
 }
 
+/**
+ * ON AIR sign-on — a fast red flash of the frequency, not a cinematic hold.
+ * Content must be visible in under a second (Awwwards usability + honesty:
+ * the old 2s gold sequence was the single biggest dead-time on the site).
+ */
 export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
   const isFirstVisit =
     typeof window !== 'undefined' && !sessionStorage.getItem(FIRST_VISIT_KEY)
@@ -21,30 +26,27 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem(FIRST_VISIT_KEY, '1')
     }
-    // First visit: hold for full cinematic sequence; repeat visits: brief flash
-    const holdMs = isFirstVisit ? 2000 : 400
+    const holdMs = isFirstVisit ? 700 : 120
     const t1 = setTimeout(() => setExiting(true), holdMs)
-    const t2 = setTimeout(() => setHidden(true), holdMs + 650)
+    const t2 = setTimeout(() => setHidden(true), holdMs + 400)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [isReady]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (hidden) return null
 
-  /* ── Repeat-visit: simple fade ── */
+  /* ── Repeat-visit: near-instant fade ── */
   if (!isFirstVisit) {
     return (
       <div
-        className={`fixed inset-0 z-[9999] bg-[#040B14] flex items-center justify-center transition-opacity duration-500 ${
+        className={`fixed inset-0 z-[9999] bg-[#0A0A0A] transition-opacity duration-300 ${
           exiting ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
         aria-hidden
-      >
-        <BrandLogo variant="primary" className="h-12 w-auto opacity-60" />
-      </div>
+      />
     )
   }
 
-  /* ── First-visit: cinematic station sign-on ── */
+  /* ── First-visit: ON AIR sign-on flash ── */
   return (
     <AnimatePresence>
       {!exiting && (
@@ -52,79 +54,33 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
           key="intro"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.65, ease }}
-          className="fixed inset-0 z-[9999] bg-[#040B14] flex items-center justify-center overflow-hidden"
+          transition={{ duration: 0.4, ease }}
+          className="fixed inset-0 z-[9999] bg-[#0A0A0A] flex items-center justify-center overflow-hidden"
           aria-hidden
         >
-          {/* Subtle radial glow behind the number */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(212,175,55,0.07) 0%, transparent 70%)',
-            }}
-          />
-
           <div className="relative flex flex-col items-center select-none">
-            {/* Frequency number — the hero element */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.88, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, y: -24 }}
-              transition={{ duration: 0.7, delay: 0.12, ease }}
-              className="font-heading font-black text-one-gold leading-none tabular-nums"
-              style={{
-                fontSize: 'clamp(6rem, 22vw, 14rem)',
-                letterSpacing: '-0.04em',
-                textShadow: '0 0 80px rgba(212,175,55,0.25)',
-              }}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
+              transition={{ duration: 0.35, ease }}
+              className="font-poster leading-none"
+              style={{ fontSize: 'clamp(6rem, 22vw, 13rem)', color: '#E51636' }}
             >
               98.5
             </motion.div>
-
-            {/* Live badge row */}
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.5, delay: 0.45, ease }}
-              className="flex items-center gap-3 mt-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, delay: 0.15, ease }}
+              className="flex items-center gap-3 mt-2"
             >
-              <span className="relative flex h-1.5 w-1.5 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-one-red" />
-              </span>
-              <span className="font-label text-[10px] tracking-[0.35em] text-one-white/50 uppercase">
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
+              <span className="font-label text-[11px] tracking-[0.35em] text-white/60 uppercase">
                 ONE FM · SHEPPARTON · ON AIR
               </span>
-              <span className="relative flex h-1.5 w-1.5 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" style={{ animationDelay: '0.5s' }} />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-one-red" />
-              </span>
-            </motion.div>
-
-            {/* Gold rule sweep */}
-            <motion.div
-              initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, delay: 0.7, ease: [0.4, 0, 0.2, 1] }}
-              className="mt-6 h-px w-56 origin-left"
-              style={{
-                background:
-                  'linear-gradient(90deg, transparent 0%, #D4AF37 20%, #F4E89A 50%, #D4AF37 80%, transparent 100%)',
-              }}
-            />
-
-            {/* Station logo — appears after rule */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.5, delay: 1.1, ease }}
-              className="mt-6"
-            >
-              <BrandLogo variant="primary" className="h-8 w-auto opacity-40" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
             </motion.div>
           </div>
         </motion.div>
@@ -135,11 +91,11 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
 
 export function RouteFallback() {
   return (
-    <div className="min-h-screen bg-one-navy flex items-center justify-center">
+    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <BrandLogo variant="primary" className="h-16 w-auto animate-pulse" />
-        <div className="h-1 w-32 bg-one-border rounded-full overflow-hidden">
-          <div className="h-full bg-one-gold animate-[shimmer_1.5s_infinite]" />
+        <BrandLogo variant="white" className="h-14 w-auto animate-pulse" />
+        <div className="h-1 w-32 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full bg-[#E51636] animate-[shimmer_1.5s_infinite]" />
         </div>
       </div>
     </div>

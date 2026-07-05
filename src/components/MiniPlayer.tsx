@@ -19,7 +19,7 @@ function NowPlayingBars() {
           style={{
             display: 'block',
             width: 2.5,
-            background: '#D4AF37',
+            background: '#E51636',
             borderRadius: 1,
             animation: `mini-bar ${0.7 + i * 0.07}s ease-in-out ${delay} infinite`,
           }}
@@ -48,7 +48,7 @@ export function MiniPlayer() {
           className="fixed bottom-0 inset-x-0 z-[200] pointer-events-none"
         >
           <div className="pointer-events-auto mx-auto max-w-3xl px-3 pb-3">
-            <div role="region" aria-label="Mini audio player" className="rounded-2xl border border-one-gold/20 bg-[#060E1C]/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3">
+            <div role="region" aria-label="Mini audio player" className="rounded-2xl border border-white/10 bg-[#0A0A0A]/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3">
 
               {/* Live dot */}
               <span className="relative flex h-2 w-2 shrink-0">
@@ -60,7 +60,7 @@ export function MiniPlayer() {
               {playing && <NowPlayingBars />}
 
               {/* Station label */}
-              <span className="font-label text-[10px] tracking-[0.2em] text-one-gold shrink-0 hidden sm:block">
+              <span className="font-label text-[10px] tracking-[0.2em] text-[#E51636] font-bold shrink-0 hidden sm:block">
                 98.5 FM
               </span>
 
@@ -83,9 +83,9 @@ export function MiniPlayer() {
 
               {/* Now playing pill */}
               {meta.nowPlaying && (
-                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-one-gold/8 border border-one-gold/15 min-w-0 max-w-[200px]">
-                  <Radio size={10} className="text-one-gold shrink-0" />
-                  <span className="font-label text-[10px] text-one-gold truncate">{meta.nowPlaying}</span>
+                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/15 min-w-0 max-w-[200px]">
+                  <Radio size={10} className="text-[#E51636] shrink-0" />
+                  <span className="font-label text-[10px] text-white/80 truncate">{meta.nowPlaying}</span>
                 </div>
               )}
 
@@ -97,7 +97,7 @@ export function MiniPlayer() {
                 aria-label={playing ? 'Pause stream' : 'Play live stream'}
                 aria-pressed={playing}
                 data-cursor-label={playing ? 'PAUSE' : 'PLAY LIVE'}
-                className="w-9 h-9 rounded-full bg-one-gold text-one-navy flex items-center justify-center shrink-0 hover:bg-[#F4F1EA] transition-colors disabled:opacity-60"
+                className="w-9 h-9 rounded-full bg-[#E51636] text-white flex items-center justify-center shrink-0 hover:bg-white hover:text-black transition-colors disabled:opacity-60"
               >
                 {loading ? (
                   <Loader2 size={16} className="animate-spin" />
@@ -112,7 +112,7 @@ export function MiniPlayer() {
               <Link
                 to="/listen"
                 data-cursor-label="FULL PLAYER"
-                className="font-label text-[10px] text-muted hover:text-one-gold transition-colors shrink-0 hidden sm:block whitespace-nowrap"
+                className="font-label text-[10px] text-muted hover:text-white transition-colors shrink-0 hidden sm:block whitespace-nowrap"
               >
                 Full player →
               </Link>
