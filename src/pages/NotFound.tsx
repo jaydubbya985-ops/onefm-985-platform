@@ -201,7 +201,7 @@ export default function NotFound() {
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
             fontWeight: 700,
-            color: '#D4AF37',
+            color: '#F2F2F2',
             border: '1px solid rgba(212,175,55,0.4)',
             padding: '12px 28px',
             borderRadius: 4,

@@ -403,7 +403,7 @@ function PaymentsTab() {
                 return (
                   <div
                     key={key}
-                    className="rounded-lg border border-slate-800 bg-[#0A1628] p-3 text-center hover:border-slate-700 transition-all"
+                    className="rounded-lg border border-slate-800 bg-[#101010] p-3 text-center hover:border-slate-700 transition-all"
                   >
                     <Icon
                       className="h-5 w-5 mx-auto mb-1.5"
@@ -424,7 +424,7 @@ function PaymentsTab() {
       <motion.div variants={itemVariants} className="flex flex-wrap gap-3">
         <Button
           onClick={() => setRecordOpen(true)}
-          className="bg-[#D4A853] hover:bg-[#E8C875] text-[#0A1628] font-semibold"
+          className="bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
         >
           <Plus className="h-4 w-4 mr-1.5" /> Record Payment
         </Button>
@@ -439,7 +439,7 @@ function PaymentsTab() {
 
       {/* Record Payment dialog */}
       <Dialog open={recordOpen} onOpenChange={setRecordOpen}>
-        <DialogContent className="bg-[#0A1628] border border-slate-800 text-[#F4F1EA] max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#101010] border border-slate-800 text-[#F4F1EA] max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A853] text-lg">Record New Payment</DialogTitle>
           </DialogHeader>
@@ -544,7 +544,7 @@ function PaymentsTab() {
             </Button>
             <Button
               onClick={recordPayment}
-              className="bg-[#D4A853] hover:bg-[#E8C875] text-[#0A1628] font-semibold"
+              className="bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
             >
               <CheckCircle2 className="h-4 w-4 mr-1.5" /> Record Payment
             </Button>
@@ -554,7 +554,7 @@ function PaymentsTab() {
 
       {/* Payment Link Generator dialog */}
       <Dialog open={linkOpen} onOpenChange={setLinkOpen}>
-        <DialogContent className="bg-[#0A1628] border border-slate-800 text-[#F4F1EA] max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#101010] border border-slate-800 text-[#F4F1EA] max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A853] text-lg flex items-center gap-2">
               <Link2 className="h-5 w-5" /> Payment Link Generator
@@ -581,7 +581,7 @@ function PaymentsTab() {
                 <div className="rounded-lg bg-[#1E293B] border border-slate-700 p-4 space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="bg-[#D4A853] p-2 rounded-lg">
-                      <QrCode className="h-8 w-8 text-[#0A1628]" />
+                      <QrCode className="h-8 w-8 text-[#101010]" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-[#F4F1EA]">Scan to Pay</p>
@@ -590,7 +590,7 @@ function PaymentsTab() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 rounded bg-[#0A1628] border border-slate-700 p-2.5">
+                  <div className="flex items-center gap-2 rounded bg-[#101010] border border-slate-700 p-2.5">
                     <code className="text-xs text-[#D4A853] flex-1 truncate">
                       {paymentLink}
                     </code>
@@ -666,11 +666,11 @@ function PaymentsTab() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search payments..."
-                    className="pl-8 h-8 text-xs bg-[#0A1628] border-slate-700 text-[#F4F1EA] w-48"
+                    className="pl-8 h-8 text-xs bg-[#101010] border-slate-700 text-[#F4F1EA] w-48"
                   />
                 </div>
                 <Select value={methodFilter} onValueChange={setMethodFilter}>
-                  <SelectTrigger className="h-8 text-xs bg-[#0A1628] border-slate-700 text-[#F4F1EA] w-36">
+                  <SelectTrigger className="h-8 text-xs bg-[#101010] border-slate-700 text-[#F4F1EA] w-36">
                     <SelectValue placeholder="All Methods" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0F1D2F] border-slate-700">
@@ -803,7 +803,7 @@ function PaymentsTab() {
                   <Switch checked={stripeTestMode} onCheckedChange={setStripeTestMode} />
                 </div>
               </div>
-              <div className="rounded-lg bg-[#0A1628] border border-slate-800 p-3">
+              <div className="rounded-lg bg-[#101010] border border-slate-800 p-3">
                 <p className="text-xs text-slate-400 mb-1">Webhook URL</p>
                 <code className="text-xs text-[#635BFF] font-mono">{STRIPE_WEBHOOK_URL}</code>
               </div>
@@ -862,7 +862,7 @@ function PaymentsTab() {
                   <Switch checked={paypalTestMode} onCheckedChange={setPaypalTestMode} />
                 </div>
               </div>
-              <div className="rounded-lg bg-[#0A1628] border border-slate-800 p-3">
+              <div className="rounded-lg bg-[#101010] border border-slate-800 p-3">
                 <p className="text-xs text-slate-400 mb-1">Webhook URL</p>
                 <code className="text-xs text-[#0070BA] font-mono">{PAYPAL_WEBHOOK_URL}</code>
               </div>
@@ -1136,7 +1136,7 @@ function DonationsTab() {
             setRecordOpen(true)
             generateReceiptNumber()
           }}
-          className="bg-[#D4A853] hover:bg-[#E8C875] text-[#0A1628] font-semibold"
+          className="bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
         >
           <Plus className="h-4 w-4 mr-1.5" /> Record Donation
         </Button>
@@ -1144,7 +1144,7 @@ function DonationsTab() {
 
       {/* Record Donation dialog */}
       <Dialog open={recordOpen} onOpenChange={setRecordOpen}>
-        <DialogContent className="bg-[#0A1628] border border-slate-800 text-[#F4F1EA] max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#101010] border border-slate-800 text-[#F4F1EA] max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A853] text-lg flex items-center gap-2">
               <Heart className="h-5 w-5" /> Record New Donation
@@ -1298,7 +1298,7 @@ function DonationsTab() {
             </Button>
             <Button
               onClick={saveDonation}
-              className="bg-[#D4A853] hover:bg-[#E8C875] text-[#0A1628] font-semibold"
+              className="bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
             >
               <CheckCircle2 className="h-4 w-4 mr-1.5" /> Save Donation
             </Button>
@@ -1308,7 +1308,7 @@ function DonationsTab() {
 
       {/* Tax Receipt dialog */}
       <Dialog open={receiptOpen} onOpenChange={setReceiptOpen}>
-        <DialogContent className="bg-[#0A1628] border border-slate-800 text-[#F4F1EA] max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#101010] border border-slate-800 text-[#F4F1EA] max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A853] text-lg flex items-center gap-2">
               <FileText className="h-5 w-5" /> Tax Receipt
@@ -1346,7 +1346,7 @@ function DonationsTab() {
                     </p>
                   </div>
                 </div>
-                <div className="rounded bg-[#0A1628] border border-slate-700 p-4 space-y-2">
+                <div className="rounded bg-[#101010] border border-slate-700 p-4 space-y-2">
                   <p className="text-xs text-slate-400 uppercase tracking-wider">
                     Donor Details
                   </p>
@@ -1356,7 +1356,7 @@ function DonationsTab() {
                   <p className="text-xs text-slate-400">{receiptDonation.email}</p>
                   <p className="text-xs text-slate-400">{receiptDonation.phone}</p>
                 </div>
-                <div className="rounded bg-[#0A1628] border border-slate-700 p-4 space-y-2">
+                <div className="rounded bg-[#101010] border border-slate-700 p-4 space-y-2">
                   <p className="text-xs text-slate-400 uppercase tracking-wider">
                     Donation Details
                   </p>
@@ -1396,7 +1396,7 @@ function DonationsTab() {
               <div className="flex gap-3">
                 <Button
                   onClick={() => toast('Receipt sent to printer', 'success')}
-                  className="flex-1 bg-[#D4A853] hover:bg-[#E8C875] text-[#0A1628] font-semibold"
+                  className="flex-1 bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
                 >
                   <Printer className="h-4 w-4 mr-1.5" /> Print Receipt
                 </Button>
@@ -1415,7 +1415,7 @@ function DonationsTab() {
 
       {/* Donor History dialog */}
       <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
-        <DialogContent className="bg-[#0A1628] border border-slate-800 text-[#F4F1EA] max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#101010] border border-slate-800 text-[#F4F1EA] max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A853] text-lg flex items-center gap-2">
               <Users className="h-5 w-5" /> Donor History
@@ -1514,11 +1514,11 @@ function DonationsTab() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search..."
-                    className="pl-8 h-8 text-xs bg-[#0A1628] border-slate-700 text-[#F4F1EA] w-40"
+                    className="pl-8 h-8 text-xs bg-[#101010] border-slate-700 text-[#F4F1EA] w-40"
                   />
                 </div>
                 <Select value={sourceFilter} onValueChange={setSourceFilter}>
-                  <SelectTrigger className="h-8 text-xs bg-[#0A1628] border-slate-700 text-[#F4F1EA] w-32">
+                  <SelectTrigger className="h-8 text-xs bg-[#101010] border-slate-700 text-[#F4F1EA] w-32">
                     <SelectValue placeholder="All Sources" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0F1D2F] border-slate-700">
@@ -1533,7 +1533,7 @@ function DonationsTab() {
                   </SelectContent>
                 </Select>
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
-                  <SelectTrigger className="h-8 text-xs bg-[#0A1628] border-slate-700 text-[#F4F1EA] w-28">
+                  <SelectTrigger className="h-8 text-xs bg-[#101010] border-slate-700 text-[#F4F1EA] w-28">
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0F1D2F] border-slate-700">
@@ -2056,7 +2056,7 @@ function MembershipsTab() {
       <motion.div variants={itemVariants} className="flex flex-wrap gap-3">
         <Button
           onClick={() => setRegisterOpen(true)}
-          className="bg-[#D4A853] hover:bg-[#E8C875] text-[#0A1628] font-semibold"
+          className="bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
         >
           <Plus className="h-4 w-4 mr-1.5" /> Register New Member
         </Button>
@@ -2064,7 +2064,7 @@ function MembershipsTab() {
 
       {/* Member Registration dialog */}
       <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
-        <DialogContent className="bg-[#0A1628] border border-slate-800 text-[#F4F1EA] max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#101010] border border-slate-800 text-[#F4F1EA] max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A853] text-lg flex items-center gap-2">
               <Users className="h-5 w-5" /> Member Registration
@@ -2216,7 +2216,7 @@ function MembershipsTab() {
             <Button
               onClick={registerMember}
               disabled={!name || !email || !agreed}
-              className="bg-[#D4A853] hover:bg-[#E8C875] text-[#0A1628] font-semibold disabled:opacity-50"
+              className="bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold disabled:opacity-50"
             >
               <CheckCircle2 className="h-4 w-4 mr-1.5" /> Join Now
             </Button>
@@ -2226,7 +2226,7 @@ function MembershipsTab() {
 
       {/* Digital Membership Card dialog */}
       <Dialog open={cardOpen} onOpenChange={setCardOpen}>
-        <DialogContent className="bg-[#0A1628] border border-slate-800 text-[#F4F1EA] max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#101010] border border-slate-800 text-[#F4F1EA] max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A853] text-lg flex items-center gap-2">
               <IdCard className="h-5 w-5" /> Digital Membership Card
@@ -2268,7 +2268,7 @@ function MembershipsTab() {
                 </div>
                 <div className="flex justify-center">
                   <div className="bg-white p-2 rounded-lg">
-                    <QrCode className="h-16 w-16 text-[#0A1628]" />
+                    <QrCode className="h-16 w-16 text-[#101010]" />
                   </div>
                 </div>
                 <p className="text-[10px] text-slate-500">Scan at event check-in</p>
@@ -2276,7 +2276,7 @@ function MembershipsTab() {
               <div className="flex gap-3">
                 <Button
                   onClick={() => toast('Membership card sent to printer', 'success')}
-                  className="flex-1 bg-[#D4A853] hover:bg-[#E8C875] text-[#0A1628] font-semibold"
+                  className="flex-1 bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
                 >
                   <Printer className="h-4 w-4 mr-1.5" /> Print Card
                 </Button>
@@ -2307,11 +2307,11 @@ function MembershipsTab() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search members..."
-                    className="pl-8 h-8 text-xs bg-[#0A1628] border-slate-700 text-[#F4F1EA] w-40"
+                    className="pl-8 h-8 text-xs bg-[#101010] border-slate-700 text-[#F4F1EA] w-40"
                   />
                 </div>
                 <Select value={tierFilter} onValueChange={setTierFilter}>
-                  <SelectTrigger className="h-8 text-xs bg-[#0A1628] border-slate-700 text-[#F4F1EA] w-28">
+                  <SelectTrigger className="h-8 text-xs bg-[#101010] border-slate-700 text-[#F4F1EA] w-28">
                     <SelectValue placeholder="All Tiers" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0F1D2F] border-slate-700">
@@ -2326,7 +2326,7 @@ function MembershipsTab() {
                   </SelectContent>
                 </Select>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="h-8 text-xs bg-[#0A1628] border-slate-700 text-[#F4F1EA] w-28">
+                  <SelectTrigger className="h-8 text-xs bg-[#101010] border-slate-700 text-[#F4F1EA] w-28">
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0F1D2F] border-slate-700">
@@ -2505,7 +2505,7 @@ function MembershipsTab() {
                 {expiringSoon.map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between rounded-lg border border-slate-800 bg-[#0A1628] p-3 hover:border-amber-800/50 transition-all"
+                    className="flex items-center justify-between rounded-lg border border-slate-800 bg-[#101010] p-3 hover:border-amber-800/50 transition-all"
                   >
                     <div className="flex items-center gap-3">
                       <div className="h-8 w-8 rounded-full bg-amber-500/10 flex items-center justify-center">
@@ -2570,7 +2570,7 @@ export default function PaymentsModule() {
       12
 
   const tabTriggerClass =
-    'text-xs font-medium text-slate-400 data-[state=active]:text-[#0A1628] data-[state=active]:bg-[#D4A853] data-[state=active]:font-semibold px-4 py-2 rounded-md transition-all'
+    'text-xs font-medium text-slate-400 data-[state=active]:text-[#101010] data-[state=active]:bg-[#D4A853] data-[state=active]:font-semibold px-4 py-2 rounded-md transition-all'
 
   return (
     <motion.div

@@ -113,14 +113,14 @@ export function buildMailchimpNewsletterSnippet(opts: {
   return `<!-- ONE FM 98.5 · Mailchimp HTML block · ${BRAND.fullName} -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;font-family:Arial,sans-serif;">
   <tr>
-    <td style="background:#071D3A;padding:32px 40px;text-align:center;">
-      <div style="font-size:22px;font-weight:700;color:#D4AF37;letter-spacing:0.02em;">ONE FM 98.5</div>
+    <td style="background:#101010;padding:32px 40px;text-align:center;">
+      <div style="font-size:22px;font-weight:700;color:#F2F2F2;letter-spacing:0.02em;">ONE FM 98.5</div>
       <div style="font-size:11px;color:#8A9199;letter-spacing:0.12em;text-transform:uppercase;margin-top:6px;">Goulburn Valley Community Radio</div>
     </td>
   </tr>
   <tr>
     <td style="background:#FFFFFF;padding:36px 40px;">
-      <h1 style="margin:0 0 16px;font-size:24px;color:#071D3A;">${opts.headline}</h1>
+      <h1 style="margin:0 0 16px;font-size:24px;color:#101010;">${opts.headline}</h1>
       <p style="margin:0;font-size:15px;line-height:1.6;color:#333333;">${opts.body}</p>
       ${cta}
     </td>

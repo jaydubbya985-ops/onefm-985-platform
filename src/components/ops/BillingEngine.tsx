@@ -609,7 +609,7 @@ export default function BillingEngine() {
         className="flex flex-wrap items-center justify-between gap-3"
       >
         <Tabs value={tab} onValueChange={(v) => setTab(v as BillingTab)}>
-          <TabsList className="bg-[#1E293B] border border-[#1E3A5F]/30 p-1 flex flex-wrap gap-1 h-auto">
+          <TabsList className="bg-[#1E293B] border border-[#2A2A2A]/30 p-1 flex flex-wrap gap-1 h-auto">
             {TABS.map((t) => (
               <TabsTrigger
                 key={t.id}
@@ -625,7 +625,7 @@ export default function BillingEngine() {
         <Button
           variant="outline"
           onClick={exportXero}
-          className="border-[#1E3A5F]/40 text-one-white/70 hover:text-one-white text-xs"
+          className="border-[#2A2A2A]/40 text-one-white/70 hover:text-one-white text-xs"
         >
           <Download className="w-3.5 h-3.5 mr-1.5" />
           Export to Xero
@@ -685,7 +685,7 @@ export default function BillingEngine() {
               },
             ].map((kpi, idx) => (
               <motion.div key={idx} variants={fadeUp}>
-                <Card className="bg-[#1E293B] border-[#1E3A5F]/30 hover:border-one-gold/30 transition-colors">
+                <Card className="bg-[#1E293B] border-[#2A2A2A]/30 hover:border-one-gold/30 transition-colors">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-one-white/50 text-xs font-medium">
@@ -702,7 +702,7 @@ export default function BillingEngine() {
           </div>
 
           <motion.div variants={fadeUp}>
-            <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+            <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div>
@@ -728,7 +728,7 @@ export default function BillingEngine() {
                     <span className="text-one-white/50">Cycle Progress</span>
                     <span className="text-one-gold font-medium">{cycleProgress}%</span>
                   </div>
-                  <Progress value={cycleProgress} className="h-2 bg-[#0A1628]" />
+                  <Progress value={cycleProgress} className="h-2 bg-[#101010]" />
                 </div>
                 <div className="grid grid-cols-5 gap-2">
                   {cycleSteps.map((step, idx) => (
@@ -739,7 +739,7 @@ export default function BillingEngine() {
                           ? 'border-emerald-500/30 bg-emerald-500/5'
                           : step.current
                             ? 'border-one-gold/40 bg-one-gold/5'
-                            : 'border-[#1E3A5F]/20 bg-[#0A1628]/50'
+                            : 'border-[#2A2A2A]/20 bg-[#101010]/50'
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-2">
@@ -791,7 +791,7 @@ export default function BillingEngine() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30 h-full">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30 h-full">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                     <Clock className="w-4 h-4 text-one-gold" />
@@ -803,7 +803,7 @@ export default function BillingEngine() {
                     {agingBuckets.map((bucket, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-2.5 rounded-lg bg-[#0A1628]/50 border border-[#1E3A5F]/20"
+                        className="flex items-center justify-between p-2.5 rounded-lg bg-[#101010]/50 border border-[#2A2A2A]/20"
                       >
                         <div className="flex items-center gap-3">
                           <div
@@ -813,7 +813,7 @@ export default function BillingEngine() {
                           <span className="text-one-white/70 text-sm">{bucket.label}</span>
                           <Badge
                             variant="outline"
-                            className="text-[10px] bg-transparent border-[#1E3A5F]/30 text-one-white/50"
+                            className="text-[10px] bg-transparent border-[#2A2A2A]/30 text-one-white/50"
                           >
                             {bucket.invoices.length}
                           </Badge>
@@ -826,7 +826,7 @@ export default function BillingEngine() {
                         </span>
                       </div>
                     ))}
-                    <div className="flex items-center justify-between pt-2 border-t border-[#1E3A5F]/30">
+                    <div className="flex items-center justify-between pt-2 border-t border-[#2A2A2A]/30">
                       <span className="text-one-white/70 text-sm font-medium">
                         Total Outstanding
                       </span>
@@ -840,7 +840,7 @@ export default function BillingEngine() {
             </motion.div>
 
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30 h-full">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30 h-full">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-one-gold" />
@@ -856,7 +856,7 @@ export default function BillingEngine() {
                           <stop offset="95%" stopColor="#D4A853" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1E3A5F/30" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
                       <XAxis dataKey="month" stroke="#475569" fontSize={11} />
                       <YAxis
                         stroke="#475569"
@@ -866,7 +866,7 @@ export default function BillingEngine() {
                       <ChartTooltip
                         contentStyle={{
                           backgroundColor: '#1E293B',
-                          border: '1px solid #1E3A5F',
+                          border: '1px solid #2A2A2A',
                           borderRadius: '8px',
                         }}
                         labelStyle={{ color: '#F4F1EA' }}
@@ -920,7 +920,7 @@ export default function BillingEngine() {
                   placeholder="Search invoices..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 w-64 bg-[#0A1628] border-[#1E3A5F]/30 text-one-white text-sm placeholder:text-one-white/30"
+                  className="pl-9 w-64 bg-[#101010] border-[#2A2A2A]/30 text-one-white text-sm placeholder:text-one-white/30"
                 />
               </div>
               {selectedIds.size > 0 && (
@@ -952,8 +952,8 @@ export default function BillingEngine() {
               bucketInvoices.every((i) => selectedIds.has(i.id))
             return (
               <motion.div key={idx} variants={fadeUp}>
-                <Card className="bg-[#1E293B] border-[#1E3A5F]/30 overflow-hidden">
-                  <CardHeader className="pb-3 border-b border-[#1E3A5F]/20">
+                <Card className="bg-[#1E293B] border-[#2A2A2A]/30 overflow-hidden">
+                  <CardHeader className="pb-3 border-b border-[#2A2A2A]/20">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <button
@@ -977,7 +977,7 @@ export default function BillingEngine() {
                         </CardTitle>
                         <Badge
                           variant="outline"
-                          className="bg-transparent border-[#1E3A5F]/30 text-one-white/50 text-[10px]"
+                          className="bg-transparent border-[#2A2A2A]/30 text-one-white/50 text-[10px]"
                         >
                           {bucketInvoices.length} invoices
                         </Badge>
@@ -990,7 +990,7 @@ export default function BillingEngine() {
                   <CardContent className="p-0">
                     <Table>
                       <TableHeader>
-                        <TableRow className="border-[#1E3A5F]/20 hover:bg-transparent">
+                        <TableRow className="border-[#2A2A2A]/20 hover:bg-transparent">
                           <TableHead className="w-8" />
                           <TableHead className="text-one-white/50 text-xs">
                             Invoice #
@@ -1022,7 +1022,7 @@ export default function BillingEngine() {
                         {bucketInvoices.map((invoice) => (
                           <TableRow
                             key={invoice.id}
-                            className="border-[#1E3A5F]/15 hover:bg-one-gold/5"
+                            className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
                           >
                             <TableCell>
                               <button
@@ -1224,7 +1224,7 @@ export default function BillingEngine() {
           </div>
 
           <motion.div variants={fadeUp}>
-            <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+            <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-one-gold" />
@@ -1234,7 +1234,7 @@ export default function BillingEngine() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-[#1E3A5F]/20 hover:bg-transparent">
+                    <TableRow className="border-[#2A2A2A]/20 hover:bg-transparent">
                       <TableHead className="text-one-white/50 text-xs">Invoice #</TableHead>
                       <TableHead className="text-one-white/50 text-xs">Company</TableHead>
                       <TableHead className="text-one-white/50 text-xs">Campaign</TableHead>
@@ -1249,7 +1249,7 @@ export default function BillingEngine() {
                     {monthInvoices.map((invoice) => (
                       <TableRow
                         key={invoice.id}
-                        className="border-[#1E3A5F]/15 hover:bg-one-gold/5"
+                        className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
                       >
                         <TableCell className="text-one-white text-xs font-mono">
                           {invoice.number}
@@ -1306,7 +1306,7 @@ export default function BillingEngine() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {PAYMENT_METHOD_ANALYSIS.map((method, idx) => (
               <motion.div key={idx} variants={fadeUp}>
-                <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+                <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <div
@@ -1328,7 +1328,7 @@ export default function BillingEngine() {
           </div>
 
           <motion.div variants={fadeUp}>
-            <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+            <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                   <Receipt className="w-4 h-4 text-one-gold" />
@@ -1338,7 +1338,7 @@ export default function BillingEngine() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-[#1E3A5F]/20 hover:bg-transparent">
+                    <TableRow className="border-[#2A2A2A]/20 hover:bg-transparent">
                       <TableHead className="text-one-white/50 text-xs">Date</TableHead>
                       <TableHead className="text-one-white/50 text-xs">Invoice</TableHead>
                       <TableHead className="text-one-white/50 text-xs">Company</TableHead>
@@ -1354,7 +1354,7 @@ export default function BillingEngine() {
                     {MOCK_PAYMENTS.filter((p) => p.allocated).map((payment) => (
                       <TableRow
                         key={payment.id}
-                        className="border-[#1E3A5F]/15 hover:bg-one-gold/5"
+                        className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
                       >
                         <TableCell className="text-one-white/60 text-xs">
                           {payment.date}
@@ -1371,7 +1371,7 @@ export default function BillingEngine() {
                         <TableCell>
                           <Badge
                             variant="outline"
-                            className="text-[10px] bg-transparent border-[#1E3A5F]/30 text-one-white/60"
+                            className="text-[10px] bg-transparent border-[#2A2A2A]/30 text-one-white/60"
                           >
                             {payment.method}
                           </Badge>
@@ -1409,7 +1409,7 @@ export default function BillingEngine() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-[#1E3A5F]/20 hover:bg-transparent">
+                    <TableRow className="border-[#2A2A2A]/20 hover:bg-transparent">
                       <TableHead className="text-one-white/50 text-xs">Date</TableHead>
                       <TableHead className="text-one-white/50 text-xs text-right">
                         Amount
@@ -1426,7 +1426,7 @@ export default function BillingEngine() {
                     {MOCK_PAYMENTS.filter((p) => !p.allocated).map((payment) => (
                       <TableRow
                         key={payment.id}
-                        className="border-[#1E3A5F]/15 hover:bg-one-gold/5"
+                        className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
                       >
                         <TableCell className="text-one-white/60 text-xs">
                           {payment.date}
@@ -1437,7 +1437,7 @@ export default function BillingEngine() {
                         <TableCell>
                           <Badge
                             variant="outline"
-                            className="text-[10px] bg-transparent border-[#1E3A5F]/30 text-one-white/60"
+                            className="text-[10px] bg-transparent border-[#2A2A2A]/30 text-one-white/60"
                           >
                             {payment.method}
                           </Badge>
@@ -1499,7 +1499,7 @@ export default function BillingEngine() {
                       ? 'border-emerald-500/30'
                       : acq.status === 'in_progress'
                         ? 'border-amber-500/30'
-                        : 'border-[#1E3A5F]/30'
+                        : 'border-[#2A2A2A]/30'
                   } bg-[#1E293B] border`}
                 >
                   <CardContent className="p-4">
@@ -1531,19 +1531,19 @@ export default function BillingEngine() {
                       </Badge>
                     </div>
                     <div className="grid grid-cols-3 gap-3 mb-3">
-                      <div className="text-center p-2 rounded bg-[#0A1628]/50">
+                      <div className="text-center p-2 rounded bg-[#101010]/50">
                         <div className="text-xs text-one-white/40">Contract</div>
                         <div className="text-sm font-bold text-one-white">
                           {formatCurrency(acq.contractValue)}
                         </div>
                       </div>
-                      <div className="text-center p-2 rounded bg-[#0A1628]/50">
+                      <div className="text-center p-2 rounded bg-[#101010]/50">
                         <div className="text-xs text-one-white/40">Billed</div>
                         <div className="text-sm font-bold text-one-gold">
                           {formatCurrency(acq.amountBilled)}
                         </div>
                       </div>
-                      <div className="text-center p-2 rounded bg-[#0A1628]/50">
+                      <div className="text-center p-2 rounded bg-[#101010]/50">
                         <div className="text-xs text-one-white/40">Balance</div>
                         <div
                           className={`text-sm font-bold ${
@@ -1587,7 +1587,7 @@ export default function BillingEngine() {
                         onClick={() =>
                           toast(`Acquittal report exported for ${acq.sponsorName}`, 'success')
                         }
-                        className="border-[#1E3A5F]/30 text-one-white/70 hover:text-one-white text-xs flex-1"
+                        className="border-[#2A2A2A]/30 text-one-white/70 hover:text-one-white text-xs flex-1"
                       >
                         <Download className="w-3.5 h-3.5 mr-1" />
                         Export PDF
@@ -1610,7 +1610,7 @@ export default function BillingEngine() {
         >
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-one-white/50 text-xs">Upcoming Renewals</span>
@@ -1624,7 +1624,7 @@ export default function BillingEngine() {
               </Card>
             </motion.div>
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-one-white/50 text-xs">Renewal Rate</span>
@@ -1636,7 +1636,7 @@ export default function BillingEngine() {
               </Card>
             </motion.div>
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-one-white/50 text-xs">At-Risk Revenue</span>
@@ -1659,7 +1659,7 @@ export default function BillingEngine() {
           </div>
 
           <motion.div variants={fadeUp}>
-            <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+            <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                   <Repeat className="w-4 h-4 text-one-gold" />
@@ -1671,7 +1671,7 @@ export default function BillingEngine() {
                   {activeRenewals.map((renewal) => (
                     <div
                       key={renewal.id}
-                      className="flex items-center gap-4 p-3 rounded-lg bg-[#0A1628]/50 border border-[#1E3A5F]/20 hover:border-one-gold/20 transition-colors"
+                      className="flex items-center gap-4 p-3 rounded-lg bg-[#101010]/50 border border-[#2A2A2A]/20 hover:border-one-gold/20 transition-colors"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
@@ -1687,7 +1687,7 @@ export default function BillingEngine() {
                           {renewal.tier && (
                             <Badge
                               variant="outline"
-                              className="text-[10px] bg-transparent border-[#1E3A5F]/30 text-one-white/50"
+                              className="text-[10px] bg-transparent border-[#2A2A2A]/30 text-one-white/50"
                             >
                               {renewal.tier}
                             </Badge>
@@ -1724,7 +1724,7 @@ export default function BillingEngine() {
                         >
                           {renewal.probability}%
                         </div>
-                        <div className="w-full h-1.5 rounded-full bg-[#0A1628] mt-1">
+                        <div className="w-full h-1.5 rounded-full bg-[#101010] mt-1">
                           <div
                             className={`h-full rounded-full ${probabilityBarClass(renewal.probability)}`}
                             style={{ width: `${renewal.probability}%` }}
@@ -1818,7 +1818,7 @@ export default function BillingEngine() {
           </motion.div>
 
           <motion.div variants={fadeUp}>
-            <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+            <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-one-gold" />
@@ -1828,7 +1828,7 @@ export default function BillingEngine() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={MONTHLY_REVENUE}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E3A5F/30" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
                     <XAxis dataKey="month" stroke="#475569" fontSize={11} />
                     <YAxis
                       stroke="#475569"
@@ -1838,7 +1838,7 @@ export default function BillingEngine() {
                     <ChartTooltip
                       contentStyle={{
                         backgroundColor: '#1E293B',
-                        border: '1px solid #1E3A5F',
+                        border: '1px solid #2A2A2A',
                         borderRadius: '8px',
                       }}
                       labelStyle={{ color: '#F4F1EA' }}
@@ -1874,7 +1874,7 @@ export default function BillingEngine() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                     <PieChartIcon className="w-4 h-4 text-one-gold" />
@@ -1900,7 +1900,7 @@ export default function BillingEngine() {
                       <ChartTooltip
                         contentStyle={{
                           backgroundColor: '#1E293B',
-                          border: '1px solid #1E3A5F',
+                          border: '1px solid #2A2A2A',
                           borderRadius: '8px',
                         }}
                         formatter={(value) => [formatCurrency(Number(value)), '']}
@@ -1925,7 +1925,7 @@ export default function BillingEngine() {
             </motion.div>
 
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                     <Users className="w-4 h-4 text-one-gold" />
@@ -1951,7 +1951,7 @@ export default function BillingEngine() {
                       <ChartTooltip
                         contentStyle={{
                           backgroundColor: '#1E293B',
-                          border: '1px solid #1E3A5F',
+                          border: '1px solid #2A2A2A',
                           borderRadius: '8px',
                         }}
                         formatter={(value) => [formatCurrency(Number(value)), '']}
@@ -1978,7 +1978,7 @@ export default function BillingEngine() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-one-gold" />
@@ -1988,7 +1988,7 @@ export default function BillingEngine() {
                 <CardContent>
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={PAYMENT_METHOD_ANALYSIS} layout="vertical">
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1E3A5F/30" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
                       <XAxis
                         type="number"
                         stroke="#475569"
@@ -2005,7 +2005,7 @@ export default function BillingEngine() {
                       <ChartTooltip
                         contentStyle={{
                           backgroundColor: '#1E293B',
-                          border: '1px solid #1E3A5F',
+                          border: '1px solid #2A2A2A',
                           borderRadius: '8px',
                         }}
                         formatter={(value) => [formatCurrency(Number(value)), '']}
@@ -2022,7 +2022,7 @@ export default function BillingEngine() {
             </motion.div>
 
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                     <Activity className="w-4 h-4 text-one-gold" />
@@ -2032,7 +2032,7 @@ export default function BillingEngine() {
                 <CardContent>
                   <ResponsiveContainer width="100%" height={220}>
                     <LineChart data={COLLECTION_TRENDS}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1E3A5F/30" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
                       <XAxis dataKey="month" stroke="#475569" fontSize={11} />
                       <YAxis
                         stroke="#475569"
@@ -2043,7 +2043,7 @@ export default function BillingEngine() {
                       <ChartTooltip
                         contentStyle={{
                           backgroundColor: '#1E293B',
-                          border: '1px solid #1E3A5F',
+                          border: '1px solid #2A2A2A',
                           borderRadius: '8px',
                         }}
                         formatter={(value) => [`${value}%`, 'Collection Rate']}
@@ -2063,7 +2063,7 @@ export default function BillingEngine() {
           </div>
 
           <motion.div variants={fadeUp}>
-            <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+            <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                   <Landmark className="w-4 h-4 text-one-gold" />
@@ -2073,7 +2073,7 @@ export default function BillingEngine() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-[#1E3A5F]/20 hover:bg-transparent">
+                    <TableRow className="border-[#2A2A2A]/20 hover:bg-transparent">
                       <TableHead className="text-one-white/50 text-xs">Quarter</TableHead>
                       <TableHead className="text-one-white/50 text-xs text-right">
                         GST Collected
@@ -2089,7 +2089,7 @@ export default function BillingEngine() {
                   </TableHeader>
                   <TableBody>
                     {GST_QUARTERS.map((q, idx) => (
-                      <TableRow key={idx} className="border-[#1E3A5F]/15 hover:bg-one-gold/5">
+                      <TableRow key={idx} className="border-[#2A2A2A]/15 hover:bg-one-gold/5">
                         <TableCell className="text-one-white text-xs font-medium">
                           {q.quarter}
                         </TableCell>
@@ -2145,7 +2145,7 @@ export default function BillingEngine() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Shield className="w-4 h-4 text-blue-400" />
@@ -2160,7 +2160,7 @@ export default function BillingEngine() {
               </Card>
             </motion.div>
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingUp className="w-4 h-4 text-one-gold" />
@@ -2175,7 +2175,7 @@ export default function BillingEngine() {
               </Card>
             </motion.div>
             <motion.div variants={fadeUp}>
-              <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+              <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Briefcase className="w-4 h-4 text-emerald-400" />
@@ -2194,7 +2194,7 @@ export default function BillingEngine() {
           </div>
 
           <motion.div variants={fadeUp}>
-            <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+            <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-one-gold" />
@@ -2207,7 +2207,7 @@ export default function BillingEngine() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={320}>
                   <BarChart data={FORECAST_SCENARIOS}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E3A5F/30" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
                     <XAxis dataKey="month" stroke="#475569" fontSize={11} />
                     <YAxis
                       stroke="#475569"
@@ -2217,7 +2217,7 @@ export default function BillingEngine() {
                     <ChartTooltip
                       contentStyle={{
                         backgroundColor: '#1E293B',
-                        border: '1px solid #1E3A5F',
+                        border: '1px solid #2A2A2A',
                         borderRadius: '8px',
                       }}
                       labelStyle={{ color: '#F4F1EA' }}
@@ -2246,7 +2246,7 @@ export default function BillingEngine() {
           </motion.div>
 
           <motion.div variants={fadeUp}>
-            <Card className="bg-[#1E293B] border-[#1E3A5F]/30">
+            <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-one-white text-base font-semibold flex items-center gap-2">
                   <Briefcase className="w-4 h-4 text-one-gold" />
@@ -2294,7 +2294,7 @@ export default function BillingEngine() {
                   ].map((factor, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-lg bg-[#0A1628]/50 border border-[#1E3A5F]/20"
+                      className="p-3 rounded-lg bg-[#101010]/50 border border-[#2A2A2A]/20"
                     >
                       <div className="flex items-center gap-2 mb-2">
                         <factor.icon className={`w-4 h-4 ${factor.color}`} />
@@ -2317,7 +2317,7 @@ export default function BillingEngine() {
 
       {/* Record Payment dialog */}
       <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
-        <DialogContent className="bg-[#1E293B] border-[#1E3A5F]/30 text-one-white max-w-md max-h-[85vh] overflow-y-auto">
+        <DialogContent className="bg-[#1E293B] border-[#2A2A2A]/30 text-one-white max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-one-white flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-one-gold" />
@@ -2326,7 +2326,7 @@ export default function BillingEngine() {
           </DialogHeader>
           {paymentInvoice && (
             <div className="space-y-4">
-              <div className="p-3 rounded-lg bg-[#0A1628]/50 border border-[#1E3A5F]/20">
+              <div className="p-3 rounded-lg bg-[#101010]/50 border border-[#2A2A2A]/20">
                 <div className="text-xs text-one-white/50">Invoice</div>
                 <div className="text-sm font-semibold text-one-white">
                   {paymentInvoice.number} — {paymentInvoice.company}
@@ -2344,7 +2344,7 @@ export default function BillingEngine() {
                     type="number"
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
-                    className="bg-[#0A1628] border-[#1E3A5F]/30 text-one-white text-sm"
+                    className="bg-[#101010] border-[#2A2A2A]/30 text-one-white text-sm"
                   />
                 </div>
                 <div>
@@ -2353,7 +2353,7 @@ export default function BillingEngine() {
                     type="date"
                     value={paymentDate}
                     onChange={(e) => setPaymentDate(e.target.value)}
-                    className="bg-[#0A1628] border-[#1E3A5F]/30 text-one-white text-sm"
+                    className="bg-[#101010] border-[#2A2A2A]/30 text-one-white text-sm"
                   />
                 </div>
               </div>
@@ -2362,10 +2362,10 @@ export default function BillingEngine() {
                   Payment Method
                 </label>
                 <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                  <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/30 text-one-white text-sm">
+                  <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/30 text-one-white text-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#1E293B] border-[#1E3A5F]/30">
+                  <SelectContent className="bg-[#1E293B] border-[#2A2A2A]/30">
                     {PAYMENT_METHOD_OPTIONS.map((m) => (
                       <SelectItem
                         key={m}
@@ -2384,7 +2384,7 @@ export default function BillingEngine() {
                   value={paymentReference}
                   onChange={(e) => setPaymentReference(e.target.value)}
                   placeholder="Payment reference number"
-                  className="bg-[#0A1628] border-[#1E3A5F]/30 text-one-white text-sm placeholder:text-one-white/20"
+                  className="bg-[#101010] border-[#2A2A2A]/30 text-one-white text-sm placeholder:text-one-white/20"
                 />
               </div>
             </div>
@@ -2393,7 +2393,7 @@ export default function BillingEngine() {
             <Button
               variant="outline"
               onClick={() => setPaymentDialogOpen(false)}
-              className="border-[#1E3A5F]/30 text-one-white/70 hover:text-one-white"
+              className="border-[#2A2A2A]/30 text-one-white/70 hover:text-one-white"
             >
               Cancel
             </Button>
@@ -2410,7 +2410,7 @@ export default function BillingEngine() {
 
       {/* Send Reminder dialog */}
       <Dialog open={reminderDialogOpen} onOpenChange={setReminderDialogOpen}>
-        <DialogContent className="bg-[#1E293B] border-[#1E3A5F]/30 text-one-white max-w-md max-h-[85vh] overflow-y-auto">
+        <DialogContent className="bg-[#1E293B] border-[#2A2A2A]/30 text-one-white max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-one-white flex items-center gap-2">
               <Bell className="w-5 h-5 text-amber-400" />
@@ -2419,7 +2419,7 @@ export default function BillingEngine() {
           </DialogHeader>
           {reminderInvoice && (
             <div className="space-y-4">
-              <div className="p-3 rounded-lg bg-[#0A1628]/50 border border-amber-500/20">
+              <div className="p-3 rounded-lg bg-[#101010]/50 border border-amber-500/20">
                 <div className="text-xs text-one-white/50">Invoice</div>
                 <div className="text-sm font-semibold text-one-white">
                   {reminderInvoice.number} — {reminderInvoice.company}
@@ -2449,7 +2449,7 @@ export default function BillingEngine() {
             <Button
               variant="outline"
               onClick={() => setReminderDialogOpen(false)}
-              className="border-[#1E3A5F]/30 text-one-white/70 hover:text-one-white"
+              className="border-[#2A2A2A]/30 text-one-white/70 hover:text-one-white"
             >
               Cancel
             </Button>
@@ -2466,7 +2466,7 @@ export default function BillingEngine() {
 
       {/* Confirm Acquittal dialog */}
       <Dialog open={acquittalDialogOpen} onOpenChange={setAcquittalDialogOpen}>
-        <DialogContent className="bg-[#1E293B] border-[#1E3A5F]/30 text-one-white max-w-md max-h-[85vh] overflow-y-auto">
+        <DialogContent className="bg-[#1E293B] border-[#2A2A2A]/30 text-one-white max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-one-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -2475,7 +2475,7 @@ export default function BillingEngine() {
           </DialogHeader>
           {acquittalTarget && (
             <div className="space-y-4">
-              <div className="p-3 rounded-lg bg-[#0A1628]/50 border border-emerald-500/20">
+              <div className="p-3 rounded-lg bg-[#101010]/50 border border-emerald-500/20">
                 <div className="text-xs text-one-white/50">Sponsor</div>
                 <div className="text-sm font-semibold text-one-white">
                   {acquittalTarget.sponsorName}
@@ -2485,13 +2485,13 @@ export default function BillingEngine() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-2 rounded bg-[#0A1628]/50 text-center">
+                <div className="p-2 rounded bg-[#101010]/50 text-center">
                   <div className="text-[10px] text-one-white/40">Contract Value</div>
                   <div className="text-sm font-bold text-one-white">
                     {formatCurrency(acquittalTarget.contractValue)}
                   </div>
                 </div>
-                <div className="p-2 rounded bg-[#0A1628]/50 text-center">
+                <div className="p-2 rounded bg-[#101010]/50 text-center">
                   <div className="text-[10px] text-one-white/40">Amount Paid</div>
                   <div className="text-sm font-bold text-emerald-400">
                     {formatCurrency(acquittalTarget.amountPaid)}
@@ -2508,7 +2508,7 @@ export default function BillingEngine() {
             <Button
               variant="outline"
               onClick={() => setAcquittalDialogOpen(false)}
-              className="border-[#1E3A5F]/30 text-one-white/70 hover:text-one-white"
+              className="border-[#2A2A2A]/30 text-one-white/70 hover:text-one-white"
             >
               Cancel
             </Button>

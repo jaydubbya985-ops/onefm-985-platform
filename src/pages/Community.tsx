@@ -82,7 +82,7 @@ function CommunityHero() {
 
   return (
     <>
-      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="DISCOVER">
+      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="DISCOVER">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -97,8 +97,8 @@ function CommunityHero() {
               style={{ opacity: 0.55 }}
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/60 via-transparent to-transparent" />
         </div>
         <AnimatedGrid />
         <div aria-hidden className="grain-overlay" />
@@ -176,10 +176,10 @@ function CommunityHero() {
             ))}
           </motion.div>
         </div>
-        <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-[#050D1A] to-transparent z-10 pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-[#101010] to-transparent z-10 pointer-events-none" />
       </section>
 
-      <div className="py-4 bg-[#050D1A] border-y border-one-gold/10 overflow-hidden">
+      <div className="py-4 bg-[#101010] border-y border-one-gold/10 overflow-hidden">
         <Marquee
           speed={35}
           items={marqueeItems.map((item) => (
@@ -240,7 +240,7 @@ const MOSAIC_PHOTOS = [
 
 function CommunityPhotoMosaic() {
   return (
-    <section className="py-16 bg-[#050D1A]" data-cursor-label="EXPLORE">
+    <section className="py-16 bg-[#101010]" data-cursor-label="EXPLORE">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -1008,7 +1008,7 @@ export default function Community() {
       <SEO title="Community Directory" description="25 towns, 100+ NFPs, multicultural programming in 5+ languages, and community events across the Goulburn Valley. ONE FM 98.5's community hub." />
       <CommunityHero />
       <CommunityPhotoMosaic />
-      <SignalDivider className="bg-[#050D1A]" />
+      <SignalDivider className="bg-[#101010]" />
       <TownDirectory />
       <NFPImpact />
       <CulturalDiversity />

@@ -30,12 +30,12 @@ function slotsForDay(day: number): ScheduleSlot[] {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Breakfast: '#D4AF37',
+  Breakfast: '#F2F2F2',
   Music: '#9B5DE5',
-  Community: '#2EC4B6',
+  Community: '#B6FF00',
   Sport: '#E51636',
   Multicultural: '#FF6B6B',
-  Country: '#D4AF37',
+  Country: '#F2F2F2',
 }
 
 export function WeeklySchedule() {
@@ -86,7 +86,7 @@ export function WeeklySchedule() {
           ) : (
             slots.map((slot, i) => {
               const live = isLiveSlot(slot)
-              const accentColor = CATEGORY_COLORS[slot.category] ?? '#2EC4B6'
+              const accentColor = CATEGORY_COLORS[slot.category] ?? '#B6FF00'
               return (
                 <motion.li
                   key={`${slot.startHour}-${slot.name}-${i}`}

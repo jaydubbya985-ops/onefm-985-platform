@@ -192,8 +192,8 @@ const industryColors: Record<string, string> = {
 }
 
 const industryColorHex: Record<string, string> = {
-  Broadcast: '#D4AF37',
-  Sport: '#2EC4B6',
+  Broadcast: '#F2F2F2',
+  Sport: '#B6FF00',
   Digital: '#9B5DE5',
   Regional: '#6DB05E',
 }
@@ -208,7 +208,7 @@ const INDUSTRY_ICONS: Record<string, React.ElementType> = {
 type SponsorChannel = (typeof sponsorChannels)[number]
 
 function renderChannelCard(cs: SponsorChannel) {
-  const accent = industryColorHex[cs.industry] ?? '#D4AF37'
+  const accent = industryColorHex[cs.industry] ?? '#F2F2F2'
   const HeroIcon = INDUSTRY_ICONS[cs.industry] ?? Radio
   return (
     <>
@@ -292,7 +292,7 @@ const SPONSOR_GALLERY = [
 
 function SponsorGallery() {
   return (
-    <section className="py-20 bg-[#020810]" data-cursor-label="IN ACTION">
+    <section className="py-20 bg-[#070707]" data-cursor-label="IN ACTION">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -403,7 +403,7 @@ export default function SponsorshipKit() {
     <Layout>
       <SEO title="Sponsorship Packages" description="Partner with ONE FM 98.5. Bronze, Silver, Gold packages. Interactive package builder with ROI calculator." />
       {/* ── Section 1: Hero ── */}
-      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="PARTNER WITH US">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="PARTNER WITH US">
         {/* Background image */}
         <motion.div
           style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -419,8 +419,8 @@ export default function SponsorshipKit() {
           />
         </motion.div>
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/45 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/60 via-transparent to-transparent" />
         {/* Subtle particle layer still active */}
         <ParticleField />
         <div aria-hidden className="grain-overlay" />
@@ -518,7 +518,7 @@ export default function SponsorshipKit() {
       <CredibilityStrip />
 
       {/* ── Sponsorship Marquee Strip ── */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={28}
           items={[

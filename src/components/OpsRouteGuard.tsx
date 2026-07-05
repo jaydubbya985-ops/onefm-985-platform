@@ -55,7 +55,7 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
 
   if (checking || (useAuthGate && (loading || authLoading))) {
     return (
-      <div className="min-h-screen bg-[#0A1628] flex items-center justify-center">
+      <div className="min-h-screen bg-[#101010] flex items-center justify-center">
         <div className="text-one-gold font-label text-sm animate-pulse">Checking access...</div>
       </div>
     )
@@ -66,8 +66,8 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A1628] flex items-center justify-center px-4">
-      <div className="bg-[#0F1D32] border border-[#1E3A5F]/40 rounded-xl max-w-sm w-full shadow-2xl p-8">
+    <div className="min-h-screen bg-[#101010] flex items-center justify-center px-4">
+      <div className="bg-[#161616] border border-[#2A2A2A]/40 rounded-xl max-w-sm w-full shadow-2xl p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 rounded-xl bg-one-gold/10 flex items-center justify-center">
             <Lock className="w-6 h-6 text-one-gold" />

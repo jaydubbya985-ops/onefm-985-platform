@@ -239,7 +239,7 @@ export function HorizontalGallery() {
                 className="h-px rounded-full transition-all duration-500"
                 style={{
                   width: i === active ? 32 : 8,
-                  backgroundColor: i === active ? '#D4AF37' : 'rgba(255,255,255,0.22)',
+                  backgroundColor: i === active ? '#F2F2F2' : 'rgba(255,255,255,0.22)',
                 }}
               />
             ))}

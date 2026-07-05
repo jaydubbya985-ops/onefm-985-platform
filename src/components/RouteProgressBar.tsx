@@ -41,7 +41,7 @@ export function RouteProgressBar() {
         width: `${width}%`,
         zIndex: 99997,
         pointerEvents: 'none',
-        backgroundImage: 'linear-gradient(90deg, #D4AF37 0%, var(--one-electric) 60%, #D4AF37 100%)',
+        backgroundImage: 'linear-gradient(90deg, #F2F2F2 0%, var(--one-electric) 60%, #F2F2F2 100%)',
         backgroundSize: '200% 100%',
         animation: width > 0 && width < 100 ? 'shimmerBar 1.2s linear infinite' : 'none',
         opacity: visible ? 1 : 0,

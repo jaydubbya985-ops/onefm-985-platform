@@ -24,12 +24,12 @@ import {
 import { useLiveStream } from '@/hooks/useLiveStream'
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Breakfast: '#D4AF37',
+  Breakfast: '#F2F2F2',
   Music: '#9B5DE5',
-  Community: '#2EC4B6',
+  Community: '#B6FF00',
   Sport: '#E51636',
   Multicultural: '#FF6B6B',
-  Country: '#D4AF37',
+  Country: '#F2F2F2',
 }
 
 /** programGuide day (0=Sun) → grid day index (0=Mon) */
@@ -56,7 +56,7 @@ const SHOWS = FULL_SCHEDULE.map((slot, i) => {
     start: slot.startHour,
     day: toExplorerDay(slot.day),
     category: slot.category === 'Sport' ? 'Sports' : slot.category,
-    color: CATEGORY_COLORS[slot.category] ?? '#2EC4B6',
+    color: CATEGORY_COLORS[slot.category] ?? '#B6FF00',
     desc: `${slot.name} with ${slot.host}. Source: fm985.com.au/guide/`,
   }
 })
@@ -105,24 +105,24 @@ const SHOW_CARDS = PROGRAM_PREVIEW_CARDS.slice(0, 6).map((card) => {
     schedule: card.schedule,
     desc: card.description,
     tags: [cat, 'Live'],
-    color: CATEGORY_COLORS[cat] ?? '#2EC4B6',
+    color: CATEGORY_COLORS[cat] ?? '#B6FF00',
     category: cat,
   }
 })
 
 const BROADCAST_JOBS: PageJob[] = [
   { label: 'Listen Live', path: '/listen', description: 'Stream now', icon: Headphones, accent: '#E51636' },
-  { label: 'Program Guide', path: '/programs', description: 'Shows & hosts', icon: Calendar, accent: '#D4AF37' },
+  { label: 'Program Guide', path: '/programs', description: 'Shows & hosts', icon: Calendar, accent: '#F2F2F2' },
   { label: 'Coverage', path: '/coverage', description: 'Broadcast area', icon: Globe, accent: '#1B458F' },
-  { label: 'GVL Sport', path: '/football', description: 'Saturday coverage', icon: Sparkles, accent: '#2EC4B6' },
+  { label: 'GVL Sport', path: '/football', description: 'Saturday coverage', icon: Sparkles, accent: '#B6FF00' },
 ]
 
 /* ─── Deterministic gradient avatar ─── */
 const AVATAR_PALETTES = [
-  { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
-  { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
+  { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
+  { from: '#F2F2F2', to: '#1B3A6F', accent: '#FFF8DC' },
   { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
-  { from: '#2EC4B6', to: '#0A2030', accent: '#7FFFD4' },
+  { from: '#B6FF00', to: '#0A2030', accent: '#7FFFD4' },
   { from: '#9B5DE5', to: '#1A0A30', accent: '#DDB3FF' },
   { from: '#FF6B6B', to: '#2A0A10', accent: '#FFB3B3' },
   { from: '#1B458F', to: '#0D2A18', accent: '#6EE7B7' },
@@ -226,7 +226,7 @@ function HeroSection() {
   const stream = useLiveStream()
 
   return (
-    <section className="relative overflow-hidden bg-[#050D1A]" style={{ height: '50vh', minHeight: 480 }} data-cursor-label="ON AIR NOW">
+    <section className="relative overflow-hidden bg-[#101010]" style={{ height: '50vh', minHeight: 480 }} data-cursor-label="ON AIR NOW">
       <div aria-hidden className="grain-overlay" />
       <LiveWaveform />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 pb-20" style={{ maxWidth: 900, margin: '0 auto' }}>
@@ -343,7 +343,7 @@ function ScheduleSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: easeOutExpo }}
-          className="flex flex-wrap items-center gap-3 mb-8 sticky top-[72px] z-30 bg-[#071D3A]/90 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:rounded-xl"
+          className="flex flex-wrap items-center gap-3 mb-8 sticky top-[72px] z-30 bg-[#101010]/90 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:rounded-xl"
         >
           {/* Day selector */}
           <div className="flex gap-1 flex-wrap">
@@ -588,7 +588,7 @@ function ShowSpotlight() {
             <div className="md:w-[55%] p-6 md:p-8 flex flex-col justify-center">
               <WordReveal text="ONE FM BREAKFAST" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full border-2 border-one-gold/30 flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, #1B458F 0%, #D4AF37 100%)' }}>
+                <div className="w-12 h-12 rounded-full border-2 border-one-gold/30 flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, #1B458F 0%, #F2F2F2 100%)' }}>
                   <span className="font-heading font-black text-sm text-one-white/90 leading-none select-none" style={{ letterSpacing: '-0.04em' }}>OB</span>
                 </div>
                 <div>
@@ -645,7 +645,7 @@ function ShowSpotlight() {
                 {/* Gradient feature visual derived from category color */}
                 <div
                   className="absolute inset-0 group-hover:scale-105 transition-transform duration-500"
-                  style={{ background: `linear-gradient(135deg, ${show.color}33 0%, #040B14 60%)` }}
+                  style={{ background: `linear-gradient(135deg, ${show.color}33 0%, #070707 60%)` }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <span
@@ -1076,7 +1076,7 @@ export default function BroadcastExplorer() {
       <HeroSection />
 
       {/* ── Broadcast Marquee Strip ── */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={34}
           items={[

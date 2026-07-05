@@ -64,7 +64,7 @@ export function MediaImage({
       <div
         className={`relative overflow-hidden flex items-center justify-center ${className}`}
         style={{
-          background: 'linear-gradient(135deg, #0A1628 0%, #0E1E38 50%, #0A1628 100%)',
+          background: 'linear-gradient(135deg, #101010 0%, #0E1E38 50%, #101010 100%)',
           ...style,
         }}
         aria-label={alt}

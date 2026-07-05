@@ -126,7 +126,7 @@ export function FrequencyTuner({ onDemodChange, className = '', autoSweep = fals
 
   const needlePct = freqToFrac(freq) * 100
   const targetPct = freqToFrac(TARGET) * 100
-  const needleColor = isOnTarget ? '#D4AF37' : isDemod ? '#E51636' : 'rgba(255,255,255,0.8)'
+  const needleColor = isOnTarget ? '#F2F2F2' : isDemod ? '#E51636' : 'rgba(255,255,255,0.8)'
 
   return (
     <div
@@ -184,7 +184,7 @@ export function FrequencyTuner({ onDemodChange, className = '', autoSweep = fals
               : isDemod
               ? 'rgba(229,22,54,0.14)'
               : 'rgba(255,255,255,0.06)',
-            color: isOnTarget ? '#D4AF37' : isDemod ? '#E51636' : 'rgba(255,255,255,0.45)',
+            color: isOnTarget ? '#F2F2F2' : isDemod ? '#E51636' : 'rgba(255,255,255,0.45)',
             transition: 'all 0.25s',
           }}
         >

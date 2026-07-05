@@ -84,8 +84,8 @@ const cardStagger = {
 
 /* ─────────── data (sourced — no fabricated percentages) ─────────── */
 const reachChannels = [
-  { name: 'FM Radio', detail: '98.5 FM · ~100 km radius', color: '#D4AF37' },
-  { name: 'Live Stream', detail: 'fm985.com.au · Radio.co', color: '#2EC4B6' },
+  { name: 'FM Radio', detail: '98.5 FM · ~100 km radius', color: '#F2F2F2' },
+  { name: 'Live Stream', detail: 'fm985.com.au · Radio.co', color: '#B6FF00' },
   { name: 'SoundCloud', detail: 'Interview archive after broadcast', color: '#FF5500' },
   { name: 'Facebook', detail: 'facebook.com/onefmshepparton', color: '#1877F2' },
 ]
@@ -118,7 +118,7 @@ const platformCards = [
     statLabel: 'broadcast frequency',
     reach: '~100km radius',
     coverage: 'Goulburn Murray region — 25 towns',
-    accent: '#D4AF37',
+    accent: '#F2F2F2',
   },
   {
     icon: Headphones,
@@ -127,7 +127,7 @@ const platformCards = [
     statLabel: 'via fm985.com.au',
     reach: 'Worldwide',
     coverage: 'Radio.co stream · Community Radio Plus app',
-    accent: '#2EC4B6',
+    accent: '#B6FF00',
   },
   {
     icon: Share2,
@@ -187,7 +187,7 @@ function WaveformBg() {
 }
 
 /* ─────────── signal bars ─────────── */
-function SignalBars({ color = '#D4AF37' }: { color?: string }) {
+function SignalBars({ color = '#F2F2F2' }: { color?: string }) {
   return (
     <div className="flex items-end gap-[3px] h-6">
       {[40, 55, 70, 85, 100].map((h, i) => (
@@ -232,7 +232,7 @@ const STUDIO_PHOTOS = [
 
 function StudioPhotoStrip() {
   return (
-    <section className="py-16 bg-[#020810]" data-cursor-label="STUDIO">
+    <section className="py-16 bg-[#070707]" data-cursor-label="STUDIO">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -365,7 +365,7 @@ export default function MediaKit() {
         description="ONE FM 98.5 media kit — rate card, audience reach, sponsorship packages, and brand assets for advertisers in the Goulburn Valley."
       />
       {/* ═══════ HERO ═══════ */}
-      <section ref={heroRef} className="relative min-h-[80vh] flex items-end bg-[#050D1A] overflow-hidden" data-cursor-label="MEDIA KIT">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end bg-[#101010] overflow-hidden" data-cursor-label="MEDIA KIT">
         {/* Background image */}
         <motion.div
           style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -381,8 +381,8 @@ export default function MediaKit() {
           />
         </motion.div>
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/65 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/65 via-transparent to-transparent" />
         {/* Waveform overlay */}
         <WaveformBg />
         <div aria-hidden className="grain-overlay" />
@@ -494,7 +494,7 @@ export default function MediaKit() {
       <CredibilityStrip />
 
       {/* ── Media Kit Marquee Strip ── */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[
@@ -654,7 +654,7 @@ export default function MediaKit() {
                         }}
                         formatter={(value: number) => [value.toLocaleString(), 'Listeners']}
                       />
-                      <Bar dataKey="listeners" fill="#D4AF37" radius={[4, 4, 0, 0]} barSize={40} />
+                      <Bar dataKey="listeners" fill="#F2F2F2" radius={[4, 4, 0, 0]} barSize={40} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

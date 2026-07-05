@@ -84,7 +84,7 @@ export function HeroHeadline() {
       <div
         className="hl-rule h-[2px] w-28 mb-8 origin-left will-change-transform"
         style={{
-          background: 'linear-gradient(90deg, #D4AF37 0%, rgba(212,175,55,0.35) 65%, transparent 100%)',
+          background: 'linear-gradient(90deg, #F2F2F2 0%, rgba(212,175,55,0.35) 65%, transparent 100%)',
           borderRadius: 1,
         }}
       />

@@ -259,7 +259,7 @@ export function CustomCursor() {
             fontSize: 9,
             letterSpacing: '0.26em',
             textTransform: 'uppercase',
-            color: '#D4AF37',
+            color: '#F2F2F2',
             fontWeight: 600,
             fontFamily: 'JetBrains Mono, monospace',
           }}
@@ -278,7 +278,7 @@ export function CustomCursor() {
           width: 8,
           height: 8,
           borderRadius: '50%',
-          background: pressed ? '#D4AF37' : 'var(--one-electric)',
+          background: pressed ? '#F2F2F2' : 'var(--one-electric)',
           pointerEvents: 'none',
           zIndex: 99999,
           transform: 'translate(-100px, -100px)',

@@ -38,9 +38,9 @@ import {
 
 const PAGE_JOBS: PageJob[] = [
   { label: 'Listen Live', path: '/listen', description: 'Stream now', icon: Headphones, accent: '#E51636' },
-  { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule', icon: Radio, accent: '#D4AF37' },
+  { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule', icon: Radio, accent: '#F2F2F2' },
   { label: 'Coverage Map', path: '/coverage', description: '25 towns', icon: MapPin, accent: '#1B458F' },
-  { label: 'GVL Football', path: '/football', description: 'Season sponsorship', icon: Trophy, accent: '#2EC4B6' },
+  { label: 'GVL Football', path: '/football', description: 'Season sponsorship', icon: Trophy, accent: '#B6FF00' },
 ]
 
 /* ────────────────────────────────────────────────────────── */
@@ -380,19 +380,19 @@ const showFilters = ['All', 'Breakfast', 'Music', 'Sport', 'Community', 'Multicu
 const hostFilters = ["All", "Breakfast", "Sport", "Music", "Community", "Multicultural"]
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Breakfast: '#D4AF37',
+  Breakfast: '#F2F2F2',
   Music: '#9B5DE5',
-  Community: '#2EC4B6',
+  Community: '#B6FF00',
   Sport: '#E51636',
   Multicultural: '#FF6B6B',
 }
 
 /* Deterministic gradient avatar for host cards */
 const HOST_PALETTES = [
-  { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
-  { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
+  { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
+  { from: '#F2F2F2', to: '#1B3A6F', accent: '#FFF8DC' },
   { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
-  { from: '#2EC4B6', to: '#0A2030', accent: '#7FFFD4' },
+  { from: '#B6FF00', to: '#0A2030', accent: '#7FFFD4' },
   { from: '#9B5DE5', to: '#1A0A30', accent: '#DDB3FF' },
   { from: '#FF6B6B', to: '#2A0A10', accent: '#FFB3B3' },
   { from: '#1B458F', to: '#0D2A18', accent: '#6EE7B7' },
@@ -441,7 +441,7 @@ const podcasts = [
     latest: "Latest community interviews — soundcloud.com/user-570295409",
     desc: "Local interviews, community stories and Goulburn Valley voices. Available on SoundCloud after broadcast.",
     url: "https://soundcloud.com/user-570295409",
-    color: '#D4AF37',
+    color: '#F2F2F2',
     colorRgb: '212, 175, 55',
     Icon: Mic2,
     label: 'Broadcast',
@@ -465,7 +465,7 @@ const podcasts = [
     latest: "Local community voices",
     desc: "Community members, local events, and the stories that matter to the Goulburn Murray region.",
     url: "https://soundcloud.com/user-570295409",
-    color: '#2EC4B6',
+    color: '#B6FF00',
     colorRgb: '46, 196, 182',
     Icon: Radio,
     label: 'Community',
@@ -524,7 +524,7 @@ export default function Programs() {
     <Layout>
       <SEO title="Programs & Shows" description="ONE FM Breakfast, Dancing through the decades, The James Manley Show, GVL sport, multicultural programs, and more. Full guide from fm985.com.au." />
       {/* ═══════ Section 1 — Hero ═══════ */}
-      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="ON AIR NOW">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="ON AIR NOW">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -542,8 +542,8 @@ export default function Programs() {
               style={{ opacity: 0.55 }}
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/60 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
         <RadioWaveBackground />
@@ -619,7 +619,7 @@ export default function Programs() {
       </section>
 
       {/* Marquee strip */}
-      <div className="py-4 bg-[#050D1A] border-y border-one-gold/10 overflow-hidden">
+      <div className="py-4 bg-[#101010] border-y border-one-gold/10 overflow-hidden">
         <Marquee
           speed={36}
           items={[
@@ -683,9 +683,9 @@ export default function Programs() {
                     data-cursor-label={f.toUpperCase()}
                     className="font-label text-xs px-4 py-2 rounded-full border transition-all"
                     style={active && color
-                      ? { backgroundColor: color, color: '#040B14', borderColor: color }
+                      ? { backgroundColor: color, color: '#070707', borderColor: color }
                       : active
-                        ? { backgroundColor: '#D4AF37', color: '#040B14', borderColor: '#D4AF37' }
+                        ? { backgroundColor: '#F2F2F2', color: '#070707', borderColor: '#F2F2F2' }
                         : { backgroundColor: 'transparent', color: 'white', borderColor: 'rgba(244,241,234,0.3)' }
                     }
                   >
@@ -710,22 +710,22 @@ export default function Programs() {
                 {/* Category accent bar */}
                 <div
                   className="absolute left-0 top-0 bottom-0 rounded-l"
-                  style={{ width: '3px', backgroundColor: CATEGORY_COLORS[show.tag] ?? '#2EC4B6' }}
+                  style={{ width: '3px', backgroundColor: CATEGORY_COLORS[show.tag] ?? '#B6FF00' }}
                 />
                 <div aria-hidden className="explore-tile-scan" />
                 <div className="flex items-start justify-between">
                   <div
                     className="w-12 h-12 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: `${CATEGORY_COLORS[show.tag] ?? '#2EC4B6'}18` }}
+                    style={{ backgroundColor: `${CATEGORY_COLORS[show.tag] ?? '#B6FF00'}18` }}
                   >
-                    <show.icon size={22} style={{ color: CATEGORY_COLORS[show.tag] ?? '#2EC4B6' }} />
+                    <show.icon size={22} style={{ color: CATEGORY_COLORS[show.tag] ?? '#B6FF00' }} />
                   </div>
                   <span
                     className="font-label text-xs px-3 py-1 rounded-full border"
                     style={{
-                      color: CATEGORY_COLORS[show.tag] ?? '#2EC4B6',
-                      backgroundColor: `${CATEGORY_COLORS[show.tag] ?? '#2EC4B6'}18`,
-                      borderColor: `${CATEGORY_COLORS[show.tag] ?? '#2EC4B6'}30`,
+                      color: CATEGORY_COLORS[show.tag] ?? '#B6FF00',
+                      backgroundColor: `${CATEGORY_COLORS[show.tag] ?? '#B6FF00'}18`,
+                      borderColor: `${CATEGORY_COLORS[show.tag] ?? '#B6FF00'}30`,
                     }}
                   >
                     {show.tag}
@@ -746,7 +746,7 @@ export default function Programs() {
                     <Mic2 size={14} className="text-muted" />
                     <span className="font-body-small text-muted">{show.host}</span>
                   </div>
-                  <MiniWaveform color={CATEGORY_COLORS[show.tag] ?? '#2EC4B6'} seed={i} />
+                  <MiniWaveform color={CATEGORY_COLORS[show.tag] ?? '#B6FF00'} seed={i} />
                 </div>
               </motion.div>
             </TiltCard>
@@ -802,9 +802,9 @@ export default function Programs() {
                   data-cursor-label={f.toUpperCase()}
                   className="font-label text-xs px-4 py-2 rounded-full border transition-all duration-200 flex items-center gap-2"
                   style={active && color
-                    ? { backgroundColor: color, color: '#040B14', borderColor: color }
+                    ? { backgroundColor: color, color: '#070707', borderColor: color }
                     : active
-                      ? { backgroundColor: '#D4AF37', color: '#040B14', borderColor: '#D4AF37' }
+                      ? { backgroundColor: '#F2F2F2', color: '#070707', borderColor: '#F2F2F2' }
                       : { backgroundColor: 'transparent', color: 'white', borderColor: 'rgba(244,241,234,0.3)' }
                   }
                 >
@@ -889,7 +889,7 @@ export default function Programs() {
                     </span>
                   )}
                   </div>
-                  <MiniWaveform color="#D4AF37" seed={hi} />
+                  <MiniWaveform color="#F2F2F2" seed={hi} />
                 </div>
               </div>
               </TiltCard>
@@ -1028,7 +1028,7 @@ export default function Programs() {
             >
               <div
                 className="w-full aspect-square rounded-lg overflow-hidden relative"
-                style={{ background: 'linear-gradient(135deg, #071D3A 0%, #020A18 100%)' }}
+                style={{ background: 'linear-gradient(135deg, #101010 0%, #070707 100%)' }}
               >
                 {/* Category-color radial glow from below */}
                 <div className="absolute inset-0" style={{

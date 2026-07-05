@@ -139,7 +139,7 @@ function tierBadgeClasses(tier: SponsorTier): string {
     case 'bronze':
       return 'bg-amber-700/20 text-amber-600 border-amber-700/40'
     default:
-      return 'bg-[#1E3A5F]/30 text-slate-400 border-[#1E3A5F]/40'
+      return 'bg-[#2A2A2A]/30 text-slate-400 border-[#2A2A2A]/40'
   }
 }
 
@@ -555,7 +555,7 @@ export default function SponsorCRM() {
 
   return (
     <div
-      className="min-h-screen bg-[#0A1628] text-white p-6"
+      className="min-h-screen bg-[#101010] text-white p-6"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Header */}
@@ -574,16 +574,16 @@ export default function SponsorCRM() {
           </div>
           <div className="flex items-center gap-3">
             <Tabs value={view} onValueChange={setView}>
-              <TabsList className="bg-[#0E1E38] border border-[#1E3A5F]/50">
+              <TabsList className="bg-[#0E1E38] border border-[#2A2A2A]/50">
                 <TabsTrigger
                   value="pipeline"
-                  className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#0A1628] text-slate-300"
+                  className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#101010] text-slate-300"
                 >
                   Pipeline
                 </TabsTrigger>
                 <TabsTrigger
                   value="list"
-                  className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#0A1628] text-slate-300"
+                  className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#101010] text-slate-300"
                 >
                   List
                 </TabsTrigger>
@@ -599,7 +599,7 @@ export default function SponsorCRM() {
 
             {/* Add / edit dialog */}
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-              <DialogContent className="bg-[#0E1E38] border-[#1E3A5F]/50 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="bg-[#0E1E38] border-[#2A2A2A]/50 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle
                     className="text-lg font-semibold text-white"
@@ -613,7 +613,7 @@ export default function SponsorCRM() {
                     <div className="space-y-2">
                       <Label className="text-slate-300">Company Name *</Label>
                       <Input
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                         placeholder="Company name"
                         value={form.companyName}
                         onChange={(e) => setForm({ ...form, companyName: e.target.value })}
@@ -622,7 +622,7 @@ export default function SponsorCRM() {
                     <div className="space-y-2">
                       <Label className="text-slate-300">Contact Name</Label>
                       <Input
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                         placeholder="Contact person"
                         value={form.contactName}
                         onChange={(e) => setForm({ ...form, contactName: e.target.value })}
@@ -634,7 +634,7 @@ export default function SponsorCRM() {
                       <Label className="text-slate-300">Email</Label>
                       <Input
                         type="email"
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                         placeholder="email@company.com"
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -643,7 +643,7 @@ export default function SponsorCRM() {
                     <div className="space-y-2">
                       <Label className="text-slate-300">Phone</Label>
                       <Input
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                         placeholder="(03) XXXX XXXX"
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -654,7 +654,7 @@ export default function SponsorCRM() {
                     <div className="space-y-2">
                       <Label className="text-slate-300">ABN</Label>
                       <Input
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                         placeholder="12 345 678 901"
                         value={form.abn}
                         onChange={(e) => setForm({ ...form, abn: e.target.value })}
@@ -666,18 +666,18 @@ export default function SponsorCRM() {
                         value={form.industry || ' '}
                         onValueChange={(v) => setForm({ ...form, industry: v === ' ' ? '' : v })}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/50 text-white">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-white">
                           <SelectValue placeholder="Select industry" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
-                          <SelectItem value=" " className="text-white hover:bg-[#1E3A5F]/50">
+                        <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
+                          <SelectItem value=" " className="text-white hover:bg-[#2A2A2A]/50">
                             Select industry
                           </SelectItem>
                           {CRM_INDUSTRIES.map((industry) => (
                             <SelectItem
                               key={industry}
                               value={industry}
-                              className="text-white hover:bg-[#1E3A5F]/50"
+                              className="text-white hover:bg-[#2A2A2A]/50"
                             >
                               {industry}
                             </SelectItem>
@@ -689,7 +689,7 @@ export default function SponsorCRM() {
                   <div className="space-y-2">
                     <Label className="text-slate-300">Street Address</Label>
                     <Input
-                      className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                      className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                       placeholder="123 Main Street"
                       value={form.streetAddress}
                       onChange={(e) => setForm({ ...form, streetAddress: e.target.value })}
@@ -699,7 +699,7 @@ export default function SponsorCRM() {
                     <div className="space-y-2">
                       <Label className="text-slate-300">Suburb</Label>
                       <Input
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                         placeholder="Shepparton"
                         value={form.suburb}
                         onChange={(e) => setForm({ ...form, suburb: e.target.value })}
@@ -708,15 +708,15 @@ export default function SponsorCRM() {
                     <div className="space-y-2">
                       <Label className="text-slate-300">State</Label>
                       <Select value={form.state} onValueChange={(v) => setForm({ ...form, state: v })}>
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/50 text-white">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-white">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
+                        <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
                           {AU_STATES.map((state) => (
                             <SelectItem
                               key={state}
                               value={state}
-                              className="text-white hover:bg-[#1E3A5F]/50"
+                              className="text-white hover:bg-[#2A2A2A]/50"
                             >
                               {state}
                             </SelectItem>
@@ -727,7 +727,7 @@ export default function SponsorCRM() {
                     <div className="space-y-2">
                       <Label className="text-slate-300">Postcode</Label>
                       <Input
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                         placeholder="3630"
                         value={form.postcode}
                         onChange={(e) => setForm({ ...form, postcode: e.target.value })}
@@ -741,15 +741,15 @@ export default function SponsorCRM() {
                         value={form.status}
                         onValueChange={(v) => setForm({ ...form, status: v })}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/50 text-white">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-white">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
+                        <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
                           {SPONSOR_STATUS_OPTIONS.map((option) => (
                             <SelectItem
                               key={option.label}
                               value={option.label}
-                              className="text-white hover:bg-[#1E3A5F]/50"
+                              className="text-white hover:bg-[#2A2A2A]/50"
                             >
                               {option.label}
                             </SelectItem>
@@ -763,26 +763,26 @@ export default function SponsorCRM() {
                         value={form.tier}
                         onValueChange={(v) => setForm({ ...form, tier: v as SponsorTier })}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/50 text-white">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-white">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
-                          <SelectItem value="champion" className="text-white hover:bg-[#1E3A5F]/50">
+                        <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
+                          <SelectItem value="champion" className="text-white hover:bg-[#2A2A2A]/50">
                             Champion
                           </SelectItem>
-                          <SelectItem value="gold" className="text-white hover:bg-[#1E3A5F]/50">
+                          <SelectItem value="gold" className="text-white hover:bg-[#2A2A2A]/50">
                             Gold
                           </SelectItem>
-                          <SelectItem value="silver" className="text-white hover:bg-[#1E3A5F]/50">
+                          <SelectItem value="silver" className="text-white hover:bg-[#2A2A2A]/50">
                             Silver
                           </SelectItem>
-                          <SelectItem value="bronze" className="text-white hover:bg-[#1E3A5F]/50">
+                          <SelectItem value="bronze" className="text-white hover:bg-[#2A2A2A]/50">
                             Bronze
                           </SelectItem>
-                          <SelectItem value="custom" className="text-white hover:bg-[#1E3A5F]/50">
+                          <SelectItem value="custom" className="text-white hover:bg-[#2A2A2A]/50">
                             Custom
                           </SelectItem>
-                          <SelectItem value="none" className="text-white hover:bg-[#1E3A5F]/50">
+                          <SelectItem value="none" className="text-white hover:bg-[#2A2A2A]/50">
                             None
                           </SelectItem>
                         </SelectContent>
@@ -792,7 +792,7 @@ export default function SponsorCRM() {
                       <Label className="text-slate-300">Annual Value ($)</Label>
                       <Input
                         type="number"
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                         placeholder="0"
                         value={form.annualValue || ''}
                         onChange={(e) =>
@@ -806,7 +806,7 @@ export default function SponsorCRM() {
                       <Label className="text-slate-300">Start Date</Label>
                       <Input
                         type="date"
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white"
                         value={form.startDate}
                         onChange={(e) => setForm({ ...form, startDate: e.target.value })}
                       />
@@ -815,7 +815,7 @@ export default function SponsorCRM() {
                       <Label className="text-slate-300">End Date</Label>
                       <Input
                         type="date"
-                        className="bg-[#0A1628] border-[#1E3A5F]/50 text-white"
+                        className="bg-[#101010] border-[#2A2A2A]/50 text-white"
                         value={form.endDate}
                         onChange={(e) => setForm({ ...form, endDate: e.target.value })}
                       />
@@ -824,7 +824,7 @@ export default function SponsorCRM() {
                   <div className="space-y-2">
                     <Label className="text-slate-300">Website</Label>
                     <Input
-                      className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+                      className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
                       placeholder="www.company.com.au"
                       value={form.website}
                       onChange={(e) => setForm({ ...form, website: e.target.value })}
@@ -835,7 +835,7 @@ export default function SponsorCRM() {
                       {editingId ? 'Add Note (optional)' : 'Notes (optional)'}
                     </Label>
                     <Textarea
-                      className="bg-[#0A1628] border-[#1E3A5F]/50 text-white placeholder:text-slate-500 resize-none"
+                      className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500 resize-none"
                       placeholder="Any notes about this sponsor..."
                       rows={3}
                       value={form.notes}
@@ -847,7 +847,7 @@ export default function SponsorCRM() {
                   <DialogClose asChild>
                     <Button
                       variant="outline"
-                      className="border-[#1E3A5F]/50 text-slate-300 hover:bg-[#1E3A5F]/30 hover:text-white"
+                      className="border-[#2A2A2A]/50 text-slate-300 hover:bg-[#2A2A2A]/30 hover:text-white"
                     >
                       Cancel
                     </Button>
@@ -855,7 +855,7 @@ export default function SponsorCRM() {
                   <Button
                     onClick={saveSponsor}
                     disabled={!form.companyName.trim()}
-                    className="bg-[#D4A84B] hover:bg-[#D4A84B]/90 text-[#0A1628] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-[#D4A84B] hover:bg-[#D4A84B]/90 text-[#101010] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {editingId ? 'Save Changes' : 'Add Sponsor'}
                   </Button>
@@ -867,20 +867,20 @@ export default function SponsorCRM() {
 
         {/* Stats */}
         <div className="grid grid-cols-5 gap-4 mb-6">
-          <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+          <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-slate-400 uppercase tracking-wider">Total Sponsors</p>
                   <p className="text-2xl font-bold text-white mt-1">{stats.total}</p>
                 </div>
-                <div className="h-10 w-10 rounded-lg bg-[#1E3A5F]/40 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-lg bg-[#2A2A2A]/40 flex items-center justify-center">
                   <Building2 className="h-5 w-5 text-[#D4A84B]" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+          <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -893,7 +893,7 @@ export default function SponsorCRM() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+          <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -908,7 +908,7 @@ export default function SponsorCRM() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+          <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -921,7 +921,7 @@ export default function SponsorCRM() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+          <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -941,37 +941,37 @@ export default function SponsorCRM() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
             <Input
-              className="pl-9 bg-[#0E1E38] border-[#1E3A5F]/50 text-white placeholder:text-slate-500"
+              className="pl-9 bg-[#0E1E38] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
               placeholder="Search sponsors, contacts, industries..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <Select onValueChange={setTierFilter} defaultValue="all">
-            <SelectTrigger className="w-44 bg-[#0E1E38] border-[#1E3A5F]/50 text-white">
+            <SelectTrigger className="w-44 bg-[#0E1E38] border-[#2A2A2A]/50 text-white">
               <Filter className="h-4 w-4 mr-2 text-slate-400" />
               <SelectValue placeholder="Filter by tier" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
-              <SelectItem value="all" className="text-white hover:bg-[#1E3A5F]/50">
+            <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
+              <SelectItem value="all" className="text-white hover:bg-[#2A2A2A]/50">
                 All Tiers
               </SelectItem>
-              <SelectItem value="champion" className="text-white hover:bg-[#1E3A5F]/50">
+              <SelectItem value="champion" className="text-white hover:bg-[#2A2A2A]/50">
                 Champion
               </SelectItem>
-              <SelectItem value="gold" className="text-white hover:bg-[#1E3A5F]/50">
+              <SelectItem value="gold" className="text-white hover:bg-[#2A2A2A]/50">
                 Gold
               </SelectItem>
-              <SelectItem value="silver" className="text-white hover:bg-[#1E3A5F]/50">
+              <SelectItem value="silver" className="text-white hover:bg-[#2A2A2A]/50">
                 Silver
               </SelectItem>
-              <SelectItem value="bronze" className="text-white hover:bg-[#1E3A5F]/50">
+              <SelectItem value="bronze" className="text-white hover:bg-[#2A2A2A]/50">
                 Bronze
               </SelectItem>
-              <SelectItem value="custom" className="text-white hover:bg-[#1E3A5F]/50">
+              <SelectItem value="custom" className="text-white hover:bg-[#2A2A2A]/50">
                 Custom
               </SelectItem>
-              <SelectItem value="none" className="text-white hover:bg-[#1E3A5F]/50">
+              <SelectItem value="none" className="text-white hover:bg-[#2A2A2A]/50">
                 None
               </SelectItem>
             </SelectContent>
@@ -991,7 +991,7 @@ export default function SponsorCRM() {
                     <h3 className="text-sm font-semibold text-slate-200">{stage.label}</h3>
                     <Badge
                       variant="outline"
-                      className="bg-[#1E3A5F]/30 text-slate-400 border-[#1E3A5F]/40 text-xs"
+                      className="bg-[#2A2A2A]/30 text-slate-400 border-[#2A2A2A]/40 text-xs"
                     >
                       {stageSponsors.length}
                     </Badge>
@@ -1006,7 +1006,7 @@ export default function SponsorCRM() {
                     return (
                       <Card
                         key={sponsor.id}
-                        className="bg-[#0E1E38] border-[#1E3A5F]/40 hover:border-[#D4A84B]/50 cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-[#D4A84B]/5"
+                        className="bg-[#0E1E38] border-[#2A2A2A]/40 hover:border-[#D4A84B]/50 cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-[#D4A84B]/5"
                         onClick={() => openDetail(sponsor)}
                       >
                         <CardContent className="p-3.5">
@@ -1040,7 +1040,7 @@ export default function SponsorCRM() {
                             </div>
                           </div>
                           {sponsor.proposals.length > 0 && (
-                            <div className="mt-2 pt-2 border-t border-[#1E3A5F]/30">
+                            <div className="mt-2 pt-2 border-t border-[#2A2A2A]/30">
                               <div className="flex items-center gap-1.5">
                                 <FileText className="h-3 w-3 text-slate-400" />
                                 <span className="text-[10px] text-slate-400">
@@ -1055,7 +1055,7 @@ export default function SponsorCRM() {
                     )
                   })}
                   {stageSponsors.length === 0 && (
-                    <div className="border-2 border-dashed border-[#1E3A5F]/30 rounded-lg p-6 text-center">
+                    <div className="border-2 border-dashed border-[#2A2A2A]/30 rounded-lg p-6 text-center">
                       <p className="text-xs text-slate-500">No sponsors</p>
                     </div>
                   )}
@@ -1068,11 +1068,11 @@ export default function SponsorCRM() {
 
       {/* List view */}
       {view === 'list' && (
-        <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+        <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="border-b-[#1E3A5F]/50 hover:bg-transparent">
+                <TableRow className="border-b-[#2A2A2A]/50 hover:bg-transparent">
                   <TableHead className="text-slate-400 text-xs uppercase tracking-wider">
                     Company
                   </TableHead>
@@ -1105,7 +1105,7 @@ export default function SponsorCRM() {
                   return (
                     <TableRow
                       key={sponsor.id}
-                      className="border-b-[#1E3A5F]/30 hover:bg-[#1E3A5F]/20 cursor-pointer transition-colors"
+                      className="border-b-[#2A2A2A]/30 hover:bg-[#2A2A2A]/20 cursor-pointer transition-colors"
                       onClick={() => openDetail(sponsor)}
                     >
                       <TableCell>
@@ -1180,7 +1180,7 @@ export default function SponsorCRM() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-slate-400 hover:text-[#D4A84B] hover:bg-[#1E3A5F]/50"
+                            className="h-7 w-7 p-0 text-slate-400 hover:text-[#D4A84B] hover:bg-[#2A2A2A]/50"
                             onClick={(e) => openEdit(sponsor, e)}
                             title="Edit sponsor"
                           >
@@ -1189,7 +1189,7 @@ export default function SponsorCRM() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-slate-400 hover:text-[#E31E24] hover:bg-[#1E3A5F]/50"
+                            className="h-7 w-7 p-0 text-slate-400 hover:text-[#E31E24] hover:bg-[#2A2A2A]/50"
                             onClick={(e) => confirmDelete(sponsor, e)}
                             title="Delete sponsor"
                           >
@@ -1198,7 +1198,7 @@ export default function SponsorCRM() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-slate-400 hover:text-white hover:bg-[#1E3A5F]/50"
+                            className="h-7 w-7 p-0 text-slate-400 hover:text-white hover:bg-[#2A2A2A]/50"
                             onClick={(e) => {
                               e.stopPropagation()
                               openDetail(sponsor)
@@ -1226,7 +1226,7 @@ export default function SponsorCRM() {
 
       {/* Delete confirmation */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="bg-[#0E1E38] border-[#1E3A5F]/50 text-white max-w-sm">
+        <DialogContent className="bg-[#0E1E38] border-[#2A2A2A]/50 text-white max-w-sm">
           <DialogHeader>
             <DialogTitle
               className="text-lg font-semibold text-white"
@@ -1245,7 +1245,7 @@ export default function SponsorCRM() {
           <DialogFooter>
             <Button
               variant="outline"
-              className="border-[#1E3A5F]/50 text-slate-300 hover:bg-[#1E3A5F]/30 hover:text-white"
+              className="border-[#2A2A2A]/50 text-slate-300 hover:bg-[#2A2A2A]/30 hover:text-white"
               onClick={() => setIsDeleteOpen(false)}
             >
               Cancel
@@ -1264,14 +1264,14 @@ export default function SponsorCRM() {
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <DialogContent
           showCloseButton={false}
-          className="bg-[#0E1E38] border-[#1E3A5F]/50 text-white max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0"
+          className="bg-[#0E1E38] border-[#2A2A2A]/50 text-white max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0"
         >
           {selected && (
             <>
-              <div className="p-6 pb-4 border-b border-[#1E3A5F]/40">
+              <div className="p-6 pb-4 border-b border-[#2A2A2A]/40">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-xl bg-[#1E3A5F]/50 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-xl bg-[#2A2A2A]/50 flex items-center justify-center">
                       <Building2 className="h-6 w-6 text-[#D4A84B]" />
                     </div>
                     <div>
@@ -1291,7 +1291,7 @@ export default function SponsorCRM() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-[#1E3A5F]/50"
+                      className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-[#2A2A2A]/50"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -1325,7 +1325,7 @@ export default function SponsorCRM() {
                 )}
               </div>
 
-              <div className="px-6 py-4 border-b border-[#1E3A5F]/40">
+              <div className="px-6 py-4 border-b border-[#2A2A2A]/40">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs text-slate-400 mb-1.5 block">Status</Label>
@@ -1335,22 +1335,22 @@ export default function SponsorCRM() {
                         changeStatus(selected.id, v as SponsorPipelineStatus)
                       }
                     >
-                      <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/50 text-white text-sm h-8">
+                      <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-white text-sm h-8">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
+                      <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
                         {PIPELINE_STAGES.map((stage) => (
                           <SelectItem
                             key={stage.key}
                             value={stage.key}
-                            className="text-white hover:bg-[#1E3A5F]/50 text-sm"
+                            className="text-white hover:bg-[#2A2A2A]/50 text-sm"
                           >
                             {stage.label}
                           </SelectItem>
                         ))}
                         <SelectItem
                           value="lapsed"
-                          className="text-white hover:bg-[#1E3A5F]/50 text-sm"
+                          className="text-white hover:bg-[#2A2A2A]/50 text-sm"
                         >
                           Lapsed
                         </SelectItem>
@@ -1363,15 +1363,15 @@ export default function SponsorCRM() {
                       value={selected.tier}
                       onValueChange={(v) => changeTier(selected.id, v as SponsorTier)}
                     >
-                      <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/50 text-white text-sm h-8">
+                      <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-white text-sm h-8">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
+                      <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
                         {TIER_VALUES.map((tier) => (
                           <SelectItem
                             key={tier}
                             value={tier}
-                            className="text-white hover:bg-[#1E3A5F]/50 text-sm capitalize"
+                            className="text-white hover:bg-[#2A2A2A]/50 text-sm capitalize"
                           >
                             {tier}
                           </SelectItem>
@@ -1413,7 +1413,7 @@ export default function SponsorCRM() {
               </div>
 
               {/* Proposals */}
-              <div className="px-6 py-4 border-b border-[#1E3A5F]/40">
+              <div className="px-6 py-4 border-b border-[#2A2A2A]/40">
                 <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
                   <FileText className="h-4 w-4 text-[#D4A84B]" />
                   Proposals ({selected.proposals.length})
@@ -1425,7 +1425,7 @@ export default function SponsorCRM() {
                     {selected.proposals.map((proposal) => (
                       <div
                         key={proposal.id}
-                        className="bg-[#0A1628]/60 rounded-lg p-3 border border-[#1E3A5F]/30"
+                        className="bg-[#101010]/60 rounded-lg p-3 border border-[#2A2A2A]/30"
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
@@ -1465,7 +1465,7 @@ export default function SponsorCRM() {
                             {proposal.sections.map((section, index) => (
                               <span
                                 key={index}
-                                className="text-[10px] bg-[#1E3A5F]/40 text-slate-400 px-1.5 py-0.5 rounded"
+                                className="text-[10px] bg-[#2A2A2A]/40 text-slate-400 px-1.5 py-0.5 rounded"
                               >
                                 {section}
                               </span>
@@ -1484,10 +1484,10 @@ export default function SponsorCRM() {
                   <MessageSquare className="h-4 w-4 text-[#D4A84B]" />
                   Communication Log ({selected.notes.length})
                 </h3>
-                <div className="bg-[#0A1628]/60 rounded-lg p-3 border border-[#1E3A5F]/30 mb-4">
+                <div className="bg-[#101010]/60 rounded-lg p-3 border border-[#2A2A2A]/30 mb-4">
                   <div className="space-y-2">
                     <Textarea
-                      className="bg-[#0A1628] border-[#1E3A5F]/50 text-white text-sm placeholder:text-slate-500 resize-none"
+                      className="bg-[#101010] border-[#2A2A2A]/50 text-white text-sm placeholder:text-slate-500 resize-none"
                       placeholder="Add a note, call log, or meeting summary..."
                       rows={2}
                       value={newNote.content}
@@ -1501,10 +1501,10 @@ export default function SponsorCRM() {
                             setNewNote({ ...newNote, type: v as SponsorNoteType })
                           }
                         >
-                          <SelectTrigger className="h-7 text-xs bg-[#0A1628] border-[#1E3A5F]/50 text-white w-28">
+                          <SelectTrigger className="h-7 text-xs bg-[#101010] border-[#2A2A2A]/50 text-white w-28">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
+                          <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
                             <SelectItem value="note" className="text-white text-xs">
                               Note
                             </SelectItem>
@@ -1523,10 +1523,10 @@ export default function SponsorCRM() {
                           value={newNote.author}
                           onValueChange={(v) => setNewNote({ ...newNote, author: v })}
                         >
-                          <SelectTrigger className="h-7 text-xs bg-[#0A1628] border-[#1E3A5F]/50 text-white w-32">
+                          <SelectTrigger className="h-7 text-xs bg-[#101010] border-[#2A2A2A]/50 text-white w-32">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]/50">
+                          <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
                             <SelectItem value="Sarah J." className="text-white text-xs">
                               Sarah J.
                             </SelectItem>
@@ -1541,7 +1541,7 @@ export default function SponsorCRM() {
                       </div>
                       <Button
                         size="sm"
-                        className="h-7 bg-[#D4A84B] hover:bg-[#D4A84B]/90 text-[#0A1628] text-xs font-semibold gap-1"
+                        className="h-7 bg-[#D4A84B] hover:bg-[#D4A84B]/90 text-[#101010] text-xs font-semibold gap-1"
                         onClick={addNote}
                         disabled={!newNote.content.trim()}
                       >
@@ -1555,11 +1555,11 @@ export default function SponsorCRM() {
                   {selected.notes.map((note, index) => (
                     <div key={note.id} className="flex gap-3">
                       <div className="flex flex-col items-center">
-                        <div className="h-7 w-7 rounded-full bg-[#1E3A5F]/50 flex items-center justify-center flex-shrink-0">
+                        <div className="h-7 w-7 rounded-full bg-[#2A2A2A]/50 flex items-center justify-center flex-shrink-0">
                           <NoteTypeIcon type={note.type} />
                         </div>
                         {index < selected.notes.length - 1 && (
-                          <div className="w-px h-full bg-[#1E3A5F]/30 mt-1" />
+                          <div className="w-px h-full bg-[#2A2A2A]/30 mt-1" />
                         )}
                       </div>
                       <div className="flex-1 pb-3">

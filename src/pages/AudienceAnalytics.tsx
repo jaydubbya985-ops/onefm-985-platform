@@ -78,7 +78,7 @@ const ageDemoData = [
 
 // ABS 2021 gender — Greater Shepparton LGA
 const genderData = [
-  { name: 'Male', value: 49, color: '#2EC4B6' },
+  { name: 'Male', value: 49, color: '#B6FF00' },
   { name: 'Female', value: 51, color: '#D4963A' },
 ]
 
@@ -99,7 +99,7 @@ const platformCards = [
     label: '~100km radius',
     share: '25 towns · Goulburn Murray',
     status: 'Live',
-    statusColor: '#2EC4B6',
+    statusColor: '#B6FF00',
     accent: '#D4963A',
     trend: [34000, 35200, 35800, 36200, 37100, 37800, 37500, 38200, 38500, 38900, 39100, 39375],
   },
@@ -110,8 +110,8 @@ const platformCards = [
     label: 'fm985.com.au',
     share: 'Radio.co · Community Radio Plus',
     status: 'Live',
-    statusColor: '#2EC4B6',
-    accent: '#2EC4B6',
+    statusColor: '#B6FF00',
+    accent: '#B6FF00',
     trend: [450, 480, 510, 490, 520, 555, 540, 580, 610, 590, 625, 650],
   },
   {
@@ -132,7 +132,7 @@ const platformCards = [
     label: 'fm985.com.au',
     share: 'Community interview replays',
     status: 'Active',
-    statusColor: '#2EC4B6',
+    statusColor: '#B6FF00',
     accent: '#FF6B6B',
     trend: [85, 90, 95, 88, 102, 98, 110, 105, 112, 118, 115, 122],
   },
@@ -178,7 +178,7 @@ const monthlyListenerData = [
 // Audience segments based on typical community radio programming blocks (indicative only)
 const smartSegments = [
   { name: 'Breakfast (6–9am)', pct: 35, color: '#D4963A' },
-  { name: 'Mornings (9am–12pm)', pct: 28, color: '#2EC4B6' },
+  { name: 'Mornings (9am–12pm)', pct: 28, color: '#B6FF00' },
   { name: 'Afternoons (12–4pm)', pct: 22, color: '#9B5DE5' },
   { name: 'Evenings (6pm+)', pct: 15, color: '#F0C75E' },
 ]
@@ -335,7 +335,7 @@ export default function AudienceAnalytics() {
             data-cursor-label="KEY METRICS"
           >
             {[
-              { label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners, color: '#2EC4B6', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
+              { label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners, color: '#B6FF00', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
               { label: 'Towns in Broadcast Area', value: stationStats.totalTowns, color: '#D4963A', suffix: '', sparkline: false, extra: `~${stationStats.broadcastRadiusKm}km radius from Shepparton` },
               { label: 'Broadcast Area Population', value: stationStats.broadcastPopulation, color: '#F0C75E', suffix: '', sparkline: false, extra: `Source: ABS 2021 · ${stationStats.totalTowns} towns` },
               { label: 'Years Broadcasting', value: stationStats.yearsBroadcasting, color: '#9B5DE5', suffix: ' yrs', sparkline: false, extra: 'Licensed 1989 · callsign 3ONE' },
@@ -372,7 +372,7 @@ export default function AudienceAnalytics() {
       </section>
 
       {/* ── Analytics Marquee Strip ── */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[
@@ -556,7 +556,7 @@ export default function AudienceAnalytics() {
                           itemStyle={{ color: '#F4F1EA' }}
                           formatter={(value: number) => [value + '%', 'Share of population']}
                         />
-                        <Bar dataKey="percent" fill="#2EC4B6" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="percent" fill="#B6FF00" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
@@ -603,7 +603,7 @@ export default function AudienceAnalytics() {
                   title: 'Broadcast Reach',
                   text: `${stationStats.weeklyListeners.toLocaleString()} est. weekly listeners`,
                   sub: `${stationStats.totalTowns} towns · ~${stationStats.broadcastRadiusKm}km radius · source: townData / ABS 2021`,
-                  border: '#2EC4B6',
+                  border: '#B6FF00',
                   icon: TrendingUp,
                 },
                 {
@@ -700,7 +700,7 @@ export default function AudienceAnalytics() {
                     />
                     <Bar dataKey="percent" radius={[0, 4, 4, 0]} barSize={20}>
                       {ageDemoData.map((_, i) => (
-                        <Cell key={i} fill={['#2EC4B6', '#00BBF9', '#D4963A', '#FF6B6B', '#E63946'][i]} />
+                        <Cell key={i} fill={['#B6FF00', '#00BBF9', '#D4963A', '#FF6B6B', '#E63946'][i]} />
                       ))}
                     </Bar>
                   </BarChart>

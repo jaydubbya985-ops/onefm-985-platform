@@ -111,7 +111,7 @@ const oneOffTier: Tier = {
 
 const pieData = [
   { name: 'Programming & Broadcasting', value: 45, color: '#D4963A' },
-  { name: 'Community Projects', value: 25, color: '#2EC4B6' },
+  { name: 'Community Projects', value: 25, color: '#B6FF00' },
   { name: 'Equipment & Technology', value: 15, color: '#00BBF9' },
   { name: 'Training & Youth Programs', value: 10, color: '#9B5DE5' },
   { name: 'Administration', value: 5, color: '#6B6B75' },
@@ -196,7 +196,7 @@ function HeroSection() {
   const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
 
   return (
-    <section ref={heroRef} className="relative overflow-hidden bg-[#050D1A]" data-cursor-label="SUPPORT US">
+    <section ref={heroRef} className="relative overflow-hidden bg-[#101010]" data-cursor-label="SUPPORT US">
       <div className="absolute inset-0 z-0">
         <motion.div
           style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -1322,7 +1322,7 @@ export default function Support() {
       <HeroSection />
 
       {/* ── Support Marquee Strip ── */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={32}
           items={[

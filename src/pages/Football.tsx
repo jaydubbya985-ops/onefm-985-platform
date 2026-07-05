@@ -190,7 +190,7 @@ const GVL_GALLERY = [
 
 function GVLGalleryStrip() {
   return (
-    <section className="py-20 bg-[#020810]" data-cursor-label="GVL SPORT">
+    <section className="py-20 bg-[#070707]" data-cursor-label="GVL SPORT">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -291,15 +291,15 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="GAME DAY">
+      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="GAME DAY">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
             <CinegraphBackground slot="gvlGameDay" opacity={0.6} />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/55 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/55 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
         <ParticleField />
@@ -396,7 +396,7 @@ export default function Football() {
       </section>
 
       {/* ── Football Marquee Strip ── */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[
@@ -670,9 +670,9 @@ export default function Football() {
               <h4 className="font-h4 text-one-white mb-5">Listener Habits</h4>
               <div className="space-y-5">
                 {[
-                  { icon: Clock, label: 'Peak Footy Hours', value: 'Sat 1pm — 6pm', color: '#D4AF37' },
-                  { icon: Target, label: 'Live Match Coverage', value: 'Every weekend', color: '#2EC4B6' },
-                  { icon: Radio, label: 'GVL Commentary', value: 'FM 98.5 + stream', color: '#F4D27A' },
+                  { icon: Clock, label: 'Peak Footy Hours', value: 'Sat 1pm — 6pm', color: '#F2F2F2' },
+                  { icon: Target, label: 'Live Match Coverage', value: 'Every weekend', color: '#B6FF00' },
+                  { icon: Radio, label: 'GVL Commentary', value: 'FM 98.5 + stream', color: '#F2F2F2' },
                   { icon: Users, label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners.toLocaleString(), color: '#9B5DE5' },
                 ].map((item) => {
                   const Icon = item.icon

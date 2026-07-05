@@ -151,10 +151,10 @@ const socials = [
 
 /* â”€â”€â”€ Deterministic gradient avatar â”€â”€â”€ */
 const HERITAGE_PALETTES = [
-  { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
-  { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
+  { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
+  { from: '#F2F2F2', to: '#1B3A6F', accent: '#FFF8DC' },
   { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
-  { from: '#2EC4B6', to: '#0A2030', accent: '#7FFFD4' },
+  { from: '#B6FF00', to: '#0A2030', accent: '#7FFFD4' },
   { from: '#9B5DE5', to: '#1A0A30', accent: '#DDB3FF' },
   { from: '#FF6B6B', to: '#2A0A10', accent: '#FFB3B3' },
   { from: '#1B458F', to: '#0D2A18', accent: '#6EE7B7' },
@@ -218,7 +218,7 @@ export default function Heritage() {
     <Layout>
       <SEO title="Our Heritage & Community" description={`${stationStats.yearsBroadcasting} years of community broadcasting. ONE FM 98.5's story from 1989 to today.`} />
       {/* â”€â”€ Section 1: Hero â”€â”€ */}
-      <section ref={heroRef} className="relative min-h-[75dvh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="EXPLORE">
+      <section ref={heroRef} className="relative min-h-[75dvh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="EXPLORE">
         {/* Scroll parallax wrapper â€” extends 28% above so image never gaps when shifted down */}
         <motion.div
           style={{ y: heroImgY, top: '-28%', bottom: 0, left: 0, right: 0, position: 'absolute', willChange: 'transform' }}
@@ -240,9 +240,9 @@ export default function Heritage() {
             />
           </motion.div>
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/70 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050D1A]/30 via-transparent to-[#050D1A]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#101010]/30 via-transparent to-[#101010]/30" />
         <div aria-hidden className="grain-overlay" />
 
         <div className="relative z-10 max-w-[900px] mx-auto px-6 pb-40 pt-32">
@@ -316,7 +316,7 @@ export default function Heritage() {
       </section>
 
       {/* â”€â”€ Heritage Marquee Strip â”€â”€ */}
-      <div className="bg-[#020810] border-y border-one-border/20 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-border/20 py-3 overflow-hidden">
         <Marquee
           speed={28}
           items={[
@@ -617,8 +617,8 @@ export default function Heritage() {
                   <stop offset="100%" stopColor="#7A8B6E" stopOpacity="0.2" />
                 </linearGradient>
                 <linearGradient id="cityGrad" x1="50%" y1="0%" x2="50%" y2="100%">
-                  <stop offset="0%" stopColor="#2EC4B6" stopOpacity="0.6" />
-                  <stop offset="100%" stopColor="#2EC4B6" stopOpacity="0.2" />
+                  <stop offset="0%" stopColor="#B6FF00" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="#B6FF00" stopOpacity="0.2" />
                 </linearGradient>
                 <linearGradient id="hinterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#9B5DE5" stopOpacity="0.6" />
@@ -652,7 +652,7 @@ export default function Heritage() {
               <motion.path
                 d="M320 160 Q440 130 520 180 Q560 240 500 300 Q400 320 340 280 Q280 240 320 160Z"
                 fill="url(#cityGrad)"
-                stroke="#2EC4B6"
+                stroke="#B6FF00"
                 strokeWidth="1.5"
                 initial={{ pathLength: 0, opacity: 0 }}
                 whileInView={{ pathLength: 1, opacity: 1 }}
@@ -674,7 +674,7 @@ export default function Heritage() {
               {/* Labels */}
               <text x="620" y="100" fill="#D4963A" fontSize="14" fontFamily="JetBrains Mono" textAnchor="middle">The Coast</text>
               <text x="170" y="190" fill="#7A8B6E" fontSize="14" fontFamily="JetBrains Mono" textAnchor="middle">The Valley</text>
-              <text x="420" y="240" fill="#2EC4B6" fontSize="14" fontFamily="JetBrains Mono" textAnchor="middle">The City</text>
+              <text x="420" y="240" fill="#B6FF00" fontSize="14" fontFamily="JetBrains Mono" textAnchor="middle">The City</text>
               <text x="650" y="300" fill="#9B5DE5" fontSize="14" fontFamily="JetBrains Mono" textAnchor="middle">The Hinterland</text>
             </svg>
           </motion.div>

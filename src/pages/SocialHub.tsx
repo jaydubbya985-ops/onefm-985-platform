@@ -50,11 +50,11 @@ const ASSETS = [
 // V3 Brand System colours â€” source: ONE_FM_brand_system_v3
 const BRAND_COLORS = [
   { name: 'ONE FM Blue', hex: '#1B458F', usage: 'Core identity â€” wordmark, headers' },
-  { name: 'Deep Navy', hex: '#071D3A', usage: 'Backgrounds, email header band' },
+  { name: 'Deep Navy', hex: '#101010', usage: 'Backgrounds, email header band' },
   { name: '98.5 Red', hex: '#E51636', usage: 'Core identity â€” frequency, accents' },
   { name: 'Broadcast White', hex: '#FFFFFF', usage: 'Core identity â€” reversed lockup' },
-  { name: 'Heritage Gold', hex: '#D4AF37', usage: 'Premium accent â€” totals, highlights' },
-  { name: 'Champagne', hex: '#F4D27A', usage: 'Gold light â€” hover, decorative' },
+  { name: 'Heritage Gold', hex: '#F2F2F2', usage: 'Premium accent â€” totals, highlights' },
+  { name: 'Champagne', hex: '#F2F2F2', usage: 'Gold light â€” hover, decorative' },
   { name: 'Electric Cyan', hex: '#00E5FF', usage: 'Digital glow â€” stream, live signal' },
   { name: 'Neon Sky Blue', hex: '#38BDF8', usage: 'Safe daily UI accent' },
   { name: 'Neon Orange', hex: '#FF6A00', usage: 'Sport & event alerts only' },
@@ -108,14 +108,14 @@ const CALENDAR_EVENTS = [
   { day: 1,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
   { day: 5,  type: 'Content', color: '#9B5DE5', name: 'Multicultural Program Spotlight' },
   { day: 8,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
-  { day: 10, type: 'Partner', color: '#2EC4B6', name: 'Sponsor Shoutout' },
+  { day: 10, type: 'Partner', color: '#B6FF00', name: 'Sponsor Shoutout' },
   { day: 12, type: 'Content', color: '#9B5DE5', name: 'Breakfast Behind the Scenes' },
   { day: 15, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
   { day: 18, type: 'Content', color: '#1B458F', name: 'Goulburn Valley Heritage Post' },
-  { day: 20, type: 'Partner', color: '#2EC4B6', name: 'Community Org Feature' },
+  { day: 20, type: 'Partner', color: '#B6FF00', name: 'Community Org Feature' },
   { day: 22, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
   { day: 25, type: 'Content', color: '#9B5DE5', name: 'Regional Feature â€” Town of the Week' },
-  { day: 27, type: 'Partner', color: '#2EC4B6', name: 'Sponsor Spotlight' },
+  { day: 27, type: 'Partner', color: '#B6FF00', name: 'Sponsor Spotlight' },
   { day: 29, type: 'Live',    color: '#E51636', name: 'GVL Final / Major Event' },
 ]
 
@@ -184,7 +184,7 @@ function HeroSection() {
 
   return (
     <>
-      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="SOCIAL HUB">
+      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="SOCIAL HUB">
         <motion.img
           src={STATION_PHOTOS.eventLasersBuilding}
           alt=""
@@ -194,8 +194,8 @@ function HeroSection() {
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: 0.50, y: heroImgY, top: '-28%', height: '156%', willChange: 'transform' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/45 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/60 via-transparent to-transparent" />
         <GridPattern />
         <div aria-hidden className="grain-overlay" />
 
@@ -280,7 +280,7 @@ function HeroSection() {
       </section>
 
       {/* â”€â”€ Social Hub Marquee â”€â”€ */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={28}
           items={[
@@ -1035,7 +1035,7 @@ function CaptionGenerator() {
               <div className="flex gap-2 flex-wrap">
                 {['Hashtags', 'CTA', 'Emoji', 'Mentions'].map((opt) => (
                   <label key={opt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-one-border font-label text-[10px] text-muted cursor-pointer hover:border-one-gold/50 transition-colors">
-                    <input type="checkbox" defaultChecked className="accent-[#D4AF37] w-3 h-3" />
+                    <input type="checkbox" defaultChecked className="accent-[#F2F2F2] w-3 h-3" />
                     {opt}
                   </label>
                 ))}
@@ -1051,7 +1051,7 @@ function CaptionGenerator() {
                 max={5}
                 value={length}
                 onChange={(e) => setLength(Number(e.target.value))}
-                className="w-full accent-[#D4AF37]"
+                className="w-full accent-[#F2F2F2]"
               />
               <div className="flex justify-between font-label text-[10px] text-muted mt-1">
                 <span>Short</span>

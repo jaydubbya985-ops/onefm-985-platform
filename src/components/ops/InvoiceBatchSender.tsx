@@ -234,7 +234,7 @@ function StatCard({
   accent: string
 }) {
   return (
-    <Card className="bg-[#0F1D32] border-[#1E293B] relative overflow-hidden group">
+    <Card className="bg-[#161616] border-[#1E293B] relative overflow-hidden group">
       <div className={`absolute top-0 left-0 w-full h-1 ${accent}`} />
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
@@ -262,7 +262,7 @@ function InvoicePreview({ invoice }: { invoice: BatchRow }) {
     <div className="bg-white text-gray-900 p-8 rounded-lg shadow-lg max-w-[600px] mx-auto">
       <div className="flex justify-between items-start border-b-2 border-gray-800 pb-6 mb-6">
         <div>
-          <div className="bg-[#0A1628] rounded-lg px-4 py-2 inline-block">
+          <div className="bg-[#101010] rounded-lg px-4 py-2 inline-block">
             <img
               src="/one-fm-logo-master.svg"
               alt="ONE FM 98.5"
@@ -818,14 +818,14 @@ export default function InvoiceBatchSender() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-[#0A1628] text-[#F4F1EA] p-6">
+      <div className="min-h-screen bg-[#101010] text-[#F4F1EA] p-6">
         <div className="max-w-[1600px] mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#D4A853] to-[#D4A853]/60 flex items-center justify-center">
-                  <Receipt className="w-5 h-5 text-[#0A1628]" />
+                  <Receipt className="w-5 h-5 text-[#101010]" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice Batch — June 2026</h1>
@@ -943,7 +943,7 @@ export default function InvoiceBatchSender() {
               <Button
                 size="sm"
                 onClick={handleSendSelected}
-                className="bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#0A1628] font-semibold gap-1.5"
+                className="bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold gap-1.5"
               >
                 <Send className="w-3.5 h-3.5" />
                 Send Selected
@@ -974,7 +974,7 @@ export default function InvoiceBatchSender() {
                   placeholder="Search invoices..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-8 w-64 bg-[#0F1D32] border-[#1E293B] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 focus-visible:ring-[#D4A853]"
+                  className="pl-8 w-64 bg-[#161616] border-[#1E293B] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 focus-visible:ring-[#D4A853]"
                 />
               </div>
             </div>
@@ -983,7 +983,7 @@ export default function InvoiceBatchSender() {
           <div className="flex gap-6">
             {/* Invoice table */}
             <div className="flex-1 min-w-0">
-              <Card className="bg-[#0F1D32] border-[#1E293B]">
+              <Card className="bg-[#161616] border-[#1E293B]">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg font-bold text-[#F4F1EA] flex items-center gap-2">
@@ -1091,7 +1091,7 @@ export default function InvoiceBatchSender() {
                                   </TooltipTrigger>
                                   <TooltipContent
                                     side="top"
-                                    className="bg-[#0F1D32] border-[#1E293B]"
+                                    className="bg-[#161616] border-[#1E293B]"
                                   >
                                     <p className="text-xs">Excl. GST (locked)</p>
                                   </TooltipContent>
@@ -1109,7 +1109,7 @@ export default function InvoiceBatchSender() {
                                       </TooltipTrigger>
                                       <TooltipContent
                                         side="top"
-                                        className="bg-[#0F1D32] border-[#1E293B]"
+                                        className="bg-[#161616] border-[#1E293B]"
                                       >
                                         <p className="text-xs text-emerald-400">
                                           GST correct (10%)
@@ -1123,7 +1123,7 @@ export default function InvoiceBatchSender() {
                                       </TooltipTrigger>
                                       <TooltipContent
                                         side="top"
-                                        className="bg-[#0F1D32] border-[#1E293B]"
+                                        className="bg-[#161616] border-[#1E293B]"
                                       >
                                         <p className="text-xs text-red-400">GST mismatch!</p>
                                       </TooltipContent>
@@ -1168,7 +1168,7 @@ export default function InvoiceBatchSender() {
                                     </TooltipTrigger>
                                     <TooltipContent
                                       side="top"
-                                      className="bg-[#0F1D32] border-[#1E293B]"
+                                      className="bg-[#161616] border-[#1E293B]"
                                     >
                                       <p className="text-xs">Preview</p>
                                     </TooltipContent>
@@ -1186,7 +1186,7 @@ export default function InvoiceBatchSender() {
                                     </TooltipTrigger>
                                     <TooltipContent
                                       side="top"
-                                      className="bg-[#0F1D32] border-[#1E293B]"
+                                      className="bg-[#161616] border-[#1E293B]"
                                     >
                                       <p className="text-xs">Test Send</p>
                                     </TooltipContent>
@@ -1204,7 +1204,7 @@ export default function InvoiceBatchSender() {
                                     </TooltipTrigger>
                                     <TooltipContent
                                       side="top"
-                                      className="bg-[#0F1D32] border-[#1E293B]"
+                                      className="bg-[#161616] border-[#1E293B]"
                                     >
                                       <p className="text-xs">Send</p>
                                     </TooltipContent>
@@ -1222,7 +1222,7 @@ export default function InvoiceBatchSender() {
                                     </TooltipTrigger>
                                     <TooltipContent
                                       side="top"
-                                      className="bg-[#0F1D32] border-[#1E293B]"
+                                      className="bg-[#161616] border-[#1E293B]"
                                     >
                                       <p className="text-xs">Mark Paid</p>
                                     </TooltipContent>
@@ -1241,7 +1241,7 @@ export default function InvoiceBatchSender() {
                                       </TooltipTrigger>
                                       <TooltipContent
                                         side="top"
-                                        className="bg-[#0F1D32] border-[#1E293B]"
+                                        className="bg-[#161616] border-[#1E293B]"
                                       >
                                         <p className="text-xs">Send Receipt</p>
                                       </TooltipContent>
@@ -1290,7 +1290,7 @@ export default function InvoiceBatchSender() {
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                   className="overflow-hidden flex-shrink-0"
                 >
-                  <Card className="bg-[#0F1D32] border-[#1E293B] h-full">
+                  <Card className="bg-[#161616] border-[#1E293B] h-full">
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         <div>
@@ -1324,21 +1324,21 @@ export default function InvoiceBatchSender() {
                         <TabsList className="bg-[#1E293B]/50 border border-[#1E293B] w-full mb-4">
                           <TabsTrigger
                             value="invoice"
-                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#0A1628]"
+                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#101010]"
                           >
                             <Receipt className="w-3.5 h-3.5 mr-1" />
                             Invoice
                           </TabsTrigger>
                           <TabsTrigger
                             value="email"
-                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#0A1628]"
+                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#101010]"
                           >
                             <Mail className="w-3.5 h-3.5 mr-1" />
                             Email
                           </TabsTrigger>
                           <TabsTrigger
                             value="edit"
-                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#0A1628]"
+                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#101010]"
                           >
                             <Pencil className="w-3.5 h-3.5 mr-1" />
                             Edit
@@ -1364,7 +1364,7 @@ export default function InvoiceBatchSender() {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#0A1628] font-semibold gap-1.5"
+                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold gap-1.5"
                               onClick={async () => {
                                 try {
                                   const pdf = await generateInvoicePdf({ ...active, issueDate: active.createdAt })
@@ -1380,7 +1380,7 @@ export default function InvoiceBatchSender() {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#0A1628] font-semibold gap-1.5"
+                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold gap-1.5"
                               onClick={() => handleSendRequest(active.id)}
                             >
                               <Send className="w-3.5 h-3.5" />
@@ -1398,7 +1398,7 @@ export default function InvoiceBatchSender() {
                               value={testAddress}
                               onChange={(e) => setTestAddress(e.target.value)}
                               placeholder="jasonstv1@bigpond.com"
-                              className="h-7 text-xs bg-[#0A1628] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853]"
+                              className="h-7 text-xs bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853]"
                             />
                           </div>
                           <ScrollArea className="h-[calc(100vh-592px)] min-h-[130px]">
@@ -1444,7 +1444,7 @@ export default function InvoiceBatchSender() {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#0A1628] font-semibold gap-1.5"
+                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold gap-1.5"
                               onClick={() => handleSendRequest(active.id)}
                             >
                               <Send className="w-3.5 h-3.5" />
@@ -1462,7 +1462,7 @@ export default function InvoiceBatchSender() {
                               <Input
                                 value={editSubject}
                                 onChange={(e) => setEditSubject(e.target.value)}
-                                className="bg-[#0A1628] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853]"
+                                className="bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853]"
                               />
                             </div>
                             <div>
@@ -1472,7 +1472,7 @@ export default function InvoiceBatchSender() {
                               <Textarea
                                 value={editBody}
                                 onChange={(e) => setEditBody(e.target.value)}
-                                className="bg-[#0A1628] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853] min-h-[300px] font-mono text-sm leading-relaxed"
+                                className="bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853] min-h-[300px] font-mono text-sm leading-relaxed"
                               />
                             </div>
                             <div className="bg-[#1E293B]/40 rounded-lg p-3 text-xs text-[#F4F1EA]/40 space-y-1">
@@ -1486,7 +1486,7 @@ export default function InvoiceBatchSender() {
                               <Button
                                 size="sm"
                                 onClick={handleSaveEmail}
-                                className="bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#0A1628] font-semibold"
+                                className="bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold"
                               >
                                 <Save className="w-3.5 h-3.5 mr-1.5" />
                                 Save
@@ -1521,10 +1521,10 @@ export default function InvoiceBatchSender() {
               onClick={() => setSendDialogOpen(false)}
             >
               <div
-                className="bg-[#0F1D32] border border-[#1E3A5F]/40 rounded-xl max-w-md w-full mx-4 shadow-2xl overflow-hidden"
+                className="bg-[#161616] border border-[#2A2A2A]/40 rounded-xl max-w-md w-full mx-4 shadow-2xl overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="p-6 border-b border-[#1E3A5F]/30">
+                <div className="p-6 border-b border-[#2A2A2A]/30">
                   <h3 className="text-lg font-bold text-[#F4F1EA]">Send Invoice</h3>
                   <p className="text-sm text-[#5B8DB8] mt-1">
                     {sendTarget.number} — {sendTarget.company}
@@ -1554,16 +1554,16 @@ export default function InvoiceBatchSender() {
                     before sending.
                   </p>
                 </div>
-                <div className="p-4 border-t border-[#1E3A5F]/30 flex gap-3">
+                <div className="p-4 border-t border-[#2A2A2A]/30 flex gap-3">
                   <Button
                     variant="outline"
-                    className="flex-1 border-[#1E3A5F]/40 text-[#F4F1EA] hover:bg-[#1E293B]"
+                    className="flex-1 border-[#2A2A2A]/40 text-[#F4F1EA] hover:bg-[#1E293B]"
                     onClick={() => setSendDialogOpen(false)}
                   >
                     Cancel
                   </Button>
                   <Button
-                    className="flex-1 bg-[#D4A853] text-[#0A1628] hover:bg-[#F4F1EA] font-bold"
+                    className="flex-1 bg-[#D4A853] text-[#101010] hover:bg-[#F4F1EA] font-bold"
                     onClick={() => handleConfirmSend(sendTarget)}
                   >
                     <Send className="w-4 h-4 mr-2" /> Send Invoice
@@ -1580,10 +1580,10 @@ export default function InvoiceBatchSender() {
               onClick={() => setConfirm((prev) => ({ ...prev, open: false }))}
             >
               <div
-                className="bg-[#0F1D32] border border-[#1E3A5F]/40 rounded-xl max-w-md w-full mx-4 shadow-2xl overflow-hidden"
+                className="bg-[#161616] border border-[#2A2A2A]/40 rounded-xl max-w-md w-full mx-4 shadow-2xl overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="p-6 border-b border-[#1E3A5F]/30">
+                <div className="p-6 border-b border-[#2A2A2A]/30">
                   <h3 className="text-lg font-bold text-[#F4F1EA] flex items-center gap-2">
                     {confirm.variant === 'danger' && (
                       <AlertTriangle className="w-5 h-5 text-red-400" />
@@ -1594,10 +1594,10 @@ export default function InvoiceBatchSender() {
                 <div className="p-6">
                   <p className="text-sm text-[#5B8DB8]">{confirm.description}</p>
                 </div>
-                <div className="p-4 border-t border-[#1E3A5F]/30 flex gap-3">
+                <div className="p-4 border-t border-[#2A2A2A]/30 flex gap-3">
                   <Button
                     variant="outline"
-                    className="flex-1 border-[#1E3A5F]/40 text-[#F4F1EA] hover:bg-[#1E293B]"
+                    className="flex-1 border-[#2A2A2A]/40 text-[#F4F1EA] hover:bg-[#1E293B]"
                     onClick={() => setConfirm((prev) => ({ ...prev, open: false }))}
                   >
                     Cancel
@@ -1606,7 +1606,7 @@ export default function InvoiceBatchSender() {
                     className={`flex-1 font-bold ${
                       confirm.variant === 'danger'
                         ? 'bg-red-600 hover:bg-red-500 text-white'
-                        : 'bg-[#D4A853] text-[#0A1628] hover:bg-[#F4F1EA]'
+                        : 'bg-[#D4A853] text-[#101010] hover:bg-[#F4F1EA]'
                     }`}
                     onClick={confirm.onConfirm}
                   >

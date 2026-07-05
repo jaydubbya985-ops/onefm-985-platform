@@ -90,10 +90,10 @@ const milestones = [
 
 /* â”€â”€â”€ Deterministic gradient avatars (same palette as Programs page) â”€â”€â”€ */
 const TEAM_PALETTES = [
-  { from: '#1B458F', to: '#0A1628', accent: '#D4AF37' },
-  { from: '#D4AF37', to: '#1B3A6F', accent: '#FFF8DC' },
+  { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
+  { from: '#F2F2F2', to: '#1B3A6F', accent: '#FFF8DC' },
   { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
-  { from: '#2EC4B6', to: '#0A2030', accent: '#7FFFD4' },
+  { from: '#B6FF00', to: '#0A2030', accent: '#7FFFD4' },
   { from: '#9B5DE5', to: '#1A0A30', accent: '#DDB3FF' },
   { from: '#FF6B6B', to: '#2A0A10', accent: '#FFB3B3' },
   { from: '#1B458F', to: '#0D2A18', accent: '#6EE7B7' },
@@ -191,7 +191,7 @@ export default function Story() {
     <Layout>
       <SEO title="Our Story" description="The story of ONE FM 98.5 â€” from 1989 to today. Callsign 3ONE, ACMA License 1385226/1. Meet the real presenters behind the mic." />
       {/* â•â•â•â•â•â•â• Section 1 â€” Hero â•â•â•â•â•â•â• */}
-      <section ref={heroRef} className="relative min-h-[85dvh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="THE STORY">
+      <section ref={heroRef} className="relative min-h-[85dvh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="THE STORY">
         <div aria-hidden className="grain-overlay" />
         <div className="absolute inset-0 z-0">
           <motion.div
@@ -207,8 +207,8 @@ export default function Story() {
               style={{ opacity: 0.60 }}
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/35 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/55 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/55 via-transparent to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 pt-36 pb-40 w-full">
@@ -274,7 +274,7 @@ export default function Story() {
       </section>
 
       {/* â”€â”€ Story Marquee Strip â”€â”€ */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={25}
           items={[

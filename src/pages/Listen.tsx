@@ -18,8 +18,8 @@ import { FrequencyTuner } from '@/components/FrequencyTuner'
 import { WeatherWidget } from '@/components/WeatherWidget'
 
 const PAGE_JOBS: PageJob[] = [
-  { label: 'Programs', path: '/programs', description: 'Weekly guide', icon: Radio, accent: '#D4AF37' },
-  { label: 'Broadcast', path: '/broadcast', description: 'Schedule grid', icon: Headphones, accent: '#2EC4B6' },
+  { label: 'Programs', path: '/programs', description: 'Weekly guide', icon: Radio, accent: '#F2F2F2' },
+  { label: 'Broadcast', path: '/broadcast', description: 'Schedule grid', icon: Headphones, accent: '#B6FF00' },
   { label: 'Coverage', path: '/coverage', description: '25 towns', icon: MapPin, accent: '#1B458F' },
   { label: 'GVL Football', path: '/football', description: 'Game day', icon: Trophy, accent: '#E51636' },
 ]
@@ -384,7 +384,7 @@ export default function Listen() {
         description="Listen to ONE FM 98.5 live — FM 98.5 across the Goulburn Murray, stream at fm985.com.au, or via Community Radio Plus."
       />
 
-      <section ref={heroRef} className="relative min-h-[78dvh] flex flex-col justify-end overflow-hidden pt-24 bg-[#050D1A]" style={{ transition: 'background 0.4s' }} data-cursor-label="TUNE IN">
+      <section ref={heroRef} className="relative min-h-[78dvh] flex flex-col justify-end overflow-hidden pt-24 bg-[#101010]" style={{ transition: 'background 0.4s' }} data-cursor-label="TUNE IN">
         <div aria-hidden className="grain-overlay" />
         <div className="absolute inset-0 z-0">
           <motion.div
@@ -395,7 +395,7 @@ export default function Listen() {
                 the studio monitor behind him instead. Bias left. */}
             <CinegraphBackground slot="listenStudio" opacity={isDemod ? 0.2 : 0.50} imageClassName="object-left" />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/55 via-[#050D1A]/25 to-[#050D1A]/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/55 via-[#101010]/25 to-[#101010]/90" />
         </div>
         {/* Demodulation scan-line overlay */}
         {isDemod && (
@@ -516,7 +516,7 @@ export default function Listen() {
       </section>
 
       {/* ── Listen Marquee Strip ── */}
-      <div className="bg-[#020810] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[

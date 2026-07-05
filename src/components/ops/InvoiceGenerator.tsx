@@ -137,7 +137,7 @@ interface GeneratedInvoice {
 // ---------------------------------------------------------------------------
 
 const STATUS_STYLES: Record<GeneratedInvoiceStatus, string> = {
-  draft: 'bg-[#1E3A5F] text-[#5B8DB8] hover:bg-[#1E3A5F]',
+  draft: 'bg-[#2A2A2A] text-[#5B8DB8] hover:bg-[#2A2A2A]',
   previewed: 'bg-[#5B8DB8]/20 text-[#5B8DB8] hover:bg-[#5B8DB8]/20',
   tested: 'bg-purple-900/40 text-purple-400 hover:bg-purple-900/40',
   sent: 'bg-[#D4A84B]/20 text-[#D4A84B] hover:bg-[#D4A84B]/20',
@@ -790,7 +790,7 @@ export default function InvoiceGenerator() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A1628] text-white p-6">
+    <div className="min-h-screen bg-[#101010] text-white p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -808,7 +808,7 @@ export default function InvoiceGenerator() {
               setBatchMode(!batchMode)
               setSelectedIds(new Set())
             }}
-            className={`border-[#1E3A5F] text-[#5B8DB8] hover:bg-[#1E3A5F]/30 ${
+            className={`border-[#2A2A2A] text-[#5B8DB8] hover:bg-[#2A2A2A]/30 ${
               batchMode ? 'bg-[#D4A84B]/20 text-[#D4A84B] border-[#D4A84B]/50' : ''
             }`}
           >
@@ -816,16 +816,16 @@ export default function InvoiceGenerator() {
             {batchMode ? 'Cancel' : 'Batch'}
           </Button>
           <Tabs value={mainTab} onValueChange={(v) => setMainTab(v)}>
-            <TabsList className="bg-[#0E1E38] border border-[#1E3A5F]/50">
+            <TabsList className="bg-[#0E1E38] border border-[#2A2A2A]/50">
               <TabsTrigger
                 value="invoices"
-                className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#0A1628] text-[#5B8DB8]"
+                className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#101010] text-[#5B8DB8]"
               >
                 Invoices
               </TabsTrigger>
               <TabsTrigger
                 value="contracts"
-                className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#0A1628] text-[#5B8DB8]"
+                className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#101010] text-[#5B8DB8]"
               >
                 <FileSignature className="h-3.5 w-3.5 mr-1" />
                 From Contract
@@ -834,11 +834,11 @@ export default function InvoiceGenerator() {
           </Tabs>
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#0A1628] font-semibold">
+              <Button className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold">
                 <Plus className="h-4 w-4 mr-2" /> Create Invoice
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-[#0E1E38] border-[#1E3A5F] text-white max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogContent className="bg-[#0E1E38] border-[#2A2A2A] text-white max-w-2xl max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-[#D4A84B]">Create New Invoice</DialogTitle>
               </DialogHeader>
@@ -846,15 +846,15 @@ export default function InvoiceGenerator() {
                 <div>
                   <label className="text-sm text-[#5B8DB8] mb-1 block">Select Sponsor</label>
                   <Select value={sponsorCompany} onValueChange={setSponsorCompany}>
-                    <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F] text-white">
+                    <SelectTrigger className="bg-[#101010] border-[#2A2A2A] text-white">
                       <SelectValue placeholder="Choose a sponsor..." />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]">
+                    <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
                       {SPONSOR_DIRECTORY.map((s, idx) => (
                         <SelectItem
                           key={`${s.company}-${idx}`}
                           value={s.company}
-                          className="text-white hover:bg-[#1E3A5F]"
+                          className="text-white hover:bg-[#2A2A2A]"
                         >
                           {s.company} — {s.name}
                         </SelectItem>
@@ -866,7 +866,7 @@ export default function InvoiceGenerator() {
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="bg-[#0A1628] rounded-lg p-3 border border-[#1E3A5F]/50 text-sm space-y-1"
+                    className="bg-[#101010] rounded-lg p-3 border border-[#2A2A2A]/50 text-sm space-y-1"
                   >
                     <p>
                       <span className="text-[#5B8DB8]">Bill to:</span> {sponsor.name}
@@ -902,7 +902,7 @@ export default function InvoiceGenerator() {
                     type="date"
                     value={createDueDate}
                     onChange={(e) => setCreateDueDate(e.target.value)}
-                    className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                    className="bg-[#101010] border-[#2A2A2A] text-white"
                   />
                 </div>
                 <div>
@@ -911,7 +911,7 @@ export default function InvoiceGenerator() {
                     value={createProposalRef}
                     onChange={(e) => setCreateProposalRef(e.target.value)}
                     placeholder="e.g. PROP-2026-008"
-                    className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                    className="bg-[#101010] border-[#2A2A2A] text-white"
                   />
                 </div>
                 <div>
@@ -922,7 +922,7 @@ export default function InvoiceGenerator() {
                         placeholder="Description"
                         value={item.description}
                         onChange={(e) => updateCreateItem(index, { description: e.target.value })}
-                        className="bg-[#0A1628] border-[#1E3A5F] text-white flex-1"
+                        className="bg-[#101010] border-[#2A2A2A] text-white flex-1"
                       />
                       <Input
                         type="number"
@@ -931,7 +931,7 @@ export default function InvoiceGenerator() {
                         onChange={(e) =>
                           updateCreateItem(index, { quantity: parseInt(e.target.value) || 0 })
                         }
-                        className="bg-[#0A1628] border-[#1E3A5F] text-white w-16"
+                        className="bg-[#101010] border-[#2A2A2A] text-white w-16"
                       />
                       <Input
                         type="number"
@@ -940,7 +940,7 @@ export default function InvoiceGenerator() {
                         onChange={(e) =>
                           updateCreateItem(index, { unitPrice: parseFloat(e.target.value) || 0 })
                         }
-                        className="bg-[#0A1628] border-[#1E3A5F] text-white w-24"
+                        className="bg-[#101010] border-[#2A2A2A] text-white w-24"
                       />
                       <div className="w-24 text-right text-sm text-white pt-2">
                         {fmt(item.amount)}
@@ -959,12 +959,12 @@ export default function InvoiceGenerator() {
                     variant="outline"
                     size="sm"
                     onClick={addCreateItem}
-                    className="border-[#1E3A5F] text-[#5B8DB8] hover:bg-[#1E3A5F]/30"
+                    className="border-[#2A2A2A] text-[#5B8DB8] hover:bg-[#2A2A2A]/30"
                   >
                     <Plus className="h-3 w-3 mr-1" /> Add Item
                   </Button>
                 </div>
-                <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1E3A5F]/50 space-y-1 text-sm">
+                <div className="bg-[#101010] rounded-lg p-3 border border-[#2A2A2A]/50 space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span className="text-[#5B8DB8]">Subtotal</span>
                     <span>{fmt(createSubtotal)}</span>
@@ -973,7 +973,7 @@ export default function InvoiceGenerator() {
                     <span className="text-[#5B8DB8]">GST (10%)</span>
                     <span>{fmt(createGst)}</span>
                   </div>
-                  <div className="flex justify-between border-t border-[#1E3A5F] pt-1 font-semibold text-[#D4A84B]">
+                  <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#D4A84B]">
                     <span>Total</span>
                     <span>{fmt(createTotal)}</span>
                   </div>
@@ -984,7 +984,7 @@ export default function InvoiceGenerator() {
                     value={createNotes}
                     onChange={(e) => setCreateNotes(e.target.value)}
                     placeholder="Optional notes..."
-                    className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                    className="bg-[#101010] border-[#2A2A2A] text-white"
                   />
                 </div>
               </div>
@@ -1002,7 +1002,7 @@ export default function InvoiceGenerator() {
                 <Button
                   onClick={handleCreateInvoice}
                   disabled={!sponsor || !createDueDate || createTotal <= 0}
-                  className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#0A1628] font-semibold"
+                  className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold"
                 >
                   Create Invoice
                 </Button>
@@ -1016,7 +1016,7 @@ export default function InvoiceGenerator() {
         <>
           {/* Stat cards */}
           <div className="grid grid-cols-6 gap-4 mb-6">
-            <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+            <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="bg-[#D4A84B]/20 p-2 rounded-lg">
                   <DollarSign className="h-5 w-5 text-[#D4A84B]" />
@@ -1027,7 +1027,7 @@ export default function InvoiceGenerator() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+            <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="bg-[#E31E24]/20 p-2 rounded-lg">
                   <AlertTriangle className="h-5 w-5 text-[#E31E24]" />
@@ -1038,7 +1038,7 @@ export default function InvoiceGenerator() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+            <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="bg-emerald-900/40 p-2 rounded-lg">
                   <CheckCircle className="h-5 w-5 text-emerald-400" />
@@ -1049,9 +1049,9 @@ export default function InvoiceGenerator() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+            <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="bg-[#1E3A5F] p-2 rounded-lg">
+                <div className="bg-[#2A2A2A] p-2 rounded-lg">
                   <FileText className="h-5 w-5 text-[#5B8DB8]" />
                 </div>
                 <div>
@@ -1060,7 +1060,7 @@ export default function InvoiceGenerator() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+            <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="bg-blue-900/40 p-2 rounded-lg">
                   <TrendingUp className="h-5 w-5 text-blue-400" />
@@ -1071,7 +1071,7 @@ export default function InvoiceGenerator() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+            <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="bg-amber-900/40 p-2 rounded-lg">
                   <Send className="h-5 w-5 text-amber-400" />
@@ -1092,11 +1092,11 @@ export default function InvoiceGenerator() {
                 placeholder="Search by company name or invoice number..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-[#0E1E38] border-[#1E3A5F]/50 text-white pl-9"
+                className="bg-[#0E1E38] border-[#2A2A2A]/50 text-white pl-9"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-[#0E1E38] border-[#1E3A5F]/50 text-white w-44">
+              <SelectTrigger className="bg-[#0E1E38] border-[#2A2A2A]/50 text-white w-44">
                 <span className="flex items-center gap-2">
                   <svg
                     className="h-4 w-4 text-[#5B8DB8]"
@@ -1110,29 +1110,29 @@ export default function InvoiceGenerator() {
                   <span className="text-[#5B8DB8]">Filter</span>
                 </span>
               </SelectTrigger>
-              <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]">
-                <SelectItem value="all" className="text-white hover:bg-[#1E3A5F]">
+              <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
+                <SelectItem value="all" className="text-white hover:bg-[#2A2A2A]">
                   All Statuses
                 </SelectItem>
-                <SelectItem value="draft" className="text-white hover:bg-[#1E3A5F]">
+                <SelectItem value="draft" className="text-white hover:bg-[#2A2A2A]">
                   Draft
                 </SelectItem>
-                <SelectItem value="sent" className="text-white hover:bg-[#1E3A5F]">
+                <SelectItem value="sent" className="text-white hover:bg-[#2A2A2A]">
                   Sent
                 </SelectItem>
-                <SelectItem value="viewed" className="text-white hover:bg-[#1E3A5F]">
+                <SelectItem value="viewed" className="text-white hover:bg-[#2A2A2A]">
                   Viewed
                 </SelectItem>
-                <SelectItem value="paid" className="text-white hover:bg-[#1E3A5F]">
+                <SelectItem value="paid" className="text-white hover:bg-[#2A2A2A]">
                   Paid
                 </SelectItem>
-                <SelectItem value="partially_paid" className="text-white hover:bg-[#1E3A5F]">
+                <SelectItem value="partially_paid" className="text-white hover:bg-[#2A2A2A]">
                   Partially Paid
                 </SelectItem>
-                <SelectItem value="overdue" className="text-white hover:bg-[#1E3A5F]">
+                <SelectItem value="overdue" className="text-white hover:bg-[#2A2A2A]">
                   Overdue
                 </SelectItem>
-                <SelectItem value="cancelled" className="text-white hover:bg-[#1E3A5F]">
+                <SelectItem value="cancelled" className="text-white hover:bg-[#2A2A2A]">
                   Cancelled
                 </SelectItem>
               </SelectContent>
@@ -1147,7 +1147,7 @@ export default function InvoiceGenerator() {
                 <Button
                   size="sm"
                   onClick={handleBatchSend}
-                  className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#0A1628] font-semibold"
+                  className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold"
                 >
                   <Send className="h-3.5 w-3.5 mr-1" /> Send
                 </Button>
@@ -1164,7 +1164,7 @@ export default function InvoiceGenerator() {
           </div>
 
           {/* Invoice table */}
-          <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+          <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg text-white">Invoices</CardTitle>
@@ -1188,7 +1188,7 @@ export default function InvoiceGenerator() {
             <CardContent>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[#1E3A5F]/50 hover:bg-transparent">
+                  <TableRow className="border-[#2A2A2A]/50 hover:bg-transparent">
                     {batchMode && <TableHead className="text-[#5B8DB8] w-10" />}
                     <TableHead
                       className="text-[#5B8DB8] cursor-pointer hover:text-[#D4A84B]"
@@ -1241,7 +1241,7 @@ export default function InvoiceGenerator() {
                     return (
                       <TableRow
                         key={invoice.id}
-                        className={`border-[#1E3A5F]/30 hover:bg-[#0A1628]/50 transition-colors ${
+                        className={`border-[#2A2A2A]/30 hover:bg-[#101010]/50 transition-colors ${
                           isSelected ? 'bg-[#D4A84B]/5' : ''
                         }`}
                       >
@@ -1401,7 +1401,7 @@ export default function InvoiceGenerator() {
 
       {mainTab === 'contracts' && (
         <div className="space-y-6">
-          <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+          <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardHeader>
               <CardTitle className="text-lg text-[#D4A84B] flex items-center gap-2">
                 <FileSignature className="h-5 w-5" />
@@ -1419,12 +1419,12 @@ export default function InvoiceGenerator() {
                     if (c) prefillFromContract(c)
                   }}
                 >
-                  <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F] text-white">
+                  <SelectTrigger className="bg-[#101010] border-[#2A2A2A] text-white">
                     <SelectValue placeholder="Choose a contract or select sponsor below..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]">
+                  <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
                     {ACTIVE_CONTRACTS.map((c) => (
-                      <SelectItem key={c.id} value={c.id} className="text-white hover:bg-[#1E3A5F]">
+                      <SelectItem key={c.id} value={c.id} className="text-white hover:bg-[#2A2A2A]">
                         {c.companyName} — {c.campaign} ({fmt(c.contractValue)})
                       </SelectItem>
                     ))}
@@ -1433,7 +1433,7 @@ export default function InvoiceGenerator() {
               </div>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#1E3A5F]/50" />
+                  <div className="w-full border-t border-[#2A2A2A]/50" />
                 </div>
                 <div className="relative flex justify-center text-xs">
                   <span className="bg-[#0E1E38] px-3 text-[#5B8DB8]">OR</span>
@@ -1442,15 +1442,15 @@ export default function InvoiceGenerator() {
               <div>
                 <label className="text-sm text-[#5B8DB8] mb-1 block">Select from Sponsors</label>
                 <Select value={contractSponsor} onValueChange={setContractSponsor}>
-                  <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F] text-white">
+                  <SelectTrigger className="bg-[#101010] border-[#2A2A2A] text-white">
                     <SelectValue placeholder="Choose a sponsor..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]">
+                  <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
                     {SPONSOR_DIRECTORY.map((s, idx) => (
                       <SelectItem
                         key={`${s.company}-${idx}`}
                         value={s.company}
-                        className="text-white hover:bg-[#1E3A5F]"
+                        className="text-white hover:bg-[#2A2A2A]"
                       >
                         {s.company} — {s.name}
                       </SelectItem>
@@ -1462,7 +1462,7 @@ export default function InvoiceGenerator() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="bg-[#0A1628] rounded-lg p-4 border border-[#D4A84B]/30 text-sm space-y-2"
+                  className="bg-[#101010] rounded-lg p-4 border border-[#D4A84B]/30 text-sm space-y-2"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-semibold text-[#D4A84B]">{contract.companyName}</h4>
@@ -1494,7 +1494,7 @@ export default function InvoiceGenerator() {
                   <p className="text-[#5B8DB8]">
                     Schedule: <span className="text-white">{contract.schedule}</span>
                   </p>
-                  <div className="flex gap-4 pt-1 border-t border-[#1E3A5F]/50 mt-2">
+                  <div className="flex gap-4 pt-1 border-t border-[#2A2A2A]/50 mt-2">
                     <p>
                       <span className="text-[#5B8DB8]">Value:</span>{' '}
                       <span className="text-[#D4A84B] font-semibold">
@@ -1516,7 +1516,7 @@ export default function InvoiceGenerator() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="bg-[#0A1628] rounded-lg p-3 border border-[#1E3A5F]/50 text-sm space-y-1"
+                  className="bg-[#101010] rounded-lg p-3 border border-[#2A2A2A]/50 text-sm space-y-1"
                 >
                   <p>
                     <span className="text-[#5B8DB8]">Bill to:</span> {contractSponsorContact.name}
@@ -1551,7 +1551,7 @@ export default function InvoiceGenerator() {
 
           {(contract || contractSponsorContact) && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+              <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
                 <CardHeader>
                   <CardTitle className="text-lg text-white">Invoice Details</CardTitle>
                 </CardHeader>
@@ -1563,7 +1563,7 @@ export default function InvoiceGenerator() {
                         type="date"
                         value={contractDate}
                         onChange={(e) => setContractDate(e.target.value)}
-                        className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                        className="bg-[#101010] border-[#2A2A2A] text-white"
                       />
                     </div>
                     <div>
@@ -1574,7 +1574,7 @@ export default function InvoiceGenerator() {
                         type="date"
                         value={contractDueDate}
                         onChange={(e) => setContractDueDate(e.target.value)}
-                        className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                        className="bg-[#101010] border-[#2A2A2A] text-white"
                       />
                     </div>
                   </div>
@@ -1585,10 +1585,10 @@ export default function InvoiceGenerator() {
                         value={recurring}
                         onValueChange={(v) => setRecurring(v as BillingFrequency)}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F] text-white">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A] text-white">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]">
+                        <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
                           <SelectItem value="none" className="text-white">
                             One-time Invoice
                           </SelectItem>
@@ -1624,7 +1624,7 @@ export default function InvoiceGenerator() {
                       value={contractProposalRef}
                       onChange={(e) => setContractProposalRef(e.target.value)}
                       placeholder="e.g. GVL 2026 MAJOR"
-                      className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                      className="bg-[#101010] border-[#2A2A2A] text-white"
                     />
                   </div>
                   <div>
@@ -1635,7 +1635,7 @@ export default function InvoiceGenerator() {
                           placeholder="Description"
                           value={item.description}
                           onChange={(e) => updateContractItem(index, { description: e.target.value })}
-                          className="bg-[#0A1628] border-[#1E3A5F] text-white flex-1"
+                          className="bg-[#101010] border-[#2A2A2A] text-white flex-1"
                         />
                         <Input
                           type="number"
@@ -1644,7 +1644,7 @@ export default function InvoiceGenerator() {
                           onChange={(e) =>
                             updateContractItem(index, { quantity: parseInt(e.target.value) || 0 })
                           }
-                          className="bg-[#0A1628] border-[#1E3A5F] text-white w-16"
+                          className="bg-[#101010] border-[#2A2A2A] text-white w-16"
                         />
                         <Input
                           type="number"
@@ -1653,7 +1653,7 @@ export default function InvoiceGenerator() {
                           onChange={(e) =>
                             updateContractItem(index, { unitPrice: parseFloat(e.target.value) || 0 })
                           }
-                          className="bg-[#0A1628] border-[#1E3A5F] text-white w-24"
+                          className="bg-[#101010] border-[#2A2A2A] text-white w-24"
                         />
                         <div className="w-24 text-right text-sm text-white pt-2">
                           {fmt(item.amount)}
@@ -1672,12 +1672,12 @@ export default function InvoiceGenerator() {
                       variant="outline"
                       size="sm"
                       onClick={addContractItem}
-                      className="border-[#1E3A5F] text-[#5B8DB8] hover:bg-[#1E3A5F]/30"
+                      className="border-[#2A2A2A] text-[#5B8DB8] hover:bg-[#2A2A2A]/30"
                     >
                       <Plus className="h-3 w-3 mr-1" /> Add Item
                     </Button>
                   </div>
-                  <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1E3A5F]/50 space-y-1 text-sm">
+                  <div className="bg-[#101010] rounded-lg p-3 border border-[#2A2A2A]/50 space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-[#5B8DB8]">Subtotal (excl GST)</span>
                       <span className="text-white">{fmt(contractSubtotal)}</span>
@@ -1686,7 +1686,7 @@ export default function InvoiceGenerator() {
                       <span className="text-[#5B8DB8]">GST (10%)</span>
                       <span className="text-white">{fmt(contractGst)}</span>
                     </div>
-                    <div className="flex justify-between border-t border-[#1E3A5F] pt-1 font-semibold text-[#D4A84B] text-base">
+                    <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#D4A84B] text-base">
                       <span>Total (incl GST)</span>
                       <span>{fmt(contractTotal)}</span>
                     </div>
@@ -1697,7 +1697,7 @@ export default function InvoiceGenerator() {
                       value={contractNotes}
                       onChange={(e) => setContractNotes(e.target.value)}
                       placeholder="Internal notes..."
-                      className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                      className="bg-[#101010] border-[#2A2A2A] text-white"
                     />
                   </div>
                   <div className="flex gap-3 pt-2">
@@ -1705,7 +1705,7 @@ export default function InvoiceGenerator() {
                       <Button
                         onClick={handleGenerateRecurring}
                         disabled={contractTotal <= 0}
-                        className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#0A1628] font-semibold flex-1"
+                        className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold flex-1"
                       >
                         <Repeat className="h-4 w-4 mr-2" />
                         Generate {FREQUENCY_LABELS[recurring]} Invoices
@@ -1714,7 +1714,7 @@ export default function InvoiceGenerator() {
                       <Button
                         onClick={handleCreateFromContract}
                         disabled={contractTotal <= 0}
-                        className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#0A1628] font-semibold flex-1"
+                        className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold flex-1"
                       >
                         <Receipt className="h-4 w-4 mr-2" />
                         Create Invoice
@@ -1723,7 +1723,7 @@ export default function InvoiceGenerator() {
                     <Button
                       variant="outline"
                       onClick={resetContractForm}
-                      className="border-[#1E3A5F] text-[#5B8DB8] hover:bg-[#1E3A5F]/30"
+                      className="border-[#2A2A2A] text-[#5B8DB8] hover:bg-[#2A2A2A]/30"
                     >
                       Reset
                     </Button>
@@ -1733,7 +1733,7 @@ export default function InvoiceGenerator() {
             </motion.div>
           )}
 
-          <Card className="bg-[#0E1E38] border-[#1E3A5F]/50">
+          <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardHeader>
               <CardTitle className="text-lg text-white flex items-center gap-2">
                 <Landmark className="h-5 w-5 text-[#D4A84B]" />
@@ -1743,7 +1743,7 @@ export default function InvoiceGenerator() {
             <CardContent>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[#1E3A5F]/50 hover:bg-transparent">
+                  <TableRow className="border-[#2A2A2A]/50 hover:bg-transparent">
                     <TableHead className="text-[#5B8DB8]">Company</TableHead>
                     <TableHead className="text-[#5B8DB8]">Campaign</TableHead>
                     <TableHead className="text-[#5B8DB8]">Industry</TableHead>
@@ -1758,7 +1758,7 @@ export default function InvoiceGenerator() {
                   {ACTIVE_CONTRACTS.map((c) => (
                     <TableRow
                       key={c.id}
-                      className="border-[#1E3A5F]/30 hover:bg-[#0A1628]/50 cursor-pointer"
+                      className="border-[#2A2A2A]/30 hover:bg-[#101010]/50 cursor-pointer"
                       onClick={() => {
                         setContractId(c.id)
                         prefillFromContract(c)
@@ -1800,7 +1800,7 @@ export default function InvoiceGenerator() {
         <DialogContent className="bg-white text-black max-w-3xl max-h-[85vh] overflow-y-auto print:max-w-none print:max-h-none print:w-full print:overflow-visible print:bg-white print:text-black print:border-none print:shadow-none print:fixed print:inset-0 print:top-0 print:left-0 print:translate-x-0 print:translate-y-0 print:rounded-none print:p-0">
           {viewInvoice && (
             <div className="print-area">
-              <div className="bg-[#0A1628] p-6 -mx-6 -mt-6 mb-6 print:mx-0 print:mt-0 print:mb-4">
+              <div className="bg-[#101010] p-6 -mx-6 -mt-6 mb-6 print:mx-0 print:mt-0 print:mb-4">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-3xl font-bold text-white tracking-tight">
@@ -1826,7 +1826,7 @@ export default function InvoiceGenerator() {
                   <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                     Bill To
                   </h4>
-                  <p className="font-semibold text-[#0A1628]">{viewInvoice.billTo.name}</p>
+                  <p className="font-semibold text-[#101010]">{viewInvoice.billTo.name}</p>
                   <p className="text-gray-700">{viewInvoice.billTo.company}</p>
                   {viewInvoice.billTo.phone && (
                     <p className="text-gray-500 text-sm">{viewInvoice.billTo.phone}</p>
@@ -1881,7 +1881,7 @@ export default function InvoiceGenerator() {
 
               <table className="w-full mb-6 border-collapse">
                 <thead>
-                  <tr className="bg-[#0A1628] text-white">
+                  <tr className="bg-[#101010] text-white">
                     <th className="text-left p-3 text-sm font-semibold">Description</th>
                     <th className="text-center p-3 text-sm font-semibold w-20">Qty</th>
                     <th className="text-right p-3 text-sm font-semibold w-32">Unit Price</th>
@@ -1911,8 +1911,8 @@ export default function InvoiceGenerator() {
                     <span className="font-medium">{fmt(viewInvoice.gst)}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold border-t-2 border-gray-300 pt-2">
-                    <span className="text-[#0A1628]">Total (AUD)</span>
-                    <span className="text-[#0A1628]">{fmt(viewInvoice.total)}</span>
+                    <span className="text-[#101010]">Total (AUD)</span>
+                    <span className="text-[#101010]">{fmt(viewInvoice.total)}</span>
                   </div>
                   {viewInvoice.paidAmount !== undefined && viewInvoice.paidAmount > 0 && (
                     <>
@@ -1944,30 +1944,30 @@ export default function InvoiceGenerator() {
                 </div>
               )}
 
-              <div className="bg-[#0A1628]/5 border border-[#0A1628]/10 rounded-lg p-4 mb-4">
-                <h4 className="text-xs font-semibold text-[#0A1628] uppercase tracking-wider mb-3 flex items-center gap-2">
+              <div className="bg-[#101010]/5 border border-[#101010]/10 rounded-lg p-4 mb-4">
+                <h4 className="text-xs font-semibold text-[#101010] uppercase tracking-wider mb-3 flex items-center gap-2">
                   <Landmark className="h-4 w-4" /> Payment Instructions
                 </h4>
                 <div className="text-sm text-gray-700 space-y-1.5">
                   <p>
-                    <span className="font-semibold text-[#0A1628]">Account Name:</span> 98.5 One FM.
+                    <span className="font-semibold text-[#101010]">Account Name:</span> 98.5 One FM.
                   </p>
                   <p>
-                    <span className="font-semibold text-[#0A1628]">Bank:</span> Commonwealth Bank of
+                    <span className="font-semibold text-[#101010]">Bank:</span> Commonwealth Bank of
                     Australia
                   </p>
                   <div className="flex gap-6">
                     <p>
-                      <span className="font-semibold text-[#0A1628]">BSB:</span> 083-894
+                      <span className="font-semibold text-[#101010]">BSB:</span> 083-894
                     </p>
                     <p>
-                      <span className="font-semibold text-[#0A1628]">Account No:</span> 553 219 432
+                      <span className="font-semibold text-[#101010]">Account No:</span> 553 219 432
                     </p>
                   </div>
                   <p>
-                    <span className="font-semibold text-[#0A1628]">Reference:</span> Please use
+                    <span className="font-semibold text-[#101010]">Reference:</span> Please use
                     invoice number{' '}
-                    <span className="font-mono text-[#0A1628]">{viewInvoice.invoiceNumber}</span>
+                    <span className="font-mono text-[#101010]">{viewInvoice.invoiceNumber}</span>
                   </p>
                 </div>
               </div>
@@ -1982,7 +1982,7 @@ export default function InvoiceGenerator() {
               </div>
 
               <div className="mt-6 text-center py-4 border-t border-gray-200">
-                <p className="text-[#0A1628] font-semibold text-sm">
+                <p className="text-[#101010] font-semibold text-sm">
                   Thank you for supporting community radio!
                 </p>
                 <p className="text-gray-400 text-xs mt-1">
@@ -1996,7 +1996,7 @@ export default function InvoiceGenerator() {
 
       {/* Edit dialog */}
       <Dialog open={!!editInvoice} onOpenChange={(open) => !open && setEditInvoice(null)}>
-        <DialogContent className="bg-[#0E1E38] border-[#1E3A5F] text-white max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="bg-[#0E1E38] border-[#2A2A2A] text-white max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A84B]">
               Edit Invoice {editInvoice?.invoiceNumber}
@@ -2004,7 +2004,7 @@ export default function InvoiceGenerator() {
           </DialogHeader>
           {editInvoice && (
             <div className="space-y-4">
-              <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1E3A5F]/50 text-sm">
+              <div className="bg-[#101010] rounded-lg p-3 border border-[#2A2A2A]/50 text-sm">
                 <p>
                   <span className="text-[#5B8DB8]">Company:</span> {editInvoice.billTo.company}
                 </p>
@@ -2019,7 +2019,7 @@ export default function InvoiceGenerator() {
                     type="date"
                     value={editInvoice.date}
                     onChange={(e) => setEditInvoice({ ...editInvoice, date: e.target.value })}
-                    className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                    className="bg-[#101010] border-[#2A2A2A] text-white"
                   />
                 </div>
                 <div>
@@ -2028,7 +2028,7 @@ export default function InvoiceGenerator() {
                     type="date"
                     value={editInvoice.dueDate}
                     onChange={(e) => setEditInvoice({ ...editInvoice, dueDate: e.target.value })}
-                    className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                    className="bg-[#101010] border-[#2A2A2A] text-white"
                   />
                 </div>
               </div>
@@ -2037,7 +2037,7 @@ export default function InvoiceGenerator() {
                 <Input
                   value={editInvoice.proposalRef || ''}
                   onChange={(e) => setEditInvoice({ ...editInvoice, proposalRef: e.target.value })}
-                  className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                  className="bg-[#101010] border-[#2A2A2A] text-white"
                 />
               </div>
               <div>
@@ -2045,10 +2045,10 @@ export default function InvoiceGenerator() {
                 <Input
                   value={editInvoice.notes || ''}
                   onChange={(e) => setEditInvoice({ ...editInvoice, notes: e.target.value })}
-                  className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                  className="bg-[#101010] border-[#2A2A2A] text-white"
                 />
               </div>
-              <div className="bg-[#0A1628] rounded-lg p-3 border border-[#1E3A5F]/50 space-y-1 text-sm">
+              <div className="bg-[#101010] rounded-lg p-3 border border-[#2A2A2A]/50 space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[#5B8DB8]">Subtotal</span>
                   <span>{fmt(editInvoice.subtotal)}</span>
@@ -2057,7 +2057,7 @@ export default function InvoiceGenerator() {
                   <span className="text-[#5B8DB8]">GST (10%)</span>
                   <span>{fmt(editInvoice.gst)}</span>
                 </div>
-                <div className="flex justify-between border-t border-[#1E3A5F] pt-1 font-semibold text-[#D4A84B]">
+                <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#D4A84B]">
                   <span>Total</span>
                   <span>{fmt(editInvoice.total)}</span>
                 </div>
@@ -2070,7 +2070,7 @@ export default function InvoiceGenerator() {
             </Button>
             <Button
               onClick={handleSaveEdit}
-              className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#0A1628] font-semibold"
+              className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold"
             >
               <CheckCircle className="h-4 w-4 mr-2" /> Save Changes
             </Button>
@@ -2080,7 +2080,7 @@ export default function InvoiceGenerator() {
 
       {/* Payment dialog */}
       <Dialog open={!!payInvoice} onOpenChange={(open) => !open && setPayInvoice(null)}>
-        <DialogContent className="bg-[#0E1E38] border-[#1E3A5F] text-white max-w-md max-h-[85vh] overflow-y-auto">
+        <DialogContent className="bg-[#0E1E38] border-[#2A2A2A] text-white max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A84B]">
               {payInvoice?.status === 'partially_paid'
@@ -2090,7 +2090,7 @@ export default function InvoiceGenerator() {
           </DialogHeader>
           {payInvoice && (
             <div className="space-y-4">
-              <div className="bg-[#0A1628] rounded p-3 border border-[#1E3A5F]/50 text-sm">
+              <div className="bg-[#101010] rounded p-3 border border-[#2A2A2A]/50 text-sm">
                 <p className="text-[#5B8DB8]">
                   Invoice:{' '}
                   <span className="text-[#D4A84B] font-mono">{payInvoice.invoiceNumber}</span>
@@ -2121,7 +2121,7 @@ export default function InvoiceGenerator() {
                   step="0.01"
                   value={payAmount}
                   onChange={(e) => setPayAmount(e.target.value)}
-                  className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                  className="bg-[#101010] border-[#2A2A2A] text-white"
                 />
               </div>
               <div>
@@ -2130,16 +2130,16 @@ export default function InvoiceGenerator() {
                   type="date"
                   value={payDate}
                   onChange={(e) => setPayDate(e.target.value)}
-                  className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                  className="bg-[#101010] border-[#2A2A2A] text-white"
                 />
               </div>
               <div>
                 <label className="text-sm text-[#5B8DB8] mb-1 block">Payment Method</label>
                 <Select value={payMethod} onValueChange={(v) => setPayMethod(v as PaymentMethodKey)}>
-                  <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F] text-white">
+                  <SelectTrigger className="bg-[#101010] border-[#2A2A2A] text-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0E1E38] border-[#1E3A5F]">
+                  <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
                     <SelectItem value="bank_transfer" className="text-white">
                       Bank Transfer
                     </SelectItem>
@@ -2164,7 +2164,7 @@ export default function InvoiceGenerator() {
                   value={payNotes}
                   onChange={(e) => setPayNotes(e.target.value)}
                   placeholder="e.g. Ref #12345, bank transfer confirmed"
-                  className="bg-[#0A1628] border-[#1E3A5F] text-white"
+                  className="bg-[#101010] border-[#2A2A2A] text-white"
                 />
               </div>
             </div>

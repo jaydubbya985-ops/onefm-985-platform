@@ -18,7 +18,7 @@ export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; classNa
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {jobs.map((job, i) => {
             const Icon = job.icon
-            const accent = job.accent ?? '#D4AF37'
+            const accent = job.accent ?? '#F2F2F2'
             return (
               <motion.div
                 key={job.path}

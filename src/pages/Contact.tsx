@@ -84,7 +84,7 @@ function ContactHero() {
 
   return (
     <>
-      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#050D1A]" data-cursor-label="GET IN TOUCH">
+      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="GET IN TOUCH">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -99,8 +99,8 @@ function ContactHero() {
               style={{ opacity: 0.55 }}
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050D1A] via-[#050D1A]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050D1A]/65 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/65 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
 
@@ -203,7 +203,7 @@ function ContactHero() {
         </div>
       </section>
 
-      <div className="py-4 bg-[#050D1A] border-y border-one-gold/10 overflow-hidden">
+      <div className="py-4 bg-[#101010] border-y border-one-gold/10 overflow-hidden">
         <Marquee
           speed={35}
           items={marqueeItems.map((item) => (

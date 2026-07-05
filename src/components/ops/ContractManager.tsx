@@ -161,7 +161,7 @@ function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
     >
-      <Card className="bg-[#0F1D30] border-[#1E3A5F]/40 hover:border-[#D4A853]/30 transition-all">
+      <Card className="bg-[#161616] border-[#2A2A2A]/40 hover:border-[#D4A853]/30 transition-all">
         <CardContent className="p-5">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0 overflow-hidden">
@@ -171,7 +171,7 @@ function StatCard({
               <p className="text-[#F4F1EA] text-2xl font-bold truncate">{value}</p>
               {subtitle && <p className="text-[#5B8DB8]/60 text-xs mt-1 truncate">{subtitle}</p>}
             </div>
-            <div className="ml-3 p-2 rounded-lg bg-[#1E3A5F]/30">
+            <div className="ml-3 p-2 rounded-lg bg-[#2A2A2A]/30">
               <Icon className="w-5 h-5 text-[#D4A853]" />
             </div>
           </div>
@@ -782,10 +782,10 @@ export default function ContractManager() {
   ]
 
   const fieldClass =
-    'bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm placeholder:text-[#5B8DB8]/30'
+    'bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm placeholder:text-[#5B8DB8]/30'
 
   return (
-    <div className="min-h-screen bg-[#0A1628]">
+    <div className="min-h-screen bg-[#101010]">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -802,7 +802,7 @@ export default function ContractManager() {
           <Button
             onClick={exportCsv}
             variant="outline"
-            className="bg-transparent border-[#1E3A5F]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
+            className="bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
           >
             <Download className="w-4 h-4 mr-2" />
             Export CSV
@@ -810,14 +810,14 @@ export default function ContractManager() {
           <Button
             onClick={exportXero}
             variant="outline"
-            className="bg-transparent border-[#1E3A5F]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
+            className="bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
           >
             <Download className="w-4 h-4 mr-2" />
             Export for Xero
           </Button>
           <Button
             onClick={openCreate}
-            className="bg-[#D4A853] text-[#0A1628] hover:bg-[#D4A853]/90 text-xs font-semibold"
+            className="bg-[#D4A853] text-[#101010] hover:bg-[#D4A853]/90 text-xs font-semibold"
           >
             <Plus className="w-4 h-4 mr-2" />
             New Contract
@@ -876,7 +876,7 @@ export default function ContractManager() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-[#0F1D30] border border-[#1E3A5F]/40 rounded-lg p-4 mb-6"
+        className="bg-[#161616] border border-[#2A2A2A]/40 rounded-lg p-4 mb-6"
       >
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="relative flex-1">
@@ -885,16 +885,16 @@ export default function ContractManager() {
               placeholder="Search company, contact, contract #, campaign..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] placeholder:text-[#5B8DB8]/30 text-sm"
+              className="pl-10 bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] placeholder:text-[#5B8DB8]/30 text-sm"
             />
           </div>
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-[#5B8DB8]/50" />
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[160px] bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-xs">
+              <SelectTrigger className="w-[160px] bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-xs">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
-              <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+              <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                 <SelectItem value="all" className="text-[#F4F1EA]">
                   All Statuses
                 </SelectItem>
@@ -909,10 +909,10 @@ export default function ContractManager() {
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-[#5B8DB8]/50" />
             <Select value={industryFilter} onValueChange={setIndustryFilter}>
-              <SelectTrigger className="w-[160px] bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-xs">
+              <SelectTrigger className="w-[160px] bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-xs">
                 <SelectValue placeholder="All Industries" />
               </SelectTrigger>
-              <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+              <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                 <SelectItem value="all" className="text-[#F4F1EA]">
                   All Industries
                 </SelectItem>
@@ -927,10 +927,10 @@ export default function ContractManager() {
           <div className="flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-[#5B8DB8]/50" />
             <Select value={billingFilter} onValueChange={setBillingFilter}>
-              <SelectTrigger className="w-[160px] bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-xs">
+              <SelectTrigger className="w-[160px] bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-xs">
                 <SelectValue placeholder="All Billing" />
               </SelectTrigger>
-              <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+              <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                 <SelectItem value="all" className="text-[#F4F1EA]">
                   All Billing
                 </SelectItem>
@@ -950,9 +950,9 @@ export default function ContractManager() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="bg-[#0F1D30] border border-[#1E3A5F]/40 rounded-lg overflow-hidden"
+        className="bg-[#161616] border border-[#2A2A2A]/40 rounded-lg overflow-hidden"
       >
-        <div className="px-4 py-3 border-b border-[#1E3A5F]/30 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-[#2A2A2A]/30 flex items-center justify-between">
           <p className="text-[#F4F1EA] text-sm font-medium">
             {filteredContracts.length}{' '}
             <span className="text-[#5B8DB8]/60 font-normal">
@@ -963,7 +963,7 @@ export default function ContractManager() {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-[#1E3A5F]/30 hover:bg-transparent">
+              <TableRow className="border-b border-[#2A2A2A]/30 hover:bg-transparent">
                 <SortableHeader
                   field="contractNumber"
                   className="w-[120px]"
@@ -1048,7 +1048,7 @@ export default function ContractManager() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
                       transition={{ delay: index * 0.02 }}
-                      className="border-b border-[#1E3A5F]/20 hover:bg-[#1E3A5F]/15 transition-colors cursor-pointer"
+                      className="border-b border-[#2A2A2A]/20 hover:bg-[#2A2A2A]/15 transition-colors cursor-pointer"
                       onClick={() => openDetail(contract)}
                     >
                       <TableCell className="text-[#F4F1EA] text-xs font-mono font-medium">
@@ -1056,7 +1056,7 @@ export default function ContractManager() {
                       </TableCell>
                       <TableCell className="max-w-[180px]">
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="w-7 h-7 rounded-full bg-[#1E3A5F]/40 flex items-center justify-center shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-[#2A2A2A]/40 flex items-center justify-center shrink-0">
                             <Building2 className="w-3.5 h-3.5 text-[#5B8DB8]" />
                           </div>
                           <span className="text-[#F4F1EA] text-xs font-medium truncate">
@@ -1070,7 +1070,7 @@ export default function ContractManager() {
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className="text-[10px] bg-[#1E3A5F]/20 text-[#5B8DB8] border-[#1E3A5F]/40"
+                          className="text-[10px] bg-[#2A2A2A]/20 text-[#5B8DB8] border-[#2A2A2A]/40"
                         >
                           {contract.industry}
                         </Badge>
@@ -1157,7 +1157,7 @@ export default function ContractManager() {
         </div>
         {filteredContracts.length === 0 && (
           <div className="text-center py-16">
-            <FileText className="w-12 h-12 text-[#1E3A5F]/40 mx-auto mb-3" />
+            <FileText className="w-12 h-12 text-[#2A2A2A]/40 mx-auto mb-3" />
             <p className="text-[#5B8DB8]/40 text-sm">No contracts found</p>
             <p className="text-[#5B8DB8]/30 text-xs mt-1">
               Try adjusting your filters or create a new contract
@@ -1178,8 +1178,8 @@ export default function ContractManager() {
           }
         }}
       >
-        <DialogContent className="max-w-[95vw] max-h-[85vh] bg-[#0F1D30] border-[#1E3A5F]/40 p-0 w-[95vw] flex flex-col overflow-hidden">
-          <DialogHeader className="px-6 pt-6 pb-4 border-b border-[#1E3A5F]/30 shrink-0">
+        <DialogContent className="max-w-[95vw] max-h-[85vh] bg-[#161616] border-[#2A2A2A]/40 p-0 w-[95vw] flex flex-col overflow-hidden">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-[#2A2A2A]/30 shrink-0">
             <DialogTitle className="text-[#F4F1EA] text-xl font-bold flex items-center gap-3 break-words">
               <FilePenLine className="w-5 h-5 text-[#D4A853] shrink-0" />
               <span className="truncate">
@@ -1195,7 +1195,7 @@ export default function ContractManager() {
           <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-hidden">
             <div className="flex-1 overflow-y-auto overflow-x-hidden">
               {!editing && (
-                <div className="px-6 py-4 border-b border-[#1E3A5F]/30 bg-[#0A1628]/50">
+                <div className="px-6 py-4 border-b border-[#2A2A2A]/30 bg-[#101010]/50">
                   <Label className="text-[#F4F1EA] text-xs font-medium uppercase tracking-wider mb-3 block">
                     Start from Template (Optional)
                   </Label>
@@ -1209,8 +1209,8 @@ export default function ContractManager() {
                       }}
                       className={`text-xs h-auto py-3 flex flex-col items-center gap-1 min-w-0 overflow-hidden ${
                         selectedTemplate === ''
-                          ? 'bg-[#D4A853] text-[#0A1628] hover:bg-[#D4A853]/90'
-                          : 'bg-transparent border-[#1E3A5F]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30'
+                          ? 'bg-[#D4A853] text-[#101010] hover:bg-[#D4A853]/90'
+                          : 'bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30'
                       }`}
                     >
                       <span className="font-semibold truncate max-w-full">Blank</span>
@@ -1227,8 +1227,8 @@ export default function ContractManager() {
                         }}
                         className={`text-xs h-auto py-3 flex flex-col items-center gap-1 min-w-0 overflow-hidden ${
                           selectedTemplate === template.id
-                            ? 'bg-[#D4A853] text-[#0A1628] hover:bg-[#D4A853]/90'
-                            : 'bg-transparent border-[#1E3A5F]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30'
+                            ? 'bg-[#D4A853] text-[#101010] hover:bg-[#D4A853]/90'
+                            : 'bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30'
                         }`}
                       >
                         <span className="font-semibold truncate max-w-full">{template.name}</span>
@@ -1241,13 +1241,13 @@ export default function ContractManager() {
                 </div>
               )}
               <Tabs value={formTab} onValueChange={setFormTab} className="w-full">
-                <div className="px-6 border-b border-[#1E3A5F]/30">
+                <div className="px-6 border-b border-[#2A2A2A]/30">
                   <TabsList className="bg-transparent h-10 w-full justify-start gap-1">
                     {formTabs.map((tab) => (
                       <TabsTrigger
                         key={tab.id}
                         value={tab.id}
-                        className="text-xs px-3 py-2 rounded-t-lg data-[state=active]:bg-[#1E3A5F]/40 data-[state=active]:text-[#D4A853] data-[state=active]:border-b-2 data-[state=active]:border-[#D4A853] text-[#5B8DB8] hover:text-[#F4F1EA] transition-all min-w-0 inline-flex items-center gap-1.5"
+                        className="text-xs px-3 py-2 rounded-t-lg data-[state=active]:bg-[#2A2A2A]/40 data-[state=active]:text-[#D4A853] data-[state=active]:border-b-2 data-[state=active]:border-[#D4A853] text-[#5B8DB8] hover:text-[#F4F1EA] transition-all min-w-0 inline-flex items-center gap-1.5"
                       >
                         <tab.icon className="w-3.5 h-3.5 shrink-0" />
                         <span className="truncate">{tab.label}</span>
@@ -1287,10 +1287,10 @@ export default function ContractManager() {
                         value={form.industry}
                         onValueChange={(v) => setForm((f) => ({ ...f, industry: v }))}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm">
                           <SelectValue placeholder="Select industry" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+                        <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                           {INDUSTRIES.map((industry) => (
                             <SelectItem key={industry} value={industry} className="text-[#F4F1EA]">
                               {industry}
@@ -1308,7 +1308,7 @@ export default function ContractManager() {
                         className={fieldClass}
                       />
                     </div>
-                    <Separator className="col-span-full bg-[#1E3A5F]/30 my-2" />
+                    <Separator className="col-span-full bg-[#2A2A2A]/30 my-2" />
                     <div className="space-y-2 min-w-0">
                       <Label className="text-[#F4F1EA] text-xs">Street Address</Label>
                       <Input
@@ -1333,10 +1333,10 @@ export default function ContractManager() {
                         value={form.state}
                         onValueChange={(v) => setForm((f) => ({ ...f, state: v }))}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+                        <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                           {CONTRACT_STATES.map((state) => (
                             <SelectItem key={state} value={state} className="text-[#F4F1EA]">
                               {state}
@@ -1408,7 +1408,7 @@ export default function ContractManager() {
                         className={fieldClass}
                       />
                     </div>
-                    <Separator className="col-span-full bg-[#1E3A5F]/30 my-2" />
+                    <Separator className="col-span-full bg-[#2A2A2A]/30 my-2" />
                     <div className="col-span-full">
                       <h4 className="text-[#5B8DB8] text-xs font-semibold uppercase tracking-wider mb-3">
                         Secondary Contact (Optional)
@@ -1458,7 +1458,7 @@ export default function ContractManager() {
                         <Input
                           value={nextContractNumber(contracts)}
                           disabled
-                          className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#5B8DB8] text-sm font-mono"
+                          className="bg-[#101010] border-[#2A2A2A]/40 text-[#5B8DB8] text-sm font-mono"
                         />
                       </div>
                     )}
@@ -1468,7 +1468,7 @@ export default function ContractManager() {
                         <Input
                           value={editing.contractNumber}
                           disabled
-                          className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#5B8DB8] text-sm font-mono"
+                          className="bg-[#101010] border-[#2A2A2A]/40 text-[#5B8DB8] text-sm font-mono"
                         />
                       </div>
                     )}
@@ -1490,10 +1490,10 @@ export default function ContractManager() {
                           value={form.packageType}
                           onValueChange={(v) => setForm((f) => ({ ...f, packageType: v }))}
                         >
-                          <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm">
+                          <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm">
                             <SelectValue placeholder="Select package type" />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+                          <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                             {PACKAGE_TYPES.map((pkg) => (
                               <SelectItem key={pkg.value} value={pkg.value} className="text-[#F4F1EA]">
                                 {pkg.label}
@@ -1538,7 +1538,7 @@ export default function ContractManager() {
                       <Input
                         value={formatCurrency(gstOf(form.contractValue))}
                         disabled
-                        className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#5B8DB8] text-sm font-mono"
+                        className="bg-[#101010] border-[#2A2A2A]/40 text-[#5B8DB8] text-sm font-mono"
                       />
                     </div>
                     <div className="space-y-2 min-w-0">
@@ -1546,10 +1546,10 @@ export default function ContractManager() {
                       <Input
                         value={formatCurrency(totalIncGstOf(form.contractValue))}
                         disabled
-                        className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#D4A853] text-sm font-semibold font-mono"
+                        className="bg-[#101010] border-[#2A2A2A]/40 text-[#D4A853] text-sm font-semibold font-mono"
                       />
                     </div>
-                    <Separator className="col-span-full bg-[#1E3A5F]/30 my-1" />
+                    <Separator className="col-span-full bg-[#2A2A2A]/30 my-1" />
                     <div className="space-y-2 min-w-0">
                       <Label className="text-[#F4F1EA] text-xs">
                         Billing Frequency <span className="text-[#E31E24]">*</span>
@@ -1558,10 +1558,10 @@ export default function ContractManager() {
                         value={form.billingFrequency}
                         onValueChange={(v) => setForm((f) => ({ ...f, billingFrequency: v }))}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm">
                           <SelectValue placeholder="Select frequency" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+                        <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                           {BILLING_FREQUENCIES.map((freq) => (
                             <SelectItem key={freq.value} value={freq.value} className="text-[#F4F1EA]">
                               {freq.label}
@@ -1592,7 +1592,7 @@ export default function ContractManager() {
                             : totalIncGstOf(form.contractValue),
                         )}
                         disabled
-                        className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#5B8DB8] text-sm font-mono"
+                        className="bg-[#101010] border-[#2A2A2A]/40 text-[#5B8DB8] text-sm font-mono"
                       />
                     </div>
                     <div className="space-y-2 min-w-0">
@@ -1601,10 +1601,10 @@ export default function ContractManager() {
                         value={form.paymentTerms}
                         onValueChange={(v) => setForm((f) => ({ ...f, paymentTerms: v }))}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+                        <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                           {PAYMENT_TERMS.map((terms) => (
                             <SelectItem
                               key={terms.value}
@@ -1631,7 +1631,7 @@ export default function ContractManager() {
                         type="date"
                         value={form.startDate}
                         onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
-                        className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm"
+                        className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm"
                       />
                     </div>
                     <div className="space-y-2 min-w-0">
@@ -1642,7 +1642,7 @@ export default function ContractManager() {
                         type="date"
                         value={form.endDate}
                         onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))}
-                        className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm"
+                        className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm"
                       />
                     </div>
                     <div className="space-y-2 min-w-0">
@@ -1651,10 +1651,10 @@ export default function ContractManager() {
                         value={form.spotDuration}
                         onValueChange={(v) => setForm((f) => ({ ...f, spotDuration: v }))}
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+                        <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                           {SPOT_DURATIONS.map((duration) => (
                             <SelectItem key={duration} value={duration} className="text-[#F4F1EA]">
                               {duration}
@@ -1687,7 +1687,7 @@ export default function ContractManager() {
                         return (
                           <div
                             key={daypart}
-                            className="bg-[#0A1628] border border-[#1E3A5F]/40 rounded-lg p-3"
+                            className="bg-[#101010] border border-[#2A2A2A]/40 rounded-lg p-3"
                           >
                             <div className="flex items-center gap-2 mb-2">
                               <Checkbox
@@ -1705,7 +1705,7 @@ export default function ContractManager() {
                                         }),
                                   )
                                 }}
-                                className="border-[#1E3A5F] data-[state=checked]:bg-[#D4A853] data-[state=checked]:border-[#D4A853]"
+                                className="border-[#2A2A2A] data-[state=checked]:bg-[#D4A853] data-[state=checked]:border-[#D4A853]"
                               />
                               <Label className="text-[#F4F1EA] text-xs font-medium cursor-pointer">
                                 {daypart}
@@ -1726,7 +1726,7 @@ export default function ContractManager() {
                                     ),
                                   }))
                                 }
-                                className="h-7 text-xs bg-[#0F1D30] border-[#1E3A5F]/40 text-[#F4F1EA]"
+                                className="h-7 text-xs bg-[#161616] border-[#2A2A2A]/40 text-[#F4F1EA]"
                               />
                             )}
                           </div>
@@ -1753,10 +1753,10 @@ export default function ContractManager() {
                           setForm((f) => ({ ...f, status: v as ContractStatus }))
                         }
                       >
-                        <SelectTrigger className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm">
+                        <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0F1D30] border-[#1E3A5F]/40">
+                        <SelectContent className="bg-[#161616] border-[#2A2A2A]/40">
                           {CONTRACT_STATUSES.map((status) => (
                             <SelectItem key={status} value={status} className="text-[#F4F1EA]">
                               {STATUS_LABELS[status]}
@@ -1771,7 +1771,7 @@ export default function ContractManager() {
                         type="date"
                         value={form.signedDate}
                         onChange={(e) => setForm((f) => ({ ...f, signedDate: e.target.value }))}
-                        className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm"
+                        className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm"
                       />
                     </div>
                     <div className="space-y-2 min-w-0">
@@ -1800,7 +1800,7 @@ export default function ContractManager() {
                         onChange={(e) =>
                           setForm((f) => ({ ...f, renewalReminderDate: e.target.value }))
                         }
-                        className="bg-[#0A1628] border-[#1E3A5F]/40 text-[#F4F1EA] text-sm"
+                        className="bg-[#101010] border-[#2A2A2A]/40 text-[#F4F1EA] text-sm"
                       />
                     </div>
                     <div className="space-y-2 md:col-span-2">
@@ -1817,7 +1817,7 @@ export default function ContractManager() {
                 </div>
               </Tabs>
             </div>
-            <DialogFooter className="px-6 py-4 border-t border-[#1E3A5F]/30 gap-2 shrink-0">
+            <DialogFooter className="px-6 py-4 border-t border-[#2A2A2A]/30 gap-2 shrink-0">
               <Button
                 type="button"
                 variant="outline"
@@ -1826,14 +1826,14 @@ export default function ContractManager() {
                   setEditingId(null)
                   setForm(emptyContractForm())
                 }}
-                className="bg-transparent border-[#1E3A5F]/40 text-[#5B8DB8] hover:text-[#F4F1EA] hover:border-[#D4A853]/30 text-xs"
+                className="bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#F4F1EA] hover:border-[#D4A853]/30 text-xs"
               >
                 <X className="w-3.5 h-3.5 mr-1.5" />
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="bg-[#D4A853] text-[#0A1628] hover:bg-[#D4A853]/90 text-xs font-semibold"
+                className="bg-[#D4A853] text-[#101010] hover:bg-[#D4A853]/90 text-xs font-semibold"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
                 {editing ? 'Save Changes' : 'Create Contract'}
@@ -1851,10 +1851,10 @@ export default function ContractManager() {
           if (!open) setDetailId(null)
         }}
       >
-        <DialogContent className="max-w-[95vw] max-h-[85vh] overflow-y-auto overflow-x-hidden bg-[#0F1D30] border-[#1E3A5F]/40 p-0 w-[95vw]">
+        <DialogContent className="max-w-[95vw] max-h-[85vh] overflow-y-auto overflow-x-hidden bg-[#161616] border-[#2A2A2A]/40 p-0 w-[95vw]">
           {detail && (
             <>
-              <div className="px-6 pt-6 pb-4 border-b border-[#1E3A5F]/30">
+              <div className="px-6 pt-6 pb-4 border-b border-[#2A2A2A]/30">
                 <div className="flex items-start justify-between gap-4 min-w-0">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-3 mb-2 min-w-0">
@@ -1881,7 +1881,7 @@ export default function ContractManager() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-transparent border-[#1E3A5F]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
+                          className="bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
                           onClick={() => {
                             setIsDetailOpen(false)
                             openEdit(detail)
@@ -1893,7 +1893,7 @@ export default function ContractManager() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-transparent border-[#1E3A5F]/40 text-emerald-400 hover:text-emerald-300 hover:border-emerald-400/30 text-xs"
+                          className="bg-transparent border-[#2A2A2A]/40 text-emerald-400 hover:text-emerald-300 hover:border-emerald-400/30 text-xs"
                           onClick={() => openGenerateInvoice(detail)}
                         >
                           <Receipt className="w-3.5 h-3.5 mr-1.5" />
@@ -1902,7 +1902,7 @@ export default function ContractManager() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-transparent border-[#1E3A5F]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
+                          className="bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
                           onClick={() => handleRenew(detail)}
                         >
                           <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
@@ -1911,7 +1911,7 @@ export default function ContractManager() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-transparent border-[#1E3A5F]/40 text-[#E31E24] hover:text-[#E31E24] hover:border-[#E31E24]/30 text-xs"
+                          className="bg-transparent border-[#2A2A2A]/40 text-[#E31E24] hover:text-[#E31E24] hover:border-[#E31E24]/30 text-xs"
                           onClick={() => handleCancelContract(detail)}
                         >
                           <Ban className="w-3.5 h-3.5 mr-1.5" />
@@ -1923,7 +1923,7 @@ export default function ContractManager() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="bg-transparent border-[#1E3A5F]/40 text-[#E31E24] hover:text-[#E31E24] hover:border-[#E31E24]/30 text-xs"
+                        className="bg-transparent border-[#2A2A2A]/40 text-[#E31E24] hover:text-[#E31E24] hover:border-[#E31E24]/30 text-xs"
                         onClick={() => handleDelete(detail.id)}
                       >
                         <Trash2 className="w-3.5 h-3.5 mr-1.5" />
@@ -1934,18 +1934,18 @@ export default function ContractManager() {
                 </div>
               </div>
               <Tabs value={detailTab} onValueChange={setDetailTab} className="w-full">
-                <div className="px-6 border-b border-[#1E3A5F]/30">
+                <div className="px-6 border-b border-[#2A2A2A]/30">
                   <TabsList className="bg-transparent h-10 w-full justify-start gap-1">
                     {detailTabs.map((tab) => (
                       <TabsTrigger
                         key={tab.id}
                         value={tab.id}
-                        className="text-xs px-3 py-2 rounded-t-lg data-[state=active]:bg-[#1E3A5F]/40 data-[state=active]:text-[#D4A853] data-[state=active]:border-b-2 data-[state=active]:border-[#D4A853] text-[#5B8DB8] hover:text-[#F4F1EA] transition-all min-w-0 inline-flex items-center gap-1.5"
+                        className="text-xs px-3 py-2 rounded-t-lg data-[state=active]:bg-[#2A2A2A]/40 data-[state=active]:text-[#D4A853] data-[state=active]:border-b-2 data-[state=active]:border-[#D4A853] text-[#5B8DB8] hover:text-[#F4F1EA] transition-all min-w-0 inline-flex items-center gap-1.5"
                       >
                         <tab.icon className="w-3.5 h-3.5 shrink-0" />
                         <span className="truncate">{tab.label}</span>
                         {tab.id === 'invoices' && detail.invoices.length > 0 && (
-                          <span className="ml-0.5 text-[10px] bg-[#1E3A5F]/40 px-1.5 rounded-full shrink-0">
+                          <span className="ml-0.5 text-[10px] bg-[#2A2A2A]/40 px-1.5 rounded-full shrink-0">
                             {detail.invoices.length}
                           </span>
                         )}
@@ -1978,7 +1978,7 @@ export default function ContractManager() {
                           <span className="text-[#5B8DB8] text-xs">Industry</span>
                           <Badge
                             variant="outline"
-                            className="text-[10px] bg-[#1E3A5F]/20 text-[#5B8DB8] border-[#1E3A5F]/40"
+                            className="text-[10px] bg-[#2A2A2A]/20 text-[#5B8DB8] border-[#2A2A2A]/40"
                           >
                             {detail.industry}
                           </Badge>
@@ -2072,7 +2072,7 @@ export default function ContractManager() {
                         <h4 className="text-[#D4A853] text-xs font-semibold uppercase tracking-wider mb-2">
                           Internal Notes
                         </h4>
-                        <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-3">
+                        <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-3">
                           <p className="text-[#5B8DB8] text-xs leading-relaxed">
                             {detail.internalNotes}
                           </p>
@@ -2088,7 +2088,7 @@ export default function ContractManager() {
                           {detail.attachments.map((attachment) => (
                             <div
                               key={attachment.id}
-                              className="flex items-center gap-2 bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg px-3 py-2"
+                              className="flex items-center gap-2 bg-[#101010] border border-[#2A2A2A]/30 rounded-lg px-3 py-2"
                             >
                               <Paperclip className="w-3.5 h-3.5 text-[#5B8DB8]" />
                               <span className="text-[#F4F1EA] text-xs">{attachment.fileName}</span>
@@ -2106,7 +2106,7 @@ export default function ContractManager() {
                 {/* Financial */}
                 <div className={`px-6 py-5 ${detailTab === 'financial' ? 'block' : 'hidden'}`}>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <Card className="bg-[#0A1628] border-[#1E3A5F]/30">
+                    <Card className="bg-[#101010] border-[#2A2A2A]/30">
                       <CardContent className="p-4">
                         <p className="text-[#5B8DB8] text-[10px] uppercase tracking-wider mb-1">
                           Contract Value (excl GST)
@@ -2116,7 +2116,7 @@ export default function ContractManager() {
                         </p>
                       </CardContent>
                     </Card>
-                    <Card className="bg-[#0A1628] border-[#1E3A5F]/30">
+                    <Card className="bg-[#101010] border-[#2A2A2A]/30">
                       <CardContent className="p-4">
                         <p className="text-[#5B8DB8] text-[10px] uppercase tracking-wider mb-1">
                           GST (10%)
@@ -2126,7 +2126,7 @@ export default function ContractManager() {
                         </p>
                       </CardContent>
                     </Card>
-                    <Card className="bg-[#0A1628] border-[#D4A853]/30">
+                    <Card className="bg-[#101010] border-[#D4A853]/30">
                       <CardContent className="p-4">
                         <p className="text-[#D4A853] text-[10px] uppercase tracking-wider mb-1">
                           Total (incl GST)
@@ -2138,23 +2138,23 @@ export default function ContractManager() {
                     </Card>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-3">
+                    <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-3">
                       <p className="text-[#5B8DB8] text-[10px] uppercase mb-1">Billing</p>
                       <p className="text-[#F4F1EA] text-sm font-medium">
                         {billingFrequencyLabel(detail.billingFrequency)}
                       </p>
                     </div>
-                    <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-3">
+                    <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-3">
                       <p className="text-[#5B8DB8] text-[10px] uppercase mb-1">Periods</p>
                       <p className="text-[#F4F1EA] text-sm font-medium">{detail.numberOfPeriods}</p>
                     </div>
-                    <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-3">
+                    <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-3">
                       <p className="text-[#5B8DB8] text-[10px] uppercase mb-1">Per Invoice</p>
                       <p className="text-[#F4F1EA] text-sm font-medium">
                         {formatCurrency(detail.amountPerInvoice)}
                       </p>
                     </div>
-                    <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-3">
+                    <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-3">
                       <p className="text-[#5B8DB8] text-[10px] uppercase mb-1">Invoices</p>
                       <p className="text-[#F4F1EA] text-sm font-medium">
                         {detail.invoices.length} of {detail.numberOfPeriods}
@@ -2193,7 +2193,7 @@ export default function ContractManager() {
                               {formatCurrency(outstanding)}
                             </span>
                           </div>
-                          <div className="flex justify-between text-xs pt-2 border-t border-[#1E3A5F]/30">
+                          <div className="flex justify-between text-xs pt-2 border-t border-[#2A2A2A]/30">
                             <span className="text-[#5B8DB8]">Remaining to Invoice</span>
                             <span className="text-[#F4F1EA] font-medium">
                               {formatCurrency(detail.totalValue - totalInvoiced)}
@@ -2212,7 +2212,7 @@ export default function ContractManager() {
                       <h4 className="text-[#D4A853] text-xs font-semibold uppercase tracking-wider mb-3">
                         Contract Period
                       </h4>
-                      <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-4 space-y-2">
+                      <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-4 space-y-2">
                         <div className="flex justify-between">
                           <span className="text-[#5B8DB8] text-xs">Start Date</span>
                           <span className="text-[#F4F1EA] text-xs font-medium">
@@ -2254,7 +2254,7 @@ export default function ContractManager() {
                         Schedule Summary
                       </h4>
                       {detail.broadcastSchedule && (
-                        <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-4 mb-4">
+                        <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-4 mb-4">
                           <p className="text-[#5B8DB8] text-xs leading-relaxed">
                             {detail.broadcastSchedule}
                           </p>
@@ -2275,8 +2275,8 @@ export default function ContractManager() {
                               key={daypart}
                               className={`rounded-lg p-3 text-center border ${
                                 entry
-                                  ? 'bg-[#1E3A5F]/30 border-[#D4A853]/30'
-                                  : 'bg-[#0A1628] border-[#1E3A5F]/20 opacity-40'
+                                  ? 'bg-[#2A2A2A]/30 border-[#D4A853]/30'
+                                  : 'bg-[#101010] border-[#2A2A2A]/20 opacity-40'
                               }`}
                             >
                               <p
@@ -2297,7 +2297,7 @@ export default function ContractManager() {
                   </div>
                   {detail.dayparts.length > 0 && (
                     <div className="mt-4 flex items-center gap-4">
-                      <div className="bg-[#0A1628] border border-[#D4A853]/30 rounded-lg px-4 py-2">
+                      <div className="bg-[#101010] border border-[#D4A853]/30 rounded-lg px-4 py-2">
                         <span className="text-[#5B8DB8] text-[10px] uppercase">
                           Total Weekly Spots
                         </span>
@@ -2305,7 +2305,7 @@ export default function ContractManager() {
                           {detail.dayparts.reduce((sum, d) => sum + d.count, 0)}
                         </span>
                       </div>
-                      <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg px-4 py-2">
+                      <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg px-4 py-2">
                         <span className="text-[#5B8DB8] text-[10px] uppercase">Duration</span>
                         <span className="text-[#F4F1EA] text-sm font-medium ml-3">
                           {detail.spotDuration}
@@ -2324,11 +2324,11 @@ export default function ContractManager() {
                           key={invoice.invoiceNumber}
                           initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-4"
+                          className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-4"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-lg bg-[#1E3A5F]/40 flex items-center justify-center">
+                              <div className="w-9 h-9 rounded-lg bg-[#2A2A2A]/40 flex items-center justify-center">
                                 <Receipt className="w-4 h-4 text-[#D4A853]" />
                               </div>
                               <div>
@@ -2361,12 +2361,12 @@ export default function ContractManager() {
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <Receipt className="w-12 h-12 text-[#1E3A5F]/40 mx-auto mb-3" />
+                      <Receipt className="w-12 h-12 text-[#2A2A2A]/40 mx-auto mb-3" />
                       <p className="text-[#5B8DB8]/40 text-sm">No invoices generated yet</p>
                       {detail.status !== 'cancelled' && (
                         <Button
                           size="sm"
-                          className="mt-3 bg-[#D4A853] text-[#0A1628] hover:bg-[#D4A853]/90 text-xs"
+                          className="mt-3 bg-[#D4A853] text-[#101010] hover:bg-[#D4A853]/90 text-xs"
                           onClick={() => openGenerateInvoice(detail)}
                         >
                           <Plus className="w-3.5 h-3.5 mr-1.5" />
@@ -2380,7 +2380,7 @@ export default function ContractManager() {
                 {/* Activity log */}
                 <div className={`px-6 py-5 ${detailTab === 'activity' ? 'block' : 'hidden'}`}>
                   <div className="relative">
-                    <div className="absolute left-[15px] top-0 bottom-0 w-[2px] bg-[#1E3A5F]/30" />
+                    <div className="absolute left-[15px] top-0 bottom-0 w-[2px] bg-[#2A2A2A]/30" />
                     <div className="space-y-4">
                       {detail.activityLog.map((entry, index) => (
                         <motion.div
@@ -2394,10 +2394,10 @@ export default function ContractManager() {
                             className={`absolute left-[9px] top-1.5 w-4 h-4 rounded-full border-2 ${
                               index === 0
                                 ? 'bg-[#D4A853] border-[#D4A853]'
-                                : 'bg-[#0F1D30] border-[#5B8DB8]'
+                                : 'bg-[#161616] border-[#5B8DB8]'
                             }`}
                           />
-                          <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-3">
+                          <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-3">
                             <div className="flex items-center justify-between">
                               <p className="text-[#F4F1EA] text-xs font-medium">{entry.action}</p>
                               <p className="text-[#5B8DB8]/50 text-[10px]">
@@ -2437,7 +2437,7 @@ export default function ContractManager() {
           if (!open) setGenerateTargetId(null)
         }}
       >
-        <DialogContent className="max-w-md bg-[#0F1D30] border-[#1E3A5F]/40 max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-md bg-[#161616] border-[#2A2A2A]/40 max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#F4F1EA] text-lg font-bold flex items-center gap-2">
               <Receipt className="w-5 h-5 text-[#D4A853]" />
@@ -2447,7 +2447,7 @@ export default function ContractManager() {
           <form onSubmit={handleGenerateInvoice}>
             {generateTarget && (
               <div className="py-4 space-y-4">
-                <div className="bg-[#0A1628] border border-[#1E3A5F]/30 rounded-lg p-4 space-y-3">
+                <div className="bg-[#101010] border border-[#2A2A2A]/30 rounded-lg p-4 space-y-3">
                   <div className="flex justify-between">
                     <span className="text-[#5B8DB8] text-xs">Contract</span>
                     <span className="text-[#F4F1EA] text-xs font-mono">
@@ -2464,7 +2464,7 @@ export default function ContractManager() {
                     <span className="text-[#5B8DB8] text-xs">Campaign</span>
                     <span className="text-[#D4A853] text-xs">{generateTarget.campaignName}</span>
                   </div>
-                  <Separator className="bg-[#1E3A5F]/30" />
+                  <Separator className="bg-[#2A2A2A]/30" />
                   <div className="flex justify-between">
                     <span className="text-[#5B8DB8] text-xs">Invoice Amount</span>
                     <span className="text-[#D4A853] text-sm font-bold">
@@ -2498,14 +2498,14 @@ export default function ContractManager() {
                   setIsGenerateOpen(false)
                   setGenerateTargetId(null)
                 }}
-                className="bg-transparent border-[#1E3A5F]/40 text-[#5B8DB8] hover:text-[#F4F1EA] hover:border-[#D4A853]/30 text-xs"
+                className="bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#F4F1EA] hover:border-[#D4A853]/30 text-xs"
               >
                 <X className="w-3.5 h-3.5 mr-1.5" />
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="bg-[#D4A853] text-[#0A1628] hover:bg-[#D4A853]/90 text-xs font-semibold"
+                className="bg-[#D4A853] text-[#101010] hover:bg-[#D4A853]/90 text-xs font-semibold"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
                 Confirm & Generate

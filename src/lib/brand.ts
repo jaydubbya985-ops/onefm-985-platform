@@ -40,9 +40,9 @@ export const BRAND_COLORS = {
   white:   '#FFFFFF',   // Broadcast White
   red:     '#E51636',   // 98.5 Red
   // Premium layer (accent only)
-  navy:    '#071D3A',   // Deep Broadcast Navy
-  gold:    '#D4AF37',   // Heritage Gold
-  champagne: '#F4D27A', // Champagne Highlight
+  navy:    '#101010',   // Deep Broadcast Navy
+  gold:    '#F2F2F2',   // Heritage Gold
+  champagne: '#F2F2F2', // Champagne Highlight
   // Digital fluorescent (1–4% of layout max)
   cyan:    '#00E5FF',   // Electric Cyan
   neonSky: '#38BDF8',   // Neon Sky Blue (safer daily UI)
@@ -52,7 +52,7 @@ export const BRAND_COLORS = {
   // UI utility
   muted:   '#8A9199',
   border:  '#1A2A42',
-  midnight: '#020A18',
+  midnight: '#070707',
 } as const
 
 /** Official logo files — dropped into /public/brand/ */

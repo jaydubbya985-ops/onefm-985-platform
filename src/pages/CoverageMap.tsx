@@ -161,7 +161,7 @@ const LGA_COLORS: Record<string, string> = {
   'Campaspe Shire': BRAND_COLORS.blue,
   'Benalla Rural City': '#0066CC',
   'Moira Shire': BRAND_COLORS.red,
-  'Mitchell Shire': '#2EC4B6',
+  'Mitchell Shire': '#B6FF00',
   'Strathbogie Shire': '#9B5DE5',
   'Murray River Council': BRAND_COLORS.neonSky,
   'Greater Bendigo': '#FF6B6B',
@@ -552,7 +552,7 @@ export default function CoverageMap() {
 
       <div className="flex flex-col min-h-[calc(100dvh-72px)] bg-one-navy">
         {/* Hero intro */}
-        <section className="relative shrink-0 overflow-hidden border-b border-one-border bg-[#050D1A] px-4 py-8 sm:px-6 sm:py-10 lg:px-8" data-cursor-label="COVERAGE MAP">
+        <section className="relative shrink-0 overflow-hidden border-b border-one-border bg-[#101010] px-4 py-8 sm:px-6 sm:py-10 lg:px-8" data-cursor-label="COVERAGE MAP">
           <div aria-hidden className="grain-overlay" />
           <div className="absolute inset-x-0 top-0 h-[2px] bg-one-gold" aria-hidden />
           <div
@@ -1220,7 +1220,7 @@ export default function CoverageMap() {
                     />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                       {lgaChartData.map((entry) => (
-                        <Cell key={entry.name} fill={LGA_COLORS[entry.name] || '#D4AF37'} />
+                        <Cell key={entry.name} fill={LGA_COLORS[entry.name] || '#F2F2F2'} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -1293,7 +1293,7 @@ export default function CoverageMap() {
                       }}
                       formatter={(value: number) => value.toLocaleString()}
                     />
-                    <Bar dataKey="population" fill="#D4AF37" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="population" fill="#F2F2F2" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

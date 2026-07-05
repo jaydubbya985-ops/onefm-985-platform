@@ -96,8 +96,8 @@ function OpsPortalContent() {
   const { logout, user } = useAuth()
 
   return (
-    <div className="min-h-screen bg-[#0A1628]">
-      <div className="px-6 md:px-12 lg:px-20 pt-24 pb-6 border-b border-[#1E3A5F]/30">
+    <div className="min-h-screen bg-[#101010]">
+      <div className="px-6 md:px-12 lg:px-20 pt-24 pb-6 border-b border-[#2A2A2A]/30">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -154,7 +154,7 @@ function OpsPortalContent() {
         <PipelineIndicator />
       </div>
 
-      <div className="px-6 md:px-12 lg:px-20 py-4 border-b border-[#1E3A5F]/20">
+      <div className="px-6 md:px-12 lg:px-20 py-4 border-b border-[#2A2A2A]/20">
         <div className="flex gap-2 overflow-x-auto pb-1">
           {TABS.map((t) => {
             const Icon = t.icon
@@ -167,7 +167,7 @@ function OpsPortalContent() {
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg font-label text-xs tracking-wider transition-all whitespace-nowrap min-w-0 shrink-0 ${
                   active
                     ? 'bg-one-gold text-one-navy hover:bg-one-gold/90'
-                    : 'bg-transparent text-one-white/60 border border-[#1E3A5F]/30 hover:text-one-white hover:border-one-gold/30'
+                    : 'bg-transparent text-one-white/60 border border-[#2A2A2A]/30 hover:text-one-white hover:border-one-gold/30'
                 }`}
               >
                 <Icon className="w-4 h-4 shrink-0" />

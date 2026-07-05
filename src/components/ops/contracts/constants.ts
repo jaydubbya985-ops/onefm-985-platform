@@ -74,7 +74,7 @@ export const STATUS_LABELS: Record<ContractStatus, string> = {
 }
 
 export const STATUS_BADGE_CLASSES: Record<ContractStatus, string> = {
-  draft: 'bg-[#1E3A5F] text-[#5B8DB8] hover:bg-[#1E3A5F]',
+  draft: 'bg-[#2A2A2A] text-[#5B8DB8] hover:bg-[#2A2A2A]',
   pending: 'bg-[#D4A84B]/20 text-[#D4A84B] hover:bg-[#D4A84B]/20',
   pending_signature: 'bg-[#D4A84B]/20 text-[#D4A84B] hover:bg-[#D4A84B]/20',
   active: 'bg-emerald-900/40 text-emerald-400 hover:bg-emerald-900/40',
@@ -85,7 +85,7 @@ export const STATUS_BADGE_CLASSES: Record<ContractStatus, string> = {
 }
 
 export const INVOICE_STATUS_BADGE_CLASSES: Record<ContractInvoiceStatus, string> = {
-  draft: 'bg-[#1E3A5F] text-[#5B8DB8]',
+  draft: 'bg-[#2A2A2A] text-[#5B8DB8]',
   sent: 'bg-[#D4A84B]/20 text-[#D4A84B]',
   paid: 'bg-emerald-900/40 text-emerald-400',
   overdue: 'bg-[#E31E24]/20 text-[#E31E24]',
