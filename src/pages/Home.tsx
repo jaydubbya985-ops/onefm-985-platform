@@ -68,7 +68,7 @@ function Hero() {
     <section className="px-6 md:px-12 lg:px-20 pt-20 pb-16">
       <Link
         to="/listen"
-        className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 mb-9 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03]"
+        className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 mb-9 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03] bloom-red"
         style={{ background: RED }}
         data-cursor="LISTEN"
       >
@@ -148,7 +148,7 @@ function FeatureFrame() {
     <motion.div {...reveal} className="mx-6 md:mx-12 lg:mx-20 my-10">
       <Link
         to="/football"
-        className="block relative rounded-2xl overflow-hidden border-2 group"
+        className="block relative rounded-2xl overflow-hidden border-2 group border-beam"
         style={{ borderColor: RED }}
         data-cursor="GVL"
       >
@@ -181,7 +181,10 @@ function StatsStrip() {
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-px my-20" style={{ background: '#222' }}>
       {stats.map((s) => (
         <div key={s.t} className="px-8 py-11" style={{ background: INK }}>
-          <div className="font-poster text-[clamp(36px,5vw,68px)] leading-none" style={{ color: s.red ? RED : '#fff' }}>
+          <div
+            className={`font-poster text-[clamp(36px,5vw,68px)] leading-none ${s.red ? '' : 'stroke-hover'}`}
+            style={s.red ? { color: RED } : undefined}
+          >
             {s.n}
           </div>
           <div className="text-[13px] tracking-[0.14em] uppercase text-white/40 mt-2">{s.t}</div>
