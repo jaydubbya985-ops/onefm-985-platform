@@ -72,9 +72,10 @@ export function OnAirNav() {
         aria-label="Main"
       >
         <div className="h-full px-5 md:px-10 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="ONE FM 98.5 — Home" data-cursor-label="HOME">
-            <BrandLogo variant="white" className="h-10 w-auto object-contain max-w-[min(180px,40vw)]" />
+          <Link to="/" className="group flex items-center gap-3 shrink-0" aria-label="ONE FM 98.5 — Home" data-cursor-label="HOME">
+            <BrandLogo variant="white" className="logo-live h-10 w-auto object-contain max-w-[min(180px,40vw)]" />
             <span className="relative flex h-2.5 w-2.5" title={meta.isLive ? 'On air' : 'Automated'}>
+              <span className="lamp-ring" aria-hidden />
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: RED }} />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: RED }} />
             </span>
@@ -133,7 +134,7 @@ export function OnAirNav() {
                           className="group flex items-center gap-5 py-1.5 border-b border-white/8"
                         >
                           <span
-                            className="font-poster uppercase leading-[1.05] text-[clamp(38px,7.5vh,76px)] transition-colors"
+                            className={`font-poster uppercase leading-[1.05] text-[clamp(38px,7.5vh,76px)] ${active ? '' : 'poster-hover'}`}
                             style={{ color: active ? RED : '#fff' }}
                           >
                             {item.label}

@@ -78,7 +78,7 @@ function Hero() {
       <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]">
         <PosterReveal
           lines={[
-            <>The Voice</>,
+            <span className="poster-hover">The Voice</span>,
             <>of the <StrokeFill delay={1.0}>Goulburn</StrokeFill></>,
             <>
               <StrokeFill delay={1.15}>Valley</StrokeFill>
