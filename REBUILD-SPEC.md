@@ -113,3 +113,24 @@ StatsStrip. NO fake payment forms — honest mailto/bank flow until Stripe.
 - NO screenshot verification passes (Jay QAs live himself). NO exploratory
   searches. NO new dependencies. NO redesigning the kit — assemble only.
 - Jay's text feedback = punch list → fix → redeploy. Done = Jay says done.
+
+## SITEMAP LAW (approved 2026-07-06)
+
+**Public = the six pages + utilities (/contact /privacy /payment/* 404). Nothing else.**
+Staff tooling NEVER appears on the public site. Moves into /ops when rebuilt:
+- Proposal Builder (public /proposal → Ops PIPELINE group)
+- Social posting tool + brand assets (old SocialHub → Ops PROMOTE group)
+/media-kit + /audience stay live as evidence pages fronted by SPONSOR cards
+until their content is folded in; /football until absorbed by COMMUNITY+SPONSOR.
+
+**Ops portal IA (rebuild as grouped sidebar, replaces 9 flat tabs):**
+- PIPELINE: Enquiries · Proposal Builder · Contracts
+- MONEY: Invoices · Batch Send · Billing & Aging · Payments & Donations
+- PROMOTE: Social Posting · Brand Assets · Mailchimp
+- STATION: Broadcast Schedule · Settings
+
+**Page flow arc (every public page, in order):**
+1 ARRIVE (ticker + poster hero) → 2 HOOK (one big proof) → 3 BODY (≤3 modules)
+→ 4 NUMBERS (stats strip) → 5 ACT (exactly ONE red CTA).
+Page jobs — Home: press play · Listen: press play · Community: get involved ·
+History: feel it · Sponsor: enquire · Donate: give.
