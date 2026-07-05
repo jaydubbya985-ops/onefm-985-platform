@@ -4,8 +4,9 @@
  * Discipline rule: red is the brand, one fluoro is the signal,
  * nothing else gets colour. All names, photos and stats are real.
  */
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
@@ -62,10 +63,60 @@ function Ticker() {
   )
 }
 
+/** Real Goulburn Valley drone footage — six shots cycling under the type. */
+const HERO_REEL = [
+  '/videos/heroes/hero-01-aerial-factory.mp4',
+  '/videos/heroes/hero-02-pink-tower.mp4',
+  '/videos/heroes/hero-03-community-festival.mp4',
+  '/videos/heroes/hero-04-wetland-aerial.mp4',
+  '/videos/heroes/hero-05-river-bridge.mp4',
+  '/videos/heroes/hero-06-canola-finale.mp4',
+]
+
+function HeroReel() {
+  const [i, setI] = useState(0)
+  const reduced = useReducedMotion()
+  if (reduced) {
+    return (
+      <img
+        src="/videos/heroes/hero-poster.jpg"
+        alt=""
+        aria-hidden
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: 'brightness(0.45) saturate(0.9)' }}
+      />
+    )
+  }
+  return (
+    <>
+      <video
+        key={i}
+        src={HERO_REEL[i]}
+        poster={i === 0 ? '/videos/heroes/hero-poster.jpg' : undefined}
+        autoPlay
+        muted
+        playsInline
+        preload="auto"
+        onEnded={() => setI((v) => (v + 1) % HERO_REEL.length)}
+        className="absolute inset-0 w-full h-full object-cover animate-fade-in"
+        style={{ filter: 'brightness(0.45) saturate(0.9)' }}
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.15) 45%, #0A0A0A 100%)' }}
+        aria-hidden
+      />
+    </>
+  )
+}
+
 function Hero() {
   const meta = usePlayerMetadata()
   return (
-    <section className="px-6 md:px-12 lg:px-20 pt-20 pb-16">
+    <section className="relative overflow-hidden px-6 md:px-12 lg:px-20 pt-24 pb-20 min-h-[88vh] flex flex-col justify-center">
+      <HeroReel />
+      <div className="relative">
       <Link
         to="/listen"
         className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 mb-9 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03] bloom-red"
@@ -105,6 +156,7 @@ function Hero() {
         >
           Advertise With Us
         </Link>
+      </div>
       </div>
     </section>
   )
