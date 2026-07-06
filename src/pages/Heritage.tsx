@@ -1,7 +1,6 @@
 ﻿/**
  * HISTORY — rebuilt per REBUILD-SPEC.md (page 5 of 6).
- * Absorbs Story (/story → redirect). Assembled from the ON AIR kit.
- * People & flood copy: src/data/stationHistory.ts (sourced).
+ * Master public-record research: src/data/stationHistory.ts
  */
 import { Link } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
@@ -20,11 +19,17 @@ import {
 } from '@/components/onair/kit'
 import { stationStats } from '@/data/pricing'
 import {
+  ACMA_FACTS,
   BOARD_2024,
+  BRANDING_NOTE,
   EMERGENCY_BROADCAST_NARRATIVE,
   HERITAGE_LEGENDS,
   HISTORY_MILESTONES,
+  INSTITUTION_FACTS,
   LIFE_MEMBERS,
+  LIFE_MEMBER_NOTE,
+  ORIGIN_LAYERS,
+  SPORT_HISTORY_NARRATIVE,
 } from '@/data/stationHistory'
 
 const RED = '#E51636'
@@ -76,12 +81,35 @@ function HeritageHero() {
             ]}
           />
         </h1>
-        <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Established in 1980, licensed in 1989 — Goulburn Valley Community Radio Inc. has been
-          the Valley&apos;s volunteer-run voice for {stationStats.yearsBroadcasting} years. Callsign{' '}
-          <strong className="text-white/80">3ONE</strong>.
+        <p className="mt-7 max-w-[600px] text-[17px] leading-relaxed text-white/60">
+          {ACMA_FACTS.licensee} — callsign <strong className="text-white/80">{ACMA_FACTS.callsign}</strong>{' '}
+          on {ACMA_FACTS.frequency}. Licensed service commenced {ACMA_FACTS.licenceCommenced}; roots in
+          the late 1970s and established organisationally in 1980.
         </p>
       </div>
+    </section>
+  )
+}
+
+function OriginLayers() {
+  return (
+    <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
+      <LabelReveal className="mb-8">Three Layers of Origin</LabelReveal>
+      <div className="grid md:grid-cols-3 gap-5">
+        {ORIGIN_LAYERS.map((layer) => (
+          <article
+            key={layer.era}
+            className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636]"
+          >
+            <div className="font-poster text-[clamp(28px,4vw,40px)] leading-none mb-2" style={{ color: RED }}>
+              {layer.era}
+            </div>
+            <h3 className="font-poster uppercase text-[20px] text-white mb-3">{layer.title}</h3>
+            <p className="text-[15px] leading-relaxed text-white/55">{layer.body}</p>
+          </article>
+        ))}
+      </div>
+      <p className="text-[13px] text-white/35 mt-8 max-w-[720px]">{BRANDING_NOTE}</p>
     </section>
   )
 }
@@ -89,7 +117,7 @@ function HeritageHero() {
 function MilestoneStrip() {
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
-      <LabelReveal className="mb-8">The Timeline</LabelReveal>
+      <LabelReveal className="mb-8">Public Record Timeline</LabelReveal>
       <div
         className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory"
         style={{ scrollbarWidth: 'none' }}
@@ -97,18 +125,13 @@ function MilestoneStrip() {
         {HISTORY_MILESTONES.map((m) => (
           <article
             key={m.year + m.title}
-            className="snap-start shrink-0 w-[min(88vw,340px)] border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636]"
+            className="snap-start shrink-0 w-[min(88vw,300px)] border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636]"
           >
-            <div
-              className="font-poster text-[clamp(36px,5vw,52px)] leading-none mb-3"
-              style={{ color: RED }}
-            >
+            <div className="font-poster text-[clamp(32px,4.5vw,48px)] leading-none mb-3" style={{ color: RED }}>
               {m.year}
             </div>
-            <h3 className="font-poster uppercase text-[22px] text-white leading-[1.1] mb-2">
-              {m.title}
-            </h3>
-            <p className="text-[15px] leading-relaxed text-white/55">{m.body}</p>
+            <h3 className="font-poster uppercase text-[20px] text-white leading-[1.1] mb-2">{m.title}</h3>
+            <p className="text-[14px] leading-relaxed text-white/55">{m.body}</p>
           </article>
         ))}
       </div>
@@ -116,17 +139,16 @@ function MilestoneStrip() {
   )
 }
 
-function FloodEmergencyNarrative() {
+function ProseSection({ label, title, paragraphs }: { label: string; title: string; paragraphs: readonly string[] }) {
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
-      <LabelReveal className="mb-6">Community Resilience</LabelReveal>
+      <LabelReveal className="mb-6">{label}</LabelReveal>
       <h2 className="font-poster uppercase text-[clamp(26px,4vw,44px)] text-white leading-[0.95] mb-10 max-w-[900px]">
-        Floods, emergencies and ONE FM
-        <span style={{ color: RED }}>&apos;</span>s public-service role
+        {title}
       </h2>
       <div className="max-w-[720px] space-y-6">
-        {EMERGENCY_BROADCAST_NARRATIVE.map((paragraph) => (
-          <p key={paragraph.slice(0, 48)} className="text-[17px] leading-relaxed text-white/60">
+        {paragraphs.map((paragraph) => (
+          <p key={paragraph.slice(0, 52)} className="text-[17px] leading-relaxed text-white/60">
             {paragraph}
           </p>
         ))}
@@ -144,8 +166,7 @@ function LifeMembersRoll() {
         <span style={{ color: RED }}>.</span>
       </h2>
       <p className="text-[15px] text-white/50 max-w-[640px] mb-10 leading-relaxed">
-        Life members named in the ONE FM Annual Report 2024 — the backbone of the station&apos;s
-        living memory. Board and presenter lists from the same report; on-air roster today at{' '}
+        {LIFE_MEMBER_NOTE} On-air roster today at{' '}
         <a href="https://fm985.com.au/guide/" className="underline hover:text-white/80">
           fm985.com.au/guide
         </a>
@@ -154,7 +175,7 @@ function LifeMembersRoll() {
 
       <div className="mb-12">
         <h3 className="font-bold text-[12px] tracking-[0.14em] uppercase mb-4" style={{ color: RED }}>
-          Life members ({LIFE_MEMBERS.length})
+          Named in Annual Report 2024
         </h3>
         <ul className="flex flex-wrap gap-2">
           {LIFE_MEMBERS.map((name) => (
@@ -174,18 +195,15 @@ function LifeMembersRoll() {
             key={role + name}
             className="border border-white/12 rounded-xl p-5 hover:border-[#E51636] transition-colors"
           >
-            <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-white/40 mb-1">
-              {role}
-            </div>
+            <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-white/40 mb-1">{role}</div>
             <div className="font-poster uppercase text-[18px] text-white leading-tight">{name}</div>
           </div>
         ))}
       </div>
 
       <p className="text-[12px] text-white/30 mt-8">
-        Source: ONE FM Annual Report 2024 (fm985.com.au/about). Additional names from program
-        guide, interviews and station archive — oral-history verification ongoing for per-event
-        emergency broadcasts.
+        Sources: ONE FM Annual Report 2024; ACMA licence register; fm985.com.au/about; Shepparton News
+        (Ern Meharry, 2022); Greater Shepparton council records.
       </p>
     </section>
   )
@@ -195,20 +213,22 @@ export default function Heritage() {
   return (
     <Layout>
       <SEO
-        title="History — ONE FM 98.5 Since 1989"
-        description={`${stationStats.yearsBroadcasting} years of community broadcasting. Floods, football, multicultural programming and ${LIFE_MEMBERS.length} life members — Goulburn Valley Community Radio Inc.`}
+        title="History — ONE FM 98.5 · 3ONE Since 1989"
+        description="Goulburn Valley Community Radio Inc. Licensed 1 April 1989. Sport, floods, multicultural programming, life members and 35 years of local broadcasting from Shepparton."
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            'Est. 1989 · Goulburn Valley Community Radio Inc.',
-            'Callsign 3ONE · 98.5 FM Shepparton',
-            `${LIFE_MEMBERS.length} life members · volunteer-run`,
-            'Community resilience · emergency information · local sport',
+            `Callsign ${ACMA_FACTS.callsign} · ${ACMA_FACTS.frequency} · ${ACMA_FACTS.power}`,
+            `Licensed ${ACMA_FACTS.licenceCommenced}`,
+            'Est. 1980 · organising from late 1970s',
+            'GVL football · multicultural · emergency information',
           ]}
           delay={0.4}
         />
         <HeritageHero />
+
+        <OriginLayers />
 
         <div id="archive">
           <HorizontalGallery />
@@ -216,7 +236,24 @@ export default function Heritage() {
 
         <MilestoneStrip />
 
-        <FloodEmergencyNarrative />
+        <ProseSection
+          label="Sport & OB"
+          title="The call of the match"
+          paragraphs={SPORT_HISTORY_NARRATIVE}
+        />
+
+        <FeatureFrame
+          to="/football"
+          img="/assets/images/gvl-action-sprint.jpg"
+          alt="GVL football — live on ONE FM 98.5"
+          badge="GVL & local sport · Since May 1989"
+        />
+
+        <ProseSection
+          label="Community Resilience"
+          title="Floods, emergencies and ONE FM's public-service role"
+          paragraphs={EMERGENCY_BROADCAST_NARRATIVE}
+        />
 
         <NameWall
           label="Legends & Voices"
@@ -226,25 +263,9 @@ export default function Heritage() {
         <LifeMembersRoll />
 
         <EditorialCards
-          label="What We Stand For"
-          items={[
-            {
-              tag: 'Mission',
-              title: 'Live & Local',
-              body: 'Predominantly live local content 24 hours a day, seven days a week — real presenters, real Valley voices. Source: fm985.com.au/about.',
-            },
-            {
-              tag: 'Reach',
-              title: 'Online Streaming',
-              body: 'FM 98.5 plus streaming via fm985.com.au and Radio.co — so listeners across the Goulburn Murray can tune in anywhere.',
-            },
-            {
-              tag: 'Community',
-              title: 'Volunteer-Run',
-              body: 'Operated by volunteers under Goulburn Valley Community Radio Inc. — sport, multicultural programs, outside broadcasts and community information for the region.',
-            },
-          ]}
-          columns={3}
+          label="Institution"
+          items={[...INSTITUTION_FACTS]}
+          columns={2}
         />
 
         <FeatureFrame
@@ -256,10 +277,10 @@ export default function Heritage() {
 
         <StatsStrip
           stats={[
-            { n: '1989', t: 'Licensed to broadcast', red: true },
-            { n: String(LIFE_MEMBERS.length), t: 'Life members (2024 report)' },
-            { n: '3ONE', t: 'ACMA callsign' },
-            { n: '24/7', t: 'Live & local' },
+            { n: '1989', t: 'ACMA licence commenced', red: true },
+            { n: ACMA_FACTS.power, t: 'Community FM (3ONE)' },
+            { n: '35', t: 'Years local broadcasting (2024 AGM)' },
+            { n: String(stationStats.totalTowns), t: 'Towns in station reach model' },
           ]}
         />
 

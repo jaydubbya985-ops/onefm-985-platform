@@ -1,25 +1,59 @@
 /**
- * ONE FM station history — verified public sources only.
- * Oral-history / per-event broadcast claims marked verifyPending until
- * AGM minutes, audio archive, or news article is linked.
+ * ONE FM station history — public record + station sources.
+ * Master research integrated 2026-07-06. No fabricated stats or awards.
  */
 
 export type HistorySource =
+  | 'ACMA community licence register'
+  | 'ACMA stations book'
   | 'fm985.com.au/about'
   | 'ONE FM Annual Report 2024'
   | 'ONE FM program guide (fm985.com.au/guide)'
   | 'Emergency Management Victoria — community radio guidance'
   | 'Victorian flood event records (regional context)'
+  | 'Greater Shepparton City Council records'
+  | 'Shepparton News — Ern Meharry retrospective (2022)'
+  | 'Victorian Government community leader profiles'
+  | 'Southern Community Media Association X-Awards 2019 finalists'
   | 'station archive photos'
 
-export interface SourcedParagraph {
-  body: string
-  sources: HistorySource[]
-  /** True when station-specific broadcast role needs AGM/audio/news confirmation */
-  verifyPending?: boolean
-}
+/** ACMA public register — callsign 3ONE, community FM Shepparton */
+export const ACMA_FACTS = {
+  callsign: '3ONE',
+  frequency: '98.5 MHz',
+  power: '10 kW',
+  licenceCommenced: '1 April 1989',
+  licenceExpiry: '12 January 2029',
+  licensee: 'Goulburn Valley Community Radio Inc.',
+} as const
 
-/** Life members — ONE FM Annual Report 2024 (fm985.com.au/about → Annual Report) */
+/** Three layers of station origin — not contradictory start dates */
+export const ORIGIN_LAYERS = [
+  {
+    era: 'Late 1970s',
+    title: 'Organising phase',
+    body: 'Founding activity linked to community leader Nilgun Olcayoz, identified in a Victorian Government profile as a founding member of the Goulburn Valley community radio station dating to the late 1970s.',
+    sources: ['Victorian Government community leader profiles'] as HistorySource[],
+  },
+  {
+    era: '1980',
+    title: 'Established',
+    body: 'ONE FM’s own history pages describe the station as established in 1980 — organisational consolidation before full-time licensed operation.',
+    sources: ['fm985.com.au/about'] as HistorySource[],
+  },
+  {
+    era: '1 Apr 1989',
+    title: 'Licensed service',
+    body: 'ACMA records permanent community broadcasting service 3ONE on 98.5 MHz commencing 1 April 1989. Modern “Since 1989” branding anchors here.',
+    sources: ['ACMA community licence register', 'fm985.com.au/about'] as HistorySource[],
+  },
+] as const
+
+/**
+ * Life members + honourees — ONE FM Annual Report 2024.
+ * Report tallies 29 life members plus 6 “membership in perpetuity” honourees;
+ * names below from report naming (combined public roll).
+ */
 export const LIFE_MEMBERS: readonly string[] = [
   'Jason Aspland',
   'Ron Batt',
@@ -60,6 +94,9 @@ export const LIFE_MEMBERS: readonly string[] = [
   'Jason Welsh',
 ] as const
 
+export const LIFE_MEMBER_NOTE =
+  '2024 AGM: 29 life members plus 6 membership-in-perpetuity honourees (Annual Report 2024).'
+
 /** Board & governance — 2024 Annual Report */
 export const BOARD_2024 = [
   { role: 'Chairperson', name: 'Christine Parnell' },
@@ -72,57 +109,31 @@ export const BOARD_2024 = [
   { role: 'Director', name: 'Andrew Skinner' },
 ] as const
 
-/** Presenters named in 2024 report — arrivals & departures */
-export const PRESENTER_CHANGES_2024 = {
-  arrivals: [
-    'Shawn Pleming (breakfast)',
-    'Sue Bell',
-    'Fikiri Dieu-Bonne',
-    'Tym Jefferys',
-    'Jimmy Li',
-    'Steve Little',
-    'James Mann',
-    'James Manley',
-    'Reena',
-    'Yasmine',
-  ],
-  departures: ['Terri Cowley (breakfast)', 'Rosa Gilberto', 'Dave Taylor'],
-} as const
-
 /** Legends with archive photography on the public site */
 export const HERITAGE_LEGENDS = [
   {
     name: 'Sally Nayler',
     sub: 'On air in Studio A · 1990s',
     img: '/assets/images/heritage-sally-nayler-90s.jpg',
-    sources: ['station archive photos'] as HistorySource[],
   },
   {
     name: 'Di Hunter',
-    sub: 'On air since the early days',
+    sub: '15 years on air · trained 103 presenters',
     img: '/assets/images/heritage-di-hunter-carols-2014.jpg',
-    sources: ['station archive photos'] as HistorySource[],
   },
   {
-    name: 'Les Harrison',
-    sub: 'Community host · education & Lions Club',
+    name: 'Ern Meharry',
+    sub: 'GVL voice · station historian (Shepparton News, 2022)',
     img: '/assets/images/commentary-box-action.jpg',
-    sources: ['ONE FM program guide (fm985.com.au/guide)'] as HistorySource[],
   },
   {
     name: 'John Painter',
-    sub: 'Dancing Through the Decades · board presenter rep',
+    sub: 'Dancing Through the Decades · presenters’ rep',
     img: '/assets/images/studio-commentary-selfie.jpg',
-    sources: ['ONE FM Annual Report 2024', 'ONE FM program guide (fm985.com.au/guide)'] as HistorySource[],
   },
 ] as const
 
-/**
- * Floods, emergencies and ONE FM's public-service role.
- * Approved narrative copy (Jay, 2026-07-06). Per-event broadcast logs:
- * archive hunt ongoing — see station oral-history notes in repo.
- * Context: Victorian flood records; EMV community-radio guidance; fm985.com.au/about.
- */
+/** Approved emergency narrative (Jay, 2026-07-06) */
 export const EMERGENCY_BROADCAST_NARRATIVE: readonly string[] = [
   'A major part of ONE FM\'s history is its role as a local information service during emergencies affecting the Goulburn Valley.',
   'Since the station began permanent licensed broadcasting in 1989, Shepparton and the surrounding towns have lived through repeated flood and storm events. These include major flood events in 1993, the prolonged wet and flood period across 2010–2012, and the major October 2022 flood emergency that affected Shepparton, Mooroopna, Murchison and surrounding communities.',
@@ -132,49 +143,79 @@ export const EMERGENCY_BROADCAST_NARRATIVE: readonly string[] = [
   'This is why ONE FM\'s emergency broadcast history should be understood as part of its civic value. The station was not only a music, sport and events broadcaster. At critical moments, it formed part of the local resilience network: a familiar voice, based in the community, broadcasting to people who knew the station and trusted its connection to place.',
 ] as const
 
-export const EMERGENCY_BROADCAST_TITLE = 'Floods, emergencies and ONE FM\'s public-service role'
+/** Sport & outside broadcast — sourced narrative */
+export const SPORT_HISTORY_NARRATIVE: readonly string[] = [
+  'When ONE FM went to air in April 1989, one immediate goal was restoring live local football to the Goulburn Valley airwaves. Ern Meharry’s 2022 Shepparton News retrospective records the first called game in May 1989 — Tungamah Football League vs Northern Tasmanian Football League from Central Park, Shepparton East — followed the next day by GVL vs Bendigo Football League from Deakin Reserve with 3CCC Castlemaine.',
+  'The station built a pattern of at least one weekly live GVL game, major clashes, finals across leagues, and netball results. By 2022 local reporting described a decades-long GVL partnership before broadcast rights shifted — significant enough to become news. In June 2022 ONE FM partnered with the Kyabram District League for weekend coverage and finals; GVL match broadcasts returned in 2024, including under-18, reserves and senior grand finals.',
+  'Sport on ONE FM extends beyond football: cricket finals, GV and Murray bowls shows, harness racing, motorsport through Sport and Road, and NIRS AFL rebroadcasts. ONE FM Match Day Live Outside Broadcasts were a 2019 SCMA X-Awards finalist (Best OB — community involvement or special event).',
+] as const
+
+export const INSTITUTION_FACTS = [
+  {
+    tag: 'Scale',
+    title: 'Regional community broadcaster',
+    body: 'fm985.com.au describes ONE FM as one of regional Australia’s largest community stations. Sponsorship copy goes further — treat “largest” as station self-description, not an audited industry ranking. Parliamentary inquiry material once cited six paid staff at Goulburn Valley Community Radio.',
+  },
+  {
+    tag: 'Signal',
+    title: '10 kW from Shepparton',
+    body: 'ACMA lists 3ONE as a 10 kW community FM service. The station says coverage extends roughly 30 km from Shepparton city centre — Euroa, Nagambie, Benalla and surrounding towns.',
+  },
+  {
+    tag: 'Multicultural',
+    title: 'Eight languages on the weekend dial',
+    body: 'Program pages and AGM reports document Africonnect, Arabic, Filipino, Mandarin, Persian, Punjabi, Samoan, Swahili/Congolese strands and ONE Youth — structural to the station, not incidental.',
+  },
+  {
+    tag: 'Archive',
+    title: 'Recording the Valley',
+    body: 'Interviews and outside broadcasts from Shepparton Festival, SAM, Carols by Candlelight, GVL finals, multicultural festivals and local institutions — ONE FM has functioned as an oral history of the district, not only a music outlet.',
+  },
+] as const
 
 export const HISTORY_MILESTONES = [
   {
+    year: '1970s',
+    title: 'Organising',
+    body: 'Late-1970s founding activity — community radio movement in the Goulburn Valley.',
+  },
+  {
     year: '1980',
-    title: 'Founded',
-    body: 'Goulburn Valley Community Radio Inc. established in Shepparton — volunteers building a community voice for regional Victoria.',
-    sources: ['fm985.com.au/about'] as HistorySource[],
+    title: 'Established',
+    body: 'Goulburn Valley Community Radio Inc. — volunteers working toward a permanent licence.',
   },
   {
-    year: '1989',
-    title: 'Licensed Broadcaster',
-    body: 'Permanent full-time licence granted. ONE FM 98.5 (callsign 3ONE) begins licensed FM transmissions across the Goulburn Murray.',
-    sources: ['fm985.com.au/about'] as HistorySource[],
+    year: 'Apr 1989',
+    title: 'ACMA licensed',
+    body: 'Service 3ONE on 98.5 MHz commences 1 April 1989 — 10 kW community FM, Shepparton.',
   },
   {
-    year: '1990',
-    title: 'Multicultural Programming',
-    body: 'Dedicated language and multicultural shows connect Italian, Samoan, and diverse Valley communities on the dial.',
-    sources: ['fm985.com.au/about'] as HistorySource[],
+    year: 'May 1989',
+    title: 'First football call',
+    body: 'Live call from Central Park, Shepparton East — restoring GVL football to local radio.',
   },
   {
-    year: '2005',
-    title: 'Online Streaming',
-    body: 'Live stream at fm985.com.au — the Valley on air wherever listeners are, across Australia and beyond.',
-    sources: ['fm985.com.au/about'] as HistorySource[],
+    year: '2014',
+    title: '25 years',
+    body: 'Council records reference ONE FM celebrating 25 years of broadcasting.',
   },
   {
-    year: '2010',
-    title: 'GVL Football & Netball',
-    body: 'ONE FM becomes the broadcast partner for Goulburn Valley League — live match calls every weekend.',
-    sources: ['ONE FM program guide (fm985.com.au/guide)'] as HistorySource[],
+    year: '2019',
+    title: '30 years',
+    body: 'Greater Shepparton grant papers: “I heart ONE FM 98.5 celebrating 30 years”.',
   },
   {
     year: '2022',
-    title: 'Flood Emergency',
-    body: 'October floods across Shepparton, Mooroopna and Murchison — ONE FM part of the local information network when communities were cut off.',
-    sources: ['Victorian flood event records (regional context)', 'Emergency Management Victoria — community radio guidance'] as HistorySource[],
+    title: 'Floods & KDL',
+    body: 'October flood emergency; June KDL broadcast partnership when GVL rights shifted.',
   },
   {
-    year: '2026',
-    title: 'Live & Local — Always',
-    body: 'Volunteer-run, community-owned — still broadcasting 24/7 from Shepparton across the Goulburn Murray.',
-    sources: ['fm985.com.au/about'] as HistorySource[],
+    year: '2024',
+    title: '35 years',
+    body: 'AGM report: 2024 represents the 35th year of local broadcasting for ONE FM.',
   },
 ] as const
+
+/** Branding return to ONE FM — date of frequency-only phase less documented */
+export const BRANDING_NOTE =
+  'ONE FM resumed on-air use of callsign branding after community surveys showed listeners said “ONE FM” not frequency alone. Exact date of an earlier frequency-only phase is less securely documented than the return itself.'
