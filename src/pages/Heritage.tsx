@@ -21,7 +21,7 @@ import {
 import { stationStats } from '@/data/pricing'
 import {
   BOARD_2024,
-  FLOOD_RESILIENCE,
+  EMERGENCY_BROADCAST_NARRATIVE,
   HERITAGE_LEGENDS,
   HISTORY_MILESTONES,
   LIFE_MEMBERS,
@@ -116,6 +116,25 @@ function MilestoneStrip() {
   )
 }
 
+function FloodEmergencyNarrative() {
+  return (
+    <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
+      <LabelReveal className="mb-6">Community Resilience</LabelReveal>
+      <h2 className="font-poster uppercase text-[clamp(26px,4vw,44px)] text-white leading-[0.95] mb-10 max-w-[900px]">
+        Floods, emergencies and ONE FM
+        <span style={{ color: RED }}>&apos;</span>s public-service role
+      </h2>
+      <div className="max-w-[720px] space-y-6">
+        {EMERGENCY_BROADCAST_NARRATIVE.map((paragraph) => (
+          <p key={paragraph.slice(0, 48)} className="text-[17px] leading-relaxed text-white/60">
+            {paragraph}
+          </p>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function LifeMembersRoll() {
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
@@ -173,19 +192,6 @@ function LifeMembersRoll() {
 }
 
 export default function Heritage() {
-  const floodCards = FLOOD_RESILIENCE.map((para, i) => ({
-    tag: i === 0 ? 'Civic context' : i === FLOOD_RESILIENCE.length - 1 ? '2022 & beyond' : 'On air through it',
-    title:
-      i === 0
-        ? 'Floodplain broadcaster'
-        : i === 1
-          ? 'Repeated flood impacts'
-          : i === 2
-            ? 'Emergency information'
-            : 'Multilingual Valley',
-    body: para.body + (para.verifyPending ? ' (Station broadcast log — verification in progress.)' : ''),
-  }))
-
   return (
     <Layout>
       <SEO
@@ -210,7 +216,7 @@ export default function Heritage() {
 
         <MilestoneStrip />
 
-        <EditorialCards label="Floods & Community Resilience" items={floodCards} columns={2} />
+        <FloodEmergencyNarrative />
 
         <NameWall
           label="Legends & Voices"

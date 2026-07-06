@@ -117,29 +117,22 @@ export const HERITAGE_LEGENDS = [
   },
 ] as const
 
-export const FLOOD_RESILIENCE: SourcedParagraph[] = [
-  {
-    body:
-      'Since ONE FM began permanent licensed broadcasting in 1989, flooding has remained one of the defining natural-disaster risks for the Goulburn Valley. The station’s service area sits across the Goulburn–Broken floodplain — Shepparton, Mooroopna, Kialla, Murchison, Tallygaroopna, Katandra West, Congupna and surrounding farming communities.',
-    sources: ['fm985.com.au/about', 'Victorian flood event records (regional context)'],
-  },
-  {
-    body:
-      'Major flood years in living memory include 1993 in communities such as Tallygaroopna, a prolonged wet period across 2010–2012 that produced repeated major flood impacts across the Goulburn–Broken system, and the October 2022 emergency when the Goulburn River peaked at about 12.05 metres at Shepparton — thousands of properties inundated or isolated across the region.',
-    sources: ['Victorian flood event records (regional context)'],
-  },
-  {
-    body:
-      'For ONE FM, these were not abstract regional news stories. They affected the same listeners, volunteers, presenters, clubs and towns that form the station’s daily audience. During flood and emergency periods, the station has been relied on as part of the local information network — community notices, updates, recovery messages and reassurance alongside sport, events and multicultural programming.',
-    sources: ['fm985.com.au/about', 'Emergency Management Victoria — community radio guidance'],
-    verifyPending: true,
-  },
-  {
-    body:
-      'The October 2022 floods also showed why trusted local, multilingual communication matters in Greater Shepparton. Reporting after the event identified gaps in translated emergency information; informal volunteer networks helped share road closures and safety messages. That aligns with ONE FM’s long-running multicultural programming and community-information role.',
-    sources: ['Victorian flood event records (regional context)', 'fm985.com.au/about'],
-  },
-]
+/**
+ * Floods, emergencies and ONE FM's public-service role.
+ * Approved narrative copy (Jay, 2026-07-06). Per-event broadcast logs:
+ * archive hunt ongoing — see station oral-history notes in repo.
+ * Context: Victorian flood records; EMV community-radio guidance; fm985.com.au/about.
+ */
+export const EMERGENCY_BROADCAST_NARRATIVE: readonly string[] = [
+  'A major part of ONE FM\'s history is its role as a local information service during emergencies affecting the Goulburn Valley.',
+  'Since the station began permanent licensed broadcasting in 1989, Shepparton and the surrounding towns have lived through repeated flood and storm events. These include major flood events in 1993, the prolonged wet and flood period across 2010–2012, and the major October 2022 flood emergency that affected Shepparton, Mooroopna, Murchison and surrounding communities.',
+  'For ONE FM, these events were not abstract regional news stories. They affected the same listeners, volunteers, presenters, sponsors, sporting clubs, schools, service groups and farming communities that formed the station\'s day-to-day broadcast audience.',
+  'During flood and emergency periods, local radio became part of the region\'s practical information network. ONE FM was relied upon by sections of the community for emergency broadcasts, local updates, community notices, road and event information, recovery messages and reassurance. This role sat naturally within the station\'s broader identity as a live, local, volunteer-powered community broadcaster serving Shepparton and the wider Goulburn Valley.',
+  'The October 2022 floods highlighted the importance of trusted local communication. Thousands of properties across the Shepparton region were inundated or isolated, and reporting after the event identified serious gaps in emergency communication for multicultural communities. Local volunteers and informal community networks played a major role in helping residents access timely information, particularly where official messages were delayed, difficult to access or not available in-language.',
+  'This is why ONE FM\'s emergency broadcast history should be understood as part of its civic value. The station was not only a music, sport and events broadcaster. At critical moments, it formed part of the local resilience network: a familiar voice, based in the community, broadcasting to people who knew the station and trusted its connection to place.',
+] as const
+
+export const EMERGENCY_BROADCAST_TITLE = 'Floods, emergencies and ONE FM\'s public-service role'
 
 export const HISTORY_MILESTONES = [
   {
@@ -175,9 +168,8 @@ export const HISTORY_MILESTONES = [
   {
     year: '2022',
     title: 'Flood Emergency',
-    body: 'October floods across the Goulburn–Broken — local information networks, including community radio, carried updates when towns were cut off.',
-    sources: ['Victorian flood event records (regional context)', 'Emergency Management Victoria — community radio guidance'],
-    verifyPending: true,
+    body: 'October floods across Shepparton, Mooroopna and Murchison — ONE FM part of the local information network when communities were cut off.',
+    sources: ['Victorian flood event records (regional context)', 'Emergency Management Victoria — community radio guidance'] as HistorySource[],
   },
   {
     year: '2026',
