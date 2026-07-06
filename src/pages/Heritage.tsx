@@ -7,6 +7,10 @@ import { useReducedMotion } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { HorizontalGallery } from '@/components/HorizontalGallery'
+import { PeopleWall } from '@/components/archive/PeopleWall'
+import { DecadeDial } from '@/components/archive/DecadeDial'
+import { ContributePortal } from '@/components/archive/ContributePortal'
+import { ARCHIVE_PEOPLE } from '@/data/livingArchive/people'
 import {
   OnAirTicker,
   NameWall,
@@ -20,16 +24,12 @@ import {
 import { stationStats } from '@/data/pricing'
 import {
   ACMA_FACTS,
-  BOARD_2024,
-  BRANDING_NOTE,
   EMERGENCY_BROADCAST_NARRATIVE,
   HERITAGE_LEGENDS,
-  HISTORY_MILESTONES,
   INSTITUTION_FACTS,
-  LIFE_MEMBERS,
-  LIFE_MEMBER_NOTE,
   ORIGIN_LAYERS,
   SPORT_HISTORY_NARRATIVE,
+  BRANDING_NOTE,
 } from '@/data/stationHistory'
 
 const RED = '#E51636'
@@ -82,10 +82,32 @@ function HeritageHero() {
           />
         </h1>
         <p className="mt-7 max-w-[600px] text-[17px] leading-relaxed text-white/60">
-          {ACMA_FACTS.licensee} — callsign <strong className="text-white/80">{ACMA_FACTS.callsign}</strong>{' '}
-          on {ACMA_FACTS.frequency}. Licensed service commenced {ACMA_FACTS.licenceCommenced}; roots in
-          the late 1970s and established organisationally in 1980.
+          For more than three decades, ONE FM 98.5 has carried the voices, stories, sport, music,
+          emergencies and community life of the Goulburn Valley. Callsign{' '}
+          <strong className="text-white/80">{ACMA_FACTS.callsign}</strong> · licensed{' '}
+          {ACMA_FACTS.licenceCommenced}.
         </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <a
+            href="#timeline"
+            className="rounded-full px-6 py-3 font-bold text-[12px] tracking-[0.12em] uppercase text-white bloom-red"
+            style={{ background: RED }}
+          >
+            Explore the Timeline
+          </a>
+          <a
+            href="#people"
+            className="rounded-full px-6 py-3 font-bold text-[12px] tracking-[0.12em] uppercase text-white border border-white/25 hover:border-[#E51636] transition-colors"
+          >
+            Search the Archive
+          </a>
+          <a
+            href="#contribute"
+            className="rounded-full px-6 py-3 font-bold text-[12px] tracking-[0.12em] uppercase text-white/70 border border-white/15 hover:border-white/40 transition-colors"
+          >
+            Add Your Memory
+          </a>
+        </div>
       </div>
     </section>
   )
@@ -114,31 +136,6 @@ function OriginLayers() {
   )
 }
 
-function MilestoneStrip() {
-  return (
-    <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
-      <LabelReveal className="mb-8">Public Record Timeline</LabelReveal>
-      <div
-        className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory"
-        style={{ scrollbarWidth: 'none' }}
-      >
-        {HISTORY_MILESTONES.map((m) => (
-          <article
-            key={m.year + m.title}
-            className="snap-start shrink-0 w-[min(88vw,300px)] border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636]"
-          >
-            <div className="font-poster text-[clamp(32px,4.5vw,48px)] leading-none mb-3" style={{ color: RED }}>
-              {m.year}
-            </div>
-            <h3 className="font-poster uppercase text-[20px] text-white leading-[1.1] mb-2">{m.title}</h3>
-            <p className="text-[14px] leading-relaxed text-white/55">{m.body}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-  )
-}
-
 function ProseSection({ label, title, paragraphs }: { label: string; title: string; paragraphs: readonly string[] }) {
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
@@ -157,64 +154,12 @@ function ProseSection({ label, title, paragraphs }: { label: string; title: stri
   )
 }
 
-function LifeMembersRoll() {
-  return (
-    <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
-      <LabelReveal className="mb-3">The People of ONE FM</LabelReveal>
-      <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-4">
-        Volunteers, presenters, builders
-        <span style={{ color: RED }}>.</span>
-      </h2>
-      <p className="text-[15px] text-white/50 max-w-[640px] mb-10 leading-relaxed">
-        {LIFE_MEMBER_NOTE} On-air roster today at{' '}
-        <a href="https://fm985.com.au/guide/" className="underline hover:text-white/80">
-          fm985.com.au/guide
-        </a>
-        .
-      </p>
-
-      <div className="mb-12">
-        <h3 className="font-bold text-[12px] tracking-[0.14em] uppercase mb-4" style={{ color: RED }}>
-          Named in Annual Report 2024
-        </h3>
-        <ul className="flex flex-wrap gap-2">
-          {LIFE_MEMBERS.map((name) => (
-            <li
-              key={name}
-              className="px-3 py-1.5 rounded-full border border-white/12 text-[13px] text-white/70 hover:border-[#E51636] hover:text-white transition-colors"
-            >
-              {name}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {BOARD_2024.map(({ role, name }) => (
-          <div
-            key={role + name}
-            className="border border-white/12 rounded-xl p-5 hover:border-[#E51636] transition-colors"
-          >
-            <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-white/40 mb-1">{role}</div>
-            <div className="font-poster uppercase text-[18px] text-white leading-tight">{name}</div>
-          </div>
-        ))}
-      </div>
-
-      <p className="text-[12px] text-white/30 mt-8">
-        Sources: ONE FM Annual Report 2024; ACMA licence register; fm985.com.au/about; Shepparton News
-        (Ern Meharry, 2022); Greater Shepparton council records.
-      </p>
-    </section>
-  )
-}
-
 export default function Heritage() {
   return (
     <Layout>
       <SEO
-        title="History — ONE FM 98.5 · 3ONE Since 1989"
-        description="Goulburn Valley Community Radio Inc. Licensed 1 April 1989. Sport, floods, multicultural programming, life members and 35 years of local broadcasting from Shepparton."
+        title="The Living Archive — ONE FM 98.5 · 3ONE Since 1989"
+        description="The Living Archive of the Goulburn Valley — decades, people, sport, floods, multicultural voices. Searchable history from Shepparton community radio 3ONE."
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -230,11 +175,11 @@ export default function Heritage() {
 
         <OriginLayers />
 
+        <DecadeDial />
+
         <div id="archive">
           <HorizontalGallery />
         </div>
-
-        <MilestoneStrip />
 
         <ProseSection
           label="Sport & OB"
@@ -260,7 +205,9 @@ export default function Heritage() {
           rows={HERITAGE_LEGENDS.map(({ name, sub, img }) => ({ name, sub, img }))}
         />
 
-        <LifeMembersRoll />
+        <PeopleWall people={ARCHIVE_PEOPLE} />
+
+        <ContributePortal />
 
         <EditorialCards
           label="Institution"
@@ -279,7 +226,7 @@ export default function Heritage() {
           stats={[
             { n: '1989', t: 'ACMA licence commenced', red: true },
             { n: ACMA_FACTS.power, t: 'Community FM (3ONE)' },
-            { n: '35', t: 'Years local broadcasting (2024 AGM)' },
+            { n: String(ARCHIVE_PEOPLE.length), t: 'People in living archive' },
             { n: String(stationStats.totalTowns), t: 'Towns in station reach model' },
           ]}
         />
