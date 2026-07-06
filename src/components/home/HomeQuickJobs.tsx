@@ -31,7 +31,7 @@ export function HomeQuickJobs() {
                   image={job.image}
                   tags={[...job.tags]}
                   accent={job.accent}
-                  imageClassName={job.path === '/broadcast' ? 'object-left' : ''}
+                  imageClassName={job.path === '/listen' ? 'object-left' : ''}
                 />
               </TiltCard>
             </motion.div>
