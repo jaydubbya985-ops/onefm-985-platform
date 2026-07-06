@@ -49,7 +49,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Support',
     items: [
-      { label: 'Support Us', path: '/support', description: 'Donate · volunteer · membership' },
+      { label: 'Donate', path: '/support', description: 'Support community radio · bank transfer' },
       { label: 'Contact', path: '/contact', description: 'Studio · partnerships · enquiries' },
     ],
   },
