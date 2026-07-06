@@ -1,7 +1,7 @@
 ﻿/**
  * HISTORY — rebuilt per REBUILD-SPEC.md (page 5 of 6).
  * Absorbs Story (/story → redirect). Assembled from the ON AIR kit.
- * Sources: fm985.com.au/about, ACMA licence records, station archive photos.
+ * People & flood copy: src/data/stationHistory.ts (sourced).
  */
 import { Link } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
@@ -19,60 +19,15 @@ import {
   StrokeFill,
 } from '@/components/onair/kit'
 import { stationStats } from '@/data/pricing'
+import {
+  BOARD_2024,
+  FLOOD_RESILIENCE,
+  HERITAGE_LEGENDS,
+  HISTORY_MILESTONES,
+  LIFE_MEMBERS,
+} from '@/data/stationHistory'
 
 const RED = '#E51636'
-
-/** Milestones — source: ACMA records, fm985.com.au, station archive */
-const MILESTONES = [
-  {
-    year: '1980',
-    title: 'Founded',
-    body: 'Goulburn Valley Community Radio Inc. established in Shepparton — volunteers building a community voice for regional Victoria.',
-  },
-  {
-    year: '1989',
-    title: 'Licensed Broadcaster',
-    body: 'Permanent full-time licence granted. ONE FM 98.5 (callsign 3ONE) begins licensed FM transmissions across the Goulburn Murray.',
-  },
-  {
-    year: '1990',
-    title: 'Multicultural Programming',
-    body: 'Dedicated language and multicultural shows connect Italian, Samoan, and diverse Valley communities on the dial.',
-  },
-  {
-    year: '2005',
-    title: 'Online Streaming',
-    body: 'Live stream at fm985.com.au — the Valley on air wherever listeners are, across Australia and beyond.',
-  },
-  {
-    year: '2010',
-    title: 'GVL Football & Netball',
-    body: 'ONE FM becomes the broadcast partner for Goulburn Valley League — live match calls every weekend.',
-  },
-  {
-    year: String(stationStats.yearsBroadcasting + 1989),
-    title: 'Live & Local — Always',
-    body: `${stationStats.yearsBroadcasting} years on air — volunteer-run, community-owned, still broadcasting 24/7 from Shepparton.`,
-  },
-]
-
-const LEGENDS = [
-  {
-    name: 'Sally Nayler',
-    sub: 'On air in Studio A · 1990s',
-    img: '/assets/images/heritage-sally-nayler-90s.jpg',
-  },
-  {
-    name: 'Di Hunter',
-    sub: 'On air since the early days',
-    img: '/assets/images/heritage-di-hunter-carols-2014.jpg',
-  },
-  {
-    name: 'The 1988 Panel',
-    sub: 'Original mixing desk · built in-house',
-    img: '/assets/images/heritage-original-panel-1988.jpg',
-  },
-]
 
 function HeritageHero() {
   const reduced = useReducedMotion()
@@ -139,7 +94,7 @@ function MilestoneStrip() {
         className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory"
         style={{ scrollbarWidth: 'none' }}
       >
-        {MILESTONES.map((m) => (
+        {HISTORY_MILESTONES.map((m) => (
           <article
             key={m.year + m.title}
             className="snap-start shrink-0 w-[min(88vw,340px)] border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636]"
@@ -161,20 +116,89 @@ function MilestoneStrip() {
   )
 }
 
+function LifeMembersRoll() {
+  return (
+    <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
+      <LabelReveal className="mb-3">The People of ONE FM</LabelReveal>
+      <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-4">
+        Volunteers, presenters, builders
+        <span style={{ color: RED }}>.</span>
+      </h2>
+      <p className="text-[15px] text-white/50 max-w-[640px] mb-10 leading-relaxed">
+        Life members named in the ONE FM Annual Report 2024 — the backbone of the station&apos;s
+        living memory. Board and presenter lists from the same report; on-air roster today at{' '}
+        <a href="https://fm985.com.au/guide/" className="underline hover:text-white/80">
+          fm985.com.au/guide
+        </a>
+        .
+      </p>
+
+      <div className="mb-12">
+        <h3 className="font-bold text-[12px] tracking-[0.14em] uppercase mb-4" style={{ color: RED }}>
+          Life members ({LIFE_MEMBERS.length})
+        </h3>
+        <ul className="flex flex-wrap gap-2">
+          {LIFE_MEMBERS.map((name) => (
+            <li
+              key={name}
+              className="px-3 py-1.5 rounded-full border border-white/12 text-[13px] text-white/70 hover:border-[#E51636] hover:text-white transition-colors"
+            >
+              {name}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {BOARD_2024.map(({ role, name }) => (
+          <div
+            key={role + name}
+            className="border border-white/12 rounded-xl p-5 hover:border-[#E51636] transition-colors"
+          >
+            <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-white/40 mb-1">
+              {role}
+            </div>
+            <div className="font-poster uppercase text-[18px] text-white leading-tight">{name}</div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-[12px] text-white/30 mt-8">
+        Source: ONE FM Annual Report 2024 (fm985.com.au/about). Additional names from program
+        guide, interviews and station archive — oral-history verification ongoing for per-event
+        emergency broadcasts.
+      </p>
+    </section>
+  )
+}
+
 export default function Heritage() {
+  const floodCards = FLOOD_RESILIENCE.map((para, i) => ({
+    tag: i === 0 ? 'Civic context' : i === FLOOD_RESILIENCE.length - 1 ? '2022 & beyond' : 'On air through it',
+    title:
+      i === 0
+        ? 'Floodplain broadcaster'
+        : i === 1
+          ? 'Repeated flood impacts'
+          : i === 2
+            ? 'Emergency information'
+            : 'Multilingual Valley',
+    body: para.body + (para.verifyPending ? ' (Station broadcast log — verification in progress.)' : ''),
+  }))
+
   return (
     <Layout>
       <SEO
         title="History — ONE FM 98.5 Since 1989"
-        description={`${stationStats.yearsBroadcasting} years of community broadcasting. Goulburn Valley Community Radio Inc. · callsign 3ONE · volunteer-run from Shepparton.`}
+        description={`${stationStats.yearsBroadcasting} years of community broadcasting. Floods, football, multicultural programming and ${LIFE_MEMBERS.length} life members — Goulburn Valley Community Radio Inc.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             'Est. 1989 · Goulburn Valley Community Radio Inc.',
             'Callsign 3ONE · 98.5 FM Shepparton',
-            `${stationStats.yearsBroadcasting} years on air`,
-            'Volunteer-run · community-owned · not for profit',
+            `${LIFE_MEMBERS.length} life members · volunteer-run`,
+            'Community resilience · emergency information · local sport',
           ]}
           delay={0.4}
         />
@@ -186,7 +210,14 @@ export default function Heritage() {
 
         <MilestoneStrip />
 
-        <NameWall label="Legends & Archive" rows={LEGENDS} />
+        <EditorialCards label="Floods & Community Resilience" items={floodCards} columns={2} />
+
+        <NameWall
+          label="Legends & Voices"
+          rows={HERITAGE_LEGENDS.map(({ name, sub, img }) => ({ name, sub, img }))}
+        />
+
+        <LifeMembersRoll />
 
         <EditorialCards
           label="What We Stand For"
@@ -204,7 +235,7 @@ export default function Heritage() {
             {
               tag: 'Community',
               title: 'Volunteer-Run',
-              body: 'Operated and managed by volunteers under Goulburn Valley Community Radio Inc. — sport, multicultural programs, and emergency broadcasting for the region.',
+              body: 'Operated by volunteers under Goulburn Valley Community Radio Inc. — sport, multicultural programs, outside broadcasts and community information for the region.',
             },
           ]}
           columns={3}
@@ -220,8 +251,8 @@ export default function Heritage() {
         <StatsStrip
           stats={[
             { n: '1989', t: 'Licensed to broadcast', red: true },
+            { n: String(LIFE_MEMBERS.length), t: 'Life members (2024 report)' },
             { n: '3ONE', t: 'ACMA callsign' },
-            { n: String(stationStats.yearsBroadcasting), t: 'Years on air' },
             { n: '24/7', t: 'Live & local' },
           ]}
         />
