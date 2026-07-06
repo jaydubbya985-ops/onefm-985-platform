@@ -25,7 +25,6 @@ const AudienceAnalytics = lazy(() => import('./pages/AudienceAnalytics'))
 const SalesProposal = lazy(() => import('./pages/SalesProposal'))
 const Heritage = lazy(() => import('./pages/Heritage'))
 const Community = lazy(() => import('./pages/Community'))
-const Story = lazy(() => import('./pages/Story'))
 const Support = lazy(() => import('./pages/Support'))
 const Contact = lazy(() => import('./pages/Contact'))
 const MediaKit = lazy(() => import('./pages/MediaKit'))
@@ -243,14 +242,8 @@ export default function App() {
         />
         {/* Absorbed into /listen per REBUILD-SPEC.md */}
         <Route path="/programs" element={<Navigate to="/listen" replace />} />
-        <Route
-          path="/story"
-          element={
-            <LazyRoute variant="text" routeName="Story">
-              <Story />
-            </LazyRoute>
-          }
-        />
+        {/* Absorbed into /heritage per REBUILD-SPEC.md */}
+        <Route path="/story" element={<Navigate to="/heritage" replace />} />
         <Route
           path="/support"
           element={

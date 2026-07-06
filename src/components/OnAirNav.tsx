@@ -29,7 +29,7 @@ const SECONDARY: { label: string; to: string }[] = [
   { label: 'Programs', to: '/programs' },
   { label: 'GVL Footy', to: '/football' },
   { label: 'Coverage', to: '/coverage' },
-  { label: 'Our Story', to: '/story' },
+  { label: 'History', to: '/heritage' },
   { label: 'Media Kit', to: '/media-kit' },
   { label: 'Contact', to: '/contact' },
   { label: 'Ops', to: '/ops' },

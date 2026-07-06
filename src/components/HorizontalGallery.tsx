@@ -1,5 +1,4 @@
 import { useRef, useState, useLayoutEffect } from 'react'
-import { WordReveal } from '@/components/WordReveal'
 import { stationStats } from '@/data/pricing'
 
 interface Slide {
@@ -107,7 +106,7 @@ function SlidePanel({
           insetInline: 0,
           top: -2,
           height: 2,
-          background: 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.7) 20%, rgba(255,255,255,0.5) 50%, rgba(212,175,55,0.7) 80%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(229,22,54,0.7) 20%, rgba(255,255,255,0.5) 50%, rgba(229,22,54,0.7) 80%, transparent 100%)',
           pointerEvents: 'none',
           zIndex: 10,
           animation: isActive ? 'scan-sweep 0.75s ease-in forwards' : 'none',
@@ -131,8 +130,8 @@ function SlidePanel({
         }}
       >
         <h3
-          className="text-gold-gradient font-heading font-black mb-3 leading-none"
-          style={{ fontSize: 'clamp(2.2rem, 4vw, 3.5rem)', letterSpacing: '-0.03em' }}
+          className="font-poster uppercase text-white mb-3 leading-none"
+          style={{ fontSize: 'clamp(2.2rem, 4vw, 3.5rem)' }}
         >
           {slide.title}
         </h3>
@@ -188,18 +187,18 @@ export function HorizontalGallery() {
   return (
     <section aria-label="ONE FM photo archive">
 
-      {/* Section header — normal document flow above the sticky area */}
-      <div className="bg-[#030810] pt-20 pb-10 px-6 text-center section-bleed-top">
-        <span className="section-label justify-center mb-4 block">Station Archive</span>
-        <WordReveal
-          text="Across the Valley"
-          as="h2"
-          className="font-heading font-black text-one-white block"
-          style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', letterSpacing: '-0.03em' }}
-          stagger={0.04}
-          variant="char"
-        />
-        <p className="font-body-small text-muted mt-2 max-w-sm mx-auto">
+      {/* Section header — ON AIR kit chrome */}
+      <div className="bg-[#0A0A0A] pt-20 pb-10 px-6 text-center section-bleed-top">
+        <span className="font-bold text-[12px] tracking-[0.14em] uppercase mb-4 block" style={{ color: '#E51636' }}>
+          — Station Archive
+        </span>
+        <h2
+          className="font-poster uppercase text-white block leading-[0.95]"
+          style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
+        >
+          Across the Valley
+        </h2>
+        <p className="text-[14px] text-white/45 mt-2 max-w-sm mx-auto">
           Scroll through the moments that made ONE FM 98.5
         </p>
       </div>
@@ -213,7 +212,7 @@ export function HorizontalGallery() {
         data-cursor-label="SCROLL"
       >
         {/* Sticky viewport — stays fixed while outer div scrolls */}
-        <div className="sticky top-0 overflow-hidden bg-[#030810]" style={{ height: '100svh' }}>
+        <div className="sticky top-0 overflow-hidden bg-[#0A0A0A]" style={{ height: '100svh' }}>
           {/* Horizontal track — translateX driven by tick() */}
           <div
             ref={trackRef}
@@ -239,7 +238,7 @@ export function HorizontalGallery() {
                 className="h-px rounded-full transition-all duration-500"
                 style={{
                   width: i === active ? 32 : 8,
-                  backgroundColor: i === active ? '#F2F2F2' : 'rgba(255,255,255,0.22)',
+                  backgroundColor: i === active ? '#E51636' : 'rgba(255,255,255,0.22)',
                 }}
               />
             ))}
