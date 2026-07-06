@@ -22,7 +22,6 @@ const Football = lazy(() => import('./pages/Football'))
 const CoverageMap = lazy(() => import('./pages/CoverageMap'))
 const SponsorshipKit = lazy(() => import('./pages/SponsorshipKit'))
 const AudienceAnalytics = lazy(() => import('./pages/AudienceAnalytics'))
-const SalesProposal = lazy(() => import('./pages/SalesProposal'))
 const Heritage = lazy(() => import('./pages/Heritage'))
 const Community = lazy(() => import('./pages/Community'))
 const Support = lazy(() => import('./pages/Support'))
@@ -216,14 +215,8 @@ export default function App() {
         />
         {/* Absorbed into /community per REBUILD-SPEC.md */}
         <Route path="/social" element={<Navigate to="/community" replace />} />
-        <Route
-          path="/proposal"
-          element={
-            <LazyRoute variant="form" routeName="Sales Proposal">
-              <SalesProposal />
-            </LazyRoute>
-          }
-        />
+        {/* Staff proposal builder lives in Ops — public enquiries go to Sponsor */}
+        <Route path="/proposal" element={<Navigate to="/sponsorship#enquire" replace />} />
         <Route
           path="/heritage"
           element={

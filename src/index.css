@@ -142,7 +142,7 @@
     --sidebar-border: 0 0% 14%;
     --sidebar-ring: 351 82% 52%;
 
-    --one-navy: #071D3A;
+    --one-navy: #101010;
     --one-blue: #1B458F;
     --one-electric: #B6FF00; /* ON AIR: fluoro lime — the one electric */
     --one-electric-dim: rgba(182, 255, 0, 0.65);
@@ -424,7 +424,7 @@
   .btn-primary:hover {
     @apply scale-105;
     background: #E51636;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+    box-shadow: 0 0 20px rgba(229, 22, 54, 0.35);
   }
 
   .btn-primary:active {
@@ -846,13 +846,13 @@
   .bg-surface-glow {
     background:
       radial-gradient(ellipse 80% 50% at 50% 0%, rgba(var(--one-electric-rgb),0.04) 0%, transparent 60%),
-      #071D3A;
+      #101010;
   }
-  /* Gold-warmth variant for premium/sponsor sections */
+  /* Warm lift variant for sponsor sections */
   .bg-surface-warm {
     background:
       radial-gradient(ellipse 70% 40% at 50% 100%, rgba(229,22,54,0.04) 0%, transparent 60%),
-      #071D3A;
+      #121212;
   }
 
   /* ── Electric glow utilities ──────────────────────────── */

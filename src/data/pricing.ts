@@ -1,3 +1,29 @@
+/**
+ * Canonical public pricing — general sponsorship, GVL football, rate card, donations.
+ * Marketing copy must use helpers below so "$50 entry" never fights "$75/week" on cards.
+ * Ops portal uses separate DEMO season packages — not this file.
+ */
+
+/** General community sponsorship floor (Community Partner min) */
+export const GENERAL_ENTRY_WEEKLY = 50
+/** GVL football sponsorship floor (Community Supporter) */
+export const FOOTBALL_ENTRY_WEEKLY = 25
+
+export const PRICING_COPY = {
+  generalFrom: `From $${GENERAL_ENTRY_WEEKLY}/week`,
+  footballFrom: `GVL from $${FOOTBALL_ENTRY_WEEKLY}/week`,
+  generalTicker: `General sponsorship from $${GENERAL_ENTRY_WEEKLY}/week`,
+  footballTicker: `GVL football from $${FOOTBALL_ENTRY_WEEKLY}/week`,
+} as const
+
+export function formatWeeklyRange(min: number, max: number): string {
+  return `$${min}–$${max}/week`
+}
+
+export function formatWeeklyTypical(price: number): string {
+  return `Typical ~$${price}/week`
+}
+
 // Sponsorship tiers (general)
 export const generalTiers = {
   communityPartner: { name: 'Community Partner', minPrice: 50, maxPrice: 100, weeklyPrice: 75, spots: 10, socialPosts: 2 },
