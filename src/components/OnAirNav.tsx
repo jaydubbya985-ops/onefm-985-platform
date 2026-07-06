@@ -26,13 +26,10 @@ const MENU: { label: string; to: string; img: string }[] = [
 ]
 
 const SECONDARY: { label: string; to: string }[] = [
-  { label: 'Programs', to: '/programs' },
-  { label: 'GVL Footy', to: '/football' },
   { label: 'Coverage', to: '/coverage' },
-  { label: 'History', to: '/heritage' },
+  { label: 'GVL Footy', to: '/football' },
   { label: 'Media Kit', to: '/media-kit' },
   { label: 'Contact', to: '/contact' },
-  { label: 'Ops', to: '/ops' },
 ]
 
 export function OnAirNav() {
