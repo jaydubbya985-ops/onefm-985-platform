@@ -73,6 +73,7 @@ import { BATCH_DUE_DATE, BATCH_INVOICES } from './data/invoices'
 import { downloadXeroCsv, summariseXeroExport } from './invoices/xeroExport'
 import {
   buildMailtoInvoiceUrl,
+  DEFAULT_TEST_INBOX,
   dispatchInvoiceBatch,
   dispatchInvoiceEmail,
   dispatchReceiptEmail,
@@ -561,10 +562,12 @@ export default function InvoiceBatchSender() {
     const recipient = testAddress || 'jasonstv1@bigpond.com'
     setSending(true)
     try {
-      const result = await dispatchInvoiceEmail({
+      const payload = {
         ...rowToSendPayload(row, recipient),
-        testMode: true,
-      })
+        testMode: true as const,
+        testRecipient: recipient,
+      }
+      const result = await dispatchInvoiceEmail(payload)
       if (result.devMode) {
         updateStatus(id, 'tested')
         toast(`Not actually sent — no email service configured (dev mode)`, 'warning')
@@ -572,7 +575,7 @@ export default function InvoiceBatchSender() {
         updateStatus(id, 'tested')
         toast(`Test invoice sent to ${recipient}`, 'success')
       } else if (result.usedMailtoFallback) {
-        window.location.href = buildMailtoInvoiceUrl(rowToSendPayload(row, recipient))
+        window.location.href = buildMailtoInvoiceUrl(payload)
         updateStatus(id, 'tested')
         toast(`Resend unavailable — test email opened for ${recipient}`, 'warning')
       } else {
@@ -597,11 +600,24 @@ export default function InvoiceBatchSender() {
   const handleConfirmSend = async (row: BatchRow) => {
     setSending(true)
     try {
-      const result = await dispatchInvoiceEmail(rowToSendPayload(row))
+      const payload = testMode
+        ? {
+            ...rowToSendPayload(row, testAddress || DEFAULT_TEST_INBOX),
+            testMode: true as const,
+            testRecipient: testAddress || DEFAULT_TEST_INBOX,
+          }
+        : rowToSendPayload(row)
+      const deliveryTo = testMode ? (testAddress || DEFAULT_TEST_INBOX) : row.email
+      const result = await dispatchInvoiceEmail(payload)
       if (result.success && !result.devMode) {
-        // Real Resend send succeeded
-        sendBatch([row.id])
-        notify(`Invoice ${row.number} sent to ${row.email} with PDF attached`, 'success')
+        if (!testMode) sendBatch([row.id])
+        else updateStatus(row.id, 'tested')
+        notify(
+          testMode
+            ? `TEST invoice ${row.number} sent to ${deliveryTo}`
+            : `Invoice ${row.number} sent to ${row.email} with PDF attached`,
+          'success',
+        )
       } else {
         // devMode (no email service) or usedMailtoFallback — download PDF and open email client
         try {
@@ -610,10 +626,11 @@ export default function InvoiceBatchSender() {
         } catch {
           notify('Failed to generate PDF', 'error')
         }
-        window.location.href = buildMailtoInvoiceUrl(rowToSendPayload(row))
-        sendBatch([row.id])
+        window.location.href = buildMailtoInvoiceUrl(payload)
+        if (!testMode) sendBatch([row.id])
+        else updateStatus(row.id, 'tested')
         notify(
-          `PDF downloaded. Email client opened — attach ${row.number}.pdf before sending.`,
+          `PDF downloaded. Email client opened for ${deliveryTo} — attach ${row.number}.pdf before sending.`,
           'warning',
         )
       }
@@ -697,6 +714,7 @@ export default function InvoiceBatchSender() {
         const result = await dispatchInvoiceEmail({
           ...rowToSendPayload(r, recipient),
           testMode: true,
+          testRecipient: recipient,
         })
         if (result.devMode) {
           devMode++
@@ -730,26 +748,45 @@ export default function InvoiceBatchSender() {
       return
     }
     const totalValue = selected.reduce((sum, r) => sum + r.total, 0)
+    const testInbox = testAddress || DEFAULT_TEST_INBOX
     setConfirm({
       open: true,
-      title: `Send ${selected.length} Invoices?`,
-      description: `This will send ${selected.length} invoices via Resend with PDF attachments. Total value: ${formatCurrency(totalValue)}.`,
-      confirmLabel: sending ? 'Sending…' : `Send ${selected.length} Invoices`,
-      variant: selected.length > 1 ? 'danger' : 'default',
+      title: testMode
+        ? `TEST-send ${selected.length} invoices?`
+        : `Send ${selected.length} Invoices?`,
+      description: testMode
+        ? `TEST MODE: all ${selected.length} emails go to ${testInbox} only — no sponsors. Total value (for reference): ${formatCurrency(totalValue)}.`
+        : `LIVE: this will email ${selected.length} sponsors via Resend with PDF attachments. Total value: ${formatCurrency(totalValue)}.`,
+      confirmLabel: sending
+        ? 'Sending…'
+        : testMode
+          ? `Test-send ${selected.length}`
+          : `Send ${selected.length} Invoices`,
+      variant: selected.length > 1 && !testMode ? 'danger' : 'default',
       onConfirm: async () => {
         setConfirm((prev) => ({ ...prev, open: false }))
         setSending(true)
         try {
           const payloads = selected.map((r) => rowToSendPayload(r))
           const actuallySentIds: string[] = []
-          const result = await dispatchInvoiceBatch(payloads, (index, _total, itemResult) => {
-            if (itemResult.success && !itemResult.devMode) {
-              actuallySentIds.push(selected[index - 1].id)
-            } else if (itemResult.usedMailtoFallback) {
-              actuallySentIds.push(selected[index - 1].id)
+          const result = await dispatchInvoiceBatch(
+            payloads,
+            (index, _total, itemResult) => {
+              if (itemResult.success && !itemResult.devMode) {
+                actuallySentIds.push(selected[index - 1].id)
+              } else if (itemResult.usedMailtoFallback) {
+                actuallySentIds.push(selected[index - 1].id)
+              }
+            },
+            testMode ? { testMode: true, testRecipient: testInbox } : undefined,
+          )
+          if (actuallySentIds.length > 0) {
+            if (testMode) {
+              actuallySentIds.forEach((id) => updateStatus(id, 'tested'))
+            } else {
+              sendBatch(actuallySentIds)
             }
-          })
-          if (actuallySentIds.length > 0) sendBatch(actuallySentIds)
+          }
           if (result.devMode > 0) {
             notify(
               `${result.devMode} invoice(s) NOT sent — no email service configured (dev mode). ${result.sent} real send(s) succeeded.`,
@@ -757,7 +794,9 @@ export default function InvoiceBatchSender() {
             )
           } else {
             notify(
-              `Batch complete: ${result.sent} sent${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
+              testMode
+                ? `Test batch: ${result.sent} sent to ${testInbox}${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''}`
+                : `Batch complete: ${result.sent} sent${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
               result.failed > 0 ? 'warning' : 'success',
             )
           }
@@ -830,7 +869,7 @@ export default function InvoiceBatchSender() {
                 <div>
                   <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice Batch — June 2026</h1>
                   <p className="text-sm text-[#F4F1EA]/50">
-                    ONE FM 98.5 • {rows.length} invoices • Due {formatDate(BATCH_DUE_DATE)}
+                    ONE FM 98.5 • {rows.length} invoices • $64,188 inc GST • Due {formatDate(BATCH_DUE_DATE)}
                   </p>
                 </div>
               </div>

@@ -1,6 +1,9 @@
 /**
  * Invoice + receipt email dispatch — Netlify function (production),
  * direct Resend API (dev fallback), or mailto last resort.
+ *
+ * SAFETY: when `testMode` is true, mail NEVER goes to the sponsor address.
+ * It always redirects to `testRecipient` (or DEFAULT_TEST_INBOX) and prefixes [TEST].
  */
 import type { jsPDF } from 'jspdf'
 import { sendEmail } from '@/lib/email'
@@ -14,12 +17,18 @@ import {
   type PdfInvoiceData,
 } from '@/components/ops/InvoiceEmailTemplate'
 
+/** Default inbox for test sends — never a sponsor address */
+export const DEFAULT_TEST_INBOX = 'jasonstv1@bigpond.com'
+
 export interface InvoiceSendPayload extends PdfInvoiceData {
   to: string
   emailSubject: string
   emailBody?: string
   invoiceId?: string
+  /** When true, forces delivery to testRecipient / DEFAULT_TEST_INBOX — never `to`. */
   testMode?: boolean
+  /** Override test inbox (defaults to DEFAULT_TEST_INBOX). */
+  testRecipient?: string
 }
 
 export interface ReceiptSendPayload {
@@ -65,12 +74,23 @@ function buildInvoiceHtml(payload: InvoiceSendPayload): string {
   )
 }
 
+/** Resolve recipient + subject with hard test-mode redirect. */
+function resolveDelivery(payload: InvoiceSendPayload): { recipient: string; subject: string } {
+  if (payload.testMode) {
+    const recipient = (payload.testRecipient || DEFAULT_TEST_INBOX).trim() || DEFAULT_TEST_INBOX
+    const subject = payload.emailSubject.startsWith('[TEST]')
+      ? payload.emailSubject
+      : `[TEST] ${payload.emailSubject}`
+    return { recipient, subject }
+  }
+  return { recipient: payload.to, subject: payload.emailSubject }
+}
+
 /** Send invoice email with PDF attachment via Netlify function (production) or Resend direct (dev). */
 export async function dispatchInvoiceEmail(
   payload: InvoiceSendPayload,
 ): Promise<SendResult> {
-  const recipient = payload.to
-  const subject = payload.emailSubject
+  const { recipient, subject } = resolveDelivery(payload)
   const html = buildInvoiceHtml(payload)
 
   let pdfBase64: string | undefined
@@ -192,16 +212,18 @@ Reference: ${payload.number}
 Thank you for supporting ONE FM 98.5.
 
 Jason Welsh
-Station Manager, ONE FM 98.5
+Vice Chair, ONE FM 98.5
 accounts@fm985.com.au`)
 
-  return `mailto:${payload.to}?subject=${encodeURIComponent(payload.emailSubject)}&body=${body}`
+  const { recipient, subject } = resolveDelivery(payload)
+  return `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${body}`
 }
 
 /** Sequential batch send with rate-limit spacing. */
 export async function dispatchInvoiceBatch(
   items: InvoiceSendPayload[],
   onProgress?: (index: number, total: number, result: SendResult) => void,
+  options?: { testMode?: boolean; testRecipient?: string },
 ): Promise<{ sent: number; failed: number; mailtoFallback: number; devMode: number }> {
   let sent = 0
   let failed = 0
@@ -209,7 +231,14 @@ export async function dispatchInvoiceBatch(
   let devMode = 0
 
   for (let i = 0; i < items.length; i++) {
-    const result = await dispatchInvoiceEmail(items[i])
+    const item: InvoiceSendPayload = options?.testMode
+      ? {
+          ...items[i],
+          testMode: true,
+          testRecipient: options.testRecipient || DEFAULT_TEST_INBOX,
+        }
+      : items[i]
+    const result = await dispatchInvoiceEmail(item)
     onProgress?.(i + 1, items.length, result)
 
     if (result.devMode) {
@@ -218,7 +247,7 @@ export async function dispatchInvoiceBatch(
       sent++
     } else if (result.usedMailtoFallback) {
       mailtoFallback++
-      window.open(buildMailtoInvoiceUrl(items[i]), '_blank')
+      window.open(buildMailtoInvoiceUrl(item), '_blank')
     } else {
       failed++
     }

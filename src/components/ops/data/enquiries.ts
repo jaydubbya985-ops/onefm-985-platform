@@ -34,6 +34,8 @@ export interface Enquiry {
   value?: number
 }
 
+// DEMO DATA — synthetic CRM pipeline rows for ops UI. Not real sponsors.
+// Do not email these addresses. Real enquiries arrive via Supabase contact_enquiries.
 export const MOCK_ENQUIRIES: Enquiry[] = [
   {
     id: 'ENQ-001',

@@ -52,7 +52,7 @@ const TABS: {
   { id: 'sponsors', label: 'Sponsors', icon: Users, description: 'CRM, contacts & pipeline' },
   { id: 'schedule', label: 'Schedule', icon: Radio, description: 'Broadcast & ad schedule' },
   { id: 'invoices', label: 'Invoices', icon: Receipt, description: 'Create, send & track invoices' },
-  { id: 'batch', label: 'Batch Send', icon: Send, description: '$58K invoice batch — June 2026' },
+  { id: 'batch', label: 'Batch Send', icon: Send, description: '$64,188 invoice batch — June 2026' },
   { id: 'billing', label: 'Billing', icon: BarChart3, description: 'Payments, aging & reports' },
   { id: 'payments', label: 'Payments', icon: CreditCard, description: 'Donations & memberships' },
 ]
