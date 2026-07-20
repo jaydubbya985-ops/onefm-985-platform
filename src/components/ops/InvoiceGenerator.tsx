@@ -76,7 +76,7 @@ import {
   type BillingFrequency,
   type SponsorContract,
 } from './invoices/contacts'
-import { dispatchInvoiceEmail } from '@/lib/invoiceSend'
+import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
 import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
 
 // ---------------------------------------------------------------------------
@@ -674,7 +674,7 @@ export default function InvoiceGenerator() {
     const description =
       inv.items.map((item) => item.description).join('; ') || 'Sponsorship'
 
-    const result = await dispatchInvoiceEmail({
+    const payload = {
       to: inv.billTo.email,
       contactName: inv.billTo.name,
       company: inv.billTo.company,
@@ -690,11 +690,13 @@ export default function InvoiceGenerator() {
       emailSubject: `Invoice ${inv.invoiceNumber} from ONE FM 98.5 — ${inv.billTo.company}`,
       emailBody: inv.notes,
       invoiceId: inv.id,
-    })
+    }
+
+    const result = await dispatchInvoiceEmail(payload)
 
     if (result.devMode) {
       window.alert(
-        `NOT sent — no email service is configured yet. Invoice ${inv.invoiceNumber} was NOT emailed to ${inv.billTo.email}.`,
+        `NOT sent — no email service is configured yet. Invoice ${inv.invoiceNumber} was NOT emailed to ${inv.billTo.email}.\n\nUse the Batch Send tab for PDF + mailto fallback, or add RESEND_API_KEY on Netlify.`,
       )
       return
     }
@@ -704,9 +706,32 @@ export default function InvoiceGenerator() {
         list.map((i) => (i.id === id ? { ...i, status: 'sent' } : i)),
       )
       updateInvoice(id, { status: 'sent' })
-    } else if (!result.usedMailtoFallback) {
-      window.alert(result.error ?? `Failed to send invoice ${inv.invoiceNumber}.`)
+      return
     }
+
+    if (result.usedMailtoFallback) {
+      try {
+        const pdf = await generateInvoicePdf({
+          ...payload,
+          contactName: inv.billTo.name,
+          company: inv.billTo.company,
+        })
+        pdf.save(`${inv.invoiceNumber}.pdf`)
+      } catch {
+        // PDF optional — still open mailto
+      }
+      window.location.href = buildMailtoInvoiceUrl(payload)
+      setLocalInvoices((list) =>
+        list.map((i) => (i.id === id ? { ...i, status: 'sent' } : i)),
+      )
+      updateInvoice(id, { status: 'sent' })
+      window.alert(
+        `PDF downloaded. Email client opened for ${inv.billTo.email} — attach ${inv.invoiceNumber}.pdf before sending.`,
+      )
+      return
+    }
+
+    window.alert(result.error ?? `Failed to send invoice ${inv.invoiceNumber}.`)
   }
 
   function handleDeleteInvoice(id: string) {
@@ -734,14 +759,10 @@ export default function InvoiceGenerator() {
   }
 
   function handleBatchSend() {
-    setLocalInvoices((list) =>
-      list.map((inv) =>
-        selectedIds.has(inv.id) && inv.status === 'draft' ? { ...inv, status: 'sent' } : inv,
-      ),
+    // Status-only "send" removed — real email lives in Batch Send tab.
+    window.alert(
+      `This tab does not email sponsors.\n\nOpen the "Batch Send" tab to preview, test, and send invoices with PDF attachments.\n\n(${selectedIds.size} selected — status unchanged)`,
     )
-    selectedIds.forEach((id) => updateInvoice(id, { status: 'sent' }))
-    setSelectedIds(new Set())
-    setBatchMode(false)
   }
 
   function handleBatchDelete() {
