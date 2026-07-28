@@ -21,9 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          # netlify-cli's deps (@netlify/api, @netlify/zip-it-and-ship-it, etc.)
-          # require Node >=22.12.0; app build itself only needs >=20.
-          node-version: '22'
+          node-version: '20'
           cache: npm
 
       - name: Install dependencies
@@ -38,17 +36,26 @@ jobs:
           VITE_STATION_EMAIL: admin@fm985.com.au
           VITE_RADIO_CO_STATION_ID: sae3372059
 
-      # nwtgck/actions-netlify@v3.0 was dropped 2026-07-28: its bundled esbuild
-      # binary is missing under the current GitHub-hosted Node 24 runner
-      # ("spawn .../dist/esbuild ENOENT"), which broke every deploy once
-      # functions-dir was added. The official Netlify CLI is more robust and
-      # reads netlify.toml (functions, redirects, headers) natively.
+      # 2026-07-28 tech run: tried adding functions-dir/netlify-config-path
+      # here (broke on a missing esbuild binary under Node 24), then tried
+      # switching to netlify-cli entirely (got "Unauthorized: could not
+      # retrieve project" from Netlify's API on every attempt, incl. after
+      # bumping Node to 22 and dropping --auth/--site flags for env vars —
+      # see TECH_RUN_STATUS_2026-07-28.md). That looks like a real token/
+      # scope problem, not a workflow bug, so reverted to this known-good
+      # config pending NEED JAY. Functions/redirects are still NOT deployed
+      # until that's resolved.
       - name: Deploy to Netlify
-        # NETLIFY_AUTH_TOKEN / NETLIFY_SITE_ID are read from the environment,
-        # not passed as --auth/--site flags — the flag form triggers a known
-        # "Unauthorized: could not retrieve project" CLI bug even with valid
-        # tokens (see https://answers.netlify.com/t/error-unauthorized-could-not-retrieve-site/144959).
-        run: npx --yes netlify-cli deploy --prod --no-build --dir=dist
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: './dist'
+          production-deploy: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions — ${{ github.sha }}'
+          enable-pull-request-comment: false
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 5
