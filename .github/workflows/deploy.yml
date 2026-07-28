@@ -21,7 +21,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # netlify-cli's deps (@netlify/api, @netlify/zip-it-and-ship-it, etc.)
+          # require Node >=22.12.0; app build itself only needs >=20.
+          node-version: '22'
           cache: npm
 
       - name: Install dependencies
