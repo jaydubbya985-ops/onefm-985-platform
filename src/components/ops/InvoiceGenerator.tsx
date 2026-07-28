@@ -78,6 +78,7 @@ import {
 } from './invoices/contacts'
 import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
 import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
+import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1035,6 +1036,8 @@ export default function InvoiceGenerator() {
 
       {mainTab === 'invoices' && (
         <>
+          <EmailServiceBanner />
+
           {/* Stat cards */}
           <div className="grid grid-cols-6 gap-4 mb-6">
             <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
@@ -1831,7 +1834,7 @@ export default function InvoiceGenerator() {
                     <p className="text-gray-300 text-sm mt-1">
                       Community Radio - Shepparton & Goulburn Valley
                     </p>
-                    <p className="text-gray-400 text-xs mt-1">98.5 One FM.</p>
+                    <p className="text-gray-400 text-xs mt-1">ABN 92 117 291 771</p>
                   </div>
                   <div className="text-right">
                     <h3 className="text-2xl font-bold text-[#D4A84B]">TAX INVOICE</h3>
@@ -1974,8 +1977,8 @@ export default function InvoiceGenerator() {
                     <span className="font-semibold text-[#101010]">Account Name:</span> 98.5 One FM.
                   </p>
                   <p>
-                    <span className="font-semibold text-[#101010]">Bank:</span> Commonwealth Bank of
-                    Australia
+                    <span className="font-semibold text-[#101010]">Bank:</span> National Australia
+                    Bank (NAB)
                   </p>
                   <div className="flex gap-6">
                     <p>

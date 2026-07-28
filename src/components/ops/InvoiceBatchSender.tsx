@@ -43,6 +43,13 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Table,
   TableBody,
   TableCell,
@@ -59,6 +66,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useToast, type ToastType } from './Toast'
+import { EmailServiceBanner } from './EmailServiceBanner'
 import { useOpsStore, type OpsInvoice } from './store'
 import {
   BANK_ACCOUNT,
@@ -377,7 +385,7 @@ function InvoicePreview({ invoice }: { invoice: BatchRow }) {
 
       <div className="border-t border-gray-200 pt-4 text-center text-xs text-gray-400">
         <p>ONE FM 98.5 • Goulburn Valley Community Radio • ABN 92 117 291 771</p>
-        <p className="mt-0.5">47 Parkside Drive, Shepparton VIC 3630 • (03) 5831 3277</p>
+        <p className="mt-0.5">47 Parkside Drive, Shepparton VIC 3630 • (03) 5831 3131</p>
       </div>
     </div>
   )
@@ -394,6 +402,7 @@ export default function InvoiceBatchSender() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [detailTab, setDetailTab] = useState('invoice')
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<BatchStatus | 'all' | 'unsent'>('all')
   const [testMode, setTestMode] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [confirm, setConfirm] = useState<ConfirmState>({
@@ -443,13 +452,19 @@ export default function InvoiceBatchSender() {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
-    return rows.filter(
-      (r) =>
-        r.company.toLowerCase().includes(q) ||
-        r.number.toLowerCase().includes(q) ||
-        r.contactName.toLowerCase().includes(q),
-    )
-  }, [rows, search])
+    return rows
+      .filter(
+        (r) =>
+          r.company.toLowerCase().includes(q) ||
+          r.number.toLowerCase().includes(q) ||
+          r.contactName.toLowerCase().includes(q),
+      )
+      .filter((r) => {
+        if (statusFilter === 'all') return true
+        if (statusFilter === 'unsent') return r.status !== 'sent' && r.status !== 'paid'
+        return r.status === statusFilter
+      })
+  }, [rows, search, statusFilter])
 
   const stats = useMemo(() => {
     const selected = rows.filter((r) => selectedIds.has(r.id))
@@ -482,8 +497,8 @@ export default function InvoiceBatchSender() {
     return Math.round((score / maxScore) * 100)
   }, [rows])
 
-  const allSelected = rows.length > 0 && rows.every((r) => selectedIds.has(r.id))
-  const someSelected = rows.some((r) => selectedIds.has(r.id)) && !allSelected
+  const allSelected = filtered.length > 0 && filtered.every((r) => selectedIds.has(r.id))
+  const someSelected = filtered.some((r) => selectedIds.has(r.id)) && !allSelected
 
   useEffect(() => {
     if (active) {
@@ -510,8 +525,14 @@ export default function InvoiceBatchSender() {
   }
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === rows.length) setSelectedIds(new Set())
-    else setSelectedIds(new Set(rows.map((r) => r.id)))
+    const filteredIds = filtered.map((r) => r.id)
+    const allFilteredSelected = filteredIds.every((id) => selectedIds.has(id))
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (allFilteredSelected) filteredIds.forEach((id) => next.delete(id))
+      else filteredIds.forEach((id) => next.add(id))
+      return next
+    })
   }
 
   const updateStatus = (id: string, status: BatchStatus) => {
@@ -904,6 +925,8 @@ export default function InvoiceBatchSender() {
             </div>
           </div>
 
+          <EmailServiceBanner />
+
           {/* Stat cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <StatCard
@@ -1007,6 +1030,37 @@ export default function InvoiceBatchSender() {
               </Button>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const unsent = rows.filter((r) => r.status !== 'sent' && r.status !== 'paid')
+                  setSelectedIds(new Set(unsent.map((r) => r.id)))
+                  setStatusFilter('unsent')
+                  notify(`Selected ${unsent.length} unsent invoice(s)`, 'info')
+                }}
+                className="border-[#1E293B] text-[#F4F1EA] hover:bg-[#1E293B] gap-1.5"
+              >
+                <CheckSquare className="w-3.5 h-3.5" />
+                Select All Unsent ({stats.remaining})
+              </Button>
+              <Select
+                value={statusFilter}
+                onValueChange={(v) => setStatusFilter(v as BatchStatus | 'all' | 'unsent')}
+              >
+                <SelectTrigger className="bg-[#161616] border-[#1E293B] text-[#F4F1EA] w-40">
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#161616] border-[#1E293B] text-[#F4F1EA]">
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="unsent">Unsent (awaiting)</SelectItem>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="previewed">Previewed</SelectItem>
+                  <SelectItem value="tested">Tested</SelectItem>
+                  <SelectItem value="sent">Sent</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                </SelectContent>
+              </Select>
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-[#F4F1EA]/30" />
                 <Input
