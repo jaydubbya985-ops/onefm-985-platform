@@ -36,19 +36,13 @@ jobs:
           VITE_STATION_EMAIL: admin@fm985.com.au
           VITE_RADIO_CO_STATION_ID: sae3372059
 
+      # nwtgck/actions-netlify@v3.0 was dropped 2026-07-28: its bundled esbuild
+      # binary is missing under the current GitHub-hosted Node 24 runner
+      # ("spawn .../dist/esbuild ENOENT"), which broke every deploy once
+      # functions-dir was added. The official Netlify CLI is more robust and
+      # reads netlify.toml (functions, redirects, headers) natively.
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: './dist'
-          functions-dir: './netlify/functions'
-          netlify-config-path: './netlify.toml'
-          production-deploy: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Deploy from GitHub Actions — ${{ github.sha }}'
-          enable-pull-request-comment: false
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
+        run: npx --yes netlify-cli deploy --prod --no-build --dir=dist --auth="$NETLIFY_AUTH_TOKEN" --site="$NETLIFY_SITE_ID"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 5

@@ -31,8 +31,10 @@ The invoice **generation + PDF + demo-mode UI** is solid and already matches liv
   - `GET /this-page-does-not-exist-xyz` (should redirect to `index.html`, status 200, per the catch-all SPA rule) → real Netlify 404
   - `Cache-Control` header on `/assets/*.js` → `public,max-age=0,must-revalidate` instead of the configured `public, max-age=31536000, immutable`
 - This explains **both** documented symptoms in `LAUNCH-CHECKLIST.md`: the invoice send function being unreachable, and the fm985 interview proxy's "temporarily unavailable" fallback.
-- **Fix applied:** added `functions-dir: './netlify/functions'` and `netlify-config-path: './netlify.toml'` to the deploy step in `.github/workflows/deploy.yml`. Confirmed against `nwtgck/actions-netlify` docs that these are the two missing required inputs. Will take effect on the next push to `main` (this run's commit).
+- **First fix attempt:** added `functions-dir: './netlify/functions'` and `netlify-config-path: './netlify.toml'` to the `nwtgck/actions-netlify@v3.0` step. This made the *next* deploy run fail outright — its bundled `esbuild` binary is missing under GitHub's current Node 24 runner (`spawn .../dist/esbuild ENOENT`), a known breakage in that third-party action once it's asked to bundle functions.
+- **Actual fix:** replaced the `nwtgck/actions-netlify` action entirely with the official Netlify CLI (`npx netlify-cli deploy --prod --no-build --dir=dist --auth=... --site=...`), which is the same tool documented in `AGENTS.md`. It reads `netlify.toml` (functions, redirects, headers) natively and isn't affected by the third-party action's bundling bug. Verified the CLI's flag parsing locally with a fake token (fails cleanly on `Unauthorized`, not on argument parsing).
 - **Still needed after this fix:** `RESEND_API_KEY` in Netlify's function-runtime environment (not GitHub Actions) for `send-invoice` to actually send mail — this was already a known NEED JAY item, now it's the *only* remaining blocker on that path instead of one of several.
+- **Confirm after this run's deploy completes:** watch the `Deploy to Netlify` GitHub Actions run — if `NETLIFY_AUTH_TOKEN`/`NETLIFY_SITE_ID` repo secrets are valid, this should now go green end-to-end.
 
 ## 3. Truth grep results
 
