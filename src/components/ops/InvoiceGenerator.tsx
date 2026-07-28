@@ -296,7 +296,14 @@ type SortKey = 'date' | 'amount' | 'status' | 'company'
 // ---------------------------------------------------------------------------
 
 export default function InvoiceGenerator() {
-  const { invoices: storeInvoices, addInvoice, updateInvoice, markInvoicePaid } = useOpsStore()
+  const {
+    invoices: storeInvoices,
+    addInvoice,
+    updateInvoice,
+    markInvoicePaid,
+    queueForBatch,
+    setActiveTab,
+  } = useOpsStore()
 
   // Local view models created before the store round-trip (deployed kept the
   // same merged structure); the store version wins once a record exists there.
@@ -760,10 +767,20 @@ export default function InvoiceGenerator() {
   }
 
   function handleBatchSend() {
-    // Status-only "send" removed — real email lives in Batch Send tab.
-    window.alert(
-      `This tab does not email sponsors.\n\nOpen the "Batch Send" tab to preview, test, and send invoices with PDF attachments.\n\n(${selectedIds.size} selected — status unchanged)`,
-    )
+    // This tab doesn't email sponsors itself — queue the selection into the
+    // Batch Send tab (real dispatch, PDF attachment, test mode) and jump there.
+    const draftIds = Array.from(selectedIds).filter((id) => {
+      const inv = invoices.find((i) => i.id === id)
+      return inv && inv.status !== 'sent' && inv.status !== 'paid'
+    })
+    if (draftIds.length === 0) {
+      window.alert('Nothing to queue — selected invoice(s) are already sent or paid.')
+      return
+    }
+    draftIds.forEach((id) => queueForBatch(id))
+    setSelectedIds(new Set())
+    setBatchMode(false)
+    setActiveTab('batch')
   }
 
   function handleBatchDelete() {
@@ -1173,7 +1190,7 @@ export default function InvoiceGenerator() {
                   onClick={handleBatchSend}
                   className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold"
                 >
-                  <Send className="h-3.5 w-3.5 mr-1" /> Send
+                  <Send className="h-3.5 w-3.5 mr-1" /> Queue for Batch Send
                 </Button>
                 <Button
                   size="sm"
