@@ -44,7 +44,11 @@ jobs:
       # functions-dir was added. The official Netlify CLI is more robust and
       # reads netlify.toml (functions, redirects, headers) natively.
       - name: Deploy to Netlify
-        run: npx --yes netlify-cli deploy --prod --no-build --dir=dist --auth="$NETLIFY_AUTH_TOKEN" --site="$NETLIFY_SITE_ID"
+        # NETLIFY_AUTH_TOKEN / NETLIFY_SITE_ID are read from the environment,
+        # not passed as --auth/--site flags — the flag form triggers a known
+        # "Unauthorized: could not retrieve project" CLI bug even with valid
+        # tokens (see https://answers.netlify.com/t/error-unauthorized-could-not-retrieve-site/144959).
+        run: npx --yes netlify-cli deploy --prod --no-build --dir=dist
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
