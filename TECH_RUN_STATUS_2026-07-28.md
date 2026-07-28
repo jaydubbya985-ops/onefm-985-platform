@@ -7,7 +7,7 @@
 
 ## TL;DR
 
-The invoice **generation + PDF + demo-mode UI** is solid and already matches live `main`. The actual **send path is broken in production** — not because of missing secrets, but because the GitHub Actions Netlify deploy step never ships Netlify Functions or applies `netlify.toml` redirects/headers. Fixed that in this run (see "Fixed now"). Remaining blockers to *real* invoice sending are Jay's Resend/Supabase/Stripe keys — already documented, not new.
+The invoice **generation + PDF + demo-mode UI** is solid and already matches live `main`. The invoice **send path is broken in production** because Netlify Functions and `netlify.toml` redirects/headers were never actually deployed (root-caused below). Attempting to fix that surfaced a **more urgent, blocking problem: `NETLIFY_AUTH_TOKEN` is now unauthorized against Netlify's API**, even on the exact deploy config that worked on 2026-07-06. **Every future push to `main` will fail to auto-deploy until this token is fixed — this is now the #1 NEED JAY item, above the invoice work.**
 
 ---
 
@@ -31,10 +31,15 @@ The invoice **generation + PDF + demo-mode UI** is solid and already matches liv
   - `GET /this-page-does-not-exist-xyz` (should redirect to `index.html`, status 200, per the catch-all SPA rule) → real Netlify 404
   - `Cache-Control` header on `/assets/*.js` → `public,max-age=0,must-revalidate` instead of the configured `public, max-age=31536000, immutable`
 - This explains **both** documented symptoms in `LAUNCH-CHECKLIST.md`: the invoice send function being unreachable, and the fm985 interview proxy's "temporarily unavailable" fallback.
-- **First fix attempt:** added `functions-dir: './netlify/functions'` and `netlify-config-path: './netlify.toml'` to the `nwtgck/actions-netlify@v3.0` step. This made the *next* deploy run fail outright — its bundled `esbuild` binary is missing under GitHub's current Node 24 runner (`spawn .../dist/esbuild ENOENT`), a known breakage in that third-party action once it's asked to bundle functions.
-- **Actual fix:** replaced the `nwtgck/actions-netlify` action entirely with the official Netlify CLI (`npx netlify-cli deploy --prod --no-build --dir=dist --auth=... --site=...`), which is the same tool documented in `AGENTS.md`. It reads `netlify.toml` (functions, redirects, headers) natively and isn't affected by the third-party action's bundling bug. Verified the CLI's flag parsing locally with a fake token (fails cleanly on `Unauthorized`, not on argument parsing).
-- **Still needed after this fix:** `RESEND_API_KEY` in Netlify's function-runtime environment (not GitHub Actions) for `send-invoice` to actually send mail — this was already a known NEED JAY item, now it's the *only* remaining blocker on that path instead of one of several.
-- **Confirm after this run's deploy completes:** watch the `Deploy to Netlify` GitHub Actions run — if `NETLIFY_AUTH_TOKEN`/`NETLIFY_SITE_ID` repo secrets are valid, this should now go green end-to-end.
+- **Attempt 1:** added `functions-dir: './netlify/functions'` and `netlify-config-path: './netlify.toml'` to the `nwtgck/actions-netlify@v3.0` step. Broke the next deploy outright — its bundled `esbuild` binary is missing under GitHub's current Node 24 runner (`spawn .../dist/esbuild ENOENT`), a breakage in that third-party action once it's asked to bundle functions.
+- **Attempt 2:** replaced the action with the official Netlify CLI (`npx netlify-cli deploy --prod --no-build --dir=dist --auth=... --site=...`), the same tool `AGENTS.md` documents. Failed with `Error: Unauthorized: could not retrieve project`.
+- **Attempt 3:** suspected Node-version incompatibility (`netlify-cli`'s deps need Node ≥22.12, workflow was pinned to 20 → `EBADENGINE` warnings). Bumped CI to Node 22. Same `Unauthorized` error, no more engine warnings.
+- **Attempt 4:** suspected the `--auth`/`--site` flag form itself (documented CLI bug pattern on Netlify's own forums). Switched to reading `NETLIFY_AUTH_TOKEN`/`NETLIFY_SITE_ID` purely from env vars, no flags. **Still** `Unauthorized: could not retrieve project`.
+- **Decisive test:** reverted the deploy step to be **byte-for-byte identical** to the config that successfully deployed on 2026-07-06 (`git diff` against that commit's `deploy.yml` confirms it, modulo one comment). Pushed it. **It also failed — with a bare `Unauthorized`.**
+- **Conclusion:** this is not a workflow bug. The exact configuration that worked two weeks ago no longer authenticates against Netlify's API. `NETLIFY_AUTH_TOKEN` has almost certainly expired, been revoked, or `NETLIFY_SITE_ID` no longer matches — something only visible/fixable from the Netlify dashboard. Stopped here per the run's ground rules ("stop only for secrets").
+- **Current state:** reverted to the known-good deploy config (§ commit trail below) so there's nothing extra broken once the token is fixed — but **no push to `main` will auto-deploy until `NETLIFY_AUTH_TOKEN` is repaired**, including this run's own commits (unsplash-preconnect removal, docs). The live site itself is unaffected and still serving the last successful 2026-07-06 deploy; it's just now one deploy behind `main`.
+- **Once the token is fixed:** re-attempt the `functions-dir`/`netlify-config-path` addition to `nwtgck/actions-netlify@v3.0` (Attempt 1), or move to the Netlify CLI (Attempts 2–4) if that action's `esbuild` bug isn't resolved by then — either should then deploy Functions correctly.
+- **RESEND_API_KEY** (Netlify function-runtime env, not GitHub Actions) is still needed on top of all this for `send-invoice` to actually dispatch mail once functions do deploy.
 
 ## 3. Truth grep results
 
@@ -93,16 +98,17 @@ The invoice **generation + PDF + demo-mode UI** is solid and already matches liv
 
 - Verify `oneFmScrapedData.json`'s `[DATA_MISSING_FROM_SOURCE]` fields aren't rendered on any public page (quick grep + trace of imports).
 - Once Jay confirms which `enquiries.ts`/`invoices.ts`/`sponsors.ts` rows are real vs. example, add the `// DEMO DATA` tags to the example-only rows.
-- After the workflow fix deploys, re-test `GET /.netlify/functions/send-invoice` and `/api/fm985/*` live to confirm functions are now reachable (expect a clean 4xx from the function itself instead of Netlify's generic 404 — full success still needs `RESEND_API_KEY`).
+- **Blocked on NEED JAY #1:** re-adding `functions-dir`/`netlify-config-path` (or the Netlify CLI approach) to deploy Functions correctly — can't verify any of it works until the token is fixed and a deploy actually runs. The three failed approaches are preserved in the commit history and in §2 above so whoever picks this up doesn't repeat them blind.
+- Once a deploy succeeds again, re-test `GET /.netlify/functions/send-invoice` and `/api/fm985/*` live to confirm functions are reachable (expect a clean 4xx from the function itself instead of Netlify's generic 404 — full success still needs `RESEND_API_KEY`).
 
 ## 8. NEED JAY
 
-1. **`RESEND_API_KEY`** (Netlify site env var, function runtime — not `VITE_` prefixed) — required for `send-invoice` to actually dispatch email. This is now the single blocker on the invoice send path once the functions-deploy fix goes live.
-2. **`VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`** (Netlify env vars) — without these, `#/ops` stays in DEMO MODE and invoices/enquiries don't persist. Cannot confirm from this environment whether they're already set in Netlify's dashboard.
-3. **`VITE_STRIPE_PUBLISHABLE_KEY`** — PAY NOW button stays hidden without it (EFT-only fallback works fine in the meantime).
-4. **Confirm real vs. example rows** in `src/components/ops/data/enquiries.ts`, `invoices.ts`, `sponsors.ts` (see §3) so demo rows can be correctly tagged.
-5. **`NETLIFY_AUTH_TOKEN`** — not available in this cloud-agent environment, so this agent cannot run `netlify deploy` directly or confirm live Netlify dashboard env-var state. Relying entirely on the GitHub Actions auto-deploy (confirmed working — last 5 runs on `main` all succeeded) to ship this run's fix.
+1. **`NETLIFY_AUTH_TOKEN` is unauthorized — URGENT, blocks all auto-deploy.** Confirmed by reverting the deploy workflow to the byte-for-byte config that succeeded on 2026-07-06 and re-running it: it now fails with a bare `Unauthorized` from Netlify's API. This is not caused by anything in this run — it will block *any* push to `main` from auto-deploying, for any agent or for Jay, until fixed. **Action needed:** in Netlify → User settings → Applications → Personal access tokens, generate a fresh token, and update the `NETLIFY_AUTH_TOKEN` GitHub repo secret (Settings → Secrets and variables → Actions). While there, double-check `NETLIFY_SITE_ID` still matches the onefmops site's API ID (`8df4de74-d9a8-42ce-9316-61bd06475c94` per `AGENTS.md`).
+2. **`RESEND_API_KEY`** (Netlify site env var, function runtime — not `VITE_` prefixed) — required for `send-invoice` to actually dispatch email. Blocked on #1 first (functions can't deploy without a working auto-deploy), then this.
+3. **`VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`** (Netlify env vars) — without these, `#/ops` stays in DEMO MODE and invoices/enquiries don't persist. Cannot confirm from this environment whether they're already set in Netlify's dashboard.
+4. **`VITE_STRIPE_PUBLISHABLE_KEY`** — PAY NOW button stays hidden without it (EFT-only fallback works fine in the meantime).
+5. **Confirm real vs. example rows** in `src/components/ops/data/enquiries.ts`, `invoices.ts`, `sponsors.ts` (see §3) so demo rows can be correctly tagged.
 
 ---
 
-*Deploy note: this run's commits will auto-deploy via `.github/workflows/deploy.yml` on push to `main` (GitHub Actions → Netlify, confirmed working via `gh run list`). No manual `netlify deploy` was run from this environment — no Netlify CLI auth token available here.*
+*Deploy note: this run's commits are pushed to `main` but **did not auto-deploy** — see NEED JAY #1. Once the token is fixed, either re-push (workflow_dispatch also works) or trigger a manual re-run of the latest `Deploy to Netlify` GitHub Actions run. No manual `netlify deploy` was run from this environment — no Netlify CLI auth token available here either.*
