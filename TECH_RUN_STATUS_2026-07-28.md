@@ -1,12 +1,13 @@
 # TECH RUN STATUS — Tue 28 Jul 2026
 
-Jay away, open permission: pull/edit/commit/push `main` when build green. Secrets → NEED JAY.
+Jay away with open permission: pull, edit, commit, push, deploy when build is green. Secrets → NEED JAY.
+See `TECH_RUN_2026-07-28.md` for the shared mission brief and ground rules.
 
 **Live:** https://onefmops.netlify.app · **Ops:** `#/ops`
 
 ---
 
-## Agent A — Reconnaissance + deploy pipeline fix
+## Agent A — Reconnaissance, deploy pipeline, truth audit
 
 **Branch:** `cursor/tech-run-reconnaissance-9f62` (base `main`, HEAD at pull time: `48862b3`)
 
@@ -168,3 +169,113 @@ The invoice **generation + PDF + demo-mode UI** is solid and already matches liv
 ## Cross-agent note (Agent A ↔ Agent C, resolved during rebase)
 
 Agent A's `NEED JAY #1` (`NETLIFY_AUTH_TOKEN` unauthorized, blocking all auto-deploy) is the most urgent outstanding item across both runs — it blocks Agent C's fixes (and everyone else's) from reaching the live site even after merge to `main`. See `ENV_NEED_JAY.md` for the consolidated env var list; the Netlify auth token issue is a GitHub Actions repo secret, not a Netlify site env var, and needs to be fixed separately in **Settings → Secrets and variables → Actions**.
+
+---
+
+## Agent B — Ops portal invoice / billables path (P0)
+
+**Branch:** `cursor/ops-portal-invoice-path-dfec` · **Base:** `main`
+**Scope:** invoice generate → PDF → email template → batch send. Out of scope: Pleming/FWC/Xero payroll.
+
+### What shipped
+
+1. **Merged Phase 1** (`cursor/ops-invoice-ready-5705`, previously an unmerged draft PR #5) into this branch:
+   testMode now hard-redirects to the test inbox — a sponsor can never receive a `[TEST]` email by
+   accident; Batch Send confirm dialogs and multi-select send now actually respect Test Mode; mailto
+   fallback in Invoice Generator downloads the PDF and marks sent instead of being a no-op.
+
+2. **Bank-detail truth pass** — found and fixed three real bugs where the wrong bank/contact details
+   would have gone out to sponsors:
+   - `InvoiceBatchSender.tsx` PDF preview footer showed the phone as `(03) 5831 3277` — wrong number,
+     fixed to `3131`.
+   - Invoice email signature block used `admin@fm985.com.au`; every other part of the same email
+     (reply-to, footer) uses `accounts@fm985.com.au`. Fixed for consistency — replies now land in
+     the right inbox.
+   - **`InvoiceGenerator.tsx`'s own invoice-preview dialog listed the bank as "Commonwealth Bank of
+     Australia."** The BSB/account number were always correct, but the bank *name* was wrong —
+     confirmed live (browser test, screenshots below) it now correctly reads **National Australia
+     Bank (NAB)**, matching the PDF, the Batch Send tab, and the public Support page. (Agent A's
+     truth grep above ran before this fix landed and only checked BSB/account — the bank *name*
+     mismatch was a gap in that grep, now closed.)
+   - Same dialog had a stray leftover line reading "98.5 One FM." under the station name; replaced
+     with the station ABN to match the PDF/email letterhead.
+   - `invoiceDesignSystem.ts` `sigEmail` token corrected to `accounts@fm985.com.au` (was `admin@`).
+
+3. **Honest email-service status banner** — new `/.netlify/functions/email-status` (read-only, never
+   exposes the key) + `useEmailServiceStatus` hook + `EmailServiceBanner`, now shown on both the
+   Invoice Generator and Batch Send tabs. Ops staff see up front whether live Resend sending is ON,
+   OFF (`RESEND_API_KEY` missing — PDF + mailto fallback only), or unknown (local `npm run dev`
+   without Netlify functions), instead of discovering it only after clicking Send.
+
+4. **Batch Send UX for the ~104/132 backlog**:
+   - Status filter (All / Unsent / Draft / Previewed / Tested / Sent / Paid).
+   - "Select All Unsent (N)" one-click bulk-select for pushing the backlog out.
+   - Select-all checkbox and search now operate on the *filtered* set, not the whole table.
+
+5. **Bridged Invoice Generator drafts into Batch Send.** Previously, selecting drafts in the Invoice
+   Generator's batch mode and clicking "Send" just popped an alert telling staff to go find their
+   invoices in a different tab — nothing was queued. It now calls `queueForBatch()` for every
+   selected invoice that isn't already sent/paid, then jumps straight to Batch Send. Verified live:
+   selecting a billing-ledger draft + an already-sent invoice together only queued the draft
+   (batch count 19 → 20); the already-sent one was correctly skipped.
+
+6. **Payment success/cancel routes** — already present and wired in `App.tsx`
+   (`/payment/success`, `/payment/cancel` → `PaymentSuccess.tsx` / `PaymentCancel.tsx`). No changes
+   needed.
+
+7. **Supabase ops auth** — already gated correctly via `isSupabaseConfigured()` in `useOpsAccess`
+   (auto-switches from demo password to real staff login once Supabase env vars are present). No
+   changes needed.
+
+### Verified (no computer-use executor available in this environment — used a scripted headless Chromium session against `npm run dev` instead; screenshots + a real generated PDF were captured)
+
+- Ops demo-mode login → Invoices tab → Batch Send tab, no console errors besides the expected
+  404 from the (locally absent) Netlify function.
+- Invoice preview dialog: correct NAB / BSB / account / ABN, no more Commonwealth Bank.
+- Test Send with no email service configured: shows the honest
+  *"Not actually sent — no email service configured (dev mode)"* toast, never claims success.
+- Downloaded a real invoice PDF (`ONEFM-2026-011.pdf`) and rendered it — correct navy/gold
+  letterhead, correct bank block, correct totals.
+- Status filter + Select All Unsent both work against the live invoice table.
+- Invoice Generator → select drafts → "Queue for Batch Send" → lands on Batch Send tab with the
+  new invoice present and the already-sent one excluded.
+
+### Build
+
+`npm run build` green throughout. `npm run lint` unchanged from baseline (46 problems / 43 errors,
+identical before/after this branch's changes — all pre-existing and unrelated to invoices).
+
+### Live deploy path (current state, after rebasing onto Agent A + Agent C's merged findings)
+
+Per Agent A's §2/§8 above, `main`'s auto-deploy is currently **blocked on an unauthorized
+`NETLIFY_AUTH_TOKEN`** — this is upstream of and independent from everything in this section, and
+was true before this branch merged. Once that token is fixed:
+
+- Pushing to `main` re-triggers `.github/workflows/deploy.yml` automatically.
+- Netlify Functions (`send-invoice`, `email-status`, `fm985-proxy`) will deploy correctly once the
+  `functions-dir`/`netlify-config-path` fix (or CLI approach) from Agent A §2 is re-applied on top
+  of a working token — until then, `/.netlify/functions/*` 404s live in production the same way
+  Agent A documented, exactly as this branch's `EmailServiceBanner` is designed to detect and
+  surface honestly (shows "off"/"unknown" instead of silently pretending to send).
+- No manual `netlify deploy` was possible from this cloud-agent environment either (no
+  `NETLIFY_AUTH_TOKEN` present here regardless of its validity on Netlify's side).
+
+### NEED JAY (Agent B — see Agent A §8 / Agent C's `ENV_NEED_JAY.md` for the full/authoritative list; restated here for the invoice path specifically)
+
+1. **`NETLIFY_AUTH_TOKEN` unauthorized** (Agent A's finding, #1 priority — blocks this branch's
+   deploy too, not just Agent A's). Fix in Netlify dashboard, see Agent A §8.1.
+2. **`RESEND_API_KEY`** — still not set. Once functions actually deploy (needs #1 first), add this
+   in **Netlify → Site settings → Environment variables** (server-side, *not* `VITE_`-prefixed) to
+   turn on live invoice email. Until then, Send/Batch Send correctly falls back to PDF download +
+   mailto, and the new `EmailServiceBanner` tells staff this on-screen.
+3. **`VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`** — without these `#/ops` stays in DEMO MODE
+   (own findings match Agent A §8.3 / Agent C's `ENV_NEED_JAY.md`).
+4. **`VITE_STRIPE_PUBLISHABLE_KEY`** — not set. Stripe payment links / donate checkout remain
+   correctly disabled (bank-transfer-only messaging on `/support`, warnings in the Payments tab) —
+   did not invent a key or fake a working checkout.
+5. Once `RESEND_API_KEY` is live: recommend one real Test Mode send from Batch Send to your own
+   inbox before flipping any sponsor invoice to Live Mode.
+
+### Not touched (explicitly out of scope)
+
+Pleming/FWC/Xero payroll. Homepage cosmetics.
