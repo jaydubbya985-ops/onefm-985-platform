@@ -12,7 +12,7 @@ import { SEO } from '@/components/SEO'
 import { CinegraphBackground } from '@/components/CinegraphBackground'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { footballTiers, stationStats } from '@/data/pricing'
+import { footballTiers, stationStats, PRICING_COPY } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
@@ -287,7 +287,7 @@ export default function Football() {
 
   return (
     <Layout>
-      <SEO title="GVL Football Sponsorship" description="Partner with ONE FM 98.5 for Goulburn Valley Football & Netball. 9 sponsorship tiers from $25/week." />
+      <SEO title="GVL Football Sponsorship" description={`Partner with ONE FM 98.5 for Goulburn Valley Football & Netball. 9 sponsorship tiers ${PRICING_COPY.footballFrom.toLowerCase()}.`} />
       {/* ═══════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
@@ -309,7 +309,7 @@ export default function Football() {
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, ease: easeOutExpo }}
-            className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
+            className="font-label text-[10px] tracking-[0.28em] text-one-neon-orange uppercase block mb-3"
           >
             Goulburn Valley Football League Coverage
           </motion.span>
@@ -387,7 +387,7 @@ export default function Football() {
               </a>
             </MagneticButton>
             <MagneticButton strength={8}>
-              <Link to="/proposal" data-cursor-label="PROPOSAL" className="btn-secondary">
+              <Link to="/sponsorship#enquire" data-cursor-label="ENQUIRE" className="btn-secondary">
                 Build Custom Proposal
               </Link>
             </MagneticButton>
@@ -496,7 +496,7 @@ export default function Football() {
 
                 {/* CTA */}
                 <Link
-                  to="/proposal"
+                  to="/sponsorship#enquire"
                   className={`w-full block text-center ${
                     tier.ctaStyle === 'primary' ? 'btn-primary' : 'btn-secondary'
                   }`}
@@ -966,7 +966,7 @@ export default function Football() {
               dollar supports grassroots sport and puts your brand in front of thousands.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/proposal" data-cursor-label="PROPOSAL" className="btn-primary">
+              <Link to="/sponsorship#enquire" data-cursor-label="ENQUIRE" className="btn-primary">
                 Get Proposal
                 <ArrowRight size={14} />
               </Link>

@@ -1,5 +1,7 @@
 // ---------------------------------------------------------------------------
 // Sponsor & contract domain data for the Operations Portal.
+// DEMO DATA — proposal unit prices and season packages are internal samples only.
+// Public rate card: src/data/pricing.ts (rateCard + generalTiers + footballTiers).
 //
 // All mock records, option lists and label maps in this file were extracted
 // verbatim from the deployed production bundle

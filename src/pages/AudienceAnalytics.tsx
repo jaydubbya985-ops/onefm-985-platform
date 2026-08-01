@@ -272,25 +272,9 @@ export default function AudienceAnalytics() {
             transition={{ duration: 0.5 }}
           >
             <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-data-teal opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-data-teal" />
+              <span className="font-label text-one-muted text-[10px] tracking-[0.14em] uppercase">
+                Regional data · ABS 2021 census
               </span>
-              <span className="font-label text-data-teal">Live — Updated 2s ago</span>
-              <div className="flex items-end gap-[2px]" aria-hidden style={{ height: 12 }}>
-                {[3, 6, 9, 6, 3].map((h, i) => (
-                  <div
-                    key={i}
-                    className="w-[2px] rounded-sm"
-                    style={{
-                      height: h,
-                      backgroundColor: 'rgba(46,196,182,0.7)',
-                      animation: `freq-bar ${0.7 + i * 0.11}s ease-in-out infinite alternate`,
-                      animationDelay: `${i * 0.07}s`,
-                    }}
-                  />
-                ))}
-              </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="relative">

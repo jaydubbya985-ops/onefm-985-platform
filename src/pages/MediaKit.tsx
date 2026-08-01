@@ -802,7 +802,7 @@ export default function MediaKit() {
             </p>
             <div className="flex gap-3 shrink-0">
               <MagneticButton strength={10}>
-                <Link to="/proposal" data-cursor-label="QUOTE" className="btn-primary text-xs">
+                <Link to="/sponsorship#enquire" data-cursor-label="ENQUIRE" className="btn-primary text-xs">
                   Request Custom Quote
                 </Link>
               </MagneticButton>
@@ -951,8 +951,8 @@ export default function MediaKit() {
               </button>
             </MagneticButton>
             <MagneticButton strength={6} cursorLabel="BUILD">
-              <Link to="/proposal" className="flex items-center gap-2 font-label text-xs text-one-gold hover:text-gold transition-colors link-hover">
-                Or build a custom proposal yourself
+              <Link to="/sponsorship#enquire" className="flex items-center gap-2 font-label text-xs text-one-white/70 hover:text-one-white transition-colors link-hover">
+                Or start a conversation with the station
                 <ArrowRight size={14} />
               </Link>
             </MagneticButton>

@@ -1,9 +1,10 @@
 /**
- * Canonical site navigation — single source for Navbar, Footer, and Home quick jobs.
- * Audit order: Listen → Sponsor → About → Support
+ * Canonical navigation — six-page IA (REBUILD-SPEC sitemap law, 2026-07-06).
+ * Public destinations: Home, Listen, Community, History, Sponsor, Donate + utilities.
  */
 
-import { STATION_PHOTOS, HOST_PHOTOS } from '@/lib/stationPhotos'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { PRICING_COPY } from '@/data/pricing'
 
 export interface NavItem {
   label: string
@@ -17,45 +18,54 @@ export interface NavGroup {
   items: NavItem[]
 }
 
-/** Primary nav dropdowns (desktop + mobile) */
+/** The six public pages */
+export const SIX_PAGES: NavItem[] = [
+  { label: 'Home', path: '/', description: 'ONE FM 98.5 — The Voice of the Goulburn Valley' },
+  { label: 'Listen', path: '/listen', description: 'Stream live · program guide · presenters' },
+  { label: 'Our Community', path: '/community', description: '25 towns · GVL · multicultural programs' },
+  { label: 'History', path: '/heritage', description: 'Living Archive · since 1989 · callsign 3ONE' },
+  { label: 'Sponsor', path: '/sponsorship', description: `${PRICING_COPY.generalFrom} · reach the Valley` },
+  { label: 'Donate', path: '/support', description: 'Support volunteer-run community radio' },
+]
+
+/** Utilities — not counted in the six, always available */
+export const UTILITY_PAGES: NavItem[] = [
+  { label: 'Contact', path: '/contact', description: 'Studio · partnerships · get involved' },
+  { label: 'Privacy', path: '/privacy', description: 'Privacy policy' },
+]
+
+/**
+ * Evidence / deep pages — fronted by Sponsor or Community cards until fully absorbed.
+ * Not in primary six-page nav. Proposal builder is staff-only (#/ops).
+ */
+export const EVIDENCE_PAGES: NavItem[] = [
+  { label: 'Media Kit', path: '/media-kit', description: 'Rate card · audience data · assets' },
+  { label: 'Audience Data', path: '/audience', description: 'Regional demographics (ABS 2021)' },
+  { label: 'Coverage Map', path: '/coverage', description: '25 towns · 100km radius' },
+  { label: 'GVL Football', path: '/football', description: `${PRICING_COPY.footballFrom} · live calls` },
+]
+
+/** Footer + legacy Navbar column groups */
 export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Listen',
-    items: [
-      { label: 'Listen Live', path: '/listen', description: 'Stream 98.5 FM · Radio.co' },
-      { label: 'Programs', path: '/programs', description: 'Weekly guide from fm985.com.au' },
-      { label: 'Broadcast', path: '/broadcast', description: 'Schedule grid · hosts · segments' },
-      { label: 'Coverage Map', path: '/coverage', description: '25 towns · ~100km radius' },
-    ],
+    items: [SIX_PAGES[1]],
   },
   {
     label: 'Sponsor',
-    items: [
-      { label: 'Sponsorship', path: '/sponsorship', description: 'Packages & football tiers' },
-      { label: 'Media Kit', path: '/media-kit', description: 'Audience stats & rate card' },
-      { label: 'Audience', path: '/audience', description: 'Regional demographics' },
-      { label: 'Social Hub', path: '/social', description: 'Brand assets & templates' },
-      { label: 'Proposal Builder', path: '/proposal', description: 'Build a sponsor proposal' },
-    ],
+    items: [SIX_PAGES[4], ...EVIDENCE_PAGES.filter((p) => p.path === '/media-kit' || p.path === '/audience')],
   },
   {
-    label: 'About',
-    items: [
-      { label: 'History', path: '/heritage', description: 'Since 1989 · callsign 3ONE · station archive' },
-      { label: 'Community', path: '/community', description: 'NFPs & local organisations' },
-      { label: 'GVL Football', path: '/football', description: 'Season sponsorship tiers' },
-    ],
+    label: 'Station',
+    items: [SIX_PAGES[2], SIX_PAGES[3], ...EVIDENCE_PAGES.filter((p) => p.path === '/coverage' || p.path === '/football')],
   },
   {
     label: 'Support',
-    items: [
-      { label: 'Donate', path: '/support', description: 'Support community radio · bank transfer' },
-      { label: 'Contact', path: '/contact', description: 'Studio · partnerships · enquiries' },
-    ],
+    items: [SIX_PAGES[5], UTILITY_PAGES[0]],
   },
 ]
 
-/** Home page primary jobs — what a visitor needs first */
+/** Home hero quick jobs — four primary actions below the fold */
 export const HOME_JOBS = [
   {
     label: 'Listen Live',
@@ -66,32 +76,31 @@ export const HOME_JOBS = [
     tags: ['Live', '98.5 FM', 'Stream'],
   },
   {
-    label: 'Programs',
-    path: '/programs',
-    description: 'Breakfast, sport, multicultural & more',
-    accent: '#F2F2F2',
-    image: STATION_PHOTOS.studioPresenterMic,
-    tags: ['Guide', 'Hosts', 'Weekly'],
-  },
-  {
-    label: 'Broadcast',
-    path: '/broadcast',
-    description: 'Weekly schedule · presenters · segments',
+    label: 'Our Community',
+    path: '/community',
+    description: '25 towns · GVL · multicultural',
     accent: '#B6FF00',
-    image: HOST_PHOTOS.studioControlRoom,
-    tags: ['Grid', 'On Air', 'Sport'],
+    image: STATION_PHOTOS.geoTownAerial,
+    tags: ['Valley', 'Towns', 'GVL'],
   },
   {
-    label: 'Coverage',
-    path: '/coverage',
-    description: 'Map of 25 towns in our broadcast area',
-    accent: '#1B458F',
-    image: STATION_PHOTOS.geoTownAerial,
-    tags: ['25 Towns', 'Valley', 'Map'],
+    label: 'History',
+    path: '/heritage',
+    description: 'Living Archive since 1989',
+    accent: '#F2F2F2',
+    image: STATION_PHOTOS.studioExteriorRainbow,
+    tags: ['3ONE', 'Archive', 'Since 1989'],
+  },
+  {
+    label: 'Sponsor',
+    path: '/sponsorship',
+    description: PRICING_COPY.generalFrom,
+    accent: '#E51636',
+    image: STATION_PHOTOS.gvlPlayerHighFive,
+    tags: ['25 Towns', 'Valley', 'Reach'],
   },
 ] as const
 
-/** Footer link columns */
 export const FOOTER_LISTEN = NAV_GROUPS[0].items
 export const FOOTER_SPONSOR = NAV_GROUPS[1].items
 export const FOOTER_ABOUT = NAV_GROUPS[2].items
@@ -99,51 +108,30 @@ export const FOOTER_SUPPORT = NAV_GROUPS[3].items
 
 export const FOOTER_RESOURCES: NavItem[] = [
   { label: 'Privacy Policy', path: '/privacy' },
-  { label: 'Media Kit (PDF)', path: '/media-kit' },
-  { label: 'Rate Card', path: '/sponsorship' },
-  { label: 'Program Guide', path: '/programs' },
+  { label: 'Program Guide', path: '/listen' },
+  { label: 'Living Archive', path: '/heritage' },
+  { label: 'Donate', path: '/support' },
 ]
-
-/** Programs page quick navigation */
-export const PROGRAMS_PAGE_JOBS = [
-  { label: 'Listen Live', path: '/listen', description: 'Stream now' },
-  { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule' },
-  { label: 'Coverage Map', path: '/coverage', description: '25 towns' },
-  { label: 'GVL Football', path: '/football', description: 'Season sponsorship' },
-] as const
-
-/** Broadcast page quick navigation */
-export const BROADCAST_PAGE_JOBS = [
-  { label: 'Listen Live', path: '/listen', description: 'Stream now' },
-  { label: 'Program Guide', path: '/programs', description: 'Shows & hosts' },
-  { label: 'Coverage', path: '/coverage', description: 'Broadcast area' },
-  { label: 'GVL Sport', path: '/football', description: 'Saturday coverage' },
-] as const
-
-/** Coverage page quick navigation */
-export const COVERAGE_PAGE_JOBS = [
-  { label: 'Listen Live', path: '/listen', description: 'Stream now' },
-  { label: 'Programs', path: '/programs', description: 'What we broadcast' },
-  { label: 'Broadcast', path: '/broadcast', description: 'Weekly grid' },
-  { label: 'Media Kit', path: '/media-kit', description: 'Audience stats' },
-] as const
 
 export const SITE_ROUTES = [
   '/',
   '/listen',
-  '/programs',
-  '/broadcast',
-  '/coverage',
-  '/sponsorship',
-  '/media-kit',
-  '/audience',
-  '/social',
-  '/proposal',
-  '/heritage',
   '/community',
-  '/football',
+  '/heritage',
+  '/sponsorship',
   '/support',
   '/contact',
   '/privacy',
+  '/coverage',
+  '/football',
+  '/media-kit',
+  '/audience',
+  '/programs',
+  '/broadcast',
+  '/social',
+  '/story',
+  '/proposal',
+  '/payment/success',
+  '/payment/cancel',
   '/ops',
 ] as const

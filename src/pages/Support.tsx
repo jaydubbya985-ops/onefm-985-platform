@@ -14,7 +14,7 @@ import {
   PosterReveal,
   StrokeFill,
 } from '@/components/onair/kit'
-import { donationTiers, stationStats } from '@/data/pricing'
+import { donationTiers, stationStats, PRICING_COPY } from '@/data/pricing'
 
 const RED = '#E51636'
 
@@ -192,7 +192,7 @@ function BankDetails() {
 
 export default function Support() {
   const tiers = donationTiers.map((t) => ({
-    tag: t.period === 'month' ? `$${t.amount}/month` : 'One-off',
+    tag: t.period === 'month' ? `$${t.amount}/month` : `$${t.amount} one-off`,
     title: t.name,
     body: t.description,
   }))
@@ -242,7 +242,7 @@ export default function Support() {
             >
               <h3 className="font-poster uppercase text-[22px] text-white">Sponsor</h3>
               <p className="text-[15px] text-white/55 mt-2">
-                Partner with the Valley on air — packages from $50/week across 25 towns.
+                Partner with the Valley on air — {PRICING_COPY.generalFrom.toLowerCase()} across 25 towns.
               </p>
               <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>
                 View packages →

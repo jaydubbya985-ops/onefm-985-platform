@@ -10,7 +10,14 @@ import { Loader2 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
-import { generalTiers, stationStats } from '@/data/pricing'
+import {
+  generalTiers,
+  stationStats,
+  PRICING_COPY,
+  GENERAL_ENTRY_WEEKLY,
+  formatWeeklyRange,
+  formatWeeklyTypical,
+} from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
 
 const RED = '#E51636'
@@ -38,7 +45,7 @@ function SponsorHero() {
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Radio advertising that supports the community it sells to — from $50 a week,
+          Radio advertising that supports the community it sells to — {PRICING_COPY.generalFrom.toLowerCase()},
           heard across 25 towns of the Goulburn Valley.
         </p>
         <a
@@ -114,23 +121,23 @@ function EnquiryForm() {
 
 export default function SponsorshipKit() {
   const tiers = Object.values(generalTiers).map((t) => ({
-    tag: `$${t.weeklyPrice}/week`,
+    tag: formatWeeklyRange(t.minPrice, t.maxPrice),
     title: t.name,
-    body: `${t.spots} announcements a week and ${t.socialPosts} social posts a month${'exclusivity' in t && t.exclusivity ? ' — with category exclusivity' : ''}. Range $${t.minPrice}–$${t.maxPrice}/week to fit your campaign.`,
+    body: `${t.spots} announcements a week and ${t.socialPosts} social posts a month${'exclusivity' in t && t.exclusivity ? ' — with category exclusivity' : ''}. ${formatWeeklyTypical(t.weeklyPrice)} for most campaigns.`,
   }))
 
   return (
     <Layout>
       <SEO
         title="Sponsor ONE FM 98.5 — Advertise Across the Goulburn Valley"
-        description="Sponsorship from $50/week: est. 39,375 weekly listeners across 25 towns. Packages, GVL football, and a real conversation — not a call centre."
+        description={`${PRICING_COPY.generalFrom}: est. 39,375 weekly listeners across 25 towns. Packages, GVL football, and a real conversation — not a call centre.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
             `${stationStats.totalTowns} towns across the Goulburn Valley`,
-            'Packages from $50/week',
+            PRICING_COPY.generalTicker,
             `Supporting ${stationStats.nfpsSupported}+ local not-for-profits`,
           ]}
           delay={0.4}
@@ -142,7 +149,7 @@ export default function SponsorshipKit() {
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
             { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (ABS 2021)' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
-            { n: '$50', t: 'Per week — entry package' },
+            { n: `$${GENERAL_ENTRY_WEEKLY}`, t: 'From — general sponsorship' },
           ]}
         />
 
@@ -152,7 +159,7 @@ export default function SponsorshipKit() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football — sponsor the live call on ONE FM 98.5"
-          badge="GVL Footy Sponsorship · From $25/week"
+          badge={`GVL Footy Sponsorship · ${PRICING_COPY.footballFrom}`}
         />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
