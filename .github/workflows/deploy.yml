@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
 
       - name: Install dependencies
@@ -36,19 +36,16 @@ jobs:
           VITE_STATION_EMAIL: admin@fm985.com.au
           VITE_RADIO_CO_STATION_ID: sae3372059
 
-      # 2026-07-28 tech run: tried adding functions-dir/netlify-config-path
-      # here (broke on a missing esbuild binary under Node 24), then tried
-      # switching to netlify-cli entirely (got "Unauthorized: could not
-      # retrieve project" from Netlify's API on every attempt, incl. after
-      # bumping Node to 22 and dropping --auth/--site flags for env vars —
-      # see TECH_RUN_STATUS_2026-07-28.md). That looks like a real token/
-      # scope problem, not a workflow bug, so reverted to this known-good
-      # config pending NEED JAY. Functions/redirects are still NOT deployed
-      # until that's resolved.
+      # 2026-08-12: functions-dir + netlify-config-path restored (functions,
+      # redirects and headers must actually deploy). Safe under CI Node 22 —
+      # the 2026-07-28 esbuild breakage was the runner's Node 24. Still gated
+      # on NEED JAY: NETLIFY_AUTH_TOKEN must be valid or nothing deploys.
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: './dist'
+          functions-dir: './netlify/functions'
+          netlify-config-path: './netlify.toml'
           production-deploy: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: 'Deploy from GitHub Actions — ${{ github.sha }}'
