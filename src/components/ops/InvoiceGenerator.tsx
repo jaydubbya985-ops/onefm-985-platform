@@ -76,8 +76,9 @@ import {
   type BillingFrequency,
   type SponsorContract,
 } from './invoices/contacts'
-import { dispatchInvoiceEmail } from '@/lib/invoiceSend'
+import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
 import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
+import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -300,7 +301,14 @@ type SortKey = 'date' | 'amount' | 'status' | 'company'
 // ---------------------------------------------------------------------------
 
 export default function InvoiceGenerator() {
-  const { invoices: storeInvoices, addInvoice, updateInvoice, markInvoicePaid } = useOpsStore()
+  const {
+    invoices: storeInvoices,
+    addInvoice,
+    updateInvoice,
+    markInvoicePaid,
+    queueForBatch,
+    setActiveTab,
+  } = useOpsStore()
 
   // Local view models created before the store round-trip (deployed kept the
   // same merged structure); the store version wins once a record exists there.
@@ -679,7 +687,7 @@ export default function InvoiceGenerator() {
     const description =
       inv.items.map((item) => item.description).join('; ') || 'Sponsorship'
 
-    const result = await dispatchInvoiceEmail({
+    const payload = {
       to: inv.billTo.email,
       contactName: inv.billTo.name,
       company: inv.billTo.company,
@@ -695,11 +703,13 @@ export default function InvoiceGenerator() {
       emailSubject: `Invoice ${inv.invoiceNumber} from ONE FM 98.5 — ${inv.billTo.company}`,
       emailBody: inv.notes,
       invoiceId: inv.id,
-    })
+    }
+
+    const result = await dispatchInvoiceEmail(payload)
 
     if (result.devMode) {
       window.alert(
-        `NOT sent — no email service is configured yet. Invoice ${inv.invoiceNumber} was NOT emailed to ${inv.billTo.email}.`,
+        `NOT sent — no email service is configured yet. Invoice ${inv.invoiceNumber} was NOT emailed to ${inv.billTo.email}.\n\nUse the Batch Send tab for PDF + mailto fallback, or add RESEND_API_KEY on Netlify.`,
       )
       return
     }
@@ -709,9 +719,32 @@ export default function InvoiceGenerator() {
         list.map((i) => (i.id === id ? { ...i, status: 'sent' } : i)),
       )
       updateInvoice(id, { status: 'sent' })
-    } else if (!result.usedMailtoFallback) {
-      window.alert(result.error ?? `Failed to send invoice ${inv.invoiceNumber}.`)
+      return
     }
+
+    if (result.usedMailtoFallback) {
+      try {
+        const pdf = await generateInvoicePdf({
+          ...payload,
+          contactName: inv.billTo.name,
+          company: inv.billTo.company,
+        })
+        pdf.save(`${inv.invoiceNumber}.pdf`)
+      } catch {
+        // PDF optional — still open mailto
+      }
+      window.location.assign(buildMailtoInvoiceUrl(payload))
+      setLocalInvoices((list) =>
+        list.map((i) => (i.id === id ? { ...i, status: 'sent' } : i)),
+      )
+      updateInvoice(id, { status: 'sent' })
+      window.alert(
+        `PDF downloaded. Email client opened for ${inv.billTo.email} — attach ${inv.invoiceNumber}.pdf before sending.`,
+      )
+      return
+    }
+
+    window.alert(result.error ?? `Failed to send invoice ${inv.invoiceNumber}.`)
   }
 
   function handleDeleteInvoice(id: string) {
@@ -739,14 +772,20 @@ export default function InvoiceGenerator() {
   }
 
   function handleBatchSend() {
-    setLocalInvoices((list) =>
-      list.map((inv) =>
-        selectedIds.has(inv.id) && inv.status === 'draft' ? { ...inv, status: 'sent' } : inv,
-      ),
-    )
-    selectedIds.forEach((id) => updateInvoice(id, { status: 'sent' }))
+    // This tab doesn't email sponsors itself — queue the selection into the
+    // Batch Send tab (real dispatch, PDF attachment, test mode) and jump there.
+    const draftIds = Array.from(selectedIds).filter((id) => {
+      const inv = invoices.find((i) => i.id === id)
+      return inv && inv.status !== 'sent' && inv.status !== 'paid'
+    })
+    if (draftIds.length === 0) {
+      window.alert('Nothing to queue — selected invoice(s) are already sent or paid.')
+      return
+    }
+    draftIds.forEach((id) => queueForBatch(id))
     setSelectedIds(new Set())
     setBatchMode(false)
+    setActiveTab('batch')
   }
 
   function handleBatchDelete() {
@@ -1019,6 +1058,8 @@ export default function InvoiceGenerator() {
 
       {mainTab === 'invoices' && (
         <>
+          <EmailServiceBanner />
+
           {/* Stat cards */}
           <div className="grid grid-cols-6 gap-4 mb-6">
             <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
@@ -1154,7 +1195,7 @@ export default function InvoiceGenerator() {
                   onClick={handleBatchSend}
                   className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold"
                 >
-                  <Send className="h-3.5 w-3.5 mr-1" /> Send
+                  <Send className="h-3.5 w-3.5 mr-1" /> Queue for Batch Send
                 </Button>
                 <Button
                   size="sm"
@@ -1815,7 +1856,7 @@ export default function InvoiceGenerator() {
                     <p className="text-gray-300 text-sm mt-1">
                       Community Radio - Shepparton & Goulburn Valley
                     </p>
-                    <p className="text-gray-400 text-xs mt-1">98.5 One FM.</p>
+                    <p className="text-gray-400 text-xs mt-1">ABN 92 117 291 771</p>
                   </div>
                   <div className="text-right">
                     <h3 className="text-2xl font-bold text-[#D4A84B]">TAX INVOICE</h3>
@@ -1958,8 +1999,8 @@ export default function InvoiceGenerator() {
                     <span className="font-semibold text-[#101010]">Account Name:</span> 98.5 One FM.
                   </p>
                   <p>
-                    <span className="font-semibold text-[#101010]">Bank:</span> Commonwealth Bank of
-                    Australia
+                    <span className="font-semibold text-[#101010]">Bank:</span> National Australia
+                    Bank (NAB)
                   </p>
                   <div className="flex gap-6">
                     <p>

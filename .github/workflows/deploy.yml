@@ -36,6 +36,15 @@ jobs:
           VITE_STATION_EMAIL: admin@fm985.com.au
           VITE_RADIO_CO_STATION_ID: sae3372059
 
+      # 2026-07-28 tech run: tried adding functions-dir/netlify-config-path
+      # here (broke on a missing esbuild binary under Node 24), then tried
+      # switching to netlify-cli entirely (got "Unauthorized: could not
+      # retrieve project" from Netlify's API on every attempt, incl. after
+      # bumping Node to 22 and dropping --auth/--site flags for env vars —
+      # see TECH_RUN_STATUS_2026-07-28.md). That looks like a real token/
+      # scope problem, not a workflow bug, so reverted to this known-good
+      # config pending NEED JAY. Functions/redirects are still NOT deployed
+      # until that's resolved.
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:

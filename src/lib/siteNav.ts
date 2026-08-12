@@ -39,8 +39,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'About',
     items: [
-      { label: 'Our Story', path: '/story', description: 'People · milestones · mission' },
-      { label: 'Heritage', path: '/heritage', description: 'Since 1989 · callsign 3ONE' },
+      { label: 'History', path: '/heritage', description: 'Since 1989 · callsign 3ONE · station archive' },
       { label: 'Community', path: '/community', description: 'NFPs & local organisations' },
       { label: 'GVL Football', path: '/football', description: 'Season sponsorship tiers' },
     ],
@@ -48,7 +47,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Support',
     items: [
-      { label: 'Support Us', path: '/support', description: 'Donate · volunteer · membership' },
+      { label: 'Donate', path: '/support', description: 'Support community radio · bank transfer' },
       { label: 'Contact', path: '/contact', description: 'Studio · partnerships · enquiries' },
     ],
   },
@@ -135,7 +134,6 @@ export const SITE_ROUTES = [
   '/media-kit',
   '/audience',
   '/proposal',
-  '/story',
   '/heritage',
   '/community',
   '/football',

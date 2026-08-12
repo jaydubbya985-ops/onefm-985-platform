@@ -28,7 +28,7 @@ import {
   Layers,
 } from 'lucide-react'
 
-/* â”€â”€â”€ Timeline data â”€â”€â”€ */
+/* ─── Timeline data ─── */
 const milestones = [
   {
     year: "1989",
@@ -47,7 +47,7 @@ const milestones = [
   {
     year: "2005",
     title: "Online Streaming Launched",
-    desc: "ONE FM began streaming live at fm985.com.au â€” allowing listeners across Australia and the world to tune in to their Goulburn Murray station from any device, anywhere.",
+    desc: "ONE FM began streaming live at fm985.com.au — allowing listeners across Australia and the world to tune in to their Goulburn Murray station from any device, anywhere.",
     img: "/assets/images/studio-presenter-mic.jpg",
     icon: Wifi,
   },
@@ -60,7 +60,7 @@ const milestones = [
   },
   {
     year: "2014",
-    title: "25th Anniversary â€” 25 Towns",
+    title: "25th Anniversary — 25 Towns",
     desc: "Celebrated a quarter-century by visiting 25 towns across the Goulburn Valley in 25 days. A convoy of broadcast gear, live music and giveaways brought the party to every corner of the listening area.",
     img: "/assets/images/geo-lake-aerial.jpg",
     icon: MapPin,
@@ -81,14 +81,14 @@ const milestones = [
   },
   {
     year: "2026",
-    title: `${stationStats.yearsBroadcasting}th Year â€” Live Local & Connected`,
-    desc: `${stationStats.yearsBroadcasting}th year on air â€” expanded multicultural programming, a refreshed digital presence at fm985.com.au, growing GVL sports coverage, and a stronger volunteer community than ever.`,
+    title: `${stationStats.yearsBroadcasting}th Year — Live Local & Connected`,
+    desc: `${stationStats.yearsBroadcasting}th year on air — expanded multicultural programming, a refreshed digital presence at fm985.com.au, growing GVL sports coverage, and a stronger volunteer community than ever.`,
     img: "/assets/images/studio-sbs-visit.jpg",
     icon: TrendingUp,
   },
 ]
 
-/* â”€â”€â”€ Deterministic gradient avatars (same palette as Programs page) â”€â”€â”€ */
+/* ─── Deterministic gradient avatars (same palette as Programs page) ─── */
 const TEAM_PALETTES = [
   { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
   { from: '#F2F2F2', to: '#1B3A6F', accent: '#FFF8DC' },
@@ -110,26 +110,26 @@ function getTeamAvatar(name: string) {
   return { ...palette, initials }
 }
 
-/* â”€â”€â”€ Team data â”€â”€â”€ */
+/* ─── Team data ─── */
 const team = [
-  { name: "Tim Ahemt", role: "Breakfast Host (Monâ€“Tue)", years: "2026", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts ONE FM Breakfast Monday and Tuesday â€” community interviews and local news." },
+  { name: "Tim Ahemt", role: "Breakfast Host (Mon–Tue)", years: "2026", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts ONE FM Breakfast Monday and Tuesday — community interviews and local news." },
   { name: "The Big G (Craig Stott)", role: "Breakfast (Wed) / Tuesday Mornings", years: "2026", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Wednesday breakfast and Tuesday morning music on ONE FM." },
   { name: "Ralph Whitehead", role: "Thu Breakfast / Friday Arvo / Friday Morning", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
   { name: "Josh Revens", role: "Fri Breakfast / Monday Nights / Community Interviews", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Friday breakfast, Monday night community programming, and community interviews covering local events, sports and initiatives." },
-  { name: "Johnny P (John Painter)", role: "Host â€” Dancing through the decades", years: "4", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
-  { name: "James Manley", role: "Host â€” The James Manley Show", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Community-focused afternoon programming Monâ€“Tue with local interviews and advocacy." },
-  { name: "Carlos Rock", role: "Host â€” Planet of Sound", years: "19-20", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },
-  { name: "Timmy Ahmet", role: "Host â€” Good Evening Country", years: "", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
+  { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", years: "4", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
+  { name: "James Manley", role: "Host — The James Manley Show", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Community-focused afternoon programming Mon–Tue with local interviews and advocacy." },
+  { name: "Carlos Rock", role: "Host — Planet of Sound", years: "19-20", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },
+  { name: "Timmy Ahmet", role: "Host — Good Evening Country", years: "", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
   { name: "Les 'Harro' Harrison", role: "Community Host / Various", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
-  { name: "Fikiri", role: "Host â€” Africonnect (Swahili)", years: "", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
-  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host â€” Samoan Program", years: "", cat: "Multicultural", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
-  { name: "Edith", role: "Host â€” Filipino Music Program", years: "", cat: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
-  { name: "Jimmy", role: "Host â€” Mandarin Program / Her Quiet Strength", years: "", cat: "Multicultural", img: "/assets/images/studio-presenter-mic.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
+  { name: "Fikiri", role: "Host — Africonnect (Swahili)", years: "", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
+  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", years: "", cat: "Multicultural", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
+  { name: "Edith", role: "Host — Filipino Music Program", years: "", cat: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
+  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "", cat: "Multicultural", img: "/assets/images/studio-presenter-mic.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
 ]
 
 const teamCategories = ["All", "On-Air", "Multicultural"]
 
-/* â”€â”€â”€ Studio cards â”€â”€â”€ */
+/* ─── Studio cards ─── */
 const studios = [
   {
     title: "Main Studio",
@@ -157,7 +157,7 @@ const studios = [
   },
 ]
 
-/* â”€â”€â”€ Forward pillars â€” factual station commitments only â”€â”€â”€ */
+/* ─── Forward pillars — factual station commitments only ─── */
 const pillars = [
   {
     title: "Live & Local",
@@ -189,8 +189,8 @@ export default function Story() {
 
   return (
     <Layout>
-      <SEO title="Our Story" description="The story of ONE FM 98.5 â€” from 1989 to today. Callsign 3ONE, ACMA License 1385226/1. Meet the real presenters behind the mic." />
-      {/* â•â•â•â•â•â•â• Section 1 â€” Hero â•â•â•â•â•â•â• */}
+      <SEO title="Our Story" description="The story of ONE FM 98.5 — from 1989 to today. Callsign 3ONE, ACMA License 1385226/1. Meet the real presenters behind the mic." />
+      {/* ═══════ Section 1 — Hero ═══════ */}
       <section ref={heroRef} className="relative min-h-[85dvh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="THE STORY">
         <div aria-hidden className="grain-overlay" />
         <div className="absolute inset-0 z-0">
@@ -255,7 +255,7 @@ export default function Story() {
             transition={{ duration: 0.5, delay: 0.65, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             className="font-body text-one-white/65 max-w-[520px] mb-10 italic leading-relaxed"
           >
-            {stationStats.yearsBroadcasting} years of keeping the Valley connected â€” through flood, fire, footy finals and everything in between.
+            {stationStats.yearsBroadcasting} years of keeping the Valley connected — through flood, fire, footy finals and everything in between.
           </motion.p>
 
           <motion.div
@@ -273,24 +273,24 @@ export default function Story() {
         <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-one-navy to-transparent z-10 pointer-events-none" />
       </section>
 
-      {/* â”€â”€ Story Marquee Strip â”€â”€ */}
+      {/* ── Story Marquee Strip ── */}
       <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={25}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BORN 1989 Â· CALLSIGN: 3ONE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">SHEPPARTON Â· GOULBURN VALLEY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BORN 1989 · CALLSIGN: 3ONE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">SHEPPARTON · GOULBURN VALLEY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD Â· FIRE Â· FOOTY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD · FIRE · FOOTY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE CONNECTED</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES Â· {stationStats.broadcastRadiusKm}KM RADIUS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO Â· NON-PROFIT</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSED Â· 98.5 FM</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · NON-PROFIT</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSED · 98.5 FM</span>,
           ]}
         />
       </div>
 
-      {/* â•â•â•â•â•â•â• Section 2 â€” Station Info â•â•â•â•â•â•â• */}
+      {/* ═══════ Section 2 — Station Info ═══════ */}
       <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto bg-surface-lift" data-cursor-label="STATION INFO">
         <TiltCard maxTilt={3} className="mb-16">
         <motion.div
@@ -332,7 +332,7 @@ export default function Story() {
         >
           <WordReveal text="Our Heritage" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white max-w-2xl mx-auto">
-            From a single studio above a shop to the region's most trusted broadcaster â€” the journey of ONE FM 98.5.
+            From a single studio above a shop to the region's most trusted broadcaster — the journey of ONE FM 98.5.
           </p>
         </motion.div>
 
@@ -387,7 +387,7 @@ export default function Story() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â• Section 3 â€” The Team â•â•â•â•â•â•â• */}
+      {/* ═══════ Section 3 — The Team ═══════ */}
       <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto bg-surface-deep" data-cursor-label="MEET THE TEAM">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -478,7 +478,7 @@ export default function Story() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â• Section 4 â€” Studio & Facilities â•â•â•â•â•â•â• */}
+      {/* ═══════ Section 4 — Studio & Facilities ═══════ */}
       <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto bg-surface-lift" data-cursor-label="THE STUDIO">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -548,7 +548,7 @@ export default function Story() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â• Section 5 â€” Community Impact â•â•â•â•â•â•â• */}
+      {/* ═══════ Section 5 — Community Impact ═══════ */}
       <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto bg-surface-warm" data-cursor-label="COMMUNITY IMPACT">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -612,7 +612,7 @@ export default function Story() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â• Section 6 â€” Looking Forward â•â•â•â•â•â•â• */}
+      {/* ═══════ Section 6 — Looking Forward ═══════ */}
       <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto pb-32 bg-surface-glow" data-cursor-label="LOOKING AHEAD">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
