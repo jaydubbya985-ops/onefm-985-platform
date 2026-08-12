@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -72,12 +72,13 @@ function TimeOfDayTheme() {
 function ScanlineTransition() {
   const location = useLocation()
   const [animKey, setAnimKey] = useState(0)
-  const isFirst = useRef(true)
+  const [prevKey, setPrevKey] = useState(location.key)
 
-  useEffect(() => {
-    if (isFirst.current) { isFirst.current = false; return }
+  // New navigation → trigger the scanline sweep (render-phase adjustment)
+  if (prevKey !== location.key) {
+    setPrevKey(location.key)
     setAnimKey(k => k + 1)
-  }, [location.key])
+  }
 
   if (animKey === 0) return null
   if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null

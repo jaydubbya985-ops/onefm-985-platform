@@ -311,7 +311,7 @@ export default function SalesProposal() {
       const imgHeight = canvas.height
       const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight)
       const imgX = (pdfWidth - imgWidth * ratio) / 2
-      let imgY = 0
+      const imgY = 0
       let heightLeft = imgHeight * ratio
       let position = 0
 

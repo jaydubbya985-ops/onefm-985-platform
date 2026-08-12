@@ -176,6 +176,11 @@ const FREQUENCY_LABELS: Record<BillingFrequency, string> = {
 }
 
 /** Resolves a stored payment method (key or label) to its display label. */
+/** Module scope: impure ID generation is allowed outside component render. */
+function newInvoiceId(suffix?: number): string {
+  return `inv_${Date.now()}${suffix !== undefined ? `_${suffix}` : ''}`
+}
+
 function paymentMethodLabel(value?: string): string {
   if (!value) return ''
   return PAYMENT_METHOD_LABELS[value as PaymentMethodKey] ?? value
@@ -455,7 +460,7 @@ export default function InvoiceGenerator() {
     const subtotal = items.reduce((sum, i) => sum + i.amount, 0)
     const gst = subtotal * 0.1
     const invoice: GeneratedInvoice = {
-      id: `inv_${Date.now()}`,
+      id: newInvoiceId(),
       invoiceNumber: nextInvoiceNumber(invoices),
       date: '2026-02-15',
       dueDate: createDueDate,
@@ -531,7 +536,7 @@ export default function InvoiceGenerator() {
     const subtotal = items.reduce((sum, i) => sum + i.amount, 0)
     const gst = subtotal * 0.1
     const invoice: GeneratedInvoice = {
-      id: `inv_${Date.now()}`,
+      id: newInvoiceId(),
       invoiceNumber: nextInvoiceNumber(invoices),
       date: contractDate,
       dueDate: contractDueDate,
@@ -573,7 +578,7 @@ export default function InvoiceGenerator() {
       const due = new Date(issue)
       due.setDate(due.getDate() + 14)
       const invoice: GeneratedInvoice = {
-        id: `inv_${Date.now()}_${i}`,
+        id: newInvoiceId(i),
         invoiceNumber: nextInvoiceNumber([...invoices, ...generated]),
         date: issue.toISOString().split('T')[0],
         dueDate: due.toISOString().split('T')[0],
@@ -775,7 +780,7 @@ export default function InvoiceGenerator() {
   function handleDuplicate(invoice: GeneratedInvoice) {
     const copy: GeneratedInvoice = {
       ...invoice,
-      id: `inv_${Date.now()}`,
+      id: newInvoiceId(),
       invoiceNumber: nextInvoiceNumber(invoices),
       date: '2026-02-15',
       dueDate: addDays('2026-02-15', 14),

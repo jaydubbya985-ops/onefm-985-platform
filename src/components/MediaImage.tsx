@@ -34,20 +34,25 @@ export function MediaImage({
   const [loaded, setLoaded]       = useState(false)
   const [errored, setErrored]     = useState(false)
   const [currentSrc, setCurrentSrc] = useState(src)
+  const [prevSrc, setPrevSrc]     = useState(src)
   const imgRef = useRef<HTMLImageElement>(null)
 
-  // Sync src prop changes (e.g. tab switches)
-  useEffect(() => {
+  // Sync src prop changes (e.g. tab switches) — render-phase adjustment
+  if (prevSrc !== src) {
+    setPrevSrc(src)
     setLoaded(false)
     setErrored(false)
     setCurrentSrc(src)
-  }, [src])
+  }
 
   // If the image is already cached the onLoad may fire before React mounts it
   useEffect(() => {
-    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
-      setLoaded(true)
-    }
+    const id = requestAnimationFrame(() => {
+      if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+        setLoaded(true)
+      }
+    })
+    return () => cancelAnimationFrame(id)
   }, [])
 
   const handleError = () => {

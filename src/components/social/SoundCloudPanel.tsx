@@ -78,13 +78,19 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
   const [loading, setLoading] = useState(!interviewsProp?.length)
   const [activeId, setActiveId] = useState<number | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [prevProp, setPrevProp] = useState(interviewsProp)
 
-  useEffect(() => {
+  // Sync incoming interviews prop (render-phase adjustment)
+  if (prevProp !== interviewsProp) {
+    setPrevProp(interviewsProp)
     if (interviewsProp?.length) {
       setItems(interviewsProp)
       setLoading(false)
-      return
     }
+  }
+
+  useEffect(() => {
+    if (interviewsProp?.length) return
     let cancelled = false
     fetchLatestInterviews(8)
       .then((data) => {

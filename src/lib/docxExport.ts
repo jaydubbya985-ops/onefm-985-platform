@@ -605,7 +605,7 @@ function buildTermsParagraphs(): Paragraph[] {
   )
 }
 
-function makeCell(text: string, bold = false, align: any = AlignmentType.LEFT, bg?: string): TableCell {
+function makeCell(text: string, bold = false, align: (typeof AlignmentType)[keyof typeof AlignmentType] = AlignmentType.LEFT, bg?: string): TableCell {
   return new TableCell({
     children: [
       new Paragraph({

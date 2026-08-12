@@ -42,7 +42,13 @@ export function OnAirNav() {
   const meta = usePlayerMetadata()
   const reduced = useReducedMotion()
 
-  useEffect(() => setOpen(false), [location.pathname])
+  const [lastPath, setLastPath] = useState(location.pathname)
+
+  // Close menu on navigation (render-phase adjustment)
+  if (lastPath !== location.pathname) {
+    setLastPath(location.pathname)
+    setOpen(false)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)

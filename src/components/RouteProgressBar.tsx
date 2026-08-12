@@ -1,20 +1,21 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 export function RouteProgressBar() {
   const location = useLocation()
   const [width, setWidth] = useState(0)
   const [visible, setVisible] = useState(false)
-  const timerRef = useRef<number | undefined>(undefined)
-  const prevKey = useRef(location.key)
+  const [prevKey, setPrevKey] = useState(location.key)
 
-  useEffect(() => {
-    if (location.key === prevKey.current) return
-    prevKey.current = location.key
-
-    window.clearTimeout(timerRef.current)
+  // Route change → restart bar (render-phase adjustment)
+  if (prevKey !== location.key) {
+    setPrevKey(location.key)
     setVisible(true)
     setWidth(0)
+  }
+
+  useEffect(() => {
+    if (!visible) return
 
     // Rapid sweep to 75%
     const t1 = window.setTimeout(() => setWidth(75), 30)
@@ -24,9 +25,8 @@ export function RouteProgressBar() {
     const t3 = window.setTimeout(() => setWidth(100), 700)
     const t4 = window.setTimeout(() => setVisible(false), 900)
 
-    timerRef.current = t4
     return () => { window.clearTimeout(t1); window.clearTimeout(t2); window.clearTimeout(t3); window.clearTimeout(t4) }
-  }, [location.key])
+  }, [visible])
 
   if (!visible && width === 0) return null
 

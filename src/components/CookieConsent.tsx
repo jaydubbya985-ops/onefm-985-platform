@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Cookie } from 'lucide-react'
@@ -6,13 +6,7 @@ import { Cookie } from 'lucide-react'
 const CONSENT_KEY = 'onefm_cookie_consent'
 
 export function CookieConsent() {
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    if (!localStorage.getItem(CONSENT_KEY)) {
-      setVisible(true)
-    }
-  }, [])
+  const [visible, setVisible] = useState(() => !localStorage.getItem(CONSENT_KEY))
 
   const accept = () => {
     localStorage.setItem(CONSENT_KEY, 'accepted')

@@ -73,7 +73,7 @@ const TEMPLATES = [
   { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080Ã—1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
   { name: 'First Nations Program', platform: 'Facebook', dimensions: '1200Ã—630', format: 'Canva (Landscape)', tags: ['Multicultural', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
   { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080Ã—1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
-  { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080Ã—1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-scenic.jpg' },
+  { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080Ã—1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
   { name: 'TikTok Vertical â€” Now Playing', platform: 'TikTok', dimensions: '1080Ã—1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
   { name: 'LinkedIn Community Partner', platform: 'Facebook', dimensions: '1200Ã—627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
   { name: 'Threads Quote Card', platform: 'Twitter/X', dimensions: '1080Ã—1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
@@ -100,7 +100,7 @@ const FEED_POSTS = [
   { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL â€” nothing beats local footy on a Friday night. Catch us on 98.5 FM ðŸ”´ #GVL #LocalFooty', likes: '91', comments: '11', time: '2w' },
   { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley â€” this is why we call it home ðŸŒ¸ #GoulburnValley #OneFM', likes: '74', comments: '8', time: '2w' },
   { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: 'Live and local â€” 25 multicultural programs weekly keeping every corner of the Goulburn Valley connected. #OneFM985 #Community', likes: '39', comments: '5', time: '3w' },
-  { platform: 'Facebook', image: '/assets/images/culture-riverboat-scenic.jpg', caption: 'The Murray River â€” heart of our region. Stream ONE FM anywhere in the world at fm985.com.au ðŸŽ™ï¸', likes: '66', comments: '7', time: '3w' },
+  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River â€” heart of our region. Stream ONE FM anywhere in the world at fm985.com.au ðŸŽ™ï¸', likes: '66', comments: '7', time: '3w' },
 ]
 
 // Content calendar â€” GVL events & ONE FM programming (update monthly)

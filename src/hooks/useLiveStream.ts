@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 import { STREAM_URL } from '@/lib/streamConfig'
 
 /* ─── Module-level singleton ──────────────────────────────────────────────
@@ -31,17 +31,17 @@ function emit(next: StreamState) {
   bus?.dispatchEvent(new CustomEvent('stream-state', { detail: next }))
 }
 
+function subscribe(cb: () => void) {
+  bus?.addEventListener('stream-state', cb)
+  return () => bus?.removeEventListener('stream-state', cb)
+}
+
+function getSnapshot(): StreamState {
+  return state
+}
+
 export function useLiveStream() {
-  const [local, setLocal] = useState<StreamState>(state)
-
-  useEffect(() => {
-    // Sync in case state changed before mount
-    setLocal(state)
-
-    const handler = (e: Event) => setLocal((e as CustomEvent<StreamState>).detail)
-    bus?.addEventListener('stream-state', handler)
-    return () => bus?.removeEventListener('stream-state', handler)
-  }, [])
+  const local = useSyncExternalStore(subscribe, getSnapshot)
 
   const toggle = useCallback(async () => {
     const a = getAudio()

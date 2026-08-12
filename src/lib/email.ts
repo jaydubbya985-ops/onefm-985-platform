@@ -1,15 +1,13 @@
 /**
  * Email Service — payload builder
- * Sends via Supabase Edge Function (production) or Resend API (dev).
+ * Sends via Netlify Function (production) or Resend API direct (dev).
  *
  * Production setup:
- *   1. Deploy supabase/functions/send-enquiry + send-invoice
- *   2. Set RESEND_API_KEY + RESEND_FROM as Supabase secrets
+ *   1. Netlify functions send-enquiry + send-invoice deploy with the site
+ *   2. Set RESEND_API_KEY (no VITE_ prefix) in Netlify env — stays server-side
  *
- * Dev fallback: VITE_RESEND_API_KEY in .env (optional)
+ * Dev fallback: VITE_RESEND_API_KEY in .env.local (never set this in production)
  */
-
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
 export interface EmailPayload {
   to: string | string[]
@@ -254,27 +252,27 @@ export async function sendEnquiryNotification(data: EnquiryEmailData) {
   const stationHtml = buildEnquiryEmailHtml(data)
   const confirmationHtml = buildEnquiryConfirmationHtml(data)
 
-  // Prefer server-side send via Edge Function (keeps Resend key off the client)
-  if (isSupabaseConfigured()) {
-    try {
-      const { data: result, error } = await supabase.functions.invoke('send-enquiry', {
-        body: {
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          organization: data.organization,
-          enquiryType: data.enquiryType,
-          message: data.message,
-          preferredContact: data.preferredContact,
-          stationHtml,
-          confirmationHtml,
-        },
-      })
-      if (!error && result?.success) return
-      console.warn('[Email] Edge function send-enquiry failed, falling back:', error?.message ?? result?.error)
-    } catch (err) {
-      console.warn('[Email] Edge function unavailable, falling back to client send:', err)
+  // Preferred path: Netlify serverless function (Resend key stays server-side)
+  try {
+    const res = await fetch('/.netlify/functions/send-enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        enquiryType: data.enquiryType,
+        message: data.message,
+        stationHtml,
+        confirmationHtml,
+      }),
+    })
+    if (res.ok) {
+      const result = (await res.json()) as { success?: boolean }
+      if (result.success) return
     }
+    console.warn('[Email] send-enquiry function responded:', res.status)
+  } catch (err) {
+    console.warn('[Email] send-enquiry function unavailable (dev mode?), falling back:', err)
   }
 
   // Fallback: direct Resend or dev log mode

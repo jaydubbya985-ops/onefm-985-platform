@@ -168,8 +168,8 @@ const townData = [
 const communityVoice = {
   quote:
     "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that.",
-  name: 'Margaret Tresize',
-  role: 'Community Leader, Rochester',
+  name: 'Rochester Community Member',
+  role: '2022 Goulburn Valley Floods',
 }
 
 /* ─── Enquiry Form Data (from pricing.ts) ─── */

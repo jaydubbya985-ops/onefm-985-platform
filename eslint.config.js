@@ -19,5 +19,22 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // `_`-prefixed names are intentionally unused (destructured omissions, future params)
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      }],
+    },
+  },
+  {
+    // Vendored shadcn/ui kit — upstream patterns (variant exports, skeleton
+    // Math.random widths) are intentional; we don't refactor vendored code.
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/purity': 'off',
+    },
   },
 ])

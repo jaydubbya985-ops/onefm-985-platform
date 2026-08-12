@@ -16,6 +16,13 @@ export function useWeatherCycle(locations: WeatherLocation[], intervalMs = 7000)
   const [weather, setWeather] = useState<WeatherNow | null>(null)
   const [loading, setLoading] = useState(true)
   const requestId = useRef(0)
+  const [prevIndex, setPrevIndex] = useState(index)
+
+  // New location → show loading state (render-phase adjustment)
+  if (prevIndex !== index) {
+    setPrevIndex(index)
+    setLoading(true)
+  }
 
   useEffect(() => {
     if (locations.length <= 1) return
@@ -27,7 +34,6 @@ export function useWeatherCycle(locations: WeatherLocation[], intervalMs = 7000)
     const location = locations[index]
     if (!location) return
     const thisRequest = ++requestId.current
-    setLoading(true)
     fetchWeather(location.lat, location.lng)
       .then((data) => {
         if (requestId.current === thisRequest) setWeather(data)

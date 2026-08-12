@@ -560,8 +560,8 @@ export default function Story() {
             <WordReveal text="Community Impact" className="font-h2 text-one-white mb-6 block" as="h2" />
             <div className="grid grid-cols-2 gap-6 mb-8">
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={500} suffix="+" /></p>
-                <p className="font-label text-muted mt-1">Events Covered</p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.yearsBroadcasting} suffix="" /></p>
+                <p className="font-label text-muted mt-1">Years On Air</p>
               </div>
               <div>
                 <p className="font-stat text-gold-gradient"><AnimatedNumber value={100} suffix="+" /></p>
@@ -572,8 +572,8 @@ export default function Story() {
                 <p className="font-label text-muted mt-1">Emergency Alerts</p>
               </div>
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={12000} suffix="+" /></p>
-                <p className="font-label text-muted mt-1">Youth Engaged</p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.totalTowns} suffix="" /></p>
+                <p className="font-label text-muted mt-1">Towns Across the Valley</p>
               </div>
             </div>
             <TiltCard maxTilt={4}>
@@ -586,10 +586,10 @@ export default function Story() {
                 <div className="w-10 h-10 rounded-full bg-one-gold/20 flex items-center justify-center">
                   <Users size={16} className="text-one-gold" />
                 </div>
-                <div>
-                  <p className="font-body-small text-one-white font-medium">Margaret Tresize</p>
-                  <p className="font-body-small text-muted">Community Leader, Rochester</p>
-                </div>
+              <div>
+                <p className="font-body-small text-one-white font-medium">Rochester Community Member</p>
+                <p className="font-body-small text-muted">2022 Goulburn Valley Floods</p>
+              </div>
               </div>
             </div>
             </TiltCard>

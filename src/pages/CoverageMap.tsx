@@ -405,8 +405,10 @@ export default function CoverageMap() {
   }, [])
 
   useEffect(() => {
-    initMap()
+    // Defer map init past the first frame — keeps setState out of the sync effect body
+    const frame = requestAnimationFrame(() => { void initMap() })
     return () => {
+      cancelAnimationFrame(frame)
       tourAbortRef.current = true
       tourTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
       tourTimeoutsRef.current = []
@@ -481,7 +483,9 @@ export default function CoverageMap() {
     scheduleNext()
   }, [])
 
-  runTourStepRef.current = runTourStep
+  useEffect(() => {
+    runTourStepRef.current = runTourStep
+  }, [runTourStep])
 
   const startTour = useCallback(() => {
     if (!mapInstanceRef.current || touring) return

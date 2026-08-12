@@ -415,15 +415,18 @@ function BookSpotDialog({
   const [startDate, setStartDate] = useState(toIsoDate(weekStart))
   const [endDate, setEndDate] = useState(toIsoDate(addDays(weekStart, 6)))
   const [notes, setNotes] = useState('')
+  const [wasOpen, setWasOpen] = useState(false)
 
-  useEffect(() => {
-    if (open) {
-      setDaypart(defaultDaypart)
-      setSelectedDays([defaultDayIndex])
-      setStartDate(toIsoDate(weekStart))
-      setEndDate(toIsoDate(addDays(weekStart, 6)))
-    }
-  }, [open, defaultDaypart, defaultDayIndex, weekStart])
+  // Reset form each time the dialog opens (render-phase adjustment)
+  if (open && !wasOpen) {
+    setWasOpen(true)
+    setDaypart(defaultDaypart)
+    setSelectedDays([defaultDayIndex])
+    setStartDate(toIsoDate(weekStart))
+    setEndDate(toIsoDate(addDays(weekStart, 6)))
+  } else if (!open && wasOpen) {
+    setWasOpen(false)
+  }
 
   const sponsor = sponsors.find((s) => s.id === sponsorId)
   const sponsorCampaigns = campaigns.filter((c) => c.sponsorId === sponsorId)
@@ -669,13 +672,14 @@ function EditSpotDialog({
 }) {
   const [status, setStatus] = useState<SpotStatus>('scheduled')
   const [notes, setNotes] = useState('')
+  const [prevSpotId, setPrevSpotId] = useState(spot?.id)
 
-  useEffect(() => {
-    if (spot) {
-      setStatus(spot.status)
-      setNotes(spot.notes || '')
-    }
-  }, [spot])
+  // Load the spot into the form when a different spot is selected
+  if (spot && spot.id !== prevSpotId) {
+    setPrevSpotId(spot.id)
+    setStatus(spot.status)
+    setNotes(spot.notes || '')
+  }
 
   if (!spot) return null
   const campaign = campaigns.find((c) => c.id === spot.campaignId)

@@ -522,10 +522,10 @@ export default function Heritage() {
             {/* Left stats */}
             <div className="lg:col-span-2 space-y-8">
               {[
-                { num: 500, suffix: '+', label: 'Community Events Covered Annually' },
-                { num: 2400000, prefix: '$', suffix: '', label: 'Value of Free Airtime for Causes' },
-                { num: 247, prefix: '', suffix: '', label: 'Emergency Alert Network' },
-                { num: 12000, suffix: '', label: 'Youth Mentored Through Programs' },
+                { num: stationStats.yearsBroadcasting, suffix: '', label: 'Years On Air' },
+                { num: stationStats.totalTowns, prefix: '', suffix: '', label: 'Towns Across the Valley' },
+                { num: stationStats.nfpsSupported, prefix: '', suffix: '+', label: 'NFPs Supported On-Air' },
+                { num: 1989, suffix: '', label: 'On Air Since' },
               ].map((stat, i) => (
                 <motion.div
                   key={stat.label}

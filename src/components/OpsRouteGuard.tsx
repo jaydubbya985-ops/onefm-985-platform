@@ -13,7 +13,6 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   const { authLoading, submitPassword, submitLogin } = useOpsAccess()
   const { isAuthenticated, loading } = useAuth()
 
-  const [checking, setChecking] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -21,18 +20,13 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const unlocked = useAuthGate ? isAuthenticated : sessionStorage.getItem('ops_unlocked') === 'true'
+  const checking = useAuthGate && (loading || authLoading)
 
   useEffect(() => {
-    if (!useAuthGate) {
-      setChecking(false)
-      if (!unlocked) setTimeout(() => inputRef.current?.focus(), 100)
-      return
-    }
-    if (!loading && !authLoading) {
-      setChecking(false)
-      if (!isAuthenticated) setTimeout(() => inputRef.current?.focus(), 100)
-    }
-  }, [useAuthGate, loading, authLoading, isAuthenticated, unlocked])
+    if (checking || unlocked) return
+    const t = setTimeout(() => inputRef.current?.focus(), 100)
+    return () => clearTimeout(t)
+  }, [checking, unlocked])
 
   const handleDemoSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -53,7 +47,7 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
     setSubmitting(false)
   }
 
-  if (checking || (useAuthGate && (loading || authLoading))) {
+  if (checking) {
     return (
       <div className="min-h-screen bg-[#101010] flex items-center justify-center">
         <div className="text-one-gold font-label text-sm animate-pulse">Checking access...</div>

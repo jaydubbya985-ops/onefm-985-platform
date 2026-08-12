@@ -46,7 +46,7 @@ export function MagneticButton({
 
   return (
     <Tag
-      ref={ref as any}
+      ref={ref}
       className={`inline-block ${className}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}

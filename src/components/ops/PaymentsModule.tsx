@@ -128,6 +128,27 @@ function usePersistentState<T>(
   return [value, setValue]
 }
 
+/** Module scope: impure ID/time helpers — allowed outside component render. */
+function newPaymentId(): string {
+  return `cp-${Date.now()}`
+}
+
+function newTxReference(): string {
+  return `TRX-${Date.now().toString(36).toUpperCase()}`
+}
+
+function newDonationId(): string {
+  return `don-${Date.now()}`
+}
+
+function newMemberId(): string {
+  return `m${Date.now()}`
+}
+
+function daysSinceLast(iso: string): number {
+  return Math.floor((Date.now() - new Date(iso).getTime()) / 86400000)
+}
+
 function isoToday(): string {
   return new Date().toISOString().split('T')[0]
 }
@@ -316,14 +337,14 @@ function PaymentsTab() {
     const value = parseFloat(amount)
     if (Number.isNaN(value) || value <= 0) return
     const record: ClientPayment = {
-      id: `cp-${Date.now()}`,
+      id: newPaymentId(),
       invoiceId: selectedInvoice.id,
       invoiceNumber: selectedInvoice.number,
       clientName: selectedInvoice.client,
       amount: value,
       method,
       date,
-      reference: reference || `TRX-${Date.now().toString(36).toUpperCase()}`,
+      reference: reference || newTxReference(),
       notes,
       status: 'completed',
     }
@@ -970,9 +991,7 @@ function DonationsTab() {
       }
     })
     return Array.from(map.values()).map((d, idx) => {
-      const daysSince = Math.floor(
-        (Date.now() - new Date(d.last).getTime()) / 86400000,
-      )
+      const daysSince = daysSinceLast(d.last)
       let status: DonorStatus = 'active'
       if (daysSince > 90) status = 'lapsed'
       else if (d.count === 1) status = 'new'
@@ -1025,7 +1044,7 @@ function DonationsTab() {
     const value = parseFloat(donationAmount)
     if (Number.isNaN(value) || value <= 0) return
     const record: DonationRecord = {
-      id: `don-${Date.now()}`,
+        id: newDonationId(),
       donorName,
       email: donorEmail,
       phone: donorPhone,
@@ -1910,7 +1929,7 @@ function MembershipsTab() {
     if (frequency === 'monthly') renewal.setMonth(renewal.getMonth() + 1)
     else renewal.setFullYear(renewal.getFullYear() + 1)
     const record: MemberRecord = {
-      id: `m${Date.now()}`,
+        id: newMemberId(),
       memberId: `ONE-M-985${String(members.length + 1).padStart(2, '0')}`,
       name,
       email,

@@ -94,8 +94,13 @@ function NavDropdown({ group }: { group: NavGroup }) {
   const [open, setOpen] = useState(false)
   const location = useLocation()
   const ref = useRef<HTMLDivElement>(null)
+  const [lastPath, setLastPath] = useState(location.pathname)
 
-  useEffect(() => { setOpen(false) }, [location.pathname])
+  // Close dropdown on navigation (render-phase adjustment)
+  if (lastPath !== location.pathname) {
+    setLastPath(location.pathname)
+    setOpen(false)
+  }
 
   useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
@@ -205,14 +210,22 @@ function OpsAccessModal({
   const [error, setError] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [wasShown, setWasShown] = useState(false)
+
+  // Reset form whenever the modal opens (render-phase adjustment)
+  if (show && !wasShown) {
+    setWasShown(true)
+    setEmail('')
+    setPassword('')
+    setError(false)
+  } else if (!show && wasShown) {
+    setWasShown(false)
+  }
 
   useEffect(() => {
-    if (show) {
-      setEmail('')
-      setPassword('')
-      setError(false)
-      setTimeout(() => inputRef.current?.focus(), 100)
-    }
+    if (!show) return
+    const t = setTimeout(() => inputRef.current?.focus(), 100)
+    return () => clearTimeout(t)
   }, [show])
 
   if (!show) return null
@@ -316,7 +329,13 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => { setMobileOpen(false) }, [location.pathname])
+  const [lastMobilePath, setLastMobilePath] = useState(location.pathname)
+
+  // Close mobile menu on navigation (render-phase adjustment)
+  if (lastMobilePath !== location.pathname) {
+    setLastMobilePath(location.pathname)
+    setMobileOpen(false)
+  }
 
   useEffect(() => {
     if (!mobileOpen) return

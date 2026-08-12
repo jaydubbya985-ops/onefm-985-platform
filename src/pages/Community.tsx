@@ -23,7 +23,7 @@ const TOWN_IMGS = [
   '/assets/images/ob-van-branded.jpg',
   '/studio-control-room.jpg',
   '/assets/images/heritage-truck-2005.jpg',
-  '/tower-mount-major-day.png',
+  '/assets/images/tower-mount-major-day.png',
 ]
 
 function CommunityHero() {

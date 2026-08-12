@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { PlayHQGame, GVLLadderTeam } from '@/lib/playhq';
+import type { PlayHQGame, PlayHQGameSummary, GVLLadderTeam } from '@/lib/playhq';
 import {
   PlayHQClient,
   GVL_LADDER,
@@ -70,7 +70,7 @@ export function usePlayHQLadder(): {
 
 // Hook for game summary with player stats
 export function usePlayHQGameSummary(gameId: string) {
-  const [summary, setSummary] = useState<any>(null);
+  const [summary, setSummary] = useState<PlayHQGameSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useState, useRef, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import type { ElementType } from 'react'
 import { Link } from 'react-router-dom'
@@ -301,10 +301,10 @@ function HeroSection() {
           <div className="inline-flex items-center gap-3 glass-card px-8 py-4">
             <TrendingUp size={20} className="text-one-gold" />
             <span className="font-label text-one-white">
-              TOTAL COMMUNITY SUPPORT
+              100% VOLUNTEER-RUN · COMMUNITY-OWNED
             </span>
             <span className="font-stat text-gold-gradient">
-              <AnimatedNumber prefix="$" value={124580} />
+              SINCE 1989
             </span>
           </div>
         </motion.div>
@@ -538,7 +538,11 @@ function DonationFormSection({
     giftInHonor: '',
   })
 
-  useEffect(() => {
+  const [prevTier, setPrevTier] = useState(selectedTier)
+
+  // Tier selected → update form + restart the flow (render-phase adjustment)
+  if (selectedTier !== prevTier) {
+    setPrevTier(selectedTier)
     if (selectedTier) {
       const amt =
         initialAmount !== undefined
@@ -554,7 +558,7 @@ function DonationFormSection({
       setStep(1)
       setIsSuccess(false)
     }
-  }, [selectedTier, tierMap, initialAmount])
+  }
 
   const totalAmount =
     form.amount + (form.coverFees && form.donationType === 'one-off' ? 1.5 : 0)

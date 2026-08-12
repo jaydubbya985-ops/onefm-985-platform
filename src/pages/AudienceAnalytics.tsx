@@ -251,7 +251,7 @@ export default function AudienceAnalytics() {
 
   return (
     <Layout>
-      <SEO title="Audience Analytics" description="Real-time audience analytics for ONE FM 98.5. Demographics, listenership trends, and platform performance." />
+      <SEO title="Audience Analytics" description="Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across 25 towns. Live stream analytics pending Radio.co integration." />
       {/* ═══════ HERO / LIVE DASHBOARD HEADER ═══════ */}
       <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="LIVE DASHBOARD">
         {/* Animated grid background */}

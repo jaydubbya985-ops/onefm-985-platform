@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ElementType } from 'react'
+import { useEffect, useRef, useState, type ElementType, type Ref, type RefObject } from 'react'
 import { useInView } from 'framer-motion'
 
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&'
@@ -24,7 +24,7 @@ export function TextScramble({
   as: Tag = 'span',
 }: TextScrambleProps) {
   const ref = useRef<Element>(null)
-  const isInView = useInView(ref as any, { once, margin: '-80px' })
+  const isInView = useInView(ref as RefObject<Element>, { once, margin: '-80px' })
   const [display, setDisplay] = useState(text)
   const animRef = useRef<number | undefined>(undefined)
   const startedRef = useRef(false)
@@ -71,7 +71,7 @@ export function TextScramble({
   }, [isInView, text, delay, duration, once])
 
   return (
-    <Tag ref={ref as any} className={`font-mono tabular-nums ${className}`}>
+    <Tag ref={ref as Ref<HTMLElement>} className={`font-mono tabular-nums ${className}`}>
       {display}
     </Tag>
   )
