@@ -52,7 +52,7 @@ const TABS: {
   { id: 'sponsors', label: 'Sponsors', icon: Users, description: 'CRM, contacts & pipeline' },
   { id: 'schedule', label: 'Schedule', icon: Radio, description: 'Broadcast & ad schedule' },
   { id: 'invoices', label: 'Invoices', icon: Receipt, description: 'Create, send & track invoices' },
-  { id: 'batch', label: 'Batch Send', icon: Send, description: '$64,188 invoice batch — June 2026' },
+  { id: 'batch', label: 'Batch Send', icon: Send, description: 'Send a batch of invoices' },
   { id: 'billing', label: 'Billing', icon: BarChart3, description: 'Payments, aging & reports' },
   { id: 'payments', label: 'Payments', icon: CreditCard, description: 'Donations & memberships' },
 ]
@@ -111,7 +111,14 @@ function OpsPortalContent() {
             {isSupabaseConfigured() && user && (
               <p className="text-one-muted text-xs mt-1">Signed in as {user.email}</p>
             )}
-            {!isSupabaseConfigured() && (
+            {isSupabaseConfigured() ? (
+              <div className="mt-4 rounded-lg border border-emerald-700/40 bg-emerald-900/15 px-4 py-3 max-w-2xl">
+                <p className="text-sm text-emerald-400 font-semibold">LIVE — enquiries, proposals, contracts and invoices persist to Supabase</p>
+                <p className="text-xs text-one-muted mt-0.5">
+                  Sponsors, schedule and payments still save in this browser only — they are not yet on the shared database.
+                </p>
+              </div>
+            ) : (
               <div className="mt-4 rounded-lg border border-one-gold/30 bg-one-gold/8 px-4 py-3 max-w-2xl flex items-start gap-3">
                 <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold text-xs font-bold">D</span>
                 <div>
@@ -137,18 +144,20 @@ function OpsPortalContent() {
                 Sign out
               </Button>
             )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                resetDemoData()
-                toast('Demo data reset', 'success')
-              }}
-              className="border-one-border text-one-white/60 hover:text-one-white bg-transparent"
-            >
-              <RotateCcw className="w-3.5 h-3.5 mr-2" />
-              Reset demo data
-            </Button>
+            {!isSupabaseConfigured() && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  resetDemoData()
+                  toast('Demo data reset', 'success')
+                }}
+                className="border-one-border text-one-white/60 hover:text-one-white bg-transparent"
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-2" />
+                Reset demo data
+              </Button>
+            )}
           </div>
         </div>
         <PipelineIndicator />

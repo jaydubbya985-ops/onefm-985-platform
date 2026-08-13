@@ -36,22 +36,11 @@ jobs:
           VITE_STATION_EMAIL: admin@fm985.com.au
           VITE_RADIO_CO_STATION_ID: sae3372059
 
-      # 2026-08-12: functions-dir + netlify-config-path restored (functions,
-      # redirects and headers must actually deploy). Safe under CI Node 22 —
-      # the 2026-07-28 esbuild breakage was the runner's Node 24. Still gated
-      # on NEED JAY: NETLIFY_AUTH_TOKEN must be valid or nothing deploys.
+      # nwtgck/actions-netlify@v3.0 cannot bundle functions on GitHub's Node 24
+      # action runtime (spawn .../dist/esbuild ENOENT). Official CLI reads
+      # netlify.toml (functions dir, redirects, headers) and deploys all three.
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: './dist'
-          functions-dir: './netlify/functions'
-          netlify-config-path: './netlify.toml'
-          production-deploy: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Deploy from GitHub Actions — ${{ github.sha }}'
-          enable-pull-request-comment: false
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
+        run: npx --yes netlify-cli@23 deploy --prod --dir=dist --functions netlify/functions --no-build
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
