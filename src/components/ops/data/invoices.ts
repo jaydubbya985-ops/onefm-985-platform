@@ -8,6 +8,9 @@
 //   • Per-invoice operational email bodies (Ye/We map in the bundle)
 //   • The billing ledger (15 invoices, INV-2026-001 … INV-2026-015)
 //   • Recorded payments and the aging-bucket configuration
+//
+// Source of truth: Xero is the books. This last ops batch is a SEND GUIDE only.
+// Some payments are in and will come off later — do not invent allocations here.
 // ---------------------------------------------------------------------------
 
 export type BatchInvoiceStatus = 'draft' | 'previewed' | 'tested' | 'sent' | 'paid'

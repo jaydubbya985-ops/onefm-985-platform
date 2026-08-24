@@ -952,7 +952,9 @@ export default function InvoiceBatchSender() {
             {formatElapsed(calendarDaysBetween(JUNE_BATCH_CREATED, todayISO()))}. Original due{' '}
             {formatAuDate(BATCH_DUE_DATE)}. Those drafts were never sent, so they are stale to send,
             not customer-overdue. August catch-up is due {formatAuDate(AUGUST_BATCH_DUE_DATE)}. FOOTT
-            ONEFM-2026-011 already covers Jun–Nov — do not raise another FOOTT invoice.
+            ONEFM-2026-011 already covers Jun–Nov — do not raise another FOOTT invoice. Xero is the
+            books; this list is the send guide only. Payments received will come off later — do not
+            mark paid from here until Jay allocates them.
           </div>
 
           <div className="flex flex-wrap gap-2 mb-4">

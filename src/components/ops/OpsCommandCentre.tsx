@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  BookOpen,
   Clock,
   FileWarning,
   Send,
@@ -83,6 +84,18 @@ export function OpsCommandCentre() {
           <Send className="w-3.5 h-3.5 mr-1.5" />
           Open batch send
         </Button>
+      </div>
+
+      <div className="mb-4 rounded-lg border border-[#D4A84B]/25 bg-[#101010] px-3 py-2.5">
+        <p className="text-[10px] uppercase tracking-wider text-[#D4A84B] font-semibold flex items-center gap-1.5">
+          <BookOpen className="w-3.5 h-3.5" />
+          Xero is the books
+        </p>
+        <p className="text-xs text-[#F4F1EA]/70 mt-1 leading-relaxed">
+          Jay has Xero open. This last ops batch is a <span className="text-[#F4F1EA]">send guide
+          only</span> — not live AR. A couple of payments have come in and will come off later.
+          Do not mark invoices paid here until Jay allocates them in Xero.
+        </p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
