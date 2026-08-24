@@ -96,6 +96,7 @@ import {
   type RenewalStatus,
 } from './data/payments'
 import { useOpsStore, type OpsInvoice } from './store'
+import { calendarDaysBetween, todayISO } from '@/lib/opsClock'
 import { downloadXeroCsv, type XeroExportableInvoice } from './invoices/xeroExport'
 
 // ---------------------------------------------------------------------------
@@ -132,10 +133,7 @@ function displayStatus(invoice: OpsInvoice): DisplayStatus {
 }
 
 function daysOverdue(dueDate: string): number {
-  const days = Math.floor(
-    (Date.now() - new Date(dueDate).getTime()) / (1000 * 60 * 60 * 24),
-  )
-  return days > 0 ? days : 0
+  return Math.max(0, calendarDaysBetween(dueDate, todayISO()))
 }
 
 function formatCurrency(value: number): string {
@@ -238,7 +236,12 @@ export default function BillingEngine() {
   const { invoices, updateInvoice, sendBatch } = useOpsStore()
 
   const [tab, setTab] = useState<BillingTab>('dashboard')
-  const [renewals, setRenewals] = useState<RenewalRecord[]>(MOCK_RENEWALS)
+  const [renewals, setRenewals] = useState<RenewalRecord[]>(() =>
+    MOCK_RENEWALS.map((r) => ({
+      ...r,
+      daysRemaining: calendarDaysBetween(todayISO(), r.endDate),
+    })),
+  )
   const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(MOCK_ACQUITTALS)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
@@ -602,6 +605,10 @@ export default function BillingEngine() {
 
   return (
     <div className="space-y-6">
+      <div className="rounded-lg border border-amber-700/40 bg-amber-950/20 px-4 py-3 text-sm text-amber-200/90">
+        Aging on this tab is for invoices that have been sent. The June 2026 batch is still unsent —
+        that gap is on the command centre and Batch Send tab, not in these AR buckets.
+      </div>
       <motion.div
         variants={fadeUp}
         initial="hidden"

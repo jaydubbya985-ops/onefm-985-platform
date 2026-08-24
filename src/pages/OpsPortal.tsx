@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import { SkeletonLoader } from '@/components/SkeletonLoader'
 import { ToastProvider, useToast } from '@/components/ops/Toast'
 import { OpsProvider, useOpsStore, type OpsTab } from '@/components/ops/store'
+import { OpsCommandCentre } from '@/components/ops/OpsCommandCentre'
 import { useAuth } from '@/hooks/useAuth'
 import { isSupabaseConfigured } from '@/lib/supabase'
 
@@ -161,6 +162,10 @@ function OpsPortalContent() {
           </div>
         </div>
         <PipelineIndicator />
+      </div>
+
+      <div className="px-6 md:px-12 lg:px-20 pt-6">
+        <OpsCommandCentre />
       </div>
 
       <div className="px-6 md:px-12 lg:px-20 py-4 border-b border-[#2A2A2A]/20">

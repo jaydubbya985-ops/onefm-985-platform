@@ -79,6 +79,8 @@ import {
 import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
 import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
 import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
+import { ageInvoice } from '@/lib/invoiceAging'
+import { addDaysISO, calendarDaysBetween, currentMonthKey, formatAuDate, todayISO } from '@/lib/opsClock'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -191,12 +193,9 @@ function paymentMethodLabel(value?: string): string {
 // Helpers (bundle `nl`, `Se`, `Is`, `cl`, `Zt`, `rl`, `Ft`)
 // ---------------------------------------------------------------------------
 
-/** Days overdue relative to the demo "today" of 15 Feb 2026 (as deployed). */
+/** Days past due relative to today. Unsent drafts can be stale without being AR-overdue. */
 function daysOverdue(dueDate: string): number {
-  const today = new Date('2026-02-15')
-  const due = new Date(dueDate)
-  const days = Math.floor((today.getTime() - due.getTime()) / (1000 * 60 * 60 * 24))
-  return Math.max(0, days)
+  return Math.max(0, calendarDaysBetween(dueDate, todayISO()))
 }
 
 function fmt(value: number): string {
@@ -206,17 +205,7 @@ function fmt(value: number): string {
 }
 
 function fmtDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
-function addDays(date: string, days: number): string {
-  const d = new Date(date)
-  d.setDate(d.getDate() + days)
-  return d.toISOString().split('T')[0]
+  return formatAuDate(value.split('T')[0])
 }
 
 function nextInvoiceNumber(invoices: GeneratedInvoice[]): string {
@@ -341,15 +330,15 @@ export default function InvoiceGenerator() {
   const [contractId, setContractId] = useState('')
   const [contractSponsor, setContractSponsor] = useState('')
   const [contractItems, setContractItems] = useState<InvoiceLineItem[]>([emptyItem()])
-  const [contractDate, setContractDate] = useState('2026-02-15')
-  const [contractDueDate, setContractDueDate] = useState('2026-03-01')
+  const [contractDate, setContractDate] = useState(todayISO)
+  const [contractDueDate, setContractDueDate] = useState(() => addDaysISO(todayISO(), 14))
   const [contractNotes, setContractNotes] = useState('')
   const [contractProposalRef, setContractProposalRef] = useState('')
   const [recurring, setRecurring] = useState<BillingFrequency>('none')
 
   // Create dialog state
   const [sponsorCompany, setSponsorCompany] = useState('')
-  const [createDueDate, setCreateDueDate] = useState('')
+  const [createDueDate, setCreateDueDate] = useState(() => addDaysISO(todayISO(), 14))
   const [createNotes, setCreateNotes] = useState('')
   const [createItems, setCreateItems] = useState<InvoiceLineItem[]>([emptyItem()])
   const [createProposalRef, setCreateProposalRef] = useState('')
@@ -408,7 +397,7 @@ export default function InvoiceGenerator() {
         (i) =>
           (i.status === 'paid' || i.status === 'partially_paid') &&
           i.paidDate &&
-          i.paidDate.startsWith('2026-02'),
+          i.paidDate.startsWith(currentMonthKey()),
       )
       .reduce((sum, i) => sum + (i.paidAmount || 0), 0)
     const totalPaid = invoices
@@ -470,7 +459,7 @@ export default function InvoiceGenerator() {
     const invoice: GeneratedInvoice = {
       id: newInvoiceId(),
       invoiceNumber: nextInvoiceNumber(invoices),
-      date: '2026-02-15',
+      date: todayISO(),
       dueDate: createDueDate,
       billTo: { ...sponsor },
       items,
@@ -489,7 +478,7 @@ export default function InvoiceGenerator() {
 
   function resetCreateForm() {
     setSponsorCompany('')
-    setCreateDueDate('')
+    setCreateDueDate(addDaysISO(todayISO(), 14))
     setCreateNotes('')
     setCreateItems([emptyItem()])
     setCreateProposalRef('')
@@ -611,8 +600,8 @@ export default function InvoiceGenerator() {
     setContractId('')
     setContractSponsor('')
     setContractItems([emptyItem()])
-    setContractDate('2026-02-15')
-    setContractDueDate('2026-03-01')
+    setContractDate(todayISO())
+    setContractDueDate(addDaysISO(todayISO(), 14))
     setContractNotes('')
     setContractProposalRef('')
     setRecurring('none')
@@ -821,8 +810,8 @@ export default function InvoiceGenerator() {
       ...invoice,
       id: newInvoiceId(),
       invoiceNumber: nextInvoiceNumber(invoices),
-      date: '2026-02-15',
-      dueDate: addDays('2026-02-15', 14),
+      date: todayISO(),
+      dueDate: addDaysISO(todayISO(), 14),
       status: 'draft',
       paidDate: undefined,
       paidAmount: undefined,
@@ -1283,6 +1272,10 @@ export default function InvoiceGenerator() {
                 <TableBody>
                   {filtered.map((invoice) => {
                     const overdueDays = daysOverdue(invoice.dueDate)
+                    const aged = ageInvoice(
+                      { status: invoice.status, dueDate: invoice.dueDate },
+                      todayISO(),
+                    )
                     const isSelected = selectedIds.has(invoice.id)
                     return (
                       <TableRow
@@ -1325,7 +1318,11 @@ export default function InvoiceGenerator() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {invoice.status === 'overdue' ? (
+                          {aged === 'unsent_stale' ? (
+                            <span className="text-amber-400 text-xs font-medium flex items-center gap-1">
+                              <AlertTriangle className="h-3 w-3" /> Unsent · {overdueDays}d
+                            </span>
+                          ) : invoice.status === 'overdue' ? (
                             <span className="text-[#E31E24] text-xs font-medium flex items-center gap-1">
                               <AlertTriangle className="h-3 w-3" /> {overdueDays} day
                               {overdueDays !== 1 ? 's' : ''}
@@ -1387,7 +1384,7 @@ export default function InvoiceGenerator() {
                                 onClick={() => {
                                   setPayInvoice(invoice)
                                   setPayAmount(String(invoice.total - (invoice.paidAmount || 0)))
-                                  setPayDate('2026-02-15')
+                                  setPayDate(todayISO())
                                 }}
                                 className="text-emerald-400 hover:text-emerald-300 p-1"
                                 title="Mark Paid"

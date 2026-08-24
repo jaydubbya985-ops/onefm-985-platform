@@ -8,8 +8,9 @@ import {
   type ReactNode,
 } from 'react'
 import { MOCK_ENQUIRIES, type Enquiry, type EnquirySource } from './data/enquiries'
-import { BATCH_INVOICES, BILLING_INVOICES } from './data/invoices'
+import { ALL_BATCH_INVOICES, BILLING_INVOICES } from './data/invoices'
 import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
+import { addDaysISO, todayISO } from '@/lib/opsClock'
 import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
 import type { DbContactEnquiry } from '@/lib/supabase'
 import * as opsApi from '@/lib/opsApi'
@@ -81,6 +82,7 @@ export interface OpsInvoice {
   paidDate?: string
   paidAmount?: number
   paymentMethod?: string
+  batchId?: 'june-2026' | 'aug-2026'
 }
 
 export interface NewProposalInput {
@@ -141,7 +143,7 @@ export interface OpsStore extends OpsState {
 // Seed + persistence
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY = 'onefm_ops_v1'
+const STORAGE_KEY = 'onefm_ops_v2'
 
 function isoDate(d: Date): string {
   return d.toISOString().split('T')[0]
@@ -196,7 +198,7 @@ function buildSeedState(): OpsState {
     paymentMethod: b.paymentMethod,
   }))
 
-  const batchInvoices: OpsInvoice[] = BATCH_INVOICES.map((b) => ({
+  const batchInvoices: OpsInvoice[] = ALL_BATCH_INVOICES.map((b) => ({
     id: b.id,
     number: b.number,
     company: b.company,
@@ -215,6 +217,7 @@ function buildSeedState(): OpsState {
     emailBody: b.emailBody,
     story: b.story,
     notes: b.notes,
+    batchId: b.batchId ?? 'june-2026',
   }))
 
   return {
@@ -254,7 +257,7 @@ const OpsContext = createContext<OpsStore | null>(null)
 
 export function OpsProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<OpsState>(loadState)
-  const [activeTab, setActiveTab] = useState<OpsTab>('enquiries')
+  const [activeTab, setActiveTab] = useState<OpsTab>('batch')
   const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
 
   // Load from Supabase on mount (when configured + authenticated)
@@ -353,6 +356,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       resetDemoData: () => {
         try {
           window.localStorage.removeItem(STORAGE_KEY)
+          window.localStorage.removeItem('onefm_ops_v1')
         } catch {
           // ignore
         }
@@ -540,13 +544,17 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       generateInvoiceFromContract: (contractId) => {
         const contract = state.contracts.find((c) => c.id === contractId)
         if (!contract) return null
-        const amount = contract.contractValue
+        const amount =
+          contract.amountPerInvoice ??
+          (contract.numberOfPeriods
+            ? Math.round((contract.contractValue / contract.numberOfPeriods) * 100) / 100
+            : contract.contractValue)
         const gst = Math.round(amount * 0.1 * 100) / 100
         const invoice: OpsInvoice = {
           id: `inv-${Date.now()}`,
           number: nextSequential(
             state.invoices.map((i) => i.number),
-            'INV-2026-',
+            'ONEFM-2026-',
           ),
           company: contract.companyName,
           contactName: contract.primaryContact,
@@ -556,8 +564,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           total: Math.round((amount + gst) * 100) / 100,
           description: `${contract.campaignName} (${contract.contractNumber})`,
           period: `${contract.startDate} – ${contract.endDate}`,
-          issueDate: isoDate(new Date()),
-          dueDate: isoDate(new Date(Date.now() + 30 * 86400000)),
+          issueDate: todayISO(),
+          dueDate: addDaysISO(todayISO(), 14),
           status: 'draft',
           inBatch: false,
           contractId,
@@ -579,7 +587,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
             input.number ??
             nextSequential(
               state.invoices.map((i) => i.number),
-              'INV-2026-',
+              'ONEFM-2026-',
             ),
           status: input.status ?? 'draft',
           inBatch: input.inBatch ?? false,

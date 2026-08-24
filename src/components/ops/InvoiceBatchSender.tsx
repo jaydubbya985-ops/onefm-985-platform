@@ -77,7 +77,19 @@ import {
   generateReceiptEmailHtml,
 } from './InvoiceEmailTemplate'
 import InvoiceEmailTemplate from './InvoiceEmailTemplate'
-import { BATCH_DUE_DATE, BATCH_INVOICES } from './data/invoices'
+import {
+  ALL_BATCH_INVOICES,
+  AUGUST_BATCH_DUE_DATE,
+  BATCH_DUE_DATE,
+} from './data/invoices'
+import { ageInvoice } from '@/lib/invoiceAging'
+import {
+  JUNE_BATCH_CREATED,
+  calendarDaysBetween,
+  formatAuDate,
+  formatElapsed,
+  todayISO,
+} from '@/lib/opsClock'
 import { downloadXeroCsv, summariseXeroExport } from './invoices/xeroExport'
 import {
   buildMailtoInvoiceUrl,
@@ -112,6 +124,7 @@ interface BatchRow {
   emailBody: string
   status: BatchStatus
   notes: string
+  batchId: 'june-2026' | 'aug-2026'
 }
 
 function rowToSendPayload(row: BatchRow, overrideEmail?: string): InvoiceSendPayload {
@@ -224,6 +237,7 @@ function toBatchRow(invoice: OpsInvoice): BatchRow {
     emailBody: invoice.emailBody || '',
     status: toBatchStatus(invoice.status),
     notes: invoice.notes || '',
+    batchId: invoice.batchId ?? 'june-2026',
   }
 }
 
@@ -266,7 +280,6 @@ function StatCard({
 
 function InvoicePreview({ invoice }: { invoice: BatchRow }) {
   const gstOk = verifyGst(invoice.amountExclGst, invoice.gst)
-  const today = new Date().toISOString().split('T')[0]
   return (
     <div className="bg-white text-gray-900 p-8 rounded-lg shadow-lg max-w-[600px] mx-auto">
       <div className="flex justify-between items-start border-b-2 border-gray-800 pb-6 mb-6">
@@ -289,7 +302,7 @@ function InvoicePreview({ invoice }: { invoice: BatchRow }) {
       <div className="flex justify-between mb-6 text-sm">
         <div>
           <span className="text-gray-500">Issue Date:</span>
-          <span className="ml-2 font-semibold">{formatDate(today)}</span>
+          <span className="ml-2 font-semibold">{formatDate(invoice.createdAt)}</span>
         </div>
         <div>
           <span className="text-gray-500">Due Date:</span>
@@ -403,6 +416,7 @@ export default function InvoiceBatchSender() {
   const [detailTab, setDetailTab] = useState('invoice')
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<BatchStatus | 'all' | 'unsent'>('all')
+  const [batchFilter, setBatchFilter] = useState<'all' | 'june-2026' | 'aug-2026'>('all')
   const [testMode, setTestMode] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [confirm, setConfirm] = useState<ConfirmState>({
@@ -424,7 +438,7 @@ export default function InvoiceBatchSender() {
     const inBatch = invoices.filter((i) => i.inBatch)
     if (inBatch.length > 0) return inBatch.map(toBatchRow)
     // Mirror the deployed fallback: an empty store still shows the June batch.
-    return BATCH_INVOICES.map((b) =>
+    return ALL_BATCH_INVOICES.map((b) =>
       toBatchRow({
         id: b.id,
         number: b.number,
@@ -444,6 +458,7 @@ export default function InvoiceBatchSender() {
         emailBody: b.emailBody,
         story: b.story,
         notes: b.notes,
+        batchId: b.batchId ?? 'june-2026',
       }),
     )
   }, [invoices])
@@ -464,7 +479,8 @@ export default function InvoiceBatchSender() {
         if (statusFilter === 'unsent') return r.status !== 'sent' && r.status !== 'paid'
         return r.status === statusFilter
       })
-  }, [rows, search, statusFilter])
+      .filter((r) => (batchFilter === 'all' ? true : r.batchId === batchFilter))
+  }, [rows, search, statusFilter, batchFilter])
 
   const stats = useMemo(() => {
     const selected = rows.filter((r) => selectedIds.has(r.id))
@@ -888,9 +904,13 @@ export default function InvoiceBatchSender() {
                   <Receipt className="w-5 h-5 text-[#101010]" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice Batch — June 2026</h1>
+                  <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice batches</h1>
                   <p className="text-sm text-[#F4F1EA]/50">
-                    ONE FM 98.5 • {rows.length} invoices • $64,188 inc GST • Due {formatDate(BATCH_DUE_DATE)}
+                    {rows.length} invoices ·{' '}
+                    {rows
+                      .reduce((s, r) => s + r.total, 0)
+                      .toLocaleString('en-AU', { style: 'currency', currency: 'AUD' })}{' '}
+                    inc GST
                   </p>
                 </div>
               </div>
@@ -926,6 +946,38 @@ export default function InvoiceBatchSender() {
           </div>
 
           <EmailServiceBanner />
+
+          <div className="mb-4 rounded-lg border border-amber-700/40 bg-amber-950/25 px-4 py-3 text-sm text-amber-200/90">
+            June batch created {formatAuDate(JUNE_BATCH_CREATED)} —{' '}
+            {formatElapsed(calendarDaysBetween(JUNE_BATCH_CREATED, todayISO()))}. Original due{' '}
+            {formatAuDate(BATCH_DUE_DATE)}. Those drafts were never sent, so they are stale to send,
+            not customer-overdue. August catch-up is due {formatAuDate(AUGUST_BATCH_DUE_DATE)}. FOOTT
+            ONEFM-2026-011 already covers Jun–Nov — do not raise another FOOTT invoice.
+          </div>
+
+          <div className="flex flex-wrap gap-2 mb-4">
+            {(
+              [
+                ['all', 'All batches'],
+                ['june-2026', 'June 2026 (stale)'],
+                ['aug-2026', 'August 2026 (new)'],
+              ] as const
+            ).map(([id, label]) => (
+              <Button
+                key={id}
+                size="sm"
+                variant="outline"
+                onClick={() => setBatchFilter(id)}
+                className={`border-[#1E293B] ${
+                  batchFilter === id
+                    ? 'bg-[#D4A853]/20 text-[#D4A853] border-[#D4A853]/50'
+                    : 'text-[#F4F1EA]/70 hover:bg-[#1E293B]'
+                }`}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
 
           {/* Stat cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -1169,6 +1221,16 @@ export default function InvoiceBatchSender() {
                                 <div>
                                   <p className="font-medium text-sm text-[#F4F1EA]">
                                     {row.company}
+                                  </p>
+                                  <p className="text-[10px] uppercase tracking-wider text-[#F4F1EA]/35 mt-0.5">
+                                    {row.batchId === 'aug-2026' ? 'Aug 2026 catch-up' : 'June 2026 batch'}
+                                    {row.batchId !== 'aug-2026' &&
+                                    ageInvoice(
+                                      { status: row.status, dueDate: row.dueDate },
+                                      todayISO(),
+                                    ) === 'unsent_stale'
+                                      ? ' · unsent stale'
+                                      : ''}
                                   </p>
                                   {row.contactName && (
                                     <p className="text-xs text-[#F4F1EA]/40">{row.contactName}</p>
