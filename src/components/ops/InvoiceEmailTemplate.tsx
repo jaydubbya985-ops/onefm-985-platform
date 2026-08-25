@@ -13,15 +13,22 @@ import { Check, Copy, CreditCard } from 'lucide-react'
 import { useToast } from './Toast'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
-import { LOGO_PDF_DATA_URL } from '@/lib/logoBase64'
+import { getInvoiceLogoDataUrl, INVOICE_LOGO_ASPECT } from '@/lib/logoForPdf'
+import {
+  BANK_ACCOUNT,
+  BANK_ACCOUNT_NAME,
+  BANK_BSB,
+  BANK_INSTITUTION,
+  BANK_TRADING_AS,
+} from '@/lib/stationBank'
 
-// ---------------------------------------------------------------------------
-// Bank + Stripe configuration
-// ---------------------------------------------------------------------------
-
-export const BANK_BSB = '083-894'
-export const BANK_ACCOUNT = '553 219 432'
-export const BANK_ACCOUNT_NAME = '98.5 One FM'
+export {
+  BANK_ACCOUNT,
+  BANK_ACCOUNT_NAME,
+  BANK_BSB,
+  BANK_INSTITUTION,
+  BANK_TRADING_AS,
+}
 
 export interface StripeConfig {
   accountId: string
@@ -226,9 +233,15 @@ export function generateInvoiceEmailHtml(
           <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td style="vertical-align:middle;">
-                <img src="${DS.logoUrl}"
-                     alt="ONE FM 98.5" width="110" height="auto"
-                     style="width:110px;height:auto;display:block;border:0;" />
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td style="background-color:#FFFFFF;padding:8px 12px;">
+                      <img src="${DS.logoUrl}"
+                           alt="ONE FM 98.5" width="168" height="auto"
+                           style="width:168px;height:auto;display:block;border:0;" />
+                    </td>
+                  </tr>
+                </table>
               </td>
               <td style="vertical-align:middle;text-align:right;">
                 <div style="color:rgba(255,255,255,0.5);font-size:12px;line-height:1.6;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
@@ -349,7 +362,8 @@ export function generateInvoiceEmailHtml(
                   </tr>
                 </table>
                 <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(26,26,26,0.06);color:#6B6B6B;font-size:12px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  Account Name: <span style="color:#1A1A1A;font-weight:600;">${accountName}</span>
+                  Account name: <span style="color:#1A1A1A;font-weight:600;">${accountName}</span>
+                  &nbsp;&middot;&nbsp;Trading as ${BANK_TRADING_AS}
                 </div>
               </td>
             </tr>
@@ -455,8 +469,14 @@ export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
           <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td style="vertical-align:middle;">
-                <img src="${DS.logoUrl}" alt="ONE FM 98.5" width="110" height="auto"
-                     style="width:110px;height:auto;display:block;border:0;" />
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td style="background-color:#FFFFFF;padding:8px 12px;">
+                      <img src="${DS.logoUrl}" alt="ONE FM 98.5" width="168" height="auto"
+                           style="width:168px;height:auto;display:block;border:0;" />
+                    </td>
+                  </tr>
+                </table>
               </td>
               <td style="vertical-align:middle;text-align:right;">
                 <div style="color:rgba(255,255,255,0.45);font-size:12px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
@@ -595,26 +615,23 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
 
   // ── colour helpers ───────────────────────────────────────────────────────
   const [nR,nG,nB] = DS.rgb.navy
-  const [gR,gG,gB] = DS.rgb.gold
   const [rR,rG,rB] = DS.rgb.red
   const [bR,bG,bB] = DS.rgb.blue
 
   const fillNavy  = () => doc.setFillColor(nR, nG, nB)
-  const fillGold  = () => doc.setFillColor(gR, gG, gB)
+  const fillBlue  = () => doc.setFillColor(bR, bG, bB)
   const fillLight = () => doc.setFillColor(245, 247, 250)
 
   const inkNavy   = () => doc.setTextColor(nR, nG, nB)
-  const inkGold   = () => doc.setTextColor(gR, gG, gB)
+  const inkBlue   = () => doc.setTextColor(bR, bG, bB)
   const inkRed    = () => doc.setTextColor(rR, rG, rB)
   const inkWhite  = () => doc.setTextColor(255, 255, 255)
   const inkGrey   = () => doc.setTextColor(102, 102, 102)
   const inkSilver = () => doc.setTextColor(160, 160, 160)
   const inkDark   = () => doc.setTextColor(26, 26, 26)
   const inkDim    = () => doc.setTextColor(130, 130, 130)
-  const inkNab    = () => doc.setTextColor(DS.rgb.nab[0], DS.rgb.nab[1], DS.rgb.nab[2])
 
   const ruleLight = () => { doc.setDrawColor(220, 220, 220); doc.setLineWidth(0.3) }
-  const ruleBlue  = () => { doc.setDrawColor(bR, bG, bB); doc.setLineWidth(1.5) }
 
   const bold = (sz: number) => { doc.setFont('helvetica', 'bold'); doc.setFontSize(sz) }
   const norm = (sz: number) => { doc.setFont('helvetica', 'normal'); doc.setFontSize(sz) }
@@ -625,27 +642,31 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   const tr  = (t: string, x: number, y: number) => doc.text(t, x, y, { align: 'right' })
   const tc  = (t: string, x: number, y: number) => doc.text(t, x, y, { align: 'center' })
 
-  // ── HEADER BAND ─────────────────────────────────────────────────────────
-  const HEADER_H = 42
-  fillNavy(); box(0, 0, W, HEADER_H)
+  // ── WHITE LETTERHEAD ────────────────────────────────────────────────────
+  let logoData: string | null = null
+  try {
+    logoData = await getInvoiceLogoDataUrl()
+  } catch {
+    logoData = null
+  }
 
-  // Wordmark — embedded JPEG (white-bg composite, 400px wide).
-  const LOGO_H = 13
-  const LOGO_W = LOGO_H * (1800 / 805)
-  const LOGO_X = M
-  const LOGO_Y = 7
-  doc.setFillColor(255, 255, 255)
-  doc.roundedRect(LOGO_X - 3, LOGO_Y - 2, LOGO_W + 6, LOGO_H + 4, 1.5, 1.5, 'F')
-  doc.addImage(LOGO_PDF_DATA_URL, 'JPEG', LOGO_X, LOGO_Y, LOGO_W, LOGO_H)
-  norm(8); inkSilver(); tl("Goulburn Valley's Community Radio", M, 27)
-  norm(7); inkDim();    tl('ABN: 92 117 291 771', M, 32.5)
+  const LOGO_H = 22
+  const LOGO_W = LOGO_H * INVOICE_LOGO_ASPECT
+  if (logoData) {
+    doc.addImage(logoData, 'PNG', M, 12, LOGO_W, LOGO_H)
+  } else {
+    bold(16); inkBlue(); tl('ONE FM 98.5', M, 22)
+  }
+  norm(8); inkGrey()
+  tl('Goulburn Valley Community Radio Inc.', M, 38)
+  norm(7); inkDim()
+  tl('ABN: 92 117 291 771  ·  47 Parkside Drive, Shepparton VIC 3630', M, 43)
 
-  // TAX INVOICE label + number (right)
-  bold(14); inkWhite(); tr('TAX INVOICE', W - M, 16.5)
-  norm(10); inkGold();  tr(invoice.number, W - M, 24.5)
+  bold(16); inkNavy(); tr('TAX INVOICE', W - M, 20)
+  norm(11); inkBlue(); tr(invoice.number, W - M, 28)
 
-  // ── GOLD RULE (3px, matches email) ──────────────────────────────────────
-  fillGold(); box(0, HEADER_H, W, 1.5)
+  const HEADER_H = 48
+  fillBlue(); box(0, HEADER_H, W, 1.2)
 
   // ── BODY ────────────────────────────────────────────────────────────────
   let y = HEADER_H + 10
@@ -656,17 +677,18 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   y += 5.5
 
   bold(11); inkNavy()
-  tl(invoice.contactName || '', M, y)
-  tl('ONE FM 98.5', W / 2 + 5, y)
+  tl(invoice.company, M, y)
+  tl('Goulburn Valley Community Radio Inc.', W / 2 + 5, y)
   y += 5
 
-  norm(9.5); inkGrey()
-  tl(invoice.company, M, y)
+  norm(9); inkGrey()
+  if (invoice.contactName) tl(`Attn: ${invoice.contactName}`, M, y)
+  tl('Trading as ONE FM 98.5', W / 2 + 5, y)
   y += 4.5
 
   if (invoice.email) { norm(8); inkGrey(); tl(invoice.email, M, y) }
   norm(8); inkGrey()
-  tl('47 Parkside Drive, Shepparton VIC 3630', W / 2 + 5, y)
+  tl('ABN 92 117 291 771', W / 2 + 5, y)
   y += 4.5
   tl('(03) 5831 3131  ·  accounts@fm985.com.au', W / 2 + 5, y)
   y += 12
@@ -733,51 +755,45 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   norm(9); inkDark();  tr(aud(invoice.gst), W - M, y)
   y += 5.5
 
-  // TOTAL DUE — navy fill, gold figure (matches email hero)
-  fillNavy(); box(TX - 2, y, CW - (TX - M) + 2, 11, 'F')
+  // TOTAL DUE — ONE FM blue
+  fillBlue(); box(TX - 2, y, CW - (TX - M) + 2, 11, 'F')
   bold(11.5); inkWhite(); tl('TOTAL DUE', TX, y + 7.5)
-  bold(11.5); inkGold();  tr(aud(invoice.total), W - M, y + 7.5)
+  bold(11.5); inkWhite(); tr(aud(invoice.total), W - M, y + 7.5)
   y += 16.5
 
   norm(7); inkDim(); tr(`Total includes GST of ${aud(invoice.gst)}`, W - M, y)
-  y += 12
+  y += 10
 
-  // PAYMENT DETAILS SLIP
-  fillLight(); box(M, y, CW, 30)
-  ruleBlue(); doc.line(M, y, M, y + 30)   // blue left accent
+  // PAYMENT DETAILS SLIP — legal entity + copyable BSB/account
+  const PAY_H = 42
+  fillLight(); box(M, y, CW, PAY_H)
+  fillBlue(); box(M, y, 1.6, PAY_H)
 
-  bold(7); inkDim(); tl('PAYMENT DETAILS — BANK TRANSFER (PREFERRED)', M + 4, y + 6.5)
-  norm(8.5); inkNab(); tl('National Australia Bank', M + 4, y + 13)
+  bold(7); inkBlue(); tl('PAY TO THIS ACCOUNT — BANK TRANSFER (PREFERRED)', M + 5, y + 6)
+  bold(10); inkNavy(); tl(BANK_ACCOUNT_NAME, M + 5, y + 13)
+  norm(8); inkGrey(); tl(`Trading as ${BANK_TRADING_AS}  ·  ${BANK_INSTITUTION}`, M + 5, y + 18)
 
-  const BX = [M + 4, M + 30, M + 62, M + 105, M + 143]
-  const BY  = y + 20.5
-  norm(7); inkDim()
-  tl('BSB',          BX[0], BY - 4.5)
-  tl('ACCOUNT',      BX[1], BY - 4.5)
-  tl('ACCOUNT NAME', BX[2], BY - 4.5)
-  tl('REFERENCE',    BX[3], BY - 4.5)
+  const BX = [M + 5, M + 52, M + 112]
+  const BY  = y + 32
+  norm(6.5); inkDim()
+  tl('BSB',       BX[0], BY - 5)
+  tl('ACCOUNT',   BX[1], BY - 5)
+  tl('REFERENCE', BX[2], BY - 5)
 
-  bold(9.5); inkNavy()
-  tl(BANK_BSB,          BX[0], BY + 2)
-  tl(BANK_ACCOUNT,      BX[1], BY + 2)
-  tl(BANK_ACCOUNT_NAME, BX[2], BY + 2)
-  inkRed(); tl(invoice.number, BX[3], BY + 2)
-  y += 36
+  bold(12); inkNavy()
+  tl(BANK_BSB,     BX[0], BY + 1.5)
+  tl(BANK_ACCOUNT, BX[1], BY + 1.5)
+  inkRed(); tl(invoice.number, BX[2], BY + 1.5)
+  y += PAY_H + 8
 
-  // ── FOOTER BAND (matches email) ──────────────────────────────────────────
-  const FY = H - 18
-  fillGold(); box(0, FY - 1, W, 1)    // gold rule above footer
-  fillNavy(); box(0, FY, W, 18)
+  // ── FOOTER ──────────────────────────────────────────────────────────────
+  const FY = H - 16
+  fillBlue(); box(0, FY - 1.2, W, 1.2)
+  fillNavy(); box(0, FY, W, 16)
 
   norm(7.5); inkSilver()
-  tc('Goulburn Valley Community Radio Inc.  ·  ABN: 92 117 291 771  ·  (03) 5831 3131', W / 2, FY + 6)
-  tc('Payment due within 14 days  ·  accounts@fm985.com.au', W / 2, FY + 10.5)
-
-  norm(6.5); doc.setTextColor(100, 100, 100)
-  tc(
-    `ONEFM-${invoice.number}.pdf  ·  Generated ${today.toLocaleDateString('en-AU')}`,
-    W / 2, FY + 15
-  )
+  tc('Goulburn Valley Community Radio Inc.  ·  ABN 92 117 291 771  ·  (03) 5831 3131', W / 2, FY + 6)
+  tc('Payment due within 14 days  ·  accounts@fm985.com.au', W / 2, FY + 11)
 
   return doc
 }
@@ -890,7 +906,7 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
             className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1E293B] hover:bg-[#2A3A52] transition-colors group"
           >
             <span className="text-one-muted">{label}:</span>
-            <span className={`${mono ? 'font-mono' : ''} text-one-gold ${key === 'name' ? 'truncate max-w-[180px]' : ''}`}>
+            <span className={`${mono ? 'font-mono' : ''} text-one-gold ${key === 'name' ? 'truncate max-w-[280px]' : ''}`}>
               {value}
             </span>
             {copiedField === key

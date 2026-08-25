@@ -78,6 +78,7 @@ import {
 } from './invoices/contacts'
 import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
 import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
+import { TaxInvoiceLetterhead, TaxInvoicePayTo } from '@/components/ops/TaxInvoiceDocument'
 import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
 import { ageInvoice } from '@/lib/invoiceAging'
 import { addDaysISO, calendarDaysBetween, currentMonthKey, formatAuDate, todayISO } from '@/lib/opsClock'
@@ -1843,26 +1844,7 @@ export default function InvoiceGenerator() {
         <DialogContent className="bg-white text-black max-w-3xl max-h-[85vh] overflow-y-auto print:max-w-none print:max-h-none print:w-full print:overflow-visible print:bg-white print:text-black print:border-none print:shadow-none print:fixed print:inset-0 print:top-0 print:left-0 print:translate-x-0 print:translate-y-0 print:rounded-none print:p-0">
           {viewInvoice && (
             <div className="print-area">
-              <div className="bg-[#101010] p-6 -mx-6 -mt-6 mb-6 print:mx-0 print:mt-0 print:mb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="text-3xl font-bold text-white tracking-tight">
-                      ONE <span className="text-[#D4A84B]">FM</span>{' '}
-                      <span className="text-[#E31E24]">98.5</span>
-                    </h2>
-                    <p className="text-gray-300 text-sm mt-1">
-                      Community Radio - Shepparton & Goulburn Valley
-                    </p>
-                    <p className="text-gray-400 text-xs mt-1">ABN 92 117 291 771</p>
-                  </div>
-                  <div className="text-right">
-                    <h3 className="text-2xl font-bold text-[#D4A84B]">TAX INVOICE</h3>
-                    <p className="text-gray-300 text-sm font-mono mt-1">
-                      {viewInvoice.invoiceNumber}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <TaxInvoiceLetterhead invoiceNumber={viewInvoice.invoiceNumber} />
 
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
@@ -1987,33 +1969,7 @@ export default function InvoiceGenerator() {
                 </div>
               )}
 
-              <div className="bg-[#101010]/5 border border-[#101010]/10 rounded-lg p-4 mb-4">
-                <h4 className="text-xs font-semibold text-[#101010] uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Landmark className="h-4 w-4" /> Payment Instructions
-                </h4>
-                <div className="text-sm text-gray-700 space-y-1.5">
-                  <p>
-                    <span className="font-semibold text-[#101010]">Account Name:</span> 98.5 One FM.
-                  </p>
-                  <p>
-                    <span className="font-semibold text-[#101010]">Bank:</span> National Australia
-                    Bank (NAB)
-                  </p>
-                  <div className="flex gap-6">
-                    <p>
-                      <span className="font-semibold text-[#101010]">BSB:</span> 083-894
-                    </p>
-                    <p>
-                      <span className="font-semibold text-[#101010]">Account No:</span> 553 219 432
-                    </p>
-                  </div>
-                  <p>
-                    <span className="font-semibold text-[#101010]">Reference:</span> Please use
-                    invoice number{' '}
-                    <span className="font-mono text-[#101010]">{viewInvoice.invoiceNumber}</span>
-                  </p>
-                </div>
-              </div>
+              <TaxInvoicePayTo reference={viewInvoice.invoiceNumber} />
 
               <div className="text-xs text-gray-400 border-t border-gray-200 pt-3 space-y-1">
                 <p className="font-medium text-gray-500 mb-1">Terms & Conditions</p>

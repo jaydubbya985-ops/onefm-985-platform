@@ -15,16 +15,25 @@ import {
   StrokeFill,
 } from '@/components/onair/kit'
 import { donationTiers, stationStats } from '@/data/pricing'
+import {
+  BANK_ACCOUNT,
+  BANK_ACCOUNT_NAME,
+  BANK_BSB,
+  BANK_INSTITUTION,
+  BANK_TRADING_AS,
+} from '@/lib/stationBank'
+import { BRAND } from '@/lib/brand'
 
 const RED = '#E51636'
 
 const BANK = {
-  name: '98.5 One FM',
-  bank: 'NAB',
-  bsb: '083-894',
-  account: '553 219 432',
-  email: 'admin@fm985.com.au',
-  phone: '(03) 5831 3131',
+  name: BANK_ACCOUNT_NAME,
+  tradingAs: BANK_TRADING_AS,
+  bank: BANK_INSTITUTION,
+  bsb: BANK_BSB,
+  account: BANK_ACCOUNT,
+  email: BRAND.email,
+  phone: BRAND.phone,
 } as const
 
 const STRIPE_READY =
@@ -137,6 +146,7 @@ function BankDetails() {
             <div>
               <dt className="text-white/40 text-[11px] font-bold tracking-[0.12em] uppercase">Account name</dt>
               <dd className="font-poster text-[22px] text-white mt-1">{BANK.name}</dd>
+              <dd className="text-white/55 text-[13px] mt-1">Trading as {BANK.tradingAs}</dd>
             </div>
             <div>
               <dt className="text-white/40 text-[11px] font-bold tracking-[0.12em] uppercase">Bank</dt>
@@ -201,7 +211,7 @@ export default function Support() {
     <Layout>
       <SEO
         title="Donate — Support ONE FM 98.5"
-        description="Support volunteer-run community radio in the Goulburn Valley. Bank transfer: NAB BSB 083-894 · Acct 553 219 432 · 98.5 One FM."
+        description="Support volunteer-run community radio in the Goulburn Valley. Bank transfer: NAB BSB 083-894 · Acct 553 219 432 · Goulburn Valley Community Radio Inc."
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
