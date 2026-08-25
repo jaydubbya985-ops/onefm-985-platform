@@ -1,8 +1,10 @@
 import {
   AlertTriangle,
+  Banknote,
   BookOpen,
   Clock,
   FileWarning,
+  Landmark,
   Send,
   ShieldCheck,
 } from 'lucide-react'
@@ -14,6 +16,12 @@ import {
   RENEWAL_PROPOSALS,
   batchTotals,
 } from '@/components/ops/data/invoices'
+import { CBF_NEED_JAY, CBF_PROGRAMS } from '@/components/ops/data/cbfGrants'
+import {
+  billedCollectTotal,
+  COLLECT_LADDER,
+  nextCollectStep,
+} from '@/components/ops/data/collectQueue'
 import { useOpsStore } from '@/components/ops/store'
 import { ageInvoice } from '@/lib/invoiceAging'
 import {
@@ -35,6 +43,18 @@ export function OpsCommandCentre() {
   const today = todayISO()
   const daysSinceJune = calendarDaysBetween(JUNE_BATCH_CREATED, today)
   const daysPastJuneDue = calendarDaysBetween(JUNE_BATCH_DUE, today)
+
+  const sentNumbers = useMemo(() => {
+    return new Set(
+      invoices
+        .filter((invoice) => invoice.status === 'sent' || invoice.status === 'paid')
+        .map((invoice) => invoice.number),
+    )
+  }, [invoices])
+
+  const next = nextCollectStep({ paperDone: true, sentNumbers })
+  const billedTotal = billedCollectTotal()
+  const openCbf = CBF_PROGRAMS.filter((program) => program.status === 'open')
 
   const june = useMemo(() => {
     const rows = invoices.filter(
@@ -97,6 +117,26 @@ export function OpsCommandCentre() {
         </div>
       </div>
 
+      <div className="mb-4 rounded-lg border border-[#1B458F] bg-[#0B1220] px-4 py-3">
+        <p className="text-[10px] uppercase tracking-[0.18em] text-[#7EB6FF] font-semibold flex items-center gap-1.5">
+          <Banknote className="w-3.5 h-3.5" />
+          Next dollar — one at a time
+        </p>
+        <p className="text-base font-semibold text-[#F4F1EA] mt-1">
+          {next.title}
+          {next.amountIncGst != null ? ` · ${aud(next.amountIncGst)}` : ''}
+        </p>
+        <p className="text-sm text-[#F4F1EA]/70 mt-1 leading-relaxed">{next.detail}</p>
+        {next.invoiceNumber ? (
+          <p className="text-xs font-mono text-[#D4A84B] mt-1">{next.invoiceNumber}</p>
+        ) : null}
+        {next.blocker ? <p className="text-xs text-amber-400 mt-2">{next.blocker}</p> : null}
+        <p className="text-[11px] text-[#F4F1EA]/45 mt-2">
+          Send-guide total on this ladder: {aud(billedTotal)} inc GST ·{' '}
+          {COLLECT_LADDER.filter((s) => s.amountIncGst).length} invoices · CBF $ is Data pending
+        </p>
+      </div>
+
       <div className="mb-4 rounded-lg border border-[#D4A84B]/25 bg-[#101010] px-3 py-2.5">
         <p className="text-[10px] uppercase tracking-wider text-[#D4A84B] font-semibold flex items-center gap-1.5">
           <BookOpen className="w-3.5 h-3.5" />
@@ -152,6 +192,37 @@ export function OpsCommandCentre() {
             {RENEWALS_DUE.length} ended contracts wait for Jay before a new invoice.
           </p>
         </div>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-[#2A2A2A] bg-[#101010]/80 px-3 py-2.5">
+        <p className="text-[10px] uppercase tracking-wider text-[#7EB6FF] font-semibold flex items-center gap-1.5 mb-2">
+          <Landmark className="w-3.5 h-3.5" />
+          CBF grants — every possible dollar, no invented figures
+        </p>
+        <ul className="space-y-1.5">
+          {CBF_PROGRAMS.map((program) => (
+            <li key={program.id} className="text-xs text-[#F4F1EA]/75 leading-relaxed">
+              <span
+                className={
+                  program.status === 'open' ? 'text-emerald-400 font-semibold' : 'text-[#F4F1EA]/40'
+                }
+              >
+                {program.status === 'open' ? 'OPEN' : 'CLOSED'}
+              </span>
+              {' · '}
+              <span className="text-[#F4F1EA]">{program.name}</span>
+              {' · '}
+              {program.closesNote}
+              {' · '}
+              <span className="text-amber-300/80">Data pending</span>
+            </li>
+          ))}
+        </ul>
+        <p className="text-[11px] text-amber-400/90 mt-2">{CBF_NEED_JAY}</p>
+        <p className="text-[11px] text-[#F4F1EA]/40 mt-1">
+          {openCbf.length} round{openCbf.length === 1 ? '' : 's'} still open. Vision Australia rental
+          is blocked until the last Xero invoice is pasted.
+        </p>
       </div>
 
       <div className="mt-4 rounded-lg border border-[#2A2A2A] bg-[#101010]/80 px-3 py-2">
