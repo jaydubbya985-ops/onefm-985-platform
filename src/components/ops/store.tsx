@@ -119,6 +119,10 @@ interface OpsState {
 export interface OpsStore extends OpsState {
   activeTab: OpsTab
   setActiveTab: (tab: OpsTab) => void
+  /** One-click collect: Batch Send opens this invoice (internal id, e.g. inv-003). */
+  focusInvoiceId: string | null
+  setFocusInvoiceId: (id: string | null) => void
+  openInvoiceInBatch: (invoiceId: string) => void
   resetDemoData: () => void
   // Enquiries
   updateEnquiry: (id: string, patch: Partial<Enquiry>) => void
@@ -280,6 +284,7 @@ const OpsContext = createContext<OpsStore | null>(null)
 export function OpsProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<OpsState>(loadState)
   const [activeTab, setActiveTab] = useState<OpsTab>('batch')
+  const [focusInvoiceId, setFocusInvoiceId] = useState<string | null>(null)
   const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
 
   // Load from Supabase on mount (when configured + authenticated)
@@ -374,6 +379,12 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       ...state,
       activeTab,
       setActiveTab,
+      focusInvoiceId,
+      setFocusInvoiceId,
+      openInvoiceInBatch: (invoiceId: string) => {
+        setFocusInvoiceId(invoiceId)
+        setActiveTab('batch')
+      },
 
       resetDemoData: () => {
         try {
@@ -690,7 +701,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         void opsApi.updateInvoicesBatch(ids, { status: 'sent' })
       },
     }
-  }, [state, activeTab])
+  }, [state, activeTab, focusInvoiceId])
 
   return <OpsContext.Provider value={value}>{children}</OpsContext.Provider>
 }

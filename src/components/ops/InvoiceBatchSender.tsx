@@ -305,7 +305,8 @@ function InvoicePreview({ invoice }: { invoice: BatchRow }) {
 
 export default function InvoiceBatchSender() {
   const { toast } = useToast()
-  const { invoices, updateInvoice, markInvoicePaid, sendBatch } = useOpsStore()
+  const { invoices, updateInvoice, markInvoicePaid, sendBatch, focusInvoiceId, setFocusInvoiceId } =
+    useOpsStore()
 
   const [activeId, setActiveId] = useState<string | null>(null)
   const [detailTab, setDetailTab] = useState('invoice')
@@ -376,6 +377,16 @@ export default function InvoiceBatchSender() {
       })
       .filter((r) => (batchFilter === 'all' ? true : r.batchId === batchFilter))
   }, [rows, search, statusFilter, batchFilter])
+
+  useEffect(() => {
+    if (!focusInvoiceId) return
+    setActiveId(focusInvoiceId)
+    setDetailTab('invoice')
+    setSearch('')
+    setStatusFilter('all')
+    setBatchFilter('all')
+    setFocusInvoiceId(null)
+  }, [focusInvoiceId, setFocusInvoiceId])
 
   const stats = useMemo(() => {
     const selected = rows.filter((r) => selectedIds.has(r.id))

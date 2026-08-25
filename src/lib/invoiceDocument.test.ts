@@ -14,6 +14,7 @@ assert.equal(BANK_ACCOUNT_NAME, 'Goulburn Valley Community Radio Inc.')
 
 assert.equal(COLLECT_LADDER[0].kind, 'document')
 assert.equal(COLLECT_LADDER[1].invoiceNumber, 'ONEFM-2026-013')
+assert.equal(COLLECT_LADDER[1].id, 'ONEFM-2026-013')
 assert.equal(COLLECT_LADDER[1].amountIncGst, 7515.2)
 
 const foott = COLLECT_LADDER.find((step) => step.invoiceNumber === 'ONEFM-2026-011')

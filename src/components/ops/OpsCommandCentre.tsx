@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useMemo } from 'react'
 import {
+  ALL_BATCH_INVOICES,
   AUGUST_BATCH_INVOICES,
   BATCH_INVOICES,
   RENEWALS_DUE,
@@ -39,7 +40,7 @@ function aud(n: number) {
 }
 
 export function OpsCommandCentre() {
-  const { invoices, setActiveTab } = useOpsStore()
+  const { invoices, setActiveTab, openInvoiceInBatch } = useOpsStore()
   const today = todayISO()
   const daysSinceJune = calendarDaysBetween(JUNE_BATCH_CREATED, today)
   const daysPastJuneDue = calendarDaysBetween(JUNE_BATCH_DUE, today)
@@ -131,6 +132,24 @@ export function OpsCommandCentre() {
           <p className="text-xs font-mono text-[#D4A84B] mt-1">{next.invoiceNumber}</p>
         ) : null}
         {next.blocker ? <p className="text-xs text-amber-400 mt-2">{next.blocker}</p> : null}
+        <div className="mt-3">
+          <Button
+            size="sm"
+            onClick={() => {
+              const match =
+                invoices.find((invoice) => invoice.number === next.invoiceNumber) ??
+                ALL_BATCH_INVOICES.find((invoice) => invoice.number === next.invoiceNumber)
+              if (match) {
+                openInvoiceInBatch(match.id)
+                return
+              }
+              setActiveTab('batch')
+            }}
+            className="bg-[#1B458F] text-white hover:bg-[#163A78] font-semibold"
+          >
+            {next.invoiceNumber ? `Open ${next.invoiceNumber} now` : 'Open batch send'}
+          </Button>
+        </div>
         <p className="text-[11px] text-[#F4F1EA]/45 mt-2">
           Send-guide total on this ladder: {aud(billedTotal)} inc GST ·{' '}
           {COLLECT_LADDER.filter((s) => s.amountIncGst).length} invoices · CBF $ is Data pending
