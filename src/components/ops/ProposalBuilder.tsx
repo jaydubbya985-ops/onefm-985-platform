@@ -73,6 +73,13 @@ export default function ProposalBuilder() {
         </div>
       </div>
 
+      <div className="rounded-lg border border-amber-700/40 bg-amber-950/20 px-4 py-3 text-sm text-amber-200/90">
+        Five renewal drafts are loaded from last billed invoices (Jason&apos;s TV, McRae,
+        Cleave&apos;s, Burkes, Natural Approach). Amounts are last period — not a new 2026/27
+        quote. Confirm with Jay before send. Rows marked DEMO are synthetic CRM and must not
+        be emailed. Vision Australia rental is waiting on the last Xero invoice.
+      </div>
+
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="space-y-3">
           {PROPOSAL_PACKAGES.map((p) => (
@@ -185,7 +192,10 @@ export default function ProposalBuilder() {
                     <div className="text-xs text-one-muted">{p.clientName}</div>
                   </TableCell>
                   <TableCell className="text-sm text-one-white/80">
-                    {p.packageName ?? 'Custom'}
+                    <div>{p.packageName ?? 'Custom'}</div>
+                    {p.notes && (
+                      <p className="text-[11px] text-one-muted mt-0.5 max-w-sm leading-snug">{p.notes}</p>
+                    )}
                   </TableCell>
                   <TableCell className="font-mono text-xs text-one-muted">
                     {p.enquiryId ?? '—'}
@@ -193,9 +203,21 @@ export default function ProposalBuilder() {
                   <TableCell className="tabular-nums">${p.value.toLocaleString()}</TableCell>
                   <TableCell className="text-xs text-one-muted">{formatDate(p.updatedAt)}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={cn('text-[10px] capitalize', PROPOSAL_STATUS_STYLES[p.status])}>
-                      {p.status}
-                    </Badge>
+                    <div className="flex flex-col items-start gap-1">
+                      <Badge variant="outline" className={cn('text-[10px] capitalize', PROPOSAL_STATUS_STYLES[p.status])}>
+                        {p.status}
+                      </Badge>
+                      {p.kind === 'demo' && (
+                        <Badge variant="outline" className="text-[10px] border-red-500/40 text-red-300">
+                          DEMO
+                        </Badge>
+                      )}
+                      {p.kind === 'renewal' && (
+                        <Badge variant="outline" className="text-[10px] border-amber-500/40 text-amber-300">
+                          Confirm with Jay
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1.5">

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { MOCK_ENQUIRIES, type Enquiry, type EnquirySource } from './data/enquiries'
-import { ALL_BATCH_INVOICES, BILLING_INVOICES } from './data/invoices'
+import { ALL_BATCH_INVOICES, BILLING_INVOICES, RENEWAL_PROPOSALS } from './data/invoices'
 import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
 import { addDaysISO, todayISO } from '@/lib/opsClock'
 import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
@@ -45,6 +45,9 @@ export interface Proposal {
   status: ProposalStatus
   createdAt: string
   updatedAt: string
+  notes?: string
+  /** demo = synthetic CRM. renewal = last billed, pending Jay. */
+  kind?: 'demo' | 'renewal'
 }
 
 export type OpsContract = Contract & { proposalId?: string }
@@ -143,7 +146,7 @@ export interface OpsStore extends OpsState {
 // Seed + persistence
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY = 'onefm_ops_v2'
+const STORAGE_KEY = 'onefm_ops_v3'
 
 function isoDate(d: Date): string {
   return d.toISOString().split('T')[0]
@@ -163,7 +166,7 @@ function nextSequential(existing: string[], prefix: string): string {
 function buildSeedState(): OpsState {
   // Enquiries that already had a proposal out the door get a matching seeded
   // proposal so the Proposals tab starts populated.
-  const proposals: Proposal[] = MOCK_ENQUIRIES.filter(
+  const demoProposals: Proposal[] = MOCK_ENQUIRIES.filter(
     (e) => e.status === 'proposal_sent',
   ).map((e, i) => ({
     id: `prop-seed-${String(i + 1).padStart(3, '0')}`,
@@ -172,11 +175,30 @@ function buildSeedState(): OpsState {
     company: e.company,
     email: e.email,
     source: e.source,
+    packageName: 'DEMO — do not send',
     value: e.value ?? 0,
     status: 'sent',
     createdAt: e.updatedAt,
     updatedAt: e.updatedAt,
+    kind: 'demo',
+    notes: 'DEMO DATA. Synthetic CRM row. Do not email.',
   }))
+
+  const renewalProposals: Proposal[] = RENEWAL_PROPOSALS.map((r) => ({
+    id: r.id,
+    clientName: r.clientName,
+    company: r.company,
+    email: r.email,
+    packageName: `Renewal draft — last billed ${r.lastInvoice}`,
+    value: r.value,
+    status: 'draft' as const,
+    createdAt: '2026-08-25',
+    updatedAt: '2026-08-25',
+    kind: 'renewal' as const,
+    notes: r.notes,
+  }))
+
+  const proposals: Proposal[] = [...renewalProposals, ...demoProposals]
 
   const billingInvoices: OpsInvoice[] = BILLING_INVOICES.map((b) => ({
     id: b.id,
@@ -357,6 +379,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         try {
           window.localStorage.removeItem(STORAGE_KEY)
           window.localStorage.removeItem('onefm_ops_v1')
+          window.localStorage.removeItem('onefm_ops_v2')
         } catch {
           // ignore
         }

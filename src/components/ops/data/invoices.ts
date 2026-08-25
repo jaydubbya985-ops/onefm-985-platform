@@ -703,6 +703,80 @@ export const RENEWALS_DUE: RenewalDue[] = [
   },
 ]
 
+/**
+ * Renewal proposal drafts — last billed amounts only, not new 2026/27 quotes.
+ * Jay must confirm the next package before these are sent or invoiced.
+ * Values are the June-batch invoice totals (inc GST).
+ */
+export interface RenewalProposalDraft {
+  id: string
+  clientName: string
+  company: string
+  email: string
+  lastInvoice: string
+  lastPeriod: string
+  value: number
+  notes: string
+}
+
+export const RENEWAL_PROPOSALS: RenewalProposalDraft[] = [
+  {
+    id: 'prop-renew-jasons-tv',
+    clientName: 'Jason Aspland',
+    company: "Jason's TV Pty Ltd",
+    email: 'jasonstv1@bigpond.com',
+    lastInvoice: 'ONEFM-2026-012',
+    lastPeriod: 'Jun 2025 – Jun 2026',
+    value: 8580,
+    notes:
+      'Last billed $8,580 inc GST on ONEFM-2026-012 (12-month clean slate). Not a 2026/27 quote until Jay confirms the next package. Do not invoice from this draft.',
+  },
+  {
+    id: 'prop-renew-mcrae',
+    clientName: 'Keith McRae',
+    company: 'McRae Demolitions',
+    email: '',
+    lastInvoice: 'ONEFM-2026-017',
+    lastPeriod: 'Nov 2025 – Jun 2026',
+    value: 4766.61,
+    notes:
+      'Last billed $4,766.61 inc GST on ONEFM-2026-017 (8 months). Not a 2026/27 quote until Jay confirms. Do not invoice from this draft.',
+  },
+  {
+    id: 'prop-renew-cleaves',
+    clientName: 'Cleave',
+    company: "Cleave's Garden Supplies",
+    email: '',
+    lastInvoice: 'ONEFM-2026-018',
+    lastPeriod: 'Nov 2025 – Jun 2026',
+    value: 4766.61,
+    notes:
+      'Last billed $4,766.61 inc GST on ONEFM-2026-018 (8 months). Not a 2026/27 quote until Jay confirms. Do not invoice from this draft.',
+  },
+  {
+    id: 'prop-renew-burkes',
+    clientName: 'Ken Tuckett',
+    company: 'Burkes Bakery',
+    email: 'strathbogiebakingcompany@gmail.com',
+    lastInvoice: 'ONEFM-2026-019',
+    lastPeriod: 'Dec 2025 – Jun 2026',
+    value: 3080,
+    notes:
+      'Last billed $3,080 inc GST on ONEFM-2026-019 (7 months). Not a 2026/27 quote until Jay confirms. Do not invoice from this draft.',
+  },
+  {
+    id: 'prop-renew-natural',
+    clientName: 'Sissy Hoskin',
+    company: 'Natural Approach Healing Centre',
+    email: '',
+    lastInvoice: 'ONEFM-2026-021',
+    lastPeriod: 'Oct 2025 – Jun 2026',
+    value: 1950.3,
+    notes:
+      'Last billed $1,950.30 inc GST on ONEFM-2026-021 (9-month catch-up). Not a 2026/27 quote until Jay confirms. Do not invoice from this draft.',
+  },
+]
+
 // ---------------------------------------------------------------------------
 // Billing ledger — the bundle's `El` array (15 invoices)
 // ---------------------------------------------------------------------------

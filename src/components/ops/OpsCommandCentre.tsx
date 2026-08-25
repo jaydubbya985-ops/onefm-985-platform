@@ -11,6 +11,7 @@ import {
   AUGUST_BATCH_INVOICES,
   BATCH_INVOICES,
   RENEWALS_DUE,
+  RENEWAL_PROPOSALS,
   batchTotals,
 } from '@/components/ops/data/invoices'
 import { useOpsStore } from '@/components/ops/store'
@@ -76,14 +77,24 @@ export function OpsCommandCentre() {
             drafts, not customer-overdue AR, until they actually go out.
           </p>
         </div>
-        <Button
-          size="sm"
-          onClick={() => setActiveTab('batch')}
-          className="bg-[#D4A84B] text-[#101010] hover:bg-[#C49A3B] font-semibold"
-        >
-          <Send className="w-3.5 h-3.5 mr-1.5" />
-          Open batch send
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button
+            size="sm"
+            onClick={() => setActiveTab('batch')}
+            className="bg-[#D4A84B] text-[#101010] hover:bg-[#C49A3B] font-semibold"
+          >
+            <Send className="w-3.5 h-3.5 mr-1.5" />
+            Open batch send
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setActiveTab('proposals')}
+            className="border-[#D4A84B]/40 text-[#D4A84B] hover:bg-[#D4A84B]/10"
+          >
+            {RENEWAL_PROPOSALS.length} renewal drafts
+          </Button>
+        </div>
       </div>
 
       <div className="mb-4 rounded-lg border border-[#D4A84B]/25 bg-[#101010] px-3 py-2.5">
