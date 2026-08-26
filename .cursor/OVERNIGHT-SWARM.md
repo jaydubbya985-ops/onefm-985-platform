@@ -25,8 +25,11 @@ Do not merge to `main`. Do not deploy production unless Jay replies.
 
 ## Remaining (hourly continue)
 
+**WRAP 20:58 UTC 26 Aug 2026.** Stopped. Hourly timer unsubscribed. Do not merge. Do not deploy.
+
 1. Named host JPGs if Jay drops them in `/public/photos/hosts/`
 2. More WP pins only when new posts exist (latest still 27 Jul 2026)
+3. Figma MCP still needs Jay OAuth
 
 Public area population is the **25-town sum 189,680** (townData), not the 185,791 scrape. Social Hub is in About nav. 404 offers Listen / Programs / Coverage.
 Heritage gallery no longer claims 25+ languages, never-dark transmitter, or standing MCG coverage. Multicultural count is the current program-guide show list.
