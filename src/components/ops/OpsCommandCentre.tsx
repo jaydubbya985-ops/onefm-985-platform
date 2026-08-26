@@ -40,7 +40,8 @@ function aud(n: number) {
 }
 
 export function OpsCommandCentre() {
-  const { invoices, setActiveTab, openInvoiceInBatch } = useOpsStore()
+  const { invoices, setActiveTab, openInvoiceInBatch, reissuedNumbers, markInvoiceReissued } =
+    useOpsStore()
   const today = todayISO()
   const daysSinceJune = calendarDaysBetween(JUNE_BATCH_CREATED, today)
   const daysPastJuneDue = calendarDaysBetween(JUNE_BATCH_DUE, today)
@@ -53,7 +54,11 @@ export function OpsCommandCentre() {
     )
   }, [invoices])
 
-  const next = nextCollectStep({ paperDone: true, sentNumbers })
+  const next = nextCollectStep({
+    paperDone: true,
+    sentNumbers,
+    reissuedNumbers: new Set(reissuedNumbers),
+  })
   const billedTotal = billedCollectTotal()
   const openCbf = CBF_PROGRAMS.filter((program) => program.status === 'open')
 
@@ -132,7 +137,7 @@ export function OpsCommandCentre() {
           <p className="text-xs font-mono text-[#D4A84B] mt-1">{next.invoiceNumber}</p>
         ) : null}
         {next.blocker ? <p className="text-xs text-amber-400 mt-2">{next.blocker}</p> : null}
-        <div className="mt-3">
+        <div className="mt-3 flex flex-wrap gap-2">
           <Button
             size="sm"
             onClick={() => {
@@ -149,6 +154,23 @@ export function OpsCommandCentre() {
           >
             {next.invoiceNumber ? `Open ${next.invoiceNumber} now` : 'Open batch send'}
           </Button>
+          {next.kind === 'reissue' && next.invoiceNumber === 'ONEFM-2026-013' ? (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                markInvoiceReissued('ONEFM-2026-013')
+                const foott =
+                  invoices.find((invoice) => invoice.number === 'ONEFM-2026-011') ??
+                  ALL_BATCH_INVOICES.find((invoice) => invoice.number === 'ONEFM-2026-011')
+                if (foott) openInvoiceInBatch(foott.id)
+                else setActiveTab('batch')
+              }}
+              className="border-[#7EB6FF]/50 text-[#7EB6FF] hover:bg-[#1B458F]/30"
+            >
+              I&apos;ve emailed Rocky — next is FOOTT
+            </Button>
+          ) : null}
         </div>
         <p className="text-[11px] text-[#F4F1EA]/45 mt-2">
           Send-guide total on this ladder: {aud(billedTotal)} inc GST ·{' '}

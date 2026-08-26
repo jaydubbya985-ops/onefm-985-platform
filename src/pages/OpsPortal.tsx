@@ -17,8 +17,8 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { Button } from '@/components/ui/button'
 import { SkeletonLoader } from '@/components/SkeletonLoader'
-import { ToastProvider, useToast } from '@/components/ops/Toast'
-import { OpsProvider, useOpsStore, type OpsTab } from '@/components/ops/store'
+import { useToast } from '@/components/ops/Toast'
+import { useOpsStore, type OpsTab } from '@/components/ops/store'
 import { OpsCommandCentre } from '@/components/ops/OpsCommandCentre'
 import { useAuth } from '@/hooks/useAuth'
 import { isSupabaseConfigured } from '@/lib/supabase'
@@ -227,16 +227,12 @@ function OpsPortalContent() {
 
 export default function OpsPortal() {
   return (
-    <ToastProvider>
-      <OpsProvider>
-        <Layout hideFooter>
-          <SEO
-            title="Operations Portal"
-            description="ONE FM 98.5 operations dashboard — enquiries, sponsors, invoices, revenue."
-          />
-          <OpsPortalContent />
-        </Layout>
-      </OpsProvider>
-    </ToastProvider>
+    <Layout hideFooter>
+      <SEO
+        title="Operations Portal"
+        description="ONE FM 98.5 operations dashboard — enquiries, sponsors, invoices, revenue."
+      />
+      <OpsPortalContent />
+    </Layout>
   )
 }

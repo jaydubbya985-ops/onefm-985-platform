@@ -1409,9 +1409,18 @@ export default function InvoiceBatchSender() {
                         </TabsList>
 
                         <TabsContent value="invoice" className="mt-0 space-y-4">
-                          <ScrollArea className="h-[calc(100vh-544px)] min-h-[200px]">
+                          <ScrollArea className="h-[min(72vh,760px)] min-h-[360px]">
                             <InvoicePreview invoice={active} />
                           </ScrollArea>
+                          <div className="rounded-md border border-[#1B458F]/60 bg-[#0B1220] px-3 py-2">
+                            <p className="text-[10px] uppercase tracking-wider text-[#7EB6FF] font-semibold">
+                              Pay to (same as PDF)
+                            </p>
+                            <p className="text-xs text-[#F4F1EA] mt-0.5 leading-snug">
+                              {BANK_ACCOUNT_NAME} · BSB {BANK_BSB} · {BANK_ACCOUNT} · ref{' '}
+                              <span className="font-mono text-[#E51636]">{active.number}</span>
+                            </p>
+                          </div>
                           <div className="flex gap-2 pt-2">
                             <Button
                               variant="outline"

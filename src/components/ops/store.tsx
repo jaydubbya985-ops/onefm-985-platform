@@ -123,6 +123,9 @@ export interface OpsStore extends OpsState {
   focusInvoiceId: string | null
   setFocusInvoiceId: (id: string | null) => void
   openInvoiceInBatch: (invoiceId: string) => void
+  /** Invoice numbers whose world-class PDF has been emailed (Gagliardi reissue). */
+  reissuedNumbers: string[]
+  markInvoiceReissued: (invoiceNumber: string) => void
   resetDemoData: () => void
   // Enquiries
   updateEnquiry: (id: string, patch: Partial<Enquiry>) => void
@@ -151,6 +154,25 @@ export interface OpsStore extends OpsState {
 // ---------------------------------------------------------------------------
 
 const STORAGE_KEY = 'onefm_ops_v3'
+const REISSUED_KEY = 'onefm_ops_reissued_v1'
+
+function loadReissued(): string[] {
+  try {
+    const raw = window.localStorage.getItem(REISSUED_KEY)
+    const parsed = raw ? JSON.parse(raw) : []
+    return Array.isArray(parsed) ? parsed.filter((item) => typeof item === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function persistReissued(numbers: string[]) {
+  try {
+    window.localStorage.setItem(REISSUED_KEY, JSON.stringify(numbers))
+  } catch {
+    // ignore
+  }
+}
 
 function isoDate(d: Date): string {
   return d.toISOString().split('T')[0]
@@ -285,6 +307,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<OpsState>(loadState)
   const [activeTab, setActiveTab] = useState<OpsTab>('batch')
   const [focusInvoiceId, setFocusInvoiceId] = useState<string | null>(null)
+  const [reissuedNumbers, setReissuedNumbers] = useState<string[]>(loadReissued)
   const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
 
   // Load from Supabase on mount (when configured + authenticated)
@@ -385,15 +408,26 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         setFocusInvoiceId(invoiceId)
         setActiveTab('batch')
       },
+      reissuedNumbers,
+      markInvoiceReissued: (invoiceNumber: string) => {
+        setReissuedNumbers((prev) => {
+          if (prev.includes(invoiceNumber)) return prev
+          const next = [...prev, invoiceNumber]
+          persistReissued(next)
+          return next
+        })
+      },
 
       resetDemoData: () => {
         try {
           window.localStorage.removeItem(STORAGE_KEY)
           window.localStorage.removeItem('onefm_ops_v1')
           window.localStorage.removeItem('onefm_ops_v2')
+          window.localStorage.removeItem(REISSUED_KEY)
         } catch {
           // ignore
         }
+        setReissuedNumbers([])
         setState(buildSeedState())
       },
 
@@ -701,7 +735,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         void opsApi.updateInvoicesBatch(ids, { status: 'sent' })
       },
     }
-  }, [state, activeTab, focusInvoiceId])
+  }, [state, activeTab, focusInvoiceId, reissuedNumbers])
 
   return <OpsContext.Provider value={value}>{children}</OpsContext.Provider>
 }
