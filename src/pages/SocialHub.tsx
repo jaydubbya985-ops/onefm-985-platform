@@ -36,7 +36,7 @@ const ASSETS = [
   { name: 'Space Grotesk Specimen', format: 'OTF, WOFF', category: 'Typography', preview: 'bg-one-navy' },
   { name: 'Waveform Pattern', format: 'SVG, PNG', category: 'Patterns', preview: 'bg-one-navy' },
   { name: 'Studio Photos Pack', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
-  { name: 'Host Portraits', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
+  { name: 'Station photos', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
   { name: 'Event Coverage', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
   { name: 'Social Media Kit', format: 'PSD, Canva', category: 'Patterns', preview: 'bg-data-violet' },
 ]
@@ -267,7 +267,7 @@ function HeroSection() {
               <a href="#templates" data-cursor-label="TEMPLATES" className="btn-primary text-xs">Browse Templates</a>
             </MagneticButton>
             <MagneticButton strength={8}>
-              <a href="#assets" data-cursor-label="DOWNLOAD" className="btn-secondary text-xs">Download Brand Kit</a>
+              <a href="#assets" data-cursor-label="ASSETS" className="btn-secondary text-xs">Brand assets</a>
             </MagneticButton>
           </motion.div>
         </div>
@@ -493,7 +493,6 @@ function AssetLibrary() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-h3 text-one-white">Typography</h3>
-            <button data-cursor-label="DOWNLOAD" className="btn-secondary text-xs">Download Font Package</button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>

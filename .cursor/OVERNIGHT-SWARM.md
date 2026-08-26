@@ -43,6 +43,8 @@ Unsourced `twitter:site @onefm985` removed (Twitter URL is null). Live Amrap gui
 
 Social Hub templates are Canva **sizes** (Facebook / Square / Story) — not Instagram/TikTok/X accounts. Campaign calendar is the sourced Aug 2026 GVL window only (no invented weekly rounds). Football photo captions no longer claim every premiership / every match day.
 
+Dead “Download Font Package” / Host Portraits kit claims stripped. Heritage gallery GVL caption points at the weekly guide, not “every weekend since the first bounce”.
+
 ## Stop
 
 Stop spawning new work after **21:20 UTC 26 Aug 2026**

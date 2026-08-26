@@ -27,7 +27,7 @@ const SLIDES: Slide[] = [
     img: '/assets/images/commentary-box-action.jpg',
     num: '03', ghost: 'SPORT',
     title: 'Call of the Match',
-    caption: 'GVL Football, live every weekend. The voice of the game since the first bounce.',
+    caption: 'GVL football and netball on the weekly guide — Saturday Sport, Match of the Day, The Final Siren. Fixture dates on the football page.',
   },
   {
     img: '/assets/images/gvl-championship-mcg.jpg',
