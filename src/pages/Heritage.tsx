@@ -20,6 +20,7 @@ import {
   EditorialCards,
   PosterReveal,
   StrokeFill,
+  HeadlinePop,
 } from '@/components/onair/kit'
 import { stationStats } from '@/data/pricing'
 import {
@@ -141,7 +142,7 @@ function ProseSection({ label, title, paragraphs }: { label: string; title: stri
     <section className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
       <LabelReveal className="mb-6">{label}</LabelReveal>
       <h2 className="font-poster uppercase text-[clamp(26px,4vw,44px)] text-white leading-[0.95] mb-10 max-w-[900px]">
-        {title}
+        <HeadlinePop>{title}</HeadlinePop>
       </h2>
       <div className="max-w-[720px] space-y-6">
         {paragraphs.map((paragraph) => (
@@ -233,7 +234,9 @@ export default function Heritage() {
 
         <section className="px-6 md:px-12 lg:px-20 pb-32 text-center">
           <h2 className="font-poster uppercase text-[clamp(28px,4vw,44px)] text-white mb-6">
-            The story continues on air<span style={{ color: RED }}>.</span>
+            <HeadlinePop>
+              The story continues on air<span style={{ color: RED }}>.</span>
+            </HeadlinePop>
           </h2>
           <Link
             to="/listen"

@@ -68,7 +68,7 @@ import {
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 import type { CoverageGlowHandle } from '@/lib/coverageGlowCanvas'
 import { BRAND, BRAND_COLORS } from '@/lib/brand'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { TiltCard } from '@/components/TiltCard'
 
 /* ─────────────────────── helpers ─────────────────────── */
@@ -577,7 +577,12 @@ export default function CoverageMap() {
               >
                 <span className="section-label mb-4 block">Broadcast reach</span>
                 <h1 className="font-hero text-one-white mb-4">
-                  GOULBURN VALLEY <span className="text-gold-gradient">COVERAGE</span>
+                  <span className="block">
+                    <HeadlinePop>Goulburn Valley</HeadlinePop>
+                  </span>
+                  <span className="block text-gold-gradient">
+                    <HeadlinePop delay={0.08}>Coverage</HeadlinePop>
+                  </span>
                 </h1>
                 <p className="font-body text-one-white/55 leading-relaxed">
                   See where your brand lands — {broadcastArea.totalTowns} communities,{' '}
@@ -1225,7 +1230,9 @@ export default function CoverageMap() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 text-center">
             <p className="mb-2 font-label text-[11px] uppercase tracking-[0.2em] text-one-gold">Area analytics</p>
-            <WordReveal text="Coverage by the numbers" as="h2" className="font-heading text-2xl text-one-white sm:text-3xl block" stagger={0.04} />
+            <h2 className="font-heading text-2xl text-one-white sm:text-3xl">
+              <HeadlinePop>Coverage by the numbers</HeadlinePop>
+            </h2>
           </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
             <TiltCard maxTilt={4} className="h-full">

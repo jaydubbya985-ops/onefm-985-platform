@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
 import type { ArchivePerson, PersonCategory, SourceConfidence } from '@/types/livingArchive'
 import { CATEGORY_LABELS, CONFIDENCE_LABELS } from '@/types/livingArchive'
-import { LabelReveal } from '@/components/onair/kit'
+import { LabelReveal, HeadlinePop } from '@/components/onair/kit'
 
 const RED = '#E51636'
 
@@ -98,7 +98,7 @@ export function PeopleWall({ people }: { people: ArchivePerson[] }) {
     <section id="people" className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
       <LabelReveal className="mb-3">The Living Archive</LabelReveal>
       <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-2">
-        People of ONE FM
+        <HeadlinePop>People of ONE FM</HeadlinePop>
       </h2>
       <p className="text-[15px] text-white/50 max-w-[640px] mb-8 leading-relaxed">
         No volunteer disappears into a paragraph. Search and filter — each name carries a source

@@ -13,6 +13,7 @@ import {
   EditorialCards,
   PosterReveal,
   StrokeFill,
+  HeadlinePop,
 } from '@/components/onair/kit'
 import { donationTiers, stationStats } from '@/data/pricing'
 
@@ -128,7 +129,9 @@ function BankDetails() {
     <section id="give" className="px-6 md:px-12 lg:px-20 pb-16">
       <LabelReveal className="mb-3">Give Now</LabelReveal>
       <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-8">
-        Bank transfer<span style={{ color: RED }}>.</span>
+        <HeadlinePop>
+          Bank transfer<span style={{ color: RED }}>.</span>
+        </HeadlinePop>
       </h2>
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl">
@@ -269,7 +272,9 @@ export default function Support() {
 
         <section className="px-6 md:px-12 lg:px-20 pb-32 text-center">
           <h2 className="font-poster uppercase text-[clamp(26px,4vw,40px)] text-white mb-6">
-            Thank you for backing community radio<span style={{ color: RED }}>.</span>
+            <HeadlinePop>
+              Thank you for backing community radio<span style={{ color: RED }}>.</span>
+            </HeadlinePop>
           </h2>
           <Link
             to="/listen"

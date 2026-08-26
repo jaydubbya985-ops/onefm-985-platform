@@ -18,7 +18,7 @@ import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
 import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
 import { MediaImage } from '@/components/MediaImage'
@@ -202,7 +202,9 @@ function GVLGalleryStrip() {
         >
           <div>
             <p className="font-label text-one-gold text-[10px] tracking-widest uppercase mb-2">Matchday · In Frame</p>
-            <WordReveal text="The Game. The Moment." className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white">
+              <HeadlinePop>The Game. The Moment.</HeadlinePop>
+            </h2>
           </div>
           <span className="hidden sm:block font-label text-one-muted text-[10px] tracking-widest uppercase">GVL Coverage</span>
         </motion.div>
@@ -339,8 +341,12 @@ export default function Football() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Football" as="span" className="block text-one-white" delay={0.15} stagger={0.1} />
-            <WordReveal text="Sponsorship." as="span" className="block text-one-gold" delay={0.4} stagger={0.08} />
+            <span className="block text-one-white">
+              <HeadlinePop>Football</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>Sponsorship.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -426,7 +432,9 @@ export default function Football() {
               <Shield size={18} className="text-one-electric" />
               <span className="font-label text-one-electric">9 SPONSORSHIP LEVELS</span>
             </div>
-            <WordReveal text="CHOOSE YOUR IMPACT" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Choose your impact</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               From community supporters to naming rights partners — every dollar goes toward
               supporting local football and getting your brand heard.
@@ -520,7 +528,9 @@ export default function Football() {
               <BarChart3 size={18} className="text-data-teal" />
               <span className="font-label text-data-teal">WHY RADIO WINS</span>
             </div>
-            <WordReveal text="BETTER VALUE THAN THE ALTERNATIVES" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.04} />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Better value than the alternatives</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               See how ONE FM football sponsorship stacks up against other local advertising options.
             </p>
@@ -597,7 +607,9 @@ export default function Football() {
               <Users size={18} className="text-one-electric" />
               <span className="font-label text-one-electric">WHO IS LISTENING</span>
             </div>
-            <WordReveal text="YOUR AUDIENCE, YOUR COMMUNITY" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Your audience, your community</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a projected population of {stationStats.broadcastPopulation.toLocaleString()}.
             </p>
@@ -773,7 +785,9 @@ export default function Football() {
               <Star size={18} className="text-one-electric" />
               <span className="font-label text-one-electric">LOCAL PROOF</span>
             </div>
-            <WordReveal text="COMMUNITY VOICE" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Community voice</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted">
               Why the Goulburn Valley trusts ONE FM.
             </p>
@@ -813,7 +827,9 @@ export default function Football() {
               <Send size={18} className="text-data-teal" />
               <span className="font-label text-data-teal">GET STARTED</span>
             </div>
-            <WordReveal text="ENQUIRE NOW" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Enquire now</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted">
               Tell us about your business and we'll recommend the perfect sponsorship tier.
             </p>
@@ -961,7 +977,9 @@ export default function Football() {
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles size={20} className="text-one-gold" />
             </div>
-            <WordReveal text="READY TO SPONSOR LOCAL FOOTBALL?" className="font-h2 text-one-white mb-4 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-4">
+              <HeadlinePop>Ready to sponsor local football?</HeadlinePop>
+            </h2>
             <p className="font-body text-one-white mb-8">
               Join the local businesses keeping community football alive. Every sponsorship
               dollar supports grassroots sport and puts your brand in front of thousands.

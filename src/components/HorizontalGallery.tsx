@@ -1,4 +1,5 @@
 import { useRef, useState, useLayoutEffect } from 'react'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { stationStats } from '@/data/pricing'
 
 interface Slide {
@@ -196,7 +197,7 @@ export function HorizontalGallery() {
           className="font-poster uppercase text-white block leading-[0.95]"
           style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
         >
-          Across the Valley
+          <HeadlinePop>Across the Valley</HeadlinePop>
         </h2>
         <p className="text-[14px] text-white/45 mt-2 max-w-sm mx-auto">
           Scroll through the moments that made ONE FM 98.5
