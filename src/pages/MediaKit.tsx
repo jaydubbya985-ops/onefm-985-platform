@@ -950,9 +950,9 @@ export default function MediaKit() {
                 Book a Meeting
               </button>
             </MagneticButton>
-            <MagneticButton strength={6} cursorLabel="BUILD">
+            <MagneticButton strength={6} cursorLabel="REQUEST">
               <Link to="/proposal" className="flex items-center gap-2 font-label text-xs text-one-gold hover:text-gold transition-colors link-hover">
-                Or build a custom proposal yourself
+                Or request a tailored proposal
                 <ArrowRight size={14} />
               </Link>
             </MagneticButton>
@@ -961,7 +961,7 @@ export default function MediaKit() {
       </section>
       <SponsorCommercialCta
         headline="From stats to signed campaign"
-        subline="Download the kit, explore coverage by town, or build a custom proposal online."
+        subline="Download the kit, explore coverage by town, or request a tailored proposal."
       />
     </Layout>
   )

@@ -152,22 +152,20 @@ Push to `main` triggers `.github/workflows/deploy.yml` → build → Netlify pro
 ## NEXT RUN (copy this prompt to cloud agent or desktop)
 
 ```
-Pull main. Verify live onefmops.netlify.app has NO "Plemo" — breakfast must show ONE FM Breakfast with rotating hosts from programGuide.ts.
+Pull latest main (or the open ops-proposals PR if not merged). Do not wait.
 
-Then complete in order:
-1. Wire Netlify env vars docs — list exactly which VITE_* keys Jay must paste in Netlify dashboard
-2. Ops portal: connect Supabase auth (remove demo-only gate when env vars present)
-3. Invoice flow: test PDF generate + email template with real bank details (BSB 083-894)
-4. Stripe test payment flow on live URL
-5. Final truth pass: grep entire src/ for Plemo, unsplash, fake listener millions, AI-Enhanced
-6. Commit, push main (auto-deploys), verify live site
+1. Verify ops #/ops password onefm2026 → Proposals: Community Partner PDF downloads with 39,375 listeners, GST, and no invented demographics.
+2. If that PR is open, merge-ready fixes only — then continue ops.
+3. Next ops slice: accepted proposal → contract PDF (same letterhead as invoices/proposals). Then invoice send path with BSB 083-894.
+4. Truth grep src/ for Plemo, unsplash, fake millions, AI-Enhanced.
+5. Commit, push, update PR. Build must pass.
 
-If blocked: post "NEED JAY:" with one specific action. Do not stall.
+If blocked: NEED JAY: one specific action. Do not stall. Do not invent stats.
 ```
 
 ## Current priorities
 
-1. Auto-deploy on every push to main (workflow + NETLIFY_AUTH_TOKEN secret)
-2. Live site must match code — no stale Plemo deploy
-3. Wire Netlify + Supabase env vars for ops portal
+1. Ship sendable sponsorship proposals from Ops (PDF + email) — in progress this branch
+2. Keep a cloud agent on the NEXT RUN prompt so work continues between Jay's sessions
+3. Wire Netlify + Supabase env vars for live ops (NEED JAY if missing)
 4. Real invoices + Stripe test payment live

@@ -281,6 +281,12 @@ create table if not exists ops_proposals (
   created_at   timestamptz default now(),
   updated_at   timestamptz default now()
 );
+alter table ops_proposals add column if not exists proposal_number text;
+alter table ops_proposals add column if not exists package_id text;
+alter table ops_proposals add column if not exists duration_weeks integer;
+alter table ops_proposals add column if not exists notes text;
+alter table ops_proposals add column if not exists valid_until date;
+alter table ops_proposals add column if not exists details jsonb default '{}'::jsonb;
 alter table ops_proposals enable row level security;
 drop policy if exists "Staff manage ops_proposals" on ops_proposals;
 create policy "Staff manage ops_proposals" on ops_proposals

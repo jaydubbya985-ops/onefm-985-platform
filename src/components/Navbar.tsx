@@ -419,8 +419,8 @@ export function Navbar() {
               <Headphones size={14} />
               Listen Live
             </Link>
-            <Link to="/proposal" className="btn-secondary text-xs px-4 py-2.5 whitespace-nowrap" data-cursor-label="BUILD">
-              Build Proposal
+            <Link to="/proposal" className="btn-secondary text-xs px-4 py-2.5 whitespace-nowrap" data-cursor-label="REQUEST">
+              Request Proposal
             </Link>
             <div className="flex items-center gap-2 pl-2 border-l border-white/15" data-cursor-label="LIVE STATUS">
               <span className="relative flex h-2 w-2">
@@ -550,8 +550,8 @@ export function Navbar() {
                 <Lock className="w-4 h-4" />
                 Ops Portal
               </button>
-              <Link to="/proposal" data-cursor-label="BUILD" className="btn-secondary mt-4 inline-block w-full text-center">
-                Build Proposal
+              <Link to="/proposal" data-cursor-label="REQUEST" className="btn-secondary mt-4 inline-block w-full text-center">
+                Request Proposal
               </Link>
             </motion.div>
           </motion.div>

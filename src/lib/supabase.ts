@@ -97,6 +97,12 @@ export interface DbOpsProposal {
   tier?: string | null
   value?: number | null
   status: string
+  proposal_number?: string | null
+  package_id?: string | null
+  duration_weeks?: number | null
+  notes?: string | null
+  valid_until?: string | null
+  details?: Record<string, unknown> | null
   created_at: string
   updated_at?: string | null
 }

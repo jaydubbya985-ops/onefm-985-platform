@@ -34,18 +34,25 @@ export type ProposalStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
 
 export interface Proposal {
   id: string
+  number?: string
   enquiryId?: string
   clientName: string
   company?: string
   email?: string
   source?: EnquirySource
+  packageId?: string
   packageName?: string
   tier?: string
+  durationWeeks?: number
+  notes?: string
+  validUntil?: string
+  deliverables?: { id: string; name: string }[]
+  gst?: number
+  total?: number
   value: number
   status: ProposalStatus
   createdAt: string
   updatedAt: string
-  notes?: string
   /** demo = synthetic CRM. renewal = last billed, pending Jay. */
   kind?: 'demo' | 'renewal'
 }
@@ -94,9 +101,17 @@ export interface NewProposalInput {
   email?: string
   enquiryId?: string
   source?: EnquirySource
+  packageId?: string
   packageName?: string
   tier?: string
+  durationWeeks?: number
+  notes?: string
+  validUntil?: string
+  deliverables?: { id: string; name: string }[]
+  gst?: number
+  total?: number
   value: number
+  number?: string
 }
 
 export type NewInvoiceInput = Omit<
@@ -126,6 +141,8 @@ export interface OpsStore extends OpsState {
   /** Invoice numbers whose world-class PDF has been emailed (Gagliardi reissue). */
   reissuedNumbers: string[]
   markInvoiceReissued: (invoiceNumber: string) => void
+  focusProposalId: string | null
+  setFocusProposalId: (id: string | null) => void
   resetDemoData: () => void
   // Enquiries
   updateEnquiry: (id: string, patch: Partial<Enquiry>) => void
@@ -135,7 +152,7 @@ export interface OpsStore extends OpsState {
   addProposal: (input: NewProposalInput) => string
   updateProposal: (id: string, patch: Partial<Proposal>) => void
   sendProposal: (id: string) => void
-  acceptProposal: (id: string) => void
+  acceptProposal: (id: string) => OpsContract | null
   declineProposal: (id: string) => void
   // Contracts
   updateContract: (id: string, patch: Partial<OpsContract>) => void
@@ -155,6 +172,7 @@ export interface OpsStore extends OpsState {
 
 const STORAGE_KEY = 'onefm_ops_v3'
 const REISSUED_KEY = 'onefm_ops_reissued_v1'
+const SESSION_KEY = 'onefm_ops_session_v1'
 
 function loadReissued(): string[] {
   try {
@@ -172,6 +190,24 @@ function persistReissued(numbers: string[]) {
   } catch {
     // ignore
   }
+}
+
+function loadSession(): { activeTab: OpsTab; focusProposalId: string | null } {
+  try {
+    const raw = window.localStorage.getItem(SESSION_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as { activeTab?: OpsTab; focusProposalId?: string | null }
+      if (parsed.activeTab) {
+        return {
+          activeTab: parsed.activeTab,
+          focusProposalId: parsed.focusProposalId ?? null,
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return { activeTab: 'batch', focusProposalId: null }
 }
 
 function isoDate(d: Date): string {
@@ -196,6 +232,7 @@ function buildSeedState(): OpsState {
     (e) => e.status === 'proposal_sent',
   ).map((e, i) => ({
     id: `prop-seed-${String(i + 1).padStart(3, '0')}`,
+    number: `PROP-2026-${String(i + 1).padStart(3, '0')}`,
     enquiryId: e.id,
     clientName: e.name,
     company: e.company,
@@ -305,9 +342,12 @@ const OpsContext = createContext<OpsStore | null>(null)
 
 export function OpsProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<OpsState>(loadState)
-  const [activeTab, setActiveTab] = useState<OpsTab>('batch')
+  const [activeTab, setActiveTab] = useState<OpsTab>(() => loadSession().activeTab)
   const [focusInvoiceId, setFocusInvoiceId] = useState<string | null>(null)
   const [reissuedNumbers, setReissuedNumbers] = useState<string[]>(loadReissued)
+  const [focusProposalId, setFocusProposalId] = useState<string | null>(
+    () => loadSession().focusProposalId,
+  )
   const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
 
   // Load from Supabase on mount (when configured + authenticated)
@@ -384,6 +424,21 @@ export function OpsProvider({ children }: { children: ReactNode }) {
     }
   }, [state, remoteReady])
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify({
+          activeTab,
+          focusProposalId,
+          updatedAt: new Date().toISOString(),
+        }),
+      )
+    } catch {
+      // ignore
+    }
+  }, [activeTab, focusProposalId])
+
   const value = useMemo<OpsStore>(() => {
     const now = () => new Date().toISOString()
 
@@ -417,6 +472,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           return next
         })
       },
+      focusProposalId,
+      setFocusProposalId,
 
       resetDemoData: () => {
         try {
@@ -424,6 +481,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           window.localStorage.removeItem('onefm_ops_v1')
           window.localStorage.removeItem('onefm_ops_v2')
           window.localStorage.removeItem(REISSUED_KEY)
+          window.localStorage.removeItem(SESSION_KEY)
         } catch {
           // ignore
         }
@@ -471,6 +529,10 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         if (!enquiry) return null
         const proposal: Proposal = {
           id: `prop-${Date.now()}`,
+          number: nextSequential(
+            state.proposals.map((p) => p.number ?? ''),
+            'PROP-2026-',
+          ),
           enquiryId,
           clientName: enquiry.name,
           company: enquiry.company,
@@ -480,6 +542,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           status: 'draft',
           createdAt: now(),
           updatedAt: now(),
+          validUntil: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
         }
         setState((prev) => ({
           ...prev,
@@ -490,6 +553,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         }))
         void opsApi.upsertProposal(proposal)
         void opsApi.updateEnquiry(enquiryId, { status: 'in_progress' })
+        setFocusProposalId(proposal.id)
         setActiveTab('proposals')
         return proposal.id
       },
@@ -498,6 +562,12 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         const proposal: Proposal = {
           ...input,
           id: `prop-${Date.now()}`,
+          number:
+            input.number ??
+            nextSequential(
+              state.proposals.map((p) => p.number ?? ''),
+              'PROP-2026-',
+            ),
           status: 'draft',
           createdAt: now(),
           updatedAt: now(),
@@ -539,10 +609,28 @@ export function OpsProvider({ children }: { children: ReactNode }) {
 
       acceptProposal: (id) => {
         const proposal = state.proposals.find((p) => p.id === id)
-        if (!proposal) return
+        if (!proposal) return null
         const start = new Date()
         const end = new Date()
-        end.setMonth(end.getMonth() + 6)
+        if (proposal.durationWeeks && proposal.durationWeeks > 0) {
+          end.setDate(start.getDate() + proposal.durationWeeks * 7)
+        } else {
+          end.setMonth(end.getMonth() + 6)
+        }
+        const gst = Math.round(proposal.value * 0.1 * 100) / 100
+        const deliverableLine = proposal.deliverables?.length
+          ? proposal.deliverables.map((d) => d.name).join('; ')
+          : null
+        const packageType =
+          proposal.packageId === 'fb-bronze'
+            ? 'football_bronze'
+            : proposal.packageId === 'fb-silver'
+              ? 'football_silver'
+              : proposal.packageId === 'fb-gold'
+                ? 'football_gold'
+                : proposal.packageId === 'prog-sponsor'
+                  ? 'program_sponsorship'
+                  : 'custom'
         const contract: OpsContract = {
           id: `c-${Date.now()}`,
           contractNumber: nextSequential(
@@ -553,14 +641,21 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           primaryContact: proposal.clientName,
           email: proposal.email ?? '',
           campaignName: proposal.packageName ?? 'Sponsorship Agreement',
-          description: proposal.packageName
-            ? `${proposal.packageName} package — from accepted proposal`
-            : 'Created from accepted proposal',
+          description: deliverableLine
+            ? `${proposal.packageName ?? 'Sponsorship'} — ${deliverableLine}`
+            : proposal.packageName
+              ? `${proposal.packageName} package — from accepted proposal`
+              : 'Created from accepted proposal',
           contractValue: proposal.value,
+          gst,
+          totalValue: Math.round((proposal.value + gst) * 100) / 100,
           startDate: isoDate(start),
           endDate: isoDate(end),
           status: 'pending',
           tier: proposal.tier ?? 'Custom',
+          packageType,
+          paymentTerms: '14_days',
+          billingFrequency: 'one_time',
           invoices: [],
           proposalId: proposal.id,
         }
@@ -580,6 +675,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         }
         void opsApi.upsertContract(contract)
         setActiveTab('contracts')
+        return contract
       },
 
       declineProposal: (id) => {
@@ -735,7 +831,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         void opsApi.updateInvoicesBatch(ids, { status: 'sent' })
       },
     }
-  }, [state, activeTab, focusInvoiceId, reissuedNumbers])
+  }, [state, activeTab, focusInvoiceId, reissuedNumbers, focusProposalId])
 
   return <OpsContext.Provider value={value}>{children}</OpsContext.Provider>
 }

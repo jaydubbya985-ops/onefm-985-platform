@@ -29,8 +29,8 @@ const SECONDARY: { label: string; to: string }[] = [
   { label: 'Programs', to: '/programs' },
   { label: 'GVL Footy', to: '/football' },
   { label: 'Coverage', to: '/coverage' },
-  { label: 'History', to: '/heritage' },
   { label: 'Media Kit', to: '/media-kit' },
+  { label: 'Request a proposal', to: '/proposal' },
   { label: 'Contact', to: '/contact' },
   { label: 'Ops', to: '/ops' },
 ]

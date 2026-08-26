@@ -587,8 +587,8 @@ export default function CoverageMap() {
                   <MagneticButton strength={6} cursorLabel="MEDIA KIT">
                     <Link to="/media-kit" className="btn-secondary text-xs">Request media kit</Link>
                   </MagneticButton>
-                  <Link to="/proposal" data-cursor-label="BUILD" className="font-label text-[10px] text-one-gold hover:text-one-gold transition-colors link-hover">
-                    Build a proposal →
+                  <Link to="/proposal" data-cursor-label="REQUEST" className="font-label text-[10px] text-one-gold hover:text-one-gold transition-colors link-hover">
+                    Request a proposal →
                   </Link>
                 </div>
               </motion.div>

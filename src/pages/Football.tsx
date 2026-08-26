@@ -124,6 +124,7 @@ const tiers = footballTiers.map((t) => {
   const meta = tierMeta[t.name]
   return {
     key: meta.key,
+    id: t.id,
     name: t.name,
     shortName: meta.shortName,
     price: t.price,
@@ -388,7 +389,7 @@ export default function Football() {
             </MagneticButton>
             <MagneticButton strength={8}>
               <Link to="/proposal" data-cursor-label="PROPOSAL" className="btn-secondary">
-                Build Custom Proposal
+                Request a Proposal
               </Link>
             </MagneticButton>
           </motion.div>
@@ -496,7 +497,7 @@ export default function Football() {
 
                 {/* CTA */}
                 <Link
-                  to="/proposal"
+                  to={`/proposal?package=fb-${tier.id}`}
                   className={`w-full block text-center ${
                     tier.ctaStyle === 'primary' ? 'btn-primary' : 'btn-secondary'
                   }`}

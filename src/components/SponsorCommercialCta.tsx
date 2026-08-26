@@ -14,7 +14,7 @@ const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 export function SponsorCommercialCta({
   headline = 'Ready to reach the Goulburn Valley?',
-  subline = 'Explore coverage, build a proposal, or speak with our partnerships team.',
+  subline = 'Explore coverage, request a proposal, or speak with our partnerships team.',
   className = '',
 }: SponsorCommercialCtaProps) {
   return (
@@ -77,7 +77,7 @@ export function SponsorCommercialCta({
             <MagneticButton strength={6}>
               <Link to="/proposal" data-cursor-label="PROPOSAL" className="btn-secondary text-xs inline-flex items-center gap-2">
                 <FileText size={14} />
-                Build a proposal
+                Request a proposal
               </Link>
             </MagneticButton>
             <MagneticButton strength={10}>

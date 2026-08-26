@@ -33,12 +33,27 @@ function proposalToRow(p: Proposal): DbOpsProposal {
     tier: p.tier ?? null,
     value: p.value,
     status: p.status,
+    proposal_number: p.number ?? null,
+    package_id: p.packageId ?? null,
+    duration_weeks: p.durationWeeks ?? null,
+    notes: p.notes ?? null,
+    valid_until: p.validUntil ?? null,
+    details: {
+      deliverables: p.deliverables ?? [],
+      gst: p.gst ?? null,
+      total: p.total ?? null,
+    },
     created_at: p.createdAt,
     updated_at: p.updatedAt,
   }
 }
 
 function rowToProposal(row: DbOpsProposal): Proposal {
+  const details = (row.details ?? {}) as {
+    deliverables?: { id: string; name: string }[]
+    gst?: number | null
+    total?: number | null
+  }
   return {
     id: row.id,
     enquiryId: row.enquiry_id ?? undefined,
@@ -50,6 +65,14 @@ function rowToProposal(row: DbOpsProposal): Proposal {
     tier: row.tier ?? undefined,
     value: row.value ?? 0,
     status: row.status as Proposal['status'],
+    number: row.proposal_number ?? undefined,
+    packageId: row.package_id ?? undefined,
+    durationWeeks: row.duration_weeks ?? undefined,
+    notes: row.notes ?? undefined,
+    validUntil: row.valid_until ?? undefined,
+    deliverables: details.deliverables,
+    gst: details.gst ?? undefined,
+    total: details.total ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at ?? row.created_at,
   }
@@ -272,7 +295,25 @@ export async function updateEnquiry(
 
 export async function upsertProposal(proposal: Proposal): Promise<void> {
   if (!isSupabaseConfigured()) return
-  await supabase.from('ops_proposals').upsert(proposalToRow(proposal))
+  const row = proposalToRow(proposal)
+  const { error } = await supabase.from('ops_proposals').upsert(row)
+  if (error) {
+    const core = {
+      id: row.id,
+      enquiry_id: row.enquiry_id,
+      client_name: row.client_name,
+      company: row.company,
+      email: row.email,
+      source: row.source,
+      package_name: row.package_name,
+      tier: row.tier,
+      value: row.value,
+      status: row.status,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+    }
+    await supabase.from('ops_proposals').upsert(core)
+  }
 }
 
 export async function updateProposal(
@@ -285,7 +326,37 @@ export async function updateProposal(
   if (patch.value !== undefined) row.value = patch.value
   if (patch.packageName) row.package_name = patch.packageName
   if (patch.tier) row.tier = patch.tier
-  await supabase.from('ops_proposals').update(row).eq('id', id)
+  if (patch.email !== undefined) row.email = patch.email
+  if (patch.company !== undefined) row.company = patch.company
+  if (patch.clientName) row.client_name = patch.clientName
+  if (patch.number) row.proposal_number = patch.number
+  if (patch.packageId) row.package_id = patch.packageId
+  if (patch.durationWeeks !== undefined) row.duration_weeks = patch.durationWeeks
+  if (patch.notes !== undefined) row.notes = patch.notes
+  if (patch.validUntil) row.valid_until = patch.validUntil
+  if (
+    patch.deliverables ||
+    patch.gst !== undefined ||
+    patch.total !== undefined
+  ) {
+    row.details = {
+      deliverables: patch.deliverables ?? [],
+      gst: patch.gst ?? null,
+      total: patch.total ?? null,
+    }
+  }
+  const { error } = await supabase.from('ops_proposals').update(row).eq('id', id)
+  if (error) {
+    const core: Record<string, unknown> = { updated_at: row.updated_at }
+    if (row.status) core.status = row.status
+    if (row.value !== undefined) core.value = row.value
+    if (row.package_name) core.package_name = row.package_name
+    if (row.tier) core.tier = row.tier
+    if (row.email !== undefined) core.email = row.email
+    if (row.company !== undefined) core.company = row.company
+    if (row.client_name) core.client_name = row.client_name
+    await supabase.from('ops_proposals').update(core).eq('id', id)
+  }
 }
 
 // ── Contract mutations ─────────────────────────────────────────

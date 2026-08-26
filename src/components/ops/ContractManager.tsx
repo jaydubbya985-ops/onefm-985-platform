@@ -98,6 +98,7 @@ import {
   type RichContract,
 } from './contracts/constants'
 import { buildXeroLinesFromContracts, downloadXeroCsv, summarizeXeroExport } from './contracts/xero'
+import { generateContractPdf } from '@/lib/contractDocument'
 
 // ---------------------------------------------------------------------------
 // Local persistence for contracts created in this module. Contracts from the
@@ -762,6 +763,20 @@ export default function ContractManager() {
     )
   }, [filteredContracts, toast])
 
+  const downloadContract = useCallback(
+    async (contract: RichContract) => {
+      try {
+        const pdf = await generateContractPdf(contract)
+        pdf.save(`${contract.contractNumber}.pdf`)
+        toast(`Downloaded ${contract.contractNumber}.pdf`, 'success')
+      } catch (err) {
+        console.error(err)
+        toast('Contract PDF failed — try again', 'error')
+      }
+    },
+    [toast],
+  )
+
   // ---- Render -------------------------------------------------------------
 
   const formTabs = [
@@ -1125,6 +1140,15 @@ export default function ContractManager() {
                             title="View"
                           >
                             <Eye className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="w-7 h-7 text-[#5B8DB8] hover:text-[#D4A853] hover:bg-[#D4A853]/10"
+                            onClick={() => void downloadContract(contract)}
+                            title="Download agreement PDF"
+                          >
+                            <Download className="w-3.5 h-3.5" />
                           </Button>
                           <Button
                             size="icon"
@@ -1878,6 +1902,15 @@ export default function ContractManager() {
                   <div className="flex gap-2 flex-wrap justify-end shrink-0">
                     {detail.status !== 'cancelled' && (
                       <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="bg-transparent border-[#2A2A2A]/40 text-[#5B8DB8] hover:text-[#D4A853] hover:border-[#D4A853]/30 text-xs"
+                          onClick={() => void downloadContract(detail)}
+                        >
+                          <Download className="w-3.5 h-3.5 mr-1.5" />
+                          Agreement PDF
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"

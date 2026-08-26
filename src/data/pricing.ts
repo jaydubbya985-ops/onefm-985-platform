@@ -65,12 +65,3 @@ export const stationStats = {
   nfpsSupported: 100,
   yearsBroadcasting: 37, // since 1989
 };
-
-// ROI comparison data
-export const roiComparison = {
-  oneFm: { cpm: 4.20, reach: stationStats.weeklyListeners, frequency: 12, engagement: '94%', trust: '94%' },
-  newspaper: { cpm: 18.50, reach: 8500, frequency: 1, engagement: '22%', trust: '67%' },
-  digitalAds: { cpm: 8.75, reach: 15000, frequency: 3, engagement: '1.8%', trust: '34%' },
-  billboard: { cpm: 22.00, reach: 25000, frequency: 30, engagement: 'N/A', trust: '45%' },
-  socialMedia: { cpm: 6.50, reach: 12000, frequency: 8, engagement: '3.2%', trust: '38%' },
-};
