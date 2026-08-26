@@ -734,12 +734,8 @@ export default function InvoiceGenerator() {
         // PDF optional — still open mailto
       }
       window.location.assign(buildMailtoInvoiceUrl(payload))
-      setLocalInvoices((list) =>
-        list.map((i) => (i.id === id ? { ...i, status: 'sent' } : i)),
-      )
-      updateInvoice(id, { status: 'sent' })
       window.alert(
-        `PDF downloaded. Email client opened for ${inv.billTo.email} — attach ${inv.invoiceNumber}.pdf before sending.`,
+        `PDF downloaded. Email client opened for ${inv.billTo.email} — attach ${inv.invoiceNumber}.pdf before sending. Status stays unsent until a real send succeeds.`,
       )
       return
     }
