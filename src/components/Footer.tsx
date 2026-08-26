@@ -7,7 +7,7 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { BRAND } from '@/lib/brand'
 import { FOOTER_LISTEN, FOOTER_SPONSOR, FOOTER_ABOUT, FOOTER_SUPPORT, FOOTER_RESOURCES } from '@/lib/siteNav'
 import { MagneticButton } from '@/components/MagneticButton'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
@@ -45,8 +45,12 @@ export function Footer() {
               className="font-heading font-bold mb-6"
               style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', lineHeight: 1, letterSpacing: '-0.02em' }}
             >
-              <WordReveal text="The valley's voice," as="span" className="block text-one-white" delay={0.1} stagger={0.022} variant="char" />
-              <WordReveal text="on air 24/7." as="span" className="block text-[#E51636]" delay={0.65} stagger={0.028} variant="char" />
+              <HeadlinePop>
+                <span className="block text-one-white">The valley's voice,</span>
+              </HeadlinePop>
+              <HeadlinePop delay={0.08}>
+                <span className="block text-[#E51636]">on air 24/7.</span>
+              </HeadlinePop>
             </h2>
             <motion.div
               initial={{ opacity: 0, y: 12 }}

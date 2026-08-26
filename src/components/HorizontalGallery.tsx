@@ -1,4 +1,5 @@
 import { useRef, useState, useLayoutEffect } from 'react'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { stationStats } from '@/data/pricing'
 
 interface Slide {
@@ -26,25 +27,25 @@ const SLIDES: Slide[] = [
     img: '/assets/images/commentary-box-action.jpg',
     num: '03', ghost: 'SPORT',
     title: 'Call of the Match',
-    caption: 'GVL Football, live every weekend. The voice of the game since the first bounce.',
+    caption: 'GVL football and netball on the weekly guide — Saturday Sport, Match of the Day, The Final Siren. Fixture dates on the football page.',
   },
   {
     img: '/assets/images/gvl-championship-mcg.jpg',
     num: '04', ghost: 'GVL',
     title: 'The Big Stage',
-    caption: 'When Goulburn Valley Football reaches the MCG, ONE FM is there for every moment.',
+    caption: 'GVL championship — station archive photo. Fixture dates live on the football page.',
   },
   {
     img: '/assets/images/tower-mount-major-day.png',
     num: '05', ghost: 'SIGNAL',
     title: 'On the Hill',
-    caption: 'The transmitter on Mount Major. Since 1989 it has never gone dark — 24 hours, 7 days.',
+    caption: 'The transmitter on Mount Major — 98.5 FM across the Goulburn Valley.',
   },
   {
     img: '/assets/images/culture-indigenous-elders.jpg',
     num: '06', ghost: 'VOICES',
     title: 'Every Voice',
-    caption: 'From First Nations to 25+ language communities — ONE FM gives a microphone to everyone.',
+    caption: 'First Nations programming and multicultural shows listed on the fm985.com.au weekly guide.',
   },
   {
     img: '/assets/images/geo-lake-aerial.jpg',
@@ -196,7 +197,7 @@ export function HorizontalGallery() {
           className="font-poster uppercase text-white block leading-[0.95]"
           style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
         >
-          Across the Valley
+          <HeadlinePop>Across the Valley</HeadlinePop>
         </h2>
         <p className="text-[14px] text-white/45 mt-2 max-w-sm mx-auto">
           Scroll through the moments that made ONE FM 98.5

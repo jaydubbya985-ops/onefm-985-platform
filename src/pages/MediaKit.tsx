@@ -39,7 +39,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { BRAND } from '@/lib/brand'
 import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
@@ -92,7 +92,7 @@ const reachChannels = [
 
 const audienceStats = [
   { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString(), note: 'Regional reach estimate' },
-  { label: 'Population in broadcast area', value: stationStats.broadcastPopulation.toLocaleString(), note: '2026 est. · 25 towns' },
+  { label: 'Population in broadcast area', value: stationStats.broadcastPopulation.toLocaleString(), note: 'Sum of 25 towns · 2026 est.' },
   { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km`, note: 'From Shepparton' },
   { label: 'Years on air', value: String(stationStats.yearsBroadcasting), note: 'Licensed since 1989' },
 ]
@@ -243,7 +243,9 @@ function StudioPhotoStrip() {
         >
           <div>
             <p className="font-label text-one-gold text-[10px] tracking-widest uppercase mb-2">Behind the Signal</p>
-            <WordReveal text="The Station. The Team." className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white">
+              <HeadlinePop>The Station. The Team.</HeadlinePop>
+            </h2>
           </div>
           <span className="hidden sm:block font-label text-one-muted text-[10px] tracking-widest uppercase">ONE FM 98.5</span>
         </motion.div>
@@ -314,15 +316,13 @@ export default function MediaKit() {
         { label: 'Broadcast Population', value: stationStats.broadcastPopulation.toLocaleString() },
         { label: 'Towns Covered', value: String(stationStats.totalTowns) },
         { label: 'Broadcast Radius', value: `${stationStats.broadcastRadiusKm} km` },
-        { label: 'Social Followers', value: stationStats.socialFollowers.toLocaleString() },
-        { label: 'Podcast Downloads', value: stationStats.podcastDownloads.toLocaleString() },
         { label: 'Years Broadcasting', value: String(stationStats.yearsBroadcasting) },
       ]
 
       const platformReach = [
         { platform: 'FM Radio', stat: '98.5 FM', reach: `${stationStats.weeklyListeners.toLocaleString()} est. weekly listeners` },
         { platform: 'Live Stream', stat: 'fm985.com.au', reach: 'Radio.co · Community Radio Plus app' },
-        { platform: 'Social Media', stat: `${stationStats.socialFollowers.toLocaleString()}`, reach: 'Facebook community page (target growth to 12,500)' },
+        { platform: 'Social Media', stat: 'Facebook', reach: 'facebook.com/onefmshepparton — follower count pending' },
         { platform: 'SoundCloud', stat: 'Interview archive', reach: 'Community interviews on fm985.com.au' },
       ]
 
@@ -339,7 +339,7 @@ export default function MediaKit() {
         audienceStats,
         platformReach,
         contactEmail: BRAND.email,
-        contactPhone: '+61 2 5555 0198',
+        contactPhone: BRAND.phone,
       })
 
       const url = window.URL.createObjectURL(blob)
@@ -421,8 +421,12 @@ export default function MediaKit() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Media" as="span" className="block text-ivory" delay={0.15} stagger={0.12} />
-            <WordReveal text="Kit." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+            <span className="block text-ivory">
+              <HeadlinePop>Media</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>Kit.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -473,14 +477,14 @@ export default function MediaKit() {
           >
             {[
               { value: stationStats.weeklyListeners, label: 'Listeners', suffix: '' },
-              { value: stationStats.socialFollowers, label: 'Social', suffix: '' },
-              { value: 1, label: 'Regional', suffix: '', prefix: '#' },
+              { value: stationStats.totalTowns, label: 'Towns', suffix: '' },
+              { value: stationStats.yearsBroadcasting, label: 'Years on air', suffix: '' },
               { value: 24, label: 'Broadcast', suffix: '/7' },
             ].map((stat, i) => (
               <div key={i} className="flex items-center gap-6 md:gap-8">
                 <div>
                   <div className="font-stat text-gold-gradient">
-                    <AnimatedNumber value={stat.value} prefix={stat.prefix || ''} suffix={stat.suffix || ''} />
+                    <AnimatedNumber value={stat.value} suffix={stat.suffix || ''} />
                   </div>
                   <div className="font-label text-muted">{stat.label}</div>
                 </div>
@@ -500,7 +504,7 @@ export default function MediaKit() {
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ADVERTISING RATES 2026</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} AREA POP. (2026 EST.)</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">GOULBURN VALLEY · VICTORIA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE READS · SPOT ADS · SPONSORSHIP</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">~{stationStats.broadcastRadiusKm} KM BROADCAST RADIUS</span>,
@@ -516,7 +520,9 @@ export default function MediaKit() {
       {/* ═══════ AUDIENCE DEMOGRAPHICS ═══════ */}
       <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="AUDIENCE DATA">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-          <WordReveal text="WHO'S LISTENING" className="font-h2 text-ivory mb-8 block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-ivory mb-8">
+            <HeadlinePop>Who's listening</HeadlinePop>
+          </h2>
 
           {/* Tabs */}
           <div className="flex flex-wrap gap-2 mb-10">
@@ -682,7 +688,9 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="PLATFORM REACH" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-ivory">
+              <HeadlinePop>Platform reach</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted mt-2">Where your message travels</p>
           </motion.div>
 
@@ -734,7 +742,9 @@ export default function MediaKit() {
             variants={fadeUp}
           >
             <div>
-              <WordReveal text="ADVERTISING RATES" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
+              <h2 className="font-h2 text-ivory">
+                <HeadlinePop>Advertising rates</HeadlinePop>
+              </h2>
               <p className="font-micro text-muted mt-2">Effective Q1 2026 — All rates in selected currency, GST exclusive</p>
             </div>
             <div className="relative">
@@ -827,7 +837,9 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="BRAND ASSETS" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-ivory">
+              <HeadlinePop>Brand assets</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted mt-2">Logos, guidelines, and creative resources</p>
           </motion.div>
 
@@ -906,7 +918,9 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="READY TO AMPLIFY?" className="font-h2 text-ivory mb-4 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-ivory mb-4">
+              <HeadlinePop>Ready to amplify?</HeadlinePop>
+            </h2>
             <p className="font-body text-chalk mb-10">
               Our partnerships team is ready to build a campaign that works for your brand.
             </p>

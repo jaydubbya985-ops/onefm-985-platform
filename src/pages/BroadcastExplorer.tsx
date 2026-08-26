@@ -2,11 +2,11 @@ import { useState, useEffect, useRef, useMemo, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play, Pause, Search, Grid3X3, List, ChevronDown,
-  ChevronLeft, ChevronRight, Radio, Globe, Smartphone,
+  ChevronLeft, ChevronRight, Radio, Globe,
   Headphones, Sparkles, Calendar,
-  Instagram, Twitter, Music, ArrowRight
+  ArrowRight
 } from 'lucide-react'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { TiltCard } from '@/components/TiltCard'
 import { Marquee } from '@/components/Marquee'
 import { Layout } from '@/components/Layout'
@@ -586,7 +586,9 @@ function ShowSpotlight() {
               </div>
             </div>
             <div className="md:w-[55%] p-6 md:p-8 flex flex-col justify-center">
-              <WordReveal text="ONE FM BREAKFAST" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+              <h2 className="font-h2 text-one-white mb-3">
+                <HeadlinePop>ONE FM BREAKFAST</HeadlinePop>
+              </h2>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full border-2 border-one-gold/30 flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, #1B458F 0%, #F2F2F2 100%)' }}>
                   <span className="font-heading font-black text-sm text-one-white/90 leading-none select-none" style={{ letterSpacing: '-0.04em' }}>OB</span>
@@ -709,8 +711,10 @@ function HostRoster() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <WordReveal text="MEET THE VOICES" className="font-h2 text-one-white mb-2 block" as="h2" />
-            <p className="font-body-small text-muted">16 real presenters behind the microphone</p>
+            <h2 className="font-h2 text-one-white mb-2">
+              <HeadlinePop>MEET THE VOICES</HeadlinePop>
+            </h2>
+            <p className="font-body-small text-muted">{ALL_PRESENTERS.length} presenters from the program guide</p>
           </div>
 
           <div className="relative">
@@ -783,11 +787,6 @@ function HostRoster() {
                 <h3 className="font-h3 text-one-white text-center group-hover:translate-x-1 transition-transform duration-300">{host.name}</h3>
                 <div className="font-label text-one-muted text-[10px] text-center mt-1">{host.role}</div>
                 <div className="font-body-small text-muted text-xs text-center mt-2">{host.shows.join(', ')}</div>
-                <div className="flex justify-center gap-3 mt-3 opacity-50 group-hover:opacity-100 transition-opacity">
-                  <Twitter size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                  <Instagram size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                  <Music size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                </div>
                 <div className="text-center mt-3">
                   <Link to="/programs" data-cursor-label="PROGRAMS" className="font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">View Programs →</Link>
                 </div>
@@ -814,7 +813,9 @@ function SegmentDeepDive() {
           transition={{ duration: 0.5, ease: easeOutExpo }}
           className="mb-10"
         >
-          <WordReveal text="SIGNATURE SEGMENTS" className="font-h2 text-one-white mb-2 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-2">
+            <HeadlinePop>SIGNATURE SEGMENTS</HeadlinePop>
+          </h2>
           <p className="font-body-small text-muted">What makes ONE FM unmissable</p>
         </motion.div>
 
@@ -935,7 +936,9 @@ function BehindTheScenes() {
           </motion.div>
 
           <div>
-            <WordReveal text="BEHIND THE MIC" className="font-h2 text-one-white mb-6 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-6">
+              <HeadlinePop>BEHIND THE MIC</HeadlinePop>
+            </h2>
             <motion.p
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -943,14 +946,14 @@ function BehindTheScenes() {
               transition={{ delay: 0.1, duration: 0.6, ease: easeOutExpo }}
               className="font-body text-one-white mb-8"
             >
-              ONE FM 98.5 — Callsign 3ONE, ACMA License 1385226/1, licensed by APRA AMCOS. Our state-of-the-art broadcast facility combines professional audio equipment with community-focused programming. From the early morning breakfast show to late-night multicultural programs, we're the heartbeat of the Goulburn Valley.
+              ONE FM 98.5 — callsign 3ONE, ACMA licence 1385226/1, APRA AMCOS licensed. Volunteer-run community radio from 47 Parkside Drive, Shepparton. Breakfast 6–9am with rotating hosts, GVL sport, and multicultural shows from the weekly program guide.
             </motion.p>
 
             <div className="space-y-4 mb-8">
               {[
-                { title: 'Live Community Programming', desc: 'Real local voices, real local stories' },
-                { title: 'HD Broadcast Suite', desc: 'Crystal-clear transmission across 100km radius' },
-                { title: 'Live Stream Infrastructure', desc: 'Global reach, local heart' },
+                { title: 'Live community programming', desc: 'Presenters and shows from the fm985.com.au weekly guide' },
+                { title: '98.5 FM from Mount Major', desc: 'Community service 3ONE · ~100km radius · 25 towns' },
+                { title: 'Live stream', desc: 'This site, any browser — Radio.co' },
               ].map((item, i) => (
                 <motion.div
                   key={item.title}
@@ -988,12 +991,11 @@ function BehindTheScenes() {
 
 /* ─── Section 7: Listen Live / CTA ─── */
 function ListenLiveCTA() {
+  const stream = useLiveStream()
   const platforms = [
     { name: 'FM 98.5', icon: <Radio size={24} /> },
     { name: 'Web', icon: <Globe size={24} /> },
-    { name: 'iOS', icon: <Smartphone size={24} /> },
-    { name: 'Android', icon: <Smartphone size={24} /> },
-    { name: 'Alexa', icon: <Headphones size={24} /> },
+    { name: 'Radio.co', icon: <Headphones size={24} /> },
   ]
 
   return (
@@ -1014,7 +1016,9 @@ function ListenLiveCTA() {
       </div>
 
       <div className="max-w-[600px] mx-auto px-4 sm:px-6 text-center relative z-10">
-        <WordReveal text="TUNE IN ANYWHERE" className="font-h2 text-one-white mb-4 block" as="h2" />
+        <h2 className="font-h2 text-one-white mb-4">
+          <HeadlinePop>TUNE IN ANYWHERE</HeadlinePop>
+        </h2>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -1022,7 +1026,7 @@ function ListenLiveCTA() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="font-body text-one-white mb-10"
         >
-          FM 98.5 · Stream online · iOS &amp; Android · Smart speakers · Ask Alexa
+          FM 98.5 · Stream on this site · fm985.com.au player
         </motion.p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-10">
@@ -1051,8 +1055,14 @@ function ListenLiveCTA() {
         >
           <div className="relative">
             <div className="absolute inset-0 rounded-full bg-one-gold animate-ping opacity-30" />
-            <button className="relative w-20 h-20 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform" data-cursor-label="PLAY">
-              <Play size={32} fill="currentColor" />
+            <button
+              type="button"
+              onClick={() => void stream.toggle()}
+              className="relative w-20 h-20 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform"
+              data-cursor-label={stream.playing ? 'PAUSE' : 'PLAY'}
+              aria-label={stream.playing ? 'Pause live stream' : 'Play live stream'}
+            >
+              {stream.playing ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" />}
             </button>
           </div>
           <div className="flex items-center gap-2">

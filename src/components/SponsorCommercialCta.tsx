@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, MapPin, FileText, Mail } from 'lucide-react'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 
 interface SponsorCommercialCtaProps {
@@ -57,7 +57,9 @@ export function SponsorCommercialCta({
                 }} />
               ))}
             </motion.div>
-            <WordReveal text={headline} className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.04} />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>{headline}</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted">{subline}</p>
           </motion.div>
 

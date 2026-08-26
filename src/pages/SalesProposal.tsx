@@ -292,9 +292,9 @@ export default function SalesProposal() {
 
         <StatsStrip
           stats={[
-            // source: ABS 2021 via townData / stationStats
+            // weeklyListeners: ABS 2021 via townData. broadcastPopulation: 25-town sum 2026 est.
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (ABS 2021)' },
+            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'Area population (25-town sum, 2026 est.)' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
             { n: `${stationStats.broadcastRadiusKm}km`, t: 'Broadcast radius' },
           ]}

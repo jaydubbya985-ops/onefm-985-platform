@@ -10,24 +10,19 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
+import { RecentStationActivity } from '@/components/RecentStationActivity'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
+import { LivePlayerWidget } from '@/components/home/LivePlayerWidget'
 import { stationStats } from '@/data/pricing'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
-import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
+import { PosterReveal, StrokeFill } from '@/components/motion/PosterReveal'
+import { NameWall } from '@/components/onair/kit'
+import { wallRows } from '@/data/onAirPeople'
+import { GVL_FINALS_2026 } from '@/data/gvlSeason'
 
 const RED = '#E51636'
 const INK = '#0A0A0A'
-const BAR = '#161616'
 
-/** Real weekly presenters — source: programGuide.ts (fm985.com.au/guide). */
-const ON_AIR_WALL: { name: string; show: string; img: string }[] = [
-  { name: 'Tim Ahemt', show: 'ONE FM Breakfast · Mon & Tue', img: '/on-air-host-1.jpg' },
-  { name: 'The Big G', show: 'Craig Stott · Wednesday Breakfast', img: '/studio-control-room.jpg' },
-  { name: 'Ralph Whitehead', show: 'Thursday Breakfast', img: '/assets/images/studio-presenter-mic.jpg' },
-  { name: 'Josh Revens', show: 'Friday Breakfast · Live Music', img: '/assets/images/ob-van-branded.jpg' },
-  { name: 'Tim Symonds', show: 'The Essential Hits', img: '/assets/images/heritage-truck-2005.jpg' },
-  { name: 'Di Hunter', show: 'On Air Since the Early Days', img: '/assets/images/heritage-di-hunter-carols-2014.jpg' },
-]
 
 const reveal = {
   initial: { opacity: 0, y: 24 },
@@ -162,39 +157,6 @@ function Hero() {
   )
 }
 
-function NameWall() {
-  return (
-    <section className="px-6 md:px-12 lg:px-20 py-16">
-      <LabelReveal className="mb-8">On Air This Week</LabelReveal>
-      <div>
-        {ON_AIR_WALL.map((p, i) => (
-          <motion.div
-            key={p.name}
-            initial={{ opacity: 0, x: i % 2 === 1 ? 48 : -48 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className={`flex items-stretch gap-5 mb-3.5 ${i % 2 === 1 ? 'flex-row-reverse' : ''}`}
-          >
-            <div className="font-poster uppercase leading-none whitespace-nowrap text-white text-[clamp(40px,7vw,104px)]">
-              {p.name}
-              <span className="block font-body normal-case text-[13px] tracking-[0.14em] text-white/40 mt-1.5">
-                {p.show}
-              </span>
-            </div>
-            <div
-              className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
-              style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
-              role="img"
-              aria-label={`${p.name} — ${p.show}`}
-            />
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  )
-}
-
 function FeatureFrame() {
   return (
     <motion.div {...reveal} className="mx-6 md:mx-12 lg:mx-20 my-10">
@@ -215,7 +177,7 @@ function FeatureFrame() {
           className="absolute bottom-6 left-6 px-5 py-2.5 rounded font-bold text-[13px] tracking-[0.13em] uppercase text-white"
           style={{ background: RED }}
         >
-          GVL Footy · Called Live on 98.5
+          GVL finals · {GVL_FINALS_2026.firstFinalsWeekend}
         </div>
       </Link>
     </motion.div>
@@ -256,14 +218,13 @@ export default function Home() {
       <div style={{ background: INK }} className="min-h-screen">
         <Ticker />
         <Hero />
-        <NameWall />
+        <LivePlayerWidget className="relative z-20 -mt-4 mb-6" />
+        <NameWall label="On Air This Week" rows={wallRows()} />
         <FeatureFrame />
         <StatsStrip />
-        <section className="px-6 md:px-12 lg:px-20 pb-10">
-          <LatestInterviews />
-        </section>
-        <section className="px-6 md:px-12 lg:px-20 pb-32">
-          <LabelReveal className="mb-8">Explore ONE FM</LabelReveal>
+        <LatestInterviews />
+        <RecentStationActivity kinds={['sport', 'community']} />
+        <section className="pb-32">
           <ExploreOneFMGrid />
         </section>
       </div>

@@ -1,6 +1,7 @@
 import { towns } from '@/data/townData'
+import { RECENT_STATION_ACTIVITY } from '@/data/recentStationActivity'
 
-export type CoveragePinType = 'station' | 'football' | 'sponsor'
+export type CoveragePinType = 'station' | 'football' | 'sponsor' | 'community'
 
 export interface CoveragePin {
   id: string
@@ -11,6 +12,8 @@ export interface CoveragePin {
   town: string
   blurb: string
   link?: string
+  /** ISO date from fm985.com.au WP — community pins only. */
+  date?: string
 }
 
 /** Offset pin slightly from town centroid so markers don't stack. */
@@ -86,9 +89,28 @@ export const coveragePins: CoveragePin[] = [
       link,
     }]
   }),
+  // Recent station activity — titles/dates from fm985.com.au WP (scanned 26 Aug 2026)
+  ...RECENT_STATION_ACTIVITY.flatMap((item, i) => {
+    const dLat = (item.kind === 'sport' ? 0.022 : -0.018) + (i % 5) * 0.006
+    const dLng = (item.kind === 'community' ? 0.02 : -0.016) + Math.floor(i / 5) * 0.008
+    const pos = atTown(item.town, dLat, dLng)
+    if (!pos) return []
+    return [{
+      id: item.id,
+      type: 'community' as const,
+      name: item.title.length > 72 ? `${item.title.slice(0, 69)}…` : item.title,
+      lat: pos.lat,
+      lng: pos.lng,
+      town: item.town,
+      blurb: `${item.date} · ${item.kind} on fm985.com.au — not an invented event.`,
+      link: item.sourceUrl,
+      date: item.date,
+    }]
+  }),
 ]
 
 export const coveragePinCounts = {
   football: coveragePins.filter((p) => p.type === 'football').length,
   sponsor: coveragePins.filter((p) => p.type === 'sponsor').length,
+  community: coveragePins.filter((p) => p.type === 'community').length,
 }

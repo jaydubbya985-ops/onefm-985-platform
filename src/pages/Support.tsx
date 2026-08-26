@@ -13,18 +13,20 @@ import {
   EditorialCards,
   PosterReveal,
   StrokeFill,
+  HeadlinePop,
 } from '@/components/onair/kit'
 import { donationTiers, stationStats } from '@/data/pricing'
+import { BRAND } from '@/lib/brand'
 
 const RED = '#E51636'
 
 const BANK = {
-  name: '98.5 One FM',
+  name: BRAND.org,
   bank: 'NAB',
   bsb: '083-894',
   account: '553 219 432',
-  email: 'admin@fm985.com.au',
-  phone: '(03) 5831 3131',
+  email: BRAND.email,
+  phone: BRAND.phone,
 } as const
 
 const STRIPE_READY =
@@ -35,12 +37,12 @@ const IMPACT = [
   {
     tag: 'Programming',
     title: 'Keep the Valley on air',
-    body: 'Volunteer-run community radio — live local content 24/7 from Shepparton. Your support helps cover transmission, studio and programming costs.',
+    body: 'Volunteer-run community radio — on air 24/7 from Shepparton, with live local programming through the day. Your support helps cover transmission, studio and programming costs.',
   },
   {
     tag: 'Community',
-    title: `${stationStats.nfpsSupported}+ NFPs on air`,
-    body: 'ONE FM donates airtime to charities and community groups across the Goulburn Murray — sport, multicultural programs and local notices.',
+    title: 'Community airtime',
+    body: 'ONE FM donates airtime to charities and community groups across the Goulburn Murray — sport, multicultural programs and local notices. CSA count: data pending.',
   },
   {
     tag: 'Resilience',
@@ -128,7 +130,9 @@ function BankDetails() {
     <section id="give" className="px-6 md:px-12 lg:px-20 pb-16">
       <LabelReveal className="mb-3">Give Now</LabelReveal>
       <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-8">
-        Bank transfer<span style={{ color: RED }}>.</span>
+        <HeadlinePop>
+          Bank transfer<span style={{ color: RED }}>.</span>
+        </HeadlinePop>
       </h2>
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl">
@@ -201,7 +205,7 @@ export default function Support() {
     <Layout>
       <SEO
         title="Donate — Support ONE FM 98.5"
-        description="Support volunteer-run community radio in the Goulburn Valley. Bank transfer: NAB BSB 083-894 · Acct 553 219 432 · 98.5 One FM."
+        description="Support volunteer-run community radio in the Goulburn Valley. Bank transfer to Goulburn Valley Community Radio Inc.: NAB BSB 083-894 · Acct 553 219 432."
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -261,15 +265,17 @@ export default function Support() {
         <StatsStrip
           stats={[
             { n: String(stationStats.yearsBroadcasting), t: 'Years on air', red: true },
-            { n: String(stationStats.nfpsSupported) + '+', t: 'NFPs supported on air' },
-            { n: '24/7', t: 'Live & local' },
+            { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners' },
+            { n: '24/7', t: 'On air' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
           ]}
         />
 
         <section className="px-6 md:px-12 lg:px-20 pb-32 text-center">
           <h2 className="font-poster uppercase text-[clamp(26px,4vw,40px)] text-white mb-6">
-            Thank you for backing community radio<span style={{ color: RED }}>.</span>
+            <HeadlinePop>
+              Thank you for backing community radio<span style={{ color: RED }}>.</span>
+            </HeadlinePop>
           </h2>
           <Link
             to="/listen"

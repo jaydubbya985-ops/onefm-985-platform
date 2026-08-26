@@ -102,6 +102,7 @@ export function Layout({ children, hideFooter = false }: LayoutProps) {
           {children}
         </motion.main>
         {!hideFooter && <Footer />}
+        {/* Persistent listen bar — HashRouter-safe via MiniPlayer + location.pathname */}
         <MiniPlayer />
       </div>
       {toastPortal}

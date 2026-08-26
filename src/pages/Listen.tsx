@@ -1,44 +1,47 @@
 /**
- * LISTEN — rebuilt per REBUILD-SPEC.md (page 2 of 6).
- * Absorbs Programs + Broadcast Explorer. Assembled from the ON AIR kit.
- * Old 604-line page retired; real content and hooks preserved.
+ * LISTEN — play/pause is the hero action. Program + host come from programGuide.
+ * Dedicated /programs and /broadcast pages stay in the nav (this page is the stream).
  */
 import { Loader2, Pause, Play, Phone, Radio, Wifi } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { WeeklySchedule } from '@/components/WeeklySchedule'
+import { MediaImage } from '@/components/MediaImage'
 import { LatestInterviews } from '@/components/LatestInterviews'
-import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFill } from '@/components/onair/kit'
+import { RecentStationActivity } from '@/components/RecentStationActivity'
+import { OnAirTicker, NameWall, StatsStrip, LabelReveal, StrokeFill } from '@/components/onair/kit'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
+import { wallRows } from '@/data/onAirPeople'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
+import { presenterPhotoFallback, presenterPhotoPath } from '@/lib/presenterAssets'
 import { stationStats } from '@/data/pricing'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
 
-/** Real weekly presenters — source: programGuide.ts (fm985.com.au/guide). */
-const WEEK_WALL = [
-  { name: 'Tim Ahemt', sub: 'ONE FM Breakfast · Mon & Tue', img: '/on-air-host-1.jpg' },
-  { name: 'The Big G', sub: 'Craig Stott · Wednesday Breakfast', img: '/studio-control-room.jpg' },
-  { name: 'Ralph Whitehead', sub: 'Thursday Breakfast', img: '/assets/images/studio-presenter-mic.jpg' },
-  { name: 'Josh Revens', sub: 'Friday Breakfast · Live Music', img: '/assets/images/ob-van-branded.jpg' },
-  { name: 'Tim Symonds', sub: 'The Essential Hits', img: '/assets/images/heritage-truck-2005.jpg' },
-  { name: 'Di Hunter', sub: 'On Air Since the Early Days', img: '/assets/images/heritage-di-hunter-carols-2014.jpg' },
-]
-
 function ListenHero() {
-  const { playing, loading, toggle } = useLiveStream()
+  const { playing, loading, error, toggle } = useLiveStream()
   const meta = usePlayerMetadata()
+  const presenterImg = presenterPhotoPath(meta.presenter)
+
   return (
-    <section className="relative px-6 md:px-12 lg:px-20 pt-24 pb-16 min-h-[80vh] flex flex-col justify-center">
-      <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,160px)]">
-        <PosterReveal lines={[
-          <span key="a" className="poster-hover">Listen</span>,
-          <span key="b"><StrokeFill delay={0.9}>Live</StrokeFill><span style={{ color: RED }}>.</span></span>,
-        ]} />
+    <section className="relative px-5 sm:px-6 md:px-12 lg:px-20 pt-16 sm:pt-24 pb-16 min-h-[85vh] flex flex-col justify-center">
+      <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(52px,12vw,160px)]">
+        <span className="block">
+          <HeadlinePop>
+            <span className="poster-hover">Listen</span>
+          </HeadlinePop>
+        </span>
+        <span className="block">
+          <HeadlinePop delay={0.08}>
+            <StrokeFill delay={0.9}>Live</StrokeFill>
+            <span style={{ color: RED }}>.</span>
+          </HeadlinePop>
+        </span>
       </h1>
 
-      <div className="mt-10 flex items-center gap-6 flex-wrap">
+      <div className="mt-10 flex flex-col sm:flex-row items-center sm:items-start gap-7 sm:gap-8">
         <button
           type="button"
           onClick={() => void toggle()}
@@ -46,26 +49,53 @@ function ListenHero() {
           aria-pressed={playing}
           aria-label={playing ? 'Pause the live stream' : 'Play the live stream'}
           data-cursor-label={playing ? 'PAUSE' : 'PLAY'}
-          className="w-24 h-24 rounded-full flex items-center justify-center text-white bloom-red hover:scale-105 transition-transform disabled:opacity-60"
+          className="w-[7.5rem] h-[7.5rem] sm:w-32 sm:h-32 rounded-full flex items-center justify-center text-white bloom-red hover:scale-105 transition-transform disabled:opacity-60 shrink-0"
           style={{ background: RED }}
         >
-          {loading ? <Loader2 size={34} className="animate-spin" /> : playing ? <Pause size={34} /> : <Play size={36} className="translate-x-0.5" />}
-        </button>
-        <div>
-          <div className="text-[12px] font-bold tracking-[0.18em] uppercase" style={{ color: RED }}>
-            ● On Air Now
-          </div>
-          <div className="font-poster uppercase text-[28px] text-white leading-tight mt-1">{meta.program}</div>
-          <div className="text-[14px] text-white/50">
-            with {meta.presenter} · {meta.programTime}
-          </div>
-          {meta.nowPlaying && (
-            <div className="text-[13px] font-bold mt-1.5" style={{ color: LIME }}>
-              ♪ {meta.nowPlaying}{meta.artist ? ` — ${meta.artist}` : ''}
-            </div>
+          {loading ? (
+            <Loader2 size={40} className="animate-spin" />
+          ) : playing ? (
+            <Pause size={40} />
+          ) : (
+            <Play size={44} className="translate-x-1" />
           )}
+        </button>
+
+        <div className="flex items-center gap-4 sm:gap-5 w-full min-w-0">
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border border-white/15 shrink-0">
+            <MediaImage
+              src={presenterImg}
+              alt={meta.presenter ? `${meta.presenter} on air` : meta.program}
+              fallbackSrc={presenterPhotoFallback(meta.presenter)}
+              className="absolute inset-0 w-full h-full"
+              priority
+            />
+            {meta.isLive && (
+              <div className="absolute bottom-0 inset-x-0 h-1" style={{ background: RED }} />
+            )}
+          </div>
+          <div className="min-w-0">
+            <div className="text-[12px] font-bold tracking-[0.18em] uppercase" style={{ color: RED }}>
+              {meta.isLive ? '● On Air Now' : '● 98.5 FM'}
+            </div>
+            <div className="font-poster uppercase text-[26px] sm:text-[28px] text-white leading-tight mt-1">
+              {meta.program}
+            </div>
+            <div className="text-[14px] text-white/50">
+              with {meta.presenter} · {meta.programTime}
+            </div>
+            {meta.nowPlaying && (
+              <div className="text-[13px] font-bold mt-1.5 truncate" style={{ color: LIME }}>
+                ♪ {meta.nowPlaying}{meta.artist ? ` — ${meta.artist}` : ''}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {error && (
+        <p className="mt-4 text-[13px] text-white/70">{error}</p>
+      )}
 
       <div className="mt-8 text-[13px] tracking-[0.14em] uppercase text-white/40">
         Up next: {meta.upNext}
@@ -102,7 +132,7 @@ export default function Listen() {
     <Layout>
       <SEO
         title="Listen Live — ONE FM 98.5"
-        description="Stream ONE FM 98.5 live from Shepparton. Full program guide, this week's presenters, and the latest from the studio."
+        description="Stream ONE FM 98.5 live from Shepparton. Program guide and presenters live on the Programs and Broadcast pages."
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -114,13 +144,26 @@ export default function Listen() {
           delay={0.4}
         />
         <ListenHero />
-        <NameWall label="On Air This Week" rows={WEEK_WALL} />
+        <NameWall label="On Air This Week" rows={wallRows()} />
         <section className="px-6 md:px-12 lg:px-20 pb-6" id="guide">
-          <LabelReveal className="mb-8">Full Program Guide</LabelReveal>
-          <WeeklySchedule />
+          <LabelReveal className="mb-6">Program Guide</LabelReveal>
+          <p className="text-[15px] text-white/55 max-w-xl mb-6">
+            This page is the live stream. The weekly grid and show cards live on Programs; the hour grid is on Broadcast.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/programs" className="btn-primary text-sm" data-cursor-label="PROGRAMS">
+              Full program guide →
+            </Link>
+            <Link to="/broadcast" className="btn-secondary text-sm" data-cursor-label="BROADCAST">
+              Broadcast grid →
+            </Link>
+          </div>
         </section>
         <section className="px-6 md:px-12 lg:px-20 pb-6">
           <LatestInterviews />
+        </section>
+        <section className="px-6 md:px-12 lg:px-20 pb-6">
+          <RecentStationActivity />
         </section>
         <WaysToListen />
         <StatsStrip

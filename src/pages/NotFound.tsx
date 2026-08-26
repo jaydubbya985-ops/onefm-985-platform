@@ -221,6 +221,38 @@ export default function NotFound() {
           ← Return to broadcast
         </Link>
 
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '12px 20px',
+            marginTop: 28,
+          }}
+        >
+          {[
+            { to: '/listen', label: 'Listen live' },
+            { to: '/programs', label: 'Program guide' },
+            { to: '/coverage', label: 'Coverage map' },
+          ].map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              data-cursor-label={item.label.toUpperCase()}
+              style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.65rem',
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.55)',
+                textDecoration: 'none',
+              }}
+            >
+              {item.label} →
+            </Link>
+          ))}
+        </div>
+
         {/* Station ID */}
         <p
           style={{

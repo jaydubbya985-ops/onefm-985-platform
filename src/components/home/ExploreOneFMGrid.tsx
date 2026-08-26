@@ -2,42 +2,39 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
-import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
-import { WordReveal } from '@/components/WordReveal'
+import { HOST_PHOTOS, PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { TiltCard } from '@/components/TiltCard'
 
 const TILES = [
   {
     title: 'Listen Live',
     desc: 'Stream ONE FM now',
-    path: 'https://fm985.com.au/audio-player/',
-    external: true,
-    image: STATION_PHOTOS.commentaryBoxAction,
-    fallback: PHOTO_DEFAULTS.regional,
+    path: '/listen',
+    image: HOST_PHOTOS.studioControlRoom,
+    fallback: PHOTO_DEFAULTS.studio,
   },
   {
     title: 'Programs',
     desc: 'Full program guide',
     path: '/programs',
-    image: STATION_PHOTOS.studioPresenterMic,
-    fallback: PHOTO_DEFAULTS.regional,
+    image: STATION_PHOTOS.studioSbsDiversity,
+    fallback: PHOTO_DEFAULTS.studio,
   },
   {
     title: 'Local Sport',
     desc: 'GVL & community sport',
     path: '/football',
     image: STATION_PHOTOS.gvlNightPanorama,
-    fallback: PHOTO_DEFAULTS.regional,
+    fallback: PHOTO_DEFAULTS.football,
   },
   {
     title: 'Community News',
     desc: 'Latest from fm985.com.au',
     path: 'https://fm985.com.au',
     external: true,
-    // cultureFirstNationsDancer is only 196x257px (thumbnail-res) -- visibly
-    // pixelated at full grid-tile size. No higher-res original exists.
-    image: STATION_PHOTOS.cultureIndigenousElders,
-    fallback: PHOTO_DEFAULTS.regional,
+    image: STATION_PHOTOS.communityBookStall,
+    fallback: PHOTO_DEFAULTS.community,
   },
   {
     title: 'Coverage Map',
@@ -50,24 +47,22 @@ const TILES = [
     title: 'Our Story',
     desc: 'Heritage since 1989',
     path: '/heritage',
-    image: STATION_PHOTOS.studioExteriorRainbow,
-    fallback: PHOTO_DEFAULTS.regional,
+    image: '/assets/images/heritage-original-panel-1988.jpg',
+    fallback: STATION_PHOTOS.studioExteriorRainbow,
   },
   {
     title: 'Sponsor ONE FM',
     desc: 'Partner with the Valley',
     path: '/sponsorship',
-    image: STATION_PHOTOS.gvlPlayerHighFive,
+    image: HOST_PHOTOS.regionalLandscape,
     fallback: PHOTO_DEFAULTS.regional,
   },
   {
     title: 'Contact',
     desc: 'Get involved',
     path: '/contact',
-    // cultureSiloArtFaces is only 287x175px (thumbnail-res). No higher-res
-    // original exists.
-    image: STATION_PHOTOS.communityBookStall,
-    fallback: PHOTO_DEFAULTS.regional,
+    image: STATION_PHOTOS.studioPresenterMic,
+    fallback: PHOTO_DEFAULTS.studio,
   },
 ] as const
 
@@ -77,7 +72,9 @@ export function ExploreOneFMGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10">
           <p className="font-label text-one-electric text-[10px] tracking-widest uppercase mb-2">Explore ONE FM</p>
-          <WordReveal text="Everything the station offers" className="font-h2 text-one-white block" as="h2" stagger={0.022} variant="char" />
+          <h2 className="font-h2 text-one-white">
+            <HeadlinePop>Everything the station offers</HeadlinePop>
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -3,6 +3,8 @@
  * Master research integrated 2026-07-06. No fabricated stats or awards.
  */
 
+import { MULTICULTURAL_SHOW_COUNT, MULTICULTURAL_SHOWS } from '@/data/programGuide'
+
 export type HistorySource =
   | 'ACMA community licence register'
   | 'ACMA stations book'
@@ -163,8 +165,8 @@ export const INSTITUTION_FACTS = [
   },
   {
     tag: 'Multicultural',
-    title: 'Eight languages on the weekend dial',
-    body: 'Program pages and AGM reports document Africonnect, Arabic, Filipino, Mandarin, Persian, Punjabi, Samoan, Swahili/Congolese strands and ONE Youth — structural to the station, not incidental.',
+    title: `${MULTICULTURAL_SHOW_COUNT} shows on the current weekly guide`,
+    body: `Listed now on fm985.com.au/guide: ${MULTICULTURAL_SHOWS.map((s) => s.name).join(', ')}. Older AGM reports named additional language strands — those names are not counted unless they are on the current guide.`,
   },
   {
     tag: 'Archive',

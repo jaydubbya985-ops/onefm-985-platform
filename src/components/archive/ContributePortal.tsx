@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { LabelReveal } from '@/components/onair/kit'
+import { LabelReveal, HeadlinePop } from '@/components/onair/kit'
 
 const RED = '#E51636'
 
@@ -17,7 +17,7 @@ export function ContributePortal() {
     <section id="contribute" className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
       <LabelReveal className="mb-3">Growing the Archive</LabelReveal>
       <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,44px)] text-white leading-[0.95] mb-4">
-        Were you part of ONE FM history?
+        <HeadlinePop>Were you part of ONE FM history?</HeadlinePop>
       </h2>
       <p className="text-[17px] text-white/55 max-w-[600px] mb-8 leading-relaxed">
         The Living Archive is an active preservation project — not a finished monument. Photos,

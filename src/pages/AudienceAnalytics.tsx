@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Download,
@@ -16,8 +16,6 @@ import {
   FileText,
 } from 'lucide-react'
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   XAxis,
@@ -30,13 +28,14 @@ import {
   Cell,
 } from 'recharts'
 import { Layout } from '@/components/Layout'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { Marquee } from '@/components/Marquee'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { SEO } from '@/components/SEO'
 import { stationStats } from '@/data/pricing'
+import { MULTICULTURAL_SHOW_COUNT } from '@/data/programGuide'
 
 /* ─────────── easing ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -101,7 +100,6 @@ const platformCards = [
     status: 'Live',
     statusColor: '#B6FF00',
     accent: '#D4963A',
-    trend: [34000, 35200, 35800, 36200, 37100, 37800, 37500, 38200, 38500, 38900, 39100, 39375],
   },
   {
     icon: Headphones,
@@ -112,7 +110,6 @@ const platformCards = [
     status: 'Live',
     statusColor: '#B6FF00',
     accent: '#B6FF00',
-    trend: [450, 480, 510, 490, 520, 555, 540, 580, 610, 590, 625, 650],
   },
   {
     icon: Share2,
@@ -123,7 +120,6 @@ const platformCards = [
     status: 'Active',
     statusColor: '#F0C75E',
     accent: '#9B5DE5',
-    trend: [1100, 1150, 1200, 1180, 1220, 1250, 1230, 1270, 1300, 1280, 1320, 1350],
   },
   {
     icon: Mic,
@@ -134,107 +130,14 @@ const platformCards = [
     status: 'Active',
     statusColor: '#B6FF00',
     accent: '#FF6B6B',
-    trend: [85, 90, 95, 88, 102, 98, 110, 105, 112, 118, 115, 122],
   },
 ]
 
 // Notable audience events — sourced from station records and programme notes
-const anomalyData: { time: string; change: string; reason: string; severity: string }[] = [
-  { time: 'GVL Season Opener · Mar', change: '+18%', reason: 'Sat 1pm live match commentary — season kick-off drew strong breakfast lead-in audience', severity: 'growth' },
-  { time: 'Easter Long Weekend · Apr', change: '+12%', reason: 'Country shows and community announcements during Easter public holidays', severity: 'growth' },
-  { time: 'Australia Day · Jan', change: '-9%', reason: 'Summer holiday listener dip — consistent pattern across regional community stations', severity: 'drop' },
-  { time: 'GVL Grand Final · Sep', change: '+31%', reason: 'Peak match-day audience of the year — live commentary and post-match coverage', severity: 'growth' },
-]
-
-// 7-day estimated listener distribution (relative to weekly total of 39,375)
-// Sat peaks on match day; Mon & Fri strong with breakfast drive programming
-const weeklyListenerData = [
-  { day: 'Mon', listeners: 6200 },
-  { day: 'Tue', listeners: 5800 },
-  { day: 'Wed', listeners: 5600 },
-  { day: 'Thu', listeners: 5700 },
-  { day: 'Fri', listeners: 6100 },
-  { day: 'Sat', listeners: 6900 },
-  { day: 'Sun', listeners: 3075 },
-]
-
-// Estimated monthly listener projections — ABS 2021 regional model
-// GVL footy season (Mar–Sep) drives higher engagement; summer holiday dip Jan–Feb.
-const monthlyListenerData = [
-  { month: 'Jan', listeners: 33500 },
-  { month: 'Feb', listeners: 35800 },
-  { month: 'Mar', listeners: 37200 },
-  { month: 'Apr', listeners: 38900 },
-  { month: 'May', listeners: 40200 },
-  { month: 'Jun', listeners: 41800 },
-  { month: 'Jul', listeners: 43100 },
-  { month: 'Aug', listeners: 44500 },
-  { month: 'Sep', listeners: 42900 },
-  { month: 'Oct', listeners: 40100 },
-  { month: 'Nov', listeners: 38200 },
-  { month: 'Dec', listeners: 35100 },
-]
-
-// Audience segments based on typical community radio programming blocks (indicative only)
-const smartSegments = [
-  { name: 'Breakfast (6–9am)', pct: 35, color: '#D4963A' },
-  { name: 'Mornings (9am–12pm)', pct: 28, color: '#B6FF00' },
-  { name: 'Afternoons (12–4pm)', pct: 22, color: '#9B5DE5' },
-  { name: 'Evenings (6pm+)', pct: 15, color: '#F0C75E' },
-]
+// No verified match-day lift percentages — do not invent them
+const anomalyData: { time: string; change: string; reason: string; severity: string }[] = []
 
 /* ─────────── helpers ─────────── */
-
-/* ─────────── heatmap ─────────── */
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-const HOURS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}`)
-
-// Relative activity index (0–100) based on typical community radio listening patterns.
-// This is indicative only — not derived from actual ONE FM streaming data.
-// Replace with real Radio.co analytics data when available.
-function generateHeatmapData() {
-  const data: number[][] = []
-  for (let d = 0; d < 7; d++) {
-    const row: number[] = []
-    for (let h = 0; h < 24; h++) {
-      let base = 0
-      if (d < 5) {
-        if (h >= 6 && h <= 9) base = 80 + Math.random() * 20
-        else if (h >= 16 && h <= 19) base = 85 + Math.random() * 15
-        else if (h >= 12 && h <= 14) base = 50 + Math.random() * 20
-        else if (h >= 20 && h <= 23) base = 40 + Math.random() * 25
-        else base = 10 + Math.random() * 15
-      } else {
-        if (h >= 9 && h <= 12) base = 60 + Math.random() * 25
-        else if (h >= 18 && h <= 22) base = 70 + Math.random() * 20
-        else base = 15 + Math.random() * 20
-      }
-      row.push(Math.min(100, Math.round(base)))
-    }
-    data.push(row)
-  }
-  return data
-}
-
-function HeatmapCell({ value, isCurrent }: { value: number; isCurrent: boolean }) {
-  let bg = 'transparent'
-  if (value > 85) bg = 'rgba(230,57,70,0.8)'
-  else if (value > 60) bg = 'rgba(212,150,58,0.7)'
-  else if (value > 30) bg = 'rgba(212,150,58,0.3)'
-  else if (value > 10) bg = 'rgba(212,150,58,0.1)'
-
-  return (
-    <motion.div
-      className={`relative w-full aspect-square rounded-[3px] cursor-pointer transition-all duration-200 hover:scale-[1.3] hover:z-10 ${isCurrent ? 'ring-1 ring-one-gold' : ''}`}
-      style={{ backgroundColor: bg }}
-      initial={{ opacity: 0, scale: 0 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, ease: easeOutExpo }}
-      title={`${value}% capacity`}
-    />
-  )
-}
 
 /* ═══════════════════════════════════
    AUDIENCE ANALYTICS PAGE
@@ -242,12 +145,7 @@ function HeatmapCell({ value, isCurrent }: { value: number; isCurrent: boolean }
 export default function AudienceAnalytics() {
   const [dateRange, setDateRange] = useState('7 Days')
   const [chartTab, setChartTab] = useState('Listeners')
-  const [weekdayMode, setWeekdayMode] = useState(true)
   const [dismissInsight, setDismissInsight] = useState(false)
-  const [selectedSegment, setSelectedSegment] = useState<string | null>(null)
-
-  const heatmapData = useMemo(() => generateHeatmapData(), [weekdayMode])
-  const currentHour = new Date().getHours()
 
   return (
     <Layout>
@@ -276,7 +174,7 @@ export default function AudienceAnalytics() {
                 <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-data-teal opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-data-teal" />
               </span>
-              <span className="font-label text-data-teal">Live — Updated 2s ago</span>
+              <span className="font-label text-data-teal">Sourced model — not live stream counts</span>
               <div className="flex items-end gap-[2px]" aria-hidden style={{ height: 12 }}>
                 {[3, 6, 9, 6, 3].map((h, i) => (
                   <div
@@ -320,9 +218,11 @@ export default function AudienceAnalytics() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
           >
-            <WordReveal text="AUDIENCE INTELLIGENCE" className="font-h1 text-one-white mb-2 block" as="h1" stagger={0.04} />
+            <h1 className="font-h1 text-one-white mb-2">
+              <HeadlinePop>AUDIENCE INTELLIGENCE</HeadlinePop>
+            </h1>
             <p className="font-body text-one-white">
-              Real-time insights into who's listening, when, and how
+              Modelled from ABS 2021 town populations — not live listener telemetry
             </p>
           </motion.div>
 
@@ -337,7 +237,7 @@ export default function AudienceAnalytics() {
             {[
               { label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners, color: '#B6FF00', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
               { label: 'Towns in Broadcast Area', value: stationStats.totalTowns, color: '#D4963A', suffix: '', sparkline: false, extra: `~${stationStats.broadcastRadiusKm}km radius from Shepparton` },
-              { label: 'Broadcast Area Population', value: stationStats.broadcastPopulation, color: '#F0C75E', suffix: '', sparkline: false, extra: `Source: ABS 2021 · ${stationStats.totalTowns} towns` },
+              { label: 'Broadcast Area Population', value: stationStats.broadcastPopulation, color: '#F0C75E', suffix: '', sparkline: false, extra: `Sum of ${stationStats.totalTowns} towns · 2026 est. (townData)` },
               { label: 'Years Broadcasting', value: stationStats.yearsBroadcasting, color: '#9B5DE5', suffix: ' yrs', sparkline: false, extra: 'Licensed 1989 · callsign 3ONE' },
             ].map((stat) => (
               <TiltCard key={stat.label} maxTilt={5} className="flex flex-col min-h-[140px]">
@@ -376,13 +276,13 @@ export default function AudienceAnalytics() {
         <Marquee
           speed={30}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">REAL-TIME AUDIENCE INTELLIGENCE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">SOURCED AUDIENCE MODEL · ABS 2021</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DEMOGRAPHICS · REACH · PERFORMANCE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 POPULATION · LICENSED 1989</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} BROADCAST AREA POPULATION</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DATA UPDATED · EVERY 2 SECONDS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">WEEKLY LISTENERS · ABS 2021 MODEL</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} 25-TOWN SUM · 2026 EST.</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE STREAM ANALYTICS · DATA PENDING</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.yearsBroadcasting} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
           ]}
         />
@@ -399,69 +299,26 @@ export default function AudienceAnalytics() {
             variants={fadeUp}
           >
             <div>
-              <WordReveal text="LISTENERSHIP HEATMAP" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-              <p className="font-body-small text-muted mt-1">When your audience tunes in</p>
-            </div>
-            <div className="flex bg-one-navy/50 rounded-full p-1 border border-one-border">
-              <button
-                onClick={() => setWeekdayMode(true)}
-                data-cursor-label="WEEKDAY"
-                className={`px-4 py-1.5 rounded-full font-label text-xs transition-all ${weekdayMode ? 'text-one-navy bg-one-gold' : 'text-one-white/60 hover:text-one-white'}`}
-              >
-                Weekday
-              </button>
-              <button
-                onClick={() => setWeekdayMode(false)}
-                data-cursor-label="WEEKEND"
-                className={`px-4 py-1.5 rounded-full font-label text-xs transition-all ${!weekdayMode ? 'text-one-navy bg-one-gold' : 'text-one-white/60 hover:text-one-white'}`}
-              >
-                Weekend
-              </button>
+              <h2 className="font-h2 text-one-white">
+                <HeadlinePop>LISTENERSHIP HEATMAP</HeadlinePop>
+              </h2>
+              <p className="font-body-small text-muted mt-1">Hour-by-hour stream data pending Radio.co</p>
             </div>
           </motion.div>
 
           <TiltCard maxTilt={3}>
           <motion.div
-            className="glass-card p-4 sm:p-6 overflow-x-auto"
+            className="glass-card p-8 sm:p-10"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            {/* Hours header */}
-            <div className="grid grid-cols-[50px_repeat(24,1fr)] gap-[3px] mb-[3px]">
-              <div />
-              {HOURS.map((h) => (
-                <div key={h} className="text-center font-micro text-muted text-[9px] hidden sm:block">
-                  {h}
-                </div>
-              ))}
-            </div>
-            {/* Heatmap rows */}
-            {DAYS.map((day, dIdx) => (
-              <div key={day} className="grid grid-cols-[50px_repeat(24,1fr)] gap-[3px] mb-[3px]">
-                <div className="flex items-center font-label text-[10px] text-one-white">{day}</div>
-                {heatmapData[dIdx].map((val, hIdx) => (
-                  <HeatmapCell
-                    key={hIdx}
-                    value={val}
-                    isCurrent={hIdx === currentHour && new Date().getDay() === (dIdx + 1) % 7}
-                  />
-                ))}
-              </div>
-            ))}
-            {/* Legend */}
-            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-one-border">
-              <span className="font-micro text-muted">Low</span>
-              <div className="flex gap-[3px]">
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.05)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.15)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.35)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.6)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(230,57,70,0.8)' }} />
-              </div>
-              <span className="font-micro text-muted">Peak</span>
-            </div>
+            <p className="font-h4 text-one-white mb-2">Data pending</p>
+            <p className="font-body-small text-muted max-w-xl">
+              Hour-of-day listenership is not measured yet. This page does not invent a heatmap.
+              Connect Radio.co analytics to show real peaks.
+            </p>
           </motion.div>
           </TiltCard>
 
@@ -501,7 +358,9 @@ export default function AudienceAnalytics() {
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6, ease: easeOutExpo }}
             >
-              <WordReveal text="AUDIENCE TRENDS" className="font-h2 text-one-white mb-6 block" as="h2" stagger={0.05} />
+              <h2 className="font-h2 text-one-white mb-6">
+                <HeadlinePop>AUDIENCE TRENDS</HeadlinePop>
+              </h2>
               {/* Chart tabs */}
               <div className="flex gap-2 mb-6 overflow-x-auto">
                 {['Listeners', 'Sessions', 'Engagement', 'Demographics'].map((tab) => (
@@ -525,25 +384,15 @@ export default function AudienceAnalytics() {
                 <div aria-hidden className="explore-tile-scan" />
                 <div className="w-full h-[360px]">
                   {chartTab === 'Listeners' && (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={monthlyListenerData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="listenerGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#D4963A" stopOpacity={0.28} />
-                            <stop offset="95%" stopColor="#D4963A" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey="month" tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => Math.round(v / 1000) + 'k'} />
-                        <Tooltip
-                          contentStyle={{ background: 'rgba(15,29,48,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                          itemStyle={{ color: '#F4F1EA' }}
-                          formatter={(value: number) => [value.toLocaleString(), 'Est. listeners']}
-                        />
-                        <Area type="monotone" dataKey="listeners" stroke="#D4963A" strokeWidth={2} fill="url(#listenerGrad)" dot={false} activeDot={{ r: 4, fill: '#D4963A' }} />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center px-8">
+                      <p className="font-stat text-gold-gradient">
+                        {stationStats.weeklyListeners.toLocaleString()}
+                      </p>
+                      <p className="font-label text-xs text-muted uppercase tracking-widest">Est. weekly listeners</p>
+                      <p className="font-body-small text-muted max-w-md">
+                        Source: ABS 2021 via townData.ts. Monthly and daily splits are not independently measured — data pending Radio.co.
+                      </p>
+                    </div>
                   )}
                   {chartTab === 'Demographics' && (
                     <ResponsiveContainer width="100%" height="100%">
@@ -615,8 +464,8 @@ export default function AudienceAnalytics() {
                 },
                 {
                   title: 'Community',
-                  text: '25+ multicultural programs weekly',
-                  sub: 'Swahili, Samoan, Filipino, Mandarin, Punjabi & more',
+                  text: `${MULTICULTURAL_SHOW_COUNT} multicultural shows on the weekly guide`,
+                  sub: 'Names and hosts from fm985.com.au/guide — not an invented language count',
                   border: '#D4963A',
                   icon: Sparkles,
                 },
@@ -662,7 +511,9 @@ export default function AudienceAnalytics() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="DEMOGRAPHIC DEEP DIVE" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white">
+              <HeadlinePop>DEMOGRAPHIC DEEP DIVE</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted mt-1">Who makes up your audience</p>
           </motion.div>
 
@@ -708,7 +559,7 @@ export default function AudienceAnalytics() {
               </div>
               <div className="mt-3 flex items-center gap-2">
                 <TrendingUp size={12} className="text-data-teal" />
-                <span className="font-label text-xs text-data-teal">25-34 is your fastest-growing segment</span>
+                <span className="font-label text-xs text-muted">Age bands are Greater Shepparton LGA (ABS 2021) — not a station survey</span>
               </div>
             </motion.div>
             </TiltCard>
@@ -801,7 +652,7 @@ export default function AudienceAnalytics() {
               </div>
               <div className="mt-3 flex items-center gap-2">
                 <TrendingUp size={12} className="text-data-teal" />
-                <span className="font-label text-xs text-data-teal">Regional coverage: 78% within 50km</span>
+                <span className="font-label text-xs text-muted">Town shares from townData.ts listener estimates (ABS 2021)</span>
               </div>
             </motion.div>
             </TiltCard>
@@ -819,7 +670,9 @@ export default function AudienceAnalytics() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="PLATFORM PERFORMANCE" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white">
+              <HeadlinePop>PLATFORM PERFORMANCE</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted mt-1">Where your audience connects</p>
           </motion.div>
 
@@ -843,19 +696,7 @@ export default function AudienceAnalytics() {
                   <Icon size={32} style={{ color: card.accent }} className="mb-3" />
                   <div className="font-stat text-gold-gradient mb-0.5">{card.stat}</div>
                   <div className="font-label text-muted mb-3">{card.label}</div>
-                  <div className="w-full h-[40px] mb-3">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={card.trend.map((v, i) => ({ i, v }))}>
-                        <defs>
-                          <linearGradient id={`ptrend-${i}`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor={card.accent} stopOpacity={0.25} />
-                            <stop offset="100%" stopColor={card.accent} stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <Area type="monotone" dataKey="v" stroke={card.accent} fill={`url(#ptrend-${i})`} strokeWidth={2} dot={false} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <p className="font-body-small text-muted mb-3">Follower and stream counts pending a verified source.</p>
                   <div className="flex items-center justify-between">
                     <span className="font-label text-xs text-muted">{card.share}</span>
                     <span className="font-label text-xs flex items-center gap-1" style={{ color: card.statusColor }}>
@@ -871,7 +712,7 @@ export default function AudienceAnalytics() {
       </section>
 
       {/* ═══════ AI PREDICTIONS ═══════ */}
-      <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="AI PREDICTIONS">
+      <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="INSIGHTS">
         <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
           <motion.div
             className="flex items-center gap-3 mb-10"
@@ -881,7 +722,9 @@ export default function AudienceAnalytics() {
             variants={fadeUp}
           >
             <div>
-              <WordReveal text="AUDIENCE INSIGHTS" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+              <h2 className="font-h2 text-one-white">
+                <HeadlinePop>AUDIENCE INSIGHTS</HeadlinePop>
+              </h2>
               <p className="font-body-small text-muted mt-1">Sourced regional data · ABS 2021 model · Station programme records</p>
             </div>
             <span className="px-3 py-1 rounded-full bg-one-gold/20 text-one-gold font-label text-[10px] shrink-0">SOURCED</span>
@@ -899,20 +742,10 @@ export default function AudienceAnalytics() {
             >
               <div aria-hidden className="explore-tile-scan" />
               <h4 className="font-h4 text-one-white mb-4">Weekly Listener Distribution</h4>
-              <div className="w-full h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={weeklyListenerData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                    <XAxis dataKey="day" tick={{ fill: '#6B6B75', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: '#6B6B75', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => Math.round(v / 1000) + 'k'} />
-                    <Tooltip contentStyle={{ background: 'rgba(15,29,48,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} itemStyle={{ color: '#F4F1EA' }} formatter={(value: number) => [value.toLocaleString(), 'Est. listeners']} />
-                    <Bar dataKey="listeners" fill="#D4963A" radius={[3, 3, 0, 0]} opacity={0.85} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 p-3 rounded-lg bg-one-navy/50">
-                <span className="font-label text-xs text-one-gold">Sat peak driven by GVL live coverage · ABS 2021 regional model</span>
-              </div>
+              <p className="font-body-small text-muted">
+                Day-of-week splits are not independently measured. Est. weekly total remains{' '}
+                {stationStats.weeklyListeners.toLocaleString()} (ABS 2021 via townData). Data pending Radio.co.
+              </p>
             </motion.div>
             </TiltCard>
 
@@ -972,49 +805,10 @@ export default function AudienceAnalytics() {
             transition={{ duration: 0.6, delay: 0.3, ease: easeOutExpo }}
           >
             <div aria-hidden className="explore-tile-scan" />
-            <h4 className="font-h4 text-one-white mb-4">Programming Blocks (Indicative)</h4>
-            <p className="font-body-small text-muted mb-4">
-              Typical community radio listening distribution by daypart — not live measurement data
+            <h4 className="font-h4 text-one-white mb-4">Programming Blocks</h4>
+            <p className="font-body-small text-muted">
+              Daypart share percentages are not from a station survey — data pending. Breakfast is ONE FM Breakfast, Monday to Friday 6–9am, with rotating hosts from the program guide.
             </p>
-            <div className="flex flex-wrap gap-3">
-              {smartSegments.map((seg, i) => (
-                <motion.button
-                  key={seg.name}
-                  className={`px-4 py-2.5 rounded-full font-label text-xs transition-all ${
-                    selectedSegment === seg.name
-                      ? 'ring-2 ring-offset-1 ring-offset-slate'
-                      : 'hover:scale-105'
-                  }`}
-                  style={{
-                    backgroundColor: `${seg.color}20`,
-                    color: seg.color,
-                  }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: i * 0.08, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] }}
-                  onClick={() => setSelectedSegment(selectedSegment === seg.name ? null : seg.name)}
-                >
-                  {seg.name} ({seg.pct}%)
-                </motion.button>
-              ))}
-            </div>
-            <AnimatePresence>
-              {selectedSegment && (
-                <motion.div
-                  className="mt-4 p-4 rounded-lg bg-one-navy/50"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="font-body-small text-one-white">
-                    <span className="text-one-gold font-medium">{selectedSegment}:</span>{' '}
-                    Detailed segment profile with listening habits, preferred content types, and optimal targeting windows.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
           </TiltCard>
         </div>
@@ -1029,7 +823,9 @@ export default function AudienceAnalytics() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: easeOutExpo }}
           >
-            <WordReveal text="USE YOUR DATA" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>USE YOUR DATA</HeadlinePop>
+            </h2>
             <p className="font-body text-one-white mb-8">
               Export insights for reports, presentations, or share with your team.
             </p>

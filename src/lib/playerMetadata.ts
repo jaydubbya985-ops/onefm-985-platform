@@ -117,6 +117,8 @@ export async function fetchStreamMetadata(_streamUrl?: string): Promise<{
     const data = (await res.json()) as {
       status?: string
       current_track?: { title?: string }
+      // Radio.co may also send collaboration / current_listeners.
+      // Never map those — live listener counts are not an approved public metric.
     }
 
     if (data.status !== 'online') return null

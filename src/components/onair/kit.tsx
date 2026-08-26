@@ -7,14 +7,14 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { LabelReveal } from '@/components/motion/PosterReveal'
+import { HeadlinePop, LabelReveal } from '@/components/motion/PosterReveal'
 
 const RED = '#E51636'
 const INK = '#0A0A0A'
 const BAR = '#161616'
 const EXPO = [0.16, 1, 0.3, 1] as const
 
-export { LabelReveal }
+export { HeadlinePop, LabelReveal }
 export { PosterReveal, StrokeFill } from '@/components/motion/PosterReveal'
 
 /** Red marquee band. Pass real facts / live metadata as items. */
@@ -42,6 +42,7 @@ export interface WallRow {
   name: string
   sub: string
   img: string
+  alt?: string
 }
 
 /** Alternating giant-name rows with photo bars. Real things only. */
@@ -53,23 +54,27 @@ export function NameWall({ label, rows }: { label: string; rows: WallRow[] }) {
         {rows.map((p, i) => (
           <motion.div
             key={p.name}
-            initial={{ opacity: 0, x: i % 2 === 1 ? 48 : -48 }}
+            initial={{ opacity: 0, x: i % 2 === 1 ? 56 : -56 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, ease: EXPO }}
+            transition={{ duration: 0.7, ease: EXPO }}
             className={`flex items-stretch gap-5 mb-3.5 ${i % 2 === 1 ? 'flex-row-reverse' : ''}`}
           >
             <div className="font-poster uppercase leading-none whitespace-nowrap text-white text-[clamp(40px,7vw,104px)] poster-hover">
-              {p.name}
+              <HeadlinePop>{p.name}</HeadlinePop>
               <span className="block font-body normal-case text-[13px] tracking-[0.14em] text-white/40 mt-1.5">
                 {p.sub}
               </span>
             </div>
-            <div
-              className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
+            <motion.div
+              className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0"
               style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
               role="img"
-              aria-label={`${p.name} — ${p.sub}`}
+              aria-label={p.alt ?? `${p.name} — ${p.sub}`}
+              initial={{ scale: 1.08, opacity: 0.55 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.85, ease: EXPO }}
             />
           </motion.div>
         ))}

@@ -55,13 +55,17 @@ export const donationTiers = [
 // Key stats
 export const stationStats = {
   weeklyListeners: 39375,
-  broadcastPopulation: 185791,
+  // Public figure = sum of the 25 towns in townData (verified 189680).
+  // oneFmScrapedData area_population_2026 was 185791 — do not show both.
+  broadcastPopulation: 189680,
   totalTowns: 25,
   broadcastRadiusKm: 100,
-  socialFollowers: 4000,
-  socialTarget: 12500,
-  podcastDownloads: 500,
-  podcastTarget: 10000,
-  nfpsSupported: 100,
+  // Unverified — do not render on public pages until a sourced count exists
+  socialFollowers: 0,
+  socialTarget: 0,
+  podcastDownloads: 0,
+  podcastTarget: 0,
+  // CSA “100+” is Data pending — do not show as a station statistic
+  nfpsSupported: 0,
   yearsBroadcasting: 37, // since 1989
 };

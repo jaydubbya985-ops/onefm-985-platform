@@ -18,12 +18,13 @@ import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
 import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
 import { MediaImage } from '@/components/MediaImage'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
+import { GVL_FINALS_2026 } from '@/data/gvlSeason'
 
 /* ─── easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -154,7 +155,7 @@ const reachFacts = [
   { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString() },
   { label: 'Towns in broadcast area', value: String(stationStats.totalTowns) },
   { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km` },
-  { label: 'Area population (2026 est.)', value: stationStats.broadcastPopulation.toLocaleString() },
+  { label: 'Area population (25-town sum, 2026 est.)', value: stationStats.broadcastPopulation.toLocaleString() },
 ]
 
 const townData = [
@@ -168,9 +169,9 @@ const townData = [
 /* ─── Community voice ─── */
 const communityVoice = {
   quote:
-    "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that.",
-  name: 'Rochester Community Member',
-  role: '2022 Goulburn Valley Floods',
+    'ONE FM calls GVL football and netball — Saturday Sport, GVL Match of the Day, and The Final Siren scoreboard. First 2026 finals weekend: 29–30 August. Named listener quotes stay off this page until the station supplies them.',
+  name: 'Goulburn Valley Community Radio Inc.',
+  role: 'Source: fm985.com.au/guide/ · fm985.com.au/sport/',
 }
 
 /* ─── Enquiry Form Data (from pricing.ts) ─── */
@@ -202,7 +203,9 @@ function GVLGalleryStrip() {
         >
           <div>
             <p className="font-label text-one-gold text-[10px] tracking-widest uppercase mb-2">Matchday · In Frame</p>
-            <WordReveal text="The Game. The Moment." className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white">
+              <HeadlinePop>The Game. The Moment.</HeadlinePop>
+            </h2>
           </div>
           <span className="hidden sm:block font-label text-one-muted text-[10px] tracking-widest uppercase">GVL Coverage</span>
         </motion.div>
@@ -339,8 +342,12 @@ export default function Football() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Football" as="span" className="block text-one-white" delay={0.15} stagger={0.1} />
-            <WordReveal text="Sponsorship." as="span" className="block text-one-gold" delay={0.4} stagger={0.08} />
+            <span className="block text-one-white">
+              <HeadlinePop>Football</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>Sponsorship.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -413,6 +420,42 @@ export default function Football() {
         />
       </div>
 
+      <section
+        className="bg-[#101010] border-b border-one-gold/20 px-4 sm:px-6 py-6"
+        data-cursor-label="GVL FINALS"
+      >
+        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p className="font-label text-[10px] tracking-[0.22em] text-one-gold uppercase mb-1">
+              2026 finals window
+            </p>
+            <p className="font-h4 text-one-white">
+              Home-and-away closed {GVL_FINALS_2026.homeAndAwayClosed}. First finals weekend {GVL_FINALS_2026.firstFinalsWeekend}.
+            </p>
+            <p className="font-body-small text-muted mt-1">
+              Which clubs play is not listed here — follow the GVL draw. Source:{' '}
+              <a
+                href={GVL_FINALS_2026.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-one-gold hover:text-one-white underline"
+              >
+                {GVL_FINALS_2026.sourceLabel}
+              </a>
+            </p>
+          </div>
+          <a
+            href={GVL_FINALS_2026.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor-label="SPORT"
+            className="btn-secondary text-xs shrink-0"
+          >
+            fm985.com.au/sport
+          </a>
+        </div>
+      </section>
+
       {/* ─── GVL Sports Photo Strip ─── */}
       <GVLGalleryStrip />
 
@@ -426,7 +469,9 @@ export default function Football() {
               <Shield size={18} className="text-one-electric" />
               <span className="font-label text-one-electric">9 SPONSORSHIP LEVELS</span>
             </div>
-            <WordReveal text="CHOOSE YOUR IMPACT" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Choose your impact</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               From community supporters to naming rights partners — every dollar goes toward
               supporting local football and getting your brand heard.
@@ -520,7 +565,9 @@ export default function Football() {
               <BarChart3 size={18} className="text-data-teal" />
               <span className="font-label text-data-teal">WHY RADIO WINS</span>
             </div>
-            <WordReveal text="BETTER VALUE THAN THE ALTERNATIVES" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.04} />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Better value than the alternatives</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               See how ONE FM football sponsorship stacks up against other local advertising options.
             </p>
@@ -597,9 +644,11 @@ export default function Football() {
               <Users size={18} className="text-one-electric" />
               <span className="font-label text-one-electric">WHO IS LISTENING</span>
             </div>
-            <WordReveal text="YOUR AUDIENCE, YOUR COMMUNITY" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Your audience, your community</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a projected population of {stationStats.broadcastPopulation.toLocaleString()}.
+              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a combined 2026 est. population of {stationStats.broadcastPopulation.toLocaleString()}.
             </p>
           </ScrollReveal>
 
@@ -703,8 +752,8 @@ export default function Football() {
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-2 gap-3">
             {[
-              { src: STATION_PHOTOS.gvlGoalCelebration,     caption: 'GVL — where footy means everything' },
-              { src: STATION_PHOTOS.gvlTownersCelebration,  caption: 'ONE FM celebrates every premiership moment' },
+              { src: STATION_PHOTOS.gvlGoalCelebration,     caption: 'GVL — local footy on 98.5' },
+              { src: STATION_PHOTOS.gvlTownersCelebration,  caption: 'Premiership archive — station photo' },
             ].map((photo, i) => (
               <motion.div
                 key={photo.caption}
@@ -736,9 +785,9 @@ export default function Football() {
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-3 gap-3">
             {[
-              { src: STATION_PHOTOS.commentaryBoxView,    caption: 'Ready for kick-off — the broadcaster\'s view' },
-              { src: STATION_PHOTOS.obSetupFull,          caption: 'ONE FM 98.5 on location — every match day' },
-              { src: STATION_PHOTOS.commentaryTeamSelfie, caption: 'The broadcast team — live from the box' },
+              { src: STATION_PHOTOS.commentaryBoxView,    caption: 'Commentary box — the caller\'s view' },
+              { src: STATION_PHOTOS.obSetupFull,          caption: 'ONE FM 98.5 on location' },
+              { src: STATION_PHOTOS.commentaryTeamSelfie, caption: 'Broadcast team in the box' },
             ].map((photo, i) => (
               <motion.div
                 key={photo.caption}
@@ -771,19 +820,21 @@ export default function Football() {
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Star size={18} className="text-one-electric" />
-              <span className="font-label text-one-electric">LOCAL PROOF</span>
+              <span className="font-label text-one-electric">GVL ON AIR</span>
             </div>
-            <WordReveal text="COMMUNITY VOICE" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>How we cover the league</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted">
-              Why the Goulburn Valley trusts ONE FM.
+              Sourced from the program guide and sport page — not invented testimonials.
             </p>
           </ScrollReveal>
 
           <div className="max-w-3xl mx-auto">
             <TiltCard maxTilt={3}>
             <div className="glass-card p-8 text-center">
-              <p className="font-body text-one-white italic mb-6 text-lg leading-relaxed">
-                "{communityVoice.quote}"
+              <p className="font-body text-one-white mb-6 text-lg leading-relaxed">
+                {communityVoice.quote}
               </p>
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-one-white/10 flex items-center justify-center">
@@ -813,7 +864,9 @@ export default function Football() {
               <Send size={18} className="text-data-teal" />
               <span className="font-label text-data-teal">GET STARTED</span>
             </div>
-            <WordReveal text="ENQUIRE NOW" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Enquire now</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted">
               Tell us about your business and we'll recommend the perfect sponsorship tier.
             </p>
@@ -961,7 +1014,9 @@ export default function Football() {
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles size={20} className="text-one-gold" />
             </div>
-            <WordReveal text="READY TO SPONSOR LOCAL FOOTBALL?" className="font-h2 text-one-white mb-4 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-4">
+              <HeadlinePop>Ready to sponsor local football?</HeadlinePop>
+            </h2>
             <p className="font-body text-one-white mb-8">
               Join the local businesses keeping community football alive. Every sponsorship
               dollar supports grassroots sport and puts your brand in front of thousands.

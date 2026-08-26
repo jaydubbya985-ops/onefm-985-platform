@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
-import { ExternalLink, Loader2, Pause, Play, Radio, Signal } from 'lucide-react'
+import { ExternalLink, Loader2, Pause, Play, Signal } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { STATION_TICKER } from '@/lib/playerMetadata'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
-import { presenterPhotoPath } from '@/lib/presenterAssets'
+import { presenterPhotoFallback, presenterPhotoPath } from '@/lib/presenterAssets'
 
 function MetadataBadge({ live, label }: { live: boolean; label: string }) {
   return (
@@ -65,78 +65,70 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
           className="rounded-2xl overflow-hidden border border-one-gold/20 shadow-[0_0_60px_rgba(212,168,75,0.08)]"
         >
           <div className="grid lg:grid-cols-[1fr_280px] bg-gradient-to-br from-[#0D1B2A] to-one-navy">
-            <div className="p-6 sm:p-8 lg:p-10">
+            <div className="p-5 sm:p-8 lg:p-10">
               <MetadataBadge live={meta.isLive} label={meta.sourceLabel} />
 
-              <div className="mt-6 grid sm:grid-cols-[auto_1fr] gap-6 items-start">
-                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-one-border shrink-0">
-                  <MediaImage
-                    src={presenterImg}
-                    alt={meta.presenter}
-                    className="absolute inset-0 w-full h-full"
-                  />
-                  {meta.isLive && (
-                    <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-one-gold to-one-red" />
-                  )}
-                </div>
-
-                <div className="min-w-0">
-                  <p className="font-label text-one-gold text-[10px] uppercase tracking-widest mb-1">
-                    {meta.category} · {meta.programTime}
-                  </p>
-                  <h2 className="font-h2 text-one-white text-xl sm:text-2xl mb-1 truncate">{meta.program}</h2>
-                  <p className="font-body text-one-muted mb-4">with {meta.presenter}</p>
-
-                  {meta.nowPlaying ? (
-                    <div className="glass-card rounded-lg px-4 py-3 mb-4 border-one-gold/20">
-                      <p className="font-label text-[10px] text-one-gold mb-1">NOW PLAYING</p>
-                      <p className="font-body text-one-white text-sm truncate">{meta.nowPlaying}</p>
-                    </div>
-                  ) : (
-                    <div className="glass-card rounded-lg px-4 py-3 mb-4 border-one-gold/10">
-                      <p className="font-label text-[10px] text-one-gold/60 mb-1">LIVE ON AIR</p>
-                      <p className="font-body text-one-muted text-sm">Tune in live on 98.5 FM</p>
-                    </div>
-                  )}
-
-                  <p className="font-label text-[10px] text-muted">
-                    Up next: <span className="text-one-white">{meta.upNext}</span>
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 flex flex-wrap items-center gap-3">
+              <div className="mt-6 flex flex-col sm:flex-row items-center sm:items-start gap-6">
                 <button
                   type="button"
                   onClick={() => void toggle()}
                   disabled={loading}
                   data-cursor-label={loading ? 'CONNECTING' : playing ? 'PAUSE' : 'LISTEN LIVE'}
-                  className="btn-primary inline-flex items-center gap-2 min-w-[140px] justify-center disabled:opacity-70"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-one-red text-white flex items-center justify-center shrink-0 bloom-red hover:scale-105 transition-transform disabled:opacity-70"
                   aria-pressed={playing}
+                  aria-label={playing ? 'Pause the live stream' : 'Play the live stream'}
                   title="Play / pause (Space)"
                 >
                   {loading ? (
-                    <Loader2 size={18} className="animate-spin" />
+                    <Loader2 size={32} className="animate-spin" />
                   ) : playing ? (
-                    <Pause size={18} />
+                    <Pause size={32} />
                   ) : (
-                    <Play size={18} />
+                    <Play size={36} className="translate-x-0.5" />
                   )}
-                  {loading ? 'Connecting…' : playing ? 'Pause' : 'Listen Live'}
                 </button>
-                <a
-                  href={LISTEN_LINKS.web.href!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-cursor-label="WEB PLAYER"
-                  className="btn-secondary inline-flex items-center gap-2 text-xs"
-                >
-                  <Radio size={14} />
-                  Web player
-                </a>
+
+                <div className="grid sm:grid-cols-[auto_1fr] gap-4 sm:gap-5 items-start w-full min-w-0">
+                  <div className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-one-border shrink-0 mx-auto sm:mx-0">
+                    <MediaImage
+                      src={presenterImg}
+                      alt={meta.presenter ? `${meta.presenter} on air` : meta.program}
+                      fallbackSrc={presenterPhotoFallback(meta.presenter)}
+                      className="absolute inset-0 w-full h-full"
+                      priority
+                    />
+                    {meta.isLive && (
+                      <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-one-gold to-one-red" />
+                    )}
+                  </div>
+
+                  <div className="min-w-0 text-center sm:text-left">
+                    <p className="font-label text-one-gold text-[10px] uppercase tracking-widest mb-1">
+                      {meta.category} · {meta.programTime}
+                    </p>
+                    <h2 className="font-h2 text-one-white text-xl sm:text-2xl mb-1 truncate">{meta.program}</h2>
+                    <p className="font-body text-one-muted mb-3">with {meta.presenter}</p>
+
+                    {meta.nowPlaying ? (
+                      <div className="glass-card rounded-lg px-4 py-3 mb-3 border-one-gold/20">
+                        <p className="font-label text-[10px] text-one-gold mb-1">NOW PLAYING</p>
+                        <p className="font-body text-one-white text-sm truncate">{meta.nowPlaying}</p>
+                      </div>
+                    ) : (
+                      <div className="glass-card rounded-lg px-4 py-3 mb-3 border-one-gold/10">
+                        <p className="font-label text-[10px] text-one-gold/60 mb-1">LIVE ON AIR</p>
+                        <p className="font-body text-one-muted text-sm">Tune in live on 98.5 FM</p>
+                      </div>
+                    )}
+
+                    <p className="font-label text-[10px] text-muted">
+                      Up next: <span className="text-one-white">{meta.upNext}</span>
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <p className="hidden sm:block mt-1 font-mono text-[9px] text-one-muted/85 select-none" aria-hidden>
+              <p className="hidden sm:block mt-5 font-mono text-[9px] text-one-muted/85 select-none" aria-hidden>
                 Press <kbd className="border border-one-border/40 rounded px-1 py-px bg-one-navy/40">Space</kbd> to play / pause
               </p>
 
@@ -144,8 +136,12 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                 <p className="mt-3 font-body-small text-one-red">{error}</p>
               )}
 
-              <div className="mt-6 flex flex-wrap gap-4 font-label text-[10px] text-muted">
+              <div className="mt-6 flex flex-wrap gap-4 font-label text-[10px] text-muted justify-center sm:justify-start">
                 <span>{LISTEN_LINKS.fm.label}</span>
+                <span className="text-one-border">|</span>
+                <a href={LISTEN_LINKS.web.href!} target="_blank" rel="noopener noreferrer" className="hover:text-one-gold transition-colors inline-flex items-center gap-1">
+                  {LISTEN_LINKS.web.label} <ExternalLink size={10} />
+                </a>
                 <span className="text-one-border">|</span>
                 <a href={LISTEN_LINKS.crp.href} target="_blank" rel="noopener noreferrer" className="hover:text-one-gold transition-colors inline-flex items-center gap-1">
                   {LISTEN_LINKS.crp.label} <ExternalLink size={10} />

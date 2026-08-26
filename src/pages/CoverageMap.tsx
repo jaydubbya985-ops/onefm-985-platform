@@ -68,7 +68,7 @@ import {
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 import type { CoverageGlowHandle } from '@/lib/coverageGlowCanvas'
 import { BRAND, BRAND_COLORS } from '@/lib/brand'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { TiltCard } from '@/components/TiltCard'
 
 /* ─────────────────────── helpers ─────────────────────── */
@@ -200,6 +200,7 @@ export default function CoverageMap() {
   const [tourCaption, setTourCaption] = useState('')
   const [showFootballPins, setShowFootballPins] = useState(true)
   const [showSponsorPins, setShowSponsorPins] = useState(true)
+  const [showCommunityPins, setShowCommunityPins] = useState(true)
   const [mobileListOpen, setMobileListOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [mapTypeId, setMapTypeIdState] = useState<'satellite' | 'terrain' | 'roadmap'>('satellite')
@@ -429,13 +430,14 @@ export default function CoverageMap() {
         (pin) =>
           pin.type === 'station' ||
           (pin.type === 'football' && showFootballPins) ||
-          (pin.type === 'sponsor' && showSponsorPins),
+          (pin.type === 'sponsor' && showSponsorPins) ||
+          (pin.type === 'community' && showCommunityPins),
       )
       .map((pin) => pinMarkersRef.current.get(pin.id))
       .filter((m): m is google.maps.Marker => !!m)
     clustererRef.current.clearMarkers()
     clustererRef.current.addMarkers([...markersRef.current, ...activePins])
-  }, [mapReady, showFootballPins, showSponsorPins])
+  }, [mapReady, showFootballPins, showSponsorPins, showCommunityPins])
 
   const runTourStepRef = useRef<(index: number) => void>(() => {})
 
@@ -575,7 +577,12 @@ export default function CoverageMap() {
               >
                 <span className="section-label mb-4 block">Broadcast reach</span>
                 <h1 className="font-hero text-one-white mb-4">
-                  GOULBURN VALLEY <span className="text-gold-gradient">COVERAGE</span>
+                  <span className="block">
+                    <HeadlinePop>Goulburn Valley</HeadlinePop>
+                  </span>
+                  <span className="block text-gold-gradient">
+                    <HeadlinePop delay={0.08}>Coverage</HeadlinePop>
+                  </span>
                 </h1>
                 <p className="font-body text-one-white/55 leading-relaxed">
                   See where your brand lands — {broadcastArea.totalTowns} communities,{' '}
@@ -626,7 +633,7 @@ export default function CoverageMap() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/88 uppercase whitespace-nowrap">Live · Shepparton</span>
+              <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/88 uppercase whitespace-nowrap">Weather · Goulburn Valley</span>
               <div className="flex items-end gap-[2px]" aria-hidden style={{ height: 16 }}>
                 {[4, 8, 12, 16].map((h, i) => (
                   <motion.div
@@ -646,6 +653,44 @@ export default function CoverageMap() {
             <p className="relative mt-4 text-[10px] text-one-muted/80">
               Population: ABS Census 2021 with local projections · Listener estimates: regional reach model
             </p>
+
+            <div className="relative mt-6">
+              <p className="font-label text-[10px] tracking-[0.2em] text-one-gold uppercase mb-3">
+                On air recently · fm985.com.au
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                {coveragePins
+                  .filter((p) => p.type === 'community')
+                  .slice(0, 4)
+                  .map((pin) => (
+                    <button
+                      key={pin.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedPin(pin)
+                        setSelectedTown(null)
+                        setShowCommunityPins(true)
+                        setMobileListOpen(false)
+                        if (mapInstanceRef.current) {
+                          mapInstanceRef.current.panTo({ lat: pin.lat, lng: pin.lng })
+                          if ((mapInstanceRef.current.getZoom() ?? 0) < 11) {
+                            mapInstanceRef.current.setZoom(12)
+                          }
+                        }
+                        mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                      }}
+                      data-cursor-label="PIN"
+                      className="text-left rounded-lg border border-one-border bg-one-midnight/40 px-3 py-2 hover:border-one-gold/50 transition-colors"
+                    >
+                      <p className="font-label text-[10px] text-one-gold uppercase">{pin.town}</p>
+                      {pin.date && (
+                        <p className="text-[10px] text-one-muted mt-0.5">{pin.date}</p>
+                      )}
+                      <p className="font-body-small text-one-white line-clamp-2 mt-0.5">{pin.name}</p>
+                    </button>
+                  ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -711,6 +756,20 @@ export default function CoverageMap() {
               >
                 <Sparkles size={12} className="text-one-gold" />
                 Sponsors ({coveragePinCounts.sponsor})
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowCommunityPins((v) => !v)}
+                data-cursor-label={showCommunityPins ? 'HIDE ON AIR' : 'SHOW ON AIR'}
+                className={cn(
+                  'flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium transition-colors',
+                  showCommunityPins
+                    ? 'border-one-blue/50 bg-one-blue/10 text-one-white'
+                    : 'border-one-border text-one-muted hover:text-one-white',
+                )}
+              >
+                <Radio size={12} className="text-one-blue" />
+                On air ({coveragePinCounts.community})
               </button>
             </div>
 
@@ -1022,13 +1081,16 @@ export default function CoverageMap() {
                               selectedPin.type === 'station' && 'border-one-gold/50 text-one-gold',
                               selectedPin.type === 'football' && 'border-one-red/50 text-one-red',
                               selectedPin.type === 'sponsor' && 'border-one-gold/50 text-one-gold',
+                              selectedPin.type === 'community' && 'border-one-blue/50 text-sky-300',
                             )}
                           >
                             {selectedPin.type === 'station'
                               ? 'Broadcast hub'
                               : selectedPin.type === 'football'
                                 ? 'GVL club'
-                                : 'Local sponsor'}
+                                : selectedPin.type === 'community'
+                                  ? 'On air recently'
+                                  : 'Local sponsor'}
                           </Badge>
                           <h3 className="font-heading text-lg text-one-white">{selectedPin.name}</h3>
                           <p className="text-xs text-one-muted">{selectedPin.town}</p>
@@ -1051,14 +1113,27 @@ export default function CoverageMap() {
                       )}
                       <p className="text-sm leading-relaxed text-one-muted">{selectedPin.blurb}</p>
                       {selectedPin.link && (
-                        <Link
-                          to={selectedPin.link}
-                          data-cursor-label={selectedPin.type === 'football' ? 'GVL' : 'ADVERTISE'}
-                          className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-one-gold hover:text-one-white"
-                        >
-                          {selectedPin.type === 'football' ? 'View GVL packages' : 'Advertise with ONE FM'}
-                          <ChevronDown size={12} className="-rotate-90" />
-                        </Link>
+                        selectedPin.link.startsWith('http') ? (
+                          <a
+                            href={selectedPin.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-cursor-label="STORY"
+                            className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-one-gold hover:text-one-white"
+                          >
+                            Read on fm985.com.au
+                            <ChevronDown size={12} className="-rotate-90" />
+                          </a>
+                        ) : (
+                          <Link
+                            to={selectedPin.link}
+                            data-cursor-label={selectedPin.type === 'football' ? 'GVL' : 'ADVERTISE'}
+                            className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-one-gold hover:text-one-white"
+                          >
+                            {selectedPin.type === 'football' ? 'View GVL packages' : 'Advertise with ONE FM'}
+                            <ChevronDown size={12} className="-rotate-90" />
+                          </Link>
+                        )
                       )}
                     </div>
                   </motion.div>
@@ -1193,7 +1268,9 @@ export default function CoverageMap() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 text-center">
             <p className="mb-2 font-label text-[11px] uppercase tracking-[0.2em] text-one-gold">Area analytics</p>
-            <WordReveal text="Coverage by the numbers" as="h2" className="font-heading text-2xl text-one-white sm:text-3xl block" stagger={0.04} />
+            <h2 className="font-heading text-2xl text-one-white sm:text-3xl">
+              <HeadlinePop>Coverage by the numbers</HeadlinePop>
+            </h2>
           </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
             <TiltCard maxTilt={4} className="h-full">

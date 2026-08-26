@@ -77,6 +77,33 @@ export function StrokeFill({
   )
 }
 
+/** Scroll-in poster line — clip + slight scale. Use on section titles. */
+export function HeadlinePop({
+  children,
+  className = '',
+  delay = 0,
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+}) {
+  const reduced = useReducedMotion()
+  if (reduced) return <span className={className}>{children}</span>
+  return (
+    <span className={`inline-block overflow-hidden align-bottom ${className}`}>
+      <motion.span
+        className="block origin-left headline-pop"
+        initial={{ y: '112%', scale: 0.92, filter: 'blur(8px)' }}
+        whileInView={{ y: '0%', scale: 1, filter: 'blur(0px)' }}
+        viewport={{ once: true, margin: '-50px' }}
+        transition={{ duration: 0.72, delay, ease: EXPO }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  )
+}
+
 /** Red section label: rule draws in, text slides on. One-shot on scroll. */
 export function LabelReveal({
   children,

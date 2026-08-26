@@ -2,12 +2,13 @@
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { stationStats } from '@/data/pricing'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { Marquee } from '@/components/Marquee'
 import { LatestInterviews } from '@/components/LatestInterviews'
+import { MULTICULTURAL_SHOW_COUNT } from '@/data/programGuide'
 import {
   Radio,
   Mic,
@@ -132,28 +133,28 @@ const teamCategories = ["All", "On-Air", "Multicultural"]
 /* ─── Studio cards ─── */
 const studios = [
   {
-    title: "Main Studio",
-    desc: "Flagship broadcast suite with digital mixing console, multi-channel routing and live-to-air monitoring.",
+    title: "Parkside Drive",
+    desc: "On-air studio at 47 Parkside Drive, Shepparton. Callsign 3ONE, licensed 1989.",
     icon: Speaker,
-    specs: ["24ch digital mixer", "ON-AIR / MIC LIVE switch", "Program & preview bus"],
+    specs: ["Live programming 6AM–10PM", "Automated overnight", "ACMA 1385226/1"],
   },
   {
-    title: "Production Suite",
-    desc: "Dedicated editing and pre-production room for commercials, podcasts and promotional content.",
-    icon: Monitor,
-    specs: ["Adobe Audition + Pro Tools", "Acoustic treatment", "ISDN & remote link"],
-  },
-  {
-    title: "Broadcast Equipment",
-    desc: "100km broadcast radius covering the entire Goulburn Valley and beyond into northern Victoria.",
+    title: "FM 98.5",
+    desc: "Community service from Mount Major — about 100km and 25 towns in the Goulburn Valley.",
     icon: Wifi,
-    specs: ["100km radius", "Digital streaming", "HD simulcast ready"],
+    specs: ["100km radius", "25 towns", "Callsign 3ONE"],
   },
   {
-    title: "Community Space",
-    desc: "Open-plan area for live performances, interview panels and community group recordings.",
+    title: "Live stream",
+    desc: "Same Radio.co stream as this site and fm985.com.au/audio-player/.",
+    icon: Monitor,
+    specs: ["This site", "fm985.com.au player", "Radio.co"],
+  },
+  {
+    title: "Community airtime",
+    desc: "GVL sport, multicultural shows on the weekly guide, and community notices. CSA count: data pending.",
     icon: Users,
-    specs: ["40 person capacity", "Live band setup", "Video capture"],
+    specs: [`${MULTICULTURAL_SHOW_COUNT} multicultural shows`, "GVL football", "CSA count: data pending"],
   },
 ]
 
@@ -161,7 +162,7 @@ const studios = [
 const pillars = [
   {
     title: "Live & Local",
-    desc: "Continuing 24/7 community broadcasting from Shepparton, with local presenters, local news, and local music across the Goulburn Murray.",
+    desc: "Continuing 24/7 community broadcasting from Shepparton, with local presenters through the day, local news, and local music across the Goulburn Murray.",
     icon: Layers,
   },
   {
@@ -171,7 +172,7 @@ const pillars = [
   },
   {
     title: "Community Partnership",
-    desc: "Supporting 100+ local NFPs on-air, GVL sports coverage, and emergency broadcasting for the 25 towns in our 100km broadcast area.",
+    desc: "Airtime for local community groups, GVL sports coverage, and emergency broadcasting for the 25 towns in our 100km broadcast area. CSA count: data pending.",
     icon: Heart,
   },
 ]
@@ -245,8 +246,12 @@ export default function Story() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3.5rem, 10vw, 8rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Our" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
-            <WordReveal text="Story." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+            <span className="block text-one-white">
+              <HeadlinePop>Our</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>Story.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -282,7 +287,7 @@ export default function Story() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">SHEPPARTON · GOULBURN VALLEY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD · FIRE · FOOTY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE CONNECTED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} AREA POP. (2026 EST.)</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · NON-PROFIT</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSED · 98.5 FM</span>,
@@ -330,7 +335,9 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-16"
         >
-          <WordReveal text="Our Heritage" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-3">
+            <HeadlinePop>Our Heritage</HeadlinePop>
+          </h2>
           <p className="font-body text-one-white max-w-2xl mx-auto">
             From a single studio above a shop to the region's most trusted broadcaster — the journey of ONE FM 98.5.
           </p>
@@ -397,7 +404,9 @@ export default function Story() {
           className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12"
         >
           <div>
-            <WordReveal text="Meet the Voices of the Valley" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Meet the Voices of the Valley</HeadlinePop>
+            </h2>
             <p className="font-body text-one-white max-w-xl">
               Our team is a mix of lifelong locals and passionate broadcasters who found their home at ONE FM.
             </p>
@@ -487,9 +496,11 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="mb-12"
         >
-          <WordReveal text="Behind the Scenes" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-3">
+            <HeadlinePop>Behind the Scenes</HeadlinePop>
+          </h2>
           <p className="font-body text-one-white max-w-xl">
-            Our facilities combine heritage warmth with modern broadcast technology.
+            Our facilities at Parkside Drive — sourced facts only, no invented mixer specs.
           </p>
         </motion.div>
 
@@ -510,7 +521,7 @@ export default function Story() {
             <div aria-hidden className="explore-tile-scan" />
             <div className="absolute bottom-6 left-6 right-6">
               <h3 className="font-h3 text-one-white mb-1">Live On Air</h3>
-              <p className="font-body-small text-one-white">Where the magic happens, every single day.</p>
+              <p className="font-body-small text-one-white">Live to air from Shepparton.</p>
             </div>
           </motion.div>
 
@@ -557,19 +568,21 @@ export default function Story() {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
           >
-            <WordReveal text="Community Impact" className="font-h2 text-one-white mb-6 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-6">
+              <HeadlinePop>Community Impact</HeadlinePop>
+            </h2>
             <div className="grid grid-cols-2 gap-6 mb-8">
               <div>
                 <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.yearsBroadcasting} suffix="" /></p>
                 <p className="font-label text-muted mt-1">Years On Air</p>
               </div>
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={100} suffix="+" /></p>
-                <p className="font-label text-muted mt-1">NFPs Supported On-Air</p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.weeklyListeners} suffix="" /></p>
+                <p className="font-label text-muted mt-1">Est. weekly listeners</p>
               </div>
               <div>
                 <p className="font-stat text-gold-gradient">24/7</p>
-                <p className="font-label text-muted mt-1">Emergency Alerts</p>
+                <p className="font-label text-muted mt-1">On air from Shepparton</p>
               </div>
               <div>
                 <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.totalTowns} suffix="" /></p>
@@ -579,16 +592,16 @@ export default function Story() {
             <TiltCard maxTilt={4}>
             <div className="glass-card p-6 border-l-4 border-l-one-gold">
               <Quote size={24} className="text-one-gold/40 mb-3" />
-              <p className="font-body text-one-white italic mb-4">
-                "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that."
+              <p className="font-body text-one-white mb-4">
+                When floods and storms isolate towns, local radio is part of the practical information network — community notices alongside sport and events. We do not publish invented listener quotes.
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-one-gold/20 flex items-center justify-center">
                   <Users size={16} className="text-one-gold" />
                 </div>
               <div>
-                <p className="font-body-small text-one-white font-medium">Rochester Community Member</p>
-                <p className="font-body-small text-muted">2022 Goulburn Valley Floods</p>
+                <p className="font-body-small text-one-white font-medium">Goulburn Valley Community Radio Inc.</p>
+                <p className="font-body-small text-muted">Emergency copy: station fact, not a named testimonial</p>
               </div>
               </div>
             </div>
@@ -621,7 +634,9 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-16"
         >
-          <WordReveal text="Looking Forward" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-3">
+            <HeadlinePop>Looking Forward</HeadlinePop>
+          </h2>
           <p className="font-body text-one-white max-w-2xl mx-auto">
             The next chapter of ONE FM blends our heritage values with tomorrow's technology.
           </p>
