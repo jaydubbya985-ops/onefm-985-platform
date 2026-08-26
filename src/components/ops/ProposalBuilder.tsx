@@ -37,6 +37,7 @@ import { PROPOSAL_PACKAGES } from './data/sponsors'
 import { formatDate } from './data/enquiries'
 import { useOpsStore, type Proposal, type ProposalStatus } from './store'
 import { useToast } from './Toast'
+import { generateContractPdf } from '@/lib/contractDocument'
 import {
   addDaysIso,
   buildMailtoProposalUrl,
@@ -694,8 +695,24 @@ export default function ProposalBuilder() {
                       size="sm"
                       className="h-9 px-3 text-xs bg-green-500/20 text-green-300 hover:bg-green-500/30 border border-green-500/30"
                       onClick={() => {
-                        acceptProposal(p.id)
-                        toast('Proposal accepted — contract created', 'success')
+                        void (async () => {
+                          const contract = acceptProposal(p.id)
+                          if (!contract) return
+                          try {
+                            const pdf = await generateContractPdf(contract)
+                            pdf.save(`${contract.contractNumber}.pdf`)
+                            toast(
+                              `Accepted — ${contract.contractNumber}.pdf downloaded`,
+                              'success',
+                            )
+                          } catch (err) {
+                            console.error(err)
+                            toast(
+                              'Contract created — download the PDF from Contracts',
+                              'warning',
+                            )
+                          }
+                        })()
                       }}
                     >
                       <Check className="w-3 h-3 mr-1" />

@@ -141,7 +141,7 @@ export interface OpsStore extends OpsState {
   addProposal: (input: NewProposalInput) => string
   updateProposal: (id: string, patch: Partial<Proposal>) => void
   sendProposal: (id: string) => void
-  acceptProposal: (id: string) => void
+  acceptProposal: (id: string) => OpsContract | null
   declineProposal: (id: string) => void
   // Contracts
   updateContract: (id: string, patch: Partial<OpsContract>) => void
@@ -537,10 +537,28 @@ export function OpsProvider({ children }: { children: ReactNode }) {
 
       acceptProposal: (id) => {
         const proposal = state.proposals.find((p) => p.id === id)
-        if (!proposal) return
+        if (!proposal) return null
         const start = new Date()
         const end = new Date()
-        end.setMonth(end.getMonth() + 6)
+        if (proposal.durationWeeks && proposal.durationWeeks > 0) {
+          end.setDate(start.getDate() + proposal.durationWeeks * 7)
+        } else {
+          end.setMonth(end.getMonth() + 6)
+        }
+        const gst = Math.round(proposal.value * 0.1 * 100) / 100
+        const deliverableLine = proposal.deliverables?.length
+          ? proposal.deliverables.map((d) => d.name).join('; ')
+          : null
+        const packageType =
+          proposal.packageId === 'fb-bronze'
+            ? 'football_bronze'
+            : proposal.packageId === 'fb-silver'
+              ? 'football_silver'
+              : proposal.packageId === 'fb-gold'
+                ? 'football_gold'
+                : proposal.packageId === 'prog-sponsor'
+                  ? 'program_sponsorship'
+                  : 'custom'
         const contract: OpsContract = {
           id: `c-${Date.now()}`,
           contractNumber: nextSequential(
@@ -551,14 +569,21 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           primaryContact: proposal.clientName,
           email: proposal.email ?? '',
           campaignName: proposal.packageName ?? 'Sponsorship Agreement',
-          description: proposal.packageName
-            ? `${proposal.packageName} package — from accepted proposal`
-            : 'Created from accepted proposal',
+          description: deliverableLine
+            ? `${proposal.packageName ?? 'Sponsorship'} — ${deliverableLine}`
+            : proposal.packageName
+              ? `${proposal.packageName} package — from accepted proposal`
+              : 'Created from accepted proposal',
           contractValue: proposal.value,
+          gst,
+          totalValue: Math.round((proposal.value + gst) * 100) / 100,
           startDate: isoDate(start),
           endDate: isoDate(end),
           status: 'pending',
           tier: proposal.tier ?? 'Custom',
+          packageType,
+          paymentTerms: '14_days',
+          billingFrequency: 'one_time',
           invoices: [],
           proposalId: proposal.id,
         }
@@ -578,6 +603,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         }
         void opsApi.upsertContract(contract)
         setActiveTab('contracts')
+        return contract
       },
 
       declineProposal: (id) => {

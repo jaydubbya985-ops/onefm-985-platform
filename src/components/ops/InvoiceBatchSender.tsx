@@ -370,15 +370,15 @@ function InvoicePreview({ invoice }: { invoice: BatchRow }) {
           </div>
           <div>
             <span className="text-gray-400">Account Name:</span>
-            <span className="ml-2 font-medium">ONE FM 98.5</span>
+            <span className="ml-2 font-medium">{BANK_ACCOUNT_NAME}</span>
           </div>
           <div>
             <span className="text-gray-400">BSB:</span>
-            <span className="ml-2 font-mono font-medium">083-894</span>
+            <span className="ml-2 font-mono font-medium">{BANK_BSB}</span>
           </div>
           <div>
             <span className="text-gray-400">Account:</span>
-            <span className="ml-2 font-mono font-medium">553 219 432</span>
+            <span className="ml-2 font-mono font-medium">{BANK_ACCOUNT}</span>
           </div>
         </div>
       </div>

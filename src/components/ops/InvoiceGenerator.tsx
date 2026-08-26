@@ -77,7 +77,7 @@ import {
   type SponsorContract,
 } from './invoices/contacts'
 import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
-import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
+import { generateInvoicePdf, BANK_BSB, BANK_ACCOUNT, BANK_ACCOUNT_NAME } from '@/components/ops/InvoiceEmailTemplate'
 import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
 
 // ---------------------------------------------------------------------------
@@ -1996,7 +1996,7 @@ export default function InvoiceGenerator() {
                 </h4>
                 <div className="text-sm text-gray-700 space-y-1.5">
                   <p>
-                    <span className="font-semibold text-[#101010]">Account Name:</span> 98.5 One FM.
+                    <span className="font-semibold text-[#101010]">Account Name:</span> {BANK_ACCOUNT_NAME}
                   </p>
                   <p>
                     <span className="font-semibold text-[#101010]">Bank:</span> National Australia
@@ -2004,10 +2004,10 @@ export default function InvoiceGenerator() {
                   </p>
                   <div className="flex gap-6">
                     <p>
-                      <span className="font-semibold text-[#101010]">BSB:</span> 083-894
+                      <span className="font-semibold text-[#101010]">BSB:</span> {BANK_BSB}
                     </p>
                     <p>
-                      <span className="font-semibold text-[#101010]">Account No:</span> 553 219 432
+                      <span className="font-semibold text-[#101010]">Account No:</span> {BANK_ACCOUNT}
                     </p>
                   </div>
                   <p>

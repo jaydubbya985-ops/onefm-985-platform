@@ -2,20 +2,18 @@
 
 You are continuing ONE FM 98.5 (`jaydubbya985-ops/onefm-985-platform`). Jay works in bursts; do not wait. Pull latest, ship the next ops slice, commit, push, update the PR.
 
-## This evening's job (if not already merged)
+## Already shipped on this branch
 
-Ops Proposals must produce a real PDF Jay can email tonight:
+- Ops Proposals: Community/Champion/Premier/Signature weekly rates + football packages → branded PDF + mailto. Stats 39,375 / 25 towns / 100km (ABS 2021 via townData).
+- Accept proposal → contract PDF (same letterhead). BSB 083-894 on invoices and on the agreement payment note.
 
-- `#/ops` → password `onefm2026` (demo) → Proposals
-- Packages from `src/data/pricing.ts` (Community / Champion / Premier / Signature weekly rates) plus existing football season packages
-- Download PDF + mailto. Stats: **39,375** weekly listeners, **25** towns, **100km** (ABS 2021 via `townData`). No invented demographics. No Plemo.
+## Next, in order
 
-## After that, in order
-
-1. Accepted proposal → contract PDF (same navy/gold letterhead as invoices)
-2. Invoice send path still works (BSB 083-894)
-3. Truth grep `src/` for Plemo, unsplash, fake millions, AI-Enhanced
-4. `npm run build` must pass
+1. Confirm invoice send path still uses BSB 083-894 (InvoiceEmailTemplate + Batch Send). Do not regress it.
+2. If PR #9 is not merged, keep committing onto that branch.
+3. Stripe test payment on live URL only if `VITE_STRIPE_PUBLISHABLE_KEY` is set; otherwise `NEED JAY: VITE_STRIPE_PUBLISHABLE_KEY on Netlify`.
+4. Truth grep `src/` for Plemo, unsplash, fake listener millions, AI-Enhanced.
+5. `npm run build` must pass.
 
 ## Rules
 

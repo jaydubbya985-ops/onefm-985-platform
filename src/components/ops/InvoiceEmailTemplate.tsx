@@ -14,14 +14,9 @@ import { useToast } from './Toast'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
 import { LOGO_PDF_DATA_URL } from '@/lib/logoBase64'
+import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 
-// ---------------------------------------------------------------------------
-// Bank + Stripe configuration
-// ---------------------------------------------------------------------------
-
-export const BANK_BSB = '083-894'
-export const BANK_ACCOUNT = '553 219 432'
-export const BANK_ACCOUNT_NAME = '98.5 One FM'
+export { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB }
 
 export interface StripeConfig {
   accountId: string
