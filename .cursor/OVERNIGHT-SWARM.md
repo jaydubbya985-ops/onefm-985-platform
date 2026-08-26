@@ -20,7 +20,8 @@ Do not merge to `main`. Do not deploy production unless Jay replies.
 - GVL finals window on Football (H&A closed 22 Aug, first weekend 29–30 Aug) — no invented clubs
 - OG/LCP: weekly listeners 39,375; hero poster preload
 - Truth: stripped invented NFP 100+, social follower 4,000, podcast 500, fake audience heatmap/trends/+31% match-day lifts
-- Cookie banner sits above MiniPlayer (`z-[210]`)
+- Cookie banner sits **above** MiniPlayer so Accept is not covered
+- Story.tsx leftover “100+ NFPs” stripped (page still redirects to Heritage)
 
 ## Remaining (hourly continue)
 

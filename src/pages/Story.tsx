@@ -171,7 +171,7 @@ const pillars = [
   },
   {
     title: "Community Partnership",
-    desc: "Supporting 100+ local NFPs on-air, GVL sports coverage, and emergency broadcasting for the 25 towns in our 100km broadcast area.",
+    desc: "Airtime for local community groups, GVL sports coverage, and emergency broadcasting for the 25 towns in our 100km broadcast area. CSA count: data pending.",
     icon: Heart,
   },
 ]
@@ -576,12 +576,12 @@ export default function Story() {
                 <p className="font-label text-muted mt-1">Years On Air</p>
               </div>
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={100} suffix="+" /></p>
-                <p className="font-label text-muted mt-1">NFPs Supported On-Air</p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.weeklyListeners} suffix="" /></p>
+                <p className="font-label text-muted mt-1">Est. weekly listeners</p>
               </div>
               <div>
                 <p className="font-stat text-gold-gradient">24/7</p>
-                <p className="font-label text-muted mt-1">Emergency Alerts</p>
+                <p className="font-label text-muted mt-1">On air from Shepparton</p>
               </div>
               <div>
                 <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.totalTowns} suffix="" /></p>
