@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { DecadeId } from '@/types/livingArchive'
 import { CONFIDENCE_LABELS } from '@/types/livingArchive'
 import { ARCHIVE_CARDS, cardsForDecade, DECADES } from '@/data/livingArchive/decades'
-import { LabelReveal } from '@/components/onair/kit'
+import { LabelReveal, HeadlinePop } from '@/components/onair/kit'
 
 const RED = '#E51636'
 
@@ -15,7 +15,7 @@ export function DecadeDial() {
     <section id="timeline" className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
       <LabelReveal className="mb-3">The Decade Dial</LabelReveal>
       <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-8">
-        Tune through time
+        <HeadlinePop>Tune through time</HeadlinePop>
       </h2>
 
       <div

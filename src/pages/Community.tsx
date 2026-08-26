@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
+import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill, HeadlinePop } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
 import { stationStats } from '@/data/pricing'
 import { FULL_SCHEDULE } from '@/data/programGuide'
@@ -119,7 +119,9 @@ export default function Community() {
           <LabelReveal className="mb-8">Where the Signal Reaches</LabelReveal>
           <div className="border border-white/12 rounded-xl p-8 flex items-center justify-between gap-6 flex-wrap transition-colors hover:border-[#E51636]">
             <div>
-              <h3 className="font-poster uppercase text-[30px] text-white">The Coverage Map</h3>
+              <h3 className="font-poster uppercase text-[30px] text-white">
+                <HeadlinePop>The Coverage Map</HeadlinePop>
+              </h3>
               <p className="text-[15px] text-white/55 mt-1 max-w-[480px]">
                 100km of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
               </p>

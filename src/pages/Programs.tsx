@@ -3,7 +3,7 @@ import { TiltCard } from '@/components/TiltCard'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
@@ -582,8 +582,12 @@ export default function Programs() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Programs" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
-            <WordReveal text="& Shows." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+            <span className="block text-one-white">
+              <HeadlinePop>Programs</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>& Shows.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -645,7 +649,9 @@ export default function Programs() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <WordReveal text="This Week's Guide" className="font-h2 text-one-white mb-2 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-2">
+            <HeadlinePop>This Week's Guide</HeadlinePop>
+          </h2>
           <p className="font-body text-muted max-w-2xl">
             Full schedule sourced from fm985.com.au — select a day to see what&apos;s on.
           </p>
@@ -666,7 +672,9 @@ export default function Programs() {
         >
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
-              <WordReveal text="Featured Shows" className="font-h2 text-one-white mb-3 block" as="h2" />
+              <h2 className="font-h2 text-one-white mb-3">
+                <HeadlinePop>Featured Shows</HeadlinePop>
+              </h2>
               <p className="font-body text-one-white max-w-xl">
                 From dawn till dark, our presenters keep the Valley informed, entertained and connected.
               </p>
@@ -785,7 +793,9 @@ export default function Programs() {
           className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12"
         >
           <div>
-            <WordReveal text="Host Roster" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Host Roster</HeadlinePop>
+            </h2>
             <p className="font-body text-one-white max-w-xl">
               Meet the voices behind the mic. {hosts.length} presenters from the fm985.com.au program guide.
             </p>
@@ -931,7 +941,9 @@ export default function Programs() {
         >
           <div className="flex items-center gap-3 mb-3">
             <Trophy size={28} className="text-one-gold" />
-            <WordReveal text="GVL FOOTBALL & NETBALL BROADCASTS" className="font-h2 text-one-white block" as="h2" stagger={0.04} />
+            <h2 className="font-h2 text-one-white">
+              <HeadlinePop>GVL Football & Netball Broadcasts</HeadlinePop>
+            </h2>
           </div>
           <p className="font-body text-one-white max-w-2xl">
             ONE FM 98.5 covers Goulburn Valley League football and netball on Saturdays, plus NIRS AFL on Friday nights.
@@ -1003,7 +1015,9 @@ export default function Programs() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="mb-12"
         >
-          <WordReveal text="Interviews & On-Demand" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-3">
+            <HeadlinePop>Interviews & On-Demand</HeadlinePop>
+          </h2>
           <p className="font-body text-muted max-w-xl">
             Community interviews and sport replays on SoundCloud — not separate podcast download counts.
           </p>
@@ -1113,7 +1127,9 @@ export default function Programs() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-12"
         >
-          <WordReveal text="Request a Song / Shoutout" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-3">
+            <HeadlinePop>Request a Song / Shoutout</HeadlinePop>
+          </h2>
           <p className="font-body text-one-white">
             Want to hear your favourite track? Send a dedication to someone special? Drop your request below.
           </p>

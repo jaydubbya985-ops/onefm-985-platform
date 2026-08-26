@@ -39,7 +39,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { BRAND } from '@/lib/brand'
 import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
@@ -243,7 +243,9 @@ function StudioPhotoStrip() {
         >
           <div>
             <p className="font-label text-one-gold text-[10px] tracking-widest uppercase mb-2">Behind the Signal</p>
-            <WordReveal text="The Station. The Team." className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white">
+              <HeadlinePop>The Station. The Team.</HeadlinePop>
+            </h2>
           </div>
           <span className="hidden sm:block font-label text-one-muted text-[10px] tracking-widest uppercase">ONE FM 98.5</span>
         </motion.div>
@@ -421,8 +423,12 @@ export default function MediaKit() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Media" as="span" className="block text-ivory" delay={0.15} stagger={0.12} />
-            <WordReveal text="Kit." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+            <span className="block text-ivory">
+              <HeadlinePop>Media</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>Kit.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -516,7 +522,9 @@ export default function MediaKit() {
       {/* ═══════ AUDIENCE DEMOGRAPHICS ═══════ */}
       <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="AUDIENCE DATA">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-          <WordReveal text="WHO'S LISTENING" className="font-h2 text-ivory mb-8 block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-ivory mb-8">
+            <HeadlinePop>Who's listening</HeadlinePop>
+          </h2>
 
           {/* Tabs */}
           <div className="flex flex-wrap gap-2 mb-10">
@@ -682,7 +690,9 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="PLATFORM REACH" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-ivory">
+              <HeadlinePop>Platform reach</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted mt-2">Where your message travels</p>
           </motion.div>
 
@@ -734,7 +744,9 @@ export default function MediaKit() {
             variants={fadeUp}
           >
             <div>
-              <WordReveal text="ADVERTISING RATES" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
+              <h2 className="font-h2 text-ivory">
+                <HeadlinePop>Advertising rates</HeadlinePop>
+              </h2>
               <p className="font-micro text-muted mt-2">Effective Q1 2026 — All rates in selected currency, GST exclusive</p>
             </div>
             <div className="relative">
@@ -827,7 +839,9 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="BRAND ASSETS" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-ivory">
+              <HeadlinePop>Brand assets</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted mt-2">Logos, guidelines, and creative resources</p>
           </motion.div>
 
@@ -906,7 +920,9 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="READY TO AMPLIFY?" className="font-h2 text-ivory mb-4 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-ivory mb-4">
+              <HeadlinePop>Ready to amplify?</HeadlinePop>
+            </h2>
             <p className="font-body text-chalk mb-10">
               Our partnerships team is ready to build a campaign that works for your brand.
             </p>
