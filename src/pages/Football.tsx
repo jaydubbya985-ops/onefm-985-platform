@@ -169,9 +169,9 @@ const townData = [
 /* ─── Community voice ─── */
 const communityVoice = {
   quote:
-    "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that.",
-  name: 'Rochester Community Member',
-  role: '2022 Goulburn Valley Floods',
+    'ONE FM calls GVL football and netball — Saturday Sport, GVL Match of the Day, and The Final Siren scoreboard. First 2026 finals weekend: 29–30 August. Named listener quotes stay off this page until the station supplies them.',
+  name: 'Goulburn Valley Community Radio Inc.',
+  role: 'Source: fm985.com.au/guide/ · fm985.com.au/sport/',
 }
 
 /* ─── Enquiry Form Data (from pricing.ts) ─── */
@@ -820,21 +820,21 @@ export default function Football() {
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Star size={18} className="text-one-electric" />
-              <span className="font-label text-one-electric">LOCAL PROOF</span>
+              <span className="font-label text-one-electric">GVL ON AIR</span>
             </div>
             <h2 className="font-h2 text-one-white mb-3">
-              <HeadlinePop>Community voice</HeadlinePop>
+              <HeadlinePop>How we cover the league</HeadlinePop>
             </h2>
             <p className="font-body-small text-muted">
-              Why the Goulburn Valley trusts ONE FM.
+              Sourced from the program guide and sport page — not invented testimonials.
             </p>
           </ScrollReveal>
 
           <div className="max-w-3xl mx-auto">
             <TiltCard maxTilt={3}>
             <div className="glass-card p-8 text-center">
-              <p className="font-body text-one-white italic mb-6 text-lg leading-relaxed">
-                "{communityVoice.quote}"
+              <p className="font-body text-one-white mb-6 text-lg leading-relaxed">
+                {communityVoice.quote}
               </p>
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-one-white/10 flex items-center justify-center">

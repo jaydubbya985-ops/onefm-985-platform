@@ -1,6 +1,6 @@
 /**
  * ONE FM 98.5 — canonical programme data.
- * Source: fm985.com.au/guide/ (scraped June 2026 via WP REST API).
+ * Source: fm985.com.au/guide/ (Amrap grid). Live HTML check 26 Aug 2026.
  * Day index: 0=Sunday, 1=Monday … 6=Saturday.
  */
 
@@ -11,7 +11,7 @@ export const BREAKFAST_TIME = '6:00am – 9:00am'
 export const BREAKFAST_HOSTS: Record<number, string> = {
   1: 'Tim Ahemt',     // Monday
   2: 'Tim Ahemt',     // Tuesday (guide shows same presenter block)
-  3: 'Craig Stott',   // Wednesday — "Tuesday Mornings with Craig Stott" / Big G Wed
+  3: 'The Big G',     // Wednesday — guide: Wednesday Morning with the Big G (9am); Breaky 6–9 is unnamed on the grid
   4: 'Ralph Whitehead', // Thursday — "Thursday Mornings with Ralph Whitehead"
   5: 'Josh Revens',   // Friday — "Friday Mornings with Josh Revens"
 }
@@ -21,7 +21,7 @@ export function getBreakfastHost(day: number): string {
 }
 
 export function getBreakfastScheduleLabel(): string {
-  return 'Mon–Tue: Tim Ahemt · Wed: Craig Stott (The Big G) · Thu: Ralph Whitehead · Fri: Josh Revens'
+  return 'Mon–Tue: Tim Ahemt · Wed: The Big G · Thu: Ralph Whitehead · Fri: Josh Revens'
 }
 
 export interface LiveShowInfo {
@@ -75,8 +75,7 @@ export const FULL_SCHEDULE: ScheduleSlot[] = [
   { day: 3, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'The Big G', category: 'Breakfast' },
   { day: 3, startHour: 9,  endHour: 12, name: 'Wednesday Morning', host: 'The Big G', category: 'Music' },
   { day: 3, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 3, startHour: 15, endHour: 16, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
-  { day: 3, startHour: 16, endHour: 17, name: 'Thursday Afternoon', host: 'The Big G', category: 'Music' }, // title as scraped from fm985.com.au/guide/ June 2026 — do not rename without a live guide check
+  { day: 3, startHour: 15, endHour: 18, name: 'All Things Rock', host: 'Steve Little', category: 'Music' }, // live guide 26 Aug 2026: rowspan 3hrs; “Thursday Afternoon with The Big G” is Thursday only
   { day: 3, startHour: 18, endHour: 19, name: 'Rockin with Les Harrison', host: "Les 'Harro' Harrison", category: 'Music' },
   { day: 3, startHour: 21, endHour: 22, name: 'Samoan Music Program', host: 'MK', category: 'Multicultural' },
   { day: 3, startHour: 23, endHour: 24, name: 'Arabic Music Program', host: 'ONE FM', category: 'Multicultural' },

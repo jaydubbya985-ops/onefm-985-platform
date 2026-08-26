@@ -39,6 +39,8 @@ Broadcast Explorer “state-of-the-art / HD suite” copy stripped. Donate accou
 
 Contact hero lists **Facebook + SoundCloud only** (no dead Instagram/Twitter/YouTube). Marquee is **On air 24/7**, not “Open 7 Days”. Office-hours 9–5 card replaced with live programming 6AM–10PM. FAQ no longer invents TuneIn/iHeart. Broadcast presenter cards have no dummy social icons. Donate 24/7 label is **On air**, not live-local overnight. Broadcast Listen CTA plays the real Radio.co stream (FM / Web / Radio.co — no Alexa/app claims).
 
+Unsourced `twitter:site @onefm985` removed (Twitter URL is null). Live Amrap guide 26 Aug 2026: Wednesday 4pm is **All Things Rock**, not Thursday Afternoon. Invented Rochester flood quote stripped from Football (and Story). WP latest post still **27 Jul 2026**.
+
 ## Stop
 
 Stop spawning new work after **21:20 UTC 26 Aug 2026**

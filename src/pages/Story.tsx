@@ -8,6 +8,7 @@ import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { Marquee } from '@/components/Marquee'
 import { LatestInterviews } from '@/components/LatestInterviews'
+import { MULTICULTURAL_SHOW_COUNT } from '@/data/programGuide'
 import {
   Radio,
   Mic,
@@ -132,28 +133,28 @@ const teamCategories = ["All", "On-Air", "Multicultural"]
 /* ─── Studio cards ─── */
 const studios = [
   {
-    title: "Main Studio",
-    desc: "Flagship broadcast suite with digital mixing console, multi-channel routing and live-to-air monitoring.",
+    title: "Parkside Drive",
+    desc: "On-air studio at 47 Parkside Drive, Shepparton. Callsign 3ONE, licensed 1989.",
     icon: Speaker,
-    specs: ["24ch digital mixer", "ON-AIR / MIC LIVE switch", "Program & preview bus"],
+    specs: ["Live programming 6AM–10PM", "Automated overnight", "ACMA 1385226/1"],
   },
   {
-    title: "Production Suite",
-    desc: "Dedicated editing and pre-production room for commercials, podcasts and promotional content.",
-    icon: Monitor,
-    specs: ["Adobe Audition + Pro Tools", "Acoustic treatment", "ISDN & remote link"],
-  },
-  {
-    title: "Broadcast Equipment",
-    desc: "100km broadcast radius covering the entire Goulburn Valley and beyond into northern Victoria.",
+    title: "FM 98.5",
+    desc: "Community service from Mount Major — about 100km and 25 towns in the Goulburn Valley.",
     icon: Wifi,
-    specs: ["100km radius", "Digital streaming", "HD simulcast ready"],
+    specs: ["100km radius", "25 towns", "Callsign 3ONE"],
   },
   {
-    title: "Community Space",
-    desc: "Open-plan area for live performances, interview panels and community group recordings.",
+    title: "Live stream",
+    desc: "Same Radio.co stream as this site and fm985.com.au/audio-player/.",
+    icon: Monitor,
+    specs: ["This site", "fm985.com.au player", "Radio.co"],
+  },
+  {
+    title: "Community airtime",
+    desc: "GVL sport, multicultural shows on the weekly guide, and community notices. CSA count: data pending.",
     icon: Users,
-    specs: ["40 person capacity", "Live band setup", "Video capture"],
+    specs: [`${MULTICULTURAL_SHOW_COUNT} multicultural shows`, "GVL football", "CSA count: data pending"],
   },
 ]
 
@@ -161,7 +162,7 @@ const studios = [
 const pillars = [
   {
     title: "Live & Local",
-    desc: "Continuing 24/7 community broadcasting from Shepparton, with local presenters, local news, and local music across the Goulburn Murray.",
+    desc: "Continuing 24/7 community broadcasting from Shepparton, with local presenters through the day, local news, and local music across the Goulburn Murray.",
     icon: Layers,
   },
   {
@@ -499,7 +500,7 @@ export default function Story() {
             <HeadlinePop>Behind the Scenes</HeadlinePop>
           </h2>
           <p className="font-body text-one-white max-w-xl">
-            Our facilities combine heritage warmth with modern broadcast technology.
+            Our facilities at Parkside Drive — sourced facts only, no invented mixer specs.
           </p>
         </motion.div>
 
@@ -520,7 +521,7 @@ export default function Story() {
             <div aria-hidden className="explore-tile-scan" />
             <div className="absolute bottom-6 left-6 right-6">
               <h3 className="font-h3 text-one-white mb-1">Live On Air</h3>
-              <p className="font-body-small text-one-white">Where the magic happens, every single day.</p>
+              <p className="font-body-small text-one-white">Live to air from Shepparton.</p>
             </div>
           </motion.div>
 
@@ -591,16 +592,16 @@ export default function Story() {
             <TiltCard maxTilt={4}>
             <div className="glass-card p-6 border-l-4 border-l-one-gold">
               <Quote size={24} className="text-one-gold/40 mb-3" />
-              <p className="font-body text-one-white italic mb-4">
-                "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that."
+              <p className="font-body text-one-white mb-4">
+                When floods and storms isolate towns, local radio is part of the practical information network — community notices alongside sport and events. We do not publish invented listener quotes.
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-one-gold/20 flex items-center justify-center">
                   <Users size={16} className="text-one-gold" />
                 </div>
               <div>
-                <p className="font-body-small text-one-white font-medium">Rochester Community Member</p>
-                <p className="font-body-small text-muted">2022 Goulburn Valley Floods</p>
+                <p className="font-body-small text-one-white font-medium">Goulburn Valley Community Radio Inc.</p>
+                <p className="font-body-small text-muted">Emergency copy: station fact, not a named testimonial</p>
               </div>
               </div>
             </div>
