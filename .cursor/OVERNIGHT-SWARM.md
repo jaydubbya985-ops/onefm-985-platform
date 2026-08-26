@@ -30,6 +30,7 @@ Do not merge to `main`. Do not deploy production unless Jay replies.
 
 Cookie QA, `/broadcast`, Community town photos, Home GVL finals badge: done.
 Coverage **On air recently** cards pan the map to WP pins. Nav includes Broadcast Grid. Community languages = guide show count (not “8+”). Population copy is 2026 est., not “people reached”.
+Public Social Hub no longer downloads ops DEMO Mailchimp leads.
 
 ## Stop
 

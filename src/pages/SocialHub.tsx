@@ -13,19 +13,10 @@ import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { FacebookPageEmbed } from '@/components/FacebookPageEmbed'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
-import { MOCK_ENQUIRIES } from '@/components/ops/data/enquiries'
-import {
-  downloadMailchimpLeadsCsv,
-  buildMailchimpNewsletterSnippet,
-  copyMailchimpSnippetToClipboard,
-  sampleMailchimpCsv,
-} from '@/lib/mailchimpBridge'
-import { toast } from 'sonner'
 import { Marquee } from '@/components/Marquee'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { stationStats } from '@/data/pricing'
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -993,73 +984,6 @@ function SocialFeedPreview() {
   )
 }
 
-/* ─── Section: Mailchimp Export ─── */
-function MailchimpExportSection() {
-  const handleExport = () => {
-    downloadMailchimpLeadsCsv(MOCK_ENQUIRIES)
-    toast.success('Mailchimp CSV downloaded — import to One FM Sales audience')
-  }
-
-  const handleCopySnippet = async () => {
-    const snippet = buildMailchimpNewsletterSnippet({
-      headline: 'Your brand across the Goulburn Valley',
-      body: `ONE FM 98.5 reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} communities. Explore sponsorship packages tailored to regional businesses.`,
-      ctaLabel: 'View Media Kit',
-      ctaUrl: 'https://fm985.com.au/#/media-kit',
-    })
-    const ok = await copyMailchimpSnippetToClipboard(snippet)
-    toast[ok ? 'success' : 'error'](ok ? 'HTML snippet copied — paste into Mailchimp' : 'Copy failed — check browser permissions')
-  }
-
-  return (
-    <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="MAILCHIMP">
-      <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
-          className="mb-8"
-        >
-          <span className="section-label mb-4 block">Marketing workflow</span>
-          <h2 className="font-h2 text-one-white mb-2">
-            <HeadlinePop>EXPORT FOR MAILCHIMP</HeadlinePop>
-          </h2>
-          <p className="font-body-small text-muted max-w-2xl">
-            Resend handles transactional invoice and enquiry emails. Use these tools to export sponsor
-            leads and copy branded HTML into Mailchimp campaigns (audience: <strong className="text-one-white">One FM Sales</strong>).
-            See <code className="text-one-gold text-xs">MAILCHIMP-WORKFLOW.md</code> in the repo for the full step-by-step.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <TiltCard maxTilt={5} className="h-full">
-          <button type="button" onClick={handleExport} data-cursor-label="EXPORT" className="glass-card p-6 text-left hover:border-one-gold/30 transition-colors group w-full h-full relative overflow-hidden">
-            <div aria-hidden className="explore-tile-scan" />
-            <Download size={24} className="text-one-gold mb-3 group-hover:scale-110 transition-transform" />
-            <h4 className="font-h4 text-one-white mb-1">Export leads CSV</h4>
-            <p className="font-body-small text-muted text-sm">Download ops enquiries formatted for Mailchimp import.</p>
-          </button>
-          </TiltCard>
-          <TiltCard maxTilt={5} className="h-full">
-          <button type="button" onClick={handleCopySnippet} data-cursor-label="COPY" className="glass-card p-6 text-left hover:border-one-gold/30 transition-colors group w-full h-full relative overflow-hidden">
-            <div aria-hidden className="explore-tile-scan" />
-            <Copy size={24} className="text-one-gold mb-3 group-hover:scale-110 transition-transform" />
-            <h4 className="font-h4 text-one-white mb-1">Copy HTML snippet</h4>
-            <p className="font-body-small text-muted text-sm">Brand V3 newsletter block — paste into Mailchimp drag-and-drop editor.</p>
-          </button>
-          </TiltCard>
-        </div>
-
-        <details className="mt-6 glass-card p-4">
-          <summary className="font-label text-xs text-one-gold cursor-pointer">Sample CSV format</summary>
-          <pre className="mt-3 text-[10px] text-muted overflow-x-auto whitespace-pre-wrap">{sampleMailchimpCsv()}</pre>
-        </details>
-      </div>
-    </section>
-  )
-}
-
 /* ─── Main Page ─── */
 export default function SocialHub() {
   return (
@@ -1074,7 +998,6 @@ export default function SocialHub() {
       <TemplatesSection />
       <CampaignCalendar />
       <PostingToolkit />
-      <MailchimpExportSection />
       <SocialFeedPreview />
     </Layout>
   )
