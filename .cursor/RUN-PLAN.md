@@ -1,6 +1,6 @@
 # ONE FM RUN PLAN — Non-stop to launch
 
-**Current score: 44% of 80% gov-ready bar** (not world-class yet). Honest hole: public `/proposal` still invents 38% age split.
+**Current score: ~50% of 80% gov-ready bar** (not world-class yet). Public `/proposal` is a request form (sourced 39,375 / 25 towns). Remaining: live ops (Supabase env), shared PDF letterhead, honest invoice send.
 
 Target **80%**: FOOTT can be sent a PDF; ops is not DEMO on live; no invented stats on public pages; invoice email does not lie about send.
 
@@ -10,7 +10,7 @@ Target **80%**: FOOTT can be sent a PDF; ops is not DEMO on live; no invented st
 |-------|--------|
 | Deploy pipeline (push → Netlify) | Working if `NETLIFY_AUTH_TOKEN` is valid |
 | Plemo removed | Live shows ONE FM Breakfast hosts |
-| Real listener stats (39,375) | Homepage + proposal PDF |
+| Public /proposal (no fake 38%) | This branch — request form, staff send PDF |
 | Ops proposals PDF | This branch — Community/Champion/Premier/Signature + football |
 | Ops portal live (invoices, Stripe) | Needs env vars |
 | Supabase auth | NEED JAY: `VITE_SUPABASE_*` on Netlify |

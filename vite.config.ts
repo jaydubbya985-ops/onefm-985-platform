@@ -31,10 +31,9 @@ export default defineConfig(({ mode }) => ({
     sourcemap: false,
     chunkSizeWarningLimit: 600,
     modulePreload: {
-      // vendor-pdf (jspdf + html2canvas) is only reachable through the
-      // lazy-loaded SalesProposal/ops invoice routes — eagerly preloading
-      // it on every page forces all visitors to download 174KB gzip they
-      // may never need.
+      // vendor-pdf (jspdf) is only reachable through ops invoice/proposal
+      // routes — eagerly preloading it on every page forces all visitors to
+      // download a chunk they may never need.
       resolveDependencies: (_filename, deps) => deps.filter((d) => !d.includes('vendor-pdf')),
     },
     rollupOptions: {
