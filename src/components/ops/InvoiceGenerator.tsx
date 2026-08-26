@@ -77,8 +77,9 @@ import {
   type SponsorContract,
 } from './invoices/contacts'
 import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
-import { generateInvoicePdf, BANK_BSB, BANK_ACCOUNT, BANK_ACCOUNT_NAME } from '@/components/ops/InvoiceEmailTemplate'
+import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
 import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
+import { OpsInvoiceSheet } from '@/components/ops/OpsInvoiceSheet'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -176,15 +177,9 @@ const FREQUENCY_LABELS: Record<BillingFrequency, string> = {
   annually: 'Annually',
 }
 
-/** Resolves a stored payment method (key or label) to its display label. */
 /** Module scope: impure ID generation is allowed outside component render. */
 function newInvoiceId(suffix?: number): string {
   return `inv_${Date.now()}${suffix !== undefined ? `_${suffix}` : ''}`
-}
-
-function paymentMethodLabel(value?: string): string {
-  if (!value) return ''
-  return PAYMENT_METHOD_LABELS[value as PaymentMethodKey] ?? value
 }
 
 // ---------------------------------------------------------------------------
@@ -1841,196 +1836,30 @@ export default function InvoiceGenerator() {
       <Dialog open={!!viewInvoice} onOpenChange={(open) => !open && setViewInvoice(null)}>
         <DialogContent className="bg-white text-black max-w-3xl max-h-[85vh] overflow-y-auto print:max-w-none print:max-h-none print:w-full print:overflow-visible print:bg-white print:text-black print:border-none print:shadow-none print:fixed print:inset-0 print:top-0 print:left-0 print:translate-x-0 print:translate-y-0 print:rounded-none print:p-0">
           {viewInvoice && (
-            <div className="print-area">
-              <div className="bg-[#101010] p-6 -mx-6 -mt-6 mb-6 print:mx-0 print:mt-0 print:mb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="text-3xl font-bold text-white tracking-tight">
-                      ONE <span className="text-[#D4A84B]">FM</span>{' '}
-                      <span className="text-[#E31E24]">98.5</span>
-                    </h2>
-                    <p className="text-gray-300 text-sm mt-1">
-                      Community Radio - Shepparton & Goulburn Valley
-                    </p>
-                    <p className="text-gray-400 text-xs mt-1">ABN 92 117 291 771</p>
-                  </div>
-                  <div className="text-right">
-                    <h3 className="text-2xl font-bold text-[#D4A84B]">TAX INVOICE</h3>
-                    <p className="text-gray-300 text-sm font-mono mt-1">
-                      {viewInvoice.invoiceNumber}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 mb-6">
-                <div>
-                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                    Bill To
-                  </h4>
-                  <p className="font-semibold text-[#101010]">{viewInvoice.billTo.name}</p>
-                  <p className="text-gray-700">{viewInvoice.billTo.company}</p>
-                  {viewInvoice.billTo.phone && (
-                    <p className="text-gray-500 text-sm">{viewInvoice.billTo.phone}</p>
-                  )}
-                  <p className="text-gray-500 text-sm">{viewInvoice.billTo.email}</p>
-                  {viewInvoice.billTo.address && (
-                    <p className="text-gray-500 text-sm">{viewInvoice.billTo.address}</p>
-                  )}
-                  {viewInvoice.billTo.abn && (
-                    <p className="text-gray-500 text-sm">ABN: {viewInvoice.billTo.abn}</p>
-                  )}
-                </div>
-                <div className="text-right space-y-1">
-                  <div className="flex justify-end gap-4 text-sm">
-                    <span className="text-gray-500">Invoice Date:</span>
-                    <span className="font-medium">{fmtDate(viewInvoice.date)}</span>
-                  </div>
-                  <div className="flex justify-end gap-4 text-sm">
-                    <span className="text-gray-500">Due Date:</span>
-                    <span className="font-medium">{fmtDate(viewInvoice.dueDate)}</span>
-                  </div>
-                  {viewInvoice.proposalRef && (
-                    <div className="flex justify-end gap-4 text-sm">
-                      <span className="text-gray-500">Proposal Ref:</span>
-                      <span className="font-medium">{viewInvoice.proposalRef}</span>
-                    </div>
-                  )}
-                  {viewInvoice.contractRef && (
-                    <div className="flex justify-end gap-4 text-sm">
-                      <span className="text-gray-500">Contract Ref:</span>
-                      <span className="font-medium">{viewInvoice.contractRef}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-end gap-4 text-sm mt-2">
-                    <span className="text-gray-500">Status:</span>
-                    <span
-                      className={`font-semibold ${
-                        viewInvoice.status === 'paid'
-                          ? 'text-emerald-600'
-                          : viewInvoice.status === 'overdue'
-                            ? 'text-[#E31E24]'
-                            : viewInvoice.status === 'partially_paid'
-                              ? 'text-orange-500'
-                              : 'text-[#D4A84B]'
-                      }`}
-                    >
-                      {STATUS_LABELS[viewInvoice.status].toUpperCase()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <table className="w-full mb-6 border-collapse">
-                <thead>
-                  <tr className="bg-[#101010] text-white">
-                    <th className="text-left p-3 text-sm font-semibold">Description</th>
-                    <th className="text-center p-3 text-sm font-semibold w-20">Qty</th>
-                    <th className="text-right p-3 text-sm font-semibold w-32">Unit Price</th>
-                    <th className="text-right p-3 text-sm font-semibold w-32">Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {viewInvoice.items.map((item, index) => (
-                    <tr key={index} className="border-b border-gray-200">
-                      <td className="p-3 text-sm">{item.description}</td>
-                      <td className="p-3 text-sm text-center">{item.quantity}</td>
-                      <td className="p-3 text-sm text-right">{fmt(item.unitPrice)}</td>
-                      <td className="p-3 text-sm text-right font-medium">{fmt(item.amount)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <div className="flex justify-end mb-6">
-                <div className="w-80 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Subtotal (excl GST)</span>
-                    <span className="font-medium">{fmt(viewInvoice.subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">GST (10%)</span>
-                    <span className="font-medium">{fmt(viewInvoice.gst)}</span>
-                  </div>
-                  <div className="flex justify-between text-lg font-bold border-t-2 border-gray-300 pt-2">
-                    <span className="text-[#101010]">Total (AUD)</span>
-                    <span className="text-[#101010]">{fmt(viewInvoice.total)}</span>
-                  </div>
-                  {viewInvoice.paidAmount !== undefined && viewInvoice.paidAmount > 0 && (
-                    <>
-                      <div className="flex justify-between text-sm text-emerald-600 border-t border-gray-200 pt-1">
-                        <span>Paid ({paymentMethodLabel(viewInvoice.paymentMethod)})</span>
-                        <span className="font-medium">-{fmt(viewInvoice.paidAmount)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm font-semibold">
-                        <span>Balance Due</span>
-                        <span>{fmt(viewInvoice.total - viewInvoice.paidAmount)}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {viewInvoice.notes && (
-                <div className="bg-gray-50 p-3 rounded mb-6">
-                  <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Notes</p>
-                  <p className="text-sm text-gray-600 whitespace-pre-line">{viewInvoice.notes}</p>
-                </div>
-              )}
-              {viewInvoice.paymentNotes && (
-                <div className="bg-emerald-50 p-3 rounded mb-6">
-                  <p className="text-xs text-emerald-600 uppercase tracking-wider mb-1">
-                    Payment Notes
-                  </p>
-                  <p className="text-sm text-emerald-700">{viewInvoice.paymentNotes}</p>
-                </div>
-              )}
-
-              <div className="bg-[#101010]/5 border border-[#101010]/10 rounded-lg p-4 mb-4">
-                <h4 className="text-xs font-semibold text-[#101010] uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Landmark className="h-4 w-4" /> Payment Instructions
-                </h4>
-                <div className="text-sm text-gray-700 space-y-1.5">
-                  <p>
-                    <span className="font-semibold text-[#101010]">Account Name:</span> {BANK_ACCOUNT_NAME}
-                  </p>
-                  <p>
-                    <span className="font-semibold text-[#101010]">Bank:</span> National Australia
-                    Bank (NAB)
-                  </p>
-                  <div className="flex gap-6">
-                    <p>
-                      <span className="font-semibold text-[#101010]">BSB:</span> {BANK_BSB}
-                    </p>
-                    <p>
-                      <span className="font-semibold text-[#101010]">Account No:</span> {BANK_ACCOUNT}
-                    </p>
-                  </div>
-                  <p>
-                    <span className="font-semibold text-[#101010]">Reference:</span> Please use
-                    invoice number{' '}
-                    <span className="font-mono text-[#101010]">{viewInvoice.invoiceNumber}</span>
-                  </p>
-                </div>
-              </div>
-
-              <div className="text-xs text-gray-400 border-t border-gray-200 pt-3 space-y-1">
-                <p className="font-medium text-gray-500 mb-1">Terms & Conditions</p>
-                <p>
-                  Payment is due within 14 days of invoice date. Late payments may incur a 5% late
-                  fee per month. GST included at 10% where applicable.
-                </p>
-                <p className="mt-2">For queries, contact accounts@fm985.com.au | (03) 5831 3131</p>
-              </div>
-
-              <div className="mt-6 text-center py-4 border-t border-gray-200">
-                <p className="text-[#101010] font-semibold text-sm">
-                  Thank you for supporting community radio!
-                </p>
-                <p className="text-gray-400 text-xs mt-1">
-                  ONE FM 98.5 — By the community, for the community
-                </p>
-              </div>
+            <div className="print-area -mx-6 -mt-6">
+              <OpsInvoiceSheet
+                invoice={{
+                  number: viewInvoice.invoiceNumber,
+                  company: viewInvoice.billTo.company,
+                  contactName: viewInvoice.billTo.name,
+                  email: viewInvoice.billTo.email,
+                  description: viewInvoice.items.map((item) => item.description).join(' · ') || 'Sponsorship',
+                  period: [viewInvoice.proposalRef, viewInvoice.contractRef]
+                    .filter(Boolean)
+                    .join(' · ') || undefined,
+                  items: viewInvoice.items.map((item) => ({
+                    description: item.description,
+                    amount: item.amount,
+                    detail: item.quantity > 1 ? `Qty ${item.quantity}` : undefined,
+                  })),
+                  notes: [viewInvoice.notes, viewInvoice.paymentNotes].filter(Boolean).join('\n'),
+                  amountExclGst: viewInvoice.subtotal,
+                  gst: viewInvoice.gst,
+                  total: viewInvoice.total,
+                  issueDate: fmtDate(viewInvoice.date),
+                  dueDate: fmtDate(viewInvoice.dueDate),
+                }}
+              />
             </div>
           )}
         </DialogContent>
