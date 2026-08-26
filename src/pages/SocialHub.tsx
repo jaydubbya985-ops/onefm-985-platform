@@ -1,16 +1,18 @@
 ﻿import { useState, useEffect, useRef, memo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
-  Search, ChevronDown, Download, Copy, Check, Instagram, Twitter, Facebook,
-  Smartphone, Globe, Image, Palette, Type, Grid, Music, ArrowRight,
-  Sparkles, X, Heart, MessageCircle, Eye, Hash, Shield,
-  Mic, Clock, Plus, Wand2, Radio
+  Search, ChevronDown, Download, Copy, Check, Facebook,
+  Smartphone, Image, Palette, Type, Grid, ArrowRight,
+  X, Eye, Hash, Shield,
+  Mic, Clock, Plus, Radio
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { WordReveal } from '@/components/WordReveal'
 import { FacebookPageEmbed } from '@/components/FacebookPageEmbed'
+import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
+import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { MOCK_ENQUIRIES } from '@/components/ops/data/enquiries'
 import {
   downloadMailchimpLeadsCsv,
@@ -86,21 +88,21 @@ const PLATFORM_FILTERS = ['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook',
 
 const GUIDES = [
   { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: '12 pages', path: '/media-kit' },
-  { title: 'Optimal Posting Times', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'Platform-specific timing recommendations based on audience data', pages: '8 pages', path: '/audience' },
-  { title: 'Hashtag Strategy', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'Curated hashtag sets for maximum reach and engagement', pages: '6 pages', path: '/social' },
-  { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: '10 pages', path: '/contact' },
+  { title: 'When the Valley is listening', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'Breakfast, Saturday sport, and event days — post when the station is live, not to a fabricated peak-hour chart', pages: 'Media kit', path: '/media-kit' },
+  { title: 'Hashtag set', icon: <Hash size={40} />, color: 'text-data-violet', desc: '#OneFM985 #Shepparton #GoulburnValley #GVL — use what is true for the post', pages: 'This page', path: '/social' },
+  { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: 'Contact', path: '/contact' },
 ]
 
-// Real ONE FM Facebook/social post examples — localised Goulburn Murray content
-const FEED_POSTS = [
-  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage is LIVE on ONE FM 98.5! Follow every bounce on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM', likes: '87', comments: '14', time: '2d' },
-  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton', likes: '42', comments: '6', time: '4d' },
-  { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley', likes: '63', comments: '9', time: '1w' },
-  { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community', likes: '58', comments: '7', time: '1w' },
-  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL — nothing beats local footy on a Friday night. Catch us on 98.5 FM 🔴 #GVL #LocalFooty', likes: '91', comments: '11', time: '2w' },
-  { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM', likes: '74', comments: '8', time: '2w' },
-  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: 'Live and local — 25 multicultural programs weekly keeping every corner of the Goulburn Valley connected. #OneFM985 #Community', likes: '39', comments: '5', time: '3w' },
-  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️', likes: '66', comments: '7', time: '3w' },
+/** Real station photos — not a scraped feed. No invented likes, views, or dates. */
+const STUDIO_STILLS = [
+  { image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage from the box — called live on 98.5 FM.', place: 'Commentary box' },
+  { image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Crew in the box. Interviews replay on SoundCloud after broadcast.', place: 'Studio' },
+  { image: '/assets/images/event-food-trucks.jpg', caption: 'On site at a Shepparton food festival — come say g’day.', place: 'Community event' },
+  { image: '/assets/images/culture-first-nations-dancer.png', caption: 'Culture and community nights across the Goulburn Valley.', place: 'Community' },
+  { image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL — local footy on a Friday night.', place: 'GVL' },
+  { image: '/assets/images/geo-pink-orchard.jpg', caption: 'Orchards in bloom — this is why we call it home.', place: 'Goulburn Valley' },
+  { image: '/assets/images/studio-presenter-mic.jpg', caption: 'Behind the mic. Faces and BTS clips beat a link dump.', place: 'Studio' },
+  { image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray — stream ONE FM from anywhere at fm985.com.au.', place: 'Region' },
 ]
 
 // Content calendar — GVL events & ONE FM programming (update monthly)
@@ -173,9 +175,9 @@ const GridPattern = memo(function GridPattern() {
 /* ─── Section 1: Hero ─── */
 function HeroSection() {
   const stats = [
-    { value: '18', label: 'Templates' },
-    { value: '120+', label: 'Images' },
-    { value: '4', label: 'Platforms' },
+    { value: 'Facebook', label: 'Community page' },
+    { value: 'SoundCloud', label: 'Interview archive' },
+    { value: String(TEMPLATES.length), label: 'Canva templates' },
   ]
 
   const heroRef = useRef<HTMLElement>(null)
@@ -243,7 +245,7 @@ function HeroSection() {
             transition={{ delay: 0.65, duration: 0.5, ease: easeOutExpo }}
             className="font-body text-one-white/70 max-w-[500px] mb-10"
           >
-            Brand assets, content templates, and campaign tools. Everything you need to amplify ONE FM across every platform.
+            Brand assets, Canva templates, and the two channels we actually run: Facebook and SoundCloud. Faces and behind-the-scenes stills — not invented follower counts.
           </motion.p>
 
           <motion.div
@@ -255,7 +257,7 @@ function HeroSection() {
             {stats.map((s, i) => (
               <div key={s.label} className="flex items-center gap-8">
                 <div>
-                  <div className="font-stat text-gold-gradient" style={{ fontSize: '2.5rem' }}>{s.value}</div>
+                  <div className="font-heading font-bold text-gold-gradient leading-tight" style={{ fontSize: 'clamp(1.35rem, 3vw, 2rem)' }}>{s.value}</div>
                   <div className="font-label text-muted text-[10px]">{s.label}</div>
                 </div>
                 {i < stats.length - 1 && <div className="hidden sm:block w-px h-10 bg-one-border/40" />}
@@ -284,11 +286,11 @@ function HeroSection() {
         <Marquee
           speed={28}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK · INSTAGRAM · X · SOUNDCLOUD</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24 CONTENT TEMPLATES</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">120+ BRAND IMAGES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK · SOUNDCLOUD</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{TEMPLATES.length} CONTENT TEMPLATES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACES BEAT LINK DUMPS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">AI CAPTION GENERATOR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">NO FAKE FOLLOWER COUNTS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CAMPAIGN CALENDAR TOOLS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BRAND KIT DOWNLOAD</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY · COMMUNITY RADIO</span>,
@@ -308,12 +310,31 @@ function LiveFacebookSection() {
           <p className="font-label text-one-electric text-[10px] mb-2">COMMUNITY</p>
           <WordReveal text="Follow ONE FM 98.5" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
           <p className="font-body text-muted mt-2 max-w-xl">
-            News, events, and Goulburn Valley updates — no clunky embeds, just our real community channels.
+            Two live channels — Facebook for news and events, SoundCloud for interviews. Follower counts are data pending; we do not invent them.
           </p>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <a
+              href={FACEBOOK_PAGE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary text-xs inline-flex items-center gap-2"
+            >
+              <Facebook size={14} /> facebook.com/onefmshepparton
+            </a>
+            <a
+              href={SOUNDCLOUD_PROFILE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary text-xs inline-flex items-center gap-2"
+            >
+              Open SoundCloud
+            </a>
+          </div>
         </div>
       </div>
-      <div className="max-w-3xl">
+      <div className="grid lg:grid-cols-2 gap-6">
         <FacebookPageEmbed />
+        <SoundCloudPanel />
       </div>
     </section>
   )
@@ -706,7 +727,7 @@ function CampaignCalendar() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <WordReveal text="CAMPAIGN CALENDAR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted">Plan and coordinate social campaigns</p>
+            <p className="font-body-small text-muted">Planning sketch for the month — not a live engagement dashboard.</p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -838,29 +859,9 @@ function CampaignCalendar() {
           </motion.div>
         )}
 
-        {/* AI Suggestion Bar */}
-        <TiltCard maxTilt={3} className="mt-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.5, ease: easeOutBack }}
-          className="glass-card p-5 border-l-2 border-l-one-gold"
-        >
-          <div className="flex flex-wrap items-center gap-4">
-            <Wand2 size={20} className="text-one-gold shrink-0" />
-            <div className="flex-1">
-              <div className="font-body-small text-one-white text-sm">
-                AI suggests: Schedule a <span className="text-one-gold">"Weekend Warmup"</span> series for Fridays based on engagement data.
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button data-cursor-label="ACCEPT" className="btn-primary text-xs">Accept</button>
-              <button data-cursor-label="DISMISS" className="btn-secondary text-xs">Dismiss</button>
-            </div>
-          </div>
-        </motion.div>
-        </TiltCard>
+        <p className="mt-8 font-label text-[10px] tracking-[0.16em] uppercase text-muted">
+          Planning sketch only — no AI engagement scores, no invented reach.
+        </p>
       </div>
     </section>
   )
@@ -908,8 +909,8 @@ function PostingToolkit() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-3">
-          {['Caption Generator', 'Hashtag Picker', 'Image Resizer', 'Best Time Checker'].map((tool) => (
-            <button key={tool} data-cursor-label={tool.split(' ')[0].toUpperCase()} className="btn-secondary text-xs">{tool}</button>
+          {['Hashtag picker', 'Image resizer', 'Studio stills'].map((tool) => (
+            <span key={tool} className="btn-secondary text-xs pointer-events-none">{tool}</span>
           ))}
         </div>
       </div>
@@ -917,304 +918,57 @@ function PostingToolkit() {
   )
 }
 
-/* ─── Section 6: AI Caption Generator ─── */
-function CaptionGenerator() {
-  const [platform, setPlatform] = useState('Instagram')
-  const [topic, setTopic] = useState('')
-  const [tone, setTone] = useState('Energetic')
-  const [length, setLength] = useState(2)
-  const [generating, setGenerating] = useState(false)
-  const [result, setResult] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
-
-  const generate = () => {
-    setGenerating(true)
-    setTimeout(() => {
-      const captions: Record<string, string[]> = {
-        Instagram: [
-          '🔥 The beats are dropping and the vibes are rising! Tune into ONE FM now for your daily dose of energy. #ONEFMBreakfast #LiveRadio #OneFM',
-          '🎙️ Your favorite hosts are LIVE and ready to make your morning unforgettable. Join the conversation! 📻✨ #OneFM #RadioLife',
-        ],
-        TikTok: [
-          'POV: you just found the best radio station ever 🔥 #OneFM #RadioTok #Viral',
-          'When the DJ drops THAT track and the whole studio loses it 🎧💥 #OneFM #MusicTok',
-        ],
-        'Twitter/X': [
-          '🎵 LIVE NOW: ONE FM Breakfast on ONE FM 98.5. News, music, and your calls. Tune in → ONE FM 98.5 #ONEFMBreakfast',
-          'The Night Shift is about to get started. Indie, electronica, and zero sleep required 🌙 #TheNightShift #OneFM',
-        ],
-        Facebook: [
-          'Join thousands of listeners who start their day with ONE FM. ONE FM Breakfast is live from 6AM — news, music, and community. 🎙️',
-          'Weekend Warmup is here! Two hours of feel-good anthems to kick off your Saturday right. Tune in now! 🎉',
-        ],
-        LinkedIn: [
-          'ONE FM continues to lead regional broadcasting with cutting-edge programming and community-focused content. Learn more about our latest initiatives.',
-        ],
-      }
-      const options = captions[platform] || captions.Instagram
-      setResult(options[Math.floor(Math.random() * options.length)])
-      setGenerating(false)
-    }, 2000)
-  }
-
-  const copyResult = () => {
-    if (!result) return
-    navigator.clipboard.writeText(result).catch(() => {})
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  return (
-    <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="AI CAPTION">
-      <div className="max-w-[800px] mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
-          className="text-center mb-10"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-one-gold/20 text-one-gold font-label text-[10px] mb-4">
-            <Sparkles size={12} /> AI POWERED
-          </div>
-          <WordReveal text="AI CAPTION GENERATOR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-          <p className="font-body-small text-muted">Generate platform-optimized captions in seconds</p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="glass-card p-6 md:p-8"
-        >
-          <div className="space-y-4 mb-6">
-            {/* Platform */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">PLATFORM</label>
-              <select
-                value={platform}
-                onChange={(e) => setPlatform(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white focus:outline-none focus:border-one-gold text-sm"
-              >
-                {['Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'LinkedIn'].map((p) => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Topic */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">TOPIC</label>
-              <input
-                type="text"
-                placeholder="What is this post about?"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold text-sm"
-              />
-            </div>
-
-            {/* Tone */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">TONE</label>
-              <select
-                value={tone}
-                onChange={(e) => setTone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white focus:outline-none focus:border-one-gold text-sm"
-              >
-                {['Energetic', 'Professional', 'Casual', 'Humorous', 'Inspirational'].map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Include pills */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-2 block">INCLUDE</label>
-              <div className="flex gap-2 flex-wrap">
-                {['Hashtags', 'CTA', 'Emoji', 'Mentions'].map((opt) => (
-                  <label key={opt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-one-border font-label text-[10px] text-muted cursor-pointer hover:border-one-gold/50 transition-colors">
-                    <input type="checkbox" defaultChecked className="accent-[#F2F2F2] w-3 h-3" />
-                    {opt}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Length slider */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">LENGTH</label>
-              <input
-                type="range"
-                min={1}
-                max={5}
-                value={length}
-                onChange={(e) => setLength(Number(e.target.value))}
-                className="w-full accent-[#F2F2F2]"
-              />
-              <div className="flex justify-between font-label text-[10px] text-muted mt-1">
-                <span>Short</span>
-                <span>Long</span>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={generate}
-            disabled={generating}
-            data-cursor-label={generating ? 'GENERATING' : 'GENERATE'}
-            className="btn-primary text-xs w-full justify-center disabled:opacity-50"
-          >
-            {generating ? (
-              <>
-                <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Sparkles size={14} /> Generate Caption
-              </>
-            )}
-          </button>
-        </motion.div>
-
-        {/* Results */}
-        <AnimatePresence>
-          {result && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, ease: easeOutExpo }}
-              className="mt-6 glass-card p-6"
-            >
-              <h4 className="font-h4 text-one-white mb-3">Generated Caption</h4>
-              <div className="bg-one-navy rounded-lg p-4 mb-4">
-                <p className="font-body text-one-white whitespace-pre-wrap">{result}</p>
-              </div>
-
-              <div className="flex flex-wrap gap-2 mb-4">
-                {['#OneFM', '#RadioLife', '#ONEFMBreakfast', '#LiveMusic'].map((tag) => (
-                  <button key={tag} className="px-2 py-1 rounded-full border border-one-border font-label text-[10px] text-muted hover:border-one-gold hover:text-one-gold transition-colors">
-                    {tag}
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="font-label text-[10px] text-data-teal">
-                  Character count: {result.length} / {platform === 'Twitter/X' ? 280 : 2200}
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={copyResult} data-cursor-label={copied ? 'COPIED' : 'COPY'} className="btn-secondary text-xs">
-                    {copied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
-                  </button>
-                  <button onClick={generate} data-cursor-label="REGENERATE" className="btn-secondary text-xs">
-                    <Sparkles size={14} /> Regenerate
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
-  )
-}
-
-/* ─── Section 7: Social Feed Preview ─── */
+/* ─── Faces & behind the scenes — real station photos, no fake stats ─── */
 function SocialFeedPreview() {
-  const [feedFilter, setFeedFilter] = useState('All')
   const [visibleCount, setVisibleCount] = useState(4)
-
-  const filteredPosts = feedFilter === 'All'
-    ? FEED_POSTS
-    : FEED_POSTS.filter((p) => p.platform === feedFilter)
-
-  const visiblePosts = filteredPosts.slice(0, visibleCount)
-
-  const platformIcon = (platform: string) => {
-    switch (platform) {
-      case 'Instagram': return <Instagram size={14} />
-      case 'TikTok': return <Music size={14} />
-      case 'Twitter/X': return <Twitter size={14} />
-      case 'Facebook': return <Facebook size={14} />
-      default: return <Globe size={14} />
-    }
-  }
+  const visible = STUDIO_STILLS.slice(0, visibleCount)
 
   return (
-    <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="SOCIAL FEED">
+    <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="STUDIO STILLS">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
-          <div>
-            <WordReveal text="LATEST FROM THE FEED" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted">Recent posts across all platforms</p>
-          </div>
-
-          <div className="flex gap-1 flex-wrap">
-            {['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook'].map((f) => (
-              <button
-                key={f}
-                onClick={() => { setFeedFilter(f); setVisibleCount(4) }}
-                className={`px-3 py-1.5 rounded-full font-label text-[11px] transition-all duration-200 ${
-                  feedFilter === f ? 'bg-one-gold text-one-navy' : 'border border-one-border text-muted hover:text-one-white'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
+        <div className="mb-10">
+          <WordReveal text="FACES & BEHIND THE SCENES" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+          <p className="font-body-small text-muted max-w-xl">
+            Real station photos. No hearts, views, or follower numbers — those counts are data pending until we publish a verified figure.
+          </p>
         </div>
 
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <AnimatePresence mode="popLayout">
-            {visiblePosts.map((post, i) => (
+            {visible.map((still, i) => (
               <motion.div
-                key={`${post.caption}-${i}`}
+                key={still.image}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: i * 0.06, duration: 0.4, ease: easeOutExpo }}
                 whileHover={{ y: -4 }}
-                className="glass-card overflow-hidden group cursor-pointer"
+                className="glass-card overflow-hidden group"
               >
                 <div className="relative h-[200px] overflow-hidden">
-                  <img src={post.image} alt="Post" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={still.image} alt={still.caption} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div aria-hidden className="explore-tile-scan" />
-                  <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-one-navy/70 text-one-white flex items-center gap-1 font-label text-[9px]">
-                    {platformIcon(post.platform)}
-                    {post.platform}
+                  <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-one-navy/70 text-one-white font-label text-[9px]">
+                    {still.place}
                   </div>
                 </div>
                 <div className="p-3">
-                  <p className="font-body-small text-one-white text-xs line-clamp-2 mb-3">{post.caption}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 group-hover:text-one-gold transition-colors">
-                      <span className="flex items-center gap-1 font-micro text-muted group-hover:text-one-gold">
-                        <Heart size={10} /> {post.likes}
-                      </span>
-                      <span className="flex items-center gap-1 font-micro text-muted group-hover:text-one-gold">
-                        <MessageCircle size={10} /> {post.comments}
-                      </span>
-                    </div>
-                    <span className="font-micro text-muted">{post.time}</span>
-                  </div>
+                  <p className="font-body-small text-one-white text-xs line-clamp-3">{still.caption}</p>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
         </motion.div>
 
-        {visibleCount < filteredPosts.length && (
+        {visibleCount < STUDIO_STILLS.length && (
           <div className="text-center mt-8">
             <button
+              type="button"
               onClick={() => setVisibleCount((c) => c + 4)}
               data-cursor-label="MORE"
               className="btn-secondary text-xs"
             >
-              Load More Posts
+              More stills
             </button>
           </div>
         )}
@@ -1292,14 +1046,16 @@ function MailchimpExportSection() {
 export default function SocialHub() {
   return (
     <Layout>
-      <SEO title="Social Media Hub" description="ONE FM 98.5 brand assets, content templates, AI caption generator, and campaign calendar." />
+      <SEO
+        title="Social Hub — ONE FM 98.5"
+        description="ONE FM 98.5 on Facebook and SoundCloud. Brand assets, Canva templates, and real studio stills — no invented follower counts."
+      />
       <HeroSection />
       <LiveFacebookSection />
       <AssetLibrary />
       <TemplatesSection />
       <CampaignCalendar />
       <PostingToolkit />
-      <CaptionGenerator />
       <MailchimpExportSection />
       <SocialFeedPreview />
     </Layout>

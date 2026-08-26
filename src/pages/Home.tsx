@@ -11,6 +11,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
+import { LivePlayerWidget } from '@/components/home/LivePlayerWidget'
 import { stationStats } from '@/data/pricing'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
@@ -215,6 +216,7 @@ export default function Home() {
       <div style={{ background: INK }} className="min-h-screen">
         <Ticker />
         <Hero />
+        <LivePlayerWidget className="relative z-20 -mt-4 mb-6" />
         <NameWall label="On Air This Week" rows={wallRows()} />
         <FeatureFrame />
         <StatsStrip />
