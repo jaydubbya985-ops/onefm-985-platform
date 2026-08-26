@@ -90,6 +90,54 @@ function PipelineIndicator() {
   )
 }
 
+function OpsResumeCard() {
+  const { proposals, focusProposalId, setActiveTab, setFocusProposalId } = useOpsStore()
+  const focused = proposals.find((p) => p.id === focusProposalId)
+  const oldestDraft = [...proposals]
+    .filter((p) => p.status === 'draft')
+    .sort((a, b) => a.updatedAt.localeCompare(b.updatedAt))[0]
+  const next = focused?.status === 'draft' ? focused : oldestDraft
+
+  if (!next) {
+    return (
+      <div className="mt-4 rounded-lg border border-one-border bg-[#0D1E36]/50 px-4 py-3 max-w-2xl flex items-center justify-between gap-3 flex-wrap">
+        <p className="text-sm text-one-white">
+          Next: build a sponsorship proposal and download the PDF.
+        </p>
+        <Button
+          size="sm"
+          onClick={() => setActiveTab('proposals')}
+          className="bg-one-gold text-one-navy hover:bg-one-gold/90 min-h-10"
+        >
+          Open Proposals
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-4 rounded-lg border border-one-gold/40 bg-one-gold/8 px-4 py-3 max-w-2xl flex items-center justify-between gap-3 flex-wrap">
+      <div>
+        <p className="text-[10px] uppercase tracking-wider text-one-gold">Pick up where you left off</p>
+        <p className="text-sm text-one-white mt-0.5">
+          Finish the PDF for {next.company ?? next.clientName}
+          {next.number ? ` (${next.number})` : ''}.
+        </p>
+      </div>
+      <Button
+        size="sm"
+        onClick={() => {
+          setFocusProposalId(next.id)
+          setActiveTab('proposals')
+        }}
+        className="bg-one-gold text-one-navy hover:bg-one-gold/90 min-h-10"
+      >
+        Continue
+      </Button>
+    </div>
+  )
+}
+
 function OpsPortalContent() {
   const { activeTab, setActiveTab, resetDemoData } = useOpsStore()
   const { toast } = useToast()
@@ -160,6 +208,7 @@ function OpsPortalContent() {
             )}
           </div>
         </div>
+        <OpsResumeCard />
         <PipelineIndicator />
       </div>
 

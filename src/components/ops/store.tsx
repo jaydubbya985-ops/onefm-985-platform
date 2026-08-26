@@ -33,13 +33,21 @@ export type ProposalStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
 
 export interface Proposal {
   id: string
+  number?: string
   enquiryId?: string
   clientName: string
   company?: string
   email?: string
   source?: EnquirySource
+  packageId?: string
   packageName?: string
   tier?: string
+  durationWeeks?: number
+  notes?: string
+  validUntil?: string
+  deliverables?: { id: string; name: string }[]
+  gst?: number
+  total?: number
   value: number
   status: ProposalStatus
   createdAt: string
@@ -89,9 +97,17 @@ export interface NewProposalInput {
   email?: string
   enquiryId?: string
   source?: EnquirySource
+  packageId?: string
   packageName?: string
   tier?: string
+  durationWeeks?: number
+  notes?: string
+  validUntil?: string
+  deliverables?: { id: string; name: string }[]
+  gst?: number
+  total?: number
   value: number
+  number?: string
 }
 
 export type NewInvoiceInput = Omit<
@@ -114,6 +130,8 @@ interface OpsState {
 export interface OpsStore extends OpsState {
   activeTab: OpsTab
   setActiveTab: (tab: OpsTab) => void
+  focusProposalId: string | null
+  setFocusProposalId: (id: string | null) => void
   resetDemoData: () => void
   // Enquiries
   updateEnquiry: (id: string, patch: Partial<Enquiry>) => void
@@ -142,6 +160,25 @@ export interface OpsStore extends OpsState {
 // ---------------------------------------------------------------------------
 
 const STORAGE_KEY = 'onefm_ops_v1'
+const SESSION_KEY = 'onefm_ops_session_v1'
+
+function loadSession(): { activeTab: OpsTab; focusProposalId: string | null } {
+  try {
+    const raw = window.localStorage.getItem(SESSION_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as { activeTab?: OpsTab; focusProposalId?: string | null }
+      if (parsed.activeTab) {
+        return {
+          activeTab: parsed.activeTab,
+          focusProposalId: parsed.focusProposalId ?? null,
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return { activeTab: 'proposals', focusProposalId: null }
+}
 
 function isoDate(d: Date): string {
   return d.toISOString().split('T')[0]
@@ -165,6 +202,7 @@ function buildSeedState(): OpsState {
     (e) => e.status === 'proposal_sent',
   ).map((e, i) => ({
     id: `prop-seed-${String(i + 1).padStart(3, '0')}`,
+    number: `PROP-2026-${String(i + 1).padStart(3, '0')}`,
     enquiryId: e.id,
     clientName: e.name,
     company: e.company,
@@ -254,7 +292,10 @@ const OpsContext = createContext<OpsStore | null>(null)
 
 export function OpsProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<OpsState>(loadState)
-  const [activeTab, setActiveTab] = useState<OpsTab>('enquiries')
+  const [activeTab, setActiveTab] = useState<OpsTab>(() => loadSession().activeTab)
+  const [focusProposalId, setFocusProposalId] = useState<string | null>(
+    () => loadSession().focusProposalId,
+  )
   const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
 
   // Load from Supabase on mount (when configured + authenticated)
@@ -331,6 +372,21 @@ export function OpsProvider({ children }: { children: ReactNode }) {
     }
   }, [state, remoteReady])
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify({
+          activeTab,
+          focusProposalId,
+          updatedAt: new Date().toISOString(),
+        }),
+      )
+    } catch {
+      // ignore
+    }
+  }, [activeTab, focusProposalId])
+
   const value = useMemo<OpsStore>(() => {
     const now = () => new Date().toISOString()
 
@@ -349,6 +405,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       ...state,
       activeTab,
       setActiveTab,
+      focusProposalId,
+      setFocusProposalId,
 
       resetDemoData: () => {
         try {
@@ -399,6 +457,10 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         if (!enquiry) return null
         const proposal: Proposal = {
           id: `prop-${Date.now()}`,
+          number: nextSequential(
+            state.proposals.map((p) => p.number ?? ''),
+            'PROP-2026-',
+          ),
           enquiryId,
           clientName: enquiry.name,
           company: enquiry.company,
@@ -408,6 +470,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           status: 'draft',
           createdAt: now(),
           updatedAt: now(),
+          validUntil: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
         }
         setState((prev) => ({
           ...prev,
@@ -418,6 +481,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         }))
         void opsApi.upsertProposal(proposal)
         void opsApi.updateEnquiry(enquiryId, { status: 'in_progress' })
+        setFocusProposalId(proposal.id)
         setActiveTab('proposals')
         return proposal.id
       },
@@ -426,6 +490,12 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         const proposal: Proposal = {
           ...input,
           id: `prop-${Date.now()}`,
+          number:
+            input.number ??
+            nextSequential(
+              state.proposals.map((p) => p.number ?? ''),
+              'PROP-2026-',
+            ),
           status: 'draft',
           createdAt: now(),
           updatedAt: now(),
@@ -659,7 +729,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         void opsApi.updateInvoicesBatch(ids, { status: 'sent' })
       },
     }
-  }, [state, activeTab])
+  }, [state, activeTab, focusProposalId])
 
   return <OpsContext.Provider value={value}>{children}</OpsContext.Provider>
 }

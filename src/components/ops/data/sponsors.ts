@@ -7,34 +7,146 @@
 // the deployed Kimi build at full fidelity.
 // ---------------------------------------------------------------------------
 
+import { generalTiers, rateCard } from '@/data/pricing'
+
 // ---------------------------------------------------------------------------
 // Proposal packages (used by ProposalBuilder)
 // ---------------------------------------------------------------------------
+
+export interface ProposalDeliverable {
+  id: string
+  name: string
+  unitPrice: number
+  unit: string
+  included: boolean
+  qty: number
+}
 
 export interface ProposalPackage {
   id: string
   name: string
   category: string
   tier: string
+  /** Season / program lump sum (ex GST). For weekly packages this is 52-week list. */
   basePrice: number
+  /** When set, price = weeklyPrice × term weeks (source: src/data/pricing.ts). */
+  weeklyPrice?: number
+  pricingMode: 'weekly' | 'fixed'
   description: string
-  deliverables: {
-    id: string
-    name: string
-    unitPrice: number
-    unit: string
-    included: boolean
-    qty: number
-  }[]
+  deliverables: ProposalDeliverable[]
+}
+
+function partnershipDeliverables(spots: number, socialPosts: number): ProposalDeliverable[] {
+  return [
+    {
+      id: 'spots',
+      name: `${spots} × 30-sec on-air spots / week`,
+      unitPrice: rateCard.standardSpot30s,
+      unit: 'per week',
+      included: true,
+      qty: spots,
+    },
+    {
+      id: 'social',
+      name: `${socialPosts} social posts / week`,
+      unitPrice: rateCard.socialPost,
+      unit: 'per week',
+      included: true,
+      qty: socialPosts,
+    },
+    {
+      id: 'web',
+      name: 'Website listing',
+      unitPrice: rateCard.websiteBanner,
+      unit: 'per month',
+      included: false,
+      qty: 1,
+    },
+    {
+      id: 'live',
+      name: 'Live read by presenter',
+      unitPrice: rateCard.liveRead,
+      unit: 'each',
+      included: false,
+      qty: 1,
+    },
+  ]
 }
 
 export const PROPOSAL_PACKAGES: ProposalPackage[] = [
+  {
+    id: 'partner-community',
+    name: generalTiers.communityPartner.name,
+    category: 'partnership',
+    tier: 'Community',
+    weeklyPrice: generalTiers.communityPartner.weeklyPrice,
+    basePrice: generalTiers.communityPartner.weeklyPrice * 52,
+    pricingMode: 'weekly',
+    description: `${generalTiers.communityPartner.spots} spots/week + ${generalTiers.communityPartner.socialPosts} social posts. Rate: src/data/pricing.ts`,
+    deliverables: partnershipDeliverables(
+      generalTiers.communityPartner.spots,
+      generalTiers.communityPartner.socialPosts,
+    ),
+  },
+  {
+    id: 'partner-champion',
+    name: generalTiers.championPartner.name,
+    category: 'partnership',
+    tier: 'Champion',
+    weeklyPrice: generalTiers.championPartner.weeklyPrice,
+    basePrice: generalTiers.championPartner.weeklyPrice * 52,
+    pricingMode: 'weekly',
+    description: `${generalTiers.championPartner.spots} spots/week + ${generalTiers.championPartner.socialPosts} social posts. Rate: src/data/pricing.ts`,
+    deliverables: partnershipDeliverables(
+      generalTiers.championPartner.spots,
+      generalTiers.championPartner.socialPosts,
+    ),
+  },
+  {
+    id: 'partner-premier',
+    name: generalTiers.premierPartner.name,
+    category: 'partnership',
+    tier: 'Premier',
+    weeklyPrice: generalTiers.premierPartner.weeklyPrice,
+    basePrice: generalTiers.premierPartner.weeklyPrice * 52,
+    pricingMode: 'weekly',
+    description: `${generalTiers.premierPartner.spots} spots/week + ${generalTiers.premierPartner.socialPosts} social posts. Rate: src/data/pricing.ts`,
+    deliverables: partnershipDeliverables(
+      generalTiers.premierPartner.spots,
+      generalTiers.premierPartner.socialPosts,
+    ),
+  },
+  {
+    id: 'partner-signature',
+    name: generalTiers.signaturePartner.name,
+    category: 'partnership',
+    tier: 'Signature',
+    weeklyPrice: generalTiers.signaturePartner.weeklyPrice,
+    basePrice: generalTiers.signaturePartner.weeklyPrice * 52,
+    pricingMode: 'weekly',
+    description: `${generalTiers.signaturePartner.spots} spots/week + ${generalTiers.signaturePartner.socialPosts} social posts, category exclusivity. Rate: src/data/pricing.ts`,
+    deliverables: [
+      ...partnershipDeliverables(
+        generalTiers.signaturePartner.spots,
+        generalTiers.signaturePartner.socialPosts,
+      ),
+      {
+        id: 'excl',
+        name: 'Category exclusivity',
+        unitPrice: 0,
+        unit: 'included',
+        included: true,
+        qty: 1,
+      },
+    ],
+  },
   {
     id: 'fb-bronze',
     name: 'Football Bronze',
     category: 'football',
     tier: 'Bronze',
     basePrice: 5000,
+    pricingMode: 'fixed',
     description: 'Match mentions and social media',
     deliverables: [
       { id: 'd1', name: 'Match Day Mentions', unitPrice: 800, unit: 'per match', included: true, qty: 2 },
@@ -49,6 +161,7 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     category: 'football',
     tier: 'Silver',
     basePrice: 10000,
+    pricingMode: 'fixed',
     description: 'Enhanced match coverage',
     deliverables: [
       { id: 'd1', name: 'Match Day Mentions', unitPrice: 800, unit: 'per match', included: true, qty: 4 },
@@ -64,6 +177,7 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     category: 'football',
     tier: 'Gold',
     basePrice: 18000,
+    pricingMode: 'fixed',
     description: 'Premium match day presence',
     deliverables: [
       { id: 'd1', name: 'Match Day Mentions', unitPrice: 800, unit: 'per match', included: true, qty: 8 },
@@ -77,6 +191,7 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     category: 'program',
     tier: 'Standard',
     basePrice: 6000,
+    pricingMode: 'fixed',
     description: 'Sponsor a weekly program segment',
     deliverables: [
       { id: 'd1', name: 'Opening Mention', unitPrice: 200, unit: 'per episode', included: true, qty: 52 },
