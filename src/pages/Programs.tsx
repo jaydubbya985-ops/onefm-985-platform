@@ -9,7 +9,9 @@ import { Marquee } from '@/components/Marquee'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
 import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { BRAND } from '@/lib/brand'
-import { HOST_PHOTOS } from '@/lib/stationPhotos'
+import { HOST_PHOTOS, STATION_PHOTOS } from '@/lib/stationPhotos'
+import { MediaImage } from '@/components/MediaImage'
+import { presenterPhotoPath } from '@/lib/presenterAssets'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
@@ -387,6 +389,47 @@ const CATEGORY_COLORS: Record<string, string> = {
   Multicultural: '#FF6B6B',
 }
 
+/** Show-type station photos — never heritage-truck or ob-van on a person. */
+function showTypePhoto(tag: string): string {
+  if (tag === 'Breakfast') return STATION_PHOTOS.studioPresenterMic
+  if (tag === 'Sport') return STATION_PHOTOS.commentaryBoxAction
+  if (tag === 'Multicultural') return STATION_PHOTOS.studioSbsDiversity
+  if (tag === 'Community') return STATION_PHOTOS.communityBookStall
+  return STATION_PHOTOS.studioPresenterMic
+}
+
+const VEHICLE_PHOTO = /heritage-truck|ob-van|ob-truck/i
+const MISSING_HOST_DIR = '/photos/hosts/'
+const GENERIC_HOST = /^(ONE FM|Automated|)$/i
+
+function isNamedPortrait(src: string): boolean {
+  return /heritage-di-hunter|heritage-sally-nayler/.test(src)
+}
+
+function cardVisual(host: string, tag: string): { src: string; fallback: string; alt: string; portrait: boolean } {
+  const fallback = showTypePhoto(tag)
+  if (GENERIC_HOST.test(host.trim())) {
+    return { src: fallback, fallback, alt: `ONE FM ${tag.toLowerCase()} broadcast`, portrait: false }
+  }
+  const named = presenterPhotoPath(host)
+  // /public/photos/hosts/ is empty — do not invent files or request 404 slugs.
+  if (named.startsWith(MISSING_HOST_DIR) || VEHICLE_PHOTO.test(named)) {
+    return {
+      src: fallback,
+      fallback,
+      alt: `ONE FM ${tag.toLowerCase()} photo — named presenter photo pending for ${host}`,
+      portrait: false,
+    }
+  }
+  const portrait = isNamedPortrait(named)
+  return {
+    src: named,
+    fallback,
+    alt: portrait ? `${host}` : `ONE FM ${tag.toLowerCase()} studio — ${host}`,
+    portrait,
+  }
+}
+
 /* Deterministic gradient avatar for host cards */
 const HOST_PALETTES = [
   { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
@@ -415,16 +458,22 @@ const gvlSportBlocks = [
     title: 'Saturday Sport',
     time: 'Sat 8am–12pm',
     desc: 'GVL Football & Netball, cricket, bowls, tennis and harness racing with The Stats Man.',
+    img: STATION_PHOTOS.commentaryBoxAction,
+    alt: 'ONE FM commentary box — Saturday Sport',
   },
   {
     title: 'GVL Match of the Day',
     time: 'Sat 1pm–3pm',
     desc: 'Live match commentary from grounds across the Goulburn Valley.',
+    img: STATION_PHOTOS.commentaryBoxView,
+    alt: 'ONE FM match-day commentary view — GVL Football',
   },
   {
     title: 'NIRS Friday Night Footy',
     time: 'Fri 7pm–10pm',
     desc: 'AFL coverage via the National Indigenous Radio Service network.',
+    img: STATION_PHOTOS.commentaryCallAction,
+    alt: 'ONE FM sport commentary call — NIRS AFL',
   },
 ]
 
@@ -697,7 +746,9 @@ export default function Programs() {
           </div>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {visibleShows.map((show, i) => (
+          {visibleShows.map((show, i) => {
+            const visual = cardVisual(show.host, show.tag)
+            return (
             <TiltCard key={show.name} maxTilt={6}>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -705,14 +756,34 @@ export default function Programs() {
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ delay: (i % SHOWS_INITIAL) * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
                 data-cursor-label={show.tag.toUpperCase()}
-                className="glass-card p-6 flex flex-col gap-4 group cursor-pointer relative overflow-hidden h-full"
+                className="glass-card p-0 flex flex-col group cursor-pointer relative overflow-hidden h-full"
               >
                 {/* Category accent bar */}
                 <div
-                  className="absolute left-0 top-0 bottom-0 rounded-l"
+                  className="absolute left-0 top-0 bottom-0 rounded-l z-10"
                   style={{ width: '3px', backgroundColor: CATEGORY_COLORS[show.tag] ?? '#B6FF00' }}
                 />
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <MediaImage
+                    src={visual.src}
+                    fallbackSrc={visual.fallback}
+                    alt={visual.alt}
+                    className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/20 to-transparent" />
+                  <span
+                    className="absolute top-3 right-3 font-label text-xs px-3 py-1 rounded-full border"
+                    style={{
+                      color: CATEGORY_COLORS[show.tag] ?? '#B6FF00',
+                      backgroundColor: `${CATEGORY_COLORS[show.tag] ?? '#B6FF00'}22`,
+                      borderColor: `${CATEGORY_COLORS[show.tag] ?? '#B6FF00'}40`,
+                    }}
+                  >
+                    {show.tag}
+                  </span>
+                </div>
                 <div aria-hidden className="explore-tile-scan" />
+                <div className="p-6 flex flex-col gap-4 flex-1">
                 <div className="flex items-start justify-between">
                   <div
                     className="w-12 h-12 rounded-full flex items-center justify-center"
@@ -720,16 +791,6 @@ export default function Programs() {
                   >
                     <show.icon size={22} style={{ color: CATEGORY_COLORS[show.tag] ?? '#B6FF00' }} />
                   </div>
-                  <span
-                    className="font-label text-xs px-3 py-1 rounded-full border"
-                    style={{
-                      color: CATEGORY_COLORS[show.tag] ?? '#B6FF00',
-                      backgroundColor: `${CATEGORY_COLORS[show.tag] ?? '#B6FF00'}18`,
-                      borderColor: `${CATEGORY_COLORS[show.tag] ?? '#B6FF00'}30`,
-                    }}
-                  >
-                    {show.tag}
-                  </span>
                 </div>
                 <div>
                   <h3 className="font-h3 text-one-white group-hover:text-one-gold transition-colors duration-200">
@@ -748,9 +809,11 @@ export default function Programs() {
                   </div>
                   <MiniWaveform color={CATEGORY_COLORS[show.tag] ?? '#B6FF00'} seed={i} />
                 </div>
+                </div>
               </motion.div>
             </TiltCard>
-          ))}
+            )
+          })}
         </div>
 
         {filteredShows.length > SHOWS_INITIAL && (
@@ -831,23 +894,25 @@ export default function Programs() {
               <div className="glass-card p-5 group h-full" data-cursor-label="PRESENTER">
                 {(() => {
                   const avatar = getHostAvatar(host.name)
+                  const visual = cardVisual(host.name, host.type)
                   return (
                     <div className="relative mb-4 overflow-hidden rounded-lg aspect-[4/5] group-hover:scale-[1.02] transition-transform duration-500">
-                      <div
-                        className="absolute inset-0"
-                        style={{ background: `linear-gradient(135deg, ${avatar.from} 0%, ${avatar.to} 100%)` }}
+                      <MediaImage
+                        src={visual.src}
+                        fallbackSrc={visual.fallback}
+                        alt={visual.alt}
+                        className="absolute inset-0 w-full h-full"
                       />
-                      <div className="absolute inset-0 opacity-[0.06]"
-                        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span
-                          className="font-heading font-black select-none"
-                          style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: avatar.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
-                        >
-                          {avatar.initials}
-                        </span>
-                      </div>
+                      {!visual.portrait && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-[#101010]/35">
+                          <span
+                            className="font-heading font-black select-none"
+                            style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: avatar.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
+                          >
+                            {avatar.initials}
+                          </span>
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-one-navy/75 via-transparent to-transparent" />
                       <div aria-hidden className="explore-tile-scan" />
                       <div className="absolute bottom-3 left-3 right-3">
@@ -947,10 +1012,20 @@ export default function Programs() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ delay: ri * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
               data-cursor-label={block.title.toUpperCase()}
-              className="glass-card p-6 relative overflow-hidden h-full group"
+              className="glass-card p-0 relative overflow-hidden h-full group"
             >
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <MediaImage
+                  src={block.img}
+                  fallbackSrc={STATION_PHOTOS.commentaryBoxAction}
+                  alt={block.alt}
+                  className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-transparent to-transparent" />
+              </div>
               <div aria-hidden className="explore-tile-scan" />
-              <div className="absolute left-0 top-0 bottom-0 rounded-l" style={{ width: '3px', backgroundColor: '#E51636' }} />
+              <div className="absolute left-0 top-0 bottom-0 rounded-l z-10" style={{ width: '3px', backgroundColor: '#E51636' }} />
+              <div className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <Trophy size={18} className="text-one-red" />
                 <h3 className="font-h3 text-one-white">{block.title}</h3>
@@ -960,6 +1035,7 @@ export default function Programs() {
                 {block.time}
               </p>
               <p className="font-body-small text-muted">{block.desc}</p>
+              </div>
             </motion.div>
             </TiltCard>
           ))}
