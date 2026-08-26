@@ -486,15 +486,13 @@ export default function InvoiceBatchSender() {
       }
       const result = await dispatchInvoiceEmail(payload)
       if (result.devMode) {
-        updateStatus(id, 'tested')
         toast(`Not actually sent — no email service configured (dev mode)`, 'warning')
       } else if (result.success) {
         updateStatus(id, 'tested')
         toast(`Test invoice sent to ${recipient}`, 'success')
       } else if (result.usedMailtoFallback) {
         window.location.href = buildMailtoInvoiceUrl(payload)
-        updateStatus(id, 'tested')
-        toast(`Resend unavailable — test email opened for ${recipient}`, 'warning')
+        toast(`Resend unavailable — test email opened for ${recipient}. Status stays untested until a real send succeeds.`, 'warning')
       } else {
         notify(result.error ?? 'Test send failed', 'error')
       }
@@ -544,10 +542,8 @@ export default function InvoiceBatchSender() {
           notify('Failed to generate PDF', 'error')
         }
         window.location.href = buildMailtoInvoiceUrl(payload)
-        if (!testMode) sendBatch([row.id])
-        else updateStatus(row.id, 'tested')
         notify(
-          `PDF downloaded. Email client opened for ${deliveryTo} — attach ${row.number}.pdf before sending.`,
+          `PDF downloaded. Email client opened for ${deliveryTo} — attach ${row.number}.pdf before sending. Status stays unsent until a real send succeeds.`,
           'warning',
         )
       }
@@ -635,7 +631,7 @@ export default function InvoiceBatchSender() {
         })
         if (result.devMode) {
           devMode++
-        } else if (result.success || result.usedMailtoFallback) {
+        } else if (result.success) {
           updateStatus(r.id, 'tested')
           sent++
         }
@@ -690,8 +686,6 @@ export default function InvoiceBatchSender() {
             payloads,
             (index, _total, itemResult) => {
               if (itemResult.success && !itemResult.devMode) {
-                actuallySentIds.push(selected[index - 1].id)
-              } else if (itemResult.usedMailtoFallback) {
                 actuallySentIds.push(selected[index - 1].id)
               }
             },
