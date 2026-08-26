@@ -155,7 +155,7 @@ const reachFacts = [
   { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString() },
   { label: 'Towns in broadcast area', value: String(stationStats.totalTowns) },
   { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km` },
-  { label: 'Area population (2026 est.)', value: stationStats.broadcastPopulation.toLocaleString() },
+  { label: 'Area population (25-town sum, 2026 est.)', value: stationStats.broadcastPopulation.toLocaleString() },
 ]
 
 const townData = [
@@ -648,7 +648,7 @@ export default function Football() {
               <HeadlinePop>Your audience, your community</HeadlinePop>
             </h2>
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a projected population of {stationStats.broadcastPopulation.toLocaleString()}.
+              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a combined 2026 est. population of {stationStats.broadcastPopulation.toLocaleString()}.
             </p>
           </ScrollReveal>
 

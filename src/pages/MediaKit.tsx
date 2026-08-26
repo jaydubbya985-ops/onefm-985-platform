@@ -92,7 +92,7 @@ const reachChannels = [
 
 const audienceStats = [
   { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString(), note: 'Regional reach estimate' },
-  { label: 'Population in broadcast area', value: stationStats.broadcastPopulation.toLocaleString(), note: '2026 est. · 25 towns' },
+  { label: 'Population in broadcast area', value: stationStats.broadcastPopulation.toLocaleString(), note: 'Sum of 25 towns · 2026 est.' },
   { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km`, note: 'From Shepparton' },
   { label: 'Years on air', value: String(stationStats.yearsBroadcasting), note: 'Licensed since 1989' },
 ]

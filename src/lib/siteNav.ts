@@ -43,6 +43,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: 'History', path: '/heritage', description: 'Since 1989 · callsign 3ONE · station archive' },
       { label: 'Community', path: '/community', description: 'NFPs & local organisations' },
       { label: 'GVL Football', path: '/football', description: 'Season sponsorship tiers' },
+      { label: 'Social Hub', path: '/social', description: 'Facebook + SoundCloud · brand assets' },
     ],
   },
   {
@@ -101,6 +102,7 @@ export const FOOTER_RESOURCES: NavItem[] = [
   { label: 'Media Kit (PDF)', path: '/media-kit' },
   { label: 'Rate Card', path: '/sponsorship' },
   { label: 'Program Guide', path: '/programs' },
+  { label: 'Social Hub', path: '/social' },
 ]
 
 /** Programs page quick navigation */

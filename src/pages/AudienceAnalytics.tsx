@@ -236,7 +236,7 @@ export default function AudienceAnalytics() {
             {[
               { label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners, color: '#B6FF00', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
               { label: 'Towns in Broadcast Area', value: stationStats.totalTowns, color: '#D4963A', suffix: '', sparkline: false, extra: `~${stationStats.broadcastRadiusKm}km radius from Shepparton` },
-              { label: 'Broadcast Area Population', value: stationStats.broadcastPopulation, color: '#F0C75E', suffix: '', sparkline: false, extra: `Source: ABS 2021 · ${stationStats.totalTowns} towns` },
+              { label: 'Broadcast Area Population', value: stationStats.broadcastPopulation, color: '#F0C75E', suffix: '', sparkline: false, extra: `Sum of ${stationStats.totalTowns} towns · 2026 est. (townData)` },
               { label: 'Years Broadcasting', value: stationStats.yearsBroadcasting, color: '#9B5DE5', suffix: ' yrs', sparkline: false, extra: 'Licensed 1989 · callsign 3ONE' },
             ].map((stat) => (
               <TiltCard key={stat.label} maxTilt={5} className="flex flex-col min-h-[140px]">
@@ -279,8 +279,8 @@ export default function AudienceAnalytics() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DEMOGRAPHICS · REACH · PERFORMANCE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 POPULATION · LICENSED 1989</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} BROADCAST AREA POPULATION</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">WEEKLY LISTENERS · ABS 2021 MODEL</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} 25-TOWN SUM · 2026 EST.</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE STREAM ANALYTICS · DATA PENDING</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.yearsBroadcasting} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
           ]}

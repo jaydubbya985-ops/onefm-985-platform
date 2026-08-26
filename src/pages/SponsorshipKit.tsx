@@ -140,7 +140,7 @@ export default function SponsorshipKit() {
         <StatsStrip
           stats={[
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'Area population (2026 est.)' },
+            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'Area population (25-town sum, 2026 est.)' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
             { n: '$50', t: 'Per week — entry package' },
           ]}

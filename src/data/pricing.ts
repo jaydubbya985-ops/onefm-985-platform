@@ -55,9 +55,9 @@ export const donationTiers = [
 // Key stats
 export const stationStats = {
   weeklyListeners: 39375,
-  // 2026 est. from station research scrape — not weekly listeners.
-  // townData.broadcastArea.totalPopulation2026 is 189680; do not invent a reconciliation.
-  broadcastPopulation: 185791,
+  // Public figure = sum of the 25 towns in townData (verified 189680).
+  // oneFmScrapedData area_population_2026 was 185791 — do not show both.
+  broadcastPopulation: 189680,
   totalTowns: 25,
   broadcastRadiusKm: 100,
   // Unverified — do not render on public pages until a sourced count exists

@@ -28,6 +28,8 @@ Do not merge to `main`. Do not deploy production unless Jay replies.
 1. Named host JPGs if Jay drops them in `/public/photos/hosts/`
 2. More WP pins only when new posts exist (latest still 27 Jul 2026)
 
+Public area population is the **25-town sum 189,680** (townData), not the 185,791 scrape. Social Hub is in About nav. 404 offers Listen / Programs / Coverage.
+
 Cookie QA, `/broadcast`, Community town photos, Home GVL finals badge: done.
 Coverage **On air recently** cards pan the map to WP pins. Nav includes Broadcast Grid. Community languages = guide show count (not “8+”). Population copy is 2026 est., not “people reached”.
 Public Social Hub no longer downloads ops DEMO Mailchimp leads.
