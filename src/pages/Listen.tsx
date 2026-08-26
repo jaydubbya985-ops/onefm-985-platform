@@ -8,6 +8,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { LatestInterviews } from '@/components/LatestInterviews'
+import { RecentStationActivity } from '@/components/RecentStationActivity'
 import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { wallRows } from '@/data/onAirPeople'
 import { useLiveStream } from '@/hooks/useLiveStream'
@@ -112,6 +113,9 @@ export default function Listen() {
         </section>
         <section className="px-6 md:px-12 lg:px-20 pb-6">
           <LatestInterviews />
+        </section>
+        <section className="px-6 md:px-12 lg:px-20 pb-6">
+          <RecentStationActivity />
         </section>
         <WaysToListen />
         <StatsStrip

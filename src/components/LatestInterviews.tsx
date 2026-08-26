@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ExternalLink, Mic2, Play } from 'lucide-react'
-import { fetchLatestInterviews, formatInterviewDate, type Fm985Interview } from '@/lib/fm985Feed'
+import {
+  fetchLatestInterviews,
+  formatInterviewDate,
+  resolveFeedImage,
+  showTypePhoto,
+  type Fm985Interview,
+} from '@/lib/fm985Feed'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
@@ -11,6 +17,12 @@ import { TiltCard } from '@/components/TiltCard'
 
 function InterviewCard({ item, index = 0 }: { item: Fm985Interview; index?: number }) {
   const [expanded, setExpanded] = useState(false)
+  const fallbackPhoto = showTypePhoto(item.kind ?? 'interview')
+  const [imgSrc, setImgSrc] = useState(() => resolveFeedImage(item.imageUrl, item.kind ?? 'interview'))
+
+  useEffect(() => {
+    setImgSrc(resolveFeedImage(item.imageUrl, item.kind ?? 'interview'))
+  }, [item.imageUrl, item.kind])
 
   return (
     <TiltCard maxTilt={4}>
@@ -22,23 +34,21 @@ function InterviewCard({ item, index = 0 }: { item: Fm985Interview; index?: numb
       transition={{ delay: index * 0.07, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="glass-card p-5 group">
       <div className="flex gap-4">
-        {item.imageUrl ? (
-          <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-one-border">
-            <img
-              src={item.imageUrl}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div aria-hidden className="explore-tile-scan" />
-          </div>
-        ) : (
-          <div className="relative w-16 h-16 rounded-lg bg-one-navy border border-one-border flex items-center justify-center shrink-0 overflow-hidden">
-            <Mic2 className="text-one-gold relative z-10" size={24} />
-            <div aria-hidden className="explore-tile-scan" />
-          </div>
-        )}
+        <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden shrink-0 border border-one-border bg-one-navy">
+          <img
+            src={imgSrc}
+            alt=""
+            width={112}
+            height={112}
+            loading="lazy"
+            decoding="async"
+            onError={() => {
+              if (imgSrc !== fallbackPhoto) setImgSrc(fallbackPhoto)
+            }}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div aria-hidden className="explore-tile-scan" />
+        </div>
         <div className="flex-1 min-w-0">
           <time className="font-label text-[10px] text-one-gold">{formatInterviewDate(item.date)}</time>
           <h3 className="font-h4 text-one-white mt-1 line-clamp-2">{item.title}</h3>

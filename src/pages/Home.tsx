@@ -10,6 +10,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
+import { RecentStationActivity } from '@/components/RecentStationActivity'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { stationStats } from '@/data/pricing'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
@@ -220,6 +221,9 @@ export default function Home() {
         <StatsStrip />
         <section className="px-6 md:px-12 lg:px-20 pb-10">
           <LatestInterviews />
+        </section>
+        <section className="px-6 md:px-12 lg:px-20 pb-10">
+          <RecentStationActivity />
         </section>
         <section className="px-6 md:px-12 lg:px-20 pb-32">
           <LabelReveal className="mb-8">Explore ONE FM</LabelReveal>
