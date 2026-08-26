@@ -27,6 +27,7 @@ const MENU: { label: string; to: string; img: string }[] = [
 
 const SECONDARY: { label: string; to: string }[] = [
   { label: 'Programs', to: '/programs' },
+  { label: 'Broadcast', to: '/broadcast' },
   { label: 'Social', to: '/social' },
   { label: 'GVL Footy', to: '/football' },
   { label: 'Coverage', to: '/coverage' },
