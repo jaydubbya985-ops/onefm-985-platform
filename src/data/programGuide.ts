@@ -119,6 +119,12 @@ export const FULL_SCHEDULE: ScheduleSlot[] = [
   { day: 0, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 ]
 
+/** Unique multicultural shows on the current fm985.com.au guide — count these, do not invent languages. */
+export const MULTICULTURAL_SHOWS = Array.from(
+  new Map(FULL_SCHEDULE.filter((s) => s.category === 'Multicultural').map((s) => [s.name, s])).values(),
+)
+export const MULTICULTURAL_SHOW_COUNT = MULTICULTURAL_SHOWS.length
+
 /** Get current on-air show from full schedule */
 export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
   const day = now.getDay()

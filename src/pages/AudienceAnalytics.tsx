@@ -35,6 +35,7 @@ import { Marquee } from '@/components/Marquee'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { SEO } from '@/components/SEO'
 import { stationStats } from '@/data/pricing'
+import { MULTICULTURAL_SHOW_COUNT } from '@/data/programGuide'
 
 /* ─────────── easing ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -463,8 +464,8 @@ export default function AudienceAnalytics() {
                 },
                 {
                   title: 'Community',
-                  text: '25+ multicultural programs weekly',
-                  sub: 'Swahili, Samoan, Filipino, Mandarin, Punjabi & more',
+                  text: `${MULTICULTURAL_SHOW_COUNT} multicultural shows on the weekly guide`,
+                  sub: 'Names and hosts from fm985.com.au/guide — not an invented language count',
                   border: '#D4963A',
                   icon: Sparkles,
                 },

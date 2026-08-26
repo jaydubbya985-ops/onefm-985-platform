@@ -14,7 +14,7 @@ import { towns } from '@/data/townData'
 import { stationStats } from '@/data/pricing'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { GVL_FINALS_2026 } from '@/data/gvlSeason'
-import { FULL_SCHEDULE } from '@/data/programGuide'
+import { MULTICULTURAL_SHOW_COUNT, MULTICULTURAL_SHOWS } from '@/data/programGuide'
 
 const RED = '#E51636'
 
@@ -68,11 +68,7 @@ export default function Community() {
     img: TOWN_IMGS[i % TOWN_IMGS.length],
   }))
 
-  const multicultural = Array.from(
-    new Map(
-      FULL_SCHEDULE.filter((s) => s.category === 'Multicultural').map((s) => [s.name, s])
-    ).values()
-  ).map((s) => ({
+  const multicultural = MULTICULTURAL_SHOWS.map((s) => ({
     tag: 'Multicultural',
     title: s.name,
     body: `With ${s.host} — listed on the fm985.com.au program guide.`,
@@ -144,7 +140,7 @@ export default function Community() {
           stats={[
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley', red: true },
             { n: stationStats.broadcastPopulation.toLocaleString(), t: 'Area population (25-town sum, 2026 est.)' },
-            { n: String(multicultural.length), t: 'Multicultural shows on the guide' },
+            { n: String(MULTICULTURAL_SHOW_COUNT), t: 'Multicultural shows on the guide' },
             { n: `${stationStats.broadcastRadiusKm}km`, t: 'Signal radius from Mt Major' },
           ]}
         />

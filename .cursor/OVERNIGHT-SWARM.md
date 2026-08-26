@@ -29,6 +29,7 @@ Do not merge to `main`. Do not deploy production unless Jay replies.
 2. More WP pins only when new posts exist (latest still 27 Jul 2026)
 
 Public area population is the **25-town sum 189,680** (townData), not the 185,791 scrape. Social Hub is in About nav. 404 offers Listen / Programs / Coverage.
+Heritage gallery no longer claims 25+ languages, never-dark transmitter, or standing MCG coverage. Multicultural count is the current program-guide show list.
 
 Cookie QA, `/broadcast`, Community town photos, Home GVL finals badge: done.
 Coverage **On air recently** cards pan the map to WP pins. Nav includes Broadcast Grid. Community languages = guide show count (not “8+”). Population copy is 2026 est., not “people reached”.
