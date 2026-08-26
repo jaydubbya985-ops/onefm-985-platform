@@ -7,10 +7,18 @@ import {
 } from '../components/ops/data/collectQueue'
 import { ALL_BATCH_INVOICES } from '../components/ops/data/invoices'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from './stationBank'
+import { INVOICE_LOGO_DATA_URL, INVOICE_LOGO_FORMAT } from './logoForPdf'
 
 assert.equal(BANK_BSB, '083-894')
 assert.equal(BANK_ACCOUNT, '553 219 432')
 assert.equal(BANK_ACCOUNT_NAME, 'Goulburn Valley Community Radio Inc.')
+
+assert.equal(INVOICE_LOGO_FORMAT, 'JPEG')
+assert.ok(INVOICE_LOGO_DATA_URL.startsWith('data:image/jpeg;base64,'))
+assert.ok(
+  INVOICE_LOGO_DATA_URL.length < 40_000,
+  'invoice JPEG must stay tiny so the PDF does not explode to megabytes',
+)
 
 assert.equal(COLLECT_LADDER[0].kind, 'document')
 assert.equal(COLLECT_LADDER[1].invoiceNumber, 'ONEFM-2026-013')

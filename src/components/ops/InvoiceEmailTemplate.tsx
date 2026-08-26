@@ -13,7 +13,11 @@ import { Check, Copy, CreditCard } from 'lucide-react'
 import { useToast } from './Toast'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
-import { getInvoiceLogoDataUrl, INVOICE_LOGO_ASPECT } from '@/lib/logoForPdf'
+import {
+  getInvoiceLogoDataUrl,
+  INVOICE_LOGO_ASPECT,
+  INVOICE_LOGO_FORMAT,
+} from '@/lib/logoForPdf'
 import {
   BANK_ACCOUNT,
   BANK_ACCOUNT_NAME,
@@ -602,7 +606,7 @@ export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
 // ---------------------------------------------------------------------------
 
 export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF> {
-  const doc  = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
+  const doc  = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true })
   const W    = 210
   const H    = 297
   const M    = 20
@@ -650,47 +654,53 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
     logoData = null
   }
 
-  const LOGO_H = 22
-  const LOGO_W = LOGO_H * INVOICE_LOGO_ASPECT
+  const LOGO_H = 16
+  const LOGO_W = Math.min(56, LOGO_H * INVOICE_LOGO_ASPECT)
   if (logoData) {
-    doc.addImage(logoData, 'PNG', M, 12, LOGO_W, LOGO_H)
+    doc.addImage(logoData, INVOICE_LOGO_FORMAT, M, 12, LOGO_W, LOGO_H, 'onefm-logo', 'FAST')
   } else {
     bold(16); inkBlue(); tl('ONE FM 98.5', M, 22)
   }
   norm(8); inkGrey()
-  tl('Goulburn Valley Community Radio Inc.', M, 38)
+  tl('Goulburn Valley Community Radio Inc.', M, 32)
   norm(7); inkDim()
-  tl('ABN: 92 117 291 771  ·  47 Parkside Drive, Shepparton VIC 3630', M, 43)
+  tl('ABN: 92 117 291 771  ·  47 Parkside Drive, Shepparton VIC 3630', M, 37)
 
-  bold(16); inkNavy(); tr('TAX INVOICE', W - M, 20)
-  norm(11); inkBlue(); tr(invoice.number, W - M, 28)
+  bold(16); inkNavy(); tr('TAX INVOICE', W - M, 18)
+  norm(11); inkBlue(); tr(invoice.number, W - M, 26)
 
-  const HEADER_H = 48
+  const HEADER_H = 42
   fillBlue(); box(0, HEADER_H, W, 1.2)
 
   // ── BODY ────────────────────────────────────────────────────────────────
   let y = HEADER_H + 10
+  const fromX = 118
+  const fromW = W - M - fromX
+  const billW = fromX - M - 8
 
   // BILL TO / FROM
   norm(7); inkDim()
-  tl('BILL TO', M, y); tl('FROM', W / 2 + 5, y)
+  tl('BILL TO', M, y); tl('FROM', fromX, y)
   y += 5.5
 
   bold(11); inkNavy()
-  tl(invoice.company, M, y)
-  tl('Goulburn Valley Community Radio Inc.', W / 2 + 5, y)
-  y += 5
+  const billLines = doc.splitTextToSize(invoice.company, billW) as string[]
+  const fromLines = doc.splitTextToSize('Goulburn Valley Community Radio Inc.', fromW) as string[]
+  const nameRows = Math.max(billLines.length, fromLines.length)
+  billLines.forEach((line, i) => tl(line, M, y + i * 5))
+  fromLines.forEach((line, i) => tl(line, fromX, y + i * 5))
+  y += nameRows * 5
 
   norm(9); inkGrey()
   if (invoice.contactName) tl(`Attn: ${invoice.contactName}`, M, y)
-  tl('Trading as ONE FM 98.5', W / 2 + 5, y)
+  tl('Trading as ONE FM 98.5', fromX, y)
   y += 4.5
 
   if (invoice.email) { norm(8); inkGrey(); tl(invoice.email, M, y) }
   norm(8); inkGrey()
-  tl('ABN 92 117 291 771', W / 2 + 5, y)
+  tl('ABN 92 117 291 771', fromX, y)
   y += 4.5
-  tl('(03) 5831 3131  ·  accounts@fm985.com.au', W / 2 + 5, y)
+  tl('(03) 5831 3131  ·  accounts@fm985.com.au', fromX, y)
   y += 12
 
   // DATES ROW
