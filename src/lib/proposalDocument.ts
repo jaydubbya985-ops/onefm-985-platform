@@ -16,6 +16,13 @@ import {
   ensureInteriorSpace,
 } from '@/lib/pdfLetterhead'
 import {
+  drawCivicPage,
+  drawFinalsPage,
+  drawSoundPage,
+  drawValleyPage,
+  loadLeagueMark,
+} from '@/lib/proposalEditorialPages'
+import {
   PDF_COVER_FOOTY_JPEG,
   PDF_COVER_FOOTY_PX,
   PDF_COVER_STUDIO_JPEG,
@@ -119,6 +126,9 @@ export interface ProposalDocData {
   deliverables: { name: string; detail: string }[]
   money: ProposalMoney
   weeklyPrice?: number
+  /** Real client file only. Never generated. */
+  clientLogoDataUrl?: string | null
+  clientLogoPx?: { w: number; h: number }
 }
 
 export function buildProposalDoc(input: {
@@ -131,6 +141,8 @@ export function buildProposalDoc(input: {
   pkg: ProposalPackage
   durationWeeks: number
   extras: Record<string, boolean>
+  clientLogoDataUrl?: string | null
+  clientLogoPx?: { w: number; h: number }
 }): ProposalDocData {
   const money = computePackageValue(input.pkg, input.durationWeeks, input.extras)
   const lines = selectedDeliverables(input.pkg, input.extras).map((d) => ({
@@ -153,6 +165,8 @@ export function buildProposalDoc(input: {
     deliverables: lines,
     money,
     weeklyPrice: input.pkg.weeklyPrice,
+    clientLogoDataUrl: input.clientLogoDataUrl || undefined,
+    clientLogoPx: input.clientLogoPx,
   }
 }
 
@@ -173,6 +187,8 @@ export function proposalEmailBody(data: ProposalDocData): string {
     `Proposal ${data.number} is valid until ${formatAuDate(data.validUntil)}.`,
     '',
     `Audience (sourced): ${stationStats.weeklyListeners.toLocaleString('en-AU')} estimated weekly listeners across ${stationStats.totalTowns} towns within ${stationStats.broadcastRadiusKm}km of Shepparton (ABS 2021 via townData).`,
+    '',
+    'The attached PDF is a designed lockup: your logo (the real file you supplied) with ONE FM 98.5, census-sourced reach, and current GVL coverage. No invented demographics.',
     '',
     'Happy to walk through it — reply to this email or call (03) 5831 3131.',
     '',
@@ -206,18 +222,33 @@ export async function generateProposalPdf(data: ProposalDocData): Promise<jsPDF>
   const football =
     /gvl|football|footy/i.test(`${data.packageName} ${data.tier} ${data.term}`)
   const coverImg = football ? PDF_COVER_FOOTY_JPEG : PDF_COVER_STUDIO_JPEG
+  const leagueMark = football ? await loadLeagueMark() : null
 
   drawCover(p, {
     imageDataUrl: coverImg,
     imagePx: football ? PDF_COVER_FOOTY_PX : PDF_COVER_STUDIO_PX,
-    kicker: 'Sponsorship proposal',
+    kicker: football ? 'Finals time now  ·  Sponsorship proposal' : 'Partnership proposal',
     title: data.company,
     subtitle: `${data.packageName}  ·  ${data.term}`,
     number: data.number,
     statValue: stationStats.weeklyListeners.toLocaleString('en-AU'),
     statLabel: 'Est. weekly listeners  ·  ABS 2021 via townData',
     statAside: `${stationStats.totalTowns} towns  ·  ${stationStats.broadcastRadiusKm}km`,
+    clientLogoDataUrl: data.clientLogoDataUrl,
+    clientLogoPx: data.clientLogoPx,
   })
+
+  doc.addPage()
+  drawValleyPage(p, data.number, '2')
+
+  doc.addPage()
+  drawFinalsPage(p, data.number, '3', leagueMark)
+
+  doc.addPage()
+  drawSoundPage(p, data.number, '4')
+
+  doc.addPage()
+  drawCivicPage(p, data.number, '5')
 
   doc.addPage()
   let y = drawInteriorHeader(p, 'Sponsorship proposal', data.number, 'The offer')

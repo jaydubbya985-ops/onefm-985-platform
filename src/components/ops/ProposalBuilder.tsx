@@ -32,12 +32,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
-import { stationStats } from '@/data/pricing'
 import { PROPOSAL_PACKAGES } from './data/sponsors'
 import { formatDate } from './data/enquiries'
 import { useOpsStore, type Proposal, type ProposalStatus } from './store'
 import { useToast } from './Toast'
 import { generateContractPdf } from '@/lib/contractDocument'
+import { ClientLogoSlot, type ClientLogoValue } from '@/components/proposal/ClientLogoSlot'
+import { ProposalDeck } from '@/components/proposal/ProposalDeck'
 import {
   addDaysIso,
   buildMailtoProposalUrl,
@@ -45,6 +46,7 @@ import {
   computePackageValue,
   DURATION_OPTIONS,
   formatAud,
+  formatAuDate,
   generateProposalPdf,
   gstOn,
   nextProposalNumber,
@@ -66,81 +68,6 @@ const CATEGORY_LABEL: Record<string, string> = {
   program: 'Program',
 }
 
-function ProposalPreviewSheet({ data }: { data: ProposalDocData }) {
-  return (
-    <div className="bg-white text-[#1A1A1A] rounded-lg overflow-hidden shadow-xl">
-      <div className="bg-[#071D3A] px-5 py-4 flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]">ONE FM 98.5</p>
-          <p className="text-xs text-white/70 mt-1">Goulburn Valley Community Radio</p>
-        </div>
-        <div className="text-right">
-          <p className="text-xs font-semibold text-white">SPONSORSHIP PROPOSAL</p>
-          <p className="text-sm text-[#D4AF37] font-mono mt-0.5">{data.number}</p>
-        </div>
-      </div>
-      <div className="h-1 bg-[#D4AF37]" />
-      <div className="p-5 space-y-4 text-sm">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-neutral-500">Prepared for</p>
-            <p className="font-semibold">{data.clientName}</p>
-            <p className="text-neutral-600">{data.company}</p>
-            {data.email && <p className="text-neutral-500 text-xs">{data.email}</p>}
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-neutral-500">Term / valid</p>
-            <p className="font-semibold">{data.term}</p>
-            <p className="text-neutral-600 text-xs">Valid until {data.validUntil}</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-2 rounded-md bg-[#F5F7FA] p-3">
-          <div>
-            <p className="text-lg font-bold text-[#071D3A]">
-              {stationStats.weeklyListeners.toLocaleString('en-AU')}
-            </p>
-            <p className="text-[10px] text-neutral-500">est. weekly listeners</p>
-          </div>
-          <div>
-            <p className="text-lg font-bold text-[#071D3A]">{stationStats.totalTowns}</p>
-            <p className="text-[10px] text-neutral-500">towns</p>
-          </div>
-          <div>
-            <p className="text-lg font-bold text-[#071D3A]">{stationStats.broadcastRadiusKm}km</p>
-            <p className="text-[10px] text-neutral-500">radius</p>
-          </div>
-        </div>
-        <p className="text-[10px] text-neutral-400">
-          Source: ABS 2021 via townData — Goulburn Valley coverage, not national stream totals
-        </p>
-        <div>
-          <p className="font-semibold text-[#071D3A]">{data.packageName}</p>
-          <p className="text-xs text-neutral-500">{data.tier}</p>
-        </div>
-        <ul className="space-y-1.5">
-          {data.deliverables.map((d) => (
-            <li key={d.name} className="flex justify-between gap-3 border-b border-neutral-100 pb-1.5">
-              <span>{d.name}</span>
-              <span className="text-neutral-500 text-xs shrink-0">{d.detail}</span>
-            </li>
-          ))}
-        </ul>
-        {data.notes && (
-          <p className="text-xs text-neutral-600 bg-neutral-50 rounded p-3">{data.notes}</p>
-        )}
-        <div className="text-right space-y-1">
-          <p className="text-xs text-neutral-500">
-            Ex GST {formatAud(data.money.exGst)} + GST {formatAud(data.money.gst)}
-          </p>
-          <p className="text-xl font-bold text-[#071D3A]">
-            {formatAud(data.money.total)} <span className="text-sm font-normal">incl. GST</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 function extrasFromProposal(p: Proposal): Record<string, boolean> {
   const extras: Record<string, boolean> = {}
   const pkg = PROPOSAL_PACKAGES.find((x) => x.id === p.packageId)
@@ -149,6 +76,19 @@ function extrasFromProposal(p: Proposal): Record<string, boolean> {
     if (!d.included && p.deliverables.some((x) => x.id === d.id)) extras[d.id] = true
   }
   return extras
+}
+
+function deckView(data: ProposalDocData) {
+  return {
+    companyName: data.company,
+    contactName: data.clientName,
+    packageName: `${data.packageName} · ${data.tier}`,
+    term: data.term,
+    number: data.number,
+    investmentLabel: `${formatAud(data.money.total)} incl. GST`,
+    clientLogoDataUrl: data.clientLogoDataUrl,
+    preparedOn: formatAuDate(data.preparedOn),
+  }
 }
 
 export default function ProposalBuilder() {
@@ -170,6 +110,7 @@ export default function ProposalBuilder() {
   const [email, setEmail] = useState('')
   const [durationWeeks, setDurationWeeks] = useState(13)
   const [notes, setNotes] = useState('')
+  const [logo, setLogo] = useState<ClientLogoValue | null>(null)
   const [extras, setExtras] = useState<Record<string, boolean>>({})
   const [previewOpen, setPreviewOpen] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -191,6 +132,15 @@ export default function ProposalBuilder() {
     setDurationWeeks(focused.durationWeeks ?? 13)
     if (focused.packageId) setSelectedId(focused.packageId)
     setExtras(extrasFromProposal(focused))
+    setLogo(
+      focused.logoDataUrl
+        ? {
+            dataUrl: focused.logoDataUrl,
+            width: focused.logoPx?.w ?? 400,
+            height: focused.logoPx?.h ?? 200,
+          }
+        : null,
+    )
   }, [focused])
 
   const draft = buildProposalDoc({
@@ -203,6 +153,8 @@ export default function ProposalBuilder() {
     durationWeeks,
     extras,
     validUntil: focused?.validUntil ?? addDaysIso(30),
+    clientLogoDataUrl: logo?.dataUrl,
+    clientLogoPx: logo ? { w: logo.width, h: logo.height } : undefined,
   })
 
   const resetForm = () => {
@@ -211,6 +163,7 @@ export default function ProposalBuilder() {
     setCompany('')
     setEmail('')
     setNotes('')
+    setLogo(null)
     setExtras({})
     setDurationWeeks(13)
     setSelectedId(PROPOSAL_PACKAGES[0].id)
@@ -233,6 +186,8 @@ export default function ProposalBuilder() {
       durationWeeks,
       extras,
       validUntil: focused?.validUntil ?? addDaysIso(30),
+      clientLogoDataUrl: logo?.dataUrl,
+      clientLogoPx: logo ? { w: logo.width, h: logo.height } : undefined,
     })
     const payload = {
       clientName: clientName.trim(),
@@ -251,6 +206,8 @@ export default function ProposalBuilder() {
       gst: money.gst,
       total: money.total,
       number,
+      logoDataUrl: logo?.dataUrl,
+      logoPx: logo ? { w: logo.width, h: logo.height } : undefined,
     }
     if (focused) {
       updateProposal(focused.id, payload)
@@ -274,6 +231,8 @@ export default function ProposalBuilder() {
         durationWeeks: p.durationWeeks ?? 13,
         extras: extrasFromProposal(p),
         validUntil: p.validUntil,
+        clientLogoDataUrl: p.logoDataUrl,
+        clientLogoPx: p.logoPx,
       })
     }
     const moneySaved =
@@ -296,6 +255,8 @@ export default function ProposalBuilder() {
         detail: 'Included',
       })),
       money: moneySaved,
+      clientLogoDataUrl: p.logoDataUrl,
+      clientLogoPx: p.logoPx,
     }
   }
 
@@ -378,7 +339,7 @@ export default function ProposalBuilder() {
           <div>
             <h2 className="text-xl font-bold text-one-white">Proposal Builder</h2>
             <p className="text-sm text-one-muted">
-              Pick a package, save a draft, download a PDF you can send tonight.
+              Pick a package, drop their real logo, download a designed PDF tonight.
             </p>
           </div>
         </div>
@@ -490,6 +451,20 @@ export default function ProposalBuilder() {
               </div>
             </div>
 
+            <div>
+              <Label className="text-one-muted">Client logo</Label>
+              <p className="text-[11px] text-one-muted mt-0.5 mb-2">
+                Their brand file. Empty plate on the PDF until you drop one. Never generated.
+              </p>
+              <ClientLogoSlot
+                tone="dark"
+                value={logo}
+                companyName={company || clientName}
+                onChange={setLogo}
+                onError={(message) => toast(message, 'warning')}
+              />
+            </div>
+
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-wider text-one-muted">Deliverables</p>
               {pkg.deliverables.map((d) => (
@@ -590,8 +565,8 @@ export default function ProposalBuilder() {
 
       <div className="hidden xl:block">
         <p className="text-xs uppercase tracking-wider text-one-muted mb-3">Live preview</p>
-        <div className="max-w-xl">
-          <ProposalPreviewSheet data={draft} />
+        <div className="max-w-xl max-h-[70vh] overflow-y-auto rounded-lg">
+          <ProposalDeck view={deckView(draft)} />
         </div>
       </div>
 
@@ -739,11 +714,11 @@ export default function ProposalBuilder() {
       </div>
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#101010] border-one-border">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-[#101010] border-one-border">
           <DialogHeader>
-            <DialogTitle className="text-one-white">Proposal preview</DialogTitle>
+            <DialogTitle className="text-one-white">Designed proposal</DialogTitle>
           </DialogHeader>
-          <ProposalPreviewSheet data={draft} />
+          <ProposalDeck view={deckView(draft)} />
         </DialogContent>
       </Dialog>
     </div>

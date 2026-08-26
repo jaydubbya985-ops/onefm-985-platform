@@ -158,6 +158,48 @@ export interface CoverSpec {
   statValue: string
   statLabel: string
   statAside?: string
+  /** Real client file only. SVG/WebP are skipped — PNG or JPG for print. */
+  clientLogoDataUrl?: string | null
+  clientLogoPx?: { w: number; h: number }
+}
+
+function pdfRasterFormat(dataUrl: string): 'JPEG' | 'PNG' | null {
+  if (dataUrl.startsWith('data:image/jpeg') || dataUrl.startsWith('data:image/jpg')) return 'JPEG'
+  if (dataUrl.startsWith('data:image/png')) return 'PNG'
+  return null
+}
+
+/** White plate + contain-fit. Never invents a wordmark if the file is missing. */
+export function drawClientPlate(
+  p: PdfPen,
+  spec: {
+    dataUrl: string
+    px?: { w: number; h: number }
+    x: number
+    y: number
+    plateW: number
+    plateH: number
+  },
+): void {
+  const { doc } = p
+  const fmt = pdfRasterFormat(spec.dataUrl)
+  doc.setFillColor(255, 255, 255)
+  doc.roundedRect(spec.x, spec.y, spec.plateW, spec.plateH, 1.2, 1.2, 'F')
+  if (!fmt) return
+  const pad = 2.4
+  const boxW = spec.plateW - pad * 2
+  const boxH = spec.plateH - pad * 2
+  const px = spec.px ?? { w: 400, h: 200 }
+  const scale = Math.min(boxW / px.w, boxH / px.h)
+  const w = Math.max(px.w * scale, 4)
+  const h = Math.max(px.h * scale, 4)
+  const ix = spec.x + pad + (boxW - w) / 2
+  const iy = spec.y + pad + (boxH - h) / 2
+  try {
+    doc.addImage(spec.dataUrl, fmt, ix, iy, w, h, undefined, 'FAST')
+  } catch {
+    /* keep the empty plate rather than a fake mark */
+  }
 }
 
 /** Full-bleed photo cover — Qwilr/Canva: image is the page, type sits in a gradient. */
@@ -189,9 +231,23 @@ export function drawCover(p: PdfPen, spec: CoverSpec): void {
   box(0, 0, PDF_RAIL, H)
 
   drawLogo(p, M, 11, 11)
-  bold(8)
-  inkWhite()
-  tr(spec.number, W - M, 18)
+  if (spec.clientLogoDataUrl) {
+    drawClientPlate(p, {
+      dataUrl: spec.clientLogoDataUrl,
+      px: spec.clientLogoPx,
+      x: W - M - 46,
+      y: 8,
+      plateW: 46,
+      plateH: 20,
+    })
+    bold(8)
+    inkWhite()
+    tr(spec.number, W - M, 34)
+  } else {
+    bold(8)
+    inkWhite()
+    tr(spec.number, W - M, 18)
+  }
 
   const titleSize = spec.title.length > 32 ? 26 : spec.title.length > 22 ? 30 : 36
   const titles = doc.splitTextToSize(spec.title, W - M * 2) as string[]
