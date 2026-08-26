@@ -6,7 +6,7 @@
  */
 import { jsPDF } from 'jspdf'
 import { DS } from '@/lib/invoiceDesignSystem'
-import { LOGO_PDF_DATA_URL } from '@/lib/logoBase64'
+import { createPdfPen, drawFooter, drawLetterhead } from '@/lib/pdfLetterhead'
 import { stationStats } from '@/data/pricing'
 import type { ProposalDeliverable, ProposalPackage } from '@/components/ops/data/sponsors'
 
@@ -178,70 +178,19 @@ export function buildMailtoProposalUrl(data: ProposalDocData): string {
   return `mailto:${encodeURIComponent(to)}?${params.toString()}`
 }
 
-/** Pure vector A4 PDF — matches invoice letterhead. */
+/** Pure vector A4 PDF — shared navy/gold letterhead. */
 export async function generateProposalPdf(data: ProposalDocData): Promise<jsPDF> {
   const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
-  const W = 210
-  const H = 297
-  const M = 20
-  const CW = W - M * 2
-
-  const [nR, nG, nB] = DS.rgb.navy
-  const [gR, gG, gB] = DS.rgb.gold
+  const p = createPdfPen(doc)
+  const {
+    W, H, M, CW,
+    fillNavy, fillLight,
+    inkNavy, inkGold, inkWhite, inkGrey, inkDark, inkDim,
+    bold, norm, tl, tr,
+  } = p
   const [bR, bG, bB] = DS.rgb.blue
 
-  const fillNavy = () => doc.setFillColor(nR, nG, nB)
-  const fillGold = () => doc.setFillColor(gR, gG, gB)
-  const fillLight = () => doc.setFillColor(245, 247, 250)
-  const inkNavy = () => doc.setTextColor(nR, nG, nB)
-  const inkGold = () => doc.setTextColor(gR, gG, gB)
-  const inkWhite = () => doc.setTextColor(255, 255, 255)
-  const inkGrey = () => doc.setTextColor(102, 102, 102)
-  const inkSilver = () => doc.setTextColor(160, 160, 160)
-  const inkDark = () => doc.setTextColor(26, 26, 26)
-  const inkDim = () => doc.setTextColor(130, 130, 130)
-
-  const bold = (sz: number) => {
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(sz)
-  }
-  const norm = (sz: number) => {
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(sz)
-  }
-  const tl = (t: string, x: number, y: number) => doc.text(t, x, y)
-  const tr = (t: string, x: number, y: number) => doc.text(t, x, y, { align: 'right' })
-  const tc = (t: string, x: number, y: number) => doc.text(t, x, y, { align: 'center' })
-
-  const HEADER_H = 42
-  fillNavy()
-  doc.rect(0, 0, W, HEADER_H, 'F')
-
-  const LOGO_H = 13
-  const LOGO_W = LOGO_H * (1800 / 805)
-  const LOGO_X = M
-  const LOGO_Y = 7
-  doc.setFillColor(255, 255, 255)
-  doc.roundedRect(LOGO_X - 3, LOGO_Y - 2, LOGO_W + 6, LOGO_H + 4, 1.5, 1.5, 'F')
-  doc.addImage(LOGO_PDF_DATA_URL, 'JPEG', LOGO_X, LOGO_Y, LOGO_W, LOGO_H)
-  norm(8)
-  inkSilver()
-  tl("Goulburn Valley's Community Radio", M, 27)
-  norm(7)
-  inkDim()
-  tl(`ABN: ${DS.station.abn}`, M, 32.5)
-
-  bold(11)
-  inkWhite()
-  tr('SPONSORSHIP PROPOSAL', W - M, 16.5)
-  norm(10)
-  inkGold()
-  tr(data.number, W - M, 24.5)
-
-  fillGold()
-  doc.rect(0, HEADER_H, W, 1.5, 'F')
-
-  let y = HEADER_H + 10
+  let y = drawLetterhead(p, 'SPONSORSHIP PROPOSAL', data.number)
 
   norm(7)
   inkDim()
@@ -418,22 +367,11 @@ export async function generateProposalPdf(data: ProposalDocData): Promise<jsPDF>
   y += 4.5
   tl('This is a proposal, not a tax invoice. Figures exclude GST unless marked.', M, y)
 
-  const FY = H - 18
-  fillGold()
-  doc.rect(0, FY - 1, W, 1, 'F')
-  fillNavy()
-  doc.rect(0, FY, W, 18, 'F')
-  norm(7.5)
-  inkSilver()
-  tc(
-    `Goulburn Valley Community Radio Inc.  ·  ABN: ${DS.station.abn}  ·  ${DS.station.phone}`,
-    W / 2,
-    FY + 6,
+  drawFooter(
+    p,
+    `admin@fm985.com.au  ·  ${DS.station.address}`,
+    `${data.number}.pdf  ·  Generated ${formatAuDate(data.preparedOn)}`,
   )
-  tc('admin@fm985.com.au  ·  47 Parkside Drive, Shepparton VIC 3630', W / 2, FY + 10.5)
-  norm(6.5)
-  doc.setTextColor(100, 100, 100)
-  tc(`${data.number}.pdf  ·  Generated ${formatAuDate(data.preparedOn)}`, W / 2, FY + 15)
 
   return doc
 }

@@ -13,7 +13,7 @@ import { Check, Copy, CreditCard } from 'lucide-react'
 import { useToast } from './Toast'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
-import { LOGO_PDF_DATA_URL } from '@/lib/logoBase64'
+import { createPdfPen, drawFooter, drawLetterhead } from '@/lib/pdfLetterhead'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 
 export { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB }
@@ -578,72 +578,24 @@ export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
 
 export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF> {
   const doc  = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
-  const W    = 210
-  const H    = 297
-  const M    = 20
-  const CW   = W - M * 2   // 170mm content width
+  const p = createPdfPen(doc)
+  const {
+    W, M, CW,
+    fillNavy, fillLight,
+    inkNavy, inkGold, inkRed, inkWhite, inkGrey, inkDark, inkDim, inkNab,
+    bold, norm, box, tl, tr,
+  } = p
+  const [bR, bG, bB] = DS.rgb.blue
 
   const today     = new Date()
   const issueDate = (invoice.issueDate ? new Date(invoice.issueDate) : today)
     .toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
   const dueDate   = new Date(invoice.dueDate).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
 
-  // ── colour helpers ───────────────────────────────────────────────────────
-  const [nR,nG,nB] = DS.rgb.navy
-  const [gR,gG,gB] = DS.rgb.gold
-  const [rR,rG,rB] = DS.rgb.red
-  const [bR,bG,bB] = DS.rgb.blue
-
-  const fillNavy  = () => doc.setFillColor(nR, nG, nB)
-  const fillGold  = () => doc.setFillColor(gR, gG, gB)
-  const fillLight = () => doc.setFillColor(245, 247, 250)
-
-  const inkNavy   = () => doc.setTextColor(nR, nG, nB)
-  const inkGold   = () => doc.setTextColor(gR, gG, gB)
-  const inkRed    = () => doc.setTextColor(rR, rG, rB)
-  const inkWhite  = () => doc.setTextColor(255, 255, 255)
-  const inkGrey   = () => doc.setTextColor(102, 102, 102)
-  const inkSilver = () => doc.setTextColor(160, 160, 160)
-  const inkDark   = () => doc.setTextColor(26, 26, 26)
-  const inkDim    = () => doc.setTextColor(130, 130, 130)
-  const inkNab    = () => doc.setTextColor(DS.rgb.nab[0], DS.rgb.nab[1], DS.rgb.nab[2])
-
   const ruleLight = () => { doc.setDrawColor(220, 220, 220); doc.setLineWidth(0.3) }
   const ruleBlue  = () => { doc.setDrawColor(bR, bG, bB); doc.setLineWidth(1.5) }
 
-  const bold = (sz: number) => { doc.setFont('helvetica', 'bold'); doc.setFontSize(sz) }
-  const norm = (sz: number) => { doc.setFont('helvetica', 'normal'); doc.setFontSize(sz) }
-
-  const box = (x: number, y: number, w: number, h: number, style: 'F'|'S'|'FD' = 'F') =>
-    doc.rect(x, y, w, h, style)
-  const tl  = (t: string, x: number, y: number) => doc.text(t, x, y)
-  const tr  = (t: string, x: number, y: number) => doc.text(t, x, y, { align: 'right' })
-  const tc  = (t: string, x: number, y: number) => doc.text(t, x, y, { align: 'center' })
-
-  // ── HEADER BAND ─────────────────────────────────────────────────────────
-  const HEADER_H = 42
-  fillNavy(); box(0, 0, W, HEADER_H)
-
-  // Wordmark — embedded JPEG (white-bg composite, 400px wide).
-  const LOGO_H = 13
-  const LOGO_W = LOGO_H * (1800 / 805)
-  const LOGO_X = M
-  const LOGO_Y = 7
-  doc.setFillColor(255, 255, 255)
-  doc.roundedRect(LOGO_X - 3, LOGO_Y - 2, LOGO_W + 6, LOGO_H + 4, 1.5, 1.5, 'F')
-  doc.addImage(LOGO_PDF_DATA_URL, 'JPEG', LOGO_X, LOGO_Y, LOGO_W, LOGO_H)
-  norm(8); inkSilver(); tl("Goulburn Valley's Community Radio", M, 27)
-  norm(7); inkDim();    tl('ABN: 92 117 291 771', M, 32.5)
-
-  // TAX INVOICE label + number (right)
-  bold(14); inkWhite(); tr('TAX INVOICE', W - M, 16.5)
-  norm(10); inkGold();  tr(invoice.number, W - M, 24.5)
-
-  // ── GOLD RULE (3px, matches email) ──────────────────────────────────────
-  fillGold(); box(0, HEADER_H, W, 1.5)
-
-  // ── BODY ────────────────────────────────────────────────────────────────
-  let y = HEADER_H + 10
+  let y = drawLetterhead(p, 'TAX INVOICE', invoice.number, 14)
 
   // BILL TO / FROM
   norm(7); inkDim()
@@ -661,9 +613,9 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
 
   if (invoice.email) { norm(8); inkGrey(); tl(invoice.email, M, y) }
   norm(8); inkGrey()
-  tl('47 Parkside Drive, Shepparton VIC 3630', W / 2 + 5, y)
+  tl(DS.station.address, W / 2 + 5, y)
   y += 4.5
-  tl('(03) 5831 3131  ·  accounts@fm985.com.au', W / 2 + 5, y)
+  tl(`${DS.station.phone}  ·  ${DS.station.accountsEmail}`, W / 2 + 5, y)
   y += 12
 
   // DATES ROW
@@ -759,19 +711,10 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   inkRed(); tl(invoice.number, BX[3], BY + 2)
   y += 36
 
-  // ── FOOTER BAND (matches email) ──────────────────────────────────────────
-  const FY = H - 18
-  fillGold(); box(0, FY - 1, W, 1)    // gold rule above footer
-  fillNavy(); box(0, FY, W, 18)
-
-  norm(7.5); inkSilver()
-  tc('Goulburn Valley Community Radio Inc.  ·  ABN: 92 117 291 771  ·  (03) 5831 3131', W / 2, FY + 6)
-  tc('Payment due within 14 days  ·  accounts@fm985.com.au', W / 2, FY + 10.5)
-
-  norm(6.5); doc.setTextColor(100, 100, 100)
-  tc(
+  drawFooter(
+    p,
+    `Payment due within 14 days  ·  ${DS.station.accountsEmail}`,
     `ONEFM-${invoice.number}.pdf  ·  Generated ${today.toLocaleDateString('en-AU')}`,
-    W / 2, FY + 15
   )
 
   return doc
