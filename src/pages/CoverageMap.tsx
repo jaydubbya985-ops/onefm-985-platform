@@ -200,6 +200,7 @@ export default function CoverageMap() {
   const [tourCaption, setTourCaption] = useState('')
   const [showFootballPins, setShowFootballPins] = useState(true)
   const [showSponsorPins, setShowSponsorPins] = useState(true)
+  const [showCommunityPins, setShowCommunityPins] = useState(true)
   const [mobileListOpen, setMobileListOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [mapTypeId, setMapTypeIdState] = useState<'satellite' | 'terrain' | 'roadmap'>('satellite')
@@ -429,13 +430,14 @@ export default function CoverageMap() {
         (pin) =>
           pin.type === 'station' ||
           (pin.type === 'football' && showFootballPins) ||
-          (pin.type === 'sponsor' && showSponsorPins),
+          (pin.type === 'sponsor' && showSponsorPins) ||
+          (pin.type === 'community' && showCommunityPins),
       )
       .map((pin) => pinMarkersRef.current.get(pin.id))
       .filter((m): m is google.maps.Marker => !!m)
     clustererRef.current.clearMarkers()
     clustererRef.current.addMarkers([...markersRef.current, ...activePins])
-  }, [mapReady, showFootballPins, showSponsorPins])
+  }, [mapReady, showFootballPins, showSponsorPins, showCommunityPins])
 
   const runTourStepRef = useRef<(index: number) => void>(() => {})
 
@@ -711,6 +713,20 @@ export default function CoverageMap() {
               >
                 <Sparkles size={12} className="text-one-gold" />
                 Sponsors ({coveragePinCounts.sponsor})
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowCommunityPins((v) => !v)}
+                data-cursor-label={showCommunityPins ? 'HIDE ON AIR' : 'SHOW ON AIR'}
+                className={cn(
+                  'flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium transition-colors',
+                  showCommunityPins
+                    ? 'border-one-blue/50 bg-one-blue/10 text-one-white'
+                    : 'border-one-border text-one-muted hover:text-one-white',
+                )}
+              >
+                <Radio size={12} className="text-one-blue" />
+                On air ({coveragePinCounts.community})
               </button>
             </div>
 
@@ -1022,13 +1038,16 @@ export default function CoverageMap() {
                               selectedPin.type === 'station' && 'border-one-gold/50 text-one-gold',
                               selectedPin.type === 'football' && 'border-one-red/50 text-one-red',
                               selectedPin.type === 'sponsor' && 'border-one-gold/50 text-one-gold',
+                              selectedPin.type === 'community' && 'border-one-blue/50 text-sky-300',
                             )}
                           >
                             {selectedPin.type === 'station'
                               ? 'Broadcast hub'
                               : selectedPin.type === 'football'
                                 ? 'GVL club'
-                                : 'Local sponsor'}
+                                : selectedPin.type === 'community'
+                                  ? 'On air recently'
+                                  : 'Local sponsor'}
                           </Badge>
                           <h3 className="font-heading text-lg text-one-white">{selectedPin.name}</h3>
                           <p className="text-xs text-one-muted">{selectedPin.town}</p>
@@ -1051,14 +1070,27 @@ export default function CoverageMap() {
                       )}
                       <p className="text-sm leading-relaxed text-one-muted">{selectedPin.blurb}</p>
                       {selectedPin.link && (
-                        <Link
-                          to={selectedPin.link}
-                          data-cursor-label={selectedPin.type === 'football' ? 'GVL' : 'ADVERTISE'}
-                          className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-one-gold hover:text-one-white"
-                        >
-                          {selectedPin.type === 'football' ? 'View GVL packages' : 'Advertise with ONE FM'}
-                          <ChevronDown size={12} className="-rotate-90" />
-                        </Link>
+                        selectedPin.link.startsWith('http') ? (
+                          <a
+                            href={selectedPin.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-cursor-label="STORY"
+                            className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-one-gold hover:text-one-white"
+                          >
+                            Read on fm985.com.au
+                            <ChevronDown size={12} className="-rotate-90" />
+                          </a>
+                        ) : (
+                          <Link
+                            to={selectedPin.link}
+                            data-cursor-label={selectedPin.type === 'football' ? 'GVL' : 'ADVERTISE'}
+                            className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-one-gold hover:text-one-white"
+                          >
+                            {selectedPin.type === 'football' ? 'View GVL packages' : 'Advertise with ONE FM'}
+                            <ChevronDown size={12} className="-rotate-90" />
+                          </Link>
+                        )
                       )}
                     </div>
                   </motion.div>

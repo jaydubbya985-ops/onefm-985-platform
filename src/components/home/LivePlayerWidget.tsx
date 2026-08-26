@@ -6,7 +6,7 @@ import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { STATION_TICKER } from '@/lib/playerMetadata'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
-import { presenterPhotoPath } from '@/lib/presenterAssets'
+import { presenterPhotoFallback, presenterPhotoPath } from '@/lib/presenterAssets'
 
 function MetadataBadge({ live, label }: { live: boolean; label: string }) {
   return (
@@ -72,7 +72,8 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                 <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-one-border shrink-0">
                   <MediaImage
                     src={presenterImg}
-                    alt={meta.presenter}
+                    alt={meta.presenter || meta.program}
+                    fallbackSrc={presenterPhotoFallback(meta.presenter)}
                     className="absolute inset-0 w-full h-full"
                   />
                   {meta.isLive && (

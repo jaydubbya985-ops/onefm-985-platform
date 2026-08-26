@@ -62,6 +62,15 @@ export function pinMarkerIcon(type: CoveragePinType): google.maps.Icon | google.
       32,
     )
   }
+  if (type === 'community') {
+    return svgIcon(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+        <circle cx="16" cy="16" r="14" fill="${BRAND_COLORS.blue}" stroke="${BRAND_COLORS.white}" stroke-width="2"/>
+        <text x="16" y="21" text-anchor="middle" font-size="13" font-weight="700" fill="${BRAND_COLORS.white}" font-family="Arial,sans-serif">ON</text>
+      </svg>`,
+      32,
+    )
+  }
   return svgIcon(
     `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
       <circle cx="15" cy="15" r="13" fill="${BRAND_COLORS.gold}" stroke="${BRAND_COLORS.navy}" stroke-width="2"/>
