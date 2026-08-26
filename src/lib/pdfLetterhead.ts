@@ -4,7 +4,11 @@
  */
 import type { jsPDF } from 'jspdf'
 import { DS } from '@/lib/invoiceDesignSystem'
-import { LOGO_PDF_DATA_URL } from '@/lib/logoBase64'
+import {
+  INVOICE_LOGO_ASPECT,
+  INVOICE_LOGO_DATA_URL,
+  INVOICE_LOGO_FORMAT,
+} from '@/lib/logoForPdf'
 import { PDF_COVER_GRADIENT_PNG } from '@/lib/pdfCoverGradient'
 
 export const PDF_W = 210
@@ -141,10 +145,10 @@ function coverFit(
 }
 
 export function drawLogo(p: PdfPen, x: number, y: number, h = 11): number {
-  const w = h * (1800 / 805)
+  const w = h * INVOICE_LOGO_ASPECT
   p.doc.setFillColor(255, 255, 255)
   p.doc.roundedRect(x - 2.2, y - 1.6, w + 4.4, h + 3.2, 1.2, 1.2, 'F')
-  p.doc.addImage(LOGO_PDF_DATA_URL, 'JPEG', x, y, w, h)
+  p.doc.addImage(INVOICE_LOGO_DATA_URL, INVOICE_LOGO_FORMAT, x, y, w, h)
   return w
 }
 
