@@ -37,7 +37,7 @@ const IMPACT = [
   {
     tag: 'Programming',
     title: 'Keep the Valley on air',
-    body: 'Volunteer-run community radio — live local content 24/7 from Shepparton. Your support helps cover transmission, studio and programming costs.',
+    body: 'Volunteer-run community radio — on air 24/7 from Shepparton, with live local programming through the day. Your support helps cover transmission, studio and programming costs.',
   },
   {
     tag: 'Community',
@@ -266,7 +266,7 @@ export default function Support() {
           stats={[
             { n: String(stationStats.yearsBroadcasting), t: 'Years on air', red: true },
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners' },
-            { n: '24/7', t: 'Live & local' },
+            { n: '24/7', t: 'On air' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
           ]}
         />

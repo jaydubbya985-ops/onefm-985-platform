@@ -37,6 +37,8 @@ Public Social Hub no longer downloads ops DEMO Mailchimp leads.
 
 Broadcast Explorer “state-of-the-art / HD suite” copy stripped. Donate account name is the licensed entity. Community menu hover is a town photo, not the OB van.
 
+Contact hero lists **Facebook + SoundCloud only** (no dead Instagram/Twitter/YouTube). Marquee is **On air 24/7**, not “Open 7 Days”. Office-hours 9–5 card replaced with live programming 6AM–10PM. FAQ no longer invents TuneIn/iHeart. Broadcast presenter cards have no dummy social icons. Donate 24/7 label is **On air**, not live-local overnight. Broadcast Listen CTA plays the real Radio.co stream (FM / Web / Radio.co — no Alexa/app claims).
+
 ## Stop
 
 Stop spawning new work after **21:20 UTC 26 Aug 2026**

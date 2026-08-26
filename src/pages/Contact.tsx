@@ -13,16 +13,14 @@ import { toast } from 'sonner'
 import { submitEnquiry } from '@/lib/enquiries'
 import { stationStats } from '@/data/pricing'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
+import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import {
   Phone,
   Mail,
   MapPin,
   Clock,
-  Instagram,
   Facebook,
-  Twitter,
-  Youtube,
+  Music,
   Send,
   Loader2,
   CheckCircle2,
@@ -63,11 +61,10 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 /* ─── Section 1: Hero ─── */
 function ContactHero() {
+  // Official channels only — Instagram / Twitter / YouTube URLs are not confirmed (socialLinks.ts).
   const socials = [
-    { icon: Instagram, label: 'Instagram', href: '#' },
     { icon: Facebook, label: 'Facebook', href: FACEBOOK_PAGE_URL, external: true },
-    { icon: Twitter, label: 'Twitter', href: '#' },
-    { icon: Youtube, label: 'YouTube', href: '#' },
+    { icon: Music, label: 'SoundCloud', href: SOUNDCLOUD_PROFILE_URL, external: true },
   ]
 
   const marqueeItems = [
@@ -75,7 +72,7 @@ function ContactHero() {
     { text: 'Email: admin@fm985.com.au', cls: 'text-one-white/40' },
     { text: 'Shepparton · Victoria · Australia', cls: 'text-one-gold/60' },
     { text: 'Sponsorship · Volunteering · Programming', cls: 'text-one-white/40' },
-    { text: 'Open 7 Days', cls: 'text-one-gold/60' },
+    { text: 'On air 24/7', cls: 'text-one-gold/60' },
   ]
 
   const heroRef = useRef<HTMLElement>(null)
@@ -111,7 +108,7 @@ function ContactHero() {
             transition={{ duration: 0.6 }}
             className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
           >
-            Studio Line Open · Shepparton
+            47 Parkside Drive · Shepparton
           </motion.span>
 
           <motion.div
@@ -600,17 +597,17 @@ function FAQSection() {
     {
       question: 'How do I become a sponsor?',
       answer:
-        'Head to our Sponsorship page to explore packages, or select "Sponsorship" in the enquiry form above. Our partnerships team will reach out within 24 hours to discuss tailored options for your business.',
+        'Head to our Sponsorship page to explore packages, or select "Sponsorship" in the enquiry form above. We aim to reply within one working day.',
     },
     {
       question: 'Can I volunteer at the station?',
       answer:
-        'Absolutely. We welcome volunteers for programming, events, technical support, and administration. Select "Volunteering" in the form above, or drop by the studio during office hours. Training is provided.',
+        'Yes. We welcome volunteers for programming, events, technical support, and administration. Select "Volunteering" in the form above, or email admin@fm985.com.au. Training is provided.',
     },
     {
       question: 'How do I request a song?',
       answer:
-        'Call the studio line on (03) 5831 3131 during broadcast hours, or message us on social media. Our hosts love taking requests — especially for local artists.',
+        'Call the studio line on (03) 5831 3131 during live programming (6:00 AM–10:00 PM), or message the station on Facebook. Overnight hours are automated.',
     },
     {
       question: 'What area does ONE FM cover?',
@@ -635,7 +632,7 @@ function FAQSection() {
     {
       question: 'Can I listen online?',
       answer:
-        'Yes — stream ONE FM live via our website player, or find us on TuneIn, iHeartRadio, and the RadioApp. The stream is available worldwide, so you can take the Valley with you anywhere.',
+        'Yes — stream ONE FM live on this site (Listen) or at fm985.com.au/audio-player/. The Radio.co stream works worldwide.',
     },
   ]
 
@@ -806,9 +803,9 @@ function MapMini() {
           <div className="glass-card p-5 text-center h-full group relative overflow-hidden">
             <div aria-hidden className="explore-tile-scan" />
             <Clock size={20} className="text-one-gold mx-auto mb-3" />
-            <div className="font-label text-one-muted mb-1">Office Hours</div>
+            <div className="font-label text-one-muted mb-1">Live programming</div>
             <div className="font-body-small text-one-white">
-              Mon – Fri: 9AM – 5PM
+              6:00 AM – 10:00 PM
             </div>
           </div>
           </TiltCard>

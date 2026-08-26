@@ -2,9 +2,9 @@ import { useState, useEffect, useRef, useMemo, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play, Pause, Search, Grid3X3, List, ChevronDown,
-  ChevronLeft, ChevronRight, Radio, Globe, Smartphone,
+  ChevronLeft, ChevronRight, Radio, Globe,
   Headphones, Sparkles, Calendar,
-  Instagram, Twitter, Music, ArrowRight
+  ArrowRight
 } from 'lucide-react'
 import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { TiltCard } from '@/components/TiltCard'
@@ -787,11 +787,6 @@ function HostRoster() {
                 <h3 className="font-h3 text-one-white text-center group-hover:translate-x-1 transition-transform duration-300">{host.name}</h3>
                 <div className="font-label text-one-muted text-[10px] text-center mt-1">{host.role}</div>
                 <div className="font-body-small text-muted text-xs text-center mt-2">{host.shows.join(', ')}</div>
-                <div className="flex justify-center gap-3 mt-3 opacity-50 group-hover:opacity-100 transition-opacity">
-                  <Twitter size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                  <Instagram size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                  <Music size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                </div>
                 <div className="text-center mt-3">
                   <Link to="/programs" data-cursor-label="PROGRAMS" className="font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">View Programs →</Link>
                 </div>
@@ -996,12 +991,11 @@ function BehindTheScenes() {
 
 /* ─── Section 7: Listen Live / CTA ─── */
 function ListenLiveCTA() {
+  const stream = useLiveStream()
   const platforms = [
     { name: 'FM 98.5', icon: <Radio size={24} /> },
     { name: 'Web', icon: <Globe size={24} /> },
-    { name: 'iOS', icon: <Smartphone size={24} /> },
-    { name: 'Android', icon: <Smartphone size={24} /> },
-    { name: 'Alexa', icon: <Headphones size={24} /> },
+    { name: 'Radio.co', icon: <Headphones size={24} /> },
   ]
 
   return (
@@ -1032,7 +1026,7 @@ function ListenLiveCTA() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="font-body text-one-white mb-10"
         >
-          FM 98.5 · Stream online · iOS &amp; Android · Smart speakers · Ask Alexa
+          FM 98.5 · Stream on this site · fm985.com.au player
         </motion.p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-10">
@@ -1061,8 +1055,14 @@ function ListenLiveCTA() {
         >
           <div className="relative">
             <div className="absolute inset-0 rounded-full bg-one-gold animate-ping opacity-30" />
-            <button className="relative w-20 h-20 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform" data-cursor-label="PLAY">
-              <Play size={32} fill="currentColor" />
+            <button
+              type="button"
+              onClick={() => void stream.toggle()}
+              className="relative w-20 h-20 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform"
+              data-cursor-label={stream.playing ? 'PAUSE' : 'PLAY'}
+              aria-label={stream.playing ? 'Pause live stream' : 'Play live stream'}
+            >
+              {stream.playing ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" />}
             </button>
           </div>
           <div className="flex items-center gap-2">
