@@ -2,7 +2,7 @@
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { stationStats } from '@/data/pricing'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
@@ -245,8 +245,12 @@ export default function Story() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3.5rem, 10vw, 8rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Our" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
-            <WordReveal text="Story." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+            <span className="block text-one-white">
+              <HeadlinePop>Our</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>Story.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -330,7 +334,9 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-16"
         >
-          <WordReveal text="Our Heritage" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-3">
+            <HeadlinePop>Our Heritage</HeadlinePop>
+          </h2>
           <p className="font-body text-one-white max-w-2xl mx-auto">
             From a single studio above a shop to the region's most trusted broadcaster — the journey of ONE FM 98.5.
           </p>
@@ -397,7 +403,9 @@ export default function Story() {
           className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12"
         >
           <div>
-            <WordReveal text="Meet the Voices of the Valley" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-3">
+              <HeadlinePop>Meet the Voices of the Valley</HeadlinePop>
+            </h2>
             <p className="font-body text-one-white max-w-xl">
               Our team is a mix of lifelong locals and passionate broadcasters who found their home at ONE FM.
             </p>
@@ -487,7 +495,9 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="mb-12"
         >
-          <WordReveal text="Behind the Scenes" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-3">
+            <HeadlinePop>Behind the Scenes</HeadlinePop>
+          </h2>
           <p className="font-body text-one-white max-w-xl">
             Our facilities combine heritage warmth with modern broadcast technology.
           </p>
@@ -557,7 +567,9 @@ export default function Story() {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
           >
-            <WordReveal text="Community Impact" className="font-h2 text-one-white mb-6 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-6">
+              <HeadlinePop>Community Impact</HeadlinePop>
+            </h2>
             <div className="grid grid-cols-2 gap-6 mb-8">
               <div>
                 <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.yearsBroadcasting} suffix="" /></p>
@@ -621,7 +633,9 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-16"
         >
-          <WordReveal text="Looking Forward" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-3">
+            <HeadlinePop>Looking Forward</HeadlinePop>
+          </h2>
           <p className="font-body text-one-white max-w-2xl mx-auto">
             The next chapter of ONE FM blends our heritage values with tomorrow's technology.
           </p>

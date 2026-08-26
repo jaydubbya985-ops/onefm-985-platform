@@ -24,10 +24,14 @@ Do not merge to `main`. Do not deploy production unless Jay replies.
 
 ## Remaining (hourly continue)
 
-1. HeadlinePop leftover: `Story.tsx` (redirects to Heritage), `BroadcastExplorer.tsx` (redirects to Listen)
-2. Named host JPGs if Jay drops them in `/public/photos/hosts/`
-3. More WP pins only when new posts exist (latest still 27 Jul 2026)
-4. Browser QA: `/programs`, `/football` finals strip, `/audience` data-pending, MiniPlayer vs cookie
+1. Named host JPGs if Jay drops them in `/public/photos/hosts/`
+2. More WP pins only when new posts exist (latest still 27 Jul 2026)
+3. MiniPlayer vs cookie banner first-visit QA
+4. `/broadcast` restored (Broadcast Explorer) — HeadlinePop on that page + Story.tsx
+
+## Stop
+
+Stop spawning new work after **21:20 UTC 26 Aug 2026**
 
 ## Truth
 

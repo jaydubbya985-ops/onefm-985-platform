@@ -27,6 +27,7 @@ const Heritage = lazy(() => import('./pages/Heritage'))
 const Community = lazy(() => import('./pages/Community'))
 const SocialHub = lazy(() => import('./pages/SocialHub'))
 const Programs = lazy(() => import('./pages/Programs'))
+const BroadcastExplorer = lazy(() => import('./pages/BroadcastExplorer'))
 const Support = lazy(() => import('./pages/Support'))
 const Contact = lazy(() => import('./pages/Contact'))
 const MediaKit = lazy(() => import('./pages/MediaKit'))
@@ -207,8 +208,14 @@ export default function App() {
             </LazyRoute>
           }
         />
-        {/* Absorbed into /listen per REBUILD-SPEC.md */}
-        <Route path="/broadcast" element={<Navigate to="/listen" replace />} />
+        <Route
+          path="/broadcast"
+          element={
+            <LazyRoute variant="card" routeName="Broadcast Explorer">
+              <BroadcastExplorer />
+            </LazyRoute>
+          }
+        />
         <Route
           path="/audience"
           element={

@@ -6,7 +6,7 @@ import {
   Headphones, Sparkles, Calendar,
   Instagram, Twitter, Music, ArrowRight
 } from 'lucide-react'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { TiltCard } from '@/components/TiltCard'
 import { Marquee } from '@/components/Marquee'
 import { Layout } from '@/components/Layout'
@@ -586,7 +586,9 @@ function ShowSpotlight() {
               </div>
             </div>
             <div className="md:w-[55%] p-6 md:p-8 flex flex-col justify-center">
-              <WordReveal text="ONE FM BREAKFAST" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+              <h2 className="font-h2 text-one-white mb-3">
+                <HeadlinePop>ONE FM BREAKFAST</HeadlinePop>
+              </h2>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full border-2 border-one-gold/30 flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, #1B458F 0%, #F2F2F2 100%)' }}>
                   <span className="font-heading font-black text-sm text-one-white/90 leading-none select-none" style={{ letterSpacing: '-0.04em' }}>OB</span>
@@ -709,8 +711,10 @@ function HostRoster() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <WordReveal text="MEET THE VOICES" className="font-h2 text-one-white mb-2 block" as="h2" />
-            <p className="font-body-small text-muted">16 real presenters behind the microphone</p>
+            <h2 className="font-h2 text-one-white mb-2">
+              <HeadlinePop>MEET THE VOICES</HeadlinePop>
+            </h2>
+            <p className="font-body-small text-muted">{ALL_PRESENTERS.length} presenters from the program guide</p>
           </div>
 
           <div className="relative">
@@ -814,7 +818,9 @@ function SegmentDeepDive() {
           transition={{ duration: 0.5, ease: easeOutExpo }}
           className="mb-10"
         >
-          <WordReveal text="SIGNATURE SEGMENTS" className="font-h2 text-one-white mb-2 block" as="h2" />
+          <h2 className="font-h2 text-one-white mb-2">
+            <HeadlinePop>SIGNATURE SEGMENTS</HeadlinePop>
+          </h2>
           <p className="font-body-small text-muted">What makes ONE FM unmissable</p>
         </motion.div>
 
@@ -935,7 +941,9 @@ function BehindTheScenes() {
           </motion.div>
 
           <div>
-            <WordReveal text="BEHIND THE MIC" className="font-h2 text-one-white mb-6 block" as="h2" />
+            <h2 className="font-h2 text-one-white mb-6">
+              <HeadlinePop>BEHIND THE MIC</HeadlinePop>
+            </h2>
             <motion.p
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1014,7 +1022,9 @@ function ListenLiveCTA() {
       </div>
 
       <div className="max-w-[600px] mx-auto px-4 sm:px-6 text-center relative z-10">
-        <WordReveal text="TUNE IN ANYWHERE" className="font-h2 text-one-white mb-4 block" as="h2" />
+        <h2 className="font-h2 text-one-white mb-4">
+          <HeadlinePop>TUNE IN ANYWHERE</HeadlinePop>
+        </h2>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

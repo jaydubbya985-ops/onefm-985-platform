@@ -130,6 +130,7 @@ export const SITE_ROUTES = [
   '/',
   '/listen',
   '/programs',
+  '/broadcast',
   '/coverage',
   '/social',
   '/sponsorship',

@@ -689,7 +689,7 @@ export default function Programs() {
       <PageJobsBar jobs={PAGE_JOBS} className="-mt-0 pb-8 relative z-20" />
 
       {/* Weekly guide from fm985.com.au */}
-      <section className="section-padding bg-surface-mid border-b border-one-border/40" data-cursor-label="WEEK'S GUIDE">
+      <section id="week-guide" className="section-padding bg-surface-mid border-b border-one-border/40" data-cursor-label="WEEK'S GUIDE">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

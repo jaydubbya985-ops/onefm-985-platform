@@ -76,7 +76,7 @@ export const FULL_SCHEDULE: ScheduleSlot[] = [
   { day: 3, startHour: 9,  endHour: 12, name: 'Wednesday Morning', host: 'The Big G', category: 'Music' },
   { day: 3, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
   { day: 3, startHour: 15, endHour: 16, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
-  { day: 3, startHour: 16, endHour: 17, name: 'Thursday Afternoon', host: 'The Big G', category: 'Music' },
+  { day: 3, startHour: 16, endHour: 17, name: 'Thursday Afternoon', host: 'The Big G', category: 'Music' }, // title as scraped from fm985.com.au/guide/ June 2026 — do not rename without a live guide check
   { day: 3, startHour: 18, endHour: 19, name: 'Rockin with Les Harrison', host: "Les 'Harro' Harrison", category: 'Music' },
   { day: 3, startHour: 21, endHour: 22, name: 'Samoan Music Program', host: 'MK', category: 'Multicultural' },
   { day: 3, startHour: 23, endHour: 24, name: 'Arabic Music Program', host: 'ONE FM', category: 'Multicultural' },
