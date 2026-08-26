@@ -1,26 +1,25 @@
-# NEXT CLOUD AGENT — paste this as the whole prompt
+# NEXT CLOUD AGENT — paste `.cursor/HANDOFF.md` as the whole prompt
 
-You are continuing ONE FM 98.5. Benchmark: **80% = gov-ready / send-to-FOOTT without DEMO or invented stats**. Public `/proposal` is a request form. PDFs share `src/lib/pdfLetterhead.ts`. Do not wait. Pull latest. Open PR: invoice real logo + proposal sheet (`cursor/invoice-real-logo-c24f`).
+**This file is a pointer.** The full brief is `.cursor/HANDOFF.md` (also copied into `AGENTS.md` NEXT RUN).
+
+You are continuing ONE FM 98.5. Benchmark: **80% = gov-ready / send-to-FOOTT without DEMO or invented stats**.
+
+## Model
+
+If you are Grok: do the work you can, then tell Jay to start the **next** run as **Claude Opus** at https://cursor.com/agents. You cannot upgrade yourself.
 
 ## Single next action (do this first)
 
-**Live ops only if env present.** Check Netlify / this VM for `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`. If missing: `NEED JAY: VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY on Netlify` and continue other ops work — do not fake live mode.
+`git pull origin main`. Read `.cursor/HANDOFF.md`. New branch off main — never share `cursor/invoice-real-logo-c24f`.
 
-If present: confirm `#/ops` is LIVE (not DEMO password gate), enquiries/proposals persist.
+**Live ops only if env present.** If `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` missing: `NEED JAY:` one line and continue independent code. Do not fake live mode.
 
-Then `npm run build`, commit, push, update the PR.
+## After that
 
-## After that, in order (toward 80%)
+1. Logo/proposal preview = real `/brand/` lockup (PR #12 — merge only if Jay says EXE).
+2. `npx vite-node scripts/verify-ops-pdfs.ts` — 39,375 + GST + BSB 083-894.
+3. Mailto / `devMode` must not mark invoices sent.
+4. Truth grep `src/` for Plemo, unsplash, AI-Enhanced, invented age %.
+5. Public craft: `Home.tsx` / `Listen.tsx` / `Coverage.tsx` / `Story.tsx` — `programGuide.ts` is breakfast source of truth.
 
-1. If Jay says EXE: merge the real-logo PR to main so live `#/ops` invoice + proposal previews match `/public/brand/`.
-2. Stripe test on live URL only if `VITE_STRIPE_PUBLISHABLE_KEY` starts with `pk_`. Else NEED JAY one line.
-3. Truth grep `src/` for Plemo, unsplash, AI-Enhanced, invented age %.
-4. `npx vite-node scripts/verify-ops-pdfs.ts` then pymupdf-extract: proposal has 39,375 + GST; contract/invoice have BSB 083-894.
-
-## Rules
-
-- Never fabricate stats, sponsors, or people photos
-- DEMO CRM stays labelled DEMO
-- Mailto / devMode must not mark invoices sent
-- Desktop — skip Galaxy Fold work
-- Leave the next slice started, not a planning doc
+`npm run build` must pass. Commit, push, open/update a PR.
