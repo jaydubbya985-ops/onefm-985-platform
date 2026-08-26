@@ -4,7 +4,7 @@ import {
   Search, ChevronDown, Download, Copy, Check, Facebook,
   Smartphone, Image, Palette, Type, Grid, ArrowRight,
   X, Eye, Hash, Shield,
-  Mic, Clock, Plus, Radio
+  Mic, Clock, Radio
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
@@ -17,6 +17,7 @@ import { Marquee } from '@/components/Marquee'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { GVL_FINALS_2026 } from '@/data/gvlSeason'
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -55,27 +56,28 @@ const BRAND_COLORS = [
 
 // 2026 on-trend template formats — square, vertical story, horizontal, reel cover
 const TEMPLATES = [
-  { name: 'Breakfast Live Card', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
-  { name: 'GVL Match Day Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Matchday'], image: '/assets/images/gvl-night-panorama.jpg' },
-  { name: 'Community Event Reel Cover', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Event', 'Community', 'Reel'], image: '/assets/images/community-book-stall.jpg' },
+  { name: 'Breakfast Live Card', platform: 'Square', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
+  { name: 'GVL Match Day Story', platform: 'Story', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Matchday'], image: '/assets/images/gvl-night-panorama.jpg' },
+  { name: 'Community Event Reel Cover', platform: 'Story', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Event', 'Community', 'Reel'], image: '/assets/images/community-book-stall.jpg' },
   { name: 'Multicultural Program Tile', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'Program', 'Community'], image: '/assets/images/culture-first-nations-dancer.png' },
   { name: 'Studio Behind the Mic', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['BTS', 'Studio', 'Presenter'], image: '/assets/images/studio-commentary-selfie.jpg' },
-  { name: 'Goulburn Valley Heritage', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Heritage', 'Regional', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
-  { name: 'Live Stream Now Playing', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'Goulburn Valley Heritage', platform: 'Square', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Heritage', 'Regional', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Live Stream Now Playing', platform: 'Square', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
   { name: 'Sponsor Thank You', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Sponsor', 'Community', 'Thank You'], image: '/assets/images/gvl-player-high-five.jpg' },
-  { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
+  { name: 'Laser & Festival Nights', platform: 'Story', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
   { name: 'First Nations Program', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
-  { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
-  { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
-  { name: 'TikTok Vertical — Now Playing', platform: 'TikTok', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
-  { name: 'LinkedIn Community Partner', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
-  { name: 'Threads Quote Card', platform: 'Twitter/X', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
-  { name: 'Carousel Slide 1 — Breakfast', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Carousel)', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
-  { name: 'GVL Scoreboard Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
-  { name: 'Presenter Spotlight Reel', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
+  { name: 'Deni Ute Muster Country', platform: 'Square', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
+  { name: 'Goulburn River Region', platform: 'Square', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
+  { name: 'Vertical Now Playing', platform: 'Story', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'Community Partner Landscape', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Quote Card', platform: 'Square', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Carousel Slide 1 — Breakfast', platform: 'Square', dimensions: '1080×1080', format: 'Canva (Carousel)', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
+  { name: 'GVL Scoreboard Story', platform: 'Story', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
+  { name: 'Presenter Spotlight', platform: 'Story', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
 ]
 
-const PLATFORM_FILTERS = ['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'Stories', 'Reels']
+/** Size filters — not claims that Instagram / TikTok / X accounts exist. */
+const PLATFORM_FILTERS = ['All', 'Facebook', 'Square', 'Story']
 
 const GUIDES = [
   { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: '12 pages', path: '/media-kit' },
@@ -96,21 +98,16 @@ const STUDIO_STILLS = [
   { image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray — stream ONE FM from anywhere at fm985.com.au.', place: 'Region' },
 ]
 
-// Content calendar — GVL events & ONE FM programming (update monthly)
-const CALENDAR_EVENTS = [
-  { day: 1,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
-  { day: 5,  type: 'Content', color: '#9B5DE5', name: 'Multicultural Program Spotlight' },
-  { day: 8,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
-  { day: 10, type: 'Partner', color: '#B6FF00', name: 'Sponsor Shoutout' },
-  { day: 12, type: 'Content', color: '#9B5DE5', name: 'Breakfast Behind the Scenes' },
-  { day: 15, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
-  { day: 18, type: 'Content', color: '#1B458F', name: 'Goulburn Valley Heritage Post' },
-  { day: 20, type: 'Partner', color: '#B6FF00', name: 'Community Org Feature' },
-  { day: 22, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
-  { day: 25, type: 'Content', color: '#9B5DE5', name: 'Regional Feature — Town of the Week' },
-  { day: 27, type: 'Partner', color: '#B6FF00', name: 'Sponsor Spotlight' },
-  { day: 29, type: 'Live',    color: '#E51636', name: 'GVL Final / Major Event' },
-]
+/** August 2026 only — sourced GVL window. Empty in other months; do not invent weekly rounds. */
+function calendarEventsFor(month: Date) {
+  const isAug2026 = month.getFullYear() === 2026 && month.getMonth() === 7
+  if (!isAug2026) return [] as { day: number; type: string; color: string; name: string }[]
+  return [
+    { day: 22, type: 'Season', color: '#F2F2F2', name: `H&A closed (${GVL_FINALS_2026.homeAndAwayClosed})` },
+    { day: 29, type: 'Live', color: '#E51636', name: `First finals Sat (${GVL_FINALS_2026.firstFinalsWeekend})` },
+    { day: 30, type: 'Live', color: '#E51636', name: `First finals Sun (${GVL_FINALS_2026.firstFinalsWeekend})` },
+  ]
+}
 
 /* ─── Animated Grid Pattern Background ─── */
 const GridPattern = memo(function GridPattern() {
@@ -531,7 +528,7 @@ function TemplatesSection() {
 
   const filteredTemplates = platformFilter === 'All'
     ? TEMPLATES
-    : TEMPLATES.filter((t) => t.platform === platformFilter || (platformFilter === 'Stories' && t.tags.includes('Story')) || (platformFilter === 'Reels' && t.tags.includes('Video')))
+    : TEMPLATES.filter((t) => t.platform === platformFilter)
 
   const openModal = (template: (typeof TEMPLATES)[0]) => {
     setModalTemplate(template)
@@ -546,7 +543,7 @@ function TemplatesSection() {
             <h2 className="font-h2 text-one-white mb-2">
               <HeadlinePop>CONTENT TEMPLATES</HeadlinePop>
             </h2>
-            <p className="font-body-small text-muted">Ready-made designs for every platform</p>
+            <p className="font-body-small text-muted">Canva layout sizes. Live channels are Facebook and SoundCloud only.</p>
           </div>
 
           <div className="flex gap-1 flex-wrap">
@@ -585,7 +582,7 @@ function TemplatesSection() {
           />
           <div aria-hidden className="explore-tile-scan" />
           <div className="absolute inset-0 bg-one-navy/60 flex flex-col justify-end p-6 md:p-8">
-            <h3 className="font-h3 text-one-white mb-3">Event Promo — Instagram Post</h3>
+            <h3 className="font-h3 text-one-white mb-3">Event Promo — square Canva size</h3>
             <div className="flex flex-wrap gap-2 mb-4">
               {['1080×1080', 'PSD + Canva', 'Event'].map((tag) => (
                 <span key={tag} className="px-3 py-1 rounded-full border border-one-border font-label text-muted text-[10px]">
@@ -597,7 +594,6 @@ function TemplatesSection() {
               <button data-cursor-label="PREVIEW" className="btn-primary text-xs" onClick={(e) => { e.stopPropagation(); openModal(TEMPLATES[0]) }}>
                 <Eye size={14} /> Preview
               </button>
-              <button data-cursor-label="DOWNLOAD" className="btn-secondary text-xs" onClick={(e) => e.stopPropagation()}>Download</button>
             </div>
           </div>
         </motion.div>
@@ -690,14 +686,11 @@ function TemplatesSection() {
                       </span>
                     ))}
                   </div>
-                  <div className="font-label text-muted text-[11px] mb-1">CUSTOMIZATION</div>
+                  <div className="font-label text-muted text-[11px] mb-1">NOTE</div>
                   <p className="font-body-small text-one-white text-sm mb-6">
-                    Easy to customize with your own images, colors, and text. All layers are clearly labeled and organized.
+                    Layout size for Canva. Official live channels are Facebook and SoundCloud — we do not list Instagram, TikTok, or X until URLs are confirmed.
                   </p>
-                  <div className="flex gap-3">
-                    <button data-cursor-label="DOWNLOAD" className="btn-primary text-xs">Download</button>
-                    <button data-cursor-label="CANVA" className="btn-secondary text-xs">Open in Canva</button>
-                  </div>
+                  <p className="font-label text-[10px] text-muted">Preview only — no file download on this page.</p>
                 </div>
               </div>
             </motion.div>
@@ -712,6 +705,7 @@ function TemplatesSection() {
 function CampaignCalendar() {
   const [calendarView, setCalendarView] = useState<'month' | 'week' | 'list'>('month')
   const [currentMonth] = useState(() => new Date())
+  const CALENDAR_EVENTS = calendarEventsFor(currentMonth)
 
   const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
   const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay()
@@ -730,26 +724,25 @@ function CampaignCalendar() {
             <h2 className="font-h2 text-one-white mb-2">
               <HeadlinePop>CAMPAIGN CALENDAR</HeadlinePop>
             </h2>
-            <p className="font-body-small text-muted">Planning sketch for the month — not a live engagement dashboard.</p>
+            <p className="font-body-small text-muted">
+              {currentMonth.getFullYear() === 2026 && currentMonth.getMonth() === 7
+                ? `August 2026 GVL window — ${GVL_FINALS_2026.sourceLabel}. We do not invent weekly rounds.`
+                : 'No sourced campaign dates for this month — we do not invent a content calendar.'}
+            </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1">
-              {(['month', 'week', 'list'] as const).map((v) => (
-                <button
-                  key={v}
-                  onClick={() => setCalendarView(v)}
-                  className={`px-3 py-1.5 rounded-md font-label text-[11px] transition-all duration-200 ${
-                    calendarView === v ? 'bg-one-gold text-one-navy' : 'border border-one-border text-muted hover:text-one-white'
-                  }`}
-                >
-                  {v.charAt(0).toUpperCase() + v.slice(1)}
-                </button>
-              ))}
-            </div>
-            <button data-cursor-label="NEW" className="btn-primary text-xs">
-              <Plus size={14} /> New Campaign
-            </button>
+          <div className="flex gap-1">
+            {(['month', 'week', 'list'] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setCalendarView(v)}
+                className={`px-3 py-1.5 rounded-md font-label text-[11px] transition-all duration-200 ${
+                  calendarView === v ? 'bg-one-gold text-one-navy' : 'border border-one-border text-muted hover:text-one-white'
+                }`}
+              >
+                {v.charAt(0).toUpperCase() + v.slice(1)}
+              </button>
+            ))}
           </div>
         </div>
 

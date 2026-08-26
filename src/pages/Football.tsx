@@ -752,8 +752,8 @@ export default function Football() {
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-2 gap-3">
             {[
-              { src: STATION_PHOTOS.gvlGoalCelebration,     caption: 'GVL — where footy means everything' },
-              { src: STATION_PHOTOS.gvlTownersCelebration,  caption: 'ONE FM celebrates every premiership moment' },
+              { src: STATION_PHOTOS.gvlGoalCelebration,     caption: 'GVL — local footy on 98.5' },
+              { src: STATION_PHOTOS.gvlTownersCelebration,  caption: 'Premiership archive — station photo' },
             ].map((photo, i) => (
               <motion.div
                 key={photo.caption}
@@ -785,9 +785,9 @@ export default function Football() {
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-3 gap-3">
             {[
-              { src: STATION_PHOTOS.commentaryBoxView,    caption: 'Ready for kick-off — the broadcaster\'s view' },
-              { src: STATION_PHOTOS.obSetupFull,          caption: 'ONE FM 98.5 on location — every match day' },
-              { src: STATION_PHOTOS.commentaryTeamSelfie, caption: 'The broadcast team — live from the box' },
+              { src: STATION_PHOTOS.commentaryBoxView,    caption: 'Commentary box — the caller\'s view' },
+              { src: STATION_PHOTOS.obSetupFull,          caption: 'ONE FM 98.5 on location' },
+              { src: STATION_PHOTOS.commentaryTeamSelfie, caption: 'Broadcast team in the box' },
             ].map((photo, i) => (
               <motion.div
                 key={photo.caption}

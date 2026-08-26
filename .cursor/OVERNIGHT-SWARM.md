@@ -41,6 +41,8 @@ Contact hero lists **Facebook + SoundCloud only** (no dead Instagram/Twitter/You
 
 Unsourced `twitter:site @onefm985` removed (Twitter URL is null). Live Amrap guide 26 Aug 2026: Wednesday 4pm is **All Things Rock**, not Thursday Afternoon. Invented Rochester flood quote stripped from Football (and Story). WP latest post still **27 Jul 2026**.
 
+Social Hub templates are Canva **sizes** (Facebook / Square / Story) — not Instagram/TikTok/X accounts. Campaign calendar is the sourced Aug 2026 GVL window only (no invented weekly rounds). Football photo captions no longer claim every premiership / every match day.
+
 ## Stop
 
 Stop spawning new work after **21:20 UTC 26 Aug 2026**
