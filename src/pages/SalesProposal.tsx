@@ -120,7 +120,11 @@ function Hero() {
           sourced reach figures — not a public generator, not invented demographics.
         </p>
         <a
-          href="#enquire"
+          href="#/proposal"
+          onClick={(e) => {
+            e.preventDefault()
+            document.getElementById('enquire')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }}
           className="inline-block mt-8 rounded-full px-7 py-3.5 font-bold text-[13px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
           style={{ background: RED }}
           data-cursor-label="REQUEST"

@@ -249,9 +249,10 @@ export function drawCover(p: PdfPen, spec: CoverSpec): void {
     tr(spec.number, W - M, 18)
   }
 
-  const titleSize = spec.title.length > 32 ? 26 : spec.title.length > 22 ? 30 : 36
+  const titleSize =
+    spec.title.length > 48 ? 22 : spec.title.length > 32 ? 26 : spec.title.length > 22 ? 30 : 36
   const titles = doc.splitTextToSize(spec.title, W - M * 2) as string[]
-  const titleLines = titles.slice(0, 2)
+  const titleLines = titles.slice(0, 3)
   const titleBlock = titleLines.length * (titleSize * 0.38 + 2)
   let y = H - 78 - titleBlock
 
