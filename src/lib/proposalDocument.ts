@@ -6,7 +6,21 @@
  */
 import { jsPDF } from 'jspdf'
 import { DS } from '@/lib/invoiceDesignSystem'
-import { createPdfPen, drawFooter, drawLetterhead } from '@/lib/pdfLetterhead'
+import {
+  createPdfPen,
+  drawAmountBand,
+  drawCover,
+  drawInteriorHeader,
+  drawSlimFooter,
+  drawStatCards,
+  ensureInteriorSpace,
+} from '@/lib/pdfLetterhead'
+import {
+  PDF_COVER_FOOTY_JPEG,
+  PDF_COVER_FOOTY_PX,
+  PDF_COVER_STUDIO_JPEG,
+  PDF_COVER_STUDIO_PX,
+} from '@/lib/pdfCoverImages'
 import { stationStats } from '@/data/pricing'
 import type { ProposalDeliverable, ProposalPackage } from '@/components/ops/data/sponsors'
 
@@ -178,200 +192,150 @@ export function buildMailtoProposalUrl(data: ProposalDocData): string {
   return `mailto:${encodeURIComponent(to)}?${params.toString()}`
 }
 
-/** Pure vector A4 PDF — shared navy/gold letterhead. */
+/** Qwilr-style cover + Workday interior. Real station photo. Sourced stats only. */
 export async function generateProposalPdf(data: ProposalDocData): Promise<jsPDF> {
   const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
   const p = createPdfPen(doc)
   const {
     W, H, M, CW,
-    fillNavy, fillLight,
-    inkNavy, inkGold, inkWhite, inkGrey, inkDark, inkDim,
-    bold, norm, tl, tr,
+    fillLight, fillRed,
+    inkNavy, inkGrey, inkDark, inkDim,
+    bold, norm, tl, tr, box, kicker,
   } = p
-  const [bR, bG, bB] = DS.rgb.blue
 
-  let y = drawLetterhead(p, 'SPONSORSHIP PROPOSAL', data.number)
+  const football =
+    /gvl|football|footy/i.test(`${data.packageName} ${data.tier} ${data.term}`)
+  const coverImg = football ? PDF_COVER_FOOTY_JPEG : PDF_COVER_STUDIO_JPEG
 
-  norm(7)
-  inkDim()
-  tl('PREPARED FOR', M, y)
-  tl('FROM', W / 2 + 5, y)
-  y += 5.5
+  drawCover(p, {
+    imageDataUrl: coverImg,
+    imagePx: football ? PDF_COVER_FOOTY_PX : PDF_COVER_STUDIO_PX,
+    kicker: 'Sponsorship proposal',
+    title: data.company,
+    subtitle: `${data.packageName}  ·  ${data.term}`,
+    number: data.number,
+    statValue: stationStats.weeklyListeners.toLocaleString('en-AU'),
+    statLabel: 'Est. weekly listeners  ·  ABS 2021 via townData',
+    statAside: `${stationStats.totalTowns} towns  ·  ${stationStats.broadcastRadiusKm}km`,
+  })
 
-  bold(11)
+  doc.addPage()
+  let y = drawInteriorHeader(p, 'Sponsorship proposal', data.number, 'The offer')
+
+  kicker('Prepared for', M, y)
+  kicker('From', W / 2 + 4, y)
+  y += 6
+  bold(14)
   inkNavy()
   tl(data.clientName, M, y)
-  tl(DS.station.name, W / 2 + 5, y)
-  y += 5
-
-  norm(9.5)
+  tl(DS.station.name, W / 2 + 4, y)
+  y += 6
+  norm(9)
   inkGrey()
   tl(data.company, M, y)
-  tl(DS.station.address, W / 2 + 5, y)
-  y += 4.5
-  if (data.email) {
-    norm(8)
-    inkGrey()
-    tl(data.email, M, y)
-  }
-  norm(8)
-  inkGrey()
-  tl(`${DS.station.phone}  ·  admin@fm985.com.au`, W / 2 + 5, y)
-  y += 10
+  tl(DS.station.address, W / 2 + 4, y)
+  y += 5
+  if (data.email) tl(data.email, M, y)
+  tl(`${DS.station.phone}  ·  admin@fm985.com.au`, W / 2 + 4, y)
+  y += 8
 
-  fillLight()
-  doc.rect(M, y, CW, 22, 'F')
-  doc.setDrawColor(bR, bG, bB)
-  doc.setLineWidth(1.5)
-  doc.line(M, y, M, y + 22)
-
-  bold(7)
+  y = drawStatCards(p, y, [
+    { n: stationStats.weeklyListeners.toLocaleString('en-AU'), t: 'Est. weekly listeners' },
+    { n: String(stationStats.totalTowns), t: 'Towns in the Valley' },
+    { n: `${stationStats.broadcastRadiusKm}km`, t: 'Broadcast radius' },
+  ])
+  norm(7)
   inkDim()
-  tl('STATION SNAPSHOT  ·  sourced, not invented', M + 4, y + 6)
-  bold(11)
-  inkNavy()
-  tl(stationStats.weeklyListeners.toLocaleString('en-AU'), M + 4, y + 13)
-  tl(String(stationStats.totalTowns), M + 58, y + 13)
-  tl(`${stationStats.broadcastRadiusKm}km`, M + 95, y + 13)
-  norm(6.5)
-  inkGrey()
-  tl('est. weekly listeners', M + 4, y + 18)
-  tl('towns', M + 58, y + 18)
-  tl('broadcast radius', M + 95, y + 18)
-  y += 26
-  norm(6.5)
-  inkDim()
-  tl('Source: ABS 2021 Census via src/data/townData.ts  ·  Goulburn Valley coverage, not national stream totals', M, y)
+  tl('Source: ABS 2021 Census via townData  ·  Goulburn Valley coverage, not national streams', M, y)
   y += 8
 
   const COL3 = CW / 3
-  doc.setDrawColor(220, 220, 220)
-  doc.setLineWidth(0.3)
-  doc.line(M, y, W - M, y)
-  y += 5
-  norm(7)
-  inkDim()
-  tl('PREPARED', M, y)
-  tl('VALID UNTIL', M + COL3, y)
-  tl('TERM', M + COL3 * 2, y)
-  y += 5.5
-  bold(10)
+  kicker('Prepared', M, y)
+  kicker('Valid until', M + COL3, y)
+  kicker('Term', M + COL3 * 2, y)
+  y += 6
+  bold(11)
   inkNavy()
   tl(formatAuDate(data.preparedOn), M, y)
   tl(formatAuDate(data.validUntil), M + COL3, y)
   tl(data.term, M + COL3 * 2, y)
   y += 8
-  doc.line(M, y, W - M, y)
-  y += 8
 
-  bold(12)
+  bold(24)
   inkNavy()
   tl(data.packageName, M, y)
-  y += 5
-  norm(9)
+  y += 7
+  norm(10)
   inkGrey()
-  tl(`${data.tier}  ·  ${data.term}`, M, y)
-  y += 8
+  tl(`${data.tier} package`, M, y)
+  y += 7
 
-  fillNavy()
-  doc.rect(M, y, CW, 8, 'F')
-  bold(7)
-  inkWhite()
-  tl('INCLUDED DELIVERABLES', M + 2, y + 5.3)
-  y += 8
-
-  const rowH = 8
-  data.deliverables.forEach((line, i) => {
-    if (y > H - 70) {
+  kicker('Included', M, y)
+  y += 6
+  data.deliverables.forEach((line) => {
+    if (y > H - 78) {
       doc.addPage()
-      y = M
+      y = drawInteriorHeader(p, 'Sponsorship proposal', data.number, 'The offer')
     }
-    if (i % 2 === 0) {
-      fillLight()
-      doc.rect(M, y, CW, rowH, 'F')
-    }
-    norm(9)
+    fillLight()
+    box(M, y, CW, 9)
+    fillRed()
+    box(M, y, 1.8, 9)
+    norm(10)
     inkDark()
-    tl(line.name, M + 2, y + 5.2)
-    inkGrey()
-    tr(line.detail, W - M - 2, y + 5.2)
-    y += rowH
+    tl(line.name, M + 6, y + 6)
+    inkDim()
+    tr(line.detail, W - M - 4, y + 6)
+    y += 10
   })
-  y += 8
+  y += 3
 
   if (data.notes) {
-    bold(8)
-    inkNavy()
-    tl('NOTES', M, y)
+    y = ensureInteriorSpace(p, y, 20, 'Sponsorship proposal', data.number, 'The offer')
+    kicker('Notes', M, y)
     y += 5
     norm(9)
     inkGrey()
     const notes = doc.splitTextToSize(data.notes, CW) as string[]
     notes.forEach((line) => {
       tl(line, M, y)
-      y += 4.5
+      y += 4.2
     })
-    y += 4
+    y += 3
   }
 
-  const TX = M + CW - 78
-  if (data.weeklyPrice) {
-    norm(9)
-    inkGrey()
-    tl('Weekly rate (ex GST)', TX, y)
-    inkDark()
-    tr(formatAud(data.weeklyPrice), W - M, y)
-    y += 5
-  }
-  doc.setDrawColor(220, 220, 220)
-  doc.line(TX, y, W - M, y)
-  y += 5
-  norm(9)
-  inkGrey()
-  tl('Investment (ex GST)', TX, y)
-  inkDark()
-  tr(formatAud(data.money.exGst), W - M, y)
-  y += 5
-  inkGrey()
-  tl('GST (10%)', TX, y)
-  inkDark()
-  tr(formatAud(data.money.gst), W - M, y)
-  y += 6
-  fillNavy()
-  doc.rect(TX - 2, y, CW - (TX - M) + 2, 11, 'F')
-  bold(11.5)
-  inkWhite()
-  tl('TOTAL INCL. GST', TX, y + 7.5)
-  inkGold()
-  tr(formatAud(data.money.total), W - M, y + 7.5)
-  y += 18
+  const investLabel = data.weeklyPrice
+    ? `Investment  ·  ${formatAud(data.weeklyPrice)} / wk  ·  ${formatAud(data.money.exGst)} ex GST + ${formatAud(data.money.gst)} GST`
+    : `Investment  ·  ${formatAud(data.money.exGst)} ex GST + ${formatAud(data.money.gst)} GST`
+
+  y = ensureInteriorSpace(p, y, 78, 'Sponsorship proposal', data.number, 'The offer')
+  y = drawAmountBand(p, y, investLabel, formatAud(data.money.total))
 
   fillLight()
-  doc.rect(M, y, CW, 28, 'F')
-  doc.setDrawColor(bR, bG, bB)
-  doc.setLineWidth(1.5)
-  doc.line(M, y, M, y + 28)
-  bold(7)
-  inkDim()
-  tl('NEXT STEPS', M + 4, y + 6)
-  norm(8.5)
+  box(M, y, CW, 26)
+  fillRed()
+  box(M, y, 1.8, 26)
+  kicker('Next steps', M + 6, y + 5)
+  norm(9)
   inkNavy()
-  tl('1. Reply to accept, or nominate changes.', M + 4, y + 12)
-  tl('2. We issue a sponsorship contract for signature.', M + 4, y + 17)
-  tl('3. First invoice follows the signed term (14-day payment).', M + 4, y + 22)
-  y += 34
+  tl('1.  Reply to accept, or nominate changes.', M + 6, y + 12)
+  tl('2.  We issue a sponsorship agreement for signature.', M + 6, y + 17.5)
+  tl('3.  First tax invoice follows the signed term (14-day payment).', M + 6, y + 23)
+  y += 32
 
   norm(8)
-  inkGrey()
-  tl(`${DS.station.sigName}  ·  ${DS.station.sigTitle}`, M, y)
-  y += 4.5
-  tl('This is a proposal, not a tax invoice. Figures exclude GST unless marked.', M, y)
+  inkDim()
+  tl(`${DS.station.sigName}  ·  ${DS.station.sigTitle}  ·  This is a proposal, not a tax invoice.`, M, y)
 
-  drawFooter(
-    p,
-    `admin@fm985.com.au  ·  ${DS.station.address}`,
-    `${data.number}.pdf  ·  Generated ${formatAuDate(data.preparedOn)}`,
-  )
+  const pages = doc.getNumberOfPages()
+  for (let i = 2; i <= pages; i++) {
+    doc.setPage(i)
+    drawSlimFooter(
+      p,
+      `Goulburn Valley Community Radio Inc.  ·  ABN ${DS.station.abn}  ·  ${DS.station.phone}`,
+      String(i),
+    )
+  }
 
   return doc
 }

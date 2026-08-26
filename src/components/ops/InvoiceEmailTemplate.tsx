@@ -13,7 +13,7 @@ import { Check, Copy, CreditCard } from 'lucide-react'
 import { useToast } from './Toast'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
-import { createPdfPen, drawFooter, drawLetterhead } from '@/lib/pdfLetterhead'
+import { createPdfPen, drawAmountBand, drawInteriorHeader, drawSlimFooter } from '@/lib/pdfLetterhead'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 
 export { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB }
@@ -581,140 +581,119 @@ export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF
   const p = createPdfPen(doc)
   const {
     W, M, CW,
-    fillNavy, fillLight,
-    inkNavy, inkGold, inkRed, inkWhite, inkGrey, inkDark, inkDim, inkNab,
-    bold, norm, box, tl, tr,
+    fillLight, fillRed,
+    inkNavy, inkGrey, inkDark, inkDim, inkNab, inkRed,
+    bold, norm, box, tl, tr, kicker,
   } = p
-  const [bR, bG, bB] = DS.rgb.blue
 
   const today     = new Date()
   const issueDate = (invoice.issueDate ? new Date(invoice.issueDate) : today)
     .toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
   const dueDate   = new Date(invoice.dueDate).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
 
-  const ruleLight = () => { doc.setDrawColor(220, 220, 220); doc.setLineWidth(0.3) }
-  const ruleBlue  = () => { doc.setDrawColor(bR, bG, bB); doc.setLineWidth(1.5) }
+  let y = drawInteriorHeader(p, 'Tax invoice', invoice.number)
 
-  let y = drawLetterhead(p, 'TAX INVOICE', invoice.number, 14)
-
-  // BILL TO / FROM
-  norm(7); inkDim()
-  tl('BILL TO', M, y); tl('FROM', W / 2 + 5, y)
-  y += 5.5
-
-  bold(11); inkNavy()
-  tl(invoice.contactName || '', M, y)
-  tl('ONE FM 98.5', W / 2 + 5, y)
-  y += 5
-
-  norm(9.5); inkGrey()
-  tl(invoice.company, M, y)
-  y += 4.5
-
-  if (invoice.email) { norm(8); inkGrey(); tl(invoice.email, M, y) }
-  norm(8); inkGrey()
-  tl(DS.station.address, W / 2 + 5, y)
-  y += 4.5
-  tl(`${DS.station.phone}  ·  ${DS.station.accountsEmail}`, W / 2 + 5, y)
+  bold(42)
+  inkRed()
+  tl(aud(invoice.total), M, y + 10)
+  y += 16
+  norm(10)
+  inkDim()
+  tl(`AUD due ${dueDate}  ·  includes GST of ${aud(invoice.gst)}`, M, y)
   y += 12
 
-  // DATES ROW
-  ruleLight(); doc.line(M, y, W - M, y); y += 5
-  const COL3 = CW / 3
-  norm(7); inkDim()
-  tl('ISSUE DATE', M, y)
-  tl('DUE DATE', M + COL3, y)
-  tl('INVOICE REFERENCE', M + COL3 * 2, y)
-  y += 5.5
-
-  bold(10); inkNavy(); tl(issueDate, M, y)
-  inkRed();            tl(dueDate, M + COL3, y)
-  inkNavy();           tl(invoice.number, M + COL3 * 2, y)
+  kicker('Bill to', M, y)
+  kicker('From', W / 2 + 4, y)
   y += 6
+  bold(13)
+  inkNavy()
+  tl(invoice.contactName || invoice.company, M, y)
+  tl(DS.station.name, W / 2 + 4, y)
+  y += 6
+  norm(9)
+  inkGrey()
+  tl(invoice.company, M, y)
+  tl(DS.station.address, W / 2 + 4, y)
+  y += 5
+  if (invoice.email) tl(invoice.email, M, y)
+  tl(`${DS.station.phone}  ·  ${DS.station.accountsEmail}`, W / 2 + 4, y)
+  y += 14
 
-  ruleLight(); doc.line(M, y, W - M, y); y += 10
+  const COL3 = CW / 3
+  kicker('Issue date', M, y)
+  kicker('Due date', M + COL3, y)
+  kicker('Reference', M + COL3 * 2, y)
+  y += 6
+  bold(12)
+  inkNavy()
+  tl(issueDate, M, y)
+  inkRed()
+  tl(dueDate, M + COL3, y)
+  inkNavy()
+  tl(invoice.number, M + COL3 * 2, y)
+  y += 12
 
-  // LINE ITEMS — header
-  fillNavy(); box(M, y, CW, 8)
-  bold(7); inkWhite()
-  tl('DESCRIPTION', M + 2, y + 5.3)
-  tr('QTY',        M + 93,     y + 5.3)
-  tr('UNIT PRICE', M + 120,    y + 5.3)
-  tr('EXCL. GST',  M + 148,    y + 5.3)
-  tr('GST',        W - M - 1,  y + 5.3)
+  kicker('Description', M, y)
+  kicker('Amount', W - M - 24, y)
+  y += 4
+  p.doc.setDrawColor(230, 230, 232)
+  p.doc.setLineWidth(0.3)
+  p.doc.line(M, y, W - M, y)
   y += 8
 
-  // LINE ITEMS — row
-  // Description gets wrapped so long text never bleeds into the QTY/price
-  // columns (those start around M+93).
-  norm(10)
-  const DESC_MAX_W = 82
-  const descLines = doc.splitTextToSize(invoice.description, DESC_MAX_W) as string[]
-  const DESC_LINE_H = 4.5
-  const baseRowH = invoice.period ? 18 : 13
-  const rowH = baseRowH + Math.max(0, descLines.length - 1) * DESC_LINE_H
-
-  ruleLight(); box(M, y, CW, rowH, 'S')
+  const descLines = doc.splitTextToSize(invoice.description, CW - 50) as string[]
+  norm(11)
   inkDark()
-  descLines.forEach((line, i) => tl(line, M + 2, y + 5.5 + i * DESC_LINE_H))
+  descLines.forEach((line, i) => {
+    tl(line, M, y)
+    if (i === 0) tr(aud(invoice.amountExclGst), W - M, y)
+    y += 6
+  })
   if (invoice.period) {
-    norm(8); inkGrey()
-    tl(`Period: ${invoice.period}`, M + 2, y + 5.5 + descLines.length * DESC_LINE_H + 1)
+    norm(9)
+    inkDim()
+    tl(`Period: ${invoice.period}`, M, y)
+    y += 6
   }
-  norm(10); inkDark()
-  tr('1',                       M + 93,    y + 5.5)
-  tr(aud(invoice.amountExclGst), M + 120,  y + 5.5)
-  tr(aud(invoice.amountExclGst), M + 148,  y + 5.5)
-  tr(aud(invoice.gst),           W - M - 1, y + 5.5)
-  y += rowH + 10
-
-  // TOTALS — right-aligned 72mm block
-  const TX = M + CW - 72   // left edge of totals block
-
-  ruleLight(); doc.line(TX, y, W - M, y); y += 5
-  norm(9); inkGrey();  tl('Subtotal (excl. GST)', TX, y)
-  norm(9); inkDark();  tr(aud(invoice.amountExclGst), W - M, y)
   y += 4
-  ruleLight(); doc.line(TX, y, W - M, y); y += 5
-  norm(9); inkGrey();  tl('GST (10%)', TX, y)
-  norm(9); inkDark();  tr(aud(invoice.gst), W - M, y)
-  y += 5.5
+  p.doc.line(M, y, W - M, y)
+  y += 8
+  norm(10)
+  inkGrey()
+  tl('Subtotal (ex GST)', M, y)
+  inkDark()
+  tr(aud(invoice.amountExclGst), W - M, y)
+  y += 6
+  inkGrey()
+  tl('GST (10%)', M, y)
+  inkDark()
+  tr(aud(invoice.gst), W - M, y)
+  y += 8
 
-  // TOTAL DUE — navy fill, gold figure (matches email hero)
-  fillNavy(); box(TX - 2, y, CW - (TX - M) + 2, 11, 'F')
-  bold(11.5); inkWhite(); tl('TOTAL DUE', TX, y + 7.5)
-  bold(11.5); inkGold();  tr(aud(invoice.total), W - M, y + 7.5)
-  y += 16.5
+  y = drawAmountBand(p, y, 'Total due', aud(invoice.total))
+  y += 4
 
-  norm(7); inkDim(); tr(`Total includes GST of ${aud(invoice.gst)}`, W - M, y)
-  y += 12
+  fillLight()
+  box(M, y, CW, 36)
+  fillRed()
+  box(M, y, 1.8, 36)
+  kicker('Pay by bank transfer', M + 6, y + 7)
+  norm(9)
+  inkNab()
+  tl('National Australia Bank', M + 6, y + 14)
+  bold(11)
+  inkNavy()
+  tl(`BSB ${BANK_BSB}`, M + 6, y + 22)
+  tl(`Acc ${BANK_ACCOUNT}`, M + 62, y + 22)
+  tl(BANK_ACCOUNT_NAME, M + 118, y + 22)
+  norm(8)
+  inkDim()
+  tl(`Reference  ${invoice.number}  ·  payment due within 14 days`, M + 6, y + 30)
 
-  // PAYMENT DETAILS SLIP
-  fillLight(); box(M, y, CW, 30)
-  ruleBlue(); doc.line(M, y, M, y + 30)   // blue left accent
-
-  bold(7); inkDim(); tl('PAYMENT DETAILS — BANK TRANSFER (PREFERRED)', M + 4, y + 6.5)
-  norm(8.5); inkNab(); tl('National Australia Bank', M + 4, y + 13)
-
-  const BX = [M + 4, M + 30, M + 62, M + 105, M + 143]
-  const BY  = y + 20.5
-  norm(7); inkDim()
-  tl('BSB',          BX[0], BY - 4.5)
-  tl('ACCOUNT',      BX[1], BY - 4.5)
-  tl('ACCOUNT NAME', BX[2], BY - 4.5)
-  tl('REFERENCE',    BX[3], BY - 4.5)
-
-  bold(9.5); inkNavy()
-  tl(BANK_BSB,          BX[0], BY + 2)
-  tl(BANK_ACCOUNT,      BX[1], BY + 2)
-  tl(BANK_ACCOUNT_NAME, BX[2], BY + 2)
-  inkRed(); tl(invoice.number, BX[3], BY + 2)
-  y += 36
-
-  drawFooter(
+  drawSlimFooter(
     p,
-    `Payment due within 14 days  ·  ${DS.station.accountsEmail}`,
-    `ONEFM-${invoice.number}.pdf  ·  Generated ${today.toLocaleDateString('en-AU')}`,
+    `Goulburn Valley Community Radio Inc.  ·  ABN ${DS.station.abn}  ·  ${DS.station.phone}`,
+    `Generated ${today.toLocaleDateString('en-AU')}`,
   )
 
   return doc
