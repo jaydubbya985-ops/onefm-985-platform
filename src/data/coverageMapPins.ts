@@ -88,8 +88,10 @@ export const coveragePins: CoveragePin[] = [
     }]
   }),
   // Recent station activity — titles/dates from fm985.com.au WP (scanned 26 Aug 2026)
-  ...RECENT_STATION_ACTIVITY.flatMap((item) => {
-    const pos = atTown(item.town, item.kind === 'sport' ? 0.022 : -0.018, item.kind === 'community' ? 0.02 : -0.016)
+  ...RECENT_STATION_ACTIVITY.flatMap((item, i) => {
+    const dLat = (item.kind === 'sport' ? 0.022 : -0.018) + (i % 5) * 0.006
+    const dLng = (item.kind === 'community' ? 0.02 : -0.016) + Math.floor(i / 5) * 0.008
+    const pos = atTown(item.town, dLat, dLng)
     if (!pos) return []
     return [{
       id: item.id,
