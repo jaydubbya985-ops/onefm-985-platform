@@ -12,18 +12,22 @@ import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill, HeadlinePop } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
 import { stationStats } from '@/data/pricing'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { GVL_FINALS_2026 } from '@/data/gvlSeason'
 import { FULL_SCHEDULE } from '@/data/programGuide'
 
 const RED = '#E51636'
 
-/** Town wall photos — real station/valley imagery (not per-town photos yet). */
+/** Valley / community photos — not OB vans or control rooms as town faces. */
 const TOWN_IMGS = [
-  '/assets/images/heritage-ob-mall-1989.jpg',
-  '/assets/images/gvl-action-sprint.jpg',
-  '/assets/images/ob-van-branded.jpg',
-  '/studio-control-room.jpg',
-  '/assets/images/heritage-truck-2005.jpg',
-  '/assets/images/tower-mount-major-day.png',
+  STATION_PHOTOS.geoTownAerial,
+  STATION_PHOTOS.geoRollingGreenHills,
+  STATION_PHOTOS.geoPinkOrchard,
+  STATION_PHOTOS.communityBookStall,
+  STATION_PHOTOS.cultureSiloArtFaces,
+  STATION_PHOTOS.eventFestivalTents,
+  STATION_PHOTOS.geoLakeAerial,
+  STATION_PHOTOS.cultureRiverboatMurray,
 ]
 
 function CommunityHero() {
@@ -49,8 +53,7 @@ function CommunityHero() {
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Twenty-five towns, one signal. From the GVL grand final to eight languages on
-          the weekend dial — this is the Valley, on air.
+          Twenty-five towns, one signal. From GVL footy to multicultural programs on the weekly guide — this is the Valley, on air.
         </p>
       </div>
     </section>
@@ -72,21 +75,21 @@ export default function Community() {
   ).map((s) => ({
     tag: 'Multicultural',
     title: s.name,
-    body: `With ${s.host} — part of the weekend world programming that keeps every corner of the Valley tuned in, in their own language.`,
+    body: `With ${s.host} — listed on the fm985.com.au program guide.`,
   }))
 
   return (
     <Layout>
       <SEO
         title="Our Community — ONE FM 98.5"
-        description="25 towns across the Goulburn Valley: GVL footy called live, multicultural programming in 8+ languages, and the communities ONE FM serves."
+        description="25 towns across the Goulburn Valley: GVL footy called live, multicultural programs from the weekly guide, and the communities ONE FM serves."
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             `● ${stationStats.totalTowns} towns across the Goulburn Valley`,
-            'GVL footy called live every season',
-            'Multicultural programming in 8+ languages',
+            `GVL finals window ${GVL_FINALS_2026.firstFinalsWeekend}`,
+            'Multicultural programs from the weekly guide',
             'Community radio since 1989',
           ]}
           delay={0.4}
@@ -97,7 +100,7 @@ export default function Community() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football under lights — called live on ONE FM 98.5"
-          badge="GVL Footy · Called Live on 98.5"
+          badge={`GVL finals · ${GVL_FINALS_2026.firstFinalsWeekend}`}
         />
 
         <NameWall label={`The Towns We Serve${showAllTowns ? '' : ' · Top 6'}`} rows={wallTowns} />
@@ -113,7 +116,7 @@ export default function Community() {
           </button>
         </div>
 
-        <EditorialCards label="The World, On the Weekend Dial" items={multicultural} columns={3} />
+        <EditorialCards label="Multicultural programs" items={multicultural} columns={3} />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
           <LabelReveal className="mb-8">Where the Signal Reaches</LabelReveal>

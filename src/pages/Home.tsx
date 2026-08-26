@@ -18,6 +18,7 @@ import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill } from '@/components/motion/PosterReveal'
 import { NameWall } from '@/components/onair/kit'
 import { wallRows } from '@/data/onAirPeople'
+import { GVL_FINALS_2026 } from '@/data/gvlSeason'
 
 const RED = '#E51636'
 const INK = '#0A0A0A'
@@ -176,7 +177,7 @@ function FeatureFrame() {
           className="absolute bottom-6 left-6 px-5 py-2.5 rounded font-bold text-[13px] tracking-[0.13em] uppercase text-white"
           style={{ background: RED }}
         >
-          GVL Footy · Called Live on 98.5
+          GVL finals · {GVL_FINALS_2026.firstFinalsWeekend}
         </div>
       </Link>
     </motion.div>
