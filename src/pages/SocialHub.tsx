@@ -9,7 +9,7 @@ import {
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { FacebookPageEmbed } from '@/components/FacebookPageEmbed'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
@@ -235,8 +235,12 @@ function HeroSection() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Social" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
-            <WordReveal text="Hub." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+            <span className="block text-one-white">
+              <HeadlinePop>Social</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>Hub.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -308,7 +312,9 @@ function LiveFacebookSection() {
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
         <div>
           <p className="font-label text-one-electric text-[10px] mb-2">COMMUNITY</p>
-          <WordReveal text="Follow ONE FM 98.5" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-one-white">
+            <HeadlinePop>Follow ONE FM 98.5</HeadlinePop>
+          </h2>
           <p className="font-body text-muted mt-2 max-w-xl">
             Two live channels — Facebook for news and events, SoundCloud for interviews. Follower counts are data pending; we do not invent them.
           </p>
@@ -364,7 +370,9 @@ function AssetLibrary() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <WordReveal text="BRAND ASSETS" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white mb-2">
+              <HeadlinePop>BRAND ASSETS</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted">Logos, colors, and guidelines for partners</p>
           </div>
 
@@ -544,7 +552,9 @@ function TemplatesSection() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <WordReveal text="CONTENT TEMPLATES" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white mb-2">
+              <HeadlinePop>CONTENT TEMPLATES</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted">Ready-made designs for every platform</p>
           </div>
 
@@ -726,7 +736,9 @@ function CampaignCalendar() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <WordReveal text="CAMPAIGN CALENDAR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white mb-2">
+              <HeadlinePop>CAMPAIGN CALENDAR</HeadlinePop>
+            </h2>
             <p className="font-body-small text-muted">Planning sketch for the month — not a live engagement dashboard.</p>
           </div>
 
@@ -879,7 +891,9 @@ function PostingToolkit() {
           transition={{ duration: 0.5, ease: easeOutExpo }}
           className="text-center mb-10"
         >
-          <WordReveal text="POSTING TOOLKIT" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-one-white mb-2">
+            <HeadlinePop>POSTING TOOLKIT</HeadlinePop>
+          </h2>
           <p className="font-body-small text-muted">Best practices and quick-start guides</p>
         </motion.div>
 
@@ -927,7 +941,9 @@ function SocialFeedPreview() {
     <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="STUDIO STILLS">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="mb-10">
-          <WordReveal text="FACES & BEHIND THE SCENES" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-one-white mb-2">
+            <HeadlinePop>FACES & BEHIND THE SCENES</HeadlinePop>
+          </h2>
           <p className="font-body-small text-muted max-w-xl">
             Real station photos. No hearts, views, or follower numbers — those counts are data pending until we publish a verified figure.
           </p>
@@ -1006,7 +1022,9 @@ function MailchimpExportSection() {
           className="mb-8"
         >
           <span className="section-label mb-4 block">Marketing workflow</span>
-          <WordReveal text="EXPORT FOR MAILCHIMP" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-one-white mb-2">
+            <HeadlinePop>EXPORT FOR MAILCHIMP</HeadlinePop>
+          </h2>
           <p className="font-body-small text-muted max-w-2xl">
             Resend handles transactional invoice and enquiry emails. Use these tools to export sponsor
             leads and copy branded HTML into Mailchimp campaigns (audience: <strong className="text-one-white">One FM Sales</strong>).

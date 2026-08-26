@@ -58,10 +58,12 @@ export const stationStats = {
   broadcastPopulation: 185791,
   totalTowns: 25,
   broadcastRadiusKm: 100,
-  socialFollowers: 4000,
-  socialTarget: 12500,
-  podcastDownloads: 500,
-  podcastTarget: 10000,
-  nfpsSupported: 100,
+  // Unverified — do not render on public pages until a sourced count exists
+  socialFollowers: 0,
+  socialTarget: 0,
+  podcastDownloads: 0,
+  podcastTarget: 0,
+  // CSA “100+” is Data pending — do not show as a station statistic
+  nfpsSupported: 0,
   yearsBroadcasting: 37, // since 1989
 };

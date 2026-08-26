@@ -6,29 +6,32 @@ Do not merge to `main`. Do not deploy production unless Jay replies.
 
 ## Branch
 
-`cursor/overnight-site-upgrade-6802` off `origin/main`.
+`cursor/overnight-site-upgrade-6802` off `origin/main`. PR **#11**.
 
-## Already shipped this session
+## Already shipped
 
-- Presenter wall no longer labels a van/truck/control room as a host face
-- Shared `src/data/onAirPeople.ts` + `presenterAssets.ts` fallbacks
-- Heading pop (`HeadlinePop`) on the name wall
-- Coverage map **On air** pins from fm985.com.au posts (Yorta Yorta Turtles, Kidstown/Mooroopna, Visitor Centre, GVL finals window)
-- Di Hunter keeps the 2014 Carols heritage portrait (filename matches)
+- Presenter wall context photos + Di Hunter heritage portrait
+- `HeadlinePop` on name wall, Programs, Football, Coverage, Heritage, Support, Media Kit, Home feeds, Footer, Contact, Social Hub, Audience
+- Coverage **On air** pins from fm985.com.au posts
+- Latest interviews + recent activity (WP scan; no August 2026 interview posts in API)
+- Listen hero play/pause + HashRouter MiniPlayer
+- Honest Social Hub (Facebook + SoundCloud, no fake hearts)
+- **`/programs` route restored** (was redirecting to `/listen`)
+- GVL finals window on Football (H&A closed 22 Aug, first weekend 29–30 Aug) — no invented clubs
+- OG/LCP: weekly listeners 39,375; hero poster preload
+- Truth: stripped invented NFP 100+, social follower 4,000, podcast 500, fake audience heatmap/trends/+31% match-day lifts
+- Cookie banner sits above MiniPlayer (`z-[210]`)
 
-## Remaining lanes (cloud agents)
+## Remaining (hourly continue)
 
-1. **activity** — live WP interviews + featured images, LatestInterviews, no fake dates
-2. **player-social** — persistent listen control, strip fake SocialHub engagement, real FB/SoundCloud
-3. **motion-pages** — HeadlinePop on Programs, Football, CoverageMap, Heritage h1/h2
-4. **photos-hosts** — if Jay drops named JPGs into `/public/photos/hosts/`, wire them; otherwise keep context photos
+1. HeadlinePop leftover: `Story.tsx` (redirects to Heritage), `BroadcastExplorer.tsx` (redirects to Listen)
+2. Named host JPGs if Jay drops them in `/public/photos/hosts/`
+3. More WP pins only when new posts exist (latest still 27 Jul 2026)
+4. Browser QA: `/programs`, `/football` finals strip, `/audience` data-pending, MiniPlayer vs cookie
 
 ## Truth
 
 - 39,375 weekly / 25 towns / 100km
 - Breakfast: Tim Ahemt Mon–Tue, The Big G Wed, Ralph Whitehead Thu, Josh Revens Fri
 - No Plemo, unsplash, invented follower counts, AI people
-
-## Hourly continue
-
-Pick the next unfinished lane. Build must pass. Commit, push, update the PR.
+- Stop spawning new work after **21:20 UTC 26 Aug 2026**

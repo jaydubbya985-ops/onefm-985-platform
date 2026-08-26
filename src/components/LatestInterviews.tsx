@@ -11,7 +11,7 @@ import {
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 
@@ -116,7 +116,9 @@ export function LatestInterviews() {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-10">
           <div>
             <span className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-3 block">LIVE &amp; LOCAL</span>
-            <WordReveal text="Latest Interviews" className="font-h2 text-one-white mt-2 block" as="h2" stagger={0.028} variant="char" />
+            <h2 className="font-h2 text-one-white mt-2">
+              <HeadlinePop>Latest Interviews</HeadlinePop>
+            </h2>
             <p className="font-body text-muted mt-2 max-w-xl">
               Fresh from ONE FM 98.5 — synced from fm985.com.au with on-demand audio on SoundCloud.
             </p>

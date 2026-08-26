@@ -24,6 +24,7 @@ import { Marquee } from '@/components/Marquee'
 import { MediaImage } from '@/components/MediaImage'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
+import { GVL_FINALS_2026 } from '@/data/gvlSeason'
 
 /* ─── easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -418,6 +419,42 @@ export default function Football() {
           ]}
         />
       </div>
+
+      <section
+        className="bg-[#101010] border-b border-one-gold/20 px-4 sm:px-6 py-6"
+        data-cursor-label="GVL FINALS"
+      >
+        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p className="font-label text-[10px] tracking-[0.22em] text-one-gold uppercase mb-1">
+              2026 finals window
+            </p>
+            <p className="font-h4 text-one-white">
+              Home-and-away closed {GVL_FINALS_2026.homeAndAwayClosed}. First finals weekend {GVL_FINALS_2026.firstFinalsWeekend}.
+            </p>
+            <p className="font-body-small text-muted mt-1">
+              Which clubs play is not listed here — follow the GVL draw. Source:{' '}
+              <a
+                href={GVL_FINALS_2026.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-one-gold hover:text-one-white underline"
+              >
+                {GVL_FINALS_2026.sourceLabel}
+              </a>
+            </p>
+          </div>
+          <a
+            href={GVL_FINALS_2026.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor-label="SPORT"
+            className="btn-secondary text-xs shrink-0"
+          >
+            fm985.com.au/sport
+          </a>
+        </div>
+      </section>
 
       {/* ─── GVL Sports Photo Strip ─── */}
       <GVLGalleryStrip />

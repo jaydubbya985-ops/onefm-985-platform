@@ -15,7 +15,7 @@ import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { LivePlayerWidget } from '@/components/home/LivePlayerWidget'
 import { stationStats } from '@/data/pricing'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
-import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
+import { PosterReveal, StrokeFill } from '@/components/motion/PosterReveal'
 import { NameWall } from '@/components/onair/kit'
 import { wallRows } from '@/data/onAirPeople'
 
@@ -221,14 +221,9 @@ export default function Home() {
         <NameWall label="On Air This Week" rows={wallRows()} />
         <FeatureFrame />
         <StatsStrip />
-        <section className="px-6 md:px-12 lg:px-20 pb-10">
-          <LatestInterviews />
-        </section>
-        <section className="px-6 md:px-12 lg:px-20 pb-10">
-          <RecentStationActivity />
-        </section>
-        <section className="px-6 md:px-12 lg:px-20 pb-32">
-          <LabelReveal className="mb-8">Explore ONE FM</LabelReveal>
+        <LatestInterviews />
+        <RecentStationActivity kinds={['sport', 'community']} />
+        <section className="pb-32">
           <ExploreOneFMGrid />
         </section>
       </div>

@@ -40,8 +40,8 @@ const IMPACT = [
   },
   {
     tag: 'Community',
-    title: `${stationStats.nfpsSupported}+ NFPs on air`,
-    body: 'ONE FM donates airtime to charities and community groups across the Goulburn Murray — sport, multicultural programs and local notices.',
+    title: 'Community airtime',
+    body: 'ONE FM donates airtime to charities and community groups across the Goulburn Murray — sport, multicultural programs and local notices. CSA count: data pending.',
   },
   {
     tag: 'Resilience',
@@ -264,7 +264,7 @@ export default function Support() {
         <StatsStrip
           stats={[
             { n: String(stationStats.yearsBroadcasting), t: 'Years on air', red: true },
-            { n: String(stationStats.nfpsSupported) + '+', t: 'NFPs supported on air' },
+            { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners' },
             { n: '24/7', t: 'Live & local' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
           ]}

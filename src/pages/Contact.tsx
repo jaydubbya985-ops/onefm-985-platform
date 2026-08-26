@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { Marquee } from '@/components/Marquee'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
@@ -134,8 +134,12 @@ function ContactHero() {
             className="font-heading font-black leading-none mb-8"
             style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.03em' }}
           >
-            <WordReveal text="Get in" as="span" className="block text-one-white" delay={0.15} stagger={0.12} />
-            <WordReveal text="Touch." as="span" className="block text-one-gold" delay={0.4} stagger={0.12} />
+            <span className="block text-one-white">
+              <HeadlinePop>Get in</HeadlinePop>
+            </span>
+            <span className="block text-one-gold">
+              <HeadlinePop delay={0.08}>Touch.</HeadlinePop>
+            </span>
           </h1>
 
           <motion.p
@@ -302,7 +306,9 @@ function ContactForm() {
             className="glass-card p-12"
           >
             <CheckCircle2 size={64} className="text-one-gold mx-auto mb-6" />
-            <WordReveal text="Thanks for reaching out!" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
+            <h2 className="font-h2 text-one-white mb-4">
+              <HeadlinePop>Thanks for reaching out!</HeadlinePop>
+            </h2>
             <p className="font-body text-one-muted">
               We'll get back to you within 24 hours.
             </p>
@@ -338,7 +344,9 @@ function ContactForm() {
               />
             ))}
           </div>
-          <WordReveal text="Multi-Pathway Enquiry" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-one-white mb-4">
+            <HeadlinePop>Multi-Pathway Enquiry</HeadlinePop>
+          </h2>
           <p className="font-body text-one-muted max-w-xl mx-auto">
             Choose the path that fits your needs and we'll route your message to the
             right team.
@@ -644,7 +652,9 @@ function FAQSection() {
           <span className="inline-block font-label text-one-electric mb-4">
             QUESTIONS?
           </span>
-          <WordReveal text="Frequently Asked" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-one-white mb-4">
+            <HeadlinePop>Frequently Asked</HeadlinePop>
+          </h2>
           <p className="font-body text-one-muted max-w-xl mx-auto">
             Everything you need to know about connecting with ONE FM.
           </p>
@@ -696,7 +706,9 @@ function EmergencyInfo() {
               <Flame size={32} className="text-one-red" />
             </div>
             <div className="flex-1">
-              <WordReveal text="Emergency Broadcasting" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
+              <h2 className="font-h2 text-one-white mb-4">
+                <HeadlinePop>Emergency Broadcasting</HeadlinePop>
+              </h2>
               <p className="font-body text-one-muted mb-6 max-w-xl">
                 During emergencies, ONE FM is your official emergency broadcaster
                 for the Goulburn Valley. We work directly with emergency services to
@@ -755,7 +767,9 @@ function MapMini() {
           <span className="inline-block font-label text-one-electric mb-4">
             FIND US
           </span>
-          <WordReveal text="Studio Location" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
+          <h2 className="font-h2 text-one-white mb-4">
+            <HeadlinePop>Studio Location</HeadlinePop>
+          </h2>
           <p className="font-body text-one-muted max-w-xl mx-auto">
             ONE FM 98.5, Shepparton, Victoria, Australia
           </p>

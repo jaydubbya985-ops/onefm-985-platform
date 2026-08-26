@@ -13,7 +13,7 @@ import {
   showTypePhoto,
   type Fm985Interview,
 } from '@/lib/fm985Feed'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { TiltCard } from '@/components/TiltCard'
 import { MagneticButton } from '@/components/MagneticButton'
 
@@ -141,13 +141,9 @@ export function RecentStationActivity({
             <span className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-3 block">
               FROM FM985.COM.AU
             </span>
-            <WordReveal
-              text="Recent station activity"
-              className="font-h2 text-one-white mt-2 block"
-              as="h2"
-              stagger={0.028}
-              variant="char"
-            />
+            <h2 className="font-h2 text-one-white mt-2">
+              <HeadlinePop>Recent station activity</HeadlinePop>
+            </h2>
             <p className="font-body text-muted mt-2 max-w-xl">
               Interviews, Super Saturday sport and community posts from ONE FM 98.5 — titles and
               dates as published. No invented crowd sizes.

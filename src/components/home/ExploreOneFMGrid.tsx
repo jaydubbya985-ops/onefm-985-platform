@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
 import { HOST_PHOTOS, PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
-import { WordReveal } from '@/components/WordReveal'
+import { HeadlinePop } from '@/components/motion/PosterReveal'
 import { TiltCard } from '@/components/TiltCard'
 
 const TILES = [
@@ -73,7 +73,9 @@ export function ExploreOneFMGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10">
           <p className="font-label text-one-electric text-[10px] tracking-widest uppercase mb-2">Explore ONE FM</p>
-          <WordReveal text="Everything the station offers" className="font-h2 text-one-white block" as="h2" stagger={0.022} variant="char" />
+          <h2 className="font-h2 text-one-white">
+            <HeadlinePop>Everything the station offers</HeadlinePop>
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
