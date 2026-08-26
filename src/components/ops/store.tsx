@@ -13,6 +13,7 @@ import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
 import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
 import type { DbContactEnquiry } from '@/lib/supabase'
 import * as opsApi from '@/lib/opsApi'
+import { loadProposalLogos, saveProposalLogo } from '@/lib/proposalLogoStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -52,6 +53,9 @@ export interface Proposal {
   status: ProposalStatus
   createdAt: string
   updatedAt: string
+  /** Real client logo data URL. Session-only — never sent to Supabase. */
+  logoDataUrl?: string
+  logoPx?: { w: number; h: number }
 }
 
 export type OpsContract = Contract & { proposalId?: string }
@@ -108,6 +112,8 @@ export interface NewProposalInput {
   total?: number
   value: number
   number?: string
+  logoDataUrl?: string
+  logoPx?: { w: number; h: number }
 }
 
 export type NewInvoiceInput = Omit<
@@ -284,6 +290,26 @@ function loadState(): OpsState {
   return buildSeedState()
 }
 
+function stripLogos(state: OpsState): OpsState {
+  return {
+    ...state,
+    proposals: state.proposals.map(({ logoDataUrl: _l, logoPx: _p, ...p }) => p),
+  }
+}
+
+function withSessionLogos(state: OpsState): OpsState {
+  const logos = loadProposalLogos()
+  return {
+    ...state,
+    proposals: state.proposals.map((p) => {
+      const logo = logos[p.id]
+      return logo
+        ? { ...p, logoDataUrl: logo.dataUrl, logoPx: { w: logo.w, h: logo.h } }
+        : p
+    }),
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Context
 // ---------------------------------------------------------------------------
@@ -291,7 +317,7 @@ function loadState(): OpsState {
 const OpsContext = createContext<OpsStore | null>(null)
 
 export function OpsProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<OpsState>(loadState)
+  const [state, setState] = useState<OpsState>(() => withSessionLogos(loadState()))
   const [activeTab, setActiveTab] = useState<OpsTab>(() => loadSession().activeTab)
   const [focusProposalId, setFocusProposalId] = useState<string | null>(
     () => loadSession().focusProposalId,
@@ -366,7 +392,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!remoteReady) return
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stripLogos(state)))
     } catch {
       // Storage full / unavailable — keep working in memory.
     }
@@ -504,6 +530,12 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           ...prev,
           proposals: [proposal, ...prev.proposals],
         }))
+        saveProposalLogo(
+          proposal.id,
+          proposal.logoDataUrl
+            ? { dataUrl: proposal.logoDataUrl, w: proposal.logoPx?.w ?? 400, h: proposal.logoPx?.h ?? 200 }
+            : null,
+        )
         void opsApi.upsertProposal(proposal)
         return proposal.id
       },
@@ -515,6 +547,18 @@ export function OpsProvider({ children }: { children: ReactNode }) {
             p.id === id ? { ...p, ...patch, updatedAt: now() } : p,
           ),
         }))
+        if ('logoDataUrl' in patch) {
+          saveProposalLogo(
+            id,
+            patch.logoDataUrl
+              ? {
+                  dataUrl: patch.logoDataUrl,
+                  w: patch.logoPx?.w ?? 400,
+                  h: patch.logoPx?.h ?? 200,
+                }
+              : null,
+          )
+        }
         void opsApi.updateProposal(id, patch)
       },
 

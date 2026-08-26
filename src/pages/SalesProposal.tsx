@@ -23,6 +23,8 @@ import { generalTiers, footballTiers, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { ProposalLockupSample } from '@/components/proposal/ProposalDeck'
+import { GVL_FINALS_2026, REACH } from '@/data/proposalTruth'
 
 const RED = '#E51636'
 
@@ -118,7 +120,11 @@ function Hero() {
           sourced reach figures — not a public generator, not invented demographics.
         </p>
         <a
-          href="#enquire"
+          href="#/proposal"
+          onClick={(e) => {
+            e.preventDefault()
+            document.getElementById('enquire')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }}
           className="inline-block mt-8 rounded-full px-7 py-3.5 font-bold text-[13px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
           style={{ background: RED }}
           data-cursor-label="REQUEST"
@@ -289,6 +295,21 @@ export default function SalesProposal() {
           delay={0.4}
         />
         <Hero />
+
+        <section className="px-6 md:px-12 lg:px-20 pb-16">
+          <LabelReveal className="mb-3">The paper they receive</LabelReveal>
+          <h2 className="font-poster uppercase text-[clamp(28px,4vw,48px)] text-white mb-4">
+            Dual lockup. Census. Finals. No slop<span style={{ color: RED }}>.</span>
+          </h2>
+          <p className="text-white/55 text-[15px] mb-8 max-w-2xl">
+            Station staff drop your real logo onto a six-page A4. Reach is{' '}
+            {REACH.weeklyListeners.toLocaleString()} weekly listeners across {REACH.towns} towns
+            (ABS 2021). GVL home-and-away closed {GVL_FINALS_2026.homeAndAwayLast} — first finals
+            weekend {GVL_FINALS_2026.firstFinalsWeekend}. We do not invent a mark, a follower
+            count, or a 25–34 age split.
+          </p>
+          <ProposalLockupSample />
+        </section>
 
         <StatsStrip
           stats={[
