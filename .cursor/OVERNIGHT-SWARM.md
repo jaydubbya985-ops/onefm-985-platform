@@ -35,6 +35,8 @@ Cookie QA, `/broadcast`, Community town photos, Home GVL finals badge: done.
 Coverage **On air recently** cards pan the map to WP pins. Nav includes Broadcast Grid. Community languages = guide show count (not “8+”). Population copy is 2026 est., not “people reached”.
 Public Social Hub no longer downloads ops DEMO Mailchimp leads.
 
+Broadcast Explorer “state-of-the-art / HD suite” copy stripped. Donate account name is the licensed entity. Community menu hover is a town photo, not the OB van.
+
 ## Stop
 
 Stop spawning new work after **21:20 UTC 26 Aug 2026**

@@ -951,14 +951,14 @@ function BehindTheScenes() {
               transition={{ delay: 0.1, duration: 0.6, ease: easeOutExpo }}
               className="font-body text-one-white mb-8"
             >
-              ONE FM 98.5 — Callsign 3ONE, ACMA License 1385226/1, licensed by APRA AMCOS. Our state-of-the-art broadcast facility combines professional audio equipment with community-focused programming. From the early morning breakfast show to late-night multicultural programs, we're the heartbeat of the Goulburn Valley.
+              ONE FM 98.5 — callsign 3ONE, ACMA licence 1385226/1, APRA AMCOS licensed. Volunteer-run community radio from 47 Parkside Drive, Shepparton. Breakfast 6–9am with rotating hosts, GVL sport, and multicultural shows from the weekly program guide.
             </motion.p>
 
             <div className="space-y-4 mb-8">
               {[
-                { title: 'Live Community Programming', desc: 'Real local voices, real local stories' },
-                { title: 'HD Broadcast Suite', desc: 'Crystal-clear transmission across 100km radius' },
-                { title: 'Live Stream Infrastructure', desc: 'Global reach, local heart' },
+                { title: 'Live community programming', desc: 'Presenters and shows from the fm985.com.au weekly guide' },
+                { title: '98.5 FM from Mount Major', desc: 'Community service 3ONE · ~100km radius · 25 towns' },
+                { title: 'Live stream', desc: 'This site, any browser — Radio.co' },
               ].map((item, i) => (
                 <motion.div
                   key={item.title}

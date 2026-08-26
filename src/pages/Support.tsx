@@ -16,16 +16,17 @@ import {
   HeadlinePop,
 } from '@/components/onair/kit'
 import { donationTiers, stationStats } from '@/data/pricing'
+import { BRAND } from '@/lib/brand'
 
 const RED = '#E51636'
 
 const BANK = {
-  name: '98.5 One FM',
+  name: BRAND.org,
   bank: 'NAB',
   bsb: '083-894',
   account: '553 219 432',
-  email: 'admin@fm985.com.au',
-  phone: '(03) 5831 3131',
+  email: BRAND.email,
+  phone: BRAND.phone,
 } as const
 
 const STRIPE_READY =
@@ -204,7 +205,7 @@ export default function Support() {
     <Layout>
       <SEO
         title="Donate — Support ONE FM 98.5"
-        description="Support volunteer-run community radio in the Goulburn Valley. Bank transfer: NAB BSB 083-894 · Acct 553 219 432 · 98.5 One FM."
+        description="Support volunteer-run community radio in the Goulburn Valley. Bank transfer to Goulburn Valley Community Radio Inc.: NAB BSB 083-894 · Acct 553 219 432."
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
