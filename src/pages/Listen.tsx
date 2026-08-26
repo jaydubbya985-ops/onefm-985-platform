@@ -1,9 +1,9 @@
 /**
- * LISTEN — rebuilt per REBUILD-SPEC.md (page 2 of 6).
- * Absorbs Programs + Broadcast Explorer. Assembled from the ON AIR kit.
- * Play/pause is the hero action. Program + host come from programGuide.
+ * LISTEN — play/pause is the hero action. Program + host come from programGuide.
+ * Dedicated /programs and /broadcast pages stay in the nav (this page is the stream).
  */
 import { Loader2, Pause, Play, Phone, Radio, Wifi } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { MediaImage } from '@/components/MediaImage'
@@ -147,7 +147,25 @@ export default function Listen() {
         <ListenHero />
         <NameWall label="On Air This Week" rows={wallRows()} />
         <section className="px-6 md:px-12 lg:px-20 pb-6" id="guide">
-          <LabelReveal className="mb-8">Full Program Guide</LabelReveal>
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <LabelReveal>Full Program Guide</LabelReveal>
+            <div className="flex flex-wrap gap-5">
+              <Link
+                to="/programs"
+                className="font-bold text-[13px] tracking-[0.12em] uppercase text-white/50 hover:text-white"
+                data-cursor-label="PROGRAMS"
+              >
+                Programs page →
+              </Link>
+              <Link
+                to="/broadcast"
+                className="font-bold text-[13px] tracking-[0.12em] uppercase text-white/50 hover:text-white"
+                data-cursor-label="BROADCAST"
+              >
+                Broadcast grid →
+              </Link>
+            </div>
+          </div>
           <WeeklySchedule />
         </section>
         <section className="px-6 md:px-12 lg:px-20 pb-6">

@@ -27,8 +27,9 @@ Do not merge to `main`. Do not deploy production unless Jay replies.
 
 1. Named host JPGs if Jay drops them in `/public/photos/hosts/`
 2. More WP pins only when new posts exist (latest still 27 Jul 2026)
-3. MiniPlayer vs cookie banner first-visit QA
-4. `/broadcast` restored (Broadcast Explorer) — HeadlinePop on that page + Story.tsx
+
+Cookie QA, `/broadcast`, Community town photos, Home GVL finals badge: done.
+Coverage **On air recently** cards pan the map to WP pins. Nav includes Broadcast Grid. Community languages = guide show count (not “8+”). Population copy is 2026 est., not “people reached”.
 
 ## Stop
 

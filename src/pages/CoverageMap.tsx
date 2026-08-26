@@ -633,7 +633,7 @@ export default function CoverageMap() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/88 uppercase whitespace-nowrap">Live · Shepparton</span>
+              <span className="font-label text-[9px] tracking-[0.2em] text-one-muted/88 uppercase whitespace-nowrap">Weather · Goulburn Valley</span>
               <div className="flex items-end gap-[2px]" aria-hidden style={{ height: 16 }}>
                 {[4, 8, 12, 16].map((h, i) => (
                   <motion.div
@@ -653,6 +653,44 @@ export default function CoverageMap() {
             <p className="relative mt-4 text-[10px] text-one-muted/80">
               Population: ABS Census 2021 with local projections · Listener estimates: regional reach model
             </p>
+
+            <div className="relative mt-6">
+              <p className="font-label text-[10px] tracking-[0.2em] text-one-gold uppercase mb-3">
+                On air recently · fm985.com.au
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                {coveragePins
+                  .filter((p) => p.type === 'community')
+                  .slice(0, 4)
+                  .map((pin) => (
+                    <button
+                      key={pin.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedPin(pin)
+                        setSelectedTown(null)
+                        setShowCommunityPins(true)
+                        setMobileListOpen(false)
+                        if (mapInstanceRef.current) {
+                          mapInstanceRef.current.panTo({ lat: pin.lat, lng: pin.lng })
+                          if ((mapInstanceRef.current.getZoom() ?? 0) < 11) {
+                            mapInstanceRef.current.setZoom(12)
+                          }
+                        }
+                        mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                      }}
+                      data-cursor-label="PIN"
+                      className="text-left rounded-lg border border-one-border bg-one-midnight/40 px-3 py-2 hover:border-one-gold/50 transition-colors"
+                    >
+                      <p className="font-label text-[10px] text-one-gold uppercase">{pin.town}</p>
+                      {pin.date && (
+                        <p className="text-[10px] text-one-muted mt-0.5">{pin.date}</p>
+                      )}
+                      <p className="font-body-small text-one-white line-clamp-2 mt-0.5">{pin.name}</p>
+                    </button>
+                  ))}
+              </div>
+            </div>
           </div>
         </section>
 

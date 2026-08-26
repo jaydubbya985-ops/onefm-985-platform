@@ -24,6 +24,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'Listen Live', path: '/listen', description: 'Stream 98.5 FM · Radio.co' },
       { label: 'Program Guide', path: '/programs', description: 'Weekly guide from fm985.com.au' },
+      { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual weekly schedule' },
       { label: 'Coverage Map', path: '/coverage', description: '25 towns · ~100km radius' },
     ],
   },
@@ -65,7 +66,7 @@ export const HOME_JOBS = [
   },
   {
     label: 'Programs',
-    path: '/listen',
+    path: '/programs',
     description: 'Breakfast, sport, multicultural & more',
     accent: '#F2F2F2',
     image: STATION_PHOTOS.studioPresenterMic,

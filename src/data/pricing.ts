@@ -55,6 +55,8 @@ export const donationTiers = [
 // Key stats
 export const stationStats = {
   weeklyListeners: 39375,
+  // 2026 est. from station research scrape — not weekly listeners.
+  // townData.broadcastArea.totalPopulation2026 is 189680; do not invent a reconciliation.
   broadcastPopulation: 185791,
   totalTowns: 25,
   broadcastRadiusKm: 100,

@@ -504,7 +504,7 @@ export default function MediaKit() {
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ADVERTISING RATES 2026</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} AREA POP. (2026 EST.)</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">GOULBURN VALLEY · VICTORIA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE READS · SPOT ADS · SPONSORSHIP</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">~{stationStats.broadcastRadiusKm} KM BROADCAST RADIUS</span>,

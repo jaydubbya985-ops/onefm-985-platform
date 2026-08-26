@@ -12,6 +12,8 @@ export interface CoveragePin {
   town: string
   blurb: string
   link?: string
+  /** ISO date from fm985.com.au WP — community pins only. */
+  date?: string
 }
 
 /** Offset pin slightly from town centroid so markers don't stack. */
@@ -102,6 +104,7 @@ export const coveragePins: CoveragePin[] = [
       town: item.town,
       blurb: `${item.date} · ${item.kind} on fm985.com.au — not an invented event.`,
       link: item.sourceUrl,
+      date: item.date,
     }]
   }),
 ]
