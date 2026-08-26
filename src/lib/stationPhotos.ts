@@ -1,6 +1,6 @@
 /**
- * Canonical ONE FM photo library — /public/assets/images/ (60 files on disk)
- * Root-level host/studio photos in /public/
+ * Canonical ONE FM photo library — every file lives under /public/assets/images/.
+ * Nothing here is stock or generated; all frames are station-supplied.
  */
 
 const IMG = '/assets/images'
@@ -78,6 +78,8 @@ export const STATION_PHOTOS = {
   // Studio & presenter additions
   studioPresenterMic: `${IMG}/studio-presenter-mic.jpg`,
   studioSbsVisit: `${IMG}/studio-sbs-visit.jpg`,
+  /** Solidyne 2600 XL desk, live to air. */
+  studioControlRoom: `${IMG}/studio-control-room.jpg`,
 
   // Geographic additions
   geoTownAerialLake: `${IMG}/geo-lake-aerial.jpg`,
@@ -96,13 +98,17 @@ export const STATION_PHOTOS = {
 } as const
 
 /**
- * Root-level public assets — real ONE FM host / studio photos.
+ * Studio and community frames used as page furniture.
+ *
+ * These are scenes, not portraits: nothing here is captioned with a presenter's
+ * name. To attribute a photograph to a named presenter, add it to
+ * `VERIFIED_PORTRAITS` in `presenterAssets.ts` instead.
  */
 export const HOST_PHOTOS = {
-  onAirHost1:       '/on-air-host-1.jpg',
+  onAirHost1:       STATION_PHOTOS.studioControlRoom,
   onAirHost2:       `${IMG}/studio-commentary-selfie.jpg`,
   onAirHost3:       `${IMG}/studio-sbs-diversity.jpg`,
-  studioControlRoom: '/studio-control-room.jpg',
+  studioControlRoom: STATION_PHOTOS.studioControlRoom,
   communityEvent:   `${IMG}/community-book-stall.jpg`,
   regionalLandscape: `${IMG}/geo-rolling-green-hills.jpg`,
 } as const

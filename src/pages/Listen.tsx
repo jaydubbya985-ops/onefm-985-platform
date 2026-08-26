@@ -12,19 +12,10 @@ import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFil
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { stationStats } from '@/data/pricing'
+import { ON_AIR_WALL } from '@/data/onAirWall'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
-
-/** Real weekly presenters — source: programGuide.ts (fm985.com.au/guide). */
-const WEEK_WALL = [
-  { name: 'Tim Ahemt', sub: 'ONE FM Breakfast · Mon & Tue', img: '/on-air-host-1.jpg' },
-  { name: 'The Big G', sub: 'Craig Stott · Wednesday Breakfast', img: '/studio-control-room.jpg' },
-  { name: 'Ralph Whitehead', sub: 'Thursday Breakfast', img: '/assets/images/studio-presenter-mic.jpg' },
-  { name: 'Josh Revens', sub: 'Friday Breakfast · Live Music', img: '/assets/images/ob-van-branded.jpg' },
-  { name: 'Tim Symonds', sub: 'The Essential Hits', img: '/assets/images/heritage-truck-2005.jpg' },
-  { name: 'Di Hunter', sub: 'On Air Since the Early Days', img: '/assets/images/heritage-di-hunter-carols-2014.jpg' },
-]
 
 function ListenHero() {
   const { playing, loading, toggle } = useLiveStream()
@@ -114,7 +105,7 @@ export default function Listen() {
           delay={0.4}
         />
         <ListenHero />
-        <NameWall label="On Air This Week" rows={WEEK_WALL} />
+        <NameWall label="On Air This Week" rows={ON_AIR_WALL} />
         <section className="px-6 md:px-12 lg:px-20 pb-6" id="guide">
           <LabelReveal className="mb-8">Full Program Guide</LabelReveal>
           <WeeklySchedule />

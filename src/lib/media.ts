@@ -18,7 +18,7 @@ export const media = {
   /* ── Station ──────────────────────────────────────────── */
   studioControlRoom: HOST_PHOTOS.studioControlRoom,
   heroWaveform:      PHOTO_DEFAULTS.hero,
-  // Real on-air host photos in /public/on-air-host-*.jpg
+  // Studio and community scenes — see presenterAssets.ts for named portraits.
   onAirHost1:        HOST_PHOTOS.onAirHost1,
   onAirHost2:        HOST_PHOTOS.onAirHost2,
   onAirHost3:        HOST_PHOTOS.onAirHost3,
@@ -65,7 +65,7 @@ export const media = {
   salesChart:    STATION_PHOTOS.gvlCrowdStands,
 
   /* ── Presenter photos ─────────────────────────────────── */
-  // Real on-air host photos — fallback chain when slug-based photo missing
+  // Scene fallbacks. Named portraits resolve through presenterImage().
   presenter1: HOST_PHOTOS.onAirHost1,
   presenter2: HOST_PHOTOS.onAirHost2,
   presenter3: HOST_PHOTOS.onAirHost3,

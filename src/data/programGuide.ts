@@ -7,21 +7,43 @@
 export const BREAKFAST_SHOW = 'ONE FM Breakfast (Breaky)'
 export const BREAKFAST_TIME = '6:00am – 9:00am'
 
-/** Breakfast hosts Mon–Fri (confirmed from guide) */
-export const BREAKFAST_HOSTS: Record<number, string> = {
-  1: 'Tim Ahemt',     // Monday
-  2: 'Tim Ahemt',     // Tuesday (guide shows same presenter block)
-  3: 'Craig Stott',   // Wednesday — "Tuesday Mornings with Craig Stott" / Big G Wed
-  4: 'Ralph Whitehead', // Thursday — "Thursday Mornings with Ralph Whitehead"
-  5: 'Josh Revens',   // Friday — "Friday Mornings with Josh Revens"
-}
+/**
+ * The breakfast roster is the single source of truth for who is on Breaky.
+ * Everything else on this page — the day lookup, the schedule label, the
+ * homepage cards — is derived from it, so the site cannot drift from the guide.
+ */
+export const BREAKFAST_ROSTER = [
+  { dayIndex: 1, day: 'Monday',    host: 'Tim Ahemt' },
+  { dayIndex: 2, day: 'Tuesday',   host: 'Tim Ahemt' },
+  { dayIndex: 3, day: 'Wednesday', host: 'The Big G (Craig Stott)' },
+  { dayIndex: 4, day: 'Thursday',  host: 'Ralph Whitehead' },
+  { dayIndex: 5, day: 'Friday',    host: 'Josh Revens' },
+] as const
+
+/** Breakfast hosts Mon–Fri, keyed by JS day index. */
+export const BREAKFAST_HOSTS: Record<number, string> = Object.fromEntries(
+  BREAKFAST_ROSTER.map((slot) => [slot.dayIndex, slot.host]),
+)
 
 export function getBreakfastHost(day: number): string {
   return BREAKFAST_HOSTS[day] ?? 'ONE FM'
 }
 
+/** "Mon–Tue: Tim Ahemt · Wed: The Big G (Craig Stott) · …" */
 export function getBreakfastScheduleLabel(): string {
-  return 'Mon–Tue: Tim Ahemt · Wed: Craig Stott (The Big G) · Thu: Ralph Whitehead · Fri: Josh Revens'
+  const runs: { hosts: string; days: string[] }[] = []
+  for (const slot of BREAKFAST_ROSTER) {
+    const last = runs[runs.length - 1]
+    if (last && last.hosts === slot.host) last.days.push(slot.day)
+    else runs.push({ hosts: slot.host, days: [slot.day] })
+  }
+  return runs
+    .map(({ hosts, days }) => {
+      const short = days.map((d) => d.slice(0, 3))
+      const span = short.length > 1 ? `${short[0]}–${short[short.length - 1]}` : short[0]
+      return `${span}: ${hosts}`
+    })
+    .join(' · ')
 }
 
 export interface LiveShowInfo {
@@ -72,7 +94,7 @@ export const FULL_SCHEDULE: ScheduleSlot[] = [
   { day: 2, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 
   // ── WEDNESDAY ───────────────────────────────────────────────
-  { day: 3, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'The Big G', category: 'Breakfast' },
+  { day: 3, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'The Big G (Craig Stott)', category: 'Breakfast' },
   { day: 3, startHour: 9,  endHour: 12, name: 'Wednesday Morning', host: 'The Big G', category: 'Music' },
   { day: 3, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
   { day: 3, startHour: 15, endHour: 16, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
@@ -163,14 +185,6 @@ function formatHour(h: number): string {
   if (h === 12) return '12:00PM'
   return h < 12 ? `${h}:00AM` : `${h - 12}:00PM`
 }
-
-export const BREAKFAST_ROSTER = [
-  { day: 'Monday',    host: 'Tim Ahemt' },
-  { day: 'Tuesday',   host: 'Tim Ahemt' },
-  { day: 'Wednesday', host: 'The Big G (Craig Stott)' },
-  { day: 'Thursday',  host: 'Ralph Whitehead' },
-  { day: 'Friday',    host: 'Josh Revens' },
-] as const
 
 /** All unique presenters from the guide */
 export const ALL_PRESENTERS = [

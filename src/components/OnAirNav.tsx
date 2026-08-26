@@ -17,8 +17,8 @@ const RED = '#E51636'
 const EXPO = [0.16, 1, 0.3, 1] as const
 
 const MENU: { label: string; to: string; img: string }[] = [
-  { label: 'Home', to: '/', img: '/studio-control-room.jpg' },
-  { label: 'Listen', to: '/listen', img: '/on-air-host-1.jpg' },
+  { label: 'Home', to: '/', img: '/assets/images/studio-exterior-rainbow.jpg' },
+  { label: 'Listen', to: '/listen', img: '/assets/images/studio-control-room.jpg' },
   { label: 'Our Community', to: '/community', img: '/assets/images/heritage-ob-mall-1989.jpg' },
   { label: 'History', to: '/heritage', img: '/assets/images/heritage-original-panel-1988.jpg' },
   { label: 'Sponsor', to: '/sponsorship', img: '/assets/images/gvl-action-sprint.jpg' },

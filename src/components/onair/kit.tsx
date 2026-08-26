@@ -42,6 +42,11 @@ export interface WallRow {
   name: string
   sub: string
   img: string
+  /**
+   * What the photograph actually shows. Only pass a caption naming the
+   * presenter when the station has confirmed they are the subject.
+   */
+  imgAlt?: string
 }
 
 /** Alternating giant-name rows with photo bars. Real things only. */
@@ -69,7 +74,7 @@ export function NameWall({ label, rows }: { label: string; rows: WallRow[] }) {
               className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
               style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
               role="img"
-              aria-label={`${p.name} — ${p.sub}`}
+              aria-label={p.imgAlt ?? 'ONE FM 98.5 station photograph'}
             />
           </motion.div>
         ))}

@@ -21,7 +21,7 @@ const TOWN_IMGS = [
   '/assets/images/heritage-ob-mall-1989.jpg',
   '/assets/images/gvl-action-sprint.jpg',
   '/assets/images/ob-van-branded.jpg',
-  '/studio-control-room.jpg',
+  '/assets/images/studio-control-room.jpg',
   '/assets/images/heritage-truck-2005.jpg',
   '/assets/images/tower-mount-major-day.png',
 ]
