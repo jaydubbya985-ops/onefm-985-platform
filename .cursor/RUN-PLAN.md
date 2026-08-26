@@ -1,6 +1,8 @@
 # ONE FM RUN PLAN — Non-stop to launch
 
-**Current score: 4/10** | Proposals now produce PDFs in Ops. Next: contract PDF + live env vars.
+**Current score: 44% of 80% gov-ready bar** (not world-class yet). Honest hole: public `/proposal` still invents 38% age split.
+
+Target **80%**: FOOTT can be sent a PDF; ops is not DEMO on live; no invented stats on public pages; invoice email does not lie about send.
 
 ## Live verification (2026-08-26)
 
