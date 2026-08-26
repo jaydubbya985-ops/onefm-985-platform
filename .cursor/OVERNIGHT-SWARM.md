@@ -45,6 +45,8 @@ Social Hub templates are Canva **sizes** (Facebook / Square / Story) — not Ins
 
 Dead “Download Font Package” / Host Portraits kit claims stripped. Heritage gallery GVL caption points at the weekly guide, not “every weekend since the first bounce”.
 
+Listen is the stream (play/pause). The weekly grid lives on Programs only — Listen no longer embeds a second copy.
+
 ## Stop
 
 Stop spawning new work after **21:20 UTC 26 Aug 2026**

@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { MediaImage } from '@/components/MediaImage'
-import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { RecentStationActivity } from '@/components/RecentStationActivity'
 import { OnAirTicker, NameWall, StatsStrip, LabelReveal, StrokeFill } from '@/components/onair/kit'
@@ -133,7 +132,7 @@ export default function Listen() {
     <Layout>
       <SEO
         title="Listen Live — ONE FM 98.5"
-        description="Stream ONE FM 98.5 live from Shepparton. Full program guide, this week's presenters, and the latest from the studio."
+        description="Stream ONE FM 98.5 live from Shepparton. Program guide and presenters live on the Programs and Broadcast pages."
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -147,26 +146,18 @@ export default function Listen() {
         <ListenHero />
         <NameWall label="On Air This Week" rows={wallRows()} />
         <section className="px-6 md:px-12 lg:px-20 pb-6" id="guide">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <LabelReveal>Full Program Guide</LabelReveal>
-            <div className="flex flex-wrap gap-5">
-              <Link
-                to="/programs"
-                className="font-bold text-[13px] tracking-[0.12em] uppercase text-white/50 hover:text-white"
-                data-cursor-label="PROGRAMS"
-              >
-                Programs page →
-              </Link>
-              <Link
-                to="/broadcast"
-                className="font-bold text-[13px] tracking-[0.12em] uppercase text-white/50 hover:text-white"
-                data-cursor-label="BROADCAST"
-              >
-                Broadcast grid →
-              </Link>
-            </div>
+          <LabelReveal className="mb-6">Program Guide</LabelReveal>
+          <p className="text-[15px] text-white/55 max-w-xl mb-6">
+            This page is the live stream. The weekly grid and show cards live on Programs; the hour grid is on Broadcast.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/programs" className="btn-primary text-sm" data-cursor-label="PROGRAMS">
+              Full program guide →
+            </Link>
+            <Link to="/broadcast" className="btn-secondary text-sm" data-cursor-label="BROADCAST">
+              Broadcast grid →
+            </Link>
           </div>
-          <WeeklySchedule />
         </section>
         <section className="px-6 md:px-12 lg:px-20 pb-6">
           <LatestInterviews />
