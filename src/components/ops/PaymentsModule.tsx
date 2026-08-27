@@ -75,6 +75,7 @@ import {
 } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+import { BRAND } from '@/lib/brand'
 import { useToast } from './Toast'
 import {
   ACCENT,
@@ -1402,25 +1403,30 @@ function DonationsTab() {
                   <div className="flex items-start gap-2">
                     <ShieldCheck className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
                     <p className="text-xs text-emerald-300 leading-relaxed">
-                      ONE FM 98.5 is registered as a Deductible Gift Recipient (DGR). This
-                      donation is tax deductible. ABN: 12 345 678 901. Receipt type: GIFT.
+                      Goulburn Valley Community Radio Inc. ABN {BRAND.abn}. DGR status:
+                      data pending — do not treat this screen as a tax receipt until DGR is
+                      confirmed.
                     </p>
                   </div>
                 </div>
                 <p className="text-[10px] text-slate-500 text-center italic">
-                  This receipt is for taxation purposes. Please keep it with your tax
-                  records.
+                  On-screen preview only — not a tax invoice until DGR status is confirmed.
                 </p>
               </div>
               <div className="flex gap-3">
                 <Button
-                  onClick={() => toast('Receipt sent to printer', 'success')}
+                  onClick={() => {
+                    window.print()
+                    toast('Print dialog opened — nothing was emailed.', 'warning')
+                  }}
                   className="flex-1 bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
                 >
                   <Printer className="h-4 w-4 mr-1.5" /> Print Receipt
                 </Button>
                 <Button
-                  onClick={() => toast('Receipt PDF downloaded', 'success')}
+                  onClick={() =>
+                    toast('PDF download is not wired yet. Receipt stays on screen only.', 'warning')
+                  }
                   variant="outline"
                   className="flex-1 border-slate-700 text-[#F4F1EA] hover:bg-[#1E293B] hover:text-[#D4A853]"
                 >
@@ -2294,13 +2300,18 @@ function MembershipsTab() {
               </div>
               <div className="flex gap-3">
                 <Button
-                  onClick={() => toast('Membership card sent to printer', 'success')}
+                  onClick={() => {
+                    window.print()
+                    toast('Print dialog opened — nothing was emailed.', 'warning')
+                  }}
                   className="flex-1 bg-[#D4A853] hover:bg-[#E8C875] text-[#101010] font-semibold"
                 >
                   <Printer className="h-4 w-4 mr-1.5" /> Print Card
                 </Button>
                 <Button
-                  onClick={() => toast('Membership card downloaded', 'success')}
+                  onClick={() =>
+                    toast('Card download is not wired yet. Preview stays on screen only.', 'warning')
+                  }
                   variant="outline"
                   className="flex-1 border-slate-700 text-[#F4F1EA] hover:bg-[#1E293B] hover:text-[#D4A853]"
                 >
@@ -2541,7 +2552,24 @@ function MembershipsTab() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => toast(`Renewal reminder sent to ${member.name}`, 'success')}
+                      onClick={() => {
+                        const to = member.email?.trim()
+                        if (!to) {
+                          toast(`No email on file for ${member.name} — reminder was NOT sent.`, 'error')
+                          return
+                        }
+                        const subject = encodeURIComponent(
+                          `Membership renewal — ONE FM 98.5`,
+                        )
+                        const body = encodeURIComponent(
+                          `Hi ${member.name},\n\nThis is a membership renewal reminder from ONE FM 98.5.\n\nNothing else was emailed until you send this message.`,
+                        )
+                        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`
+                        toast(
+                          `Email client opened for ${member.name}. Reminder is NOT marked sent until you send it.`,
+                          'warning',
+                        )
+                      }}
                       className="h-7 text-xs border-amber-800 text-amber-400 hover:bg-amber-950/30"
                     >
                       <Send className="h-3 w-3 mr-1" /> Send Reminder
