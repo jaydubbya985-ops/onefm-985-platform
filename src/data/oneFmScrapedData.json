@@ -1,4 +1,13 @@
 {
+  "_provenance": {
+    "what": "Point-in-time scrape of fm985.com.au. A record of what the site said when it was captured, not a source of truth.",
+    "consumed_by": "src/lib/fm985Feed.ts reads recent_interviews only, as the fallback when the WordPress API is unreachable.",
+    "do_not_use_for": [
+      "Breakfast hosts - this snapshot still lists Lillian Stone. The roster is src/data/programGuide.ts BREAKFAST_ROSTER.",
+      "Headline stats - area_population_2026 here is the superseded 185,791. Use stationStats in src/data/pricing.ts, which scripts/audit-town-data.ts holds to the sum of src/data/townData.ts."
+    ],
+    "rule": "Do not edit the captured values to match current data. Correct the consuming code instead."
+  },
   "station": {
     "name": "ONE FM 98.5",
     "callsign": "3ONE",
