@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs'
 import { resolveOpsConfig } from '../src/lib/opsConfigResolve.ts'
 import { readFunctionJson } from '../src/lib/readFunctionJson.ts'
+import { realBatchInvoices } from '../src/components/ops/data/invoices.ts'
 
 const fail: string[] = []
 
@@ -116,6 +117,12 @@ const okJson = await readFunctionJson<{ success?: boolean }>(
   new Response(JSON.stringify({ success: true }), { status: 200 }),
 )
 assert(okJson?.success === true, 'JSON success must parse')
+
+const foott = realBatchInvoices().find((i) => i.number === 'ONEFM-2026-011')
+assert(!!foott, 'FOOTT ONEFM-2026-011 must exist in realBatchInvoices')
+assert(foott?.email === 'peter@foott.com.au', 'FOOTT must have peter@foott.com.au')
+assert(foott?.total === 5500, 'FOOTT total must be 5500')
+assert(foott?.status === 'draft', 'FOOTT must be sendable draft')
 
 if (fail.length) {
   console.error('verify-ops-config failed:\n' + fail.map((f) => `  ${f}`).join('\n'))
