@@ -5,50 +5,42 @@
 **Repo:** `jaydubbya985-ops/onefm-985-platform`  
 **Live:** https://onefmops.netlify.app  
 **Netlify site ID:** `8df4de74-d9a8-42ce-9316-61bd06475c94`  
-**GitHub is source of truth.** Not a stale Downloads folder. Always `git pull origin main` first.
+**GitHub is source of truth.** Always `git pull origin main` first.
 
 ## Benchmark (stop only when this is true)
 
 **80% gov-ready** = FOOTT can be sent a real invoice PDF; live `#/ops` is not DEMO; public pages have no invented stats; invoice email does not lie about send.
 
-| Gate | Done when |
-|------|-----------|
-| Logo | `#/ops` Invoice + Proposal preview = real `/brand/` lockup (not gold text). PR #12. |
-| Proposal PDF | Community Partner PDF has **39,375**, GST, no 38%. |
-| Invoice | BSB **083-894**, account `553 219 432`, name `98.5 One FM`. Mailto does **not** mark sent. |
-| Truth | No Plemo / unsplash / fake millions / AI-Enhanced on public pages. |
-| Ops live | `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` on Netlify **and** Cloud Agent secrets. |
-| Deploy | New Netlify PAT in GitHub `NETLIFY_AUTH_TOKEN`. |
-| Payments | Stripe test key (optional until 80%). |
+| Gate | Status (2026-08-27) |
+|------|---------------------|
+| Logo + invoice PDF | **On `main`** (`4a7315f`). FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Not on live until Netlify PAT works. |
+| Mailto honesty | **On `main`**. Mailto / billing cycle / reminders do **not** mark sent. |
+| Public truth | **On `main`**. `/audience` towns from `townData.ts` (Echuca 3,710 not Mooroopna). Gender LGA 49/51. `npm run truth` in CI. |
+| Live `#/ops` | **Still DEMO.** https://onefmops.netlify.app still has `onefm2026` / `OpsPortal-DpfuQL4N.js`. |
+| Deploy | EXE merge **build passed**. Deploy failed: `Unauthorized: could not retrieve project`. GitHub `NETLIFY_AUTH_TOKEN` is set and **rejected**. Empty-commit retries will not fix this. |
+| Ops live env | Needs `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` in **GitHub Actions secrets** (baked at `npm run build`) **and** Netlify site env. |
 
 ## Do this run (order)
 
 1. `git pull origin main`. Do not merge PRs unless Jay says **EXE**.
-2. If PR #12 is still open: keep logo/proposal work there. New work = **new branch** `cursor/<name>-c24f`. Never share another agent’s branch.
-3. `npx vite-node scripts/verify-ops-pdfs.ts` then pymupdf (install: `python3 -m pip install --user pymupdf`).
-4. Public site craft (Kimi/Claude): `Home.tsx` / `Listen.tsx` / `Coverage.tsx` / `Story.tsx` — Brand V3 blue+white+red, real photos only, `programGuide.ts` + `townData.ts` only.
+2. New work = new branch `cursor/<name>-c24f`. Never share another agent’s branch.
+3. **First:** if live still shows `onefm2026`, do **not** empty-commit. The PAT is dead. NEED JAY (below).
+4. `npx vite-node scripts/verify-ops-pdfs.ts` then pymupdf (`python3 -m pip install --user pymupdf`).
 5. Ops: DEMO until env vars exist. Do not fake live mode. Password already in `AGENTS.md`.
 6. If blocked on secrets: post **NEED JAY:** one line. Keep coding independent work.
-7. `npm run build` must pass. Commit + push + PR. Deploy needs Netlify PAT.
+7. `npm run build` must pass. Commit + push + PR. Deploy needs a **new** Netlify PAT.
 
 ## Model / desks
 
-- **This Grok 4.6 Cloud Agent cannot upgrade itself.** Jay: start next run at https://cursor.com/agents as **Claude Opus** (or GPT 5.6 extra-high). Paste this file.
-- **Kimi (desktop):** same GitHub repo. Pull `main`. Paste this file. Local path if used: `Kimi_Agent_ONE FM Project Consolidation/app` — treat as checkout of GitHub, not a second source of truth.
-- **Claude Code:** `claude mcp add --scope project --transport http supabase "https://mcp.supabase.com/mcp?project_ref=myarjdatdtchmkgdpsab"` then authenticate in the CLI.
-- **Cursor Automation:** https://cursor.com/automations — prompt = this file; repo = this; model = Claude Opus; after each PR merge or on a timer. That is the non-stop loop.
+- **Grok 4.6 Cloud Agent cannot upgrade itself.** Jay: start next run at https://cursor.com/agents as **Claude Opus** (or GPT 5.6 extra-high). Paste this file.
+- **Kimi (desktop):** same GitHub repo. Pull `main`. Paste this file.
+- **Cursor Automation:** https://cursor.com/automations — prompt = this file; model = Claude Opus.
 
-## Secrets Jay pastes (never commit)
+## NEED JAY (one action)
 
-Cloud Agents → Secrets **and** Netlify env:
+Replace GitHub secret `NETLIFY_AUTH_TOKEN` with a **new** Netlify PAT (Netlify → User settings → Applications → New access token), then **Re-run** the failed **Deploy to Netlify** workflow on `main` (do not empty-commit).
 
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-- `NETLIFY_AUTH_TOKEN` (new PAT — old one 401s)
-- `NETLIFY_SITE_ID` = `8df4de74-d9a8-42ce-9316-61bd06475c94`
-- Optional: `VITE_STRIPE_PUBLISHABLE_KEY`, `RESEND_API_KEY`
-
-Environment Save: https://cursor.com/dashboard/cloud-agents/environments/e/12f6eaa3-4493-4864-b566-b35c84d6e030 (install already has `npm ci` + pymupdf).
+Also paste `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` into GitHub Actions secrets **and** Netlify Site settings → Environment variables so `#/ops` can leave DEMO after that deploy.
 
 ## Truth numbers (only these)
 
@@ -57,7 +49,6 @@ Environment Save: https://cursor.com/dashboard/cloud-agents/environments/e/12f6e
 - Breakfast: `src/data/programGuide.ts` (`BREAKFAST_ROSTER`) — **not** Plemo
 - Photos: `/public/assets/images/` and `/public/brand/` only
 
-## Open PRs (do not assume merged)
+## Do not
 
-- Logo + proposal preview: check `gh pr list`
-- Do not force-push. Do not invent FOOTT invoice contents.
+- Force-push. Invent FOOTT invoice contents. Fake live ops. Empty-commit to retry a 401.

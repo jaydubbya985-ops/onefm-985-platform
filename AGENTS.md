@@ -137,14 +137,16 @@ Read and follow .cursor/HANDOFF.md. Pull origin main first. Do not merge PRs unl
 
 Benchmark 80% gov-ready: FOOTT can be sent a real invoice PDF; live #/ops is not DEMO; no invented stats; mailto does not mark sent.
 
-If this is a new Cloud Agent: use Claude Opus. New branch off main — never share cursor/invoice-real-logo-c24f.
+PR #12 is already merged (4a7315f). Live is still DEMO — GitHub NETLIFY_AUTH_TOKEN is unauthorized. Do not empty-commit retry.
+
+If this is a new Cloud Agent: use Claude Opus. New branch off main.
 
 If blocked on secrets: NEED JAY one line. Keep coding independent work. Build must pass.
 ```
 
 ## Current priorities
 
-1. Fill Cloud Agent + Netlify secrets (`VITE_SUPABASE_*`, new `NETLIFY_AUTH_TOKEN`) so live ops leaves DEMO
-2. Start the next Cloud Agent as Claude Opus with `.cursor/HANDOFF.md` (this Grok run cannot upgrade itself)
-3. Merge PR #12 only when Jay says EXE (real logo on live `#/ops`)
+1. Replace GitHub `NETLIFY_AUTH_TOKEN` with a **new** Netlify PAT, then re-run **Deploy to Netlify** on `main`
+2. `VITE_SUPABASE_*` in GitHub Actions secrets + Netlify env so live `#/ops` leaves DEMO
+3. Start the next Cloud Agent as Claude Opus with `.cursor/HANDOFF.md` (this Grok run cannot upgrade itself)
 4. Public site craft from `programGuide.ts` + `townData.ts` + `/public/brand/` only
