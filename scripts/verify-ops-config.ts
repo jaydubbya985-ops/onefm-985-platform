@@ -147,8 +147,8 @@ assert(
   'email-status hook must not treat an unverified fm985.com.au domain as live send',
 )
 assert(
-  emailStatusHook.includes("'unverified'"),
-  'email-status hook must expose unverified when Resend DNS is not verified',
+  emailStatusHook.includes("'pending'"),
+  'email-status hook must not tell Jay to edit DNS while Resend is pending',
 )
 
 const gateSource = readFileSync(
@@ -215,8 +215,8 @@ const bannerSource = readFileSync(
   'utf8',
 )
 assert(
-  bannerSource.includes("status === 'unverified'"),
-  'ops banner must not claim live email is ON when fm985.com.au is unverified',
+  bannerSource.includes("status === 'pending'"),
+  'ops banner must not ask Jay to change DNS while Resend verification is pending',
 )
 assert(
   bannerSource.includes('resend._domainkey'),

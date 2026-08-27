@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { readFunctionJson } from '@/lib/readFunctionJson'
 
-export type EmailServiceStatus = 'checking' | 'live' | 'unverified' | 'off' | 'unknown'
+export type EmailServiceStatus = 'checking' | 'live' | 'pending' | 'unverified' | 'off' | 'unknown'
 
 /**
  * Checks whether the invoice email pipeline (Resend, via the Netlify
  * `send-invoice` function) can actually deliver mail.
  *
  * - 'live'       → key is set, Resend accepts it, fm985.com.au is verified.
- * - 'unverified' → key is set but fm985.com.au is not verified — sends will fail.
+ * - 'pending'    → DNS matches; Resend has not finished verifying yet.
+ * - 'unverified' → key is set but fm985.com.au DNS does not match Resend.
  * - 'off'        → function reachable but RESEND_API_KEY missing — PDF+mailto fallback only.
  * - 'unknown'    → function unreachable (SPA HTML fallback or local `npm run dev`).
  *
@@ -26,6 +27,7 @@ export function useEmailServiceStatus(): EmailServiceStatus {
           resendConfigured?: boolean
           resendReachable?: boolean
           fromDomainVerified?: boolean
+          domainStatus?: string
         }>(res),
       )
       .then((data) => {
@@ -40,6 +42,10 @@ export function useEmailServiceStatus(): EmailServiceStatus {
         }
         if (data.fromDomainVerified === true && data.resendReachable !== false) {
           setStatus('live')
+          return
+        }
+        if (data.domainStatus === 'pending') {
+          setStatus('pending')
           return
         }
         setStatus('unverified')

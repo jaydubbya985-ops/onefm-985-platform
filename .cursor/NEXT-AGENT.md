@@ -12,7 +12,7 @@ If you are Grok: do the work you can, then tell Jay to start the **next** run as
 
 `git pull origin cursor/gov-ready-live-gate-c24f`. Read `.cursor/HANDOFF.md`. Stay on that branch (PR #16) unless starting new work (`cursor/<name>-c24f`). Do not merge without **EXE**.
 
-Live `#/ops` is already **LIVE — not DEMO**. `npm run live` fails until **fm985.com.au** apex is verified. NEED JAY: SiteGround DNS — copy the three records from Resend → Domains → fm985.com.au (TXT `resend._domainkey`, MX `send`, TXT `send`) over the failed ones. Do not change Outlook MX.
+Live `#/ops` is already **LIVE — not DEMO**. DNS for **fm985.com.au** already matches Resend. Domain status is **pending**. NEED JAY: Resend → Domains → fm985.com.au → **Verify**. Do not change SiteGround DNS.
 
 ## After that
 

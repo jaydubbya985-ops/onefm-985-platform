@@ -18,13 +18,13 @@
 | Mailto / dry-run honesty | **On live.** Mailto / `devMode` / SPA HTML / `dryRun` do **not** mark sent. Production dry-run: `wouldSendTo=peter@foott.com.au`, `sent=false`, `hasPdf=true`. |
 | Public truth | **On live.** OG **189,680**. `/gov-ready-gate.txt` reads `og=189680`. Audience shows 39,375 weekly listeners (ABS 2021 via townData). |
 | Live `#/ops` | **LIVE — not DEMO**. `sb_secret_` is rejected as LIVE credentials. |
-| FOOTT actually emailed | **Blocked.** Apex `fm985.com.au` status `failed`. Resend records (all failed): TXT `resend._domainkey` (old key still in DNS), MX `send`, TXT `send`. `send.fm985.com.au` currently points at `feedback-smtp.ap-northeast-1.amazonses.com` — must match whatever Resend shows. Outlook apex MX stays. |
+| FOOTT actually emailed | **Blocked on Verify.** Live DNS **matches** Resend (TXT `resend._domainkey`, MX `send`, TXT `send`). Domain status moved **failed → pending** after auto-verify. `fromDomainVerified` is still false. Do not change SiteGround DNS. |
 
 ## Do this run (order)
 
 1. `git pull origin cursor/gov-ready-live-gate-c24f`. Stay on this branch (PR #16) unless starting new work (`cursor/<name>-c24f`).
-2. Run `npm run live`. It **must fail** until Resend shows `fm985.com.au` verified.
-3. After Jay fixes DNS: `npm run live` should pass, including `npx vite-node scripts/verify-foott-send.ts` (`emailed: false` — dry-run only).
+2. Run `npm run live`. It **must fail** until Resend shows `fm985.com.au` verified (`fromDomainVerified: true`). DNS already matches — do not edit SiteGround.
+3. When verified: `npm run live` should pass, including FOOTT dry-run (`emailed: false`).
 4. Do not merge without **EXE**. Do not email `peter@foott.com.au` as a test.
 5. Do not fake live mode. Do not upsert the 19-row DEMO batch. Never bake `sb_secret_` into the client.
 
@@ -35,13 +35,7 @@
 
 ## NEED JAY (one action)
 
-SiteGround DNS for **fm985.com.au** — open **Resend → Domains → fm985.com.au** and copy the three records over the ones already in DNS (Resend marks all three failed):
-
-1. **TXT** `resend._domainkey` — replace the old key with the value Resend shows now.
-2. **MX** `send` — must match Resend’s `feedback-smtp` host exactly (DNS today uses `ap-northeast-1`).
-3. **TXT** `send` — SPF as Resend shows.
-
-Do **not** change the apex Outlook MX. Then click **Verify**.
+In **Resend → Domains → fm985.com.au**, click **Verify**. SiteGround DNS already matches. Do not change Outlook MX.
 
 Then say **EXE** to merge PR #16. Do not send FOOTT to Peter until `email-status` shows `fromDomainVerified: true`.
 
