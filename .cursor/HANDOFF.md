@@ -41,7 +41,7 @@ Same zip is on GitHub Actions (PR #16 pack job): https://github.com/jaydubbya985
 
 After drop, `https://onefmops.netlify.app/gov-ready-gate.txt` must contain `og=189680`. Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`. Do not generate a PAT.
 
-After that deploy exists, the next one-line ask is a Netlify snippet at the end of `<head>`:
+After that deploy exists, the next one-line ask is a Netlify snippet with the **anon / publishable** key (`eyJ…` or `sb_publishable_…`). Never `sb_secret_`.
 
 ```html
 <script>

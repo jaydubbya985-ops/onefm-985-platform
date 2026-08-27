@@ -29,21 +29,27 @@ const inert = resolveOpsConfig({
 })
 assert(inert.configured === false, 'inert placeholder client must be DEMO')
 
+const secretKey = resolveOpsConfig({
+  VITE_SUPABASE_URL: 'https://example.supabase.co',
+  VITE_SUPABASE_ANON_KEY: 'sb_secret_not_for_the_browser',
+})
+assert(secretKey.configured === false, 'sb_secret_ must stay DEMO — never bake the secret key')
+
 const liveVite = resolveOpsConfig({
-  VITE_SUPABASE_URL: 'https://myarjdatdtchmkgdpsab.supabase.co',
+  VITE_SUPABASE_URL: 'https://example.supabase.co',
   VITE_SUPABASE_ANON_KEY:
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSJ9.testhash',
 })
 assert(liveVite.configured === true, 'real Vite env must be LIVE')
 if (liveVite.configured) {
   assert(
-    liveVite.url === 'https://myarjdatdtchmkgdpsab.supabase.co',
+    liveVite.url === 'https://example.supabase.co',
     'LIVE url must match',
   )
 }
 
 const liveServer = resolveOpsConfig({
-  SUPABASE_URL: 'https://myarjdatdtchmkgdpsab.supabase.co',
+  SUPABASE_URL: 'https://example.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_testkey_not_real',
 })
 assert(liveServer.configured === true, 'server-side SUPABASE_* env must be LIVE')

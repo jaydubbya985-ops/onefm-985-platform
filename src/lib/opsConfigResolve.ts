@@ -12,10 +12,11 @@ const PLACEHOLDER_KEY_VALUES = new Set([
   'your-publishable-key-here',
 ])
 
-/** Accepts legacy JWT anon keys and new publishable keys (sb_publishable_...). */
+/** Accepts legacy JWT anon keys and new publishable keys (sb_publishable_...). Never the secret key. */
 export function isValidSupabaseKey(key: string): boolean {
   if (!key || PLACEHOLDER_KEY_VALUES.has(key)) return false
   if (key.endsWith('.placeholder')) return false
+  if (key.startsWith('sb_secret_') || key.startsWith('sb_service')) return false
   return key.startsWith('eyJ') || key.startsWith('sb_publishable_')
 }
 
