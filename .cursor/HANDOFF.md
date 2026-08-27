@@ -37,7 +37,7 @@
 
 Open https://app.netlify.com/sites/onefmops/deploys — drag **`onefmops_drop_phone.zip`** onto Production, reply **done**.
 
-Same zip is on GitHub Actions (PR #16 pack job): https://github.com/jaydubbya985-ops/onefm-985-platform/actions/runs/33039323356 — Artifacts → `onefmops-production-drop`.
+Same zip is on GitHub Actions (PR #16 pack job): https://github.com/jaydubbya985-ops/onefm-985-platform/actions/runs/33039479958 — Artifacts → `onefmops-production-drop`. A newer pack run appears after each push.
 
 After drop, `https://onefmops.netlify.app/gov-ready-gate.txt` must contain `og=189680`. Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`. Do not generate a PAT.
 

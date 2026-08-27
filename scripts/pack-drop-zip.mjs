@@ -36,6 +36,11 @@ for (const dir of ['kdl', 'gvl']) {
   rmSync(resolve(dist, 'assets/logos', dir), { recursive: true, force: true })
 }
 
+const toml = resolve(root, 'netlify.toml')
+if (existsSync(toml)) {
+  copyFileSync(toml, resolve(dist, 'netlify.toml'))
+}
+
 const zipName = 'onefmops-production-drop.zip'
 const zipPath = resolve(root, zipName)
 rmSync(zipPath, { force: true })

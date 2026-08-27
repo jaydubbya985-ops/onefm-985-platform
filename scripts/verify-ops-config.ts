@@ -124,6 +124,7 @@ const packSource = readFileSync(
 )
 assert(packSource.includes('kdl'), 'drop zip must omit unused KDL club logos')
 assert(packSource.includes('189,680'), 'drop zip must refuse stale OG HTML')
+assert(packSource.includes('netlify.toml'), 'drop zip must include netlify.toml so index.html is not long-cached')
 
 const viteSource = readFileSync(new URL('../vite.config.ts', import.meta.url), 'utf8')
 assert(

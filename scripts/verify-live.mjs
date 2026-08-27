@@ -26,7 +26,9 @@ const html = await get('/')
 
 try {
   const gate = await get('/gov-ready-gate.txt')
-  if (!gate.includes('onefm-gov-ready') || !gate.includes('og=189680')) {
+  if (!gate || gate.trimStart().startsWith('<')) {
+    fail.push('live /gov-ready-gate.txt is SPA HTML — production is still the stale DEMO deploy')
+  } else if (!gate.includes('onefm-gov-ready') || !gate.includes('og=189680')) {
     fail.push('live /gov-ready-gate.txt is not the current drop (missing onefm-gov-ready og=189680)')
   }
 } catch {
