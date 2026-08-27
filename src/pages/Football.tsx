@@ -165,12 +165,12 @@ const townData = [
   'Barmah', 'Picola', 'Wunghnu', 'Katandra', 'Tallygaroopna',
 ]
 
-/* ─── Community voice ─── */
+/* ─── What we can say about ourselves, with nobody else's words in our mouth ─── */
 const communityVoice = {
-  quote:
-    "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that.",
-  name: 'Rochester Community Member',
-  role: '2022 Goulburn Valley Floods',
+  statement:
+    'ONE FM 98.5 is licensed to Goulburn Valley Community Radio Inc. under ACMA licence 1385226/1, callsign 3ONE. The station has broadcast from Shepparton since 1989, staffed by volunteers, and carries local sport, community notices and emergency information across the Goulburn Valley.',
+  attribution: 'Goulburn Valley Community Radio Inc.',
+  context: 'Licensed community broadcaster · ACMA 1385226/1',
 }
 
 /* ─── Enquiry Form Data (from pricing.ts) ─── */
@@ -764,38 +764,38 @@ export default function Football() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          SECTION 5 — TESTIMONIALS
+          SECTION 5 — WHO WE ARE
           ═══════════════════════════════════════════ */}
-      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="TESTIMONIALS">
+      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="WHO WE ARE">
         <div className="max-w-[1000px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Star size={18} className="text-one-electric" />
-              <span className="font-label text-one-electric">LOCAL PROOF</span>
+              <span className="font-label text-one-electric">ON THE RECORD</span>
             </div>
-            <WordReveal text="COMMUNITY VOICE" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+            <WordReveal text="WHO YOU'RE SPONSORING" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">
-              Why the Goulburn Valley trusts ONE FM.
+              The licence, the region, and the people behind the microphone.
             </p>
           </ScrollReveal>
 
           <div className="max-w-3xl mx-auto">
             <TiltCard maxTilt={3}>
             <div className="glass-card p-8 text-center">
-              <p className="font-body text-one-white italic mb-6 text-lg leading-relaxed">
-                "{communityVoice.quote}"
+              <p className="font-body text-one-white mb-6 text-lg leading-relaxed">
+                {communityVoice.statement}
               </p>
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-one-white/10 flex items-center justify-center">
                   <User size={18} className="text-one-muted" />
                 </div>
                 <div className="text-left">
-                  <p className="font-h4 text-one-white">{communityVoice.name}</p>
-                  <p className="font-label text-muted text-xs">{communityVoice.role}</p>
+                  <p className="font-h4 text-one-white">{communityVoice.attribution}</p>
+                  <p className="font-label text-muted text-xs">{communityVoice.context}</p>
                 </div>
               </div>
               <p className="font-body-small text-muted text-xs mt-6">
-                GVL sponsor testimonials available on request — {BRAND.email}
+                GVL sponsor references available on request — {BRAND.email}
               </p>
             </div>
             </TiltCard>
