@@ -31,6 +31,7 @@ import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { SEO } from '@/components/SEO'
 import { stationStats } from '@/data/pricing'
 import { towns } from '@/data/townData'
+import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 /* ─────────── easing ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -403,7 +404,7 @@ export default function AudienceAnalytics() {
                 },
                 {
                   title: 'Community',
-                  text: '8 multicultural programs each week',
+                  text: `${MULTICULTURAL_PROGRAM_COUNT} multicultural programs each week`,
                   sub: 'Swahili, Italian, Filipino, Mandarin, Punjabi, Samoan, Arabic, Radio Netherlands — programGuide.ts',
                   border: '#D4963A',
                   icon: Sparkles,

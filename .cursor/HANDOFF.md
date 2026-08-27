@@ -15,7 +15,7 @@
 |------|---------------------|
 | Logo + invoice PDF | **On `main`** (`e511343` + later PRs). FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Not on live until Netlify PAT works. |
 | Mailto honesty | **On `main`**. Mailto / billing cycle / reminders / `devMode` do **not** mark sent (`success: false` when no Resend). |
-| Public truth | **On `main`**. `/audience` towns from `townData.ts`. OG must be **189,680** people (not 185,791 / 36 years) — that fix is on branch `cursor/gov-ready-live-gate-c24f` until merged. `npm run truth` scans `src/` **and** `index.html`. |
+| Public truth | **On `main` plus PR #16.** `/audience` towns from `townData.ts`. OG **189,680**. Community page uses **8** multicultural programs from `programGuide.ts` (not 25+ language communities / 8+). `npm run truth` scans `src/` **and** `index.html`. |
 | Live `#/ops` | **Still DEMO.** https://onefmops.netlify.app still serves `index-BJ4yefZ1.js`. Code on the live-gate branch stops LIVE mode from hydrating the 19-row DEMO batch; it upserts only FOOTT + Jason's TV. |
 | Deploy | GitHub `NETLIFY_AUTH_TOKEN` is set and **rejected (HTTP 401)**. Empty-commit retries will not fix this. `npm run live` (`scripts/verify-live.mjs`) is the production gate after a successful deploy. |
 | Ops live env | Needs `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` in **GitHub Actions secrets** (baked at `npm run build`) **and** Netlify site env. |

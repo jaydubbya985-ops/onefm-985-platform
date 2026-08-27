@@ -29,6 +29,9 @@ const FORBIDDEN = [
   { re: /registered as a Deductible Gift Recipient/i, why: 'DGR status is data pending — do not claim it' },
   { re: /185,?791/, why: 'stale OG population — use 189,680 from townData / stationStats' },
   { re: /36 years/, why: 'stale year count — licensed 1989 (37 in 2026) or omit years' },
+  { re: /25\+ language communities/i, why: 'programGuide has 8 multicultural programs, not 25+ language communities' },
+  { re: /8\+ languages/i, why: 'use the exact multicultural program count from programGuide' },
+  { re: /never gone dark/i, why: 'unsourced transmitter uptime claim' },
 ]
 
 function walk(dir) {
