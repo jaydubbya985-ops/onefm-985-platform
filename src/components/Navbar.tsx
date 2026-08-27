@@ -162,7 +162,7 @@ function NavDropdown({ group }: { group: NavGroup }) {
               const active = location.pathname === item.path
               return (
                 <motion.div
-                  key={item.path}
+                  key={item.label}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.045, duration: 0.22, ease }}
@@ -519,7 +519,7 @@ export function Navbar() {
                     const active = location.pathname === item.path
                     return (
                     <motion.div
-                      key={item.path}
+                      key={item.label}
                       initial={{ opacity: 0, x: -14 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 + gi * 0.06 + ii * 0.04, duration: 0.3, ease }}

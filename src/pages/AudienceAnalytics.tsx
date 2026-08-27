@@ -111,7 +111,7 @@ export default function AudienceAnalytics() {
 
   const ageBands = useMemo(() => {
     const bands = [
-      { label: 'Median age under 40', test: (n: number) => n < 40 },
+      { label: 'Under 40', test: (n: number) => n < 40 },
       { label: '40–49', test: (n: number) => n >= 40 && n < 50 },
       { label: '50–59', test: (n: number) => n >= 50 && n < 60 },
       { label: '60 and over', test: (n: number) => n >= 60 },
@@ -365,7 +365,12 @@ export default function AudienceAnalytics() {
                 <motion.div className="glass-card p-5 h-full group relative overflow-hidden" variants={cardStagger}>
                   <div aria-hidden className="explore-tile-scan" />
                   <div className="font-label text-muted mb-2">{p.label}</div>
-                  <div className="font-stat" style={{ color: BRAND_COLORS.champagne }}>{p.value}</div>
+                  <div
+                    className="font-stat leading-none whitespace-nowrap"
+                    style={{ color: BRAND_COLORS.champagne, fontSize: 'clamp(1.6rem, 2.6vw, 2.4rem)' }}
+                  >
+                    {p.value}
+                  </div>
                   <p className="font-body-small text-muted mt-2">{p.note}</p>
                 </motion.div>
               </TiltCard>

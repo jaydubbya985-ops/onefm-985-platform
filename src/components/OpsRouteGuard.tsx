@@ -49,7 +49,7 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-[#101010] flex items-center justify-center">
+      <div className="min-h-screen bg-one-deep-blue flex items-center justify-center">
         <div className="text-one-gold font-label text-sm animate-pulse">Checking access...</div>
       </div>
     )
@@ -60,8 +60,8 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#101010] flex items-center justify-center px-4">
-      <div className="bg-[#161616] border border-[#2A2A2A]/40 rounded-xl max-w-sm w-full shadow-2xl p-8">
+    <div className="min-h-screen bg-one-deep-blue flex items-center justify-center px-4">
+      <div className="bg-one-navy border border-one-border/60 rounded-xl max-w-sm w-full shadow-2xl p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 rounded-xl bg-one-gold/10 flex items-center justify-center">
             <Lock className="w-6 h-6 text-one-gold" />
@@ -92,7 +92,7 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
                   }}
                   placeholder="you@fm985.com.au"
                   required
-                  className="w-full bg-one-navy border border-one-border rounded-lg pl-10 pr-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-one-gold focus:outline-none"
+                  className="w-full bg-one-deep-blue border border-one-border rounded-lg pl-10 pr-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-one-gold focus:outline-none"
                 />
               </div>
             </div>
@@ -109,7 +109,7 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
                 }}
                 placeholder="Enter password"
                 required
-                className="w-full bg-one-navy border border-one-border rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-one-gold focus:outline-none"
+                className="w-full bg-one-deep-blue border border-one-border rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-one-gold focus:outline-none"
               />
             </div>
             {error && <p className="text-xs text-red-400">{error}</p>}
@@ -137,7 +137,7 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
                   setError('')
                 }}
                 placeholder="Enter password"
-                className="w-full bg-one-navy border border-one-border rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-one-gold focus:outline-none"
+                className="w-full bg-one-deep-blue border border-one-border rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-one-gold focus:outline-none"
               />
             </div>
             {error && <p className="text-xs text-red-400">{error}</p>}
