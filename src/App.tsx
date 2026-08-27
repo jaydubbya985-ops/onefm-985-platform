@@ -14,6 +14,7 @@ import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { registerLenis } from '@/lib/scrollTop'
+import { Toaster } from 'sonner'
 
 gsap.registerPlugin(ScrollTrigger)
 const Home = lazy(() => import('./pages/Home'))
@@ -318,6 +319,7 @@ export default function App() {
       </AnimatePresence>
       <ScanlineTransition />
       <CookieConsent />
+      <Toaster richColors position="top-center" />
     </>
   )
 }
