@@ -556,7 +556,7 @@ export default function CoverageMap() {
 
       <div className="flex flex-col min-h-[calc(100dvh-72px)] bg-one-navy">
         {/* Hero intro */}
-        <section className="relative shrink-0 overflow-hidden border-b border-one-border bg-[#101010] px-4 py-8 sm:px-6 sm:py-10 lg:px-8" data-cursor-label="COVERAGE MAP">
+        <section className="relative shrink-0 overflow-hidden border-b border-one-border bg-one-navy px-4 py-8 sm:px-6 sm:py-10 lg:px-8" data-cursor-label="COVERAGE MAP">
           <div aria-hidden className="grain-overlay" />
           <div className="absolute inset-x-0 top-0 h-[2px] bg-one-gold" aria-hidden />
           <div

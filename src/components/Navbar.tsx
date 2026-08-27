@@ -162,7 +162,7 @@ function NavDropdown({ group }: { group: NavGroup }) {
               const active = location.pathname === item.path
               return (
                 <motion.div
-                  key={item.path}
+                  key={item.label}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.045, duration: 0.22, ease }}
@@ -248,7 +248,7 @@ function OpsAccessModal({
       onClick={onClose}
     >
       <div
-        className="bg-[#111111] border border-white/10 rounded-xl max-w-sm w-full mx-4 shadow-2xl p-6"
+        className="bg-[#0B2A52] border border-white/10 rounded-xl max-w-sm w-full mx-4 shadow-2xl p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 mb-4">
@@ -271,7 +271,7 @@ function OpsAccessModal({
               onChange={(e) => { setEmail(e.target.value); setError(false) }}
               placeholder="you@fm985.com.au"
               required
-              className="w-full bg-[#111111] border border-white/15 rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-[#E51636] focus:outline-none"
+              className="w-full bg-[#0B2A52] border border-white/15 rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-[#E51636] focus:outline-none"
             />
           )}
           <input
@@ -281,7 +281,7 @@ function OpsAccessModal({
             onChange={(e) => { setPassword(e.target.value); setError(false) }}
             placeholder="Enter password"
             required
-            className="w-full bg-[#111111] border border-white/15 rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-[#E51636] focus:outline-none"
+            className="w-full bg-[#0B2A52] border border-white/15 rounded-lg px-4 py-3 text-sm text-one-white placeholder-one-muted focus:border-[#E51636] focus:outline-none"
           />
           {error && (
             <p className="text-xs text-red-400">
@@ -486,7 +486,7 @@ export function Navbar() {
             animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
             exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
             transition={{ duration: 0.38, ease }}
-            className="fixed inset-0 z-40 bg-[#0A0A0A]/97 backdrop-blur-xl pt-20 px-6 pb-8 overflow-y-auto lg:hidden"
+            className="fixed inset-0 z-40 bg-one-navy/97 backdrop-blur-xl pt-20 px-6 pb-8 overflow-y-auto lg:hidden"
           >
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -519,7 +519,7 @@ export function Navbar() {
                     const active = location.pathname === item.path
                     return (
                     <motion.div
-                      key={item.path}
+                      key={item.label}
                       initial={{ opacity: 0, x: -14 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 + gi * 0.06 + ii * 0.04, duration: 0.3, ease }}

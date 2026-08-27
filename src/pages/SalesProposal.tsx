@@ -92,7 +92,7 @@ function Hero() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.15) 45%, #0A0A0A 100%)',
+            'linear-gradient(180deg, rgba(7,29,58,.55) 0%, rgba(7,29,58,.15) 45%, #071D3A 100%)',
         }}
         aria-hidden
       />
@@ -278,7 +278,7 @@ export default function SalesProposal() {
         title="Request a Sponsorship Proposal"
         description="Request a tailored ONE FM 98.5 sponsorship proposal. Est. 39,375 weekly listeners across 25 towns (ABS 2021). Station staff send the PDF."
       />
-      <div style={{ background: '#0A0A0A' }} className="min-h-screen">
+      <div style={{ background: '#071D3A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
@@ -294,7 +294,7 @@ export default function SalesProposal() {
           stats={[
             // source: ABS 2021 via townData / stationStats
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (ABS 2021)' },
+            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (2026 est.)' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
             { n: `${stationStats.broadcastRadiusKm}km`, t: 'Broadcast radius' },
           ]}

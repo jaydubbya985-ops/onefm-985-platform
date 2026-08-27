@@ -48,14 +48,13 @@ module.exports = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // ── ON AIR design system (Direction A, 2026-07-05) ──
-        // Legacy navy/gold tokens remapped to the black/red/white system so
-        // every existing page re-skins without per-file edits. Red stays rare.
-        "one-navy":    "#101010",   // was Deep Broadcast Navy → ink surface
-        "one-blue":    "#1B458F",   // logo blue (imagery only)
+        // ── Brand V3 core: ONE FM Blue + Broadcast White + 98.5 Red ──
+        // Surfaces run off Deep Broadcast Navy; red stays rare.
+        "one-navy":    "#071D3A",   // Deep Broadcast Navy
+        "one-blue":    "#1B458F",   // ONE FM Blue
         "one-blue-bright": "#0A5EB7",
-        "one-deep-blue": "#0D0D0D",
-        "one-midnight": "#050505",
+        "one-deep-blue": "#04101F",
+        "one-midnight": "#020A14",
         "one-electric": ({ opacityValue }) =>
           opacityValue === undefined
             ? 'var(--one-electric)'
@@ -65,8 +64,8 @@ module.exports = {
         "one-champagne": "#F2F2F2",
         "one-red":     "#E51636",   // 98.5 Red (core identity — THE accent)
         "one-white":   "#FFFFFF",
-        "one-muted":   "#9A9A9A",
-        "one-border":  "#242424",
+        "one-muted":   "#9AA7B8",
+        "one-border":  "#12325C",
         "one-neon-orange": "#FF6A00", // Sport/event alert only
         "one-fluoro-lime": "#B6FF00", // Specialist accent only
         "one-magenta": "#FF2BD6",     // Specialist accent only
@@ -81,11 +80,11 @@ module.exports = {
         "sage": "#74BF8A",
         // ── Design system aliases (MediaKit, AuthModal, etc.) ──
         "gold": "#F2F2F2",       // same as one-gold; used by MediaKit/Auth
-        "onyx": "#101010",       // ink (input bg, dialog bg)
-        "chalk": "#C9C9C9",      // muted body text on dark
+        "onyx": "#071D3A",       // navy surface (input bg, dialog bg)
+        "chalk": "#C9D2DE",      // muted body text on dark
         "ivory": "#F2EFE9",      // warm off-white text on dark surfaces
         "signal-red": "#E51636", // alias for one-red
-        "border-dark": "#242424", // alias for one-border
+        "border-dark": "#12325C", // alias for one-border
       },
       fontFamily: {
         // ON AIR design system (Direction A, approved 2026-07-05):

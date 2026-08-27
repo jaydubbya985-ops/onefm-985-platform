@@ -48,7 +48,7 @@ export function MiniPlayer() {
           className="fixed bottom-0 inset-x-0 z-[200] pointer-events-none"
         >
           <div className="pointer-events-auto mx-auto max-w-3xl px-3 pb-3">
-            <div role="region" aria-label="Mini audio player" className="rounded-2xl border border-white/10 bg-[#0A0A0A]/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3">
+            <div role="region" aria-label="Mini audio player" className="rounded-2xl border border-white/10 bg-one-navy/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3">
 
               {/* Live dot */}
               <span className="relative flex h-2 w-2 shrink-0">

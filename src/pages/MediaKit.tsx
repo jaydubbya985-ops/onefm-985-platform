@@ -232,7 +232,7 @@ const STUDIO_PHOTOS = [
 
 function StudioPhotoStrip() {
   return (
-    <section className="py-16 bg-[#070707]" data-cursor-label="STUDIO">
+    <section className="py-16 bg-one-deep-blue" data-cursor-label="STUDIO">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -314,15 +314,13 @@ export default function MediaKit() {
         { label: 'Broadcast Population', value: stationStats.broadcastPopulation.toLocaleString() },
         { label: 'Towns Covered', value: String(stationStats.totalTowns) },
         { label: 'Broadcast Radius', value: `${stationStats.broadcastRadiusKm} km` },
-        { label: 'Social Followers', value: stationStats.socialFollowers.toLocaleString() },
-        { label: 'Podcast Downloads', value: stationStats.podcastDownloads.toLocaleString() },
         { label: 'Years Broadcasting', value: String(stationStats.yearsBroadcasting) },
       ]
 
       const platformReach = [
         { platform: 'FM Radio', stat: '98.5 FM', reach: `${stationStats.weeklyListeners.toLocaleString()} est. weekly listeners` },
         { platform: 'Live Stream', stat: 'fm985.com.au', reach: 'Radio.co · Community Radio Plus app' },
-        { platform: 'Social Media', stat: `${stationStats.socialFollowers.toLocaleString()}`, reach: 'Facebook community page (target growth to 12,500)' },
+        { platform: 'Social Media', stat: 'Facebook', reach: 'facebook.com/onefmshepparton — follower count reported by the platform' },
         { platform: 'SoundCloud', stat: 'Interview archive', reach: 'Community interviews on fm985.com.au' },
       ]
 
@@ -365,7 +363,7 @@ export default function MediaKit() {
         description="ONE FM 98.5 media kit — rate card, audience reach, sponsorship packages, and brand assets for advertisers in the Goulburn Valley."
       />
       {/* ═══════ HERO ═══════ */}
-      <section ref={heroRef} className="relative min-h-[80vh] flex items-end bg-[#101010] overflow-hidden" data-cursor-label="MEDIA KIT">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end bg-one-navy overflow-hidden" data-cursor-label="MEDIA KIT">
         {/* Background image */}
         <motion.div
           style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -381,8 +379,8 @@ export default function MediaKit() {
           />
         </motion.div>
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/65 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-one-navy/65 via-transparent to-transparent" />
         {/* Waveform overlay */}
         <WaveformBg />
         <div aria-hidden className="grain-overlay" />
@@ -472,15 +470,15 @@ export default function MediaKit() {
             transition={{ duration: 0.6, delay: 1.0 }}
           >
             {[
-              { value: stationStats.weeklyListeners, label: 'Listeners', suffix: '' },
-              { value: stationStats.socialFollowers, label: 'Social', suffix: '' },
-              { value: 1, label: 'Regional', suffix: '', prefix: '#' },
+              { value: stationStats.weeklyListeners, label: 'Est. listeners', suffix: '' },
+              { value: stationStats.totalTowns, label: 'Towns', suffix: '' },
+              { value: stationStats.yearsBroadcasting, label: 'Years on air', suffix: '' },
               { value: 24, label: 'Broadcast', suffix: '/7' },
             ].map((stat, i) => (
               <div key={i} className="flex items-center gap-6 md:gap-8">
                 <div>
                   <div className="font-stat text-gold-gradient">
-                    <AnimatedNumber value={stat.value} prefix={stat.prefix || ''} suffix={stat.suffix || ''} />
+                    <AnimatedNumber value={stat.value} suffix={stat.suffix || ''} />
                   </div>
                   <div className="font-label text-muted">{stat.label}</div>
                 </div>
@@ -494,13 +492,13 @@ export default function MediaKit() {
       <CredibilityStrip />
 
       {/* ── Media Kit Marquee Strip ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-one-deep-blue border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ADVERTISING RATES 2026</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE REACHED</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE IN THE BROADCAST AREA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">GOULBURN VALLEY · VICTORIA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE READS · SPOT ADS · SPONSORSHIP</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">~{stationStats.broadcastRadiusKm} KM BROADCAST RADIUS</span>,

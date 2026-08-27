@@ -12,9 +12,9 @@ export default function PaymentSuccess() {
         title="Payment Received"
         description="Thank you — your payment to ONE FM 98.5 has been received."
       />
-      <section className="relative min-h-[70dvh] flex items-center justify-center overflow-hidden bg-[#101010]">
+      <section className="relative min-h-[70dvh] flex items-center justify-center overflow-hidden bg-one-navy">
         <div aria-hidden className="grain-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/90 via-one-navy/80 to-[#101010]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-one-deep-blue/90 via-one-navy/80 to-one-deep-blue" />
 
         <div className="relative z-10 max-w-lg mx-auto px-6 py-24 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-one-gold/15 border border-one-gold/40 mb-8">

@@ -84,7 +84,7 @@ function ContactHero() {
 
   return (
     <>
-      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="GET IN TOUCH">
+      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-one-navy" data-cursor-label="GET IN TOUCH">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -99,8 +99,8 @@ function ContactHero() {
               style={{ opacity: 0.55 }}
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/65 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/65 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
 
@@ -203,7 +203,7 @@ function ContactHero() {
         </div>
       </section>
 
-      <div className="py-4 bg-[#101010] border-y border-one-gold/10 overflow-hidden">
+      <div className="py-4 bg-one-navy border-y border-one-gold/10 overflow-hidden">
         <Marquee
           speed={35}
           items={marqueeItems.map((item) => (
@@ -688,7 +688,7 @@ function EmergencyInfo() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-2xl border border-one-red/30 bg-gradient-to-br from-[#1A0A0A] to-[#0D0D0D] p-8 md:p-12"
+          className="relative overflow-hidden rounded-2xl border border-one-red/30 bg-gradient-to-br from-[#2A0C16] to-one-deep-blue p-8 md:p-12"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-one-red/5 rounded-full blur-3xl" />
           <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start">

@@ -119,7 +119,7 @@ const BROADCAST_JOBS: PageJob[] = [
 
 /* ─── Deterministic gradient avatar ─── */
 const AVATAR_PALETTES = [
-  { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
+  { from: '#1B458F', to: '#071D3A', accent: '#F2F2F2' },
   { from: '#F2F2F2', to: '#1B3A6F', accent: '#FFF8DC' },
   { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
   { from: '#B6FF00', to: '#0A2030', accent: '#7FFFD4' },
@@ -226,7 +226,7 @@ function HeroSection() {
   const stream = useLiveStream()
 
   return (
-    <section className="relative overflow-hidden bg-[#101010]" style={{ height: '50vh', minHeight: 480 }} data-cursor-label="ON AIR NOW">
+    <section className="relative overflow-hidden bg-[#071D3A]" style={{ height: '50vh', minHeight: 480 }} data-cursor-label="ON AIR NOW">
       <div aria-hidden className="grain-overlay" />
       <LiveWaveform />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 pb-20" style={{ maxWidth: 900, margin: '0 auto' }}>
@@ -343,7 +343,7 @@ function ScheduleSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: easeOutExpo }}
-          className="flex flex-wrap items-center gap-3 mb-8 sticky top-[72px] z-30 bg-[#101010]/90 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:rounded-xl"
+          className="flex flex-wrap items-center gap-3 mb-8 sticky top-[72px] z-30 bg-[#071D3A]/90 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:rounded-xl"
         >
           {/* Day selector */}
           <div className="flex gap-1 flex-wrap">
@@ -645,7 +645,7 @@ function ShowSpotlight() {
                 {/* Gradient feature visual derived from category color */}
                 <div
                   className="absolute inset-0 group-hover:scale-105 transition-transform duration-500"
-                  style={{ background: `linear-gradient(135deg, ${show.color}33 0%, #070707 60%)` }}
+                  style={{ background: `linear-gradient(135deg, ${show.color}33 0%, #04101F 60%)` }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <span
@@ -1076,7 +1076,7 @@ export default function BroadcastExplorer() {
       <HeroSection />
 
       {/* ── Broadcast Marquee Strip ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#04101F] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={34}
           items={[

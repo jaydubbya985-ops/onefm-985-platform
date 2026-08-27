@@ -33,16 +33,16 @@ export const BRAND = {
   soundcloud: 'https://soundcloud.com/user-570295409',
 } as const
 
-/** Official V3 palette — source: onefm_palette_tokens_v3.json */
+/** Official V3 palette — values must stay identical to /public/brand/brand-tokens.json */
 export const BRAND_COLORS = {
   // Core identity
   blue:    '#1B458F',   // ONE FM Blue
   white:   '#FFFFFF',   // Broadcast White
   red:     '#E51636',   // 98.5 Red
   // Premium layer (accent only)
-  navy:    '#101010',   // Deep Broadcast Navy
-  gold:    '#F2F2F2',   // Heritage Gold
-  champagne: '#F2F2F2', // Champagne Highlight
+  navy:    '#071D3A',   // Deep Broadcast Navy
+  gold:    '#D4AF37',   // Heritage Gold
+  champagne: '#F4D27A', // Champagne Highlight
   // Digital fluorescent (1–4% of layout max)
   cyan:    '#00E5FF',   // Electric Cyan
   neonSky: '#38BDF8',   // Neon Sky Blue (safer daily UI)

@@ -53,15 +53,15 @@ export const donationTiers = [
 ];
 
 // Key stats
+// broadcastPopulation must equal the sum of population2026 across src/data/townData.ts.
+// `npx vite-node scripts/audit-town-data.ts` fails the build check if it drifts.
 export const stationStats = {
   weeklyListeners: 39375,
-  broadcastPopulation: 185791,
+  broadcastPopulation: 189680,
   totalTowns: 25,
   broadcastRadiusKm: 100,
-  socialFollowers: 4000,
-  socialTarget: 12500,
-  podcastDownloads: 500,
-  podcastTarget: 10000,
-  nfpsSupported: 100,
+  // Social followers, podcast downloads and the NFP count were unsourced round
+  // numbers. Do not re-add a figure here without a source we can point a
+  // regulator at — the platforms report their own counts.
   yearsBroadcasting: 37, // since 1989
 };

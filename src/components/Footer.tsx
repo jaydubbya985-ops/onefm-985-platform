@@ -129,7 +129,7 @@ export function Footer() {
             <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">LISTEN</h3>
             <ul className="space-y-3">
               {FOOTER_LISTEN.map((link) => (
-                <li key={link.path}>
+                <li key={link.label}>
                   <Link to={link.path} className="font-body-small text-one-muted hover:text-one-white transition-colors duration-150 text-sm link-hover">
                     {link.label}
                   </Link>
@@ -148,7 +148,7 @@ export function Footer() {
             <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">SPONSOR</h3>
             <ul className="space-y-3">
               {FOOTER_SPONSOR.map((link) => (
-                <li key={link.path}>
+                <li key={link.label}>
                   <Link to={link.path} className="font-body-small text-one-muted hover:text-one-white transition-colors duration-150 text-sm link-hover">
                     {link.label}
                   </Link>
@@ -167,7 +167,7 @@ export function Footer() {
             <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-5">ABOUT</h3>
             <ul className="space-y-3 mb-6">
               {FOOTER_ABOUT.map((link) => (
-                <li key={link.path}>
+                <li key={link.label}>
                   <Link to={link.path} className="font-body-small text-one-muted hover:text-one-white transition-colors duration-150 text-sm link-hover">
                     {link.label}
                   </Link>
@@ -177,7 +177,7 @@ export function Footer() {
             <h3 className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-4">SUPPORT</h3>
             <ul className="space-y-3">
               {FOOTER_SUPPORT.map((link) => (
-                <li key={link.path}>
+                <li key={link.label}>
                   <Link to={link.path} className="font-body-small text-one-muted hover:text-one-white transition-colors duration-150 text-sm link-hover">
                     {link.label}
                   </Link>
