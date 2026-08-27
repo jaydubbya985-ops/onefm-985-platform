@@ -63,6 +63,17 @@ for (const file of files) {
   }
 }
 
+const listen = files.find((f) => f.label === 'pages/Listen.tsx')
+if (
+  !listen ||
+  !listen.text.includes('Email draft opened') ||
+  !listen.text.includes('Open email draft')
+) {
+  hits.push(
+    'pages/Listen.tsx: routed song request must open a mailto draft and say so ( /programs redirects to /listen )',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)

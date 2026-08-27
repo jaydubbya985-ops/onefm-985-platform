@@ -3,6 +3,7 @@
  * Absorbs Programs + Broadcast Explorer. Assembled from the ON AIR kit.
  * Old 604-line page retired; real content and hooks preserved.
  */
+import { useState, type FormEvent } from 'react'
 import { Loader2, Pause, Play, Phone, Radio, Wifi } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
@@ -12,6 +13,7 @@ import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFil
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { stationStats } from '@/data/pricing'
+import { BRAND } from '@/lib/brand'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
@@ -96,6 +98,89 @@ function WaysToListen() {
   )
 }
 
+function SongRequest() {
+  const [name, setName] = useState('')
+  const [song, setSong] = useState('')
+  const [message, setMessage] = useState('')
+  const [draftOpened, setDraftOpened] = useState(false)
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (!name.trim() || !song.trim()) return
+    const body = encodeURIComponent(
+      `Song request from ${name.trim()}\n\nSong: ${song.trim()}\n\nMessage: ${message.trim() || '(none)'}`,
+    )
+    window.location.href = `mailto:${BRAND.email}?subject=${encodeURIComponent('ONE FM Song Request')}&body=${body}`
+    setDraftOpened(true)
+  }
+
+  const field =
+    'w-full bg-[#111] border border-white/15 rounded-lg px-4 py-3 text-sm text-white placeholder-white/30 focus:border-[#E51636] focus:outline-none'
+
+  return (
+    <section className="px-6 md:px-12 lg:px-20 pb-6" aria-labelledby="song-request-heading">
+      <LabelReveal className="mb-8">Request a song</LabelReveal>
+      <div className="border border-white/12 rounded-xl p-7 md:p-10 max-w-2xl">
+        <h2 id="song-request-heading" className="font-poster uppercase text-[32px] text-white leading-none">
+          Studio request<span style={{ color: RED }}>.</span>
+        </h2>
+        <p className="text-[15px] leading-relaxed text-white/55 mt-3 mb-6">
+          Opens an email draft to {BRAND.email}. Nothing is sent until you hit send in your email app.
+          You can also call {BRAND.phone} while we&apos;re live.
+        </p>
+        {draftOpened && (
+          <p className="mb-6 text-[15px] font-bold" style={{ color: LIME }} role="status">
+            Email draft opened — complete the send in your email app so it reaches the studio.
+          </p>
+        )}
+        <form onSubmit={onSubmit} className="space-y-4">
+          <label className="block">
+            <span className="sr-only">Your name</span>
+            <input
+              name="request-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              placeholder="Your name"
+              className={field}
+            />
+          </label>
+          <label className="block">
+            <span className="sr-only">Song title and artist</span>
+            <input
+              name="request-song"
+              value={song}
+              onChange={(e) => setSong(e.target.value)}
+              required
+              placeholder="Song title and artist"
+              className={field}
+            />
+          </label>
+          <label className="block">
+            <span className="sr-only">Dedication (optional)</span>
+            <textarea
+              name="request-message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={3}
+              placeholder="Dedication (optional)"
+              className={`${field} resize-none`}
+            />
+          </label>
+          <button
+            type="submit"
+            data-cursor-label="DRAFT"
+            className="px-6 py-3 rounded-lg font-bold uppercase tracking-wide text-sm text-white"
+            style={{ background: RED }}
+          >
+            Open email draft
+          </button>
+        </form>
+      </div>
+    </section>
+  )
+}
+
 export default function Listen() {
   const meta = usePlayerMetadata()
   return (
@@ -123,6 +208,7 @@ export default function Listen() {
           <LatestInterviews />
         </section>
         <WaysToListen />
+        <SongRequest />
         <StatsStrip
           stats={[
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners' },
