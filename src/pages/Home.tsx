@@ -12,22 +12,13 @@ import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { stationStats } from '@/data/pricing'
+import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
 
 const RED = '#E51636'
-const INK = '#0A0A0A'
-const BAR = '#161616'
-
-/** Real weekly presenters — source: programGuide.ts (fm985.com.au/guide). */
-const ON_AIR_WALL: { name: string; show: string; img: string }[] = [
-  { name: 'Tim Ahemt', show: 'ONE FM Breakfast · Mon & Tue', img: '/on-air-host-1.jpg' },
-  { name: 'The Big G', show: 'Craig Stott · Wednesday Breakfast', img: '/studio-control-room.jpg' },
-  { name: 'Ralph Whitehead', show: 'Thursday Breakfast', img: '/assets/images/studio-presenter-mic.jpg' },
-  { name: 'Josh Revens', show: 'Friday Breakfast · Live Music', img: '/assets/images/ob-van-branded.jpg' },
-  { name: 'Tim Symonds', show: 'The Essential Hits', img: '/assets/images/heritage-truck-2005.jpg' },
-  { name: 'Di Hunter', show: 'On Air Since the Early Days', img: '/assets/images/heritage-di-hunter-carols-2014.jpg' },
-]
+const INK = '#071D3A'
+const BAR = '#0B2A52'
 
 const reveal = {
   initial: { opacity: 0, y: 24 },
@@ -104,7 +95,7 @@ function HeroReel() {
       />
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.15) 45%, #0A0A0A 100%)' }}
+        style={{ background: 'linear-gradient(180deg, rgba(7,29,58,.55) 0%, rgba(7,29,58,.15) 45%, #071D3A 100%)' }}
         aria-hidden
       />
     </>
@@ -144,7 +135,7 @@ function Hero() {
       </p>
       <div className="mt-9 flex items-center gap-8 flex-wrap">
         <Link
-          to="/programs"
+          to="/listen"
           className="font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-1 hover:opacity-80"
           style={{ borderColor: RED }}
         >
@@ -167,7 +158,7 @@ function NameWall() {
     <section className="px-6 md:px-12 lg:px-20 py-16">
       <LabelReveal className="mb-8">On Air This Week</LabelReveal>
       <div>
-        {ON_AIR_WALL.map((p, i) => (
+        {ON_AIR_WEEK.map((p, i) => (
           <motion.div
             key={p.name}
             initial={{ opacity: 0, x: i % 2 === 1 ? 48 : -48 }}
@@ -179,18 +170,18 @@ function NameWall() {
             <div className="font-poster uppercase leading-none whitespace-nowrap text-white text-[clamp(40px,7vw,104px)]">
               {p.name}
               <span className="block font-body normal-case text-[13px] tracking-[0.14em] text-white/40 mt-1.5">
-                {p.show}
+                {p.sub}
               </span>
             </div>
             <div
+              aria-hidden
               className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
               style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
-              role="img"
-              aria-label={`${p.name} — ${p.show}`}
             />
           </motion.div>
         ))}
       </div>
+      <p className="mt-6 text-[12px] tracking-[0.08em] text-white/35">{ON_AIR_WALL_PHOTO_NOTE}</p>
     </section>
   )
 }
@@ -230,7 +221,7 @@ function StatsStrip() {
     { n: '1989', t: 'On air ever since', red: false },
   ]
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-px my-20" style={{ background: '#222' }}>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-px my-20" style={{ background: '#12325C' }}>
       {stats.map((s) => (
         <div key={s.t} className="px-8 py-11" style={{ background: INK }}>
           <div

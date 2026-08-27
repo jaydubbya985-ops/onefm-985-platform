@@ -9,9 +9,10 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { LabelReveal } from '@/components/motion/PosterReveal'
 
+/** Brand V3 core: ONE FM Blue base, Broadcast White type, 98.5 Red accent. */
 const RED = '#E51636'
-const INK = '#0A0A0A'
-const BAR = '#161616'
+const INK = '#071D3A'
+const BAR = '#0B2A52'
 const EXPO = [0.16, 1, 0.3, 1] as const
 
 export { LabelReveal }
@@ -44,8 +45,13 @@ export interface WallRow {
   img: string
 }
 
-/** Alternating giant-name rows with photo bars. Real things only. */
-export function NameWall({ label, rows }: { label: string; rows: WallRow[] }) {
+/**
+ * Alternating giant-name rows with photo bars. Real things only.
+ * The photo bars are station photography, not portraits of the person named in
+ * the row, so they stay decorative and carry no per-person caption. `note`
+ * prints that provenance under the wall.
+ */
+export function NameWall({ label, rows, note }: { label: string; rows: WallRow[]; note?: string }) {
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16">
       <LabelReveal className="mb-8">{label}</LabelReveal>
@@ -66,14 +72,16 @@ export function NameWall({ label, rows }: { label: string; rows: WallRow[] }) {
               </span>
             </div>
             <div
+              aria-hidden
               className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
               style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
-              role="img"
-              aria-label={`${p.name} — ${p.sub}`}
             />
           </motion.div>
         ))}
       </div>
+      {note && (
+        <p className="mt-6 text-[12px] tracking-[0.08em] text-white/35">{note}</p>
+      )}
     </section>
   )
 }
@@ -120,7 +128,7 @@ export interface Stat {
 /** 2–4 Anton numerals; exactly one red; whites hollow to lime on hover. */
 export function StatsStrip({ stats }: { stats: Stat[] }) {
   return (
-    <div className={`grid grid-cols-2 lg:grid-cols-${Math.min(stats.length, 4)} gap-px my-20`} style={{ background: '#222' }}>
+    <div className={`grid grid-cols-2 lg:grid-cols-${Math.min(stats.length, 4)} gap-px my-20`} style={{ background: '#12325C' }}>
       {stats.map((s) => (
         <div key={s.t} className="px-8 py-11" style={{ background: INK }}>
           <div

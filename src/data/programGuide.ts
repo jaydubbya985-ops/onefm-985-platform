@@ -172,6 +172,48 @@ export const BREAKFAST_ROSTER = [
   { day: 'Friday',    host: 'Josh Revens' },
 ] as const
 
+/** Consecutive breakfast days merged into one row per host. */
+function mergedBreakfastRoster(): { host: string; days: string[] }[] {
+  const rows: { host: string; days: string[] }[] = []
+  for (const slot of BREAKFAST_ROSTER) {
+    const last = rows[rows.length - 1]
+    if (last && last.host === slot.host) last.days.push(slot.day)
+    else rows.push({ host: slot.host, days: [slot.day] })
+  }
+  return rows
+}
+
+/**
+ * ONE FM holds no cleared presenter portraits, so the on-air wall runs station
+ * photography (studio and outside broadcast) behind the names. The images are
+ * decorative and must never be captioned as a photo of the presenter named
+ * beside them.
+ */
+export const ON_AIR_WALL_BACKDROPS = [
+  '/on-air-host-1.jpg',
+  '/studio-control-room.jpg',
+  '/assets/images/studio-presenter-mic.jpg',
+  '/assets/images/ob-van-branded.jpg',
+  '/assets/images/studio-commentary-selfie.jpg',
+  '/assets/images/commentary-box-action.jpg',
+] as const
+
+export const ON_AIR_WALL_PHOTO_NOTE =
+  'Photography: ONE FM studio and outside-broadcast archive — not presenter portraits.'
+
+/**
+ * "On Air This Week" wall for Home and Listen.
+ * Every row resolves to a slot in FULL_SCHEDULE above — no invented presenters.
+ */
+export const ON_AIR_WEEK: { name: string; sub: string; img: string }[] = [
+  ...mergedBreakfastRoster().map((row) => ({
+    name: row.host,
+    sub: `${BREAKFAST_SHOW} · ${row.days.map((d) => d.slice(0, 3)).join(' & ')}`,
+  })),
+  { name: 'Johnny P', sub: 'Dancing through the decades · Mon–Fri 9AM' },
+  { name: 'James Manley', sub: 'The James Manley Show · Mon & Tue 4PM' },
+].map((row, i) => ({ ...row, img: ON_AIR_WALL_BACKDROPS[i % ON_AIR_WALL_BACKDROPS.length] }))
+
 /** All unique presenters from the guide */
 export const ALL_PRESENTERS = [
   { name: 'Tim Ahemt',          show: 'ONE FM Breakfast (Mon–Tue)',       shift: 'Morning' },
