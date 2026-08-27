@@ -655,7 +655,7 @@ export default function SponsorCRM() {
                       <Label className="text-slate-300">ABN</Label>
                       <Input
                         className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
-                        placeholder="12 345 678 901"
+                        placeholder="ABN (11 digits)"
                         value={form.abn}
                         onChange={(e) => setForm({ ...form, abn: e.target.value })}
                       />

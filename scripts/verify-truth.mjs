@@ -24,6 +24,8 @@ const FORBIDDEN = [
   { re: /reaching a total population of/i, why: 'population is in the broadcast area, not reached' },
   { re: /covering a projected population of/i, why: 'population is in the broadcast area, not covered as reach' },
   { re: /Mooroopna',\s*listeners:\s*3710/, why: '3710 is Echuca listener estimate, not Mooroopna' },
+  { re: /12 345 678 901/, why: 'placeholder ABN — station ABN is 92 117 291 771' },
+  { re: /registered as a Deductible Gift Recipient/i, why: 'DGR status is data pending — do not claim it' },
 ]
 
 function walk(dir) {
