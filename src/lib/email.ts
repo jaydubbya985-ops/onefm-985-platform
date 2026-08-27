@@ -214,7 +214,7 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
       subject: payload.subject,
       attachments: payload.attachments?.length ?? 0,
     })
-    return { success: true, devMode: true }
+    return { success: false, devMode: true }
   }
 
   try {

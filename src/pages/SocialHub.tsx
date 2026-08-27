@@ -11,7 +11,6 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { WordReveal } from '@/components/WordReveal'
 import { FacebookPageEmbed } from '@/components/FacebookPageEmbed'
-import { MOCK_ENQUIRIES } from '@/components/ops/data/enquiries'
 import {
   downloadMailchimpLeadsCsv,
   buildMailchimpNewsletterSnippet,
@@ -1175,8 +1174,8 @@ function SocialFeedPreview() {
 /* ─── Section: Mailchimp Export ─── */
 function MailchimpExportSection() {
   const handleExport = () => {
-    downloadMailchimpLeadsCsv(MOCK_ENQUIRIES)
-    toast.success('Mailchimp CSV downloaded — import to One FM Sales audience')
+    downloadMailchimpLeadsCsv([], 'one-fm-sales-leads-template.csv')
+    toast.success('Template CSV downloaded — headers only. Real leads live in #/ops, not this public page.')
   }
 
   const handleCopySnippet = async () => {
@@ -1214,8 +1213,8 @@ function MailchimpExportSection() {
           <button type="button" onClick={handleExport} data-cursor-label="EXPORT" className="glass-card p-6 text-left hover:border-one-gold/30 transition-colors group w-full h-full relative overflow-hidden">
             <div aria-hidden className="explore-tile-scan" />
             <Download size={24} className="text-one-gold mb-3 group-hover:scale-110 transition-transform" />
-            <h4 className="font-h4 text-one-white mb-1">Export leads CSV</h4>
-            <p className="font-body-small text-muted text-sm">Download ops enquiries formatted for Mailchimp import.</p>
+            <h4 className="font-h4 text-one-white mb-1">Export CSV template</h4>
+            <p className="font-body-small text-muted text-sm">Headers only — real sponsor leads are in the operations portal, not this public page.</p>
           </button>
           </TiltCard>
           <TiltCard maxTilt={5} className="h-full">

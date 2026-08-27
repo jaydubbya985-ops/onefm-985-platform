@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "truth": "node scripts/verify-truth.mjs",
+    "live": "node scripts/verify-live.mjs",
     "build": "node scripts/verify-truth.mjs && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

@@ -79,6 +79,7 @@ import {
 import InvoiceEmailTemplate from './InvoiceEmailTemplate'
 import { OpsInvoiceSheet } from './OpsInvoiceSheet'
 import { BATCH_DUE_DATE, BATCH_INVOICES } from './data/invoices'
+import { isSupabaseConfigured } from '@/lib/supabase'
 import { downloadXeroCsv, summariseXeroExport } from './invoices/xeroExport'
 import {
   buildMailtoInvoiceUrl,
@@ -318,8 +319,12 @@ export default function InvoiceBatchSender() {
 
   const rows = useMemo<BatchRow[]>(() => {
     const inBatch = invoices.filter((i) => i.inBatch)
+    if (isSupabaseConfigured()) {
+      const live = inBatch.length > 0 ? inBatch : invoices
+      return live.map(toBatchRow)
+    }
     if (inBatch.length > 0) return inBatch.map(toBatchRow)
-    // Mirror the deployed fallback: an empty store still shows the June batch.
+    // DEMO only: empty store still shows the June batch for local practice.
     return BATCH_INVOICES.map((b) =>
       toBatchRow({
         id: b.id,
@@ -780,7 +785,8 @@ export default function InvoiceBatchSender() {
                 <div>
                   <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice Batch — June 2026</h1>
                   <p className="text-sm text-[#F4F1EA]/50">
-                    ONE FM 98.5 • {rows.length} invoices • $64,188 inc GST • Due {formatDate(BATCH_DUE_DATE)}
+                    ONE FM 98.5 • {rows.length} invoice{rows.length === 1 ? '' : 's'} • {formatCurrency(stats.total)} inc GST
+                    {rows.length > 0 ? ` • Due ${formatDate(BATCH_DUE_DATE)}` : ''}
                   </p>
                 </div>
               </div>
@@ -1235,6 +1241,15 @@ export default function InvoiceBatchSender() {
                             </motion.tr>
                           )
                         })}
+                        {filtered.length === 0 && (
+                          <TableRow className="border-[#1E293B] hover:bg-transparent">
+                            <TableCell colSpan={9} className="text-center py-12 text-sm text-[#F4F1EA]/50">
+                              {isSupabaseConfigured()
+                                ? 'No live invoices in this ledger yet. FOOTT ONEFM-2026-011 appears here after it is saved to Supabase.'
+                                : 'No invoices match this filter.'}
+                            </TableCell>
+                          </TableRow>
+                        )}
                       </TableBody>
                     </Table>
                   </div>

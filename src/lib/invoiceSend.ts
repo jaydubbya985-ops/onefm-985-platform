@@ -141,8 +141,8 @@ export async function dispatchInvoiceEmail(
     return { success: true, messageId: directResult.messageId }
   }
 
-  if (directResult.success && directResult.devMode) {
-    return { success: true, devMode: true }
+  if (directResult.devMode) {
+    return { success: false, devMode: true }
   }
 
   return {
@@ -189,7 +189,8 @@ export async function dispatchReceiptEmail(
     replyTo: 'accounts@fm985.com.au',
   })
 
-  if (result.success) return { success: true, messageId: result.messageId, devMode: result.devMode }
+  if (result.devMode) return { success: false, devMode: true }
+  if (result.success) return { success: true, messageId: result.messageId }
   return { success: false, usedMailtoFallback: true, error: result.error }
 }
 

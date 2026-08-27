@@ -65,3 +65,6 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 5
+
+      - name: Prove production is not the stale DEMO deploy
+        run: node scripts/verify-live.mjs

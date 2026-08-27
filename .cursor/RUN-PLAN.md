@@ -1,6 +1,6 @@
 # ONE FM RUN PLAN — Non-stop to 80% gov-ready
 
-**Current score: ~70% of 80% gov-ready bar** (truth + FOOTT PDF + honest send **on `main`**; live `#/ops` still DEMO because Netlify PAT is unauthorized).
+**Current score: code is past 70%; live site is still the stale DEMO deploy.** Truth + FOOTT PDF + honest send **on `main`**; OG 189,680 + LIVE-without-DEMO-batch **on `cursor/gov-ready-live-gate-c24f`**. Live `#/ops` is still DEMO because Netlify PAT is unauthorized.
 
 Target **80%**: FOOTT can be sent a PDF; ops is not DEMO **on live**; no invented stats on public pages; invoice email does not lie about send.
 
@@ -10,12 +10,13 @@ Target **80%**: FOOTT can be sent a PDF; ops is not DEMO **on live**; no invente
 
 | Check | Status |
 |------|--------|
-| EXE merge | PR #12 merged to `main` (`4a7315f`) |
-| GitHub Actions build | Passed (`npm run truth` + `npm run build`) |
-| Deploy to Netlify | Failed: `Unauthorized: could not retrieve project`. Token is set and rejected. |
-| Live site | Still old DEMO (`onefm2026`, `OpsPortal-DpfuQL4N.js`) |
+| EXE merge | PRs #12, #14, #15 on `main` (`e511343`) |
+| GitHub Actions build | Passed on EXE; later pushes fail at Netlify preflight |
+| Deploy to Netlify | Failed: HTTP 401. Token is set and rejected. |
+| Live site | Still old DEMO (`index-BJ4yefZ1.js`) |
 | `/audience` sourced towns | On `main`, not live |
 | Ops portal live (not DEMO) | Needs working deploy **and** `VITE_SUPABASE_*` in GitHub + Netlify env |
+| Production gate | `npm run live` after deploy |
 | Stripe payments | Needs `VITE_STRIPE_PUBLISHABLE_KEY` |
 
 ## Agent continuity (no stop-start)

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { MOCK_ENQUIRIES, type Enquiry, type EnquirySource } from './data/enquiries'
-import { BATCH_INVOICES, BILLING_INVOICES } from './data/invoices'
+import { BATCH_INVOICES, BILLING_INVOICES, realBatchInvoices } from './data/invoices'
 import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
 import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
 import type { DbContactEnquiry } from '@/lib/supabase'
@@ -160,6 +160,7 @@ export interface OpsStore extends OpsState {
 // ---------------------------------------------------------------------------
 
 const STORAGE_KEY = 'onefm_ops_v1'
+const LIVE_STORAGE_KEY = 'onefm_ops_live_v1'
 const SESSION_KEY = 'onefm_ops_session_v1'
 
 function loadSession(): { activeTab: OpsTab; focusProposalId: string | null } {
@@ -234,7 +235,22 @@ function buildSeedState(): OpsState {
     paymentMethod: b.paymentMethod,
   }))
 
-  const batchInvoices: OpsInvoice[] = BATCH_INVOICES.map((b) => ({
+  const batchInvoices: OpsInvoice[] = BATCH_INVOICES.map(fromBatchInvoice)
+
+  return {
+    enquiries: MOCK_ENQUIRIES,
+    proposals,
+    contracts: MOCK_CONTRACTS,
+    invoices: [...billingInvoices, ...batchInvoices],
+  }
+}
+
+function emptyState(): OpsState {
+  return { enquiries: [], proposals: [], contracts: [], invoices: [] }
+}
+
+function fromBatchInvoice(b: (typeof BATCH_INVOICES)[number]): OpsInvoice {
+  return {
     id: b.id,
     number: b.number,
     company: b.company,
@@ -253,35 +269,34 @@ function buildSeedState(): OpsState {
     emailBody: b.emailBody,
     story: b.story,
     notes: b.notes,
-  }))
-
-  return {
-    enquiries: MOCK_ENQUIRIES,
-    proposals,
-    contracts: MOCK_CONTRACTS,
-    invoices: [...billingInvoices, ...batchInvoices],
   }
 }
 
-function loadState(): OpsState {
+function parseStoredState(raw: string | null): OpsState | null {
+  if (!raw) return null
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      const parsed = JSON.parse(raw) as Partial<OpsState>
-      if (
-        parsed &&
-        Array.isArray(parsed.enquiries) &&
-        Array.isArray(parsed.proposals) &&
-        Array.isArray(parsed.contracts) &&
-        Array.isArray(parsed.invoices)
-      ) {
-        return parsed as OpsState
-      }
+    const parsed = JSON.parse(raw) as Partial<OpsState>
+    if (
+      parsed &&
+      Array.isArray(parsed.enquiries) &&
+      Array.isArray(parsed.proposals) &&
+      Array.isArray(parsed.contracts) &&
+      Array.isArray(parsed.invoices)
+    ) {
+      return parsed as OpsState
     }
   } catch {
-    // Corrupt or unavailable storage — fall back to seed data.
+    // Corrupt or unavailable storage.
   }
-  return buildSeedState()
+  return null
+}
+
+function loadState(): OpsState {
+  if (isSupabaseConfigured()) {
+    // Never hydrate LIVE from the DEMO localStorage key.
+    return parseStoredState(window.localStorage.getItem(LIVE_STORAGE_KEY)) ?? emptyState()
+  }
+  return parseStoredState(window.localStorage.getItem(STORAGE_KEY)) ?? buildSeedState()
 }
 
 // ---------------------------------------------------------------------------
@@ -298,26 +313,32 @@ export function OpsProvider({ children }: { children: ReactNode }) {
   )
   const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
 
-  // Load from Supabase on mount (when configured + authenticated)
+  // Load from Supabase on mount (when configured + authenticated).
+  // LIVE never merges DEMO seed enquiries/invoices. Missing FOOTT / Jason's TV
+  // rows are upserted once so the real tax invoices can be sent.
   useEffect(() => {
     if (!isSupabaseConfigured()) return
     let cancelled = false
 
     ;(async () => {
-      const { state: remote, hasData } = await opsApi.loadAll()
+      const { state: remote } = await opsApi.loadAll()
       if (cancelled) return
 
-      if (hasData) {
-        // Merge: remote enquiries + local mock enquiries not yet in DB
-        const remoteIds = new Set(remote.enquiries.map((e) => e.id))
-        const localOnly = loadState().enquiries.filter((e) => !remoteIds.has(e.id))
-        setState({
-          enquiries: [...remote.enquiries, ...localOnly],
-          proposals: remote.proposals.length ? remote.proposals : loadState().proposals,
-          contracts: remote.contracts.length ? remote.contracts : loadState().contracts,
-          invoices: remote.invoices.length ? remote.invoices : loadState().invoices,
-        })
+      const existingNumbers = new Set(remote.invoices.map((i) => i.number))
+      const missingReal: OpsInvoice[] = []
+      for (const inv of realBatchInvoices().map(fromBatchInvoice)) {
+        if (existingNumbers.has(inv.number)) continue
+        const ok = await opsApi.upsertInvoice(inv)
+        if (cancelled) return
+        if (ok) missingReal.push(inv)
       }
+
+      setState({
+        enquiries: remote.enquiries,
+        proposals: remote.proposals,
+        contracts: remote.contracts,
+        invoices: [...remote.invoices, ...missingReal],
+      })
       setRemoteReady(true)
     })()
 
@@ -366,7 +387,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!remoteReady) return
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      const key = isSupabaseConfigured() ? LIVE_STORAGE_KEY : STORAGE_KEY
+      window.localStorage.setItem(key, JSON.stringify(state))
     } catch {
       // Storage full / unavailable — keep working in memory.
     }

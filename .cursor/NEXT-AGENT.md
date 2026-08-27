@@ -12,16 +12,16 @@ If you are Grok: do the work you can, then tell Jay to start the **next** run as
 
 `git pull origin main`. Read `.cursor/HANDOFF.md`. New branch off main.
 
-PR #12 is **merged** (`4a7315f`). Live is still DEMO because GitHub `NETLIFY_AUTH_TOKEN` is unauthorized. Do not empty-commit retry.
+PR #12 / #14 / #15 are on `main` (`e511343`). Live is still DEMO because GitHub `NETLIFY_AUTH_TOKEN` is unauthorized (HTTP 401). Do not empty-commit retry. Merge/follow `cursor/gov-ready-live-gate-c24f` if it is not on main yet.
 
 **Live ops only if env present.** If `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` missing: `NEED JAY:` one line and continue independent code. Do not fake live mode.
 
 ## After that
 
-1. Confirm live `#/ops` — if still `onefm2026`, NEED JAY a new Netlify PAT, then re-run **Deploy to Netlify** on `main`.
-2. `npx vite-node scripts/verify-ops-pdfs.ts` — 39,375 + GST + BSB 083-894.
-3. Mailto / `devMode` must not mark invoices sent.
-4. `npm run truth` + `npm run build` must pass.
+1. Confirm live `#/ops` — if still `index-BJ4yefZ1.js`, NEED JAY a new Netlify PAT, then re-run **Deploy to Netlify** on `main`.
+2. `npx vite-node scripts/verify-ops-pdfs.ts` — FOOTT $5,500 + GST + BSB 083-894.
+3. Mailto / `devMode` must not mark invoices sent (`success: false` when no Resend).
+4. `npm run truth` + `npm run build` must pass. After deploy: `npm run live`.
 5. Public craft: `Home.tsx` / `Listen.tsx` / `Coverage.tsx` / `Story.tsx` — `programGuide.ts` is breakfast source of truth.
 
 Commit, push, open/update a PR. Deploy needs a new Netlify PAT.
