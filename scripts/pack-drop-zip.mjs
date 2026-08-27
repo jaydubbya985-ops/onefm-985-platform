@@ -26,6 +26,12 @@ if (/185,?791/.test(html) || html.includes('36 years')) {
   process.exit(1)
 }
 
+const gatePath = resolve(dist, 'gov-ready-gate.txt')
+if (!existsSync(gatePath) || !readFileSync(gatePath, 'utf8').includes('og=189680')) {
+  console.error('pack-drop-zip: dist/gov-ready-gate.txt missing or stale')
+  process.exit(1)
+}
+
 for (const dir of ['kdl', 'gvl']) {
   rmSync(resolve(dist, 'assets/logos', dir), { recursive: true, force: true })
 }

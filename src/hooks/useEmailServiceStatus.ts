@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { readFunctionJson } from '@/lib/readFunctionJson'
 
 export type EmailServiceStatus = 'checking' | 'live' | 'off' | 'unknown'
 
@@ -7,8 +8,8 @@ export type EmailServiceStatus = 'checking' | 'live' | 'off' | 'unknown'
  * `send-invoice` function) is actually live in this environment.
  *
  * - 'live'    → RESEND_API_KEY is set on Netlify, real sends will go out.
- * - 'off'     → function reachable but RESEND_API_KEY missing — dev/PDF+mailto fallback only.
- * - 'unknown' → function unreachable (e.g. `npm run dev` without `netlify dev`) — cannot tell.
+ * - 'off'     → function reachable but RESEND_API_KEY missing — PDF+mailto fallback only.
+ * - 'unknown' → function unreachable (SPA HTML fallback or local `npm run dev`).
  *
  * Never guesses or invents a key — this only reports presence/absence.
  */
@@ -18,13 +19,14 @@ export function useEmailServiceStatus(): EmailServiceStatus {
   useEffect(() => {
     let cancelled = false
 
-    fetch('/.netlify/functions/email-status')
-      .then((res) => {
-        if (!res.ok) throw new Error(`status ${res.status}`)
-        return res.json() as Promise<{ resendConfigured?: boolean }>
-      })
+    fetch('/.netlify/functions/email-status', { headers: { Accept: 'application/json' } })
+      .then((res) => readFunctionJson<{ resendConfigured?: boolean }>(res))
       .then((data) => {
         if (cancelled) return
+        if (!data) {
+          setStatus('unknown')
+          return
+        }
         setStatus(data.resendConfigured ? 'live' : 'off')
       })
       .catch(() => {

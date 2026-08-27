@@ -131,6 +131,21 @@ assert(
   'production build must omit unused club logo dumps from dist',
 )
 
+const emailStatusHook = readFileSync(
+  new URL('../src/hooks/useEmailServiceStatus.ts', import.meta.url),
+  'utf8',
+)
+assert(
+  emailStatusHook.includes('readFunctionJson'),
+  'email-status must not treat SPA HTML as Resend live',
+)
+
+const gateSource = readFileSync(
+  new URL('../public/gov-ready-gate.txt', import.meta.url),
+  'utf8',
+)
+assert(gateSource.includes('og=189680'), 'gov-ready-gate.txt must stamp OG 189680')
+
 const foott = realBatchInvoices().find((i) => i.number === 'ONEFM-2026-011')
 assert(!!foott, 'FOOTT ONEFM-2026-011 must exist in realBatchInvoices')
 assert(foott?.email === 'peter@foott.com.au', 'FOOTT must have peter@foott.com.au')

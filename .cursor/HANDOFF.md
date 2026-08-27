@@ -37,9 +37,9 @@
 
 Open https://app.netlify.com/sites/onefmops/deploys — drag **`onefmops_drop_phone.zip`** onto Production, reply **done**.
 
-Smaller zip: unused GVL/KDL club logo dumps are omitted. After PR CI finishes, the zip is also a GitHub Action artifact named `onefmops-production-drop` on PR #16.
+Same zip is on GitHub Actions (PR #16 pack job): https://github.com/jaydubbya985-ops/onefm-985-platform/actions/runs/33039323356 — Artifacts → `onefmops-production-drop`.
 
-Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`. Do not generate a PAT.
+After drop, `https://onefmops.netlify.app/gov-ready-gate.txt` must contain `og=189680`. Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`. Do not generate a PAT.
 
 After that deploy exists, the next one-line ask is a Netlify snippet at the end of `<head>`:
 

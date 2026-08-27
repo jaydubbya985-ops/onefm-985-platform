@@ -24,6 +24,15 @@ async function get(path) {
 
 const html = await get('/')
 
+try {
+  const gate = await get('/gov-ready-gate.txt')
+  if (!gate.includes('onefm-gov-ready') || !gate.includes('og=189680')) {
+    fail.push('live /gov-ready-gate.txt is not the current drop (missing onefm-gov-ready og=189680)')
+  }
+} catch {
+  fail.push('live is missing /gov-ready-gate.txt — production is still the stale DEMO deploy')
+}
+
 if (/185,?791/.test(html)) {
   fail.push('live index.html still has stale OG population 185,791')
 }
