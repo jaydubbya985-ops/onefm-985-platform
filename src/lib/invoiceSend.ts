@@ -7,6 +7,7 @@
  */
 import type { jsPDF } from 'jspdf'
 import { sendEmail } from '@/lib/email'
+import { readFunctionJson } from '@/lib/readFunctionJson'
 import {
   BANK_ACCOUNT,
   BANK_ACCOUNT_NAME,
@@ -116,10 +117,9 @@ export async function dispatchInvoiceEmail(
       }),
     })
 
-    if (res.ok) {
-      const data = await res.json() as { success?: boolean; messageId?: string }
-      if (data.success) return { success: true, messageId: data.messageId }
-    } else {
+    const data = await readFunctionJson<{ success?: boolean; messageId?: string }>(res)
+    if (data?.success) return { success: true, messageId: data.messageId }
+    if (!res.ok) {
       console.warn('[InvoiceSend] Netlify function responded:', res.status)
     }
   } catch (err) {
@@ -174,10 +174,8 @@ export async function dispatchReceiptEmail(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ to: payload.to, subject, html, replyTo: 'accounts@fm985.com.au' }),
     })
-    if (res.ok) {
-      const data = await res.json() as { success?: boolean; messageId?: string }
-      if (data.success) return { success: true, messageId: data.messageId }
-    }
+    const data = await readFunctionJson<{ success?: boolean; messageId?: string }>(res)
+    if (data?.success) return { success: true, messageId: data.messageId }
   } catch {
     // fall through to direct send
   }

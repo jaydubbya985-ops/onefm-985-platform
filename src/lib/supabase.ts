@@ -6,8 +6,33 @@ import type {
   EnquiryStatus,
 } from '@/components/ops/data/enquiries'
 import { resolveOpsConfig } from '@/lib/opsConfigResolve'
+import { readFunctionJson } from '@/lib/readFunctionJson'
 
 export { isValidSupabaseKey } from '@/lib/opsConfigResolve'
+
+export type OpsCredentialSource = 'none' | 'vite' | 'snippet' | 'function'
+
+let credentialSource: OpsCredentialSource = 'none'
+
+/** How LIVE credentials were loaded. `none` means DEMO. */
+export function getOpsCredentialSource(): OpsCredentialSource {
+  return credentialSource
+}
+
+export function opsCredentialSourceLabel(
+  source: OpsCredentialSource = credentialSource,
+): string {
+  switch (source) {
+    case 'vite':
+      return 'baked into this deploy'
+    case 'snippet':
+      return 'Netlify snippet'
+    case 'function':
+      return 'ops-config function'
+    default:
+      return ''
+  }
+}
 
 const AUTH_OPTIONS = {
   persistSession: true,
@@ -60,6 +85,7 @@ function readWindowOpsConfig(): ReturnType<typeof resolveOpsConfig> {
  */
 export async function initSupabaseFromRuntime(): Promise<void> {
   if (isSupabaseConfigured()) {
+    credentialSource = 'vite'
     initSupabaseAuthRefresh()
     return
   }
@@ -67,6 +93,7 @@ export async function initSupabaseFromRuntime(): Promise<void> {
   const fromWindow = readWindowOpsConfig()
   if (fromWindow.configured) {
     applyRuntimeConfig(fromWindow.url, fromWindow.anonKey)
+    credentialSource = 'snippet'
     initSupabaseAuthRefresh()
     return
   }
@@ -81,20 +108,18 @@ export async function initSupabaseFromRuntime(): Promise<void> {
       signal: ctrl.signal,
       headers: { Accept: 'application/json' },
     })
-    if (!res.ok) return
-    const text = await res.text()
-    if (!text || text.trimStart().startsWith('<')) return
-    const data = JSON.parse(text) as {
+    const data = await readFunctionJson<{
       configured?: boolean
       url?: string
       anonKey?: string
-    }
+    }>(res)
     const resolved = resolveOpsConfig({
       VITE_SUPABASE_URL: data?.configured ? data.url : undefined,
       VITE_SUPABASE_ANON_KEY: data?.configured ? data.anonKey : undefined,
     })
     if (resolved.configured) {
       applyRuntimeConfig(resolved.url, resolved.anonKey)
+      credentialSource = 'function'
       initSupabaseAuthRefresh()
     }
   } catch {

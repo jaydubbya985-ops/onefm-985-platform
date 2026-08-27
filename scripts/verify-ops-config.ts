@@ -4,6 +4,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { resolveOpsConfig } from '../src/lib/opsConfigResolve.ts'
+import { readFunctionJson } from '../src/lib/readFunctionJson.ts'
 
 const fail: string[] = []
 
@@ -65,13 +66,56 @@ assert(
   'supabase client fetches ops-config when Vite env is empty',
 )
 assert(
-  supabaseSource.includes("startsWith('<')"),
-  'runtime fetch must ignore SPA HTML fallback',
+  supabaseSource.includes('readFunctionJson'),
+  'runtime fetch must ignore SPA HTML fallback via readFunctionJson',
 )
 assert(
   supabaseSource.includes('__ONEFM_OPS__'),
   'runtime init must read Netlify snippet window.__ONEFM_OPS__',
 )
+assert(
+  supabaseSource.includes("credentialSource = 'snippet'"),
+  'runtime init must record snippet as the LIVE credential source',
+)
+
+const readFnSource = readFileSync(
+  new URL('../src/lib/readFunctionJson.ts', import.meta.url),
+  'utf8',
+)
+assert(
+  readFnSource.includes("startsWith('<')"),
+  'readFunctionJson must reject SPA HTML fallback',
+)
+
+const generatorSource = readFileSync(
+  new URL('../src/components/ops/InvoiceGenerator.tsx', import.meta.url),
+  'utf8',
+)
+assert(
+  generatorSource.includes('invoices.find((i) => i.id === id)'),
+  'Invoice Generator send must look up FOOTT from merged store invoices',
+)
+assert(
+  !generatorSource.includes('localInvoices.find((i) => i.id === id)'),
+  'Invoice Generator send must not ignore store invoices',
+)
+
+const invoiceSendSource = readFileSync(
+  new URL('../src/lib/invoiceSend.ts', import.meta.url),
+  'utf8',
+)
+assert(
+  invoiceSendSource.includes('readFunctionJson'),
+  'invoice send must not treat SPA HTML as a successful Resend response',
+)
+
+const htmlJson = await readFunctionJson(new Response('<!doctype html><html></html>', { status: 200 }))
+assert(htmlJson === null, 'HTML 200 must not parse as JSON success')
+
+const okJson = await readFunctionJson<{ success?: boolean }>(
+  new Response(JSON.stringify({ success: true }), { status: 200 }),
+)
+assert(okJson?.success === true, 'JSON success must parse')
 
 if (fail.length) {
   console.error('verify-ops-config failed:\n' + fail.map((f) => `  ${f}`).join('\n'))

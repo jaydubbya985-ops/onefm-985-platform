@@ -9,6 +9,8 @@
  * Dev fallback: VITE_RESEND_API_KEY in .env.local (never set this in production)
  */
 
+import { readFunctionJson } from '@/lib/readFunctionJson'
+
 export interface EmailPayload {
   to: string | string[]
   subject: string
@@ -268,10 +270,8 @@ export async function sendEnquiryNotification(
         confirmationHtml,
       }),
     })
-    if (res.ok) {
-      const result = (await res.json()) as { success?: boolean }
-      if (result.success) return { success: true }
-    }
+    const result = await readFunctionJson<{ success?: boolean }>(res)
+    if (result?.success) return { success: true }
     console.warn('[Email] send-enquiry function responded:', res.status)
   } catch (err) {
     console.warn('[Email] send-enquiry function unavailable (dev mode?), falling back:', err)

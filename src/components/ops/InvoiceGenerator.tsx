@@ -703,8 +703,15 @@ export default function InvoiceGenerator() {
   }
 
   async function handleSendInvoice(id: string) {
-    const inv = localInvoices.find((i) => i.id === id)
-    if (!inv?.billTo.email) return
+    const inv = invoices.find((i) => i.id === id)
+    if (!inv) {
+      window.alert('Invoice not found.')
+      return
+    }
+    if (!inv.billTo.email) {
+      window.alert(`Invoice ${inv.invoiceNumber} has no email address.`)
+      return
+    }
 
     const description =
       inv.items.map((item) => item.description).join('; ') || 'Sponsorship'

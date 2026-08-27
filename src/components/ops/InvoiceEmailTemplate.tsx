@@ -383,7 +383,7 @@ export function generateInvoiceEmailHtml(
             ABN 92 117 291 771 &nbsp;&middot;&nbsp; (03) 5831 3131 &nbsp;&middot;&nbsp; accounts@fm985.com.au
           </div>
           <div style="margin-top:12px;color:rgba(255,255,255,0.18);font-size:10px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            Sent via ONE FM Operations Portal
+            ONE FM Operations Portal
           </div>
         </td>
       </tr>

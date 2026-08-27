@@ -66,6 +66,11 @@ else {
   const hasBakedSupabase =
     haystack.includes('myarjdatdtchmkgdpsab.supabase.co') ||
     /https:\/\/[a-z0-9]+\.supabase\.co/.test(haystack)
+  const snippetConfigured =
+    html.includes('__ONEFM_OPS__') &&
+    /https:\/\/[a-z0-9]+\.supabase\.co/.test(html) &&
+    !html.includes('placeholder.supabase.co') &&
+    !html.includes('your-project-id')
 
   let runtimeConfigured = false
   try {
@@ -79,20 +84,22 @@ else {
         typeof cfg.url === 'string' &&
         cfg.url.includes('supabase.co') &&
         !cfg.url.includes('your-project-id')
-    } else if (cfgRes.ok && looksLikeHtml) {
+    } else if (cfgRes.ok && looksLikeHtml && !snippetConfigured) {
       fail.push(
-        'ops-config is not deployed yet (SPA HTML fallback) — #/ops cannot read Netlify env until this branch is on production',
+        'ops-config is not deployed yet (SPA HTML fallback) and no Netlify snippet is present — #/ops stays DEMO until Git+env, a snippet, or this branch is on production',
       )
-    } else if (cfgRes.status !== 404) {
+    } else if (!cfgRes.ok && cfgRes.status !== 404 && !snippetConfigured) {
       fail.push(`ops-config HTTP ${cfgRes.status} — #/ops cannot read Netlify env`)
     }
   } catch (err) {
-    fail.push(`ops-config fetch failed: ${err instanceof Error ? err.message : err}`)
+    if (!snippetConfigured) {
+      fail.push(`ops-config fetch failed: ${err instanceof Error ? err.message : err}`)
+    }
   }
 
-  if (!hasBakedSupabase && !runtimeConfigured) {
+  if (!hasBakedSupabase && !runtimeConfigured && !snippetConfigured) {
     fail.push(
-      'live #/ops will stay DEMO — bundle has no Supabase URL and /.netlify/functions/ops-config is not configured. Set VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY in Netlify site env (no rebuild needed once ops-config is deployed).',
+      'live #/ops will stay DEMO — no baked Supabase URL, no Netlify snippet, and /.netlify/functions/ops-config is not configured.',
     )
   }
 }
