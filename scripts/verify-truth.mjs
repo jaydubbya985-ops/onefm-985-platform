@@ -17,6 +17,13 @@ const FORBIDDEN = [
   { re: /Updated 2s ago/i, why: 'no fake live listener pulse' },
   { re: /raised over \$120,000/i, why: 'no invented marathon total' },
   { re: /landmark agreement with the Goulburn Valley League/i, why: 'GVL rights are sourced in stationHistory, not this copy' },
+  { re: /78% within 50km/i, why: 'no invented 50km coverage share' },
+  { re: /Balanced gender split — 48\/52/i, why: 'gender split must match ABS LGA 49/51' },
+  { re: /Real-time insights into who's listening/i, why: 'no fake live audience dashboard copy' },
+  { re: /25\+ multicultural programs weekly/i, why: 'programGuide has 8 multicultural slots, not 25+' },
+  { re: /reaching a total population of/i, why: 'population is in the broadcast area, not reached' },
+  { re: /covering a projected population of/i, why: 'population is in the broadcast area, not covered as reach' },
+  { re: /Mooroopna',\s*listeners:\s*3710/, why: '3710 is Echuca listener estimate, not Mooroopna' },
 ]
 
 function walk(dir) {

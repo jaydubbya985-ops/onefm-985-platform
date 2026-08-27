@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Download,
   Share2,
   Sparkles,
   TrendingUp,
@@ -10,7 +9,6 @@ import {
   Headphones,
   Mic,
   X,
-  ChevronDown,
   AlertTriangle,
 } from 'lucide-react'
 import {
@@ -32,6 +30,7 @@ import { Marquee } from '@/components/Marquee'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { SEO } from '@/components/SEO'
 import { stationStats } from '@/data/pricing'
+import { towns } from '@/data/townData'
 
 /* ─────────── easing ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -77,14 +76,13 @@ const genderData = [
   { name: 'Female', value: 51, color: '#D4963A' },
 ]
 
-// Top towns by estimated weekly listeners (source: townData.ts / ABS 2021)
-const locationData = [
-  { region: 'Shepparton', listeners: 16488, pct: 42 },
-  { region: 'Mooroopna', listeners: 3710, pct: 9 },
-  { region: 'Benalla', listeners: 2565, pct: 7 },
-  { region: 'Cobram', listeners: 2244, pct: 6 },
-  { region: 'Other 21 towns', listeners: 14368, pct: 36 },
-]
+// Top towns by estimated weekly listeners (source: townData.ts / ABS 2021).
+// Do not invent a remainder bucket against weeklyListeners 39,375 — town
+// estimates sum to a different figure (see scripts/audit-town-data.ts).
+const locationData = [...towns]
+  .sort((a, b) => b.listenersEstimate - a.listenersEstimate)
+  .slice(0, 5)
+  .map((t) => ({ region: t.name, listeners: t.listenersEstimate }))
 
 const platformCards = [
   {
@@ -138,15 +136,14 @@ const anomalyData: { time: string; change: string; reason: string; severity: str
    AUDIENCE ANALYTICS PAGE
    ═══════════════════════════════════ */
 export default function AudienceAnalytics() {
-  const [dateRange, setDateRange] = useState('7 Days')
   const [chartTab, setChartTab] = useState('Listeners')
   const [dismissInsight, setDismissInsight] = useState(false)
 
   return (
     <Layout>
       <SEO title="Audience Analytics" description="Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across 25 towns. Live stream analytics pending Radio.co integration." />
-      {/* ═══════ HERO / LIVE DASHBOARD HEADER ═══════ */}
-      <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="LIVE DASHBOARD">
+      {/* ═══════ HERO ═══════ */}
+      <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="AUDIENCE">
         {/* Animated grid background */}
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
           style={{
@@ -185,25 +182,9 @@ export default function AudienceAnalytics() {
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <select
-                  value={dateRange}
-                  onChange={(e) => setDateRange(e.target.value)}
-                  className="appearance-none glass-card px-4 py-2 pr-10 font-label text-xs text-one-white bg-transparent cursor-pointer focus:outline-none focus:border-one-gold/50"
-                >
-                  <option value="Today">Today</option>
-                  <option value="7 Days">7 Days</option>
-                  <option value="30 Days">30 Days</option>
-                  <option value="90 Days">90 Days</option>
-                  <option value="1 Year">1 Year</option>
-                </select>
-                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
-              </div>
-              <button className="glass-card p-2 hover:border-one-gold/50 transition-colors" data-cursor-label="EXPORT" aria-label="Export data">
-                <Download size={16} className="text-muted" />
-              </button>
-            </div>
+            <p className="font-label text-[10px] tracking-[0.18em] text-muted">
+              ABS 2021 model · not a date-filtered live dashboard
+            </p>
           </motion.div>
 
           {/* Headline */}
@@ -215,7 +196,7 @@ export default function AudienceAnalytics() {
           >
             <WordReveal text="AUDIENCE INTELLIGENCE" className="font-h1 text-one-white mb-2 block" as="h1" stagger={0.04} />
             <p className="font-body text-one-white">
-              Real-time insights into who's listening, when, and how
+              Modelled audience for the 25-town, 100km broadcast area (ABS 2021 via townData). Live stream counts: data pending.
             </p>
           </motion.div>
 
@@ -269,7 +250,7 @@ export default function AudienceAnalytics() {
         <Marquee
           speed={30}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">REAL-TIME AUDIENCE INTELLIGENCE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">MODELLED AUDIENCE · ABS 2021</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DEMOGRAPHICS · REACH · PERFORMANCE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
@@ -422,8 +403,8 @@ export default function AudienceAnalytics() {
                 },
                 {
                   title: 'Community',
-                  text: '25+ multicultural programs weekly',
-                  sub: 'Swahili, Samoan, Filipino, Mandarin, Punjabi & more',
+                  text: '8 multicultural programs each week',
+                  sub: 'Swahili, Italian, Filipino, Mandarin, Punjabi, Samoan, Arabic, Radio Netherlands — programGuide.ts',
                   border: '#D4963A',
                   icon: Sparkles,
                 },
@@ -470,7 +451,7 @@ export default function AudienceAnalytics() {
             variants={fadeUp}
           >
             <WordReveal text="DEMOGRAPHIC DEEP DIVE" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted mt-1">Who makes up your audience</p>
+            <p className="font-body-small text-muted mt-1">Greater Shepparton LGA (ABS 2021) — not a measured ONE FM listener survey</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -500,9 +481,9 @@ export default function AudienceAnalytics() {
                         fontSize: '12px',
                         color: '#F4F1EA',
                       }}
-                      formatter={(value: number, _name: string, props: { payload?: { count?: number; growth?: string } }) => [
-                        `${value}% (${props.payload?.count?.toLocaleString()}) · ${props.payload?.growth}`,
-                        'Percentage',
+                      formatter={(value: number) => [
+                        `${value}% of Greater Shepparton LGA`,
+                        'ABS 2021',
                       ]}
                     />
                     <Bar dataKey="percent" radius={[0, 4, 4, 0]} barSize={20}>
@@ -562,11 +543,11 @@ export default function AudienceAnalytics() {
                 </ResponsiveContainer>
               </div>
               <div className="text-center -mt-4 mb-3">
-                <div className="font-stat text-gold-gradient">39.4K</div>
-                <div className="font-label text-muted">Total</div>
+                <div className="font-stat text-gold-gradient">49 / 51</div>
+                <div className="font-label text-muted">Male / Female</div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-label text-xs text-one-gold">Balanced gender split — 48/52</span>
+                <span className="font-label text-xs text-one-gold">Greater Shepparton LGA (ABS 2021) — not a measured ONE FM gender split</span>
               </div>
             </motion.div>
             </TiltCard>
@@ -597,9 +578,9 @@ export default function AudienceAnalytics() {
                         fontSize: '12px',
                         color: '#F4F1EA',
                       }}
-                      formatter={(value: number, _name: string, props: { payload?: { pct?: number } }) => [
-                        `${value.toLocaleString()} (${props.payload?.pct}%)`,
-                        'Listeners',
+                      formatter={(value: number) => [
+                        `${value.toLocaleString()} est.`,
+                        'Weekly listeners (townData)',
                       ]}
                     />
                     <Bar dataKey="listeners" fill="#D4963A" radius={[4, 4, 0, 0]} barSize={28} />
@@ -607,8 +588,7 @@ export default function AudienceAnalytics() {
                 </ResponsiveContainer>
               </div>
               <div className="mt-3 flex items-center gap-2">
-                <TrendingUp size={12} className="text-data-teal" />
-                <span className="font-label text-xs text-data-teal">Regional coverage: 78% within 50km</span>
+                <span className="font-label text-xs text-muted">Top 5 towns by townData listener estimate (ABS 2021). Not a diary survey or 50km coverage share.</span>
               </div>
             </motion.div>
             </TiltCard>

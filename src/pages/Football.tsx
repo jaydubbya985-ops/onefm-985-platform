@@ -599,7 +599,7 @@ export default function Football() {
             </div>
             <WordReveal text="YOUR AUDIENCE, YOUR COMMUNITY" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a projected population of {stationStats.broadcastPopulation.toLocaleString()}.
+              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley. {stationStats.broadcastPopulation.toLocaleString()} people live in that broadcast area (townData 2026 est.).
             </p>
           </ScrollReveal>
 
