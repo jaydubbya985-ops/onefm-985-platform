@@ -1,3 +1,4 @@
+// DEMO DATA — ops invoice seeds for the portal UI. Not a live billing ledger.
 // ---------------------------------------------------------------------------
 // ONE FM invoice data — extracted verbatim from the deployed OpsPortal bundle
 // (deployed-reference/assets/OpsPortal-dIeH6Okr.js).

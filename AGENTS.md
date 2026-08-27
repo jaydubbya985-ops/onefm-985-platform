@@ -122,23 +122,29 @@ Push to `main` triggers `.github/workflows/deploy.yml` → build → Netlify pro
 - `VITE_SUPABASE_URL` — optional for build, required for ops portal
 - `VITE_SUPABASE_ANON_KEY` — optional for build, required for ops portal
 
-## NEXT RUN (copy this prompt to cloud agent or desktop)
+## Non-stop loop (Cloud / Claude / Kimi)
+
+**This Grok 4.6 Cloud Agent cannot change its own model.** Next run: https://cursor.com/agents → **Claude Opus** (or GPT 5.6 extra-high). Paste `.cursor/HANDOFF.md`.
+
+**Kimi (desktop):** `git pull origin main` in the GitHub checkout, then paste `.cursor/HANDOFF.md`. Do not treat a Downloads folder as source of truth.
+
+**Cursor Automation (overnight):** https://cursor.com/automations → new automation → repo `onefm-985-platform` → model Claude Opus → prompt = contents of `.cursor/HANDOFF.md`.
+
+## NEXT RUN (copy `.cursor/HANDOFF.md` as the whole prompt)
 
 ```
-Pull latest main (or the open ops-proposals PR if not merged). Do not wait.
+Read and follow .cursor/HANDOFF.md. Pull origin main first. Do not merge PRs unless Jay says EXE.
 
-1. Verify ops #/ops password onefm2026 → Proposals: Community Partner PDF downloads with 39,375 listeners, GST, and no invented demographics.
-2. If that PR is open, merge-ready fixes only — then continue ops.
-3. Next ops slice: accepted proposal → contract PDF (same letterhead as invoices/proposals). Then invoice send path with BSB 083-894.
-4. Truth grep src/ for Plemo, unsplash, fake millions, AI-Enhanced.
-5. Commit, push, update PR. Build must pass.
+Benchmark 80% gov-ready: FOOTT can be sent a real invoice PDF; live #/ops is not DEMO; no invented stats; mailto does not mark sent.
 
-If blocked: NEED JAY: one specific action. Do not stall. Do not invent stats.
+If this is a new Cloud Agent: use Claude Opus. New branch off main — never share cursor/invoice-real-logo-c24f.
+
+If blocked on secrets: NEED JAY one line. Keep coding independent work. Build must pass.
 ```
 
 ## Current priorities
 
-1. Ship sendable sponsorship proposals from Ops (PDF + email) — in progress this branch
-2. Keep a cloud agent on the NEXT RUN prompt so work continues between Jay's sessions
-3. Wire Netlify + Supabase env vars for live ops (NEED JAY if missing)
-4. Real invoices + Stripe test payment live
+1. Fill Cloud Agent + Netlify secrets (`VITE_SUPABASE_*`, new `NETLIFY_AUTH_TOKEN`) so live ops leaves DEMO
+2. Start the next Cloud Agent as Claude Opus with `.cursor/HANDOFF.md` (this Grok run cannot upgrade itself)
+3. Merge PR #12 only when Jay says EXE (real logo on live `#/ops`)
+4. Public site craft from `programGuide.ts` + `townData.ts` + `/public/brand/` only

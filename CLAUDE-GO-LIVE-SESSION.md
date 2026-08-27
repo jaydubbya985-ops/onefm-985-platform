@@ -1,7 +1,10 @@
 # ONE FM 98.5 — Go-Live Tomorrow Session (Claude Code)
 
-**Repo:** `app/` · **Live:** https://onefmops.netlify.app · **Ops:** `#/ops`  
-**Deploy:** push `main` → Netlify auto-build
+**Repo:** GitHub `jaydubbya985-ops/onefm-985-platform` — `git pull origin main` first. Paste `.cursor/HANDOFF.md` for the non-stop 80% brief.  
+**Live:** https://onefmops.netlify.app · **Ops:** `#/ops`  
+**Deploy:** push `main` → Netlify only if `NETLIFY_AUTH_TOKEN` is a valid new PAT.
+
+Copy everything below the line into Claude Code.
 
 Copy everything below the line into Claude Code.
 

@@ -1,5 +1,7 @@
 # KIMI AWWARDS SWARM — ONE FM 98.5 Platform
 
+**Ship work here:** `git pull origin main` in GitHub repo `jaydubbya985-ops/onefm-985-platform`, then paste `.cursor/HANDOFF.md`. The Downloads folder is not source of truth. Breakfast = `programGuide.ts` `BREAKFAST_ROSTER`. Never invent stats.
+
 **Mission:** Elevate onefmops.netlify.app to Awwwards-tier craft (Rock Hall · NTS · RTRFM reference tier) while keeping Brand V3 and absolute truth rules.
 
 ## Brand V3 (non-negotiable)

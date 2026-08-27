@@ -165,12 +165,12 @@ const townData = [
   'Barmah', 'Picola', 'Wunghnu', 'Katandra', 'Tallygaroopna',
 ]
 
-/* ─── Community voice ─── */
+/* ─── What we can say about ourselves, with nobody else's words in our mouth ─── */
 const communityVoice = {
-  quote:
-    "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that.",
-  name: 'Rochester Community Member',
-  role: '2022 Goulburn Valley Floods',
+  statement:
+    'ONE FM 98.5 is licensed to Goulburn Valley Community Radio Inc. under ACMA licence 1385226/1, callsign 3ONE. The station has broadcast from Shepparton since 1989, staffed by volunteers, and carries local sport, community notices and emergency information across the Goulburn Valley.',
+  attribution: 'Goulburn Valley Community Radio Inc.',
+  context: 'Licensed community broadcaster · ACMA 1385226/1',
 }
 
 /* ─── Enquiry Form Data (from pricing.ts) ─── */
@@ -191,7 +191,7 @@ const GVL_GALLERY = [
 
 function GVLGalleryStrip() {
   return (
-    <section className="py-20 bg-[#070707]" data-cursor-label="GVL SPORT">
+    <section className="py-20 bg-one-deep-blue" data-cursor-label="GVL SPORT">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -292,15 +292,15 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="GAME DAY">
+      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-one-navy" data-cursor-label="GAME DAY">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
             <CinegraphBackground slot="gvlGameDay" opacity={0.6} />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/55 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/55 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
         <ParticleField />
@@ -397,7 +397,7 @@ export default function Football() {
       </section>
 
       {/* ── Football Marquee Strip ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-one-deep-blue border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[
@@ -599,7 +599,7 @@ export default function Football() {
             </div>
             <WordReveal text="YOUR AUDIENCE, YOUR COMMUNITY" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a projected population of {stationStats.broadcastPopulation.toLocaleString()}.
+              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley. {stationStats.broadcastPopulation.toLocaleString()} people live in that broadcast area (townData 2026 est.).
             </p>
           </ScrollReveal>
 
@@ -764,38 +764,38 @@ export default function Football() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          SECTION 5 — TESTIMONIALS
+          SECTION 5 — WHO WE ARE
           ═══════════════════════════════════════════ */}
-      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="TESTIMONIALS">
+      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="WHO WE ARE">
         <div className="max-w-[1000px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Star size={18} className="text-one-electric" />
-              <span className="font-label text-one-electric">LOCAL PROOF</span>
+              <span className="font-label text-one-electric">ON THE RECORD</span>
             </div>
-            <WordReveal text="COMMUNITY VOICE" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+            <WordReveal text="WHO YOU'RE SPONSORING" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">
-              Why the Goulburn Valley trusts ONE FM.
+              The licence, the region, and the people behind the microphone.
             </p>
           </ScrollReveal>
 
           <div className="max-w-3xl mx-auto">
             <TiltCard maxTilt={3}>
             <div className="glass-card p-8 text-center">
-              <p className="font-body text-one-white italic mb-6 text-lg leading-relaxed">
-                "{communityVoice.quote}"
+              <p className="font-body text-one-white mb-6 text-lg leading-relaxed">
+                {communityVoice.statement}
               </p>
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-one-white/10 flex items-center justify-center">
                   <User size={18} className="text-one-muted" />
                 </div>
                 <div className="text-left">
-                  <p className="font-h4 text-one-white">{communityVoice.name}</p>
-                  <p className="font-label text-muted text-xs">{communityVoice.role}</p>
+                  <p className="font-h4 text-one-white">{communityVoice.attribution}</p>
+                  <p className="font-label text-muted text-xs">{communityVoice.context}</p>
                 </div>
               </div>
               <p className="font-body-small text-muted text-xs mt-6">
-                GVL sponsor testimonials available on request — {BRAND.email}
+                GVL sponsor references available on request — {BRAND.email}
               </p>
             </div>
             </TiltCard>

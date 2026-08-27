@@ -16,7 +16,7 @@ Jason has **combined type ADHD**. Adapt every session to this:
 ## Project context
 - **Source of truth for live content:** https://fm985.com.au (WordPress, active interviews/news)
 - **New platform:** onefmops.netlify.app — ops portal + next-gen public site
-- **Breakfast hosts (June 2026):** Tim Ahemt (Mon–Tue), Lillian Stone (Wed), Craig Stott (Thu), Di Hunter (Fri) — see `src/data/programGuide.ts`
+- **Breakfast hosts:** `src/data/programGuide.ts` `BREAKFAST_ROSTER` — Tim Ahemt (Mon–Tue), The Big G / Craig Stott (Wed), Ralph Whitehead (Thu), Josh Revens (Fri). Not Plemo. Not Lillian Stone.
 - **Real presenters (from live site, June 2026):** John Painter, Josh Revens, James Manley, Craig Stott
 - **No stock/AI people photos.** Real station assets only.
 - **Goal:** Demonstrate what an amazing *active* community radio website looks like in June 2026.

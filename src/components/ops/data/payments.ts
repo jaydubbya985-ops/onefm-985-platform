@@ -130,6 +130,7 @@ export interface MonthlyRevenue {
   collected: number
 }
 
+// DEMO DATA — illustrative ops charts, not station-audited revenue.
 export const MONTHLY_REVENUE: MonthlyRevenue[] = [
   { month: 'Sep', revenue: 12400, target: 14000, collected: 11800 },
   { month: 'Oct', revenue: 15800, target: 15000, collected: 15200 },

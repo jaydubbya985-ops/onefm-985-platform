@@ -77,6 +77,7 @@ import {
   generateReceiptEmailHtml,
 } from './InvoiceEmailTemplate'
 import InvoiceEmailTemplate from './InvoiceEmailTemplate'
+import { OpsInvoiceSheet } from './OpsInvoiceSheet'
 import { BATCH_DUE_DATE, BATCH_INVOICES } from './data/invoices'
 import { downloadXeroCsv, summariseXeroExport } from './invoices/xeroExport'
 import {
@@ -265,128 +266,23 @@ function StatCard({
 // ---------------------------------------------------------------------------
 
 function InvoicePreview({ invoice }: { invoice: BatchRow }) {
-  const gstOk = verifyGst(invoice.amountExclGst, invoice.gst)
-  const today = new Date().toISOString().split('T')[0]
   return (
-    <div className="bg-white text-gray-900 p-8 rounded-lg shadow-lg max-w-[600px] mx-auto">
-      <div className="flex justify-between items-start border-b-2 border-gray-800 pb-6 mb-6">
-        <div>
-          <div className="bg-[#101010] rounded-lg px-4 py-2 inline-block">
-            <img
-              src="/one-fm-logo-master.svg"
-              alt="ONE FM 98.5"
-              className="h-12 w-auto object-contain"
-            />
-          </div>
-          <p className="text-xs text-gray-400 mt-1">ABN: 92 117 291 771</p>
-        </div>
-        <div className="text-right">
-          <h2 className="text-2xl font-bold text-gray-800">TAX INVOICE</h2>
-          <p className="text-lg font-mono font-bold text-[#D4A853] mt-1">{invoice.number}</p>
-        </div>
-      </div>
-
-      <div className="flex justify-between mb-6 text-sm">
-        <div>
-          <span className="text-gray-500">Issue Date:</span>
-          <span className="ml-2 font-semibold">{formatDate(today)}</span>
-        </div>
-        <div>
-          <span className="text-gray-500">Due Date:</span>
-          <span className="ml-2 font-semibold text-red-600">{formatDate(invoice.dueDate)}</span>
-        </div>
-      </div>
-
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
-        <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Bill To</p>
-        <p className="font-bold text-lg">{invoice.company}</p>
-        {invoice.contactName && <p className="text-gray-600">Attn: {invoice.contactName}</p>}
-        {invoice.email && <p className="text-gray-500 text-sm">{invoice.email}</p>}
-      </div>
-
-      <table className="w-full mb-6">
-        <thead>
-          <tr className="border-b-2 border-gray-800">
-            <th className="text-left py-2 text-xs uppercase tracking-wider text-gray-500">
-              Description
-            </th>
-            <th className="text-right py-2 text-xs uppercase tracking-wider text-gray-500">Qty</th>
-            <th className="text-right py-2 text-xs uppercase tracking-wider text-gray-500">
-              Unit Price
-            </th>
-            <th className="text-right py-2 text-xs uppercase tracking-wider text-gray-500">
-              Amount
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="border-b border-gray-200">
-            <td className="py-3 text-sm">
-              <p className="font-medium">{invoice.description}</p>
-              <p className="text-gray-400 text-xs mt-0.5">{invoice.period}</p>
-            </td>
-            <td className="py-3 text-sm text-right">1</td>
-            <td className="py-3 text-sm text-right">{formatCurrency(invoice.amountExclGst)}</td>
-            <td className="py-3 text-sm text-right font-medium">
-              {formatCurrency(invoice.amountExclGst)}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div className="flex justify-end mb-6">
-        <div className="w-64">
-          <div className="flex justify-between py-1 text-sm">
-            <span className="text-gray-500">Subtotal (excl GST)</span>
-            <span className="font-medium">{formatCurrency(invoice.amountExclGst)}</span>
-          </div>
-          <div className="flex justify-between py-1 text-sm">
-            <span className="text-gray-500">GST (10%)</span>
-            <span className="font-medium">{formatCurrency(invoice.gst)}</span>
-          </div>
-          {gstOk && (
-            <div className="text-right text-xs text-emerald-600 mt-0.5">
-              <CheckCircle2 className="w-3 h-3 inline mr-1" />
-              GST verified
-            </div>
-          )}
-          <div className="flex justify-between py-2 border-t-2 border-gray-800 mt-2">
-            <span className="font-bold text-lg">TOTAL</span>
-            <span className="font-bold text-lg text-[#D4A853]">
-              {formatCurrency(invoice.total)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
-        <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-          Payment Instructions
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div>
-            <span className="text-gray-400">Bank:</span>
-            <span className="ml-2 font-medium">NAB</span>
-          </div>
-          <div>
-            <span className="text-gray-400">Account Name:</span>
-            <span className="ml-2 font-medium">{BANK_ACCOUNT_NAME}</span>
-          </div>
-          <div>
-            <span className="text-gray-400">BSB:</span>
-            <span className="ml-2 font-mono font-medium">{BANK_BSB}</span>
-          </div>
-          <div>
-            <span className="text-gray-400">Account:</span>
-            <span className="ml-2 font-mono font-medium">{BANK_ACCOUNT}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-gray-200 pt-4 text-center text-xs text-gray-400">
-        <p>ONE FM 98.5 • Goulburn Valley Community Radio • ABN 92 117 291 771</p>
-        <p className="mt-0.5">47 Parkside Drive, Shepparton VIC 3630 • (03) 5831 3131</p>
-      </div>
+    <div className="max-w-[600px] mx-auto rounded-lg shadow-lg overflow-hidden">
+      <OpsInvoiceSheet
+        invoice={{
+          number: invoice.number,
+          company: invoice.company,
+          contactName: invoice.contactName,
+          email: invoice.email,
+          description: invoice.description,
+          period: invoice.period ? `Period: ${invoice.period}` : undefined,
+          amountExclGst: invoice.amountExclGst,
+          gst: invoice.gst,
+          total: invoice.total,
+          issueDate: formatDate(invoice.createdAt || new Date().toISOString().split('T')[0]),
+          dueDate: formatDate(invoice.dueDate),
+        }}
+      />
     </div>
   )
 }
@@ -590,15 +486,13 @@ export default function InvoiceBatchSender() {
       }
       const result = await dispatchInvoiceEmail(payload)
       if (result.devMode) {
-        updateStatus(id, 'tested')
         toast(`Not actually sent — no email service configured (dev mode)`, 'warning')
       } else if (result.success) {
         updateStatus(id, 'tested')
         toast(`Test invoice sent to ${recipient}`, 'success')
       } else if (result.usedMailtoFallback) {
         window.location.href = buildMailtoInvoiceUrl(payload)
-        updateStatus(id, 'tested')
-        toast(`Resend unavailable — test email opened for ${recipient}`, 'warning')
+        toast(`Resend unavailable — test email opened for ${recipient}. Status stays untested until a real send succeeds.`, 'warning')
       } else {
         notify(result.error ?? 'Test send failed', 'error')
       }
@@ -648,10 +542,8 @@ export default function InvoiceBatchSender() {
           notify('Failed to generate PDF', 'error')
         }
         window.location.href = buildMailtoInvoiceUrl(payload)
-        if (!testMode) sendBatch([row.id])
-        else updateStatus(row.id, 'tested')
         notify(
-          `PDF downloaded. Email client opened for ${deliveryTo} — attach ${row.number}.pdf before sending.`,
+          `PDF downloaded. Email client opened for ${deliveryTo} — attach ${row.number}.pdf before sending. Status stays unsent until a real send succeeds.`,
           'warning',
         )
       }
@@ -739,7 +631,7 @@ export default function InvoiceBatchSender() {
         })
         if (result.devMode) {
           devMode++
-        } else if (result.success || result.usedMailtoFallback) {
+        } else if (result.success) {
           updateStatus(r.id, 'tested')
           sent++
         }
@@ -795,8 +687,6 @@ export default function InvoiceBatchSender() {
             (index, _total, itemResult) => {
               if (itemResult.success && !itemResult.devMode) {
                 actuallySentIds.push(selected[index - 1].id)
-              } else if (itemResult.usedMailtoFallback) {
-                actuallySentIds.push(selected[index - 1].id)
               }
             },
             testMode ? { testMode: true, testRecipient: testInbox } : undefined,
@@ -816,9 +706,9 @@ export default function InvoiceBatchSender() {
           } else {
             notify(
               testMode
-                ? `Test batch: ${result.sent} sent to ${testInbox}${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''}`
-                : `Batch complete: ${result.sent} sent${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
-              result.failed > 0 ? 'warning' : 'success',
+                ? `Test batch: ${result.sent} emailed to ${testInbox}${result.mailtoFallback ? `, ${result.mailtoFallback} opened in email client (not marked sent)` : ''}${result.failed ? `, ${result.failed} failed` : ''}`
+                : `Batch complete: ${result.sent} emailed${result.mailtoFallback ? `, ${result.mailtoFallback} opened in email client (not marked sent)` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
+              result.failed > 0 || result.mailtoFallback > 0 ? 'warning' : 'success',
             )
           }
         } finally {
