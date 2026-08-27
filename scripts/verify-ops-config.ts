@@ -184,8 +184,16 @@ assert(
   'Resend LIVE requires apex fm985.com.au — a send. subdomain is not enough for accounts@',
 )
 assert(
-  probeSource.includes('resend._domainkey'),
-  'NEED JAY must name the old resend._domainkey TXT that blocks verification',
+  probeSource.includes('expected'),
+  'Resend probe must expose the DNS values Jay has to paste',
+)
+assert(
+  probeSource.includes('cloudflare-dns.com'),
+  'Resend probe must compare Resend expected records to live DNS',
+)
+assert(
+  probeSource.includes('/verify'),
+  'when live DNS matches Resend, probe must trigger domain verify',
 )
 
 assert(

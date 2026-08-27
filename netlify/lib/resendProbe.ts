@@ -14,6 +14,10 @@ export type StationDomainRecord = {
   name: string
   type: string
   status: string
+  expected: string
+  dns: string
+  matches: boolean
+  priority?: number
 }
 
 export type StationDomain = {
@@ -32,34 +36,107 @@ export type ResendProbe = {
 }
 
 const APEX_DNS_FIX =
-  'NEED JAY: SiteGround DNS for fm985.com.au — open Resend → Domains → fm985.com.au and copy the three records over the existing ones (Resend marks them failed). TXT resend._domainkey (replace the old key), MX send (must match Resend’s feedback-smtp host), TXT send (SPF). Do not change the apex Outlook MX.'
+  'NEED JAY: SiteGround DNS for fm985.com.au — paste the expected values from email-status stationDomains[0].records (TXT resend._domainkey, MX send, TXT send). Do not change the apex Outlook MX.'
 
 function isStationDomain(name: string | undefined): boolean {
   if (!name) return false
   return name === INVOICE_FROM_DOMAIN || name.endsWith(`.${INVOICE_FROM_DOMAIN}`)
 }
 
-async function fetchDomainRecords(
-  apiKey: string,
-  id: string,
-): Promise<StationDomainRecord[]> {
+function fqdn(recordName: string, domain: string): string {
+  if (recordName === domain || recordName.endsWith(`.${domain}`)) return recordName
+  return `${recordName}.${domain}`
+}
+
+function stripDnsTxt(value: string): string {
+  return value
+    .replace(/^"|"$/g, '')
+    .replace(/\\"/g, '"')
+    .replace(/\s+/g, '')
+    .trim()
+}
+
+function normalizeExpected(value: string, type: string): string {
+  const raw = value.replace(/^"|"$/g, '').trim()
+  if (type === 'TXT') return stripDnsTxt(raw)
+  return raw.replace(/\.$/, '').toLowerCase()
+}
+
+async function lookupDns(name: string, type: 'TXT' | 'MX'): Promise<string[]> {
+  const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`
   try {
-    const res = await fetch(`https://api.resend.com/domains/${id}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    })
+    const res = await fetch(url, { headers: { Accept: 'application/dns-json' } })
     if (!res.ok) return []
-    const data = (await res.json()) as {
-      records?: Array<{ record?: string; name?: string; type?: string; status?: string }>
-    }
-    return (data.records ?? []).map((r) => ({
-      record: r.record ?? '',
-      name: r.name ?? '',
-      type: r.type ?? '',
-      status: r.status ?? '',
-    }))
+    const data = (await res.json()) as { Answer?: Array<{ data?: string }> }
+    return (data.Answer ?? [])
+      .map((a) => (a.data ?? '').trim())
+      .filter(Boolean)
   } catch {
     return []
   }
+}
+
+async function dnsForRecord(
+  domain: string,
+  rec: { name?: string; type?: string; value?: string; priority?: number },
+): Promise<{ dns: string; matches: boolean }> {
+  const host = fqdn(rec.name ?? '', domain)
+  const type = rec.type === 'MX' ? 'MX' : 'TXT'
+  const answers = await lookupDns(host, type)
+  const expected = rec.value ?? ''
+  const expectedNorm = normalizeExpected(expected, type)
+
+  if (type === 'MX') {
+    const hosts = answers.map((a) => {
+      const parts = a.split(/\s+/)
+      return (parts[parts.length - 1] ?? '').replace(/\.$/, '').toLowerCase()
+    })
+    const match = hosts.includes(expectedNorm)
+    return { dns: hosts.join(' | ') || '(none)', matches: match }
+  }
+
+  const txts = answers.map(stripDnsTxt)
+  const match = txts.some((t) => t === expectedNorm || t.includes(expectedNorm) || expectedNorm.includes(t))
+  return { dns: answers.join(' | ') || '(none)', matches: match }
+}
+
+async function fetchDomainDetail(
+  apiKey: string,
+  id: string,
+): Promise<{ status: string; records: Array<{ record?: string; name?: string; type?: string; status?: string; value?: string; priority?: number }> }> {
+  const res = await fetch(`https://api.resend.com/domains/${id}`, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  })
+  if (!res.ok) return { status: '', records: [] }
+  const data = (await res.json()) as {
+    status?: string
+    records?: Array<{ record?: string; name?: string; type?: string; status?: string; value?: string; priority?: number }>
+  }
+  return { status: data.status ?? '', records: data.records ?? [] }
+}
+
+async function triggerVerify(apiKey: string, id: string): Promise<void> {
+  try {
+    await fetch(`https://api.resend.com/domains/${id}/verify`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}` },
+    })
+  } catch {
+    // verify is best-effort — DNS may still be wrong
+  }
+}
+
+function needJayFrom(apex: StationDomain | undefined): string {
+  if (!apex) return APEX_DNS_FIX
+  const failed = apex.records.filter((r) => !r.matches)
+  if (failed.length === 0) {
+    return 'NEED JAY: DNS matches Resend — wait for Verify, or click Verify in Resend → Domains → fm985.com.au. Do not change Outlook MX.'
+  }
+  const lines = failed.map((r) => {
+    const prio = r.type === 'MX' && r.priority != null ? ` priority ${r.priority}` : ''
+    return `${r.type} ${r.name}${prio} → ${r.expected}`
+  })
+  return `NEED JAY: SiteGround DNS for fm985.com.au (do not change Outlook MX). Paste:\n${lines.join('\n')}`
 }
 
 export async function probeResend(apiKey: string | undefined): Promise<ResendProbe> {
@@ -105,13 +182,42 @@ export async function probeResend(apiKey: string | undefined): Promise<ResendPro
     const listed = (data.data ?? []).filter((d) => isStationDomain(d.name))
 
     const stationDomains: StationDomain[] = []
+    let apexId: string | undefined
+    let dnsAllMatch = false
+
     for (const d of listed) {
-      const records = d.id ? await fetchDomainRecords(apiKey, d.id) : []
+      if (!d.id || !d.name) continue
+      const detail = await fetchDomainDetail(apiKey, d.id)
+      const records: StationDomainRecord[] = []
+      for (const r of detail.records) {
+        const seen = await dnsForRecord(d.name, r)
+        records.push({
+          record: r.record ?? '',
+          name: r.name ?? '',
+          type: r.type ?? '',
+          status: r.status ?? '',
+          expected: (r.value ?? '').replace(/^"|"$/g, ''),
+          dns: seen.dns,
+          matches: seen.matches,
+          priority: r.priority,
+        })
+      }
+      if (d.name === INVOICE_FROM_DOMAIN) {
+        apexId = d.id
+        dnsAllMatch = records.length > 0 && records.every((r) => r.matches)
+      }
       stationDomains.push({
-        name: d.name ?? '',
-        status: d.status ?? '',
+        name: d.name,
+        status: detail.status || d.status || '',
         records,
       })
+    }
+
+    if (apexId && dnsAllMatch) {
+      await triggerVerify(apiKey, apexId)
+      const refreshed = await fetchDomainDetail(apiKey, apexId)
+      const apex = stationDomains.find((d) => d.name === INVOICE_FROM_DOMAIN)
+      if (apex && refreshed.status) apex.status = refreshed.status
     }
 
     const apex = stationDomains.find((d) => d.name === INVOICE_FROM_DOMAIN)
@@ -124,7 +230,7 @@ export async function probeResend(apiKey: string | undefined): Promise<ResendPro
       fromDomainVerified,
       domainStatus: status,
       stationDomains,
-      needJay: fromDomainVerified ? null : APEX_DNS_FIX,
+      needJay: fromDomainVerified ? null : needJayFrom(apex),
     }
   } catch {
     return {
