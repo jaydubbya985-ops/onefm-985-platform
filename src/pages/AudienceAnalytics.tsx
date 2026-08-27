@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Download,
@@ -134,68 +134,13 @@ const anomalyData: { time: string; change: string; reason: string; severity: str
 
 /* ─────────── helpers ─────────── */
 
-/* ─────────── heatmap ─────────── */
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-const HOURS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}`)
-
-// Relative activity index (0–100) based on typical community radio listening patterns.
-// This is indicative only — not derived from actual ONE FM streaming data.
-// Replace with real Radio.co analytics data when available.
-function generateHeatmapData() {
-  const data: number[][] = []
-  for (let d = 0; d < 7; d++) {
-    const row: number[] = []
-    for (let h = 0; h < 24; h++) {
-      let base = 0
-      if (d < 5) {
-        if (h >= 6 && h <= 9) base = 90
-        else if (h >= 16 && h <= 19) base = 90
-        else if (h >= 12 && h <= 14) base = 60
-        else if (h >= 20 && h <= 23) base = 50
-        else base = 15
-      } else {
-        if (h >= 9 && h <= 12) base = 70
-        else if (h >= 18 && h <= 22) base = 80
-        else base = 20
-      }
-      row.push(Math.min(100, Math.round(base)))
-    }
-    data.push(row)
-  }
-  return data
-}
-
-function HeatmapCell({ value, isCurrent }: { value: number; isCurrent: boolean }) {
-  let bg = 'transparent'
-  if (value > 85) bg = 'rgba(230,57,70,0.8)'
-  else if (value > 60) bg = 'rgba(212,150,58,0.7)'
-  else if (value > 30) bg = 'rgba(212,150,58,0.3)'
-  else if (value > 10) bg = 'rgba(212,150,58,0.1)'
-
-  return (
-    <motion.div
-      className={`relative w-full aspect-square rounded-[3px] cursor-pointer transition-all duration-200 hover:scale-[1.3] hover:z-10 ${isCurrent ? 'ring-1 ring-one-gold' : ''}`}
-      style={{ backgroundColor: bg }}
-      initial={{ opacity: 0, scale: 0 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, ease: easeOutExpo }}
-      title={`${value}% capacity`}
-    />
-  )
-}
-
 /* ═══════════════════════════════════
    AUDIENCE ANALYTICS PAGE
    ═══════════════════════════════════ */
 export default function AudienceAnalytics() {
   const [dateRange, setDateRange] = useState('7 Days')
   const [chartTab, setChartTab] = useState('Listeners')
-  const [weekdayMode, setWeekdayMode] = useState(true)
   const [dismissInsight, setDismissInsight] = useState(false)
-
-  const heatmapData = useMemo(() => generateHeatmapData(), [weekdayMode])
-  const currentHour = new Date().getHours()
 
   return (
     <Layout>
@@ -330,7 +275,7 @@ export default function AudienceAnalytics() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 POPULATION · LICENSED 1989</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} BROADCAST AREA POPULATION</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DATA UPDATED · EVERY 2 SECONDS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 · NOT LIVE STREAM COUNTS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.yearsBroadcasting} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
           ]}
         />
@@ -340,78 +285,17 @@ export default function AudienceAnalytics() {
       <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="HEATMAP">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <motion.div
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+            className="mb-8"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <div>
-              <WordReveal text="LISTENERSHIP HEATMAP" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-              <p className="font-body-small text-muted mt-1">Indicative community-radio pattern only — not ONE FM stream analytics</p>
-            </div>
-            <div className="flex bg-one-navy/50 rounded-full p-1 border border-one-border">
-              <button
-                onClick={() => setWeekdayMode(true)}
-                data-cursor-label="WEEKDAY"
-                className={`px-4 py-1.5 rounded-full font-label text-xs transition-all ${weekdayMode ? 'text-one-navy bg-one-gold' : 'text-one-white/60 hover:text-one-white'}`}
-              >
-                Weekday
-              </button>
-              <button
-                onClick={() => setWeekdayMode(false)}
-                data-cursor-label="WEEKEND"
-                className={`px-4 py-1.5 rounded-full font-label text-xs transition-all ${!weekdayMode ? 'text-one-navy bg-one-gold' : 'text-one-white/60 hover:text-one-white'}`}
-              >
-                Weekend
-              </button>
-            </div>
+            <WordReveal text="HOUR-BY-HOUR LISTENING" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <p className="font-body-small text-muted mt-1">
+              A heatmap of when people listen is data pending until Radio.co stream analytics are connected. We will not publish a typical-pattern grid as if it were ONE FM data.
+            </p>
           </motion.div>
-
-          <TiltCard maxTilt={3}>
-          <motion.div
-            className="glass-card p-4 sm:p-6 overflow-x-auto"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Hours header */}
-            <div className="grid grid-cols-[50px_repeat(24,1fr)] gap-[3px] mb-[3px]">
-              <div />
-              {HOURS.map((h) => (
-                <div key={h} className="text-center font-micro text-muted text-[9px] hidden sm:block">
-                  {h}
-                </div>
-              ))}
-            </div>
-            {/* Heatmap rows */}
-            {DAYS.map((day, dIdx) => (
-              <div key={day} className="grid grid-cols-[50px_repeat(24,1fr)] gap-[3px] mb-[3px]">
-                <div className="flex items-center font-label text-[10px] text-one-white">{day}</div>
-                {heatmapData[dIdx].map((val, hIdx) => (
-                  <HeatmapCell
-                    key={hIdx}
-                    value={val}
-                    isCurrent={hIdx === currentHour && new Date().getDay() === (dIdx + 1) % 7}
-                  />
-                ))}
-              </div>
-            ))}
-            {/* Legend */}
-            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-one-border">
-              <span className="font-micro text-muted">Low</span>
-              <div className="flex gap-[3px]">
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.05)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.15)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.35)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.6)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(230,57,70,0.8)' }} />
-              </div>
-              <span className="font-micro text-muted">Peak</span>
-            </div>
-          </motion.div>
-          </TiltCard>
 
           {/* AI Insight */}
           <AnimatePresence>
