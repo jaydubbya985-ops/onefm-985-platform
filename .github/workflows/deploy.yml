@@ -18,6 +18,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Verify Netlify can see this site
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ] || [ -z "$NETLIFY_SITE_ID" ]; then
+            echo "::error::GitHub secrets NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID are required. Site ID must be 8df4de74-d9a8-42ce-9316-61bd06475c94."
+            exit 1
+          fi
+          code=$(curl -sS -o /tmp/netlify-site.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${NETLIFY_AUTH_TOKEN}" \
+            "https://api.netlify.com/api/v1/sites/${NETLIFY_SITE_ID}")
+          if [ "$code" != "200" ]; then
+            echo "::error::Netlify HTTP ${code}: could not retrieve site. Replace GitHub secret NETLIFY_AUTH_TOKEN with a NEW personal access token (Netlify → User settings → Applications → New access token). Then re-run this workflow. Empty-commit retries will not fix this. Site ID must be 8df4de74-d9a8-42ce-9316-61bd06475c94."
+            exit 1
+          fi
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
