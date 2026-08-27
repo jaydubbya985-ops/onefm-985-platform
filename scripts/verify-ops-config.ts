@@ -118,6 +118,19 @@ const okJson = await readFunctionJson<{ success?: boolean }>(
 )
 assert(okJson?.success === true, 'JSON success must parse')
 
+const packSource = readFileSync(
+  new URL('./pack-drop-zip.mjs', import.meta.url),
+  'utf8',
+)
+assert(packSource.includes('kdl'), 'drop zip must omit unused KDL club logos')
+assert(packSource.includes('189,680'), 'drop zip must refuse stale OG HTML')
+
+const viteSource = readFileSync(new URL('../vite.config.ts', import.meta.url), 'utf8')
+assert(
+  viteSource.includes('omitUnusedClubLogos'),
+  'production build must omit unused club logo dumps from dist',
+)
+
 const foott = realBatchInvoices().find((i) => i.number === 'ONEFM-2026-011')
 assert(!!foott, 'FOOTT ONEFM-2026-011 must exist in realBatchInvoices')
 assert(foott?.email === 'peter@foott.com.au', 'FOOTT must have peter@foott.com.au')

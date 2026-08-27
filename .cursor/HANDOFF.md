@@ -35,7 +35,9 @@
 
 ## NEED JAY (one action)
 
-Open https://app.netlify.com/sites/onefmops/deploys — drag **`onefmops_drop_with_snippet_boot.zip`** onto Production, reply **done**.
+Open https://app.netlify.com/sites/onefmops/deploys — drag **`onefmops_drop_phone.zip`** onto Production, reply **done**.
+
+Smaller zip: unused GVL/KDL club logo dumps are omitted. After PR CI finishes, the zip is also a GitHub Action artifact named `onefmops-production-drop` on PR #16.
 
 Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`. Do not generate a PAT.
 

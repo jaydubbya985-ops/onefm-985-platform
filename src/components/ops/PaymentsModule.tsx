@@ -306,7 +306,6 @@ function PaymentsTab() {
   const [reference, setReference] = useState('')
   const [notes, setNotes] = useState('')
   const [copied, setCopied] = useState(false)
-  const [stripeConnected, setStripeConnected] = useState(STRIPE_KEY_CONFIGURED)
   const [stripeTestMode, setStripeTestMode] = useState(true)
   const [paypalConnected, setPaypalConnected] = useState(false)
   const [paypalTestMode, setPaypalTestMode] = useState(true)
@@ -856,11 +855,13 @@ function PaymentsTab() {
                 <div className="flex items-center gap-2.5">
                   <div
                     className={`h-2.5 w-2.5 rounded-full ${
-                      stripeConnected ? 'bg-emerald-500' : 'bg-red-500'
+                      STRIPE_KEY_CONFIGURED ? 'bg-amber-500' : 'bg-red-500'
                     }`}
                   />
                   <span className="text-sm text-[#F4F1EA]">
-                    {stripeConnected ? 'Connected' : 'Disconnected'}
+                    {STRIPE_KEY_CONFIGURED
+                      ? 'Publishable key present — invoice checkout not wired'
+                      : 'Not connected'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -881,23 +882,17 @@ function PaymentsTab() {
               )}
               <Button
                 onClick={() => {
-                  if (!stripeConnected && !STRIPE_KEY_CONFIGURED) {
-                    toast(
-                      'Add VITE_STRIPE_PUBLISHABLE_KEY to your environment first',
-                      'error',
-                    )
-                    return
-                  }
-                  setStripeConnected((c) => !c)
+                  toast(
+                    STRIPE_KEY_CONFIGURED
+                      ? 'Stripe Checkout is not wired for invoices — use BSB 083-894'
+                      : 'Add VITE_STRIPE_PUBLISHABLE_KEY to your environment first',
+                    STRIPE_KEY_CONFIGURED ? 'info' : 'error',
+                  )
                 }}
                 variant="outline"
-                className={`w-full text-xs font-semibold ${
-                  stripeConnected
-                    ? 'border-red-800 text-red-400 hover:bg-red-950/30'
-                    : 'border-[#635BFF] text-[#635BFF] hover:bg-[#635BFF]/10'
-                }`}
+                className="w-full text-xs font-semibold border-[#635BFF] text-[#635BFF] hover:bg-[#635BFF]/10"
               >
-                {stripeConnected ? 'Disconnect Stripe' : 'Connect Stripe Account'}
+                Pay invoices via NAB BSB 083-894
               </Button>
             </CardContent>
           </Card>

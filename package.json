@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "deploy": "npm run build && npx netlify deploy --prod --dir=dist",
     "deploy:preview": "npm run build && npx netlify deploy --dir=dist",
+    "pack:drop": "npm run build && node scripts/pack-drop-zip.mjs",
     "connect:drive": "powershell -ExecutionPolicy Bypass -File scripts/connect-google-drive.ps1",
     "list:drive": "powershell -ExecutionPolicy Bypass -File scripts/list-google-drive.ps1",
     "sync:drive": "powershell -ExecutionPolicy Bypass -File scripts/sync-google-drive.ps1"
