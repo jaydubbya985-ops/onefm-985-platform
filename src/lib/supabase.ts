@@ -44,15 +44,33 @@ function applyRuntimeConfig(url: string, anonKey: string): void {
   supabase = makeClient(url, anonKey)
 }
 
+function readWindowOpsConfig(): ReturnType<typeof resolveOpsConfig> {
+  if (typeof window === 'undefined') return { configured: false }
+  const raw = window.__ONEFM_OPS__
+  return resolveOpsConfig({
+    VITE_SUPABASE_URL: raw?.url,
+    VITE_SUPABASE_ANON_KEY: raw?.anonKey,
+  })
+}
+
 /**
- * Load LIVE credentials from Netlify site env when Vite did not bake them.
- * Call once before React mounts. No-ops when VITE_* is already valid.
+ * Load LIVE credentials when Vite did not bake them:
+ * 1. window.__ONEFM_OPS__ (Netlify snippet injection — works with drag-drop deploys)
+ * 2. /.netlify/functions/ops-config (Netlify site env at request time)
  */
 export async function initSupabaseFromRuntime(): Promise<void> {
   if (isSupabaseConfigured()) {
     initSupabaseAuthRefresh()
     return
   }
+
+  const fromWindow = readWindowOpsConfig()
+  if (fromWindow.configured) {
+    applyRuntimeConfig(fromWindow.url, fromWindow.anonKey)
+    initSupabaseAuthRefresh()
+    return
+  }
+
   if (typeof fetch === 'undefined') return
 
   const ctrl = new AbortController()
@@ -80,7 +98,7 @@ export async function initSupabaseFromRuntime(): Promise<void> {
       initSupabaseAuthRefresh()
     }
   } catch {
-    // Stay DEMO until Netlify env exists or the function is deployed.
+    // Stay DEMO until Netlify env, snippet, or the function exists.
   } finally {
     clearTimeout(timer)
   }

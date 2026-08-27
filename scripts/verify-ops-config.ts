@@ -68,6 +68,10 @@ assert(
   supabaseSource.includes("startsWith('<')"),
   'runtime fetch must ignore SPA HTML fallback',
 )
+assert(
+  supabaseSource.includes('__ONEFM_OPS__'),
+  'runtime init must read Netlify snippet window.__ONEFM_OPS__',
+)
 
 if (fail.length) {
   console.error('verify-ops-config failed:\n' + fail.map((f) => `  ${f}`).join('\n'))
