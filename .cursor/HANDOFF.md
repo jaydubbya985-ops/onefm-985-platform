@@ -18,7 +18,7 @@
 | Mailto / dry-run honesty | **On live.** Mailto / `devMode` / SPA HTML / `dryRun` do **not** mark sent. Production dry-run: `wouldSendTo=peter@foott.com.au`, `sent=false`, `hasPdf=true`. |
 | Public truth | **On live.** OG **189,680**. `/gov-ready-gate.txt` reads `og=189680`. Audience shows 39,375 weekly listeners (ABS 2021 via townData). |
 | Live `#/ops` | **LIVE — not DEMO**. `sb_secret_` is rejected as LIVE credentials. |
-| FOOTT actually emailed | **Blocked on Verify.** Live DNS **matches** Resend (TXT `resend._domainkey`, MX `send`, TXT `send`). Domain status moved **failed → pending** after auto-verify. `fromDomainVerified` is still false. Do not change SiteGround DNS. |
+| FOOTT actually emailed | **Blocked.** Live DNS matches; all three records are **verified**; domain status is **pending**. A real `send-invoice` POST to `accounts@fm985.com.au` (not Peter) returned **403** `The fm985.com.au domain is not verified`. Do not change SiteGround DNS. |
 
 ## Do this run (order)
 
