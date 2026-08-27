@@ -131,7 +131,7 @@ export default function SponsorshipKit() {
             `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
             `${stationStats.totalTowns} towns across the Goulburn Valley`,
             'Packages from $50/week',
-            `Supporting ${stationStats.nfpsSupported}+ local not-for-profits`,
+            'Donated airtime for local not-for-profits',
           ]}
           delay={0.4}
         />
@@ -140,7 +140,7 @@ export default function SponsorshipKit() {
         <StatsStrip
           stats={[
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (ABS 2021)' },
+            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (2026 est.)' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
             { n: '$50', t: 'Per week — entry package' },
           ]}

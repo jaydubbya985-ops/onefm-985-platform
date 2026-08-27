@@ -1,23 +1,17 @@
-import { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+/**
+ * Audience & Reach — public page for Goulburn Valley Community Radio Inc.
+ *
+ * Accountability rule: every number rendered here is computed at runtime from
+ * src/data/townData.ts (ABS 2021 base, 2026 projection) or src/data/pricing.ts,
+ * and carries its source on screen. ONE FM has no stream-level measurement, so
+ * listening behaviour — sessions, dayparts, platform followers, trends over
+ * time — is shown as pending rather than modelled. Do not add a chart here that
+ * cannot be traced back to the town data.
+ */
+import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import { MapPin, Radio, Users, Clock } from 'lucide-react'
 import {
-  Download,
-  Share2,
-  Sparkles,
-  TrendingUp,
-  TrendingDown,
-  Radio,
-  Headphones,
-  Mic,
-  X,
-  Calendar,
-  ChevronDown,
-  AlertTriangle,
-  FileText,
-} from 'lucide-react'
-import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   XAxis,
@@ -25,571 +19,298 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
   Cell,
 } from 'recharts'
+import { motion } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { WordReveal } from '@/components/WordReveal'
-import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { Marquee } from '@/components/Marquee'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { SEO } from '@/components/SEO'
+import { BRAND_COLORS } from '@/lib/brand'
 import { stationStats } from '@/data/pricing'
+import { towns } from '@/data/townData'
 
-/* ─────────── easing ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
-/* ─────────── animation variants ─────────── */
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay, ease: easeOutExpo },
-  }),
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeOutExpo } },
 }
 
-const staggerContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
-}
-
+const staggerContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }
 const cardStagger = {
   hidden: { opacity: 0, y: 25 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: easeOutExpo },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOutExpo } },
 }
 
-/* ─────────── data ─────────── */
+const SOURCE = 'ABS 2021 via src/data/townData.ts'
 
-// ABS 2021 age demographics for Greater Shepparton LGA (source: abs.gov.au)
-const ageDemoData = [
-  { age: '0-17', percent: 24, count: null, growth: null },
-  { age: '18-34', percent: 20, count: null, growth: null },
-  { age: '35-54', percent: 26, count: null, growth: null },
-  { age: '55-74', percent: 22, count: null, growth: null },
-  { age: '75+', percent: 8, count: null, growth: null },
-]
-
-// ABS 2021 gender — Greater Shepparton LGA
-const genderData = [
-  { name: 'Male', value: 49, color: '#B6FF00' },
-  { name: 'Female', value: 51, color: '#D4963A' },
-]
-
-// Top towns by estimated weekly listeners (source: townData.ts / ABS 2021)
-const locationData = [
-  { region: 'Shepparton', listeners: 16488, pct: 42 },
-  { region: 'Mooroopna', listeners: 3710, pct: 9 },
-  { region: 'Benalla', listeners: 2565, pct: 7 },
-  { region: 'Cobram', listeners: 2244, pct: 6 },
-  { region: 'Other 21 towns', listeners: 14368, pct: 36 },
-]
-
-const platformCards = [
-  {
-    icon: Radio,
-    title: 'FM Radio',
-    stat: '98.5 FM',
-    label: '~100km radius',
-    share: '25 towns · Goulburn Murray',
-    status: 'Live',
-    statusColor: '#B6FF00',
-    accent: '#D4963A',
-    trend: [34000, 35200, 35800, 36200, 37100, 37800, 37500, 38200, 38500, 38900, 39100, 39375],
-  },
-  {
-    icon: Headphones,
-    title: 'Live Stream',
-    stat: 'Online',
-    label: 'fm985.com.au',
-    share: 'Radio.co · Community Radio Plus',
-    status: 'Live',
-    statusColor: '#B6FF00',
-    accent: '#B6FF00',
-    trend: [450, 480, 510, 490, 520, 555, 540, 580, 610, 590, 625, 650],
-  },
-  {
-    icon: Share2,
-    title: 'Facebook',
-    stat: 'Community',
-    label: 'page',
-    share: 'facebook.com/onefmshepparton',
-    status: 'Active',
-    statusColor: '#F0C75E',
-    accent: '#9B5DE5',
-    trend: [1100, 1150, 1200, 1180, 1220, 1250, 1230, 1270, 1300, 1280, 1320, 1350],
-  },
-  {
-    icon: Mic,
-    title: 'SoundCloud Archive',
-    stat: 'Interviews',
-    label: 'fm985.com.au',
-    share: 'Community interview replays',
-    status: 'Active',
-    statusColor: '#B6FF00',
-    accent: '#FF6B6B',
-    trend: [85, 90, 95, 88, 102, 98, 110, 105, 112, 118, 115, 122],
-  },
-]
-
-// Notable audience events — sourced from station records and programme notes
-const anomalyData: { time: string; change: string; reason: string; severity: string }[] = [
-  { time: 'GVL Season Opener · Mar', change: '+18%', reason: 'Sat 1pm live match commentary — season kick-off drew strong breakfast lead-in audience', severity: 'growth' },
-  { time: 'Easter Long Weekend · Apr', change: '+12%', reason: 'Country shows and community announcements during Easter public holidays', severity: 'growth' },
-  { time: 'Australia Day · Jan', change: '-9%', reason: 'Summer holiday listener dip — consistent pattern across regional community stations', severity: 'drop' },
-  { time: 'GVL Grand Final · Sep', change: '+31%', reason: 'Peak match-day audience of the year — live commentary and post-match coverage', severity: 'growth' },
-]
-
-// 7-day estimated listener distribution (relative to weekly total of 39,375)
-// Sat peaks on match day; Mon & Fri strong with breakfast drive programming
-const weeklyListenerData = [
-  { day: 'Mon', listeners: 6200 },
-  { day: 'Tue', listeners: 5800 },
-  { day: 'Wed', listeners: 5600 },
-  { day: 'Thu', listeners: 5700 },
-  { day: 'Fri', listeners: 6100 },
-  { day: 'Sat', listeners: 6900 },
-  { day: 'Sun', listeners: 3075 },
-]
-
-// Estimated monthly listener projections — ABS 2021 regional model
-// GVL footy season (Mar–Sep) drives higher engagement; summer holiday dip Jan–Feb.
-const monthlyListenerData = [
-  { month: 'Jan', listeners: 33500 },
-  { month: 'Feb', listeners: 35800 },
-  { month: 'Mar', listeners: 37200 },
-  { month: 'Apr', listeners: 38900 },
-  { month: 'May', listeners: 40200 },
-  { month: 'Jun', listeners: 41800 },
-  { month: 'Jul', listeners: 43100 },
-  { month: 'Aug', listeners: 44500 },
-  { month: 'Sep', listeners: 42900 },
-  { month: 'Oct', listeners: 40100 },
-  { month: 'Nov', listeners: 38200 },
-  { month: 'Dec', listeners: 35100 },
-]
-
-// Audience segments based on typical community radio programming blocks (indicative only)
-const smartSegments = [
-  { name: 'Breakfast (6–9am)', pct: 35, color: '#D4963A' },
-  { name: 'Mornings (9am–12pm)', pct: 28, color: '#B6FF00' },
-  { name: 'Afternoons (12–4pm)', pct: 22, color: '#9B5DE5' },
-  { name: 'Evenings (6pm+)', pct: 15, color: '#F0C75E' },
-]
-
-/* ─────────── helpers ─────────── */
-
-/* ─────────── heatmap ─────────── */
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-const HOURS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}`)
-
-// Relative activity index (0–100) based on typical community radio listening patterns.
-// This is indicative only — not derived from actual ONE FM streaming data.
-// Replace with real Radio.co analytics data when available.
-function generateHeatmapData() {
-  const data: number[][] = []
-  for (let d = 0; d < 7; d++) {
-    const row: number[] = []
-    for (let h = 0; h < 24; h++) {
-      let base = 0
-      if (d < 5) {
-        if (h >= 6 && h <= 9) base = 80 + Math.random() * 20
-        else if (h >= 16 && h <= 19) base = 85 + Math.random() * 15
-        else if (h >= 12 && h <= 14) base = 50 + Math.random() * 20
-        else if (h >= 20 && h <= 23) base = 40 + Math.random() * 25
-        else base = 10 + Math.random() * 15
-      } else {
-        if (h >= 9 && h <= 12) base = 60 + Math.random() * 25
-        else if (h >= 18 && h <= 22) base = 70 + Math.random() * 20
-        else base = 15 + Math.random() * 20
-      }
-      row.push(Math.min(100, Math.round(base)))
-    }
-    data.push(row)
-  }
-  return data
+/** Population-weighted mean of a per-town percentage or rate. */
+function weightedMean(pick: (t: (typeof towns)[number]) => number): number {
+  const pop = towns.reduce((a, t) => a + t.population2026, 0)
+  return towns.reduce((a, t) => a + pick(t) * t.population2026, 0) / pop
 }
 
-function HeatmapCell({ value, isCurrent }: { value: number; isCurrent: boolean }) {
-  let bg = 'transparent'
-  if (value > 85) bg = 'rgba(230,57,70,0.8)'
-  else if (value > 60) bg = 'rgba(212,150,58,0.7)'
-  else if (value > 30) bg = 'rgba(212,150,58,0.3)'
-  else if (value > 10) bg = 'rgba(212,150,58,0.1)'
+const DISTANCE_RINGS = [
+  { label: 'Within 25km', min: 0, max: 25 },
+  { label: '25–50km', min: 25, max: 50 },
+  { label: '50–75km', min: 50, max: 75 },
+  { label: '75–100km', min: 75, max: Infinity },
+]
 
+function SourceNote({ children }: { children: React.ReactNode }) {
+  return <p className="font-label text-[10px] text-muted/70 mt-3 leading-relaxed">{children}</p>
+}
+
+function SectionHead({ title, sub }: { title: string; sub: string }) {
   return (
     <motion.div
-      className={`relative w-full aspect-square rounded-[3px] cursor-pointer transition-all duration-200 hover:scale-[1.3] hover:z-10 ${isCurrent ? 'ring-1 ring-one-gold' : ''}`}
-      style={{ backgroundColor: bg }}
-      initial={{ opacity: 0, scale: 0 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, ease: easeOutExpo }}
-      title={`${value}% capacity`}
-    />
+      className="mb-8"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-100px' }}
+      variants={fadeUp}
+    >
+      <WordReveal text={title} className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+      <p className="font-body-small text-muted mt-1">{sub}</p>
+    </motion.div>
   )
 }
 
-/* ═══════════════════════════════════
-   AUDIENCE ANALYTICS PAGE
-   ═══════════════════════════════════ */
 export default function AudienceAnalytics() {
-  const [dateRange, setDateRange] = useState('7 Days')
-  const [chartTab, setChartTab] = useState('Listeners')
-  const [weekdayMode, setWeekdayMode] = useState(true)
-  const [dismissInsight, setDismissInsight] = useState(false)
-  const [selectedSegment, setSelectedSegment] = useState<string | null>(null)
+  /* Town reach expressed as a share of the town-level total. Shares are used
+     rather than absolute counts because the per-town estimates total 39,577
+     while the station publishes the more conservative 39,375 headline. */
+  const townShare = useMemo(() => {
+    const total = towns.reduce((a, t) => a + t.listenersEstimate, 0)
+    const ranked = [...towns].sort((a, b) => b.listenersEstimate - a.listenersEstimate)
+    const top = ranked.slice(0, 6)
+    const restShare = ranked.slice(6).reduce((a, t) => a + t.listenersEstimate, 0) / total
+    return [
+      ...top.map((t) => ({ region: t.name, share: +((t.listenersEstimate / total) * 100).toFixed(1) })),
+      { region: `Other ${ranked.length - 6} towns`, share: +(restShare * 100).toFixed(1) },
+    ]
+  }, [])
 
-  const heatmapData = useMemo(() => generateHeatmapData(), [weekdayMode])
-  const currentHour = new Date().getHours()
+  const rings = useMemo(
+    () =>
+      DISTANCE_RINGS.map((r) => {
+        const inRing = towns.filter(
+          (t) => t.distanceFromSheppartonKm >= r.min && t.distanceFromSheppartonKm < r.max
+        )
+        return {
+          label: r.label,
+          towns: inRing.length,
+          population: inRing.reduce((a, t) => a + t.population2026, 0),
+        }
+      }).filter((r) => r.towns > 0),
+    []
+  )
+
+  const ageBands = useMemo(() => {
+    const bands = [
+      { label: 'Median age under 40', test: (n: number) => n < 40 },
+      { label: '40–49', test: (n: number) => n >= 40 && n < 50 },
+      { label: '50–59', test: (n: number) => n >= 50 && n < 60 },
+      { label: '60 and over', test: (n: number) => n >= 60 },
+    ]
+    return bands
+      .map((b) => ({ band: b.label, towns: towns.filter((t) => b.test(t.medianAge)).length }))
+      .filter((b) => b.towns > 0)
+  }, [])
+
+  const profile = useMemo(
+    () => [
+      {
+        label: 'Median age',
+        value: `${weightedMean((t) => t.medianAge).toFixed(1)} yrs`,
+        note: 'Population-weighted mean of the 25 town medians',
+      },
+      {
+        label: 'Born overseas',
+        value: `${weightedMean((t) => t.bornOverseasPercent).toFixed(1)}%`,
+        note: 'Population-weighted across the broadcast area',
+      },
+      {
+        label: 'Aboriginal & Torres Strait Islander',
+        value: `${weightedMean((t) => t.indigenousPercent).toFixed(1)}%`,
+        note: 'Population-weighted across the broadcast area',
+      },
+      {
+        label: 'Median household income',
+        value: `$${Math.round(weightedMean((t) => t.medianIncomePerWeek)).toLocaleString()}/wk`,
+        note: 'Population-weighted across the broadcast area',
+      },
+    ],
+    []
+  )
+
+  const kpis = [
+    {
+      label: 'Est. weekly listeners',
+      value: stationStats.weeklyListeners,
+      suffix: '',
+      color: BRAND_COLORS.gold,
+      note: 'Population-based estimate · ABS 2021',
+    },
+    {
+      label: 'Towns in broadcast area',
+      value: stationStats.totalTowns,
+      suffix: '',
+      color: BRAND_COLORS.neonSky,
+      note: `~${stationStats.broadcastRadiusKm}km licence radius from Shepparton`,
+    },
+    {
+      label: 'People in broadcast area',
+      value: stationStats.broadcastPopulation,
+      suffix: '',
+      color: BRAND_COLORS.champagne,
+      note: '2026 projection · sum of the 25 towns',
+    },
+    {
+      label: 'Years broadcasting',
+      value: stationStats.yearsBroadcasting,
+      suffix: ' yrs',
+      color: BRAND_COLORS.red,
+      note: 'Licensed 1989 · callsign 3ONE',
+    },
+  ]
 
   return (
     <Layout>
-      <SEO title="Audience Analytics" description="Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across 25 towns. Live stream analytics pending Radio.co integration." />
-      {/* ═══════ HERO / LIVE DASHBOARD HEADER ═══════ */}
-      <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="LIVE DASHBOARD">
-        {/* Animated grid background */}
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
+      <SEO
+        title="Audience & Reach — ONE FM 98.5"
+        description={`ONE FM 98.5 reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns within ~${stationStats.broadcastRadiusKm}km of Shepparton. Every figure is derived from ABS 2021 census data — stream-level analytics are not yet measured.`}
+      />
+
+      {/* ═══════ HERO ═══════ */}
+      <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="AUDIENCE">
+        <div
+          className="absolute inset-0 opacity-[0.05] pointer-events-none"
           style={{
-            backgroundImage: `linear-gradient(#2A2A30 1px, transparent 1px), linear-gradient(90deg, #2A2A30 1px, transparent 1px)`,
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)',
             backgroundSize: '60px 60px',
           }}
         />
         <div aria-hidden className="grain-overlay" />
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 py-12 pt-8">
-          {/* Top bar */}
-          <motion.div
-            className="flex flex-wrap items-center justify-between gap-4 mb-8"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-data-teal opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-data-teal" />
-              </span>
-              <span className="font-label text-data-teal">Live — Updated 2s ago</span>
-              <div className="flex items-end gap-[2px]" aria-hidden style={{ height: 12 }}>
-                {[3, 6, 9, 6, 3].map((h, i) => (
-                  <div
-                    key={i}
-                    className="w-[2px] rounded-sm"
-                    style={{
-                      height: h,
-                      backgroundColor: 'rgba(46,196,182,0.7)',
-                      animation: `freq-bar ${0.7 + i * 0.11}s ease-in-out infinite alternate`,
-                      animationDelay: `${i * 0.07}s`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <select
-                  value={dateRange}
-                  onChange={(e) => setDateRange(e.target.value)}
-                  className="appearance-none glass-card px-4 py-2 pr-10 font-label text-xs text-one-white bg-transparent cursor-pointer focus:outline-none focus:border-one-gold/50"
-                >
-                  <option value="Today">Today</option>
-                  <option value="7 Days">7 Days</option>
-                  <option value="30 Days">30 Days</option>
-                  <option value="90 Days">90 Days</option>
-                  <option value="1 Year">1 Year</option>
-                </select>
-                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
-              </div>
-              <button className="glass-card p-2 hover:border-one-gold/50 transition-colors" data-cursor-label="EXPORT" aria-label="Export data">
-                <Download size={16} className="text-muted" />
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Headline */}
           <motion.div
             className="mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
           >
-            <WordReveal text="AUDIENCE INTELLIGENCE" className="font-h1 text-one-white mb-2 block" as="h1" stagger={0.04} />
-            <p className="font-body text-one-white">
-              Real-time insights into who's listening, when, and how
+            <WordReveal text="AUDIENCE & REACH" className="font-h1 text-one-white mb-3 block" as="h1" stagger={0.04} />
+            <p className="font-body text-one-white/80 max-w-2xl">
+              Who lives inside the ONE FM 98.5 broadcast area, and how our reach estimate is built.
+            </p>
+            <p className="font-body-small text-muted mt-3 max-w-2xl">
+              Every figure on this page is calculated from the {stationStats.totalTowns} towns in our
+              coverage data ({SOURCE}). ONE FM does not yet measure stream-level listening, so nothing
+              here is presented as live or measured audience behaviour.
             </p>
           </motion.div>
 
-          {/* KPI stat row */}
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
-            data-cursor-label="KEY METRICS"
           >
-            {[
-              { label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners, color: '#B6FF00', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
-              { label: 'Towns in Broadcast Area', value: stationStats.totalTowns, color: '#D4963A', suffix: '', sparkline: false, extra: `~${stationStats.broadcastRadiusKm}km radius from Shepparton` },
-              { label: 'Broadcast Area Population', value: stationStats.broadcastPopulation, color: '#F0C75E', suffix: '', sparkline: false, extra: `Source: ABS 2021 · ${stationStats.totalTowns} towns` },
-              { label: 'Years Broadcasting', value: stationStats.yearsBroadcasting, color: '#9B5DE5', suffix: ' yrs', sparkline: false, extra: 'Licensed 1989 · callsign 3ONE' },
-            ].map((stat) => (
+            {kpis.map((stat) => (
               <TiltCard key={stat.label} maxTilt={5} className="flex flex-col min-h-[140px]">
-              <motion.div
-                className="glass-card p-5 flex flex-col justify-between h-full group relative overflow-hidden"
-                variants={cardStagger}
-              >
-                <div aria-hidden className="explore-tile-scan" />
-                <div>
-                  <div className="font-label text-muted mb-2">{stat.label}</div>
-                  <div className="font-stat" style={{ color: stat.color }}>
-                    <AnimatedNumber value={stat.value} suffix={stat.suffix} />
-                  </div>
-                  {stat.extra && (
-                    <div className="flex items-center gap-1 mt-1">
-                      {stat.extra.startsWith('+') ? (
-                        <TrendingUp size={12} className="text-data-teal" />
-                      ) : stat.extra.startsWith('-') ? (
-                        <TrendingDown size={12} className="text-one-red" />
-                      ) : null}
-                      <span className={`font-label text-xs ${stat.extra.startsWith('+') ? 'text-data-teal' : stat.extra.startsWith('-') ? 'text-one-red' : 'text-muted'}`}>
-                        {stat.extra}
-                      </span>
+                <motion.div
+                  className="glass-card p-5 flex flex-col justify-between h-full group relative overflow-hidden"
+                  variants={cardStagger}
+                >
+                  <div aria-hidden className="explore-tile-scan" />
+                  <div>
+                    <div className="font-label text-muted mb-2">{stat.label}</div>
+                    <div className="font-stat" style={{ color: stat.color }}>
+                      <AnimatedNumber value={stat.value} suffix={stat.suffix} />
                     </div>
-                  )}
-                </div>
-              </motion.div>
+                    <span className="font-label text-xs text-muted mt-1 block">{stat.note}</span>
+                  </div>
+                </motion.div>
               </TiltCard>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ── Analytics Marquee Strip ── */}
+      {/* ── Marquee ── */}
       <div className="bg-one-deep-blue border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">REAL-TIME AUDIENCE INTELLIGENCE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GOULBURN VALLEY COMMUNITY RADIO INC.</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DEMOGRAPHICS · REACH · PERFORMANCE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 POPULATION · LICENSED 1989</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} BROADCAST AREA POPULATION</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DATA UPDATED · EVERY 2 SECONDS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.yearsBroadcasting} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">CALLSIGN 3ONE · LICENSED 1989</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} TOWNS · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ALL FIGURES FROM ABS 2021 CENSUS DATA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE IN THE BROADCAST AREA</span>,
           ]}
         />
       </div>
 
-      {/* ═══════ LISTENERSHIP HEATMAP ═══════ */}
-      <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="HEATMAP">
+      {/* ═══════ WHERE THE REACH SITS ═══════ */}
+      <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="COVERAGE">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-          <motion.div
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeUp}
-          >
-            <div>
-              <WordReveal text="LISTENERSHIP HEATMAP" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-              <p className="font-body-small text-muted mt-1">When your audience tunes in</p>
-            </div>
-            <div className="flex bg-one-navy/50 rounded-full p-1 border border-one-border">
-              <button
-                onClick={() => setWeekdayMode(true)}
-                data-cursor-label="WEEKDAY"
-                className={`px-4 py-1.5 rounded-full font-label text-xs transition-all ${weekdayMode ? 'text-one-navy bg-one-gold' : 'text-one-white/60 hover:text-one-white'}`}
-              >
-                Weekday
-              </button>
-              <button
-                onClick={() => setWeekdayMode(false)}
-                data-cursor-label="WEEKEND"
-                className={`px-4 py-1.5 rounded-full font-label text-xs transition-all ${!weekdayMode ? 'text-one-navy bg-one-gold' : 'text-one-white/60 hover:text-one-white'}`}
-              >
-                Weekend
-              </button>
-            </div>
-          </motion.div>
+          <SectionHead
+            title="WHERE THE REACH SITS"
+            sub="Share of the estimated weekly audience, by town"
+          />
 
-          <TiltCard maxTilt={3}>
-          <motion.div
-            className="glass-card p-4 sm:p-6 overflow-x-auto"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Hours header */}
-            <div className="grid grid-cols-[50px_repeat(24,1fr)] gap-[3px] mb-[3px]">
-              <div />
-              {HOURS.map((h) => (
-                <div key={h} className="text-center font-micro text-muted text-[9px] hidden sm:block">
-                  {h}
-                </div>
-              ))}
-            </div>
-            {/* Heatmap rows */}
-            {DAYS.map((day, dIdx) => (
-              <div key={day} className="grid grid-cols-[50px_repeat(24,1fr)] gap-[3px] mb-[3px]">
-                <div className="flex items-center font-label text-[10px] text-one-white">{day}</div>
-                {heatmapData[dIdx].map((val, hIdx) => (
-                  <HeatmapCell
-                    key={hIdx}
-                    value={val}
-                    isCurrent={hIdx === currentHour && new Date().getDay() === (dIdx + 1) % 7}
-                  />
-                ))}
-              </div>
-            ))}
-            {/* Legend */}
-            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-one-border">
-              <span className="font-micro text-muted">Low</span>
-              <div className="flex gap-[3px]">
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.05)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.15)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.35)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(212,150,58,0.6)' }} />
-                <div className="w-4 h-4 rounded-[3px]" style={{ backgroundColor: 'rgba(230,57,70,0.8)' }} />
-              </div>
-              <span className="font-micro text-muted">Peak</span>
-            </div>
-          </motion.div>
-          </TiltCard>
-
-          {/* AI Insight */}
-          <AnimatePresence>
-            {!dismissInsight && (
-              <motion.div
-                className="mt-6 glass-card p-4 flex items-start gap-3 border-l-2 border-l-one-gold"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.5, delay: 1, ease: easeOutExpo }}
-              >
-                <Sparkles size={18} className="text-one-gold shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="font-body-small text-one-white">
-                    <span className="text-one-gold font-medium">Data source:</span> Figures on this page use ABS 2021 regional demographics and fm985.com.au programme data. Live Radio.co stream analytics will auto-populate when connected.
-                  </p>
-                </div>
-                <button onClick={() => setDismissInsight(true)} data-cursor-label="DISMISS" className="text-muted hover:text-one-white transition-colors">
-                  <X size={16} />
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
-
-      {/* ═══════ AUDIENCE TRENDS ═══════ */}
-      <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="AUDIENCE TRENDS">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-8">
-            {/* Main Chart */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6, ease: easeOutExpo }}
-            >
-              <WordReveal text="AUDIENCE TRENDS" className="font-h2 text-one-white mb-6 block" as="h2" stagger={0.05} />
-              {/* Chart tabs */}
-              <div className="flex gap-2 mb-6 overflow-x-auto">
-                {['Listeners', 'Sessions', 'Engagement', 'Demographics'].map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setChartTab(tab)}
-                    data-cursor-label={tab.toUpperCase()}
-                    className={`px-4 py-2 rounded-full font-label text-xs whitespace-nowrap transition-all ${
-                      chartTab === tab
-                        ? 'text-one-gold bg-one-gold/10 border border-one-gold/30'
-                        : 'text-one-white/60 border border-one-border hover:text-one-white hover:border-ivory/20'
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-
-              <TiltCard maxTilt={2}>
+          <div className="grid grid-cols-1 lg:grid-cols-[62%_38%] gap-8">
+            <TiltCard maxTilt={2}>
               <div className="glass-card p-4 sm:p-6 group relative overflow-hidden">
                 <div aria-hidden className="explore-tile-scan" />
                 <div className="w-full h-[360px]">
-                  {chartTab === 'Listeners' && (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={monthlyListenerData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="listenerGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#D4963A" stopOpacity={0.28} />
-                            <stop offset="95%" stopColor="#D4963A" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey="month" tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => Math.round(v / 1000) + 'k'} />
-                        <Tooltip
-                          contentStyle={{ background: 'rgba(15,29,48,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                          itemStyle={{ color: '#F4F1EA' }}
-                          formatter={(value: number) => [value.toLocaleString(), 'Est. listeners']}
-                        />
-                        <Area type="monotone" dataKey="listeners" stroke="#D4963A" strokeWidth={2} fill="url(#listenerGrad)" dot={false} activeDot={{ r: 4, fill: '#D4963A' }} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  )}
-                  {chartTab === 'Demographics' && (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={ageDemoData} layout="vertical" margin={{ top: 10, right: 20, left: 20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
-                        <XAxis type="number" tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => v + '%'} />
-                        <YAxis type="category" dataKey="age" tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                        <Tooltip
-                          contentStyle={{ background: 'rgba(15,29,48,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                          itemStyle={{ color: '#F4F1EA' }}
-                          formatter={(value: number) => [value + '%', 'Share of population']}
-                        />
-                        <Bar dataKey="percent" fill="#B6FF00" radius={[0, 4, 4, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  )}
-                  {(chartTab === 'Sessions' || chartTab === 'Engagement') && (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-3">
-                      <p className="font-body-small text-muted text-center px-8 max-w-md">
-                        {chartTab} data requires Radio.co stream analytics integration. Listener reach estimates are based on ABS 2021 regional population modelling.
-                      </p>
-                    </div>
-                  )}
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={townShare} layout="vertical" margin={{ top: 8, right: 24, left: 24, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
+                      <XAxis
+                        type="number"
+                        tick={{ fill: '#9AA7B8', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}
+                        axisLine={false}
+                        tickLine={false}
+                        tickFormatter={(v: number) => `${v}%`}
+                      />
+                      <YAxis
+                        type="category"
+                        dataKey="region"
+                        width={110}
+                        tick={{ fill: '#F2EFE9', fontSize: 11, fontFamily: 'Space Grotesk' }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <Tooltip
+                        cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                        contentStyle={{ background: BRAND_COLORS.navy, border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, fontSize: 12 }}
+                        itemStyle={{ color: '#F4F1EA' }}
+                        formatter={(value: number) => [`${value}% of estimated reach`, '']}
+                      />
+                      <Bar dataKey="share" radius={[0, 4, 4, 0]} barSize={22}>
+                        {townShare.map((_, i) => (
+                          <Cell key={i} fill={i === 0 ? BRAND_COLORS.red : BRAND_COLORS.blue} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
-                <p className="font-label text-[9px] text-muted/40 mt-3">
-                  Projected estimates · ABS 2021 regional model · Not live streaming data
-                </p>
+                <SourceNote>
+                  Share of the town-level weekly listener estimates ({SOURCE}). Shown as a share
+                  rather than a headcount: the town estimates total 39,577 against the station's
+                  published {stationStats.weeklyListeners.toLocaleString()} headline, and we publish
+                  the more conservative figure.
+                </SourceNote>
               </div>
-              </TiltCard>
+            </TiltCard>
 
-              <div className="flex gap-3 mt-4">
-                <MagneticButton strength={6} cursorLabel="DOWNLOAD">
-                  <button className="btn-secondary text-xs">
-                    <Download size={14} />
-                    Full Report
-                  </button>
-                </MagneticButton>
-                <MagneticButton strength={6} cursorLabel="ALERT">
-                  <button className="btn-secondary text-xs">
-                    Set Alert
-                  </button>
-                </MagneticButton>
-              </div>
-            </motion.div>
-
-            {/* Insight Cards */}
             <motion.div
               className="flex flex-col gap-4"
               variants={staggerContainer}
@@ -597,431 +318,159 @@ export default function AudienceAnalytics() {
               whileInView="visible"
               viewport={{ once: true, margin: '-50px' }}
             >
-              <h3 className="font-h3 text-one-white mb-2">Insights</h3>
-              {[
-                {
-                  title: 'Broadcast Reach',
-                  text: `${stationStats.weeklyListeners.toLocaleString()} est. weekly listeners`,
-                  sub: `${stationStats.totalTowns} towns · ~${stationStats.broadcastRadiusKm}km radius · source: townData / ABS 2021`,
-                  border: '#B6FF00',
-                  icon: TrendingUp,
-                },
-                {
-                  title: 'Breakfast',
-                  text: 'ONE FM Breakfast Mon–Fri 6–9am',
-                  sub: 'Tim Ahemt · The Big G · Ralph Whitehead · Josh Revens',
-                  border: '#F0C75E',
-                  icon: Radio,
-                },
-                {
-                  title: 'Community',
-                  text: '25+ multicultural programs weekly',
-                  sub: 'Swahili, Samoan, Filipino, Mandarin, Punjabi & more',
-                  border: '#D4963A',
-                  icon: Sparkles,
-                },
-              ].map((insight, i) => {
-                const Icon = insight.icon
-                return (
-                  <TiltCard key={i} maxTilt={5}>
+              <h3 className="font-h3 text-one-white mb-1">Distance from the studio</h3>
+              {rings.map((r, i) => (
+                <TiltCard key={r.label} maxTilt={4}>
                   <motion.div
                     className="glass-card p-5 border-l-[3px] group relative overflow-hidden"
-                    style={{ borderLeftColor: insight.border }}
-                    variants={{
-                      hidden: { opacity: 0, x: 20 },
-                      visible: {
-                        opacity: 1,
-                        x: 0,
-                        transition: { duration: 0.5, delay: i * 0.12, ease: easeOutExpo },
-                      },
-                    }}
+                    style={{ borderLeftColor: i === 0 ? BRAND_COLORS.red : BRAND_COLORS.blue }}
+                    variants={cardStagger}
                   >
                     <div aria-hidden className="explore-tile-scan" />
                     <div className="flex items-center gap-2 mb-2">
-                      <Icon size={14} style={{ color: insight.border }} />
-                      <span className="font-label text-xs" style={{ color: insight.border }}>{insight.title}</span>
+                      <MapPin size={14} style={{ color: i === 0 ? BRAND_COLORS.red : BRAND_COLORS.neonSky }} />
+                      <span className="font-label text-xs text-one-white">{r.label}</span>
                     </div>
-                    <p className="font-h4 text-one-white mb-1">{insight.text}</p>
-                    <p className="font-body-small text-muted">{insight.sub}</p>
+                    <p className="font-h4 text-one-white mb-1">
+                      {r.population.toLocaleString()} people
+                    </p>
+                    <p className="font-body-small text-muted">
+                      {r.towns} {r.towns === 1 ? 'town' : 'towns'} · 2026 projection
+                    </p>
                   </motion.div>
-                  </TiltCard>
-                )
-              })}
+                </TiltCard>
+              ))}
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══════ DEMOGRAPHIC BREAKDOWN ═══════ */}
-      <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="DEMOGRAPHICS">
+      {/* ═══════ WHO LIVES HERE ═══════ */}
+      <section className="bg-surface-lift section-bleed-top section-padding" data-cursor-label="COMMUNITY PROFILE">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <SectionHead
+            title="WHO LIVES HERE"
+            sub="Census profile of the broadcast area — not a survey of our listeners"
+          />
+
           <motion.div
-            className="mb-10"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+            variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeUp}
+            viewport={{ once: true, margin: '-50px' }}
           >
-            <WordReveal text="DEMOGRAPHIC DEEP DIVE" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted mt-1">Who makes up your audience</p>
+            {profile.map((p) => (
+              <TiltCard key={p.label} maxTilt={4} className="h-full">
+                <motion.div className="glass-card p-5 h-full group relative overflow-hidden" variants={cardStagger}>
+                  <div aria-hidden className="explore-tile-scan" />
+                  <div className="font-label text-muted mb-2">{p.label}</div>
+                  <div className="font-stat" style={{ color: BRAND_COLORS.champagne }}>{p.value}</div>
+                  <p className="font-body-small text-muted mt-2">{p.note}</p>
+                </motion.div>
+              </TiltCard>
+            ))}
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Age */}
-            <TiltCard maxTilt={4} className="h-full">
+          <TiltCard maxTilt={3}>
             <motion.div
-              className="glass-card p-5 h-full group relative overflow-hidden"
+              className="glass-card p-5 sm:p-6 group relative overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, ease: easeOutExpo }}
             >
               <div aria-hidden className="explore-tile-scan" />
-              <h4 className="font-h4 text-one-white mb-4">Age Distribution</h4>
+              <h4 className="font-h4 text-one-white mb-4">Towns by median age</h4>
               <div className="w-full h-[240px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={ageDemoData} layout="vertical" margin={{ left: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" horizontal={false} />
-                    <XAxis type="number" hide />
-                    <YAxis type="category" dataKey="age" tick={{ fill: '#F4F1EA', fontSize: 11, fontFamily: 'Space Grotesk' }} axisLine={false} tickLine={false} width={50} />
-                    <Tooltip
-                      contentStyle={{
-                        background: 'rgba(26,26,31,0.95)',
-                        border: '1px solid #2A2A30',
-                        borderRadius: '8px',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        fontSize: '12px',
-                        color: '#F4F1EA',
-                      }}
-                      formatter={(value: number, _name: string, props: { payload?: { count?: number; growth?: string } }) => [
-                        `${value}% (${props.payload?.count?.toLocaleString()}) · ${props.payload?.growth}`,
-                        'Percentage',
-                      ]}
+                  <BarChart data={ageBands} margin={{ top: 8, right: 16, left: -18, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                    <XAxis
+                      dataKey="band"
+                      tick={{ fill: '#F2EFE9', fontSize: 11, fontFamily: 'Space Grotesk' }}
+                      axisLine={false}
+                      tickLine={false}
                     />
-                    <Bar dataKey="percent" radius={[0, 4, 4, 0]} barSize={20}>
-                      {ageDemoData.map((_, i) => (
-                        <Cell key={i} fill={['#B6FF00', '#00BBF9', '#D4963A', '#FF6B6B', '#E63946'][i]} />
-                      ))}
-                    </Bar>
+                    <YAxis
+                      allowDecimals={false}
+                      tick={{ fill: '#9AA7B8', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                      contentStyle={{ background: BRAND_COLORS.navy, border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, fontSize: 12 }}
+                      itemStyle={{ color: '#F4F1EA' }}
+                      formatter={(value: number) => [`${value} towns`, '']}
+                    />
+                    <Bar dataKey="towns" fill={BRAND_COLORS.blue} radius={[4, 4, 0, 0]} barSize={44} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-3 flex items-center gap-2">
-                <TrendingUp size={12} className="text-data-teal" />
-                <span className="font-label text-xs text-data-teal">25-34 is your fastest-growing segment</span>
-              </div>
+              <SourceNote>
+                Count of towns in each median-age band ({SOURCE}). This describes the population we
+                broadcast to; ONE FM holds no age data about its own listeners.
+              </SourceNote>
             </motion.div>
-            </TiltCard>
-
-            {/* Gender */}
-            <TiltCard maxTilt={4} className="h-full">
-            <motion.div
-              className="glass-card p-5 h-full group relative overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1, ease: easeOutExpo }}
-            >
-              <div aria-hidden className="explore-tile-scan" />
-              <h4 className="font-h4 text-one-white mb-4">Gender Split</h4>
-              <div className="w-full h-[200px] flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={genderData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={90}
-                      paddingAngle={4}
-                      dataKey="value"
-                      stroke="none"
-                    >
-                      {genderData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        background: 'rgba(26,26,31,0.95)',
-                        border: '1px solid #2A2A30',
-                        borderRadius: '8px',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        fontSize: '12px',
-                        color: '#F4F1EA',
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="text-center -mt-4 mb-3">
-                <div className="font-stat text-gold-gradient">39.4K</div>
-                <div className="font-label text-muted">Total</div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-label text-xs text-one-gold">Balanced gender split — 48/52</span>
-              </div>
-            </motion.div>
-            </TiltCard>
-
-            {/* Location */}
-            <TiltCard maxTilt={4} className="h-full">
-            <motion.div
-              className="glass-card p-5 h-full group relative overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2, ease: easeOutExpo }}
-            >
-              <div aria-hidden className="explore-tile-scan" />
-              <h4 className="font-h4 text-one-white mb-4">Top Locations</h4>
-              <div className="w-full h-[240px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={locationData} margin={{ bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" vertical={false} />
-                    <XAxis dataKey="region" tick={{ fill: '#F4F1EA', fontSize: 10, fontFamily: 'Space Grotesk' }} axisLine={false} tickLine={false} angle={-20} textAnchor="end" height={50} />
-                    <YAxis hide />
-                    <Tooltip
-                      contentStyle={{
-                        background: 'rgba(26,26,31,0.95)',
-                        border: '1px solid #2A2A30',
-                        borderRadius: '8px',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        fontSize: '12px',
-                        color: '#F4F1EA',
-                      }}
-                      formatter={(value: number, _name: string, props: { payload?: { pct?: number } }) => [
-                        `${value.toLocaleString()} (${props.payload?.pct}%)`,
-                        'Listeners',
-                      ]}
-                    />
-                    <Bar dataKey="listeners" fill="#D4963A" radius={[4, 4, 0, 0]} barSize={28} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 flex items-center gap-2">
-                <TrendingUp size={12} className="text-data-teal" />
-                <span className="font-label text-xs text-data-teal">Regional coverage: 78% within 50km</span>
-              </div>
-            </motion.div>
-            </TiltCard>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════ PLATFORM PERFORMANCE ═══════ */}
-      <section className="bg-surface-peak section-bleed-top section-padding" data-cursor-label="PLATFORM STATS">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-          <motion.div
-            className="mb-10"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeUp}
-          >
-            <WordReveal text="PLATFORM PERFORMANCE" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted mt-1">Where your audience connects</p>
-          </motion.div>
-
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
-          >
-            {platformCards.map((card, i) => {
-              const Icon = card.icon
-              return (
-                <motion.div
-                  key={i}
-                  className="glass-card p-5 hover:scale-[1.02] transition-all duration-300 group relative overflow-hidden"
-                  variants={cardStagger}
-                  whileHover={{ borderColor: `${card.accent}50` }}
-                >
-                  <div aria-hidden className="explore-tile-scan" />
-                  <Icon size={32} style={{ color: card.accent }} className="mb-3" />
-                  <div className="font-stat text-gold-gradient mb-0.5">{card.stat}</div>
-                  <div className="font-label text-muted mb-3">{card.label}</div>
-                  <div className="w-full h-[40px] mb-3">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={card.trend.map((v, i) => ({ i, v }))}>
-                        <defs>
-                          <linearGradient id={`ptrend-${i}`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor={card.accent} stopOpacity={0.25} />
-                            <stop offset="100%" stopColor={card.accent} stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <Area type="monotone" dataKey="v" stroke={card.accent} fill={`url(#ptrend-${i})`} strokeWidth={2} dot={false} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-label text-xs text-muted">{card.share}</span>
-                    <span className="font-label text-xs flex items-center gap-1" style={{ color: card.statusColor }}>
-                      <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: card.statusColor }} />
-                      {card.status}
-                    </span>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══════ AI PREDICTIONS ═══════ */}
-      <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="AI PREDICTIONS">
-        <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
-          <motion.div
-            className="flex items-center gap-3 mb-10"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeUp}
-          >
-            <div>
-              <WordReveal text="AUDIENCE INSIGHTS" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-              <p className="font-body-small text-muted mt-1">Sourced regional data · ABS 2021 model · Station programme records</p>
-            </div>
-            <span className="px-3 py-1 rounded-full bg-one-gold/20 text-one-gold font-label text-[10px] shrink-0">SOURCED</span>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {/* 7-Day Forecast */}
-            <TiltCard maxTilt={4} className="h-full">
-            <motion.div
-              className="glass-card p-6 h-full group relative overflow-hidden"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: easeOutExpo }}
-            >
-              <div aria-hidden className="explore-tile-scan" />
-              <h4 className="font-h4 text-one-white mb-4">Weekly Listener Distribution</h4>
-              <div className="w-full h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={weeklyListenerData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                    <XAxis dataKey="day" tick={{ fill: '#6B6B75', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: '#6B6B75', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => Math.round(v / 1000) + 'k'} />
-                    <Tooltip contentStyle={{ background: 'rgba(15,29,48,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} itemStyle={{ color: '#F4F1EA' }} formatter={(value: number) => [value.toLocaleString(), 'Est. listeners']} />
-                    <Bar dataKey="listeners" fill="#D4963A" radius={[3, 3, 0, 0]} opacity={0.85} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 p-3 rounded-lg bg-one-navy/50">
-                <span className="font-label text-xs text-one-gold">Sat peak driven by GVL live coverage · ABS 2021 regional model</span>
-              </div>
-            </motion.div>
-            </TiltCard>
-
-            {/* Anomaly Detection */}
-            <TiltCard maxTilt={4} className="h-full">
-            <motion.div
-              className="glass-card p-6 h-full group relative overflow-hidden"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.15, ease: easeOutExpo }}
-            >
-              <div aria-hidden className="explore-tile-scan" />
-              <h4 className="font-h4 text-one-white mb-4">Audience Events</h4>
-              <div className="space-y-3">
-                {anomalyData.length === 0 && (
-                  <p className="font-body-small text-muted p-4 rounded-lg bg-one-navy/50">
-                    No anomaly data yet — requires live streaming analytics integration.
-                  </p>
-                )}
-                {anomalyData.map((a, i) => (
-                  <motion.div
-                    key={i}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-one-navy/50"
-                    initial={{ opacity: 0, x: -15 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: i * 0.1, ease: easeOutExpo }}
-                  >
-                    <AlertTriangle
-                      size={16}
-                      className={`shrink-0 mt-0.5 ${a.severity === 'growth' ? 'text-data-teal' : 'text-one-red'}`}
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-body-small text-one-white">{a.time}</span>
-                        <span className={`font-label text-xs ${a.severity === 'growth' ? 'text-data-teal' : 'text-one-red'}`}>
-                          {a.change}
-                        </span>
-                      </div>
-                      <p className="font-body-small text-muted mt-0.5">{a.reason}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-            </TiltCard>
-          </div>
-
-          {/* Smart Segments */}
-          <TiltCard maxTilt={3}>
-          <motion.div
-            className="glass-card p-6 group relative overflow-hidden"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3, ease: easeOutExpo }}
-          >
-            <div aria-hidden className="explore-tile-scan" />
-            <h4 className="font-h4 text-one-white mb-4">Programming Blocks (Indicative)</h4>
-            <p className="font-body-small text-muted mb-4">
-              Typical community radio listening distribution by daypart — not live measurement data
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {smartSegments.map((seg, i) => (
-                <motion.button
-                  key={seg.name}
-                  className={`px-4 py-2.5 rounded-full font-label text-xs transition-all ${
-                    selectedSegment === seg.name
-                      ? 'ring-2 ring-offset-1 ring-offset-slate'
-                      : 'hover:scale-105'
-                  }`}
-                  style={{
-                    backgroundColor: `${seg.color}20`,
-                    color: seg.color,
-                  }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: i * 0.08, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] }}
-                  onClick={() => setSelectedSegment(selectedSegment === seg.name ? null : seg.name)}
-                >
-                  {seg.name} ({seg.pct}%)
-                </motion.button>
-              ))}
-            </div>
-            <AnimatePresence>
-              {selectedSegment && (
-                <motion.div
-                  className="mt-4 p-4 rounded-lg bg-one-navy/50"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="font-body-small text-one-white">
-                    <span className="text-one-gold font-medium">{selectedSegment}:</span>{' '}
-                    Detailed segment profile with listening habits, preferred content types, and optimal targeting windows.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
           </TiltCard>
         </div>
       </section>
 
-      {/* ═══════ DATA EXPORT ═══════ */}
-      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="DATA EXPORT">
+      {/* ═══════ WHAT WE DO NOT MEASURE ═══════ */}
+      <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="DATA PENDING">
+        <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
+          <SectionHead
+            title="WHAT WE DO NOT MEASURE"
+            sub="Held back deliberately until the numbers are real"
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                icon: Radio,
+                title: 'Stream analytics',
+                body: 'Session counts, listening duration and concurrent listeners need the Radio.co analytics integration. Until it is connected we publish no stream figures.',
+              },
+              {
+                icon: Clock,
+                title: 'Daypart listening',
+                body: 'Breakfast, morning and drive audience splits require survey or stream measurement. We will not model them from programme times.',
+              },
+              {
+                icon: Users,
+                title: 'Social and podcast reach',
+                body: 'Follower and download counts belong to the platforms that report them. They will appear here once pulled from source, not before.',
+              },
+            ].map((item, i) => {
+              const Icon = item.icon
+              return (
+                <motion.div
+                  key={item.title}
+                  className="glass-card p-6 border-l-[3px]"
+                  style={{ borderLeftColor: BRAND_COLORS.muted }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1, ease: easeOutExpo }}
+                >
+                  <Icon size={20} className="text-muted mb-3" />
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="font-h4 text-one-white">{item.title}</h4>
+                    <span className="px-2 py-0.5 rounded-full font-label text-[9px] tracking-[0.18em] text-one-navy" style={{ background: BRAND_COLORS.champagne }}>
+                      PENDING
+                    </span>
+                  </div>
+                  <p className="font-body-small text-muted leading-relaxed">{item.body}</p>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ NEXT STEPS ═══════ */}
+      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="NEXT">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1029,73 +478,17 @@ export default function AudienceAnalytics() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: easeOutExpo }}
           >
-            <WordReveal text="USE YOUR DATA" className="font-h2 text-one-white mb-3 block" as="h2" />
-            <p className="font-body text-one-white mb-8">
-              Export insights for reports, presentations, or share with your team.
+            <WordReveal text="TALK TO US ABOUT REACH" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <p className="font-body text-one-white/80 mb-8">
+              Station staff prepare every sponsorship proposal by hand, using these figures and their
+              sources. Nothing is auto-generated.
             </p>
-          </motion.div>
-
-          <motion.div
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <motion.button className="btn-secondary text-sm" variants={cardStagger} data-cursor-label="DOWNLOAD">
-              <Download size={16} />
-              Download CSV
-            </motion.button>
-            <motion.button className="btn-primary text-sm" variants={cardStagger} data-cursor-label="EXPORT">
-              <FileText size={16} />
-              Export PDF Report
-            </motion.button>
-            <motion.button className="btn-secondary text-sm" variants={cardStagger} data-cursor-label="SHARE">
-              <Share2 size={16} />
-              Share Dashboard Link
-            </motion.button>
-          </motion.div>
-
-          <motion.div
-            className="glass-card p-5 max-w-md mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <Calendar size={16} className="text-one-gold" />
-              <span className="font-label text-xs text-one-white">Scheduled Reports</span>
-            </div>
-            <div className="flex gap-2">
-              <select className="flex-1 appearance-none glass-card px-3 py-2 font-label text-xs text-one-white bg-transparent cursor-pointer focus:outline-none focus:border-one-gold/50">
-                <option>Daily</option>
-                <option>Weekly</option>
-                <option>Monthly</option>
-              </select>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-[2] glass-card px-3 py-2 font-body text-sm text-one-white bg-transparent focus:outline-none focus:border-one-gold/50 placeholder:text-muted"
-              />
-              <MagneticButton strength={8} cursorLabel="SUBSCRIBE">
-                <button className="btn-primary text-xs px-4">Subscribe</button>
-              </MagneticButton>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link to="/media-kit" className="btn-secondary text-sm">Media kit &amp; rate card</Link>
+              <Link to="/coverage" className="btn-secondary text-sm">Coverage map</Link>
+              <Link to="/proposal" className="btn-primary text-sm">Request a proposal</Link>
             </div>
           </motion.div>
-
-          <motion.p
-            className="mt-6"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-          >
-            <span className="font-label text-xs text-muted">Developer? </span>
-            <button data-cursor-label="API" className="font-label text-xs text-one-gold hover:text-one-gold transition-colors link-hover">
-              Access our analytics API
-            </button>
-          </motion.p>
         </div>
       </section>
     </Layout>

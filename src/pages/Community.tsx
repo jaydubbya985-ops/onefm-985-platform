@@ -138,7 +138,7 @@ export default function Community() {
         <StatsStrip
           stats={[
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (ABS 2021)' },
+            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (2026 est.)' },
             { n: '8+', t: 'Languages on air weekly' },
             { n: `${stationStats.broadcastRadiusKm}km`, t: 'Signal radius from Mt Major' },
           ]}

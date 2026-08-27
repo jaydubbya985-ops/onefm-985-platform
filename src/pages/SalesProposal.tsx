@@ -294,7 +294,7 @@ export default function SalesProposal() {
           stats={[
             // source: ABS 2021 via townData / stationStats
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (ABS 2021)' },
+            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (2026 est.)' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
             { n: `${stationStats.broadcastRadiusKm}km`, t: 'Broadcast radius' },
           ]}

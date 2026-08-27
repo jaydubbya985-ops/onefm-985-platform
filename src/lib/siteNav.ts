@@ -32,7 +32,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'Sponsorship', path: '/sponsorship', description: 'Packages & football tiers' },
       { label: 'Media Kit', path: '/media-kit', description: 'Audience stats & rate card' },
-      { label: 'Audience', path: '/audience', description: 'Regional demographics' },
+      { label: 'Audience & Reach', path: '/audience', description: 'Census profile of the broadcast area' },
       { label: 'Request a proposal', path: '/proposal', description: 'Staff send a tailored PDF' },
     ],
   },
