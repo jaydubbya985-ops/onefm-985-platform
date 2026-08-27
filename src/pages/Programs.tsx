@@ -1123,13 +1123,14 @@ export default function Programs() {
           transition={{ duration: 0.5 }}
           className="glass-card p-6 md:p-10"
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence initial={false}>
             {requestDraftOpened ? (
               <motion.div
                 key="success"
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 1, scale: 1 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
                 className="flex flex-col items-center text-center py-12"
               >
                 <CheckCircle2 size={56} className="text-data-teal mb-4" />
