@@ -14,7 +14,7 @@
 | Gate | Status (2026-08-27) |
 |------|---------------------|
 | Logo + invoice PDF | **On `main`** (`e511343` + later PRs). FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Not on live until Netlify PAT works. |
-| Mailto honesty | **On `main` plus this branch.** Invoice mailto / billing cycle / reminders / `devMode` do **not** mark sent. Programs song request now says **Email Draft Opened**, not Request Received. |
+| Mailto honesty | **On `main` plus this branch.** Invoice mailto / billing cycle / reminders / `devMode` do **not** mark sent. Public enquiry forms only claim received if Supabase stored the row or an email actually sent. Programs song request says **Email Draft Opened**. |
 | Public truth | **On `main` plus PR #16.** `/audience` towns from `townData.ts`. OG **189,680**. Community page uses **8** multicultural programs from `programGuide.ts`. `npm run truth` also forbids invented pay/webhook domains and fake Stripe Checkout query URLs. |
 | Live `#/ops` | **Still DEMO on production.** Branch also hides DEMO billing charts, fake pay URLs, fake webhooks, and the $5,000 donation goal when Supabase is configured. Pay instruction is BSB **083-894**. |
 | Deploy | GitHub `NETLIFY_AUTH_TOKEN` is set and **rejected (HTTP 401)**. Empty-commit retries will not fix this. `npm run live` (`scripts/verify-live.mjs`) is the production gate after a successful deploy. |

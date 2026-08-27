@@ -261,7 +261,7 @@ export default function Football() {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await submitEnquiry({
+      const result = await submitEnquiry({
         name: formData.contactName,
         email: formData.email,
         phone: formData.phone,
@@ -272,8 +272,16 @@ export default function Football() {
         enquiryType: 'GVL Football Sponsorship',
         priority: 'high',
       })
+      if (!result.success) {
+        toast.error(result.error ?? 'Something went wrong. Please call us on (03) 5831 3131.')
+        return
+      }
       setSubmitted(true)
-      toast.success('Enquiry sent! Our partnerships team will be in touch within 24 hours.')
+      toast.success(
+        result.stored
+          ? 'Enquiry received at the station.'
+          : 'Enquiry emailed to the station.',
+      )
       setTimeout(() => setSubmitted(false), 5000)
     } catch {
       toast.error('Something went wrong. Please call us on (03) 5831 3131.')
@@ -937,9 +945,9 @@ export default function Football() {
                 <div className="w-16 h-16 rounded-full bg-data-teal/20 flex items-center justify-center mx-auto mb-4">
                   <Check size={32} className="text-data-teal" />
                 </div>
-                <h3 className="font-h3 text-one-white mb-2">Enquiry Sent!</h3>
+                <h3 className="font-h3 text-one-white mb-2">Enquiry received</h3>
                 <p className="font-body-small text-one-white">
-                  Thanks {formData.contactName || 'there'}! Our sponsorship team will be in touch within 24 hours.
+                  Thanks {formData.contactName || 'there'}! Our sponsorship team will be in touch.
                 </p>
               </motion.div>
             )}

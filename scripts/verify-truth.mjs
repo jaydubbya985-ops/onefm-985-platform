@@ -36,6 +36,8 @@ const FORBIDDEN = [
   { re: /api\.onefm985\.com\.au\/webhooks/i, why: 'webhook domain does not exist' },
   { re: /checkout\.stripe\.com\/pay\?/i, why: 'do not invent Stripe Checkout query URLs' },
   { re: /Request Received!/, why: 'mailto song request is a draft, not a received request' },
+  { re: /Enquiry Sent!/, why: 'enquiry forms must not claim sent unless stored or emailed' },
+  { re: /Message sent! We'll be in touch within 24 hours/, why: 'contact form must not claim send when nothing was stored or emailed' },
 ]
 
 function walk(dir) {

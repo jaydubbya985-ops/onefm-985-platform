@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { submitEnquiry } from '@/lib/enquiries'
+import { BRAND } from '@/lib/brand'
 import { stationStats } from '@/data/pricing'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
@@ -260,7 +261,7 @@ function ContactForm() {
   const onSubmit = async (data: EnquiryForm) => {
     setLoading(true)
     try {
-      await submitEnquiry({
+      const result = await submitEnquiry({
         name: data.name,
         email: data.email,
         phone: data.phone,
@@ -272,8 +273,17 @@ function ContactForm() {
         preferredContact: data.preferredContact,
       })
 
+      if (!result.success) {
+        toast.error(result.error ?? 'Something went wrong. Please try again or call us directly.')
+        return
+      }
+
       setSubmitted(true)
-      toast.success('Message sent! We\'ll be in touch within 24 hours.')
+      toast.success(
+        result.stored
+          ? 'Enquiry received at the station.'
+          : 'Enquiry emailed to the station.',
+      )
     } catch (err) {
       console.error('[Contact] Submission error:', err)
       toast.error('Something went wrong. Please try again or call us directly.')
@@ -304,7 +314,7 @@ function ContactForm() {
             <CheckCircle2 size={64} className="text-one-gold mx-auto mb-6" />
             <WordReveal text="Thanks for reaching out!" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
             <p className="font-body text-one-muted">
-              We'll get back to you within 24 hours.
+              We'll be in touch. If you need us now, call {BRAND.phone} or email {BRAND.email}.
             </p>
           </motion.div>
         </div>
@@ -592,7 +602,7 @@ function FAQSection() {
     {
       question: 'How do I become a sponsor?',
       answer:
-        'Head to our Sponsorship page to explore packages, or select "Sponsorship" in the enquiry form above. Our partnerships team will reach out within 24 hours to discuss tailored options for your business.',
+        'Head to our Sponsorship page to explore packages, or select "Sponsorship" in the enquiry form above. Our partnerships team will follow up.',
     },
     {
       question: 'Can I volunteer at the station?',
