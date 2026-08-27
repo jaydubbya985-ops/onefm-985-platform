@@ -144,8 +144,8 @@ function ProseSection({ label, title, paragraphs }: { label: string; title: stri
         {title}
       </h2>
       <div className="max-w-[720px] space-y-6">
-        {paragraphs.map((paragraph) => (
-          <p key={paragraph.slice(0, 52)} className="text-[17px] leading-relaxed text-white/60">
+        {paragraphs.map((paragraph, i) => (
+          <p key={i} className="text-[17px] leading-relaxed text-white/60">
             {paragraph}
           </p>
         ))}
