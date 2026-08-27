@@ -109,6 +109,7 @@ import {
 } from './data/payments'
 import { opsInitial, opsStorageKey } from '@/lib/opsMode'
 import { isSupabaseConfigured } from '@/lib/supabase'
+import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB, bankPayLine } from '@/lib/bankDetails'
 import { useOpsStore, type OpsInvoice } from './store'
 
 // ---------------------------------------------------------------------------
@@ -380,13 +381,20 @@ function PaymentsTab() {
   }
 
   function copyLink(link: string) {
+    if (!link) {
+      toast('Online pay links are not configured', 'error')
+      return
+    }
     navigator.clipboard.writeText(link).catch(() => {})
     setCopied(true)
-    toast('Payment link copied to clipboard', 'success')
+    toast('Copied to clipboard', 'success')
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const paymentLink = selectedInvoice ? buildPaymentLink(selectedInvoice.id) : ''
+  const paymentLink = selectedInvoice ? buildPaymentLink(selectedInvoice.id) : null
+  const bankLine = selectedInvoice
+    ? bankPayLine(selectedInvoice.number)
+    : bankPayLine()
 
   return (
     <motion.div
@@ -622,41 +630,53 @@ function PaymentsTab() {
             {selectedInvoice && (
               <>
                 <div className="rounded-lg bg-[#1E293B] border border-slate-700 p-4 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-[#D4A853] p-2 rounded-lg">
-                      <QrCode className="h-8 w-8 text-[#101010]" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-[#F4F1EA]">Scan to Pay</p>
-                      <p className="text-xs text-slate-400">
-                        QR code for {selectedInvoice.number}
-                      </p>
-                    </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#F4F1EA]">
+                      Online pay links are not configured
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Ask {selectedInvoice.client} to pay {selectedInvoice.number} by bank
+                      transfer. Do not invent a hosted pay URL.
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2 rounded bg-[#101010] border border-slate-700 p-2.5">
-                    <code className="text-xs text-[#D4A853] flex-1 truncate">
-                      {paymentLink}
+                  <div className="rounded bg-[#101010] border border-slate-700 p-2.5 space-y-1">
+                    <p className="text-xs text-slate-400">
+                      {BANK_ACCOUNT_NAME} · NAB
+                    </p>
+                    <code className="text-xs text-[#D4A853] block">
+                      BSB {BANK_BSB} · Account {BANK_ACCOUNT}
                     </code>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => copyLink(paymentLink)}
-                      className="h-7 px-2 text-slate-400 hover:text-[#D4A853]"
-                    >
-                      {copied ? (
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5" />
-                      )}
-                    </Button>
+                    <p className="text-[11px] text-slate-500">
+                      Reference: {selectedInvoice.number}
+                    </p>
                   </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => copyLink(bankLine)}
+                    className="h-8 border-slate-700 text-slate-300 hover:text-[#D4A853]"
+                  >
+                    {copied ? (
+                      <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5 mr-1.5" />
+                    )}
+                    Copy bank details
+                  </Button>
+                  {paymentLink && (
+                    <div className="flex items-center gap-2 rounded bg-[#101010] border border-slate-700 p-2.5">
+                      <code className="text-xs text-[#D4A853] flex-1 truncate">
+                        {paymentLink}
+                      </code>
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     onClick={() =>
                       toast(
                         STRIPE_KEY_CONFIGURED
-                          ? 'Stripe Checkout session would open here'
+                          ? 'Stripe Checkout is not wired for invoices yet — use BSB 083-894'
                           : 'Add VITE_STRIPE_PUBLISHABLE_KEY to enable Stripe checkout',
                         STRIPE_KEY_CONFIGURED ? 'info' : 'error',
                       )
@@ -666,7 +686,9 @@ function PaymentsTab() {
                     <CreditCard className="h-4 w-4 mr-1.5" /> Pay with Stripe
                   </Button>
                   <Button
-                    onClick={() => toast('PayPal checkout is not configured in this demo', 'info')}
+                    onClick={() =>
+                      toast('PayPal is not configured — use BSB 083-894', 'info')
+                    }
                     className="bg-[#0070BA] hover:bg-[#0085E0] text-white font-semibold"
                   >
                     <Wallet className="h-4 w-4 mr-1.5" /> Pay with PayPal
@@ -910,7 +932,13 @@ function PaymentsTab() {
                 <code className="text-xs text-[#0070BA] font-mono">{PAYPAL_WEBHOOK_URL}</code>
               </div>
               <Button
-                onClick={() => setPaypalConnected((c) => !c)}
+                onClick={() => {
+                  if (isSupabaseConfigured()) {
+                    toast('PayPal is not configured — use BSB 083-894', 'error')
+                    return
+                  }
+                  setPaypalConnected((c) => !c)
+                }}
                 variant="outline"
                 className={`w-full text-xs font-semibold ${
                   paypalConnected
@@ -1102,7 +1130,11 @@ function DonationsTab() {
         <StatCard
           title="Donations This Month"
           value={`$${donationsThisMonth.toLocaleString()}`}
-          subtitle={`Goal: $${MONTHLY_DONATION_GOAL.toLocaleString()}`}
+          subtitle={
+            isSupabaseConfigured()
+              ? 'No monthly goal set'
+              : `Goal: $${MONTHLY_DONATION_GOAL.toLocaleString()}`
+          }
           icon={Heart}
           color={ACCENT.danger}
           delay={0}
@@ -1141,6 +1173,7 @@ function DonationsTab() {
         />
       </div>
 
+      {!isSupabaseConfigured() && (
       <motion.div variants={itemVariants}>
         <Card className="border border-slate-800 bg-[#0F1D2F]">
           <CardContent className="p-4">
@@ -1170,6 +1203,7 @@ function DonationsTab() {
           </CardContent>
         </Card>
       </motion.div>
+      )}
 
       <motion.div variants={itemVariants} className="flex flex-wrap gap-3">
         <Button

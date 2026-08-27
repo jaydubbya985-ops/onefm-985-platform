@@ -40,24 +40,10 @@ export const PAYMENT_LINKS: Record<string, string> = {}
 
 export function getStripePaymentLink(
   invoiceNumber: string,
-  total: number,
-  company?: string,
+  _total: number,
+  _company?: string,
 ): string {
-  if (PAYMENT_LINKS[invoiceNumber]) return PAYMENT_LINKS[invoiceNumber]
-  const { publishableKey, currency, successUrl, cancelUrl } = STRIPE_CONFIG
-  if (!publishableKey.includes('placeholder')) {
-    const amountCents = Math.round(total * 100)
-    return `https://checkout.stripe.com/pay?${new URLSearchParams({
-      pk: publishableKey,
-      amount: amountCents.toString(),
-      currency,
-      description: `Invoice ${invoiceNumber}${company ? ` — ${company}` : ''}`,
-      reference: invoiceNumber,
-      success_url: `${successUrl}?ref=${encodeURIComponent(invoiceNumber)}`,
-      cancel_url:  `${cancelUrl}?ref=${encodeURIComponent(invoiceNumber)}`,
-    }).toString()}`
-  }
-  return `https://dashboard.stripe.com/payment-links/create?amount=${Math.round(total * 100)}&currency=${currency}`
+  return PAYMENT_LINKS[invoiceNumber] ?? ''
 }
 
 // ---------------------------------------------------------------------------
@@ -818,12 +804,11 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
         ))}
       </div>
 
-      {!STRIPE_CONFIG.needsSetup && (
+      {paymentLinkCount > 0 && (
         <div className="bg-[#1B2A1B] border border-[#2A3A2A] rounded-lg p-3 flex items-center gap-2 text-xs">
           <CreditCard className="w-4 h-4 text-emerald-400 flex-shrink-0" />
           <span className="text-emerald-300">
-            Stripe online payments are active. {paymentLinkCount} payment link
-            {paymentLinkCount !== 1 ? 's' : ''} configured.
+            Stripe payment link{paymentLinkCount !== 1 ? 's' : ''} configured for this send.
           </span>
         </div>
       )}

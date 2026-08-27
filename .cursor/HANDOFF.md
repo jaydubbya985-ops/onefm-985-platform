@@ -15,8 +15,8 @@
 |------|---------------------|
 | Logo + invoice PDF | **On `main`** (`e511343` + later PRs). FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Not on live until Netlify PAT works. |
 | Mailto honesty | **On `main`**. Mailto / billing cycle / reminders / `devMode` do **not** mark sent (`success: false` when no Resend). |
-| Public truth | **On `main` plus PR #16.** `/audience` towns from `townData.ts`. OG **189,680**. Community page uses **8** multicultural programs from `programGuide.ts` (not 25+ language communities / 8+). `npm run truth` scans `src/` **and** `index.html`. |
-| Live `#/ops` | **Still DEMO.** https://onefmops.netlify.app still serves `index-BJ4yefZ1.js`. Code on the live-gate branch stops LIVE mode from hydrating the 19-row DEMO batch; it upserts only FOOTT + Jason's TV. |
+| Public truth | **On `main` plus PR #16.** `/audience` towns from `townData.ts`. OG **189,680**. Community page uses **8** multicultural programs from `programGuide.ts`. `npm run truth` also forbids invented pay/webhook domains and fake Stripe Checkout query URLs. |
+| Live `#/ops` | **Still DEMO on production.** Branch also hides DEMO billing charts, fake pay URLs, fake webhooks, and the $5,000 donation goal when Supabase is configured. Pay instruction is BSB **083-894**. |
 | Deploy | GitHub `NETLIFY_AUTH_TOKEN` is set and **rejected (HTTP 401)**. Empty-commit retries will not fix this. `npm run live` (`scripts/verify-live.mjs`) is the production gate after a successful deploy. |
 | Ops live env | Needs `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` in **GitHub Actions secrets** (baked at `npm run build`) **and** Netlify site env. |
 

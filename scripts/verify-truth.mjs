@@ -32,6 +32,9 @@ const FORBIDDEN = [
   { re: /25\+ language communities/i, why: 'programGuide has 8 multicultural programs, not 25+ language communities' },
   { re: /8\+ languages/i, why: 'use the exact multicultural program count from programGuide' },
   { re: /never gone dark/i, why: 'unsourced transmitter uptime claim' },
+  { re: /pay\.onefm985\.com\.au/i, why: 'hosted pay domain does not exist — use BSB 083-894' },
+  { re: /api\.onefm985\.com\.au\/webhooks/i, why: 'webhook domain does not exist' },
+  { re: /checkout\.stripe\.com\/pay\?/i, why: 'do not invent Stripe Checkout query URLs' },
 ]
 
 function walk(dir) {

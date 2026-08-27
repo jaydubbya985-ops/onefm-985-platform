@@ -101,6 +101,7 @@ export interface RevenueBySource {
   color: string
 }
 
+// DEMO DATA — illustrative ops charts, not station-audited revenue.
 export const REVENUE_BY_SOURCE: RevenueBySource[] = [
   { source: 'Football', revenue: 38500, color: '#D4A853' },
   { source: 'Programs', revenue: 18200, color: '#5B8DB8' },
@@ -116,6 +117,7 @@ export interface TierAnalysis {
   color: string
 }
 
+// DEMO DATA — illustrative ops charts, not station-audited revenue.
 export const TIER_ANALYSIS: TierAnalysis[] = [
   { tier: 'Platinum', count: 2, revenue: 50000, color: '#D4A853' },
   { tier: 'Gold', count: 4, revenue: 28800, color: '#5B8DB8' },
@@ -145,6 +147,7 @@ export interface CollectionTrend {
   rate: number
 }
 
+// DEMO DATA — illustrative ops charts, not station-audited revenue.
 export const COLLECTION_TRENDS: CollectionTrend[] = [
   { month: 'Sep', rate: 82 },
   { month: 'Oct', rate: 88 },
@@ -160,6 +163,7 @@ export interface ForecastMonth {
   optimistic: number
 }
 
+// DEMO DATA — illustrative ops charts, not station-audited revenue.
 export const FORECAST_SCENARIOS: ForecastMonth[] = [
   { month: 'Mar', conservative: 18000, optimistic: 22000 },
   { month: 'Apr', conservative: 19500, optimistic: 24500 },
@@ -176,6 +180,7 @@ export interface PaymentMethodBreakdown {
   color: string
 }
 
+// DEMO DATA — illustrative ops charts, not station-audited revenue.
 export const PAYMENT_METHOD_ANALYSIS: PaymentMethodBreakdown[] = [
   { method: 'Bank Transfer', count: 45, amount: 78500, color: '#D4A853' },
   { method: 'Credit Card', count: 28, amount: 42300, color: '#5B8DB8' },
@@ -191,6 +196,7 @@ export interface GstQuarter {
   net: number
 }
 
+// DEMO DATA — illustrative GST table, not ATO-filed figures.
 export const GST_QUARTERS: GstQuarter[] = [
   { quarter: 'Q1 FY25', collected: 12400, paid: 3800, net: 8600 },
   { quarter: 'Q2 FY25', collected: 15800, paid: 5200, net: 10600 },
@@ -437,14 +443,15 @@ export const SEED_MEMBERS: MemberRecord[] = [
   { id: 'm10', memberId: 'ONE-M-98510', name: 'Trevor Banks', email: 'tbanks52@bigpond.com', phone: '0428 605 114', address: '9 Pine Rd, Kialla VIC 3631', tier: 'bronze', billingFrequency: 'monthly', joinDate: '2024-08-19', renewalDate: '2026-03-19', amount: 5, status: 'cancelled', autoRenew: false, paymentMethod: 'direct_debit', source: 'Radio' },
 ]
 
-/** Monthly community donation goal (from bundle: $5,000). */
+/** Monthly community donation goal (DEMO theatre only — hide in live mode). */
 export const MONTHLY_DONATION_GOAL = 5000
 
-/** Stripe / PayPal webhook endpoints shown in the integrations panel (verbatim). */
-export const STRIPE_WEBHOOK_URL = 'https://api.onefm985.com.au/webhooks/stripe'
-export const PAYPAL_WEBHOOK_URL = 'https://api.onefm985.com.au/webhooks/paypal'
+/** Webhooks are not deployed. Do not invent a hosted webhook URL. */
+export const WEBHOOK_NOT_CONFIGURED = 'Not configured — pay to NAB BSB 083-894'
+export const STRIPE_WEBHOOK_URL = WEBHOOK_NOT_CONFIGURED
+export const PAYPAL_WEBHOOK_URL = WEBHOOK_NOT_CONFIGURED
 
-/** Hosted payment-link pattern used by the deployed Payment Link Generator. */
-export function buildPaymentLink(invoiceId: string): string {
-  return `https://pay.onefm985.com.au/invoice/${invoiceId}?ref=${Math.random().toString(36).substring(2, 10)}`
+/** Hosted pay links do not exist. Callers must show bank details instead. */
+export function buildPaymentLink(_invoiceId: string): string | null {
+  return null
 }
