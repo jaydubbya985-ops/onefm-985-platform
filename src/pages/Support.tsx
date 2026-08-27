@@ -83,7 +83,7 @@ function DonateHero() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.15) 45%, #0A0A0A 100%)',
+            'linear-gradient(180deg, rgba(7,29,58,.55) 0%, rgba(7,29,58,.15) 45%, #071D3A 100%)',
         }}
         aria-hidden
       />
@@ -203,7 +203,7 @@ export default function Support() {
         title="Donate — Support ONE FM 98.5"
         description="Support volunteer-run community radio in the Goulburn Valley. Bank transfer: NAB BSB 083-894 · Acct 553 219 432 · 98.5 One FM."
       />
-      <div style={{ background: '#0A0A0A' }} className="min-h-screen">
+      <div style={{ background: '#071D3A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             'Volunteer-run · community-owned · not for profit',

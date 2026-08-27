@@ -372,7 +372,7 @@ export default function AudienceAnalytics() {
       </section>
 
       {/* ── Analytics Marquee Strip ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-one-deep-blue border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[

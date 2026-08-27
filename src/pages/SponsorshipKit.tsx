@@ -29,7 +29,7 @@ function SponsorHero() {
           style={{ filter: 'brightness(0.45) saturate(0.9)' }}
         />
       )}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.15) 45%, #0A0A0A 100%)' }} aria-hidden />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(7,29,58,.55) 0%, rgba(7,29,58,.15) 45%, #071D3A 100%)' }} aria-hidden />
       <div className="relative">
         <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(52px,10vw,150px)]">
           <PosterReveal lines={[
@@ -125,7 +125,7 @@ export default function SponsorshipKit() {
         title="Sponsor ONE FM 98.5 — Advertise Across the Goulburn Valley"
         description="Sponsorship from $50/week: est. 39,375 weekly listeners across 25 towns. Packages, GVL football, and a real conversation — not a call centre."
       />
-      <div style={{ background: '#0A0A0A' }} className="min-h-screen">
+      <div style={{ background: '#071D3A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,

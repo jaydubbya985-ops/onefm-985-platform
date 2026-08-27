@@ -191,7 +191,7 @@ const GVL_GALLERY = [
 
 function GVLGalleryStrip() {
   return (
-    <section className="py-20 bg-[#070707]" data-cursor-label="GVL SPORT">
+    <section className="py-20 bg-one-deep-blue" data-cursor-label="GVL SPORT">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -292,15 +292,15 @@ export default function Football() {
       {/* ═══════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="GAME DAY">
+      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-one-navy" data-cursor-label="GAME DAY">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
             <CinegraphBackground slot="gvlGameDay" opacity={0.6} />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/55 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/55 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
         <ParticleField />
@@ -397,7 +397,7 @@ export default function Football() {
       </section>
 
       {/* ── Football Marquee Strip ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-one-deep-blue border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[

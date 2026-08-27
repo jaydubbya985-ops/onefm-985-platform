@@ -40,7 +40,7 @@ function CommunityHero() {
           style={{ filter: 'brightness(0.45) saturate(0.9)' }}
         />
       )}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.15) 45%, #0A0A0A 100%)' }} aria-hidden />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(7,29,58,.55) 0%, rgba(7,29,58,.15) 45%, #071D3A 100%)' }} aria-hidden />
       <div className="relative">
         <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,160px)]">
           <PosterReveal lines={[
@@ -81,7 +81,7 @@ export default function Community() {
         title="Our Community — ONE FM 98.5"
         description="25 towns across the Goulburn Valley: GVL footy called live, multicultural programming in 8+ languages, and the communities ONE FM serves."
       />
-      <div style={{ background: '#0A0A0A' }} className="min-h-screen">
+      <div style={{ background: '#071D3A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             `● ${stationStats.totalTowns} towns across the Goulburn Valley`,

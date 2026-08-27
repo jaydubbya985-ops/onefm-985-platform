@@ -72,7 +72,7 @@ export function OnAirNav() {
       {/* ── The bar: three objects ── */}
       <nav
         className={`fixed top-0 inset-x-0 z-[300] transition-colors duration-300 ${
-          scrolled || open ? 'bg-[#0A0A0A]/92 backdrop-blur-xl border-b border-white/8' : 'bg-transparent'
+          scrolled || open ? 'bg-one-navy/92 backdrop-blur-xl border-b border-white/8' : 'bg-transparent'
         }`}
         style={{ height: 68 }}
         aria-label="Main"
@@ -120,7 +120,7 @@ export function OnAirNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[290] bg-[#0A0A0A] overflow-y-auto"
+            className="fixed inset-0 z-[290] bg-one-navy overflow-y-auto"
           >
             <div className="min-h-full flex flex-col px-5 md:px-10 pt-24 pb-8">
               <div className="flex-1">

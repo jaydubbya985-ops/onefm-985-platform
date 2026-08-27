@@ -486,7 +486,7 @@ export function Navbar() {
             animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
             exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
             transition={{ duration: 0.38, ease }}
-            className="fixed inset-0 z-40 bg-[#0A0A0A]/97 backdrop-blur-xl pt-20 px-6 pb-8 overflow-y-auto lg:hidden"
+            className="fixed inset-0 z-40 bg-one-navy/97 backdrop-blur-xl pt-20 px-6 pb-8 overflow-y-auto lg:hidden"
           >
             <motion.div
               initial={{ opacity: 0, y: 16 }}

@@ -188,7 +188,7 @@ export function HorizontalGallery() {
     <section aria-label="ONE FM photo archive">
 
       {/* Section header — ON AIR kit chrome */}
-      <div className="bg-[#0A0A0A] pt-20 pb-10 px-6 text-center section-bleed-top">
+      <div className="bg-one-navy pt-20 pb-10 px-6 text-center section-bleed-top">
         <span className="font-bold text-[12px] tracking-[0.14em] uppercase mb-4 block" style={{ color: '#E51636' }}>
           — Station Archive
         </span>
@@ -212,7 +212,7 @@ export function HorizontalGallery() {
         data-cursor-label="SCROLL"
       >
         {/* Sticky viewport — stays fixed while outer div scrolls */}
-        <div className="sticky top-0 overflow-hidden bg-[#0A0A0A]" style={{ height: '100svh' }}>
+        <div className="sticky top-0 overflow-hidden bg-one-navy" style={{ height: '100svh' }}>
           {/* Horizontal track — translateX driven by tick() */}
           <div
             ref={trackRef}

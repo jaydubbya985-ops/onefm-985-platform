@@ -38,7 +38,7 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
   if (!isFirstVisit) {
     return (
       <div
-        className={`fixed inset-0 z-[9999] bg-[#0A0A0A] transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[9999] bg-one-navy transition-opacity duration-300 ${
           exiting ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
         aria-hidden
@@ -55,7 +55,7 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4, ease }}
-          className="fixed inset-0 z-[9999] bg-[#0A0A0A] flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-[9999] bg-one-navy flex items-center justify-center overflow-hidden"
           aria-hidden
         >
           <div className="relative flex flex-col items-center select-none">
@@ -91,7 +91,7 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
 
 export function RouteFallback() {
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+    <div className="min-h-screen bg-one-navy flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <BrandLogo variant="white" className="h-14 w-auto animate-pulse" />
         <div className="h-1 w-32 bg-white/10 rounded-full overflow-hidden">

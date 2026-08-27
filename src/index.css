@@ -113,33 +113,34 @@
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
+    /* Neutrals are Brand V3 navy, not grey — see /public/brand/brand-tokens.json */
+    --background: 213 77% 7%;
     --foreground: 0 0% 100%;
-    --card: 0 0% 4%;
+    --card: 214 78% 13%;
     --card-foreground: 0 0% 100%;
-    --popover: 0 0% 4%;
+    --popover: 214 78% 13%;
     --popover-foreground: 0 0% 100%;
     --primary: 351 82% 52%;
-    --primary-foreground: 0 0% 4%;
-    --secondary: 0 0% 10%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 76% 18%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 62%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 214 17% 66%;
+    --muted-foreground: 214 15% 60%;
     --accent: 351 82% 52%;
-    --accent-foreground: 0 0% 4%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 358 82% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
+    --border: 214 67% 22%;
+    --input: 214 67% 22%;
     --ring: 351 82% 52%;
     --radius: 0.625rem;
-    --sidebar-background: 0 0% 4%;
+    --sidebar-background: 213 77% 7%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 351 82% 52%;
-    --sidebar-primary-foreground: 0 0% 4%;
-    --sidebar-accent: 0 0% 10%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 76% 18%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 14%;
+    --sidebar-border: 214 67% 22%;
     --sidebar-ring: 351 82% 52%;
 
     --one-navy: #071D3A;
@@ -149,8 +150,8 @@
     --one-gold: #E51636; /* ON AIR: legacy gold token now maps to signal red */
     --one-red: #E51636;
     --one-white: #FFFFFF;
-    --one-muted: #8A9199;
-    --one-border: #242424;
+    --one-muted: #9AA7B8;
+    --one-border: #12325C;
 
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
@@ -177,7 +178,7 @@
   }
 
   body {
-    @apply bg-[#0A0A0A] text-one-white font-body antialiased;
+    @apply bg-one-navy text-one-white font-body antialiased;
     -webkit-font-smoothing: antialiased;
     overflow-x: clip;
     -moz-osx-font-smoothing: grayscale;
@@ -191,7 +192,7 @@
     }
   }
 
-  ::selection { background: #B6FF00; color: #0A0A0A; }
+  ::selection { background: #B6FF00; color: #071D3A; }
 
   body::after {
     content: '';
@@ -829,18 +830,18 @@
      Use these instead of flat bg-one-navy to give pages
      visual altitude variation. Deep → Mid → Lift → Peak.
   ─────────────────────────────────────────────────────── */
-  /* ON AIR (Direction A): ink scale replaces navy scale */
+  /* Brand V3: ONE FM Blue base — Deep Broadcast Navy #071D3A and its shades */
   .bg-surface-deep {
-    background: #070707;
+    background: #04101F;
   }
   .bg-surface-mid {
-    background: #0A0A0A;
+    background: #071D3A;
   }
   .bg-surface-lift {
-    background: linear-gradient(180deg, #121212 0%, #0A0A0A 100%);
+    background: linear-gradient(180deg, #0B2A52 0%, #071D3A 100%);
   }
   .bg-surface-peak {
-    background: linear-gradient(180deg, #181818 0%, #101010 100%);
+    background: linear-gradient(180deg, #0F3466 0%, #0B2A52 100%);
   }
   /* Subtle side-lit variant for hero-adjacent sections */
   .bg-surface-glow {

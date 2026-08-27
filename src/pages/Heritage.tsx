@@ -63,7 +63,7 @@ function HeritageHero() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.15) 45%, #0A0A0A 100%)',
+            'linear-gradient(180deg, rgba(7,29,58,.55) 0%, rgba(7,29,58,.15) 45%, #071D3A 100%)',
         }}
         aria-hidden
       />
@@ -161,7 +161,7 @@ export default function Heritage() {
         title="The Living Archive — ONE FM 98.5 · 3ONE Since 1989"
         description="The Living Archive of the Goulburn Valley — decades, people, sport, floods, multicultural voices. Searchable history from Shepparton community radio 3ONE."
       />
-      <div style={{ background: '#0A0A0A' }} className="min-h-screen">
+      <div style={{ background: '#071D3A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             `Callsign ${ACMA_FACTS.callsign} · ${ACMA_FACTS.frequency} · ${ACMA_FACTS.power}`,

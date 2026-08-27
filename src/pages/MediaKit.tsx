@@ -232,7 +232,7 @@ const STUDIO_PHOTOS = [
 
 function StudioPhotoStrip() {
   return (
-    <section className="py-16 bg-[#070707]" data-cursor-label="STUDIO">
+    <section className="py-16 bg-one-deep-blue" data-cursor-label="STUDIO">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -365,7 +365,7 @@ export default function MediaKit() {
         description="ONE FM 98.5 media kit — rate card, audience reach, sponsorship packages, and brand assets for advertisers in the Goulburn Valley."
       />
       {/* ═══════ HERO ═══════ */}
-      <section ref={heroRef} className="relative min-h-[80vh] flex items-end bg-[#101010] overflow-hidden" data-cursor-label="MEDIA KIT">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end bg-one-navy overflow-hidden" data-cursor-label="MEDIA KIT">
         {/* Background image */}
         <motion.div
           style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -381,8 +381,8 @@ export default function MediaKit() {
           />
         </motion.div>
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/65 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-one-navy/65 via-transparent to-transparent" />
         {/* Waveform overlay */}
         <WaveformBg />
         <div aria-hidden className="grain-overlay" />
@@ -494,7 +494,7 @@ export default function MediaKit() {
       <CredibilityStrip />
 
       {/* ── Media Kit Marquee Strip ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-one-deep-blue border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[
