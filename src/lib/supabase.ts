@@ -1,48 +1,88 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type {
   EnquiryNote,
   EnquiryPriority,
   EnquirySource,
   EnquiryStatus,
 } from '@/components/ops/data/enquiries'
+import { resolveOpsConfig } from '@/lib/opsConfigResolve'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+export { isValidSupabaseKey } from '@/lib/opsConfigResolve'
 
-const PLACEHOLDER_KEY_VALUES = new Set([
-  'your-anon-key-here',
-  'your-publishable-key-here',
-])
+const AUTH_OPTIONS = {
+  persistSession: true,
+  autoRefreshToken: true,
+  detectSessionInUrl: true,
+  storageKey: 'onefm-supabase-auth',
+} as const
 
-/** Accepts legacy JWT anon keys and new publishable keys (sb_publishable_...). */
-export function isValidSupabaseKey(key: string): boolean {
-  if (!key || PLACEHOLDER_KEY_VALUES.has(key)) return false
-  return key.startsWith('eyJ') || key.startsWith('sb_publishable_')
+const INERT_URL = 'https://placeholder.supabase.co'
+const INERT_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSJ9.placeholder'
+
+let supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
+let supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+
+function makeClient(url: string, key: string): SupabaseClient {
+  return createClient(url || INERT_URL, key || INERT_KEY, { auth: AUTH_OPTIONS })
 }
 
 /** True when real Supabase credentials are configured (not placeholder values). */
 export function isSupabaseConfigured(): boolean {
-  return Boolean(
-    supabaseUrl &&
-      isValidSupabaseKey(supabaseAnonKey) &&
-      !supabaseUrl.includes('your-project-id'),
-  )
+  return resolveOpsConfig({
+    VITE_SUPABASE_URL: supabaseUrl,
+    VITE_SUPABASE_ANON_KEY: supabaseAnonKey,
+  }).configured
 }
 
 // Supabase throws if URL is empty — use inert placeholders until env vars are set.
-const clientUrl = supabaseUrl || 'https://placeholder.supabase.co'
-const clientKey =
-  supabaseAnonKey ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSJ9.placeholder'
+export let supabase = makeClient(supabaseUrl, supabaseAnonKey)
 
-export const supabase = createClient(clientUrl, clientKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    storageKey: 'onefm-supabase-auth',
-  },
-})
+function applyRuntimeConfig(url: string, anonKey: string): void {
+  supabaseUrl = url
+  supabaseAnonKey = anonKey
+  supabase = makeClient(url, anonKey)
+}
+
+/**
+ * Load LIVE credentials from Netlify site env when Vite did not bake them.
+ * Call once before React mounts. No-ops when VITE_* is already valid.
+ */
+export async function initSupabaseFromRuntime(): Promise<void> {
+  if (isSupabaseConfigured()) {
+    initSupabaseAuthRefresh()
+    return
+  }
+  if (typeof fetch === 'undefined') return
+
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), 4000)
+  try {
+    const res = await fetch('/.netlify/functions/ops-config', {
+      method: 'GET',
+      signal: ctrl.signal,
+      headers: { Accept: 'application/json' },
+    })
+    if (!res.ok) return
+    const data = (await res.json()) as {
+      configured?: boolean
+      url?: string
+      anonKey?: string
+    }
+    const resolved = resolveOpsConfig({
+      VITE_SUPABASE_URL: data?.configured ? data.url : undefined,
+      VITE_SUPABASE_ANON_KEY: data?.configured ? data.anonKey : undefined,
+    })
+    if (resolved.configured) {
+      applyRuntimeConfig(resolved.url, resolved.anonKey)
+      initSupabaseAuthRefresh()
+    }
+  } catch {
+    // Stay DEMO until Netlify env exists or the function is deployed.
+  } finally {
+    clearTimeout(timer)
+  }
+}
 
 let authRefreshInitialized = false
 

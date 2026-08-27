@@ -5,7 +5,8 @@
 **Repo:** `jaydubbya985-ops/onefm-985-platform`  
 **Live:** https://onefmops.netlify.app  
 **Netlify site ID:** `8df4de74-d9a8-42ce-9316-61bd06475c94`  
-**GitHub is source of truth.** Always `git pull origin main` first.
+**GitHub is source of truth.** Always `git pull origin main` first.  
+**Do not merge PRs unless Jay says EXE.**
 
 ## Benchmark (stop only when this is true)
 
@@ -13,36 +14,32 @@
 
 | Gate | Status (2026-08-27) |
 |------|---------------------|
-| Logo + invoice PDF | **On `main`** (`e511343` + later PRs). FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Not on live until Netlify PAT works. |
-| Mailto honesty | **On `main` plus this branch.** Invoice mailto / billing cycle / reminders / `devMode` do **not** mark sent. Public enquiry forms only claim received if Supabase stored the row or an email actually sent. Programs song request says **Email Draft Opened**. |
-| Public truth | **On `main` plus PR #16.** `/audience` towns from `townData.ts`. OG **189,680**. Community page uses **8** multicultural programs from `programGuide.ts`. `npm run truth` also forbids invented pay/webhook domains and fake Stripe Checkout query URLs. |
-| Live `#/ops` | **Still DEMO on production.** Branch also hides DEMO billing charts, fake pay URLs, fake webhooks, and the $5,000 donation goal when Supabase is configured. Pay instruction is BSB **083-894**. |
-| Deploy | GitHub `NETLIFY_AUTH_TOKEN` is set and **rejected (HTTP 401)**. Empty-commit retries will not fix this. `npm run live` (`scripts/verify-live.mjs`) is the production gate after a successful deploy. |
-| Ops live env | Needs `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` in **GitHub Actions secrets** (baked at `npm run build`) **and** Netlify site env. |
+| Logo + invoice PDF | **On `main`**. FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Not on live until a Netlify deploy lands. |
+| Mailto honesty | **On `main` plus PR #16.** Invoice mailto / billing cycle / reminders / `devMode` do **not** mark sent. Enquiry forms only claim received if Supabase stored the row or an email actually sent. |
+| Public truth | **On `main` plus PR #16.** OG **189,680**. Community page **8** multicultural programs from `programGuide.ts`. |
+| Live `#/ops` | **Still DEMO on production** (`index-BJ4yefZ1.js`). PR #16: LIVE banner when Supabase is configured; DEMO seeds stay in DEMO only; FOOTT + Jason’s TV upserted on first live load. Runtime `/.netlify/functions/ops-config` reads Netlify site env so `#/ops` can go LIVE **without** GitHub `VITE_*` secrets after this function is deployed. |
+| Deploy | GitHub `NETLIFY_AUTH_TOKEN` is **401**. Empty-commit retries will not fix this. `npm run live` is the production gate. |
 
 ## Do this run (order)
 
-1. `git pull origin main`. Do not merge PRs unless Jay says **EXE**.
-2. New work = new branch `cursor/<name>-c24f`. Never share another agent’s branch.
-3. **First:** if live still shows `index-BJ4yefZ1.js`, do **not** empty-commit. The PAT is dead. NEED JAY (below).
-4. `npx vite-node scripts/verify-ops-pdfs.ts` then pymupdf (`python3 -m pip install --user pymupdf`).
-5. Ops: DEMO until env vars exist. Do not fake live mode. Password already in `AGENTS.md`.
-6. If blocked on secrets: post **NEED JAY:** one line. Keep coding independent work.
-7. `npm run build` must pass. Commit + push + PR. Deploy needs a **new** Netlify PAT. Then `npm run live` against production.
+1. `git pull origin main`. Stay on `cursor/gov-ready-live-gate-c24f` (PR #16) unless starting new work (`cursor/<name>-c24f`).
+2. If live still shows `index-BJ4yefZ1.js`, do **not** empty-commit.
+3. If Jay replied **done** after linking Git or replacing the PAT: do not merge without **EXE**. Re-run Deploy to Netlify on `main` only if the PAT is new; otherwise wait for Netlify’s own build, then `npm run live`.
+4. `npm run ops-config` and `npx vite-node scripts/verify-ops-pdfs.ts`.
+5. Do not fake live mode. Do not upsert the 19-row DEMO batch.
 
 ## Model / desks
 
-- **Grok 4.6 Cloud Agent cannot upgrade itself.** Jay: start next run at https://cursor.com/agents as **Claude Opus** (or GPT 5.6 extra-high). Paste this file.
+- **Grok 4.6 Cloud Agent cannot upgrade itself.** Next coding run: https://cursor.com/agents as **Claude Opus**. Paste this file.
 - **Kimi (desktop):** same GitHub repo. Pull `main`. Paste this file.
-- **Cursor Automation:** https://cursor.com/automations — prompt = this file; model = Claude Opus.
 
 ## NEED JAY (one action)
 
-Replace GitHub secret `NETLIFY_AUTH_TOKEN` with a **new** Netlify PAT (Netlify → User settings → Applications → New access token), then **Re-run** the failed **Deploy to Netlify** workflow on `main` (do not empty-commit).
+Open **onefmops** in Netlify → Site configuration → Build & deploy → Continuous Deployment → **Link repository** → GitHub → `jaydubbya985-ops/onefm-985-platform` → branch **main** → Deploy.
 
-Also paste `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` into GitHub Actions secrets **and** Netlify Site settings → Environment variables so `#/ops` can leave DEMO after that deploy.
+Then reply **done**. Do not generate a PAT. Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`.
 
-Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`.
+After that deploy exists, the next one-line ask is: paste `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` into Netlify → Site settings → Environment variables (ops-config reads them at request time). Then say **EXE** to merge PR #16.
 
 ## Truth numbers (only these)
 
@@ -54,4 +51,4 @@ Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`.
 
 ## Do not
 
-- Force-push. Invent FOOTT invoice contents. Fake live ops. Empty-commit to retry a 401. Upsert the 19-row DEMO batch into Supabase.
+- Force-push. Invent FOOTT invoice contents. Fake live ops. Empty-commit to retry a 401. Upsert the 19-row DEMO batch into Supabase. Merge without **EXE**.

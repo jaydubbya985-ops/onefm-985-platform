@@ -63,12 +63,30 @@ else {
   }
 
   const haystack = indexJs + html
-  const hasSupabase =
+  const hasBakedSupabase =
     haystack.includes('myarjdatdtchmkgdpsab.supabase.co') ||
     /https:\/\/[a-z0-9]+\.supabase\.co/.test(haystack)
-  if (!hasSupabase) {
+
+  let runtimeConfigured = false
+  try {
+    const cfgRes = await fetch(LIVE + '/.netlify/functions/ops-config')
+    if (cfgRes.ok) {
+      const cfg = JSON.parse(await cfgRes.text())
+      runtimeConfigured =
+        cfg?.configured === true &&
+        typeof cfg.url === 'string' &&
+        cfg.url.includes('supabase.co') &&
+        !cfg.url.includes('your-project-id')
+    } else if (cfgRes.status !== 404) {
+      fail.push(`ops-config HTTP ${cfgRes.status} — #/ops cannot read Netlify env`)
+    }
+  } catch (err) {
+    fail.push(`ops-config fetch failed: ${err instanceof Error ? err.message : err}`)
+  }
+
+  if (!hasBakedSupabase && !runtimeConfigured) {
     fail.push(
-      'live bundle has no Supabase URL — #/ops will stay DEMO until VITE_SUPABASE_* is in the GitHub Actions build secrets',
+      'live #/ops will stay DEMO — bundle has no Supabase URL and /.netlify/functions/ops-config is not configured. Set VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY in Netlify site env (no rebuild needed once ops-config is deployed).',
     )
   }
 }
