@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   Search, ChevronDown, Download, Copy, Check, Instagram, Twitter, Facebook,
   Smartphone, Globe, Image, Palette, Type, Grid, Music, ArrowRight,
-  Sparkles, X, Heart, MessageCircle, Eye, Hash, Shield,
+  Sparkles, X, Eye, Hash, Shield,
   Mic, Clock, Plus, Wand2, Radio
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -84,23 +84,29 @@ const TEMPLATES = [
 
 const PLATFORM_FILTERS = ['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'Stories', 'Reels']
 
+// Page counts were invented, so the cards link to the live page instead of
+// claiming a document length we cannot produce.
 const GUIDES = [
-  { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: '12 pages', path: '/media-kit' },
-  { title: 'Optimal Posting Times', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'Platform-specific timing recommendations based on audience data', pages: '8 pages', path: '/audience' },
-  { title: 'Hashtag Strategy', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'Curated hashtag sets for maximum reach and engagement', pages: '6 pages', path: '/social' },
-  { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: '10 pages', path: '/contact' },
+  { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: 'Media kit', path: '/media-kit' },
+  { title: 'Who We Reach', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'The broadcast-area population behind every post — and what we do not measure', pages: 'Audience & reach', path: '/audience' },
+  { title: 'Hashtag Sets', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'The station hashtags to use across GVL, community and program posts', pages: 'This page', path: '/social' },
+  { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: 'Contact the station', path: '/contact' },
 ]
 
-// Real ONE FM Facebook/social post examples — localised Goulburn Murray content
+/**
+ * Caption examples for the station's own feed. Like and comment counts were
+ * invented and used to sit on each card; ONE FM does not export platform
+ * metrics into this repo, so the cards show the copy and the artwork only.
+ */
 const FEED_POSTS = [
-  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage is LIVE on ONE FM 98.5! Follow every bounce on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM', likes: '87', comments: '14', time: '2d' },
-  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton', likes: '42', comments: '6', time: '4d' },
-  { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley', likes: '63', comments: '9', time: '1w' },
-  { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community', likes: '58', comments: '7', time: '1w' },
-  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL — nothing beats local footy on a Friday night. Catch us on 98.5 FM 🔴 #GVL #LocalFooty', likes: '91', comments: '11', time: '2w' },
-  { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM', likes: '74', comments: '8', time: '2w' },
-  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: 'Live and local — 25 multicultural programs weekly keeping every corner of the Goulburn Valley connected. #OneFM985 #Community', likes: '39', comments: '5', time: '3w' },
-  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️', likes: '66', comments: '7', time: '3w' },
+  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage is LIVE on ONE FM 98.5! Follow every bounce on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM' },
+  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton' },
+  { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley' },
+  { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community' },
+  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL — nothing beats local footy on a Friday night. Catch us on 98.5 FM 🔴 #GVL #LocalFooty' },
+  { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM' },
+  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: 'Live and local — eight language programs keeping every corner of the Goulburn Valley connected. #OneFM985 #Community' },
+  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️' },
 ]
 
 // Content calendar — GVL events & ONE FM programming (update monthly)
@@ -288,7 +294,7 @@ function HeroSection() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24 CONTENT TEMPLATES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">120+ BRAND IMAGES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">AI CAPTION GENERATOR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">CAPTION TEMPLATES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CAMPAIGN CALENDAR TOOLS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BRAND KIT DOWNLOAD</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY · COMMUNITY RADIO</span>,
@@ -838,7 +844,7 @@ function CampaignCalendar() {
           </motion.div>
         )}
 
-        {/* AI Suggestion Bar */}
+        {/* Planning note */}
         <TiltCard maxTilt={3} className="mt-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -851,12 +857,9 @@ function CampaignCalendar() {
             <Wand2 size={20} className="text-one-gold shrink-0" />
             <div className="flex-1">
               <div className="font-body-small text-one-white text-sm">
-                AI suggests: Schedule a <span className="text-one-gold">"Weekend Warmup"</span> series for Fridays based on engagement data.
+                Planning note: this calendar is a posting plan, not a performance report. ONE FM does
+                not measure social engagement, so nothing here is ranked by reach.
               </div>
-            </div>
-            <div className="flex gap-2">
-              <button data-cursor-label="ACCEPT" className="btn-primary text-xs">Accept</button>
-              <button data-cursor-label="DISMISS" className="btn-secondary text-xs">Dismiss</button>
             </div>
           </div>
         </motion.div>
@@ -907,55 +910,54 @@ function PostingToolkit() {
           ))}
         </div>
 
-        <div className="flex flex-wrap justify-center gap-3">
-          {['Caption Generator', 'Hashtag Picker', 'Image Resizer', 'Best Time Checker'].map((tool) => (
-            <button key={tool} data-cursor-label={tool.split(' ')[0].toUpperCase()} className="btn-secondary text-xs">{tool}</button>
-          ))}
-        </div>
+        <p className="text-center font-body-small text-muted">
+          Caption starters are below. A hashtag picker, image resizer and posting-time tool are not
+          built yet, so they are not listed here.
+        </p>
       </div>
     </section>
   )
 }
 
-/* ─── Section 6: AI Caption Generator ─── */
+/**
+ * Section 6: caption starter templates.
+ *
+ * A fixed library, not a model. It was previously badged as AI-powered behind a
+ * two-second fake spinner, with tone/topic/length controls that never touched
+ * the output. A licensed broadcaster cannot advertise a capability it does not
+ * have, so it now says what it is and every control shown does something.
+ */
+const CAPTION_TEMPLATES: Record<string, string[]> = {
+  Instagram: [
+    '🎙️ Live now on ONE FM 98.5 — ONE FM Breakfast, 6AM–9AM weekdays. #ONEFMBreakfast #OneFM',
+    '📻 Community radio, made in Shepparton. Tune to 98.5 FM or stream at fm985.com.au. #OneFM #RadioLife',
+  ],
+  TikTok: [
+    'Community radio from the Goulburn Valley, on air since 1989 🎧 #OneFM #RadioTok',
+    'Behind the desk at ONE FM 98.5 — volunteer-run, live and local 🎙️ #OneFM #MusicTok',
+  ],
+  'Twitter/X': [
+    '🎵 LIVE NOW: ONE FM Breakfast on ONE FM 98.5. News, music, and your calls. Tune in → 98.5 FM #ONEFMBreakfast',
+    'GVL football, called live on ONE FM 98.5. Stream at fm985.com.au #OneFM #GVL',
+  ],
+  Facebook: [
+    'ONE FM Breakfast is live from 6AM weekdays — news, music, and community from your local station. 🎙️',
+    'Catch GVL football and netball called live on ONE FM 98.5, or stream anywhere at fm985.com.au. 🎉',
+  ],
+  LinkedIn: [
+    'ONE FM 98.5 is a volunteer-powered community broadcaster licensed to Goulburn Valley Community Radio Inc., on air from Shepparton since 1989.',
+  ],
+}
+
 function CaptionGenerator() {
   const [platform, setPlatform] = useState('Instagram')
-  const [topic, setTopic] = useState('')
-  const [tone, setTone] = useState('Energetic')
-  const [length, setLength] = useState(2)
-  const [generating, setGenerating] = useState(false)
+  const [variant, setVariant] = useState(0)
   const [result, setResult] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const generate = () => {
-    setGenerating(true)
-    setTimeout(() => {
-      const captions: Record<string, string[]> = {
-        Instagram: [
-          '🔥 The beats are dropping and the vibes are rising! Tune into ONE FM now for your daily dose of energy. #ONEFMBreakfast #LiveRadio #OneFM',
-          '🎙️ Your favorite hosts are LIVE and ready to make your morning unforgettable. Join the conversation! 📻✨ #OneFM #RadioLife',
-        ],
-        TikTok: [
-          'POV: you just found the best radio station ever 🔥 #OneFM #RadioTok #Viral',
-          'When the DJ drops THAT track and the whole studio loses it 🎧💥 #OneFM #MusicTok',
-        ],
-        'Twitter/X': [
-          '🎵 LIVE NOW: ONE FM Breakfast on ONE FM 98.5. News, music, and your calls. Tune in → ONE FM 98.5 #ONEFMBreakfast',
-          'The Night Shift is about to get started. Indie, electronica, and zero sleep required 🌙 #TheNightShift #OneFM',
-        ],
-        Facebook: [
-          'Join thousands of listeners who start their day with ONE FM. ONE FM Breakfast is live from 6AM — news, music, and community. 🎙️',
-          'Weekend Warmup is here! Two hours of feel-good anthems to kick off your Saturday right. Tune in now! 🎉',
-        ],
-        LinkedIn: [
-          'ONE FM continues to lead regional broadcasting with cutting-edge programming and community-focused content. Learn more about our latest initiatives.',
-        ],
-      }
-      const options = captions[platform] || captions.Instagram
-      setResult(options[Math.floor(Math.random() * options.length)])
-      setGenerating(false)
-    }, 2000)
-  }
+  const options = CAPTION_TEMPLATES[platform] ?? CAPTION_TEMPLATES.Instagram
+
+  const generate = () => setResult(options[variant % options.length])
 
   const copyResult = () => {
     if (!result) return
@@ -965,7 +967,7 @@ function CaptionGenerator() {
   }
 
   return (
-    <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="AI CAPTION">
+    <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="CAPTION TEMPLATES">
       <div className="max-w-[800px] mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -975,10 +977,13 @@ function CaptionGenerator() {
           className="text-center mb-10"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-one-gold/20 text-one-gold font-label text-[10px] mb-4">
-            <Sparkles size={12} /> AI POWERED
+            <Sparkles size={12} /> TEMPLATE LIBRARY
           </div>
-          <WordReveal text="AI CAPTION GENERATOR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-          <p className="font-body-small text-muted">Generate platform-optimized captions in seconds</p>
+          <WordReveal text="CAPTION TEMPLATES" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+          <p className="font-body-small text-muted">
+            Pick a platform, copy a starter caption, then edit it for the post. Written by the
+            station — no generated copy.
+          </p>
         </motion.div>
 
         <motion.div
@@ -1003,79 +1008,34 @@ function CaptionGenerator() {
               </select>
             </div>
 
-            {/* Topic */}
+            {/* Variant */}
             <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">TOPIC</label>
-              <input
-                type="text"
-                placeholder="What is this post about?"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold text-sm"
-              />
-            </div>
-
-            {/* Tone */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">TONE</label>
-              <select
-                value={tone}
-                onChange={(e) => setTone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white focus:outline-none focus:border-one-gold text-sm"
-              >
-                {['Energetic', 'Professional', 'Casual', 'Humorous', 'Inspirational'].map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Include pills */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-2 block">INCLUDE</label>
+              <label className="font-label text-muted text-[10px] mb-2 block">TEMPLATE</label>
               <div className="flex gap-2 flex-wrap">
-                {['Hashtags', 'CTA', 'Emoji', 'Mentions'].map((opt) => (
-                  <label key={opt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-one-border font-label text-[10px] text-muted cursor-pointer hover:border-one-gold/50 transition-colors">
-                    <input type="checkbox" defaultChecked className="accent-[#F2F2F2] w-3 h-3" />
-                    {opt}
-                  </label>
+                {options.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setVariant(i)}
+                    className={`px-3 py-1.5 rounded-full border font-label text-[10px] transition-colors ${
+                      variant % options.length === i
+                        ? 'border-one-gold text-one-gold'
+                        : 'border-one-border text-muted hover:border-one-gold/50'
+                    }`}
+                  >
+                    Option {i + 1}
+                  </button>
                 ))}
-              </div>
-            </div>
-
-            {/* Length slider */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">LENGTH</label>
-              <input
-                type="range"
-                min={1}
-                max={5}
-                value={length}
-                onChange={(e) => setLength(Number(e.target.value))}
-                className="w-full accent-[#F2F2F2]"
-              />
-              <div className="flex justify-between font-label text-[10px] text-muted mt-1">
-                <span>Short</span>
-                <span>Long</span>
               </div>
             </div>
           </div>
 
           <button
             onClick={generate}
-            disabled={generating}
-            data-cursor-label={generating ? 'GENERATING' : 'GENERATE'}
-            className="btn-primary text-xs w-full justify-center disabled:opacity-50"
+            data-cursor-label="COPY TEMPLATE"
+            className="btn-primary text-xs w-full justify-center"
           >
-            {generating ? (
-              <>
-                <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Sparkles size={14} /> Generate Caption
-              </>
-            )}
+            <Sparkles size={14} /> Show Caption
           </button>
         </motion.div>
 
@@ -1089,7 +1049,7 @@ function CaptionGenerator() {
               transition={{ duration: 0.5, ease: easeOutExpo }}
               className="mt-6 glass-card p-6"
             >
-              <h4 className="font-h4 text-one-white mb-3">Generated Caption</h4>
+              <h4 className="font-h4 text-one-white mb-3">Starter Caption</h4>
               <div className="bg-one-navy rounded-lg p-4 mb-4">
                 <p className="font-body text-one-white whitespace-pre-wrap">{result}</p>
               </div>
@@ -1189,18 +1149,7 @@ function SocialFeedPreview() {
                   </div>
                 </div>
                 <div className="p-3">
-                  <p className="font-body-small text-one-white text-xs line-clamp-2 mb-3">{post.caption}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 group-hover:text-one-gold transition-colors">
-                      <span className="flex items-center gap-1 font-micro text-muted group-hover:text-one-gold">
-                        <Heart size={10} /> {post.likes}
-                      </span>
-                      <span className="flex items-center gap-1 font-micro text-muted group-hover:text-one-gold">
-                        <MessageCircle size={10} /> {post.comments}
-                      </span>
-                    </div>
-                    <span className="font-micro text-muted">{post.time}</span>
-                  </div>
+                  <p className="font-body-small text-one-white text-xs line-clamp-2">{post.caption}</p>
                 </div>
               </motion.div>
             ))}
@@ -1292,7 +1241,7 @@ function MailchimpExportSection() {
 export default function SocialHub() {
   return (
     <Layout>
-      <SEO title="Social Media Hub" description="ONE FM 98.5 brand assets, content templates, AI caption generator, and campaign calendar." />
+      <SEO title="Social Media Hub" description="ONE FM 98.5 brand assets, content templates, caption starters, and campaign calendar." />
       <HeroSection />
       <LiveFacebookSection />
       <AssetLibrary />
