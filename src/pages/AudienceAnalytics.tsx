@@ -10,14 +10,10 @@ import {
   Headphones,
   Mic,
   X,
-  Calendar,
   ChevronDown,
   AlertTriangle,
-  FileText,
 } from 'lucide-react'
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   XAxis,
@@ -31,7 +27,6 @@ import {
 } from 'recharts'
 import { Layout } from '@/components/Layout'
 import { WordReveal } from '@/components/WordReveal'
-import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { Marquee } from '@/components/Marquee'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
@@ -98,10 +93,9 @@ const platformCards = [
     stat: '98.5 FM',
     label: '~100km radius',
     share: '25 towns · Goulburn Murray',
-    status: 'Live',
+    status: 'On air',
     statusColor: '#B6FF00',
     accent: '#D4963A',
-    trend: [34000, 35200, 35800, 36200, 37100, 37800, 37500, 38200, 38500, 38900, 39100, 39375],
   },
   {
     icon: Headphones,
@@ -109,10 +103,9 @@ const platformCards = [
     stat: 'Online',
     label: 'fm985.com.au',
     share: 'Radio.co · Community Radio Plus',
-    status: 'Live',
-    statusColor: '#B6FF00',
+    status: 'Analytics pending',
+    statusColor: '#F0C75E',
     accent: '#B6FF00',
-    trend: [450, 480, 510, 490, 520, 555, 540, 580, 610, 590, 625, 650],
   },
   {
     icon: Share2,
@@ -120,10 +113,9 @@ const platformCards = [
     stat: 'Community',
     label: 'page',
     share: 'facebook.com/onefmshepparton',
-    status: 'Active',
+    status: 'Link only — no follower count',
     statusColor: '#F0C75E',
     accent: '#9B5DE5',
-    trend: [1100, 1150, 1200, 1180, 1220, 1250, 1230, 1270, 1300, 1280, 1320, 1350],
   },
   {
     icon: Mic,
@@ -131,23 +123,14 @@ const platformCards = [
     stat: 'Interviews',
     label: 'fm985.com.au',
     share: 'Community interview replays',
-    status: 'Active',
-    statusColor: '#B6FF00',
+    status: 'Archive — no play counts',
+    statusColor: '#F0C75E',
     accent: '#FF6B6B',
-    trend: [85, 90, 95, 88, 102, 98, 110, 105, 112, 118, 115, 122],
   },
 ]
 
 // No invented lift/drop %. Empty until Radio.co (or a sourced station survey) exists.
 const anomalyData: { time: string; change: string; reason: string; severity: string }[] = []
-
-// Audience segments based on typical community radio programming blocks (indicative only)
-const smartSegments = [
-  { name: 'Breakfast (6–9am)', pct: 35, color: '#D4963A' },
-  { name: 'Mornings (9am–12pm)', pct: 28, color: '#B6FF00' },
-  { name: 'Afternoons (12–4pm)', pct: 22, color: '#9B5DE5' },
-  { name: 'Evenings (6pm+)', pct: 15, color: '#F0C75E' },
-]
 
 /* ─────────── helpers ─────────── */
 
@@ -210,7 +193,6 @@ export default function AudienceAnalytics() {
   const [chartTab, setChartTab] = useState('Listeners')
   const [weekdayMode, setWeekdayMode] = useState(true)
   const [dismissInsight, setDismissInsight] = useState(false)
-  const [selectedSegment, setSelectedSegment] = useState<string | null>(null)
 
   const heatmapData = useMemo(() => generateHeatmapData(), [weekdayMode])
   const currentHour = new Date().getHours()
@@ -528,20 +510,6 @@ export default function AudienceAnalytics() {
                 </p>
               </div>
               </TiltCard>
-
-              <div className="flex gap-3 mt-4">
-                <MagneticButton strength={6} cursorLabel="DOWNLOAD">
-                  <button className="btn-secondary text-xs">
-                    <Download size={14} />
-                    Full Report
-                  </button>
-                </MagneticButton>
-                <MagneticButton strength={6} cursorLabel="ALERT">
-                  <button className="btn-secondary text-xs">
-                    Set Alert
-                  </button>
-                </MagneticButton>
-              </div>
             </motion.div>
 
             {/* Insight Cards */}
@@ -798,19 +766,7 @@ export default function AudienceAnalytics() {
                   <Icon size={32} style={{ color: card.accent }} className="mb-3" />
                   <div className="font-stat text-gold-gradient mb-0.5">{card.stat}</div>
                   <div className="font-label text-muted mb-3">{card.label}</div>
-                  <div className="w-full h-[40px] mb-3">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={card.trend.map((v, i) => ({ i, v }))}>
-                        <defs>
-                          <linearGradient id={`ptrend-${i}`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor={card.accent} stopOpacity={0.25} />
-                            <stop offset="100%" stopColor={card.accent} stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <Area type="monotone" dataKey="v" stroke={card.accent} fill={`url(#ptrend-${i})`} strokeWidth={2} dot={false} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <p className="font-label text-[10px] text-muted/70 mb-3">No invented trend sparkline. Counts: data pending.</p>
                   <div className="flex items-center justify-between">
                     <span className="font-label text-xs text-muted">{card.share}</span>
                     <span className="font-label text-xs flex items-center gap-1" style={{ color: card.statusColor }}>
@@ -916,49 +872,10 @@ export default function AudienceAnalytics() {
             transition={{ duration: 0.6, delay: 0.3, ease: easeOutExpo }}
           >
             <div aria-hidden className="explore-tile-scan" />
-            <h4 className="font-h4 text-one-white mb-4">Programming Blocks (Indicative)</h4>
+            <h4 className="font-h4 text-one-white mb-4">Programming Blocks</h4>
             <p className="font-body-small text-muted mb-4">
-              Typical community radio listening distribution by daypart — not live measurement data
+              Daypart share of listenership is data pending. Breakfast is 6:00am–9:00am (ONE FM Breakfast). We do not publish invented percentages.
             </p>
-            <div className="flex flex-wrap gap-3">
-              {smartSegments.map((seg, i) => (
-                <motion.button
-                  key={seg.name}
-                  className={`px-4 py-2.5 rounded-full font-label text-xs transition-all ${
-                    selectedSegment === seg.name
-                      ? 'ring-2 ring-offset-1 ring-offset-slate'
-                      : 'hover:scale-105'
-                  }`}
-                  style={{
-                    backgroundColor: `${seg.color}20`,
-                    color: seg.color,
-                  }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: i * 0.08, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] }}
-                  onClick={() => setSelectedSegment(selectedSegment === seg.name ? null : seg.name)}
-                >
-                  {seg.name} ({seg.pct}%)
-                </motion.button>
-              ))}
-            </div>
-            <AnimatePresence>
-              {selectedSegment && (
-                <motion.div
-                  className="mt-4 p-4 rounded-lg bg-one-navy/50"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="font-body-small text-one-white">
-                    <span className="text-one-gold font-medium">{selectedSegment}:</span>{' '}
-                    Detailed segment profile with listening habits, preferred content types, and optimal targeting windows.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
           </TiltCard>
         </div>
@@ -975,71 +892,9 @@ export default function AudienceAnalytics() {
           >
             <WordReveal text="USE YOUR DATA" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white mb-8">
-              Export insights for reports, presentations, or share with your team.
+              CSV / PDF export, scheduled reports, and an analytics API are data pending until Radio.co is connected. We will not generate a file of invented counts.
             </p>
           </motion.div>
-
-          <motion.div
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <motion.button className="btn-secondary text-sm" variants={cardStagger} data-cursor-label="DOWNLOAD">
-              <Download size={16} />
-              Download CSV
-            </motion.button>
-            <motion.button className="btn-primary text-sm" variants={cardStagger} data-cursor-label="EXPORT">
-              <FileText size={16} />
-              Export PDF Report
-            </motion.button>
-            <motion.button className="btn-secondary text-sm" variants={cardStagger} data-cursor-label="SHARE">
-              <Share2 size={16} />
-              Share Dashboard Link
-            </motion.button>
-          </motion.div>
-
-          <motion.div
-            className="glass-card p-5 max-w-md mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <Calendar size={16} className="text-one-gold" />
-              <span className="font-label text-xs text-one-white">Scheduled Reports</span>
-            </div>
-            <div className="flex gap-2">
-              <select className="flex-1 appearance-none glass-card px-3 py-2 font-label text-xs text-one-white bg-transparent cursor-pointer focus:outline-none focus:border-one-gold/50">
-                <option>Daily</option>
-                <option>Weekly</option>
-                <option>Monthly</option>
-              </select>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-[2] glass-card px-3 py-2 font-body text-sm text-one-white bg-transparent focus:outline-none focus:border-one-gold/50 placeholder:text-muted"
-              />
-              <MagneticButton strength={8} cursorLabel="SUBSCRIBE">
-                <button className="btn-primary text-xs px-4">Subscribe</button>
-              </MagneticButton>
-            </div>
-          </motion.div>
-
-          <motion.p
-            className="mt-6"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-          >
-            <span className="font-label text-xs text-muted">Developer? </span>
-            <button data-cursor-label="API" className="font-label text-xs text-one-gold hover:text-one-gold transition-colors link-hover">
-              Access our analytics API
-            </button>
-          </motion.p>
         </div>
       </section>
     </Layout>
