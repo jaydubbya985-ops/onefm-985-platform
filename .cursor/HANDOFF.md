@@ -17,7 +17,7 @@
 | Logo + invoice PDF | **On `main`**. FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Not on live until a Netlify deploy lands. |
 | Mailto honesty | **On `main` plus PR #16.** Invoice mailto / billing cycle / reminders / `devMode` do **not** mark sent. Enquiry forms only claim received if Supabase stored the row or an email actually sent. Routed `/listen` song request opens a mailto draft and says **Email draft opened** (`/programs` redirects to `/listen`). |
 | Public truth | **On `main` plus PR #16.** OG **189,680**. Community page **8** multicultural programs from `programGuide.ts`. |
-| Live `#/ops` | **Still DEMO on production** (`index-BJ4yefZ1.js`). PR #16: LIVE banner when Supabase is configured; DEMO seeds stay in DEMO only; FOOTT + Jason’s TV upserted on first live load. Runtime `/.netlify/functions/ops-config` reads Netlify site env so `#/ops` can go LIVE **without** GitHub `VITE_*` secrets after this function is deployed. |
+| Live `#/ops` | **Still DEMO on production** (`index-BJ4yefZ1.js`). **PR #16 is ready for review** (not draft). LIVE banner when Supabase is configured; DEMO seeds stay in DEMO only; FOOTT + Jason’s TV upserted on first live load. Runtime `/.netlify/functions/ops-config` reads Netlify site env so `#/ops` can go LIVE **without** GitHub `VITE_*` secrets after this function is deployed. Do not merge without **EXE**. |
 | Deploy | GitHub `NETLIFY_AUTH_TOKEN` is **401**. Empty-commit retries will not fix this. `npm run live` is the production gate. |
 
 ## Do this run (order)
