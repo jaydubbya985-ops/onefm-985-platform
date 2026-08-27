@@ -138,13 +138,8 @@ const platformCards = [
   },
 ]
 
-// Notable audience events — sourced from station records and programme notes
-const anomalyData: { time: string; change: string; reason: string; severity: string }[] = [
-  { time: 'GVL Season Opener · Mar', change: '+18%', reason: 'Sat 1pm live match commentary — season kick-off drew strong breakfast lead-in audience', severity: 'growth' },
-  { time: 'Easter Long Weekend · Apr', change: '+12%', reason: 'Country shows and community announcements during Easter public holidays', severity: 'growth' },
-  { time: 'Australia Day · Jan', change: '-9%', reason: 'Summer holiday listener dip — consistent pattern across regional community stations', severity: 'drop' },
-  { time: 'GVL Grand Final · Sep', change: '+31%', reason: 'Peak match-day audience of the year — live commentary and post-match coverage', severity: 'growth' },
-]
+// No invented lift/drop %. Empty until Radio.co (or a sourced station survey) exists.
+const anomalyData: { time: string; change: string; reason: string; severity: string }[] = []
 
 // 7-day estimated listener distribution (relative to weekly total of 39,375)
 // Sat peaks on match day; Mon & Fri strong with breakfast drive programming
@@ -199,15 +194,15 @@ function generateHeatmapData() {
     for (let h = 0; h < 24; h++) {
       let base = 0
       if (d < 5) {
-        if (h >= 6 && h <= 9) base = 80 + Math.random() * 20
-        else if (h >= 16 && h <= 19) base = 85 + Math.random() * 15
-        else if (h >= 12 && h <= 14) base = 50 + Math.random() * 20
-        else if (h >= 20 && h <= 23) base = 40 + Math.random() * 25
-        else base = 10 + Math.random() * 15
+        if (h >= 6 && h <= 9) base = 90
+        else if (h >= 16 && h <= 19) base = 90
+        else if (h >= 12 && h <= 14) base = 60
+        else if (h >= 20 && h <= 23) base = 50
+        else base = 15
       } else {
-        if (h >= 9 && h <= 12) base = 60 + Math.random() * 25
-        else if (h >= 18 && h <= 22) base = 70 + Math.random() * 20
-        else base = 15 + Math.random() * 20
+        if (h >= 9 && h <= 12) base = 70
+        else if (h >= 18 && h <= 22) base = 80
+        else base = 20
       }
       row.push(Math.min(100, Math.round(base)))
     }
@@ -276,7 +271,7 @@ export default function AudienceAnalytics() {
                 <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-data-teal opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-data-teal" />
               </span>
-              <span className="font-label text-data-teal">Live — Updated 2s ago</span>
+              <span className="font-label text-one-gold/80">Modelled — not live listener counts. Radio.co pending.</span>
               <div className="flex items-end gap-[2px]" aria-hidden style={{ height: 12 }}>
                 {[3, 6, 9, 6, 3].map((h, i) => (
                   <div
@@ -400,7 +395,7 @@ export default function AudienceAnalytics() {
           >
             <div>
               <WordReveal text="LISTENERSHIP HEATMAP" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-              <p className="font-body-small text-muted mt-1">When your audience tunes in</p>
+              <p className="font-body-small text-muted mt-1">Indicative community-radio pattern only — not ONE FM stream analytics</p>
             </div>
             <div className="flex bg-one-navy/50 rounded-full p-1 border border-one-border">
               <button
@@ -708,7 +703,7 @@ export default function AudienceAnalytics() {
               </div>
               <div className="mt-3 flex items-center gap-2">
                 <TrendingUp size={12} className="text-data-teal" />
-                <span className="font-label text-xs text-data-teal">25-34 is your fastest-growing segment</span>
+                <span className="font-label text-xs text-one-white/70">Greater Shepparton LGA (ABS 2021) — not a measured ONE FM age split. Growth by age: data pending.</span>
               </div>
             </motion.div>
             </TiltCard>

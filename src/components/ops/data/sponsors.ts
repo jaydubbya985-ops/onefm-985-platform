@@ -1,3 +1,4 @@
+// DEMO DATA — mock sponsor/package rows for the ops portal. Labelled DEMO, not live CRM.
 // ---------------------------------------------------------------------------
 // Sponsor & contract domain data for the Operations Portal.
 //

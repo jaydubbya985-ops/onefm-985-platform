@@ -1,3 +1,4 @@
+// DEMO DATA — campaign/spot seeds are synthetic. Breakfast hosts must match programGuide.ts.
 // ---------------------------------------------------------------------------
 // Broadcast schedule data — dayparts, programme guide, campaigns & ad spots
 //
