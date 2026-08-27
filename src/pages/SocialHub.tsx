@@ -50,7 +50,7 @@ const ASSETS = [
 // V3 Brand System colours — source: ONE_FM_brand_system_v3
 const BRAND_COLORS = [
   { name: 'ONE FM Blue', hex: '#1B458F', usage: 'Core identity — wordmark, headers' },
-  { name: 'Deep Navy', hex: '#101010', usage: 'Backgrounds, email header band' },
+  { name: 'Deep Navy', hex: '#071D3A', usage: 'Backgrounds, email header band' },
   { name: '98.5 Red', hex: '#E51636', usage: 'Core identity — frequency, accents' },
   { name: 'Broadcast White', hex: '#FFFFFF', usage: 'Core identity — reversed lockup' },
   { name: 'Heritage Gold', hex: '#F2F2F2', usage: 'Premium accent — totals, highlights' },
@@ -184,7 +184,7 @@ function HeroSection() {
 
   return (
     <>
-      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="SOCIAL HUB">
+      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#071D3A]" data-cursor-label="SOCIAL HUB">
         <motion.img
           src={STATION_PHOTOS.eventLasersBuilding}
           alt=""
@@ -194,8 +194,8 @@ function HeroSection() {
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: 0.50, y: heroImgY, top: '-28%', height: '156%', willChange: 'transform' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/45 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#071D3A] via-[#071D3A]/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#071D3A]/60 via-transparent to-transparent" />
         <GridPattern />
         <div aria-hidden className="grain-overlay" />
 
@@ -280,7 +280,7 @@ function HeroSection() {
       </section>
 
       {/* ── Social Hub Marquee ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#04101F] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={28}
           items={[

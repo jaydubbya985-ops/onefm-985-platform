@@ -389,7 +389,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 /* Deterministic gradient avatar for host cards */
 const HOST_PALETTES = [
-  { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
+  { from: '#1B458F', to: '#071D3A', accent: '#F2F2F2' },
   { from: '#F2F2F2', to: '#1B3A6F', accent: '#FFF8DC' },
   { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
   { from: '#B6FF00', to: '#0A2030', accent: '#7FFFD4' },
@@ -524,7 +524,7 @@ export default function Programs() {
     <Layout>
       <SEO title="Programs & Shows" description="ONE FM Breakfast, Dancing through the decades, The James Manley Show, GVL sport, multicultural programs, and more. Full guide from fm985.com.au." />
       {/* ═══════ Section 1 — Hero ═══════ */}
-      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="ON AIR NOW">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#071D3A]" data-cursor-label="ON AIR NOW">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
@@ -542,8 +542,8 @@ export default function Programs() {
               style={{ opacity: 0.55 }}
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071D3A] via-[#071D3A]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#071D3A]/60 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
         <RadioWaveBackground />
@@ -619,7 +619,7 @@ export default function Programs() {
       </section>
 
       {/* Marquee strip */}
-      <div className="py-4 bg-[#101010] border-y border-one-gold/10 overflow-hidden">
+      <div className="py-4 bg-[#071D3A] border-y border-one-gold/10 overflow-hidden">
         <Marquee
           speed={36}
           items={[
@@ -683,9 +683,9 @@ export default function Programs() {
                     data-cursor-label={f.toUpperCase()}
                     className="font-label text-xs px-4 py-2 rounded-full border transition-all"
                     style={active && color
-                      ? { backgroundColor: color, color: '#070707', borderColor: color }
+                      ? { backgroundColor: color, color: '#04101F', borderColor: color }
                       : active
-                        ? { backgroundColor: '#F2F2F2', color: '#070707', borderColor: '#F2F2F2' }
+                        ? { backgroundColor: '#F2F2F2', color: '#04101F', borderColor: '#F2F2F2' }
                         : { backgroundColor: 'transparent', color: 'white', borderColor: 'rgba(244,241,234,0.3)' }
                     }
                   >
@@ -802,9 +802,9 @@ export default function Programs() {
                   data-cursor-label={f.toUpperCase()}
                   className="font-label text-xs px-4 py-2 rounded-full border transition-all duration-200 flex items-center gap-2"
                   style={active && color
-                    ? { backgroundColor: color, color: '#070707', borderColor: color }
+                    ? { backgroundColor: color, color: '#04101F', borderColor: color }
                     : active
-                      ? { backgroundColor: '#F2F2F2', color: '#070707', borderColor: '#F2F2F2' }
+                      ? { backgroundColor: '#F2F2F2', color: '#04101F', borderColor: '#F2F2F2' }
                       : { backgroundColor: 'transparent', color: 'white', borderColor: 'rgba(244,241,234,0.3)' }
                   }
                 >
@@ -1028,7 +1028,7 @@ export default function Programs() {
             >
               <div
                 className="w-full aspect-square rounded-lg overflow-hidden relative"
-                style={{ background: 'linear-gradient(135deg, #101010 0%, #070707 100%)' }}
+                style={{ background: 'linear-gradient(135deg, #071D3A 0%, #04101F 100%)' }}
               >
                 {/* Category-color radial glow from below */}
                 <div className="absolute inset-0" style={{
