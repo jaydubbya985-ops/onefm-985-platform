@@ -175,6 +175,19 @@ const emailStatusSource = readFileSync(
 assert(emailStatusSource.includes('dryRunSupported'), 'email-status must advertise dry-run support')
 assert(emailStatusSource.includes('probeResend'), 'email-status must probe Resend without sending')
 
+const probeSource = readFileSync(
+  new URL('../netlify/lib/resendProbe.ts', import.meta.url),
+  'utf8',
+)
+assert(
+  probeSource.includes('name === INVOICE_FROM_DOMAIN'),
+  'Resend LIVE requires apex fm985.com.au — a send. subdomain is not enough for accounts@',
+)
+assert(
+  probeSource.includes('resend._domainkey'),
+  'NEED JAY must name the old resend._domainkey TXT that blocks verification',
+)
+
 assert(
   invoiceSendSource.includes('readSendResult'),
   'invoice send must ignore dry-run success payloads',
@@ -196,6 +209,14 @@ const bannerSource = readFileSync(
 assert(
   bannerSource.includes("status === 'unverified'"),
   'ops banner must not claim live email is ON when fm985.com.au is unverified',
+)
+assert(
+  bannerSource.includes('resend._domainkey'),
+  'ops banner must tell Jay to replace the old resend._domainkey TXT',
+)
+assert(
+  bannerSource.includes('include:amazonses.com'),
+  'ops banner must tell Jay to add amazonses to the existing SPF',
 )
 
 const foott = realBatchInvoices().find((i) => i.number === 'ONEFM-2026-011')

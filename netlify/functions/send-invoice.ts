@@ -56,6 +56,8 @@ export const handler: Handler = async (event: HandlerEvent) => {
       resendReachable: probe.reachable,
       fromDomainVerified: probe.fromDomainVerified,
       domainStatus: probe.domainStatus,
+      stationDomains: probe.stationDomains.map((d) => ({ name: d.name, status: d.status })),
+      needJay: probe.needJay,
       wouldSendTo: body.to,
       hasPdf,
       filename: body.filename ?? null,

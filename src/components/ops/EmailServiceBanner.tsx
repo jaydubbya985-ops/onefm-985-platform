@@ -25,9 +25,12 @@ export function EmailServiceBanner() {
       <div className="flex items-center gap-2 rounded-lg border border-amber-700/50 bg-amber-900/20 px-3 py-2 text-xs text-amber-400 mb-4">
         <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
         <span>
-          Resend has a key, but <code className="font-mono">fm985.com.au</code> is not verified.
-          Invoice email will not send from accounts@fm985.com.au. NEED JAY: in Resend, fix DNS for
-          fm985.com.au until the domain status is verified.
+          Resend has a key, but <code className="font-mono">fm985.com.au</code> is not verified
+          — invoice email will not send from accounts@fm985.com.au. NEED JAY: SiteGround DNS
+          for fm985.com.au — replace the old <code className="font-mono">resend._domainkey</code> TXT
+          with the DKIM CNAME from Resend → Domains; add{' '}
+          <code className="font-mono">include:amazonses.com</code> to the existing SPF (keep Outlook);
+          do not change MX. Then click Verify in Resend.
         </span>
       </div>
     )

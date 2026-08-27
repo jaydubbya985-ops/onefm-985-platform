@@ -18,7 +18,7 @@
 | Mailto / dry-run honesty | **On live.** Mailto / `devMode` / SPA HTML / `dryRun` do **not** mark sent. Production dry-run: `wouldSendTo=peter@foott.com.au`, `sent=false`, `hasPdf=true`. |
 | Public truth | **On live.** OG **189,680**. `/gov-ready-gate.txt` reads `og=189680`. Audience shows 39,375 weekly listeners (ABS 2021 via townData). |
 | Live `#/ops` | **LIVE — not DEMO**. `sb_secret_` is rejected as LIVE credentials. |
-| FOOTT actually emailed | **Blocked.** Resend key works (`resendReachable=true`) but **`fm985.com.au` domainStatus=`failed`**. Sends from `accounts@fm985.com.au` will not deliver until DNS is fixed. Ops banner must say unverified, not “live email is ON”. |
+| FOOTT actually emailed | **Blocked.** Apex `fm985.com.au` is not verified. Public DNS: `resend._domainkey` is an old TXT; apex SPF has Outlook but not `amazonses.com`. MX is Outlook — leave it. `send.fm985.com.au` already has SES bounce records. |
 
 ## Do this run (order)
 
@@ -35,9 +35,14 @@
 
 ## NEED JAY (one action)
 
-In **Resend → Domains**, fix DNS for **fm985.com.au** until status is **verified**. Then say **EXE** to merge PR #16.
+SiteGround DNS for **fm985.com.au** (ns1/ns2.siteground.net):
 
-Do not send FOOTT to Peter until that domain is verified.
+1. Replace the old **TXT** `resend._domainkey` with the **DKIM CNAME** shown in Resend → Domains → fm985.com.au.
+2. Edit the existing SPF TXT: keep `include:spf.protection.outlook.com`, add `include:amazonses.com`. Do not use `-all` until that include is there (current record already has `-all`).
+3. **Do not change MX** — Outlook stays for receiving mail.
+4. In Resend, click **Verify**.
+
+Then say **EXE** to merge PR #16. Do not send FOOTT to Peter until `email-status` shows `fromDomainVerified: true`.
 
 ## Truth numbers (only these)
 
