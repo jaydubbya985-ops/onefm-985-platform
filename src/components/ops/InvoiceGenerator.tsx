@@ -80,6 +80,7 @@ import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
 import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
 import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
 import { OpsInvoiceSheet } from '@/components/ops/OpsInvoiceSheet'
+import { isSupabaseConfigured } from '@/lib/supabase'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -355,9 +356,35 @@ export default function InvoiceGenerator() {
   const [payMethod, setPayMethod] = useState<PaymentMethodKey>('bank_transfer')
   const [payNotes, setPayNotes] = useState('')
 
-  const sponsor = SPONSOR_DIRECTORY.find((s) => s.company === sponsorCompany)
-  const contract = ACTIVE_CONTRACTS.find((c) => c.id === contractId)
-  const contractSponsorContact = SPONSOR_DIRECTORY.find((s) => s.company === contractSponsor)
+  const liveOps = isSupabaseConfigured()
+  const sponsorDirectory = useMemo(() => {
+    if (!liveOps) return SPONSOR_DIRECTORY
+    const real = SPONSOR_DIRECTORY.filter(
+      (s) =>
+        s.company === 'FOOTT Waste Solutions' || s.company.startsWith("Jason's TV"),
+    )
+    const extra = storeInvoices
+      .filter((i) => !real.some((s) => s.company === i.company))
+      .map((i) => ({
+        name: i.contactName,
+        company: i.company,
+        email: i.email,
+        address: '',
+        abn: '',
+        phone: '',
+      }))
+    const seen = new Set<string>()
+    return [...real, ...extra].filter((s) => {
+      if (!s.company || seen.has(s.company)) return false
+      seen.add(s.company)
+      return true
+    })
+  }, [liveOps, storeInvoices])
+  const activeContracts = liveOps ? [] : ACTIVE_CONTRACTS
+
+  const sponsor = sponsorDirectory.find((s) => s.company === sponsorCompany)
+  const contract = activeContracts.find((c) => c.id === contractId)
+  const contractSponsorContact = sponsorDirectory.find((s) => s.company === contractSponsor)
 
   const filtered = useMemo(() => {
     const list = invoices.filter((inv) => {
@@ -885,7 +912,7 @@ export default function InvoiceGenerator() {
                       <SelectValue placeholder="Choose a sponsor..." />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
-                      {SPONSOR_DIRECTORY.map((s, idx) => (
+                      {sponsorDirectory.map((s, idx) => (
                         <SelectItem
                           key={`${s.company}-${idx}`}
                           value={s.company}
@@ -1452,7 +1479,7 @@ export default function InvoiceGenerator() {
                   value={contractId}
                   onValueChange={(v) => {
                     setContractId(v)
-                    const c = ACTIVE_CONTRACTS.find((x) => x.id === v)
+                    const c = activeContracts.find((x) => x.id === v)
                     if (c) prefillFromContract(c)
                   }}
                 >
@@ -1460,7 +1487,7 @@ export default function InvoiceGenerator() {
                     <SelectValue placeholder="Choose a contract or select sponsor below..." />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
-                    {ACTIVE_CONTRACTS.map((c) => (
+                    {activeContracts.map((c) => (
                       <SelectItem key={c.id} value={c.id} className="text-white hover:bg-[#2A2A2A]">
                         {c.companyName} — {c.campaign} ({fmt(c.contractValue)})
                       </SelectItem>
@@ -1483,7 +1510,7 @@ export default function InvoiceGenerator() {
                     <SelectValue placeholder="Choose a sponsor..." />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
-                    {SPONSOR_DIRECTORY.map((s, idx) => (
+                    {sponsorDirectory.map((s, idx) => (
                       <SelectItem
                         key={`${s.company}-${idx}`}
                         value={s.company}
@@ -1792,7 +1819,7 @@ export default function InvoiceGenerator() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {ACTIVE_CONTRACTS.map((c) => (
+                  {activeContracts.map((c) => (
                     <TableRow
                       key={c.id}
                       className="border-[#2A2A2A]/30 hover:bg-[#101010]/50 cursor-pointer"
@@ -1818,7 +1845,7 @@ export default function InvoiceGenerator() {
                       </TableCell>
                     </TableRow>
                   ))}
-                  {ACTIVE_CONTRACTS.length === 0 && (
+                  {activeContracts.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={8} className="text-center text-[#5B8DB8] py-8">
                         No contracts loaded.

@@ -35,11 +35,13 @@
 
 ## NEED JAY (one action)
 
-Open **onefmops** in Netlify → Site configuration → Build & deploy → Continuous Deployment → **Link repository** → GitHub → `jaydubbya985-ops/onefm-985-platform` → branch **main** → Deploy.
+Open this link, then Link repository → GitHub → `jaydubbya985-ops/onefm-985-platform` → branch **main** → Deploy:
 
-Then reply **done**. Do not generate a PAT. Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`.
+https://app.netlify.com/sites/onefmops/configuration/deploys
 
-After that deploy exists, the next one-line ask is: paste `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` into Netlify → Site settings → Environment variables (ops-config reads them at request time). Then say **EXE** to merge PR #16.
+Reply **done**. Site ID must stay `8df4de74-d9a8-42ce-9316-61bd06475c94`. Do not generate a PAT.
+
+After that deploy exists, the next one-line ask is: paste `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` into Netlify env (ops-config reads them at request time). Then say **EXE** to merge PR #16.
 
 ## Truth numbers (only these)
 
