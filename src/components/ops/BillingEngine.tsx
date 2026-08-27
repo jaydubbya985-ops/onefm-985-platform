@@ -96,6 +96,8 @@ import {
   type RenewalStatus,
 } from './data/payments'
 import { useOpsStore, type OpsInvoice } from './store'
+import { opsInitial } from '@/lib/opsMode'
+import { isSupabaseConfigured } from '@/lib/supabase'
 import { downloadXeroCsv, type XeroExportableInvoice } from './invoices/xeroExport'
 
 // ---------------------------------------------------------------------------
@@ -238,8 +240,8 @@ export default function BillingEngine() {
   const { invoices, updateInvoice } = useOpsStore()
 
   const [tab, setTab] = useState<BillingTab>('dashboard')
-  const [renewals, setRenewals] = useState<RenewalRecord[]>(MOCK_RENEWALS)
-  const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(MOCK_ACQUITTALS)
+  const [renewals, setRenewals] = useState<RenewalRecord[]>(opsInitial(MOCK_RENEWALS, []))
+  const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(opsInitial(MOCK_ACQUITTALS, []))
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
 
@@ -1366,7 +1368,7 @@ export default function BillingEngine() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {MOCK_PAYMENTS.filter((p) => p.allocated).map((payment) => (
+                    {(isSupabaseConfigured() ? [] : MOCK_PAYMENTS).filter((p) => p.allocated).map((payment) => (
                       <TableRow
                         key={payment.id}
                         className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
@@ -1438,7 +1440,7 @@ export default function BillingEngine() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {MOCK_PAYMENTS.filter((p) => !p.allocated).map((payment) => (
+                    {(isSupabaseConfigured() ? [] : MOCK_PAYMENTS).filter((p) => !p.allocated).map((payment) => (
                       <TableRow
                         key={payment.id}
                         className="border-[#2A2A2A]/15 hover:bg-one-gold/5"

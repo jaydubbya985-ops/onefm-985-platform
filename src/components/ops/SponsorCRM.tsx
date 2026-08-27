@@ -75,6 +75,7 @@ import {
   type SponsorProposalStatus,
   type SponsorTier,
 } from './data/sponsors'
+import { opsInitial, opsStorageKey } from '@/lib/opsMode'
 
 // ---------------------------------------------------------------------------
 // Module helpers (extracted from the deployed bundle)
@@ -320,7 +321,10 @@ function sponsorFromContract(contract: Contract): CrmSponsor {
 
 export default function SponsorCRM() {
   const { contracts } = useOpsStore()
-  const [sponsors, setSponsors] = useLocalStorage<CrmSponsor[]>(SPONSORS_STORAGE_KEY, CRM_SPONSORS)
+  const [sponsors, setSponsors] = useLocalStorage<CrmSponsor[]>(
+    opsStorageKey(SPONSORS_STORAGE_KEY),
+    opsInitial(CRM_SPONSORS, []),
+  )
   const [view, setView] = useState('pipeline')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')

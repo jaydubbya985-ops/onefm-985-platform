@@ -163,7 +163,7 @@ function OpsPortalContent() {
               <div className="mt-4 rounded-lg border border-emerald-700/40 bg-emerald-900/15 px-4 py-3 max-w-2xl">
                 <p className="text-sm text-emerald-400 font-semibold">LIVE — enquiries, proposals, contracts and invoices persist to Supabase</p>
                 <p className="text-xs text-one-muted mt-0.5">
-                  Sponsors, schedule and payments still save in this browser only — they are not yet on the shared database.
+                  Sponsors, schedule, billing charts and payments start empty in live mode. DEMO seeds stay in DEMO mode only.
                 </p>
               </div>
             ) : (

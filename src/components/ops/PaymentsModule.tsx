@@ -105,11 +105,30 @@ import {
   type PaymentMethod,
   type RecurringDonation,
   type RecurringStatus,
+  type OutstandingInvoice,
 } from './data/payments'
+import { opsInitial, opsStorageKey } from '@/lib/opsMode'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { useOpsStore, type OpsInvoice } from './store'
 
 // ---------------------------------------------------------------------------
 // Persistence + shared helpers
 // ---------------------------------------------------------------------------
+
+function outstandingFromLedger(storeInvoices: OpsInvoice[]): OutstandingInvoice[] {
+  if (isSupabaseConfigured()) {
+    return storeInvoices
+      .filter((i) => i.status !== 'paid')
+      .map((i) => ({
+        id: i.id,
+        number: i.number,
+        client: i.company,
+        balance: i.total - (i.paidAmount ?? 0),
+        dueDate: i.dueDate,
+      }))
+  }
+  return SEED_OUTSTANDING_INVOICES
+}
 
 function usePersistentState<T>(
   key: string,
@@ -269,9 +288,11 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
 
 function PaymentsTab() {
   const { toast } = useToast()
+  const { invoices } = useOpsStore()
+  const outstanding = useMemo(() => outstandingFromLedger(invoices), [invoices])
   const [payments, setPayments] = usePersistentState<ClientPayment[]>(
-    'onefm_payments',
-    SEED_CLIENT_PAYMENTS,
+    opsStorageKey('onefm_payments'),
+    opsInitial(SEED_CLIENT_PAYMENTS, []),
   )
   const [search, setSearch] = useState('')
   const [methodFilter, setMethodFilter] = useState('all')
@@ -297,8 +318,8 @@ function PaymentsTab() {
     [payments],
   )
   const totalOutstanding = useMemo(
-    () => SEED_OUTSTANDING_INVOICES.reduce((sum, inv) => sum + inv.balance, 0),
-    [],
+    () => outstanding.reduce((sum, inv) => sum + inv.balance, 0),
+    [outstanding],
   )
   const collectionRate = useMemo(() => {
     const total = totalPaid + totalOutstanding
@@ -329,7 +350,7 @@ function PaymentsTab() {
     [payments, search, methodFilter],
   )
 
-  const selectedInvoice = SEED_OUTSTANDING_INVOICES.find(
+  const selectedInvoice = outstanding.find(
     (inv) => inv.id === selectedInvoiceId,
   )
 
@@ -386,7 +407,7 @@ function PaymentsTab() {
         <StatCard
           title="Total Outstanding"
           value={`$${totalOutstanding.toLocaleString('en-AU', { minimumFractionDigits: 0 })}`}
-          subtitle={`${SEED_OUTSTANDING_INVOICES.length} invoices pending`}
+          subtitle={`${outstanding.length} invoices pending`}
           icon={AlertTriangle}
           color={ACCENT.warning}
           delay={0.05}
@@ -473,7 +494,7 @@ function PaymentsTab() {
                   <SelectValue placeholder="Search invoices..." />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0F1D2F] border-slate-700">
-                  {SEED_OUTSTANDING_INVOICES.map((inv) => (
+                  {outstanding.map((inv) => (
                     <SelectItem key={inv.id} value={inv.id} className={selectItemClass}>
                       {inv.number} — {inv.client} (Balance: ${inv.balance.toLocaleString()})
                     </SelectItem>
@@ -590,7 +611,7 @@ function PaymentsTab() {
                   <SelectValue placeholder="Choose an invoice..." />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0F1D2F] border-slate-700">
-                  {SEED_OUTSTANDING_INVOICES.map((inv) => (
+                  {outstanding.map((inv) => (
                     <SelectItem key={inv.id} value={inv.id} className={selectItemClass}>
                       {inv.number} — {inv.client} (${inv.balance.toLocaleString()})
                     </SelectItem>
@@ -925,12 +946,12 @@ interface DonorSummary {
 function DonationsTab() {
   const { toast } = useToast()
   const [donations, setDonations] = usePersistentState<DonationRecord[]>(
-    'onefm_donations',
-    SEED_DONATIONS,
+    opsStorageKey('onefm_donations'),
+    opsInitial(SEED_DONATIONS, []),
   )
   const [recurring] = usePersistentState<RecurringDonation[]>(
-    'onefm_recurring',
-    SEED_RECURRING_DONATIONS,
+    opsStorageKey('onefm_recurring'),
+    opsInitial(SEED_RECURRING_DONATIONS, []),
   )
   const [search, setSearch] = useState('')
   const [sourceFilter, setSourceFilter] = useState('all')
@@ -1863,8 +1884,8 @@ function MembershipsTab() {
   const [cardOpen, setCardOpen] = useState(false)
   const [cardMember, setCardMember] = useState<MemberRecord | null>(null)
   const [members, setMembers] = usePersistentState<MemberRecord[]>(
-    'onefm_members',
-    SEED_MEMBERS,
+    opsStorageKey('onefm_members'),
+    opsInitial(SEED_MEMBERS, []),
   )
 
   const [name, setName] = useState('')
@@ -2596,14 +2617,17 @@ export default function PaymentsModule() {
 
   // Header total reads the same persisted stores the tabs use.
   const [payments] = usePersistentState<ClientPayment[]>(
-    'onefm_payments',
-    SEED_CLIENT_PAYMENTS,
+    opsStorageKey('onefm_payments'),
+    opsInitial(SEED_CLIENT_PAYMENTS, []),
   )
   const [donations] = usePersistentState<DonationRecord[]>(
-    'onefm_donations',
-    SEED_DONATIONS,
+    opsStorageKey('onefm_donations'),
+    opsInitial(SEED_DONATIONS, []),
   )
-  const [members] = usePersistentState<MemberRecord[]>('onefm_members', SEED_MEMBERS)
+  const [members] = usePersistentState<MemberRecord[]>(
+    opsStorageKey('onefm_members'),
+    opsInitial(SEED_MEMBERS, []),
+  )
 
   const totalIncomeYtd =
     payments.filter((p) => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0) +
