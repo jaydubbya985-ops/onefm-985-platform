@@ -283,8 +283,14 @@ export default function ProposalBuilder() {
       setBusy(false)
     }
     window.location.assign(buildMailtoProposalUrl(saved.doc))
+    toast('PDF downloaded and email client opened. Not marked sent — confirm the email went, then Mark sent.', 'success')
+  }
+
+  const handleMarkSent = () => {
+    const saved = persist()
+    if (!saved) return
     sendProposal(saved.id)
-    toast('PDF downloaded. Attach it in the email that just opened.', 'success')
+    toast(`Marked sent to ${saved.doc.company}`, 'success')
   }
 
   const handleCopyEmail = async () => {
@@ -510,6 +516,15 @@ export default function ProposalBuilder() {
               </Button>
               <Button
                 variant="outline"
+                onClick={handleMarkSent}
+                disabled={busy}
+                className="border-one-border min-h-11"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Mark sent
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => void handleCopyEmail()}
                 className="border-one-border min-h-11"
               >
@@ -596,31 +611,50 @@ export default function ProposalBuilder() {
                   PDF
                 </Button>
                 {p.status === 'draft' && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-9 px-3 text-xs border-one-border"
-                    disabled={busy}
-                    onClick={() => {
-                      void (async () => {
-                        setBusy(true)
-                        try {
-                          const doc = docFromSaved(p)
-                          await downloadDoc(doc)
-                          sendProposal(p.id)
-                          toast(`PDF downloaded — marked sent to ${doc.company}`, 'success')
-                        } catch (err) {
-                          console.error(err)
-                          toast('PDF failed — try again', 'error')
-                        } finally {
-                          setBusy(false)
-                        }
-                      })()
-                    }}
-                  >
-                    <Send className="w-3 h-3 mr-1" />
-                    Send
-                  </Button>
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-9 px-3 text-xs border-one-gold/40 text-one-gold"
+                      disabled={busy}
+                      onClick={() => {
+                        void (async () => {
+                          if (!p.email) {
+                            toast('Add an email on the draft first', 'warning')
+                            return
+                          }
+                          setBusy(true)
+                          try {
+                            const doc = docFromSaved(p)
+                            await downloadDoc(doc)
+                            window.location.assign(buildMailtoProposalUrl(doc))
+                            toast('PDF downloaded and email client opened. Not marked sent.', 'success')
+                          } catch (err) {
+                            console.error(err)
+                            toast('PDF failed — try again', 'error')
+                          } finally {
+                            setBusy(false)
+                          }
+                        })()
+                      }}
+                    >
+                      <Mail className="w-3 h-3 mr-1" />
+                      Email
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-9 px-3 text-xs border-one-border"
+                      disabled={busy}
+                      onClick={() => {
+                        sendProposal(p.id)
+                        toast(`Marked sent to ${p.company}`, 'success')
+                      }}
+                    >
+                      <Send className="w-3 h-3 mr-1" />
+                      Mark sent
+                    </Button>
+                  </>
                 )}
                 {(p.status === 'draft' || p.status === 'sent') && (
                   <>

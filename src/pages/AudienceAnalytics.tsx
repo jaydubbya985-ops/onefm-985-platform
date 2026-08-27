@@ -141,35 +141,6 @@ const platformCards = [
 // No invented lift/drop %. Empty until Radio.co (or a sourced station survey) exists.
 const anomalyData: { time: string; change: string; reason: string; severity: string }[] = []
 
-// 7-day estimated listener distribution (relative to weekly total of 39,375)
-// Sat peaks on match day; Mon & Fri strong with breakfast drive programming
-const weeklyListenerData = [
-  { day: 'Mon', listeners: 6200 },
-  { day: 'Tue', listeners: 5800 },
-  { day: 'Wed', listeners: 5600 },
-  { day: 'Thu', listeners: 5700 },
-  { day: 'Fri', listeners: 6100 },
-  { day: 'Sat', listeners: 6900 },
-  { day: 'Sun', listeners: 3075 },
-]
-
-// Estimated monthly listener projections — ABS 2021 regional model
-// GVL footy season (Mar–Sep) drives higher engagement; summer holiday dip Jan–Feb.
-const monthlyListenerData = [
-  { month: 'Jan', listeners: 33500 },
-  { month: 'Feb', listeners: 35800 },
-  { month: 'Mar', listeners: 37200 },
-  { month: 'Apr', listeners: 38900 },
-  { month: 'May', listeners: 40200 },
-  { month: 'Jun', listeners: 41800 },
-  { month: 'Jul', listeners: 43100 },
-  { month: 'Aug', listeners: 44500 },
-  { month: 'Sep', listeners: 42900 },
-  { month: 'Oct', listeners: 40100 },
-  { month: 'Nov', listeners: 38200 },
-  { month: 'Dec', listeners: 35100 },
-]
-
 // Audience segments based on typical community radio programming blocks (indicative only)
 const smartSegments = [
   { name: 'Breakfast (6–9am)', pct: 35, color: '#D4963A' },
@@ -520,25 +491,14 @@ export default function AudienceAnalytics() {
                 <div aria-hidden className="explore-tile-scan" />
                 <div className="w-full h-[360px]">
                   {chartTab === 'Listeners' && (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={monthlyListenerData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="listenerGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#D4963A" stopOpacity={0.28} />
-                            <stop offset="95%" stopColor="#D4963A" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey="month" tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fill: '#6B6B75', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => Math.round(v / 1000) + 'k'} />
-                        <Tooltip
-                          contentStyle={{ background: 'rgba(15,29,48,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                          itemStyle={{ color: '#F4F1EA' }}
-                          formatter={(value: number) => [value.toLocaleString(), 'Est. listeners']}
-                        />
-                        <Area type="monotone" dataKey="listeners" stroke="#D4963A" strokeWidth={2} fill="url(#listenerGrad)" dot={false} activeDot={{ r: 4, fill: '#D4963A' }} />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+                      <p className="font-h3 text-one-white">
+                        {stationStats.weeklyListeners.toLocaleString('en-AU')}
+                      </p>
+                      <p className="font-body-small text-muted text-center px-8 max-w-md">
+                        Est. weekly listeners (ABS 2021 via townData, 25 towns / 100km). Month-by-month stream counts: data pending until Radio.co is connected.
+                      </p>
+                    </div>
                   )}
                   {chartTab === 'Demographics' && (
                     <ResponsiveContainer width="100%" height="100%">
@@ -894,20 +854,9 @@ export default function AudienceAnalytics() {
             >
               <div aria-hidden className="explore-tile-scan" />
               <h4 className="font-h4 text-one-white mb-4">Weekly Listener Distribution</h4>
-              <div className="w-full h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={weeklyListenerData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                    <XAxis dataKey="day" tick={{ fill: '#6B6B75', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: '#6B6B75', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => Math.round(v / 1000) + 'k'} />
-                    <Tooltip contentStyle={{ background: 'rgba(15,29,48,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} itemStyle={{ color: '#F4F1EA' }} formatter={(value: number) => [value.toLocaleString(), 'Est. listeners']} />
-                    <Bar dataKey="listeners" fill="#D4963A" radius={[3, 3, 0, 0]} opacity={0.85} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 p-3 rounded-lg bg-one-navy/50">
-                <span className="font-label text-xs text-one-gold">Sat peak driven by GVL live coverage · ABS 2021 regional model</span>
-              </div>
+              <p className="font-body-small text-muted p-4 rounded-lg bg-one-navy/50">
+                Day-by-day listener counts are data pending. Approved figure is {stationStats.weeklyListeners.toLocaleString('en-AU')} estimated weekly listeners (ABS 2021 via townData), not a modelled Sat peak.
+              </p>
             </motion.div>
             </TiltCard>
 
