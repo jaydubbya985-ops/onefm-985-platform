@@ -706,9 +706,9 @@ export default function InvoiceBatchSender() {
           } else {
             notify(
               testMode
-                ? `Test batch: ${result.sent} sent to ${testInbox}${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''}`
-                : `Batch complete: ${result.sent} sent${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
-              result.failed > 0 ? 'warning' : 'success',
+                ? `Test batch: ${result.sent} emailed to ${testInbox}${result.mailtoFallback ? `, ${result.mailtoFallback} opened in email client (not marked sent)` : ''}${result.failed ? `, ${result.failed} failed` : ''}`
+                : `Batch complete: ${result.sent} emailed${result.mailtoFallback ? `, ${result.mailtoFallback} opened in email client (not marked sent)` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
+              result.failed > 0 || result.mailtoFallback > 0 ? 'warning' : 'success',
             )
           }
         } finally {

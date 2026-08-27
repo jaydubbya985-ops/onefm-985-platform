@@ -235,7 +235,7 @@ const TABS: Array<{ id: BillingTab; label: string; icon: typeof BarChart3 }> = [
 
 export default function BillingEngine() {
   const { toast } = useToast()
-  const { invoices, updateInvoice, sendBatch } = useOpsStore()
+  const { invoices, updateInvoice } = useOpsStore()
 
   const [tab, setTab] = useState<BillingTab>('dashboard')
   const [renewals, setRenewals] = useState<RenewalRecord[]>(MOCK_RENEWALS)
@@ -477,23 +477,38 @@ export default function BillingEngine() {
 
   function sendReminder() {
     if (!reminderInvoice) return
-    toast(`Payment reminder sent to ${reminderInvoice.company}`, 'success')
+    const to = reminderInvoice.email?.trim()
+    if (!to) {
+      toast('No email on this invoice — reminder was NOT sent.', 'error')
+      return
+    }
+    const due = formatCurrency(
+      reminderInvoice.total - (reminderInvoice.paidAmount ?? 0),
+    )
+    const subject = encodeURIComponent(
+      `Payment reminder — ${reminderInvoice.number} | ONE FM 98.5`,
+    )
+    const body = encodeURIComponent(
+      `Hi ${reminderInvoice.contactName},\n\nThis is a payment reminder for invoice ${reminderInvoice.number} (${reminderInvoice.company}).\nAmount due: ${due}.\nDue date: ${reminderInvoice.dueDate}.\n\nPlease see the invoice PDF for bank details.\n\nONE FM 98.5 accounts`,
+    )
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`
+    toast(
+      `Email client opened for ${reminderInvoice.company}. Reminder is NOT marked sent until you send it.`,
+      'warning',
+    )
     setReminderDialogOpen(false)
     setReminderInvoice(null)
   }
 
   function runBillingCycle() {
-    const draftIds = monthInvoices
-      .filter((i) => displayStatus(i) === 'draft')
-      .map((i) => i.id)
-    if (draftIds.length > 0) sendBatch(draftIds)
+    const draftCount = monthInvoices.filter((i) => displayStatus(i) === 'draft').length
     setCycleComplete(true)
     setCycleProgress(100)
     toast(
-      draftIds.length > 0
-        ? `Billing cycle run — ${draftIds.length} invoice${draftIds.length === 1 ? '' : 's'} sent`
-        : 'Billing cycle run — no draft invoices to send',
-      'success',
+      draftCount > 0
+        ? `Cycle checklist marked complete. ${draftCount} draft invoice${draftCount === 1 ? '' : 's'} were NOT emailed — use Batch Send.`
+        : 'Cycle checklist marked complete — no draft invoices to email.',
+      draftCount > 0 ? 'warning' : 'success',
     )
   }
 
@@ -2434,13 +2449,19 @@ export default function BillingEngine() {
               </div>
               <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
                 <p className="text-xs text-one-white/60">
-                  A payment reminder will be sent to{' '}
-                  <strong className="text-one-white">{reminderInvoice.contactName}</strong>{' '}
+                  Opens your email client to{' '}
+                  <strong className="text-one-white">{reminderInvoice.contactName}</strong>
+                  {reminderInvoice.email ? (
+                    <>
+                      {' '}
+                      &lt;<strong className="text-one-white">{reminderInvoice.email}</strong>&gt;
+                    </>
+                  ) : null}{' '}
                   at <strong className="text-one-white">{reminderInvoice.company}</strong>.
+                  Nothing is emailed until you send that message.
                 </p>
                 <p className="text-xs text-one-white/40 mt-2">
-                  The reminder will include the invoice details, amount due, and payment
-                  instructions.
+                  Draft includes invoice number, amount due, and a request to pay from the PDF.
                 </p>
               </div>
             </div>
@@ -2458,7 +2479,7 @@ export default function BillingEngine() {
               className="bg-amber-500 hover:bg-amber-600 text-one-navy"
             >
               <Send className="w-4 h-4 mr-1" />
-              Send Reminder
+              Open email client
             </Button>
           </DialogFooter>
         </DialogContent>
