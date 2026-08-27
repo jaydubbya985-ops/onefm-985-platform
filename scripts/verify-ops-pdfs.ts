@@ -72,6 +72,21 @@ const invoicePdf = await generateInvoicePdf({
 })
 writeFileSync(`${outDir}/invoice-019.pdf`, Buffer.from(invoicePdf.output('arraybuffer')))
 
+const foottPdf = await generateInvoicePdf({
+  number: 'ONEFM-2026-011',
+  company: 'FOOTT Waste Solutions',
+  contactName: 'Peter Foott',
+  email: 'peter@foott.com.au',
+  amountExclGst: 5000,
+  gst: 500,
+  total: 5500,
+  description: 'FOOTT Waste Solutions – Community Partnership & Sponsorship Package (Jun–Nov 2026)',
+  period: 'Jun 2026 – Nov 2026',
+  dueDate: '2026-06-23',
+  issueDate: '2026-06-09',
+})
+writeFileSync(`${outDir}/invoice-foott-011.pdf`, Buffer.from(foottPdf.output('arraybuffer')))
+
 console.log(JSON.stringify({
   outDir,
   weeklyListeners: stationStats.weeklyListeners,
@@ -79,4 +94,6 @@ console.log(JSON.stringify({
   proposalGst: proposal.money.gst,
   bsb: BANK_BSB,
   packageName: proposal.packageName,
+  foottInvoice: 'ONEFM-2026-011',
+  foottTotal: 5500,
 }, null, 2))
