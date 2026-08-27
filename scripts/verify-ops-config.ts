@@ -143,8 +143,12 @@ const emailStatusHook = readFileSync(
   'utf8',
 )
 assert(
-  emailStatusHook.includes('readFunctionJson'),
-  'email-status must not treat SPA HTML as Resend live',
+  emailStatusHook.includes('fromDomainVerified'),
+  'email-status hook must not treat an unverified fm985.com.au domain as live send',
+)
+assert(
+  emailStatusHook.includes("'unverified'"),
+  'email-status hook must expose unverified when Resend DNS is not verified',
 )
 
 const gateSource = readFileSync(
@@ -183,6 +187,15 @@ assert(
 assert(
   generatorSource.includes('This will email'),
   'Invoice Generator Send must confirm before emailing FOOTT',
+)
+
+const bannerSource = readFileSync(
+  new URL('../src/components/ops/EmailServiceBanner.tsx', import.meta.url),
+  'utf8',
+)
+assert(
+  bannerSource.includes("status === 'unverified'"),
+  'ops banner must not claim live email is ON when fm985.com.au is unverified',
 )
 
 const foott = realBatchInvoices().find((i) => i.number === 'ONEFM-2026-011')

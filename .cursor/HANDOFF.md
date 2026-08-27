@@ -14,18 +14,19 @@
 
 | Gate | Status (2026-08-27) |
 |------|---------------------|
-| Logo + invoice PDF | **On live.** FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Invoice Generator Send looks up store rows. First authenticated LIVE load upserts FOOTT + Jason’s TV only. Staff sign-in required to send. |
-| Mailto honesty | **On live.** Invoice mailto / `devMode` / SPA HTML do **not** mark sent. `sb_secret_` is rejected as LIVE credentials. |
-| Public truth | **On live.** OG **189,680**. `/gov-ready-gate.txt` reads `og=189680`. `npm run live` passes. Audience shows 39,375 weekly listeners (ABS 2021 via townData). |
-| Live `#/ops` | **LIVE — not DEMO** on https://onefmops.netlify.app/#/ops (ops-config function + Netlify site env). Do not merge PR #16 without **EXE** — `main` is still behind this branch. |
-| Deploy | Production deploy `6a8fbe00d8613af657b3ddf4` from this branch. Bundle `index-CfDQJh2P.js`. |
+| Logo + invoice PDF | **On live.** FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. PDF generates (~32KB, real logo). Invoice Generator Send looks up store rows and **confirms** before emailing. |
+| Mailto / dry-run honesty | **On live.** Mailto / `devMode` / SPA HTML / `dryRun` do **not** mark sent. Production dry-run: `wouldSendTo=peter@foott.com.au`, `sent=false`, `hasPdf=true`. |
+| Public truth | **On live.** OG **189,680**. `/gov-ready-gate.txt` reads `og=189680`. Audience shows 39,375 weekly listeners (ABS 2021 via townData). |
+| Live `#/ops` | **LIVE — not DEMO**. `sb_secret_` is rejected as LIVE credentials. |
+| FOOTT actually emailed | **Blocked.** Resend key works (`resendReachable=true`) but **`fm985.com.au` domainStatus=`failed`**. Sends from `accounts@fm985.com.au` will not deliver until DNS is fixed. Ops banner must say unverified, not “live email is ON”. |
 
 ## Do this run (order)
 
 1. `git pull origin cursor/gov-ready-live-gate-c24f`. Stay on this branch (PR #16) unless starting new work (`cursor/<name>-c24f`).
-2. Run `npm run live`. If it fails, production drifted.
-3. Do not merge without **EXE**.
-4. Do not fake live mode. Do not upsert the 19-row DEMO batch. Never bake `sb_secret_` into the client.
+2. Run `npm run live`. It **must fail** until Resend shows `fm985.com.au` verified.
+3. After Jay fixes DNS: `npm run live` should pass, including `npx vite-node scripts/verify-foott-send.ts` (`emailed: false` — dry-run only).
+4. Do not merge without **EXE**. Do not email `peter@foott.com.au` as a test.
+5. Do not fake live mode. Do not upsert the 19-row DEMO batch. Never bake `sb_secret_` into the client.
 
 ## Model / desks
 
@@ -34,9 +35,9 @@
 
 ## NEED JAY (one action)
 
-Say **EXE** to merge PR #16 so GitHub `main` matches live.
+In **Resend → Domains**, fix DNS for **fm985.com.au** until status is **verified**. Then say **EXE** to merge PR #16.
 
-Then sign in at https://onefmops.netlify.app/#/ops with a Supabase staff user and Send FOOTT `ONEFM-2026-011`.
+Do not send FOOTT to Peter until that domain is verified.
 
 ## Truth numbers (only these)
 
@@ -48,4 +49,4 @@ Then sign in at https://onefmops.netlify.app/#/ops with a Supabase staff user an
 
 ## Do not
 
-- Force-push. Invent FOOTT invoice contents. Fake live ops. Empty-commit to retry a 401. Upsert the 19-row DEMO batch into Supabase. Merge without **EXE**. Bake `sb_secret_` into the browser bundle.
+- Force-push. Invent FOOTT invoice contents. Fake live ops. Empty-commit to retry a 401. Upsert the 19-row DEMO batch into Supabase. Merge without **EXE**. Bake `sb_secret_` into the browser bundle. POST to `send-invoice` without `dryRun: true` (that would email Peter).

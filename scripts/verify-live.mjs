@@ -125,6 +125,11 @@ try {
     if (status.resendConfigured !== true) {
       fail.push('live email-status reports Resend is not configured — FOOTT cannot be emailed')
     }
+    if (status.dryRunSupported === true && status.fromDomainVerified !== true) {
+      fail.push(
+        `live Resend domain fm985.com.au is not verified (domainStatus=${status.domainStatus ?? 'unknown'}) — NEED JAY: fix DNS in Resend`,
+      )
+    }
   }
 } catch (err) {
   fail.push(`email-status fetch failed: ${err instanceof Error ? err.message : err}`)
