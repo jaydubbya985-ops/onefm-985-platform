@@ -35,6 +35,7 @@ const FORBIDDEN = [
   { re: /pay\.onefm985\.com\.au/i, why: 'hosted pay domain does not exist — use BSB 083-894' },
   { re: /api\.onefm985\.com\.au\/webhooks/i, why: 'webhook domain does not exist' },
   { re: /checkout\.stripe\.com\/pay\?/i, why: 'do not invent Stripe Checkout query URLs' },
+  { re: /Request Received!/, why: 'mailto song request is a draft, not a received request' },
 ]
 
 function walk(dir) {

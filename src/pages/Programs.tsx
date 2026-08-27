@@ -486,7 +486,7 @@ export default function Programs() {
   const [requestName, setRequestName] = useState("")
   const [requestSong, setRequestSong] = useState("")
   const [requestMsg, setRequestMsg] = useState("")
-  const [requestSent, setRequestSent] = useState(false)
+  const [requestDraftOpened, setRequestDraftOpened] = useState(false)
 
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -511,12 +511,9 @@ export default function Programs() {
       `Song request from ${requestName}\n\nSong: ${requestSong}\n\nMessage: ${requestMsg || '(none)'}`,
     )
     window.location.href = `mailto:${BRAND.email}?subject=${encodeURIComponent('ONE FM Song Request')}&body=${body}`
-    setRequestSent(true)
+    setRequestDraftOpened(true)
     setTimeout(() => {
-      setRequestSent(false)
-      setRequestName('')
-      setRequestSong('')
-      setRequestMsg('')
+      setRequestDraftOpened(false)
     }, 4000)
   }
 
@@ -1127,7 +1124,7 @@ export default function Programs() {
           className="glass-card p-6 md:p-10"
         >
           <AnimatePresence mode="wait">
-            {requestSent ? (
+            {requestDraftOpened ? (
               <motion.div
                 key="success"
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -1136,9 +1133,9 @@ export default function Programs() {
                 className="flex flex-col items-center text-center py-12"
               >
                 <CheckCircle2 size={56} className="text-data-teal mb-4" />
-                <h3 className="font-h3 text-one-white mb-2">Request Received!</h3>
+                <h3 className="font-h3 text-one-white mb-2">Email Draft Opened</h3>
                 <p className="font-body text-muted max-w-md">
-                  Your email client should open with the request addressed to {BRAND.email}. You can also call the studio on {BRAND.phone}.
+                  Complete the send in your email app so the request reaches {BRAND.email}. You can also call the studio on {BRAND.phone}.
                 </p>
               </motion.div>
             ) : (
