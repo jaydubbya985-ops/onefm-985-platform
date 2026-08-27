@@ -131,7 +131,7 @@ export default function SponsorshipKit() {
             `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
             `${stationStats.totalTowns} towns across the Goulburn Valley`,
             'Packages from $50/week',
-            `Supporting ${stationStats.nfpsSupported}+ local not-for-profits`,
+            'Donated airtime for local not-for-profits',
           ]}
           delay={0.4}
         />

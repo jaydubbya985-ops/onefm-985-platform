@@ -314,15 +314,13 @@ export default function MediaKit() {
         { label: 'Broadcast Population', value: stationStats.broadcastPopulation.toLocaleString() },
         { label: 'Towns Covered', value: String(stationStats.totalTowns) },
         { label: 'Broadcast Radius', value: `${stationStats.broadcastRadiusKm} km` },
-        { label: 'Social Followers', value: stationStats.socialFollowers.toLocaleString() },
-        { label: 'Podcast Downloads', value: stationStats.podcastDownloads.toLocaleString() },
         { label: 'Years Broadcasting', value: String(stationStats.yearsBroadcasting) },
       ]
 
       const platformReach = [
         { platform: 'FM Radio', stat: '98.5 FM', reach: `${stationStats.weeklyListeners.toLocaleString()} est. weekly listeners` },
         { platform: 'Live Stream', stat: 'fm985.com.au', reach: 'Radio.co · Community Radio Plus app' },
-        { platform: 'Social Media', stat: `${stationStats.socialFollowers.toLocaleString()}`, reach: 'Facebook community page (target growth to 12,500)' },
+        { platform: 'Social Media', stat: 'Facebook', reach: 'facebook.com/onefmshepparton — follower count reported by the platform' },
         { platform: 'SoundCloud', stat: 'Interview archive', reach: 'Community interviews on fm985.com.au' },
       ]
 
@@ -472,15 +470,15 @@ export default function MediaKit() {
             transition={{ duration: 0.6, delay: 1.0 }}
           >
             {[
-              { value: stationStats.weeklyListeners, label: 'Listeners', suffix: '' },
-              { value: stationStats.socialFollowers, label: 'Social', suffix: '' },
-              { value: 1, label: 'Regional', suffix: '', prefix: '#' },
+              { value: stationStats.weeklyListeners, label: 'Est. listeners', suffix: '' },
+              { value: stationStats.totalTowns, label: 'Towns', suffix: '' },
+              { value: stationStats.yearsBroadcasting, label: 'Years on air', suffix: '' },
               { value: 24, label: 'Broadcast', suffix: '/7' },
             ].map((stat, i) => (
               <div key={i} className="flex items-center gap-6 md:gap-8">
                 <div>
                   <div className="font-stat text-gold-gradient">
-                    <AnimatedNumber value={stat.value} prefix={stat.prefix || ''} suffix={stat.suffix || ''} />
+                    <AnimatedNumber value={stat.value} suffix={stat.suffix || ''} />
                   </div>
                   <div className="font-label text-muted">{stat.label}</div>
                 </div>
