@@ -64,6 +64,10 @@ assert(
   supabaseSource.includes('/.netlify/functions/ops-config'),
   'supabase client fetches ops-config when Vite env is empty',
 )
+assert(
+  supabaseSource.includes("startsWith('<')"),
+  'runtime fetch must ignore SPA HTML fallback',
+)
 
 if (fail.length) {
   console.error('verify-ops-config failed:\n' + fail.map((f) => `  ${f}`).join('\n'))

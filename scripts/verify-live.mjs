@@ -70,13 +70,19 @@ else {
   let runtimeConfigured = false
   try {
     const cfgRes = await fetch(LIVE + '/.netlify/functions/ops-config')
-    if (cfgRes.ok) {
-      const cfg = JSON.parse(await cfgRes.text())
+    const cfgText = await cfgRes.text()
+    const looksLikeHtml = cfgText.trimStart().startsWith('<')
+    if (cfgRes.ok && !looksLikeHtml) {
+      const cfg = JSON.parse(cfgText)
       runtimeConfigured =
         cfg?.configured === true &&
         typeof cfg.url === 'string' &&
         cfg.url.includes('supabase.co') &&
         !cfg.url.includes('your-project-id')
+    } else if (cfgRes.ok && looksLikeHtml) {
+      fail.push(
+        'ops-config is not deployed yet (SPA HTML fallback) — #/ops cannot read Netlify env until this branch is on production',
+      )
     } else if (cfgRes.status !== 404) {
       fail.push(`ops-config HTTP ${cfgRes.status} — #/ops cannot read Netlify env`)
     }

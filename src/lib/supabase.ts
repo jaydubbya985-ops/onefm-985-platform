@@ -64,7 +64,9 @@ export async function initSupabaseFromRuntime(): Promise<void> {
       headers: { Accept: 'application/json' },
     })
     if (!res.ok) return
-    const data = (await res.json()) as {
+    const text = await res.text()
+    if (!text || text.trimStart().startsWith('<')) return
+    const data = JSON.parse(text) as {
       configured?: boolean
       url?: string
       anonKey?: string
