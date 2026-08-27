@@ -32,7 +32,7 @@ export type ResendProbe = {
 }
 
 const APEX_DNS_FIX =
-  'NEED JAY: SiteGround DNS for fm985.com.au — replace the old resend._domainkey TXT with the DKIM CNAME shown in Resend → Domains; add include:amazonses.com to the existing SPF (keep include:spf.protection.outlook.com); do not change MX (Outlook stays). Then click Verify in Resend.'
+  'NEED JAY: SiteGround DNS for fm985.com.au — open Resend → Domains → fm985.com.au and copy the three records over the existing ones (Resend marks them failed). TXT resend._domainkey (replace the old key), MX send (must match Resend’s feedback-smtp host), TXT send (SPF). Do not change the apex Outlook MX.'
 
 function isStationDomain(name: string | undefined): boolean {
   if (!name) return false

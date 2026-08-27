@@ -215,8 +215,8 @@ assert(
   'ops banner must tell Jay to replace the old resend._domainkey TXT',
 )
 assert(
-  bannerSource.includes('include:amazonses.com'),
-  'ops banner must tell Jay to add amazonses to the existing SPF',
+  bannerSource.includes('Outlook MX'),
+  'ops banner must tell Jay not to change the Outlook MX',
 )
 
 const foott = realBatchInvoices().find((i) => i.number === 'ONEFM-2026-011')
