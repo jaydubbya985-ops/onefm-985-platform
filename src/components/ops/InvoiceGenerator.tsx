@@ -734,6 +734,11 @@ export default function InvoiceGenerator() {
       invoiceId: inv.id,
     }
 
+    const confirmed = window.confirm(
+      `This will email ${inv.billTo.email} with ${inv.invoiceNumber}.pdf attached.\n\nContinue only if that is what you mean to do.`,
+    )
+    if (!confirmed) return
+
     const result = await dispatchInvoiceEmail(payload)
 
     if (result.devMode) {
@@ -748,6 +753,7 @@ export default function InvoiceGenerator() {
         list.map((i) => (i.id === id ? { ...i, status: 'sent' } : i)),
       )
       updateInvoice(id, { status: 'sent' })
+      window.alert(`Emailed ${inv.billTo.email} with ${inv.invoiceNumber}.pdf.`)
       return
     }
 

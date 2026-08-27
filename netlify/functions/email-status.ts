@@ -1,21 +1,28 @@
 import type { Handler, HandlerEvent } from '@netlify/functions'
+import { INVOICE_FROM, probeResend } from '../lib/resendProbe'
 
 /**
- * Read-only status check for the invoice email pipeline — reports whether
- * RESEND_API_KEY is set on Netlify, WITHOUT ever exposing the key itself.
- * Lets the Ops portal show an accurate "live sends are on/off" banner
- * instead of ops staff discovering it only after clicking Send.
+ * Read-only status for the invoice email pipeline.
+ * Reports whether RESEND_API_KEY is set and whether Resend accepts it,
+ * without exposing the key or sending mail.
  */
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod !== 'GET') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
   }
 
+  const probe = await probeResend(process.env.RESEND_API_KEY)
+
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
     body: JSON.stringify({
-      resendConfigured: Boolean(process.env.RESEND_API_KEY),
+      resendConfigured: probe.configured,
+      resendReachable: probe.reachable,
+      fromDomainVerified: probe.fromDomainVerified,
+      domainStatus: probe.domainStatus,
+      from: INVOICE_FROM,
+      dryRunSupported: true,
     }),
   }
 }

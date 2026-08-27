@@ -56,6 +56,18 @@ function pdfToBase64(pdf: jsPDF): string {
   return pdf.output('datauristring').split(',')[1] ?? ''
 }
 
+/** Dry-run or sent:false must never be treated as a real email. */
+function readSendResult(
+  data: { success?: boolean; messageId?: string; dryRun?: boolean; sent?: boolean } | null,
+): SendResult | null {
+  if (!data) return null
+  if (data.dryRun || data.sent === false) {
+    return { success: false, error: 'Invoice was not emailed (dry-run or send failed).' }
+  }
+  if (data.success) return { success: true, messageId: data.messageId }
+  return null
+}
+
 function buildInvoiceHtml(payload: InvoiceSendPayload): string {
   return generateInvoiceEmailHtml(
     {
@@ -117,8 +129,14 @@ export async function dispatchInvoiceEmail(
       }),
     })
 
-    const data = await readFunctionJson<{ success?: boolean; messageId?: string }>(res)
-    if (data?.success) return { success: true, messageId: data.messageId }
+    const data = await readFunctionJson<{
+      success?: boolean
+      messageId?: string
+      dryRun?: boolean
+      sent?: boolean
+    }>(res)
+    const parsed = readSendResult(data)
+    if (parsed) return parsed
     if (!res.ok) {
       console.warn('[InvoiceSend] Netlify function responded:', res.status)
     }
@@ -174,8 +192,14 @@ export async function dispatchReceiptEmail(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ to: payload.to, subject, html, replyTo: 'accounts@fm985.com.au' }),
     })
-    const data = await readFunctionJson<{ success?: boolean; messageId?: string }>(res)
-    if (data?.success) return { success: true, messageId: data.messageId }
+    const data = await readFunctionJson<{
+      success?: boolean
+      messageId?: string
+      dryRun?: boolean
+      sent?: boolean
+    }>(res)
+    const parsed = readSendResult(data)
+    if (parsed) return parsed
   } catch {
     // fall through to direct send
   }

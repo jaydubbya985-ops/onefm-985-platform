@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "truth": "node scripts/verify-truth.mjs",
-    "live": "node scripts/verify-live.mjs",
+    "live": "node scripts/verify-live.mjs && npx vite-node scripts/verify-foott-send.ts",
+    "foott": "npx vite-node scripts/verify-foott-send.ts",
     "ops-config": "node --experimental-strip-types scripts/verify-ops-config.ts",
     "build": "node scripts/verify-truth.mjs && node --experimental-strip-types scripts/verify-ops-config.ts && tsc -b && vite build",
     "lint": "eslint .",

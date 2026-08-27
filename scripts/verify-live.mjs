@@ -115,6 +115,33 @@ else {
   }
 }
 
+try {
+  const statusRes = await fetch(LIVE + '/.netlify/functions/email-status')
+  const statusText = await statusRes.text()
+  if (!statusRes.ok || statusText.trimStart().startsWith('<')) {
+    fail.push('live email-status is missing or SPA HTML — invoice email cannot be proven')
+  } else {
+    const status = JSON.parse(statusText)
+    if (status.resendConfigured !== true) {
+      fail.push('live email-status reports Resend is not configured — FOOTT cannot be emailed')
+    }
+  }
+} catch (err) {
+  fail.push(`email-status fetch failed: ${err instanceof Error ? err.message : err}`)
+}
+
+try {
+  const sendRes = await fetch(LIVE + '/.netlify/functions/send-invoice')
+  const sendText = await sendRes.text()
+  if (sendText.trimStart().startsWith('<')) {
+    fail.push('live send-invoice is SPA HTML — function is not deployed')
+  } else if (sendRes.status !== 405) {
+    fail.push(`live send-invoice GET expected 405, got ${sendRes.status}`)
+  }
+} catch (err) {
+  fail.push(`send-invoice fetch failed: ${err instanceof Error ? err.message : err}`)
+}
+
 if (fail.length) {
   console.error('verify-live failed:\n' + fail.map((f) => `  ${f}`).join('\n'))
   process.exit(1)

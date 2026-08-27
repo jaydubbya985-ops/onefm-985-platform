@@ -153,6 +153,38 @@ const gateSource = readFileSync(
 )
 assert(gateSource.includes('og=189680'), 'gov-ready-gate.txt must stamp OG 189680')
 
+const sendInvoiceSource = readFileSync(
+  new URL('../netlify/functions/send-invoice.ts', import.meta.url),
+  'utf8',
+)
+assert(sendInvoiceSource.includes('dryRun'), 'send-invoice must support dry-run')
+assert(sendInvoiceSource.includes('sent: false'), 'dry-run must report sent:false')
+assert(
+  sendInvoiceSource.includes("body.dryRun === true"),
+  'send-invoice must not email when dryRun is true',
+)
+
+const emailStatusSource = readFileSync(
+  new URL('../netlify/functions/email-status.ts', import.meta.url),
+  'utf8',
+)
+assert(emailStatusSource.includes('dryRunSupported'), 'email-status must advertise dry-run support')
+assert(emailStatusSource.includes('probeResend'), 'email-status must probe Resend without sending')
+
+assert(
+  invoiceSendSource.includes('readSendResult'),
+  'invoice send must ignore dry-run success payloads',
+)
+assert(
+  invoiceSendSource.includes('data.dryRun'),
+  'invoice send must not mark dry-run as emailed',
+)
+
+assert(
+  generatorSource.includes('This will email'),
+  'Invoice Generator Send must confirm before emailing FOOTT',
+)
+
 const foott = realBatchInvoices().find((i) => i.number === 'ONEFM-2026-011')
 assert(!!foott, 'FOOTT ONEFM-2026-011 must exist in realBatchInvoices')
 assert(foott?.email === 'peter@foott.com.au', 'FOOTT must have peter@foott.com.au')
