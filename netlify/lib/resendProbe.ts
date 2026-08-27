@@ -4,6 +4,9 @@
  *
  * FROM is accounts@fm985.com.au — only the apex domain counts as verified.
  * A verified send.fm985.com.au subdomain is not enough.
+ *
+ * Read-only: do not restart Resend domain verification from this probe. Resend
+ * marks the domain pending on every restart, which is why status was stuck.
  */
 
 export const INVOICE_FROM = 'ONE FM 98.5 <accounts@fm985.com.au>'
@@ -24,6 +27,7 @@ export type StationDomain = {
   name: string
   status: string
   records: StationDomainRecord[]
+  sending?: string
 }
 
 export type ResendProbe = {
@@ -103,26 +107,24 @@ async function dnsForRecord(
 async function fetchDomainDetail(
   apiKey: string,
   id: string,
-): Promise<{ status: string; records: Array<{ record?: string; name?: string; type?: string; status?: string; value?: string; priority?: number }> }> {
+): Promise<{
+  status: string
+  sending: string
+  records: Array<{ record?: string; name?: string; type?: string; status?: string; value?: string; priority?: number }>
+}> {
   const res = await fetch(`https://api.resend.com/domains/${id}`, {
     headers: { Authorization: `Bearer ${apiKey}` },
   })
-  if (!res.ok) return { status: '', records: [] }
+  if (!res.ok) return { status: '', sending: '', records: [] }
   const data = (await res.json()) as {
     status?: string
+    capabilities?: { sending?: string }
     records?: Array<{ record?: string; name?: string; type?: string; status?: string; value?: string; priority?: number }>
   }
-  return { status: data.status ?? '', records: data.records ?? [] }
-}
-
-async function triggerVerify(apiKey: string, id: string): Promise<void> {
-  try {
-    await fetch(`https://api.resend.com/domains/${id}/verify`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}` },
-    })
-  } catch {
-    // verify is best-effort — DNS may still be wrong
+  return {
+    status: data.status ?? '',
+    sending: data.capabilities?.sending ?? '',
+    records: data.records ?? [],
   }
 }
 
@@ -130,7 +132,7 @@ function needJayFrom(apex: StationDomain | undefined): string {
   if (!apex) return APEX_DNS_FIX
   const failed = apex.records.filter((r) => !r.matches)
   if (failed.length === 0) {
-    return 'NEED JAY: DNS matches Resend — wait for Verify, or click Verify in Resend → Domains → fm985.com.au. Do not change Outlook MX.'
+    return 'NEED JAY: DNS matches Resend — wait. Do not click Verify again (that restarts pending). Do not change Outlook MX.'
   }
   const lines = failed.map((r) => {
     const prio = r.type === 'MX' && r.priority != null ? ` priority ${r.priority}` : ''
@@ -182,8 +184,6 @@ export async function probeResend(apiKey: string | undefined): Promise<ResendPro
     const listed = (data.data ?? []).filter((d) => isStationDomain(d.name))
 
     const stationDomains: StationDomain[] = []
-    let apexId: string | undefined
-    let dnsAllMatch = false
 
     for (const d of listed) {
       if (!d.id || !d.name) continue
@@ -202,22 +202,12 @@ export async function probeResend(apiKey: string | undefined): Promise<ResendPro
           priority: r.priority,
         })
       }
-      if (d.name === INVOICE_FROM_DOMAIN) {
-        apexId = d.id
-        dnsAllMatch = records.length > 0 && records.every((r) => r.matches)
-      }
       stationDomains.push({
         name: d.name,
         status: detail.status || d.status || '',
+        sending: detail.sending,
         records,
       })
-    }
-
-    if (apexId && dnsAllMatch) {
-      await triggerVerify(apiKey, apexId)
-      const refreshed = await fetchDomainDetail(apiKey, apexId)
-      const apex = stationDomains.find((d) => d.name === INVOICE_FROM_DOMAIN)
-      if (apex && refreshed.status) apex.status = refreshed.status
     }
 
     const apex = stationDomains.find((d) => d.name === INVOICE_FROM_DOMAIN)

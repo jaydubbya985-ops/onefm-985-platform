@@ -192,8 +192,12 @@ assert(
   'Resend probe must compare Resend expected records to live DNS',
 )
 assert(
-  probeSource.includes('/verify'),
-  'when live DNS matches Resend, probe must trigger domain verify',
+  !probeSource.includes("method: 'POST'"),
+  'probe must not POST to Resend — that restarts pending and blocks send',
+)
+assert(
+  probeSource.includes('Read-only'),
+  'Resend probe must stay read-only so verification can finish',
 )
 
 assert(
@@ -217,6 +221,10 @@ const bannerSource = readFileSync(
 assert(
   bannerSource.includes("status === 'pending'"),
   'ops banner must not ask Jay to change DNS while Resend verification is pending',
+)
+assert(
+  bannerSource.includes('Do not click Verify'),
+  'ops banner must not tell Jay to restart Resend verification while pending',
 )
 assert(
   bannerSource.includes('resend._domainkey'),

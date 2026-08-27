@@ -4,7 +4,7 @@ import { INVOICE_FROM, probeResend } from '../lib/resendProbe'
 /**
  * Read-only status for the invoice email pipeline.
  * Reports whether RESEND_API_KEY is set and whether Resend accepts it,
- * without exposing the key or sending mail.
+ * without exposing the key, sending mail, or restarting domain verification.
  */
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod !== 'GET') {
@@ -24,6 +24,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
       stationDomains: probe.stationDomains.map((d) => ({
         name: d.name,
         status: d.status,
+        sending: d.sending,
         records: d.records,
       })),
       needJay: probe.needJay,

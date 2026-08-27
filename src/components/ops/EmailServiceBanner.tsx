@@ -26,8 +26,8 @@ export function EmailServiceBanner() {
         <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
         <span>
           DNS for <code className="font-mono">fm985.com.au</code> already matches Resend — verification is
-          pending. Invoice email is not live yet. Do not change SiteGround DNS. NEED JAY: in Resend →
-          Domains → fm985.com.au click <strong>Verify</strong> if this stays pending.
+          pending. Invoice email is not live yet. Do not change SiteGround DNS. Do not click Verify
+          again (that restarts pending). Wait until this banner turns green.
         </span>
       </div>
     )
