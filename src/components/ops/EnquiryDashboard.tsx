@@ -35,6 +35,8 @@ import {
 } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
 import {
   ASSIGNEES,
   FILTER_TABS,
@@ -84,6 +86,12 @@ function StatCard({
 export default function EnquiryDashboard() {
   const { enquiries, updateEnquiry, addEnquiryNote, createProposalFromEnquiry } = useOpsStore()
   const { toast } = useToast()
+  const { user } = useAuth()
+  const assignees = isSupabaseConfigured()
+    ? user?.email
+      ? [user.email]
+      : []
+    : ASSIGNEES
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -381,7 +389,7 @@ export default function EnquiryDashboard() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="unassigned">Unassigned</SelectItem>
-                        {ASSIGNEES.map((a) => (
+                        {assignees.map((a) => (
                           <SelectItem key={a} value={a}>
                             {a}
                           </SelectItem>
