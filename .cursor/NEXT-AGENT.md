@@ -10,18 +10,15 @@ If you are Grok: do the work you can, then tell Jay to start the **next** run as
 
 ## Single next action (do this first)
 
-`git pull origin main`. Read `.cursor/HANDOFF.md`. New branch off main.
+`git pull origin cursor/gov-ready-live-gate-c24f`. Read `.cursor/HANDOFF.md`. Stay on that branch (PR #16) unless starting new work (`cursor/<name>-c24f`). Do not merge without **EXE**.
 
-PR #12 is **merged** (`4a7315f`). Live is still DEMO because GitHub `NETLIFY_AUTH_TOKEN` is unauthorized. Do not empty-commit retry.
-
-**Live ops only if env present.** If `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` missing: `NEED JAY:` one line and continue independent code. Do not fake live mode.
+Live `#/ops` is **LIVE — not DEMO**. `fm985.com.au` is **verified**. A real send of `ONEFM-2026-011.pdf` to `accounts@fm985.com.au` succeeded (`sent=true`). Peter was not emailed.
 
 ## After that
 
-1. Confirm live `#/ops` — if still `onefm2026`, NEED JAY a new Netlify PAT, then re-run **Deploy to Netlify** on `main`.
-2. `npx vite-node scripts/verify-ops-pdfs.ts` — 39,375 + GST + BSB 083-894.
-3. Mailto / `devMode` must not mark invoices sent.
-4. `npm run truth` + `npm run build` must pass.
-5. Public craft: `Home.tsx` / `Listen.tsx` / `Coverage.tsx` / `Story.tsx` — `programGuide.ts` is breakfast source of truth.
+1. `npm run live` must pass.
+2. Do not POST `send-invoice` to `peter@foott.com.au` unless Jay asks.
+3. `npm run build` must pass. Never bake `sb_secret_` into the client.
+4. NEED JAY: **EXE** to merge PR #16.
 
-Commit, push, open/update a PR. Deploy needs a new Netlify PAT.
+Commit, push, update PR #16. Deploy from this branch is allowed; merging to `main` is not, until EXE.

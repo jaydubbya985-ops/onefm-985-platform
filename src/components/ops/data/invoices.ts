@@ -1,14 +1,10 @@
-// DEMO DATA — ops invoice seeds for the portal UI. Not a live billing ledger.
 // ---------------------------------------------------------------------------
-// ONE FM invoice data — extracted verbatim from the deployed OpsPortal bundle
+// ONE FM invoice data — extracted from the deployed OpsPortal bundle
 // (deployed-reference/assets/OpsPortal-dIeH6Okr.js).
 //
-// Contains:
-//   • The June 2026 batch (19 invoices, ONEFM-2026-011 … ONEFM-2026-029)
-//   • Per-invoice "thank you" email messages (Gi map in the bundle)
-//   • Per-invoice operational email bodies (Ye/We map in the bundle)
-//   • The billing ledger (15 invoices, INV-2026-001 … INV-2026-015)
-//   • Recorded payments and the aging-bucket configuration
+// REAL (may exist in LIVE ops): ONEFM-2026-011 FOOTT, ONEFM-2026-012 Jason's TV.
+// DEMO DATA: remaining BATCH_INVOICES rows and the billing ledger. Do not upsert
+// those into Supabase.
 // ---------------------------------------------------------------------------
 
 export type BatchInvoiceStatus = 'draft' | 'previewed' | 'tested' | 'sent' | 'paid'
@@ -538,8 +534,20 @@ export const BATCH_INVOICES: BatchInvoice[] = [
   },
 ]
 
+/** Real June 2026 sponsor invoices. Everything else in BATCH_INVOICES is DEMO. */
+export const REAL_INVOICE_NUMBERS = ['ONEFM-2026-011', 'ONEFM-2026-012'] as const
+
+export function isRealSponsorInvoiceNumber(number: string): boolean {
+  return (REAL_INVOICE_NUMBERS as readonly string[]).includes(number)
+}
+
+export function realBatchInvoices(): BatchInvoice[] {
+  return BATCH_INVOICES.filter((i) => isRealSponsorInvoiceNumber(i.number))
+}
+
 // ---------------------------------------------------------------------------
 // Billing ledger — the bundle's `El` array (15 invoices)
+// DEMO DATA — illustrative aging ledger, not the live FOOTT tax invoice.
 // ---------------------------------------------------------------------------
 
 export type BillingInvoiceStatus = 'paid' | 'sent' | 'overdue' | 'partially_paid' | 'draft'

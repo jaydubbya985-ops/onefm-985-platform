@@ -12,7 +12,7 @@ import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
 import { stationStats } from '@/data/pricing'
-import { FULL_SCHEDULE } from '@/data/programGuide'
+import { MULTICULTURAL_PROGRAMS, MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 const RED = '#E51636'
 
@@ -49,8 +49,8 @@ function CommunityHero() {
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Twenty-five towns, one signal. From the GVL grand final to eight languages on
-          the weekend dial — this is the Valley, on air.
+          Twenty-five towns, one signal. From the GVL grand final to {MULTICULTURAL_PROGRAM_COUNT} multicultural
+          programs on the weekly guide — this is the Valley, on air.
         </p>
       </div>
     </section>
@@ -65,28 +65,24 @@ export default function Community() {
     img: TOWN_IMGS[i % TOWN_IMGS.length],
   }))
 
-  const multicultural = Array.from(
-    new Map(
-      FULL_SCHEDULE.filter((s) => s.category === 'Multicultural').map((s) => [s.name, s])
-    ).values()
-  ).map((s) => ({
+  const multicultural = MULTICULTURAL_PROGRAMS.map((s) => ({
     tag: 'Multicultural',
     title: s.name,
-    body: `With ${s.host} — part of the weekend world programming that keeps every corner of the Valley tuned in, in their own language.`,
+    body: `With ${s.host} — part of the weekly world programming that keeps every corner of the Valley tuned in, in their own language.`,
   }))
 
   return (
     <Layout>
       <SEO
         title="Our Community — ONE FM 98.5"
-        description="25 towns across the Goulburn Valley: GVL footy called live, multicultural programming in 8+ languages, and the communities ONE FM serves."
+        description={`${stationStats.totalTowns} towns across the Goulburn Valley: GVL footy called live, ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the station guide, and the communities ONE FM serves.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             `● ${stationStats.totalTowns} towns across the Goulburn Valley`,
             'GVL footy called live every season',
-            'Multicultural programming in 8+ languages',
+            `Multicultural programming — ${MULTICULTURAL_PROGRAM_COUNT} programs on the weekly guide`,
             'Community radio since 1989',
           ]}
           delay={0.4}
@@ -139,7 +135,7 @@ export default function Community() {
           stats={[
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley', red: true },
             { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in broadcast area (townData 2026 est.)' },
-            { n: '8+', t: 'Languages on air weekly' },
+            { n: String(MULTICULTURAL_PROGRAM_COUNT), t: 'Multicultural programs (station guide)' },
             { n: `${stationStats.broadcastRadiusKm}km`, t: 'Signal radius from Mt Major' },
           ]}
         />

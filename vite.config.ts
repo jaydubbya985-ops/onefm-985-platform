@@ -1,13 +1,27 @@
+import fs from 'node:fs'
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { inspectAttr } from 'plugin-inspect-react-code'
+
+/** Club logo dumps are not referenced by the app. Drop them so a phone deploy zip is small enough to upload. */
+function omitUnusedClubLogos() {
+  return {
+    name: 'omit-unused-club-logos',
+    closeBundle() {
+      for (const dir of ['kdl', 'gvl']) {
+        fs.rmSync(path.resolve('dist/assets/logos', dir), { recursive: true, force: true })
+      }
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   base: './',
   plugins: [
     react(),
+    omitUnusedClubLogos(),
     // Dev-only — strips from production bundle
     ...(mode === 'development' ? [inspectAttr()] : []),
   ],

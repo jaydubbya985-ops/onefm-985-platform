@@ -13,6 +13,10 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # Site env (Netlify UI — never git): VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+  # Those keys are read at request time by /.netlify/functions/ops-config so
+  # #/ops can go LIVE without a GitHub Actions rebuild. RESEND_API_KEY is
+  # server-side only (send-invoice / send-enquiry).
 
 [functions]
   directory = "netlify/functions"

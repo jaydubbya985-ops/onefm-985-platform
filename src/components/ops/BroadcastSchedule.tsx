@@ -77,6 +77,7 @@ import {
   type ScheduleSponsor,
   type SpotStatus,
 } from './data/schedule'
+import { opsInitial, opsStorageKey } from '@/lib/opsMode'
 
 // ----------------------------- shared helpers ------------------------------
 
@@ -2018,9 +2019,18 @@ type ScheduleTab = 'schedule' | 'programme' | 'campaigns' | 'spots' | 'reports' 
 export default function BroadcastSchedule() {
   const [tab, setTab] = useState<ScheduleTab>('schedule')
   const [weekOffset, setWeekOffset] = useState(0)
-  const [spots, setSpots] = usePersistentState<AdSpot[]>('onefm_schedule_spots', INITIAL_SPOTS)
-  const [campaigns] = usePersistentState<ScheduleCampaign[]>('onefm_schedule_campaigns', SEED_CAMPAIGNS)
-  const [sponsors] = usePersistentState<ScheduleSponsor[]>('onefm_schedule_sponsors', SEED_SPONSORS)
+  const [spots, setSpots] = usePersistentState<AdSpot[]>(
+    opsStorageKey('onefm_schedule_spots'),
+    opsInitial(INITIAL_SPOTS, []),
+  )
+  const [campaigns] = usePersistentState<ScheduleCampaign[]>(
+    opsStorageKey('onefm_schedule_campaigns'),
+    opsInitial(SEED_CAMPAIGNS, []),
+  )
+  const [sponsors] = usePersistentState<ScheduleSponsor[]>(
+    opsStorageKey('onefm_schedule_sponsors'),
+    opsInitial(SEED_SPONSORS, []),
+  )
   const [bookOpen, setBookOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editingSpot, setEditingSpot] = useState<AdSpot | null>(null)

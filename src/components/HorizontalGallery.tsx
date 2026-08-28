@@ -1,5 +1,6 @@
 import { useRef, useState, useLayoutEffect } from 'react'
 import { stationStats } from '@/data/pricing'
+import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 interface Slide {
   img: string
@@ -20,7 +21,7 @@ const SLIDES: Slide[] = [
     img: '/assets/images/ob-van-branded.jpg',
     num: '02', ghost: 'FIELD',
     title: 'We Come to You',
-    caption: 'The ONE FM OB van takes the station wherever the story is — 25 towns, one broadcast team.',
+    caption: `The ONE FM OB van takes the station wherever the story is — ${stationStats.totalTowns} towns, one broadcast team.`,
   },
   {
     img: '/assets/images/commentary-box-action.jpg',
@@ -38,13 +39,13 @@ const SLIDES: Slide[] = [
     img: '/assets/images/tower-mount-major-day.png',
     num: '05', ghost: 'SIGNAL',
     title: 'On the Hill',
-    caption: 'The transmitter on Mount Major. Since 1989 it has never gone dark — 24 hours, 7 days.',
+    caption: 'The transmitter on Mount Major has carried 98.5 FM since the 1989 licence.',
   },
   {
     img: '/assets/images/culture-indigenous-elders.jpg',
     num: '06', ghost: 'VOICES',
     title: 'Every Voice',
-    caption: 'From First Nations to 25+ language communities — ONE FM gives a microphone to everyone.',
+    caption: `First Nations voices and ${stationStats.totalTowns} towns — plus ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs each week from the station guide.`,
   },
   {
     img: '/assets/images/geo-lake-aerial.jpg',

@@ -96,6 +96,9 @@ import {
   type RenewalStatus,
 } from './data/payments'
 import { useOpsStore, type OpsInvoice } from './store'
+import { opsInitial } from '@/lib/opsMode'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { LivePendingNote } from './LivePendingNote'
 import { downloadXeroCsv, type XeroExportableInvoice } from './invoices/xeroExport'
 
 // ---------------------------------------------------------------------------
@@ -238,8 +241,8 @@ export default function BillingEngine() {
   const { invoices, updateInvoice } = useOpsStore()
 
   const [tab, setTab] = useState<BillingTab>('dashboard')
-  const [renewals, setRenewals] = useState<RenewalRecord[]>(MOCK_RENEWALS)
-  const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(MOCK_ACQUITTALS)
+  const [renewals, setRenewals] = useState<RenewalRecord[]>(opsInitial(MOCK_RENEWALS, []))
+  const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(opsInitial(MOCK_ACQUITTALS, []))
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
 
@@ -261,7 +264,8 @@ export default function BillingEngine() {
 
   // Billing cycle
   const [cycleComplete, setCycleComplete] = useState(false)
-  const [cycleProgress, setCycleProgress] = useState(45)
+  const [cycleProgress, setCycleProgress] = useState(0)
+  const liveOps = isSupabaseConfigured()
 
   const now = new Date()
   const currentMonthKey = isoToday().slice(0, 7)
@@ -863,6 +867,9 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Monthly revenue trend" />
+                  ) : (
                   <ResponsiveContainer width="100%" height={220}>
                     <AreaChart data={MONTHLY_REVENUE}>
                       <defs>
@@ -904,6 +911,7 @@ export default function BillingEngine() {
                       />
                     </AreaChart>
                   </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -1318,6 +1326,9 @@ export default function BillingEngine() {
             </div>
           </motion.div>
 
+          {liveOps ? (
+            <LivePendingNote title="Payment method totals" />
+          ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {PAYMENT_METHOD_ANALYSIS.map((method, idx) => (
               <motion.div key={idx} variants={fadeUp}>
@@ -1341,6 +1352,7 @@ export default function BillingEngine() {
               </motion.div>
             ))}
           </div>
+          )}
 
           <motion.div variants={fadeUp}>
             <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
@@ -1366,7 +1378,7 @@ export default function BillingEngine() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {MOCK_PAYMENTS.filter((p) => p.allocated).map((payment) => (
+                    {(isSupabaseConfigured() ? [] : MOCK_PAYMENTS).filter((p) => p.allocated).map((payment) => (
                       <TableRow
                         key={payment.id}
                         className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
@@ -1404,6 +1416,13 @@ export default function BillingEngine() {
                         </TableCell>
                       </TableRow>
                     ))}
+                    {liveOps && (
+                      <TableRow className="border-[#2A2A2A]/15 hover:bg-transparent">
+                        <TableCell colSpan={7} className="text-one-white/40 text-xs text-center py-6">
+                          No payments recorded in live mode. DEMO payment history stays in DEMO mode.
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -1438,7 +1457,7 @@ export default function BillingEngine() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {MOCK_PAYMENTS.filter((p) => !p.allocated).map((payment) => (
+                    {(isSupabaseConfigured() ? [] : MOCK_PAYMENTS).filter((p) => !p.allocated).map((payment) => (
                       <TableRow
                         key={payment.id}
                         className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
@@ -1478,6 +1497,13 @@ export default function BillingEngine() {
                         </TableCell>
                       </TableRow>
                     ))}
+                    {liveOps && (
+                      <TableRow className="border-[#2A2A2A]/15 hover:bg-transparent">
+                        <TableCell colSpan={6} className="text-one-white/40 text-xs text-center py-6">
+                          No unallocated deposits in live mode.
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -1841,6 +1867,9 @@ export default function BillingEngine() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                {liveOps ? (
+                  <LivePendingNote title="Monthly revenue report" />
+                ) : (
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={MONTHLY_REVENUE}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
@@ -1883,6 +1912,7 @@ export default function BillingEngine() {
                     />
                   </BarChart>
                 </ResponsiveContainer>
+                )}
               </CardContent>
             </Card>
           </motion.div>
@@ -1897,6 +1927,10 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Revenue by source" />
+                  ) : (
+                  <>
                   <ResponsiveContainer width="100%" height={240}>
                     <RePieChart>
                       <Pie
@@ -1935,6 +1969,8 @@ export default function BillingEngine() {
                       </div>
                     ))}
                   </div>
+                  </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -1948,6 +1984,10 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Sponsor tier analysis" />
+                  ) : (
+                  <>
                   <ResponsiveContainer width="100%" height={240}>
                     <RePieChart>
                       <Pie
@@ -1986,6 +2026,8 @@ export default function BillingEngine() {
                       </div>
                     ))}
                   </div>
+                  </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -2001,6 +2043,9 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Payment method analysis" />
+                  ) : (
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={PAYMENT_METHOD_ANALYSIS} layout="vertical">
                       <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
@@ -2032,6 +2077,7 @@ export default function BillingEngine() {
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -2045,6 +2091,9 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Collection rate trends" />
+                  ) : (
                   <ResponsiveContainer width="100%" height={220}>
                     <LineChart data={COLLECTION_TRENDS}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
@@ -2072,6 +2121,7 @@ export default function BillingEngine() {
                       />
                     </LineChart>
                   </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -2086,6 +2136,9 @@ export default function BillingEngine() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                {liveOps ? (
+                  <LivePendingNote title="GST summary" detail="ATO-filed GST figures are not loaded in live mode." />
+                ) : (
                 <Table>
                   <TableHeader>
                     <TableRow className="border-[#2A2A2A]/20 hover:bg-transparent">
@@ -2133,6 +2186,7 @@ export default function BillingEngine() {
                     ))}
                   </TableBody>
                 </Table>
+                )}
               </CardContent>
             </Card>
           </motion.div>
@@ -2158,6 +2212,13 @@ export default function BillingEngine() {
             </div>
           </motion.div>
 
+          {liveOps ? (
+            <LivePendingNote
+              title="Revenue forecast"
+              detail="DEMO conservative/optimistic series are hidden. Forecast factors below use actual renewal rows only."
+            />
+          ) : (
+          <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <motion.div variants={fadeUp}>
               <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
@@ -2259,6 +2320,8 @@ export default function BillingEngine() {
               </CardContent>
             </Card>
           </motion.div>
+          </>
+          )}
 
           <motion.div variants={fadeUp}>
             <Card className="bg-[#1E293B] border-[#2A2A2A]/30">

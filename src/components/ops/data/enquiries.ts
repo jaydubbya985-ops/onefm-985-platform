@@ -438,7 +438,7 @@ export const FILTER_TABS = [
   { key: 'closed', label: 'Closed' },
 ] as const
 
-export const ASSIGNEES = ['Ricardo B', 'Lisa M', 'James T', 'Admin']
+export const ASSIGNEES = ['Ricardo B', 'Lisa M', 'James T', 'Admin'] // DEMO DATA — not live staff
 
 export function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-AU', {
