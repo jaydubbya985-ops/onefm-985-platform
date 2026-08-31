@@ -12,6 +12,7 @@ import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
 import { stationStats } from '@/data/pricing'
+import { formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { MULTICULTURAL_PROGRAMS, MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 const RED = '#E51636'
@@ -49,7 +50,7 @@ function CommunityHero() {
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Twenty-five towns, one signal. From the GVL grand final to {MULTICULTURAL_PROGRAM_COUNT} multicultural
+          {formatTowns()}, one signal. From the GVL grand final to {MULTICULTURAL_PROGRAM_COUNT} multicultural
           programs on the weekly guide — this is the Valley, on air.
         </p>
       </div>
@@ -117,7 +118,7 @@ export default function Community() {
             <div>
               <h3 className="font-poster uppercase text-[30px] text-white">The Coverage Map</h3>
               <p className="text-[15px] text-white/55 mt-1 max-w-[480px]">
-                100km of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
+                {formatRadius()} of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
               </p>
             </div>
             <Link

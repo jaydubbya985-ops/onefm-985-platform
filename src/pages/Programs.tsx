@@ -9,6 +9,7 @@ import { Marquee } from '@/components/Marquee'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
 import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { BRAND } from '@/lib/brand'
+import { formatTowns } from '@/lib/coverageCopy'
 import { HOST_PHOTOS } from '@/lib/stationPhotos'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
@@ -39,7 +40,7 @@ import {
 const PAGE_JOBS: PageJob[] = [
   { label: 'Listen Live', path: '/listen', description: 'Stream now', icon: Headphones, accent: '#E51636' },
   { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule', icon: Radio, accent: '#F2F2F2' },
-  { label: 'Coverage Map', path: '/coverage', description: '25 towns', icon: MapPin, accent: '#1B458F' },
+  { label: 'Coverage Map', path: '/coverage', description: formatTowns(), icon: MapPin, accent: '#1B458F' },
   { label: 'GVL Football', path: '/football', description: 'Season sponsorship', icon: Trophy, accent: '#B6FF00' },
 ]
 

@@ -582,6 +582,7 @@ export default function CoverageMap() {
                   {broadcastArea.totalPopulation2026.toLocaleString()} people, and an estimated{' '}
                   {broadcastArea.weeklyListeners.toLocaleString()} weekly listeners across{' '}
                   {broadcastArea.broadcastRadiusKm}&nbsp;km from {BRAND.fullName}.
+                  Town markers and listener estimates come from townData (ABS 2021). The glow ring is a visual {broadcastArea.broadcastRadiusKm}km guide — not an ACMA coverage contour.
                 </p>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
                   <MagneticButton strength={6} cursorLabel="MEDIA KIT">

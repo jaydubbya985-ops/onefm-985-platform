@@ -12,21 +12,15 @@ import { LatestInterviews } from '@/components/LatestInterviews'
 import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
+import { ON_AIR_WALL_PHOTO_NOTE, ON_AIR_WEEK } from '@/data/programGuide'
 import { stationStats } from '@/data/pricing'
 import { BRAND } from '@/lib/brand'
+import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
 
-/** Real weekly presenters — source: programGuide.ts (fm985.com.au/guide). */
-const WEEK_WALL = [
-  { name: 'Tim Ahemt', sub: 'ONE FM Breakfast · Mon & Tue', img: '/on-air-host-1.jpg' },
-  { name: 'The Big G', sub: 'Craig Stott · Wednesday Breakfast', img: '/studio-control-room.jpg' },
-  { name: 'Ralph Whitehead', sub: 'Thursday Breakfast', img: '/assets/images/studio-presenter-mic.jpg' },
-  { name: 'Josh Revens', sub: 'Friday Breakfast · Live Music', img: '/assets/images/ob-van-branded.jpg' },
-  { name: 'Tim Symonds', sub: 'The Essential Hits', img: '/assets/images/heritage-truck-2005.jpg' },
-  { name: 'Di Hunter', sub: 'On Air Since the Early Days', img: '/assets/images/heritage-di-hunter-carols-2014.jpg' },
-]
+/** Same wall as Home — programGuide.ts. Di Hunter is the only named portrait. */
 
 function ListenHero() {
   const { playing, loading, toggle } = useLiveStream()
@@ -78,7 +72,7 @@ function ListenHero() {
 
 function WaysToListen() {
   const ways = [
-    { icon: Radio, title: '98.5 FM', body: 'On the dial across Shepparton and 25 towns of the Goulburn Valley — 100km of signal from Mt Major.' },
+    { icon: Radio, title: '98.5 FM', body: `On the dial across Shepparton and ${formatTowns()} of the Goulburn Valley — ${formatCoverageShort()} from Mt Major.` },
     { icon: Wifi, title: 'Stream anywhere', body: 'The live stream follows you — this site, any browser, anywhere in the world. Press play above.' },
     { icon: Phone, title: 'Studio line', body: 'Requests, shout-outs, community notices: (03) 5831 3131 — the studio answers when we’re live.' },
   ]
@@ -199,7 +193,12 @@ export default function Listen() {
           delay={0.4}
         />
         <ListenHero />
-        <NameWall label="On Air This Week" rows={WEEK_WALL} />
+        <NameWall
+          label="On Air This Week"
+          rows={ON_AIR_WEEK}
+          photoNote={ON_AIR_WALL_PHOTO_NOTE}
+          portraits={['Di Hunter']}
+        />
         <section className="px-6 md:px-12 lg:px-20 pb-6" id="guide">
           <LabelReveal className="mb-8">Full Program Guide</LabelReveal>
           <WeeklySchedule />

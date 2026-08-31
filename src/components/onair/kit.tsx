@@ -45,12 +45,25 @@ export interface WallRow {
 }
 
 /** Alternating giant-name rows with photo bars. Real things only. */
-export function NameWall({ label, rows }: { label: string; rows: WallRow[] }) {
+export function NameWall({
+  label,
+  rows,
+  photoNote,
+  portraits = [],
+}: {
+  label: string
+  rows: WallRow[]
+  photoNote?: string
+  /** Names whose img is a verified portrait of that person. */
+  portraits?: string[]
+}) {
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16">
       <LabelReveal className="mb-8">{label}</LabelReveal>
       <div>
-        {rows.map((p, i) => (
+        {rows.map((p, i) => {
+          const isPortrait = portraits.includes(p.name)
+          return (
           <motion.div
             key={p.name}
             initial={{ opacity: 0, x: i % 2 === 1 ? 48 : -48 }}
@@ -69,11 +82,19 @@ export function NameWall({ label, rows }: { label: string; rows: WallRow[] }) {
               className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
               style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
               role="img"
-              aria-label={`${p.name} — ${p.sub}`}
+              aria-label={
+                isPortrait
+                  ? `${p.name} — ${p.sub}`
+                  : `ONE FM station photography beside ${p.name} — not a presenter portrait`
+              }
             />
           </motion.div>
-        ))}
+          )
+        })}
       </div>
+      {photoNote ? (
+        <p className="mt-6 font-body text-[12px] tracking-[0.08em] text-white/35">{photoNote}</p>
+      ) : null}
     </section>
   )
 }

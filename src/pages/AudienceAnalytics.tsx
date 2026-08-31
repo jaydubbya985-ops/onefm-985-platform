@@ -90,8 +90,8 @@ const platformCards = [
     icon: Radio,
     title: 'FM Radio',
     stat: '98.5 FM',
-    label: '~100km radius',
-    share: '25 towns · Goulburn Murray',
+    label: `${stationStats.broadcastRadiusKm}km radius`,
+    share: `${stationStats.totalTowns} towns · Goulburn Murray`,
     status: 'On air',
     statusColor: '#B6FF00',
     accent: '#D4963A',
@@ -142,7 +142,7 @@ export default function AudienceAnalytics() {
 
   return (
     <Layout>
-      <SEO title="Audience Analytics" description="Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across 25 towns. Live stream analytics pending Radio.co integration." />
+      <SEO title="Audience Analytics" description={`Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across ${stationStats.totalTowns} towns. Live stream analytics pending Radio.co integration.`} />
       {/* ═══════ HERO ═══════ */}
       <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="AUDIENCE">
         {/* Animated grid background */}
@@ -344,7 +344,7 @@ export default function AudienceAnalytics() {
                         {stationStats.weeklyListeners.toLocaleString('en-AU')}
                       </p>
                       <p className="font-body-small text-muted text-center px-8 max-w-md">
-                        Est. weekly listeners (ABS 2021 via townData, 25 towns / 100km). Month-by-month stream counts: data pending until Radio.co is connected.
+                        Est. weekly listeners (ABS 2021 via townData, {stationStats.totalTowns} towns / {stationStats.broadcastRadiusKm}km). Month-by-month stream counts: data pending until Radio.co is connected.
                       </p>
                     </div>
                   )}
