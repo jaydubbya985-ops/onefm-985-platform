@@ -38,6 +38,12 @@ const FORBIDDEN = [
   { re: /Request Received!/, why: 'mailto song request is a draft, not a received request' },
   { re: /Enquiry Sent!/, why: 'enquiry forms must not claim sent unless stored or emailed' },
   { re: /Sent via ONE FM Operations Portal/, why: 'invoice email footer must not claim the message was sent' },
+  { re: /GVL Footy Sponsorship · From \$25/i, why: 'GVL is premium — never advertise from $25' },
+  { re: /GVL Footy · From \$25/i, why: 'GVL is premium — never advertise from $25' },
+  { re: /9 sponsorship tiers from \$25\/week/i, why: 'GVL is premium — never advertise from $25' },
+  { re: /FROM \$25\/WEEK · NAMING RIGHTS/i, why: 'GVL is premium — never advertise from $25' },
+  { re: /advertise on GVL.{0,40}from \$25/i, why: 'GVL must never be sold from $25' },
+  { re: /~100km radius/, why: 'use formatRadius() from coverageCopy — do not hardcode ~100km' },
 ]
 
 function walk(dir) {
@@ -83,6 +89,19 @@ if (
   hits.push(
     'pages/Programs.tsx: song request must say a draft opened — not that it was received',
   )
+}
+
+const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
+if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
+  hits.push('lib/coverageCopy.ts: coverage strings must read stationStats')
+}
+const presenterAssets = files.find((f) => f.label === 'lib/presenterAssets.ts')
+if (
+  !presenterAssets ||
+  !presenterAssets.text.includes('heritage-di-hunter-carols-2014') ||
+  !presenterAssets.text.includes('heritage-sally-nayler-90s')
+) {
+  hits.push('lib/presenterAssets.ts: only Di Hunter and Sally Nayler may be named portraits')
 }
 
 const app = files.find((f) => f.label === 'App.tsx')

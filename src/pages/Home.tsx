@@ -13,6 +13,8 @@ import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { stationStats } from '@/data/pricing'
 import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
+import { formatWeeklyListeners } from '@/lib/coverageCopy'
+import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
 
@@ -32,7 +34,7 @@ function Ticker() {
   const items = [
     meta.isLive ? `● ON AIR — ${meta.program}${meta.presenter ? ` with ${meta.presenter}` : ''}` : `● ${meta.program}`,
     meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
-    `Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
+    formatWeeklyListeners(),
     'Community radio since 1989 · Callsign 3ONE',
   ]
   const line = items.join('   ·   ')
@@ -174,9 +176,14 @@ function NameWall() {
               </span>
             </div>
             <div
-              aria-hidden
               className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
               style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
+              role="img"
+              aria-label={
+                presenterPhotoIsPortrait(p.name)
+                  ? `${p.name} — ${p.sub}`
+                  : `ONE FM station photography beside ${p.name} — not a presenter portrait`
+              }
             />
           </motion.div>
         ))}

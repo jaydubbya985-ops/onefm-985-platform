@@ -73,6 +73,10 @@ assert(
   'supabase client fetches ops-config when Vite env is empty',
 )
 assert(
+  supabaseSource.includes('resolveOpsConfig') && supabaseSource.includes('INERT_URL'),
+  'makeClient must refuse invalid Vite secrets and fall back to inert DEMO',
+)
+assert(
   supabaseSource.includes('readFunctionJson'),
   'runtime fetch must ignore SPA HTML fallback via readFunctionJson',
 )
@@ -233,6 +237,26 @@ assert(
 assert(
   bannerSource.includes('Outlook MX'),
   'ops banner must tell Jay not to change the Outlook MX',
+)
+
+const inventoryCopy = readFileSync(new URL('../src/lib/inventoryCopy.ts', import.meta.url), 'utf8')
+assert(
+  inventoryCopy.includes('STANDARD_SPOT_PLUS_GST'),
+  'inventory copy must publish $25 plus GST for standard 30s spots',
+)
+assert(
+  inventoryCopy.includes('GVL_PREMIUM'),
+  'inventory copy must treat GVL as premium, not from $25',
+)
+const coverageCopy = readFileSync(new URL('../src/lib/coverageCopy.ts', import.meta.url), 'utf8')
+assert(
+  coverageCopy.includes('stationStats.weeklyListeners'),
+  'coverage copy must read listeners from stationStats',
+)
+const presenterAssets = readFileSync(new URL('../src/lib/presenterAssets.ts', import.meta.url), 'utf8')
+assert(
+  presenterAssets.includes('NAMED_PORTRAITS'),
+  'presenter assets must only name verified portraits',
 )
 
 const foott = realBatchInvoices().find((i) => i.number === 'ONEFM-2026-011')

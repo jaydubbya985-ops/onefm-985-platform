@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { stationStats } from '@/data/pricing';
+import { formatBroadcastPopulation, formatCoverageShort, formatTowns } from '@/lib/coverageCopy';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
 
@@ -28,16 +29,16 @@ const demoProposalPool: Record<string, string[]> = {
   ],
   'About ONE FM': [
     'ONE FM 98.5 has been broadcasting across the Goulburn Murray since 1980. Licensed as a community broadcaster since 1989, we are operated by Goulburn Valley Community Radio Inc. — a not-for-profit organisation dedicated to live, local content.',
-    'ONE FM 98.5 (callsign 3ONE) is the Goulburn Murray\'s community radio station. We broadcast from Shepparton across 25 towns, delivering local news, community announcements, sport, multicultural programming, and music.',
+    `ONE FM 98.5 (callsign 3ONE) is the Goulburn Murray's community radio station. We broadcast from Shepparton across ${formatTowns()}, delivering local news, community announcements, sport, multicultural programming, and music.`,
     'Our mission is to inform, entertain, and connect the Goulburn Murray community. ONE FM is volunteer-supported and community-owned, making your sponsorship a genuine investment in local broadcasting.',
   ],
   'Audience Overview': [
     `ONE FM reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns in the Goulburn Murray region (source: population-based estimate from ABS 2021 census data). Our audience is local, community-focused, and connected to the station that reflects their region.`,
-    'Our listeners are the Goulburn Murray community — families, farmers, business owners, workers, and volunteers across 25 towns. They trust ONE FM because we are genuinely local and community-owned.',
-    'The Goulburn Murray is home to approximately 189,000 people across 25 communities within our broadcast area. ONE FM is their community radio station — the one that covers their local sport, their local news, and their local events.',
+    `Our listeners are the Goulburn Murray community — families, farmers, business owners, workers, and volunteers across ${formatTowns()}. They trust ONE FM because we are genuinely local and community-owned.`,
+    `The Goulburn Murray broadcast area is home to ${formatBroadcastPopulation()} people across ${formatTowns()} (ABS 2021 via townData). ONE FM is their community radio station — the one that covers their local sport, their local news, and their local events.`,
   ],
   'Platform Reach': [
-    'ONE FM 98.5 delivers reach through FM broadcast (98.5 FM, ~100km radius), live streaming via fm985.com.au and the Community Radio Plus app, community Facebook (facebook.com/onefmshepparton), and SoundCloud interview content.',
+    `ONE FM 98.5 delivers reach through FM broadcast (98.5 FM, ${formatCoverageShort()}), live streaming via fm985.com.au and the Community Radio Plus app, community Facebook (facebook.com/onefmshepparton), and SoundCloud interview content.`,
     'Your message reaches the Goulburn Murray community through our FM broadcast signal, online stream, and community social channels. ONE FM is genuinely local — no national aggregates, no metro assumptions.',
     'We broadcast on 98.5 FM across the Goulburn Murray, stream live at fm985.com.au, and publish local interviews on SoundCloud. Our Facebook community page keeps the region connected.',
   ],
@@ -66,7 +67,7 @@ const demoProposalPool: Record<string, string[]> = {
     'Our terms are designed to protect both parties and ensure campaign quality. Deposits secure inventory in competitive dayparts. Cancellation windows allow us to reallocate slots while giving clients flexibility. Creative deadlines ensure proper review and technical compliance.',
   ],
   'Regional Map & Coverage': [
-    'ONE FM 98.5 covers the Goulburn Murray region from Shepparton, reaching 25 towns within approximately 100km. Key communities include Shepparton, Mooroopna, Cobram, Echuca, Kyabram, Benalla, and surrounds. Our live stream extends reach globally via fm985.com.au.',
+    `ONE FM 98.5 covers the Goulburn Murray region from Shepparton — ${formatCoverageShort()}. Key communities include Shepparton, Mooroopna, Cobram, Echuca, Kyabram, Benalla, and surrounds. Our live stream extends reach globally via fm985.com.au.`,
   ],
   'Social Media Strategy': [
     'ONE FM maintains an active community Facebook page at facebook.com/onefmshepparton. Social mentions and community posts can be included as part of your sponsorship package. Contact us to discuss current social opportunities.',

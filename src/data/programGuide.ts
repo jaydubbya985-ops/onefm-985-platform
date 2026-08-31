@@ -3,6 +3,9 @@
  * Source: fm985.com.au/guide/ (scraped June 2026 via WP REST API).
  * Day index: 0=Sunday, 1=Monday … 6=Saturday.
  */
+import { presenterBackdrop } from '@/lib/presenterAssets'
+
+export { ON_AIR_WALL_BACKDROPS, ON_AIR_WALL_PHOTO_NOTE } from '@/lib/presenterAssets'
 
 export const BREAKFAST_SHOW = 'ONE FM Breakfast (Breaky)'
 export const BREAKFAST_TIME = '6:00am – 9:00am'
@@ -192,26 +195,9 @@ function mergedBreakfastRoster(): { host: string; days: string[] }[] {
 }
 
 /**
- * ONE FM holds no cleared presenter portraits, so the on-air wall runs station
- * photography (studio and outside broadcast) behind the names. The images are
- * decorative and must never be captioned as a photo of the presenter named
- * beside them.
- */
-export const ON_AIR_WALL_BACKDROPS = [
-  '/on-air-host-1.jpg',
-  '/studio-control-room.jpg',
-  '/assets/images/studio-presenter-mic.jpg',
-  '/assets/images/ob-van-branded.jpg',
-  '/assets/images/studio-commentary-selfie.jpg',
-  '/assets/images/commentary-box-action.jpg',
-] as const
-
-export const ON_AIR_WALL_PHOTO_NOTE =
-  'Photography: ONE FM studio and outside-broadcast archive — not presenter portraits.'
-
-/**
  * "On Air This Week" wall for Home and Listen.
  * Every row resolves to a slot in FULL_SCHEDULE above — no invented presenters.
+ * Images come from presenterAssets: named portraits only when we have them.
  */
 export const ON_AIR_WEEK: { name: string; sub: string; img: string }[] = [
   ...mergedBreakfastRoster().map((row) => ({
@@ -220,7 +206,10 @@ export const ON_AIR_WEEK: { name: string; sub: string; img: string }[] = [
   })),
   { name: 'Johnny P', sub: 'Dancing through the decades · Mon–Fri 9AM' },
   { name: 'James Manley', sub: 'The James Manley Show · Mon & Tue 4PM' },
-].map((row, i) => ({ ...row, img: ON_AIR_WALL_BACKDROPS[i % ON_AIR_WALL_BACKDROPS.length] }))
+].map((row, i) => ({
+  ...row,
+  img: presenterBackdrop(row.name, i),
+}))
 
 /** All unique presenters from the guide */
 export const ALL_PRESENTERS = [

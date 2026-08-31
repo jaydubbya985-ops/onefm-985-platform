@@ -49,7 +49,15 @@ let supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
 let supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
 function makeClient(url: string, key: string): SupabaseClient {
-  return createClient(url || INERT_URL, key || INERT_KEY, { auth: AUTH_OPTIONS })
+  const resolved = resolveOpsConfig({
+    VITE_SUPABASE_URL: url,
+    VITE_SUPABASE_ANON_KEY: key,
+  })
+  if (resolved.configured) {
+    return createClient(resolved.url, resolved.anonKey, { auth: AUTH_OPTIONS })
+  }
+  // Never pass a half-valid URL to createClient — it throws before React mounts.
+  return createClient(INERT_URL, INERT_KEY, { auth: AUTH_OPTIONS })
 }
 
 /** True when real Supabase credentials are configured (not placeholder values). */

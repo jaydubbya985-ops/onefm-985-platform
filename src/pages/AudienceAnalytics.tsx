@@ -31,6 +31,7 @@ import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { SEO } from '@/components/SEO'
 import { stationStats } from '@/data/pricing'
 import { towns } from '@/data/townData'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 /* ─────────── easing ─────────── */
@@ -90,8 +91,8 @@ const platformCards = [
     icon: Radio,
     title: 'FM Radio',
     stat: '98.5 FM',
-    label: '~100km radius',
-    share: '25 towns · Goulburn Murray',
+    label: `${stationStats.broadcastRadiusKm}km radius`,
+    share: `${stationStats.totalTowns} towns · Goulburn Murray`,
     status: 'On air',
     statusColor: '#B6FF00',
     accent: '#D4963A',
@@ -142,7 +143,7 @@ export default function AudienceAnalytics() {
 
   return (
     <Layout>
-      <SEO title="Audience Analytics" description="Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across 25 towns. Live stream analytics pending Radio.co integration." />
+      <SEO title="Audience Analytics" description={`Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across ${stationStats.totalTowns} towns. Live stream analytics pending Radio.co integration.`} />
       {/* ═══════ HERO ═══════ */}
       <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="AUDIENCE">
         {/* Animated grid background */}
@@ -197,7 +198,7 @@ export default function AudienceAnalytics() {
           >
             <WordReveal text="AUDIENCE INTELLIGENCE" className="font-h1 text-one-white mb-2 block" as="h1" stagger={0.04} />
             <p className="font-body text-one-white">
-              Modelled audience for the 25-town, 100km broadcast area (ABS 2021 via townData). Live stream counts: data pending.
+              Modelled audience for the {formatCoverageShort()} broadcast area (ABS 2021 via townData). Live stream counts: data pending.
             </p>
           </motion.div>
 
@@ -344,7 +345,7 @@ export default function AudienceAnalytics() {
                         {stationStats.weeklyListeners.toLocaleString('en-AU')}
                       </p>
                       <p className="font-body-small text-muted text-center px-8 max-w-md">
-                        Est. weekly listeners (ABS 2021 via townData, 25 towns / 100km). Month-by-month stream counts: data pending until Radio.co is connected.
+                        Est. weekly listeners (ABS 2021 via townData, {stationStats.totalTowns} towns / {stationStats.broadcastRadiusKm}km). Month-by-month stream counts: data pending until Radio.co is connected.
                       </p>
                     </div>
                   )}

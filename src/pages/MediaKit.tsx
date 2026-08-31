@@ -43,6 +43,9 @@ import { WordReveal } from '@/components/WordReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { formatRadius } from '@/lib/coverageCopy'
+import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { InventoryLadder } from '@/components/InventoryLadder'
 import { MediaImage } from '@/components/MediaImage'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
@@ -84,7 +87,7 @@ const cardStagger = {
 
 /* ─────────── data (sourced — no fabricated percentages) ─────────── */
 const reachChannels = [
-  { name: 'FM Radio', detail: '98.5 FM · ~100 km radius', color: '#F2F2F2' },
+  { name: 'FM Radio', detail: `98.5 FM · ${stationStats.broadcastRadiusKm} km radius`, color: '#F2F2F2' },
   { name: 'Live Stream', detail: 'fm985.com.au · Radio.co', color: '#B6FF00' },
   { name: 'SoundCloud', detail: 'Interview archive after broadcast', color: '#FF5500' },
   { name: 'Facebook', detail: 'facebook.com/onefmshepparton', color: '#1877F2' },
@@ -92,7 +95,7 @@ const reachChannels = [
 
 const audienceStats = [
   { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString(), note: 'Regional reach estimate' },
-  { label: 'Population in broadcast area', value: stationStats.broadcastPopulation.toLocaleString(), note: '2026 est. · 25 towns' },
+  { label: 'Population in broadcast area', value: stationStats.broadcastPopulation.toLocaleString(), note: `2026 est. · ${stationStats.totalTowns} towns` },
   { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km`, note: 'From Shepparton' },
   { label: 'Years on air', value: String(stationStats.yearsBroadcasting), note: 'Licensed since 1989' },
 ]
@@ -116,8 +119,8 @@ const platformCards = [
     title: 'FM Radio',
     stat: '98.5 FM',
     statLabel: 'broadcast frequency',
-    reach: '~100km radius',
-    coverage: 'Goulburn Murray region — 25 towns',
+    reach: `${formatRadius()} radius`,
+    coverage: `Goulburn Murray region — ${stationStats.totalTowns} towns`,
     accent: '#F2F2F2',
   },
   {
@@ -733,7 +736,7 @@ export default function MediaKit() {
           >
             <div>
               <WordReveal text="ADVERTISING RATES" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
-              <p className="font-micro text-muted mt-2">Effective Q1 2026 — All rates in selected currency, GST exclusive</p>
+              <p className="font-micro text-muted mt-2">Effective Q1 2026 — All rates plus GST. {STANDARD_SPOT_PLUS_GST}. GVL and live reads are premium inventory — never sold as the $25 floor.</p>
             </div>
             <div className="relative">
               <select
@@ -749,6 +752,8 @@ export default function MediaKit() {
               <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
             </div>
           </motion.div>
+
+          <InventoryLadder className="mb-10" />
 
           <motion.div
             className="glass-card overflow-hidden"

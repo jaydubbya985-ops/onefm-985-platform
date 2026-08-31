@@ -3,6 +3,7 @@
  * Audit order: Listen → Sponsor → About → Support
  */
 
+import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
 import { STATION_PHOTOS, HOST_PHOTOS } from '@/lib/stationPhotos'
 
 export interface NavItem {
@@ -24,7 +25,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'Listen Live', path: '/listen', description: 'Stream 98.5 FM · Radio.co' },
       { label: 'Program Guide', path: '/listen', description: 'Weekly guide from fm985.com.au' },
-      { label: 'Coverage Map', path: '/coverage', description: '25 towns · ~100km radius' },
+      { label: 'Coverage Map', path: '/coverage', description: formatCoverageShort() },
     ],
   },
   {
@@ -82,10 +83,10 @@ export const HOME_JOBS = [
   {
     label: 'Coverage',
     path: '/coverage',
-    description: 'Map of 25 towns in our broadcast area',
+    description: `Map of ${formatTowns()} in our broadcast area`,
     accent: '#1B458F',
     image: STATION_PHOTOS.geoTownAerial,
-    tags: ['25 Towns', 'Valley', 'Map'],
+    tags: [formatTowns(), 'Valley', 'Map'],
   },
 ] as const
 
@@ -106,7 +107,7 @@ export const FOOTER_RESOURCES: NavItem[] = [
 export const PROGRAMS_PAGE_JOBS = [
   { label: 'Listen Live', path: '/listen', description: 'Stream now' },
   { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule' },
-  { label: 'Coverage Map', path: '/coverage', description: '25 towns' },
+  { label: 'Coverage Map', path: '/coverage', description: formatTowns() },
   { label: 'GVL Football', path: '/football', description: 'Season sponsorship' },
 ] as const
 

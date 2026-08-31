@@ -22,6 +22,7 @@ import {
   getBreakfastScheduleLabel,
 } from '@/data/programGuide'
 import { useLiveStream } from '@/hooks/useLiveStream'
+import { formatRadius } from '@/lib/coverageCopy'
 
 const CATEGORY_COLORS: Record<string, string> = {
   Breakfast: '#F2F2F2',
@@ -949,7 +950,7 @@ function BehindTheScenes() {
             <div className="space-y-4 mb-8">
               {[
                 { title: 'Live Community Programming', desc: 'Real local voices, real local stories' },
-                { title: 'HD Broadcast Suite', desc: 'Crystal-clear transmission across 100km radius' },
+                { title: 'HD Broadcast Suite', desc: `Crystal-clear transmission across a ${formatRadius()} radius` },
                 { title: 'Live Stream Infrastructure', desc: 'Global reach, local heart' },
               ].map((item, i) => (
                 <motion.div

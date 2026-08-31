@@ -8,44 +8,32 @@
 **GitHub is source of truth.** Always `git pull origin main` first.  
 **Do not merge PRs unless Jay says EXE.**
 
-## Benchmark (this is now true on live)
+## This swarm (station truth)
 
-**80% gov-ready** = FOOTT can be sent a real invoice PDF; live `#/ops` is not DEMO; public pages have no invented stats; invoice email does not lie about send.
+Branch `cursor/station-truth-swarm-c24f` — images, rates, coverage SSOT.
 
-| Gate | Status (2026-08-27) |
-|------|---------------------|
-| Logo + invoice PDF | **On live.** FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. PDF ~32KB with real logo. |
-| Mailto / dry-run honesty | **On live.** Dry-run: `wouldSendTo=peter@foott.com.au`, `sent=false`, `hasPdf=true`. |
-| Public truth | **On live.** OG **189,680**. Homepage 39,375 / 25 towns / 1989 / callsign 3ONE. No 185,791, no 78%, no 48/52. |
-| Live `#/ops` | **LIVE — not DEMO**. Staff login is Supabase Auth. |
-| FOOTT PDF emailed | **Proven.** `fm985.com.au` is **verified**, sending **enabled**. Real `send-invoice` to `accounts@fm985.com.au` (not Peter) returned HTTP 200 `sent=true` messageId `f6ed46c5-c281-4c5d-b17d-43885c3199ba`. |
+| Rule | Source |
+|------|--------|
+| Weekly listeners **39,375** | `src/data/townData.ts` / `stationStats` via `src/lib/coverageCopy.ts` |
+| Broadcast-area population **189,680** | same |
+| **25 towns**, **100km** | same — do not hardcode |
+| Standard 30s spot **$25 plus GST** | `src/lib/inventoryCopy.ts` |
+| GVL / live reads / breakfast | **premium — never “from $25”** |
+| Named portraits only | Di Hunter, Sally Nayler in `src/lib/presenterAssets.ts` |
 
-Cause of the earlier pending 403: `email-status` was restarting Resend verification on every GET. Probe is read-only now. Do not POST verify from GET.
+## Do this run
 
-## Do this run (order)
-
-1. `git pull origin cursor/gov-ready-live-gate-c24f`. Stay on this branch (PR #16) unless starting new work (`cursor/<name>-c24f`).
-2. `npm run live` must pass. Optional: confirm `accounts@fm985.com.au` received the `[TEST] Invoice pipeline — ONEFM-2026-011` mail.
-3. Do not merge without **EXE**. Do not email `peter@foott.com.au` unless Jay asks.
-4. Do not fake live mode. Do not upsert the 19-row DEMO batch. Never bake `sb_secret_` into the client.
-
-## Model / desks
-
-- **Grok 4.6 Cloud Agent cannot upgrade itself.** Next coding run: https://cursor.com/agents as **Claude Opus**. Paste this file.
-- **Kimi (desktop):** same GitHub repo. Pull `main` only after EXE merge.
+1. Stay on `cursor/station-truth-swarm-c24f` unless starting new work.
+2. `npm run build` must pass (truth + ops-config + tsc).
+3. Do not merge without **EXE**.
+4. GitHub Actions deploy on `main` still 401s on `NETLIFY_AUTH_TOKEN` — deploy via Netlify CLI if needed.
 
 ## NEED JAY (one action)
 
-Say **EXE** to merge PR #16. Then check `accounts@fm985.com.au` for the pipeline test with `ONEFM-2026-011.pdf`. Do not send FOOTT to Peter unless you mean to invoice him.
+Say **EXE** to merge PR **#18** (`cursor/station-truth-swarm-c24f`). Then check `/#/football` is not selling GVL from $25, `/#/programs` shows Di Hunter’s archive portrait, `/#/coverage` uses 189,680 / 39,375 from townData.
 
-## Truth numbers (only these)
-
-- Weekly listeners **39,375** — ABS 2021 via `src/data/townData.ts`
-- Broadcast-area population **189,680** — `stationStats.broadcastPopulation`
-- **25 towns**, **100km**
-- Breakfast: `src/data/programGuide.ts` (`BREAKFAST_ROSTER`) — **not** Plemo
-- Photos: `/public/assets/images/` and `/public/brand/` only
+**Cloud Agent secrets are wrong.** `VITE_SUPABASE_URL` is the project ref only (must be the full `https://….supabase.co` API URL). `VITE_SUPABASE_ANON_KEY` starts with `sb_s` — that is the secret key and must never be a `VITE_` var. Paste the real HTTPS URL + the **anon / publishable** key in Cursor Cloud secrets and Netlify. Public pages now stay DEMO instead of crashing if those stay wrong.
 
 ## Do not
 
-- Force-push. Invent FOOTT invoice contents. Fake live ops. Empty-commit to retry a 401. Upsert the 19-row DEMO batch into Supabase. Merge without **EXE**. Bake `sb_secret_` into the browser bundle. POST `send-invoice` to `peter@foott.com.au` unless Jay asks. Restart Resend domain verification from `email-status`.
+- Force-push. Invent portraits. Market GVL as from $25. Merge PR #13 as-is (conflicts + would regress `#/ops` to DEMO). Restart Resend verification. Email `peter@foott.com.au` unless Jay asks.

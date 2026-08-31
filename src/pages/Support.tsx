@@ -15,6 +15,7 @@ import {
   StrokeFill,
 } from '@/components/onair/kit'
 import { donationTiers, stationStats } from '@/data/pricing'
+import { formatTowns } from '@/lib/coverageCopy'
 
 const RED = '#E51636'
 
@@ -242,7 +243,7 @@ export default function Support() {
             >
               <h3 className="font-poster uppercase text-[22px] text-white">Sponsor</h3>
               <p className="text-[15px] text-white/55 mt-2">
-                Partner with the Valley on air — packages from $50/week across 25 towns.
+                Partner with the Valley on air — packages from $50/week across {formatTowns()}.
               </p>
               <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>
                 View packages →

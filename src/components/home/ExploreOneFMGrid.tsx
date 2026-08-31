@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
 import { WordReveal } from '@/components/WordReveal'
 import { TiltCard } from '@/components/TiltCard'
@@ -41,7 +42,7 @@ const TILES = [
   },
   {
     title: 'Coverage Map',
-    desc: '25 towns · 100km radius',
+    desc: formatCoverageShort(),
     path: '/coverage',
     image: STATION_PHOTOS.geoTownAerial,
     fallback: PHOTO_DEFAULTS.regional,
