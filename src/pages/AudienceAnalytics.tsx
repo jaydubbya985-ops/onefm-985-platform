@@ -31,6 +31,7 @@ import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { SEO } from '@/components/SEO'
 import { stationStats } from '@/data/pricing'
 import { towns } from '@/data/townData'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 /* ─────────── easing ─────────── */
@@ -197,7 +198,7 @@ export default function AudienceAnalytics() {
           >
             <WordReveal text="AUDIENCE INTELLIGENCE" className="font-h1 text-one-white mb-2 block" as="h1" stagger={0.04} />
             <p className="font-body text-one-white">
-              Modelled audience for the 25-town, 100km broadcast area (ABS 2021 via townData). Live stream counts: data pending.
+              Modelled audience for the {formatCoverageShort()} broadcast area (ABS 2021 via townData). Live stream counts: data pending.
             </p>
           </motion.div>
 
