@@ -9,6 +9,9 @@ concurrency:
   group: netlify-deploy
   cancel-in-progress: true
 
+env:
+  NETLIFY_SITE_ID: 8df4de74-d9a8-42ce-9316-61bd06475c94
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -21,10 +24,9 @@ jobs:
       - name: Verify Netlify can see this site
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          if [ -z "$NETLIFY_AUTH_TOKEN" ] || [ -z "$NETLIFY_SITE_ID" ]; then
-            echo "::error::GitHub secrets NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID are required. Site ID must be 8df4de74-d9a8-42ce-9316-61bd06475c94."
+          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then
+            echo "::error::GitHub secret NETLIFY_AUTH_TOKEN is required. Create a Netlify personal access token that can see site ${NETLIFY_SITE_ID}."
             exit 1
           fi
           code=$(curl -sS -o /tmp/netlify-site.json -w "%{http_code}" \
@@ -63,7 +65,6 @@ jobs:
         run: npx --yes netlify-cli@23 deploy --prod --dir=dist --functions netlify/functions --no-build
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 5
 
       - name: Prove production is not the stale DEMO deploy
