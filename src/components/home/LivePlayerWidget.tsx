@@ -6,7 +6,7 @@ import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { STATION_TICKER } from '@/lib/playerMetadata'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
-import { presenterPhotoPath } from '@/lib/presenterAssets'
+import { presenterPhotoIsPortrait, presenterVisual } from '@/lib/presenterAssets'
 
 function MetadataBadge({ live, label }: { live: boolean; label: string }) {
   return (
@@ -53,7 +53,9 @@ function Ticker() {
 export function LivePlayerWidget({ className = '-mt-12' }: { className?: string }) {
   const meta = usePlayerMetadata()
   const { playing, loading, error, toggle } = useLiveStream()
-  const presenterImg = presenterPhotoPath(meta.presenter)
+  const presenterVisualCard = presenterVisual(meta.presenter, meta.category)
+  const presenterImg = presenterVisualCard.src
+  const presenterIsPortrait = presenterPhotoIsPortrait(meta.presenter)
 
   return (
     <section className={`relative z-20 px-4 sm:px-6 ${className}`}>
@@ -72,9 +74,14 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                 <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-one-border shrink-0">
                   <MediaImage
                     src={presenterImg}
-                    alt={meta.presenter}
+                    alt={presenterVisualCard.alt}
                     className="absolute inset-0 w-full h-full"
                   />
+                  {!presenterIsPortrait && (
+                    <span className="absolute top-1.5 left-1.5 font-label text-[8px] uppercase tracking-wider text-white/80 bg-black/50 px-1.5 py-0.5 rounded">
+                      Station photo
+                    </span>
+                  )}
                   {meta.isLive && (
                     <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-one-gold to-one-red" />
                   )}

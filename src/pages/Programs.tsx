@@ -11,6 +11,7 @@ import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { BRAND } from '@/lib/brand'
 import { formatTowns } from '@/lib/coverageCopy'
 import { HOST_PHOTOS } from '@/lib/stationPhotos'
+import { presenterVisual } from '@/lib/presenterAssets'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
@@ -350,39 +351,40 @@ const shows = [
 /* ────────────────────────────────────────────────────────── */
 // Source: fm985.com.au/guide/ (scraped June 2026)
 const hosts = [
-  { name: "Tim Ahemt",        show: BREAKFAST_SHOW,             time: "Mon & Tue, 6am–9am",   type: "Breakfast",    img: "/assets/images/commentary-box-action.jpg",  social: { fb: true } },
-  { name: "The Big G",        show: BREAKFAST_SHOW + " / Wed Mornings", time: "Wed, 6am–12pm", type: "Breakfast",   img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Ralph Whitehead",  show: "Thu Mornings / Friday Arvo", time: "Thu 9am–12pm · Fri 3pm–6pm", type: "Breakfast", img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Josh Revens",      show: "Fri Mornings / Mon Nights",  time: "Fri 9am–12pm · Mon 6pm", type: "Breakfast", img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "John Painter (Johnny P)", show: "Dancing through the decades", time: "Mon–Fri, 9am–12pm", type: "Music",  img: "/assets/images/commentary-box-action.jpg",  social: { fb: true } },
-  { name: "Di Hunter",        show: "Monday Afternoon",          time: "Monday, 12pm–3pm",      type: "Music",       img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Craig Stott",      show: "Tuesday Mornings",          time: "Tuesday, 9am–12pm",     type: "Music",       img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-  { name: "James Manley",     show: "The James Manley Show",     time: "Mon–Tue, 4pm–5pm",      type: "Community",   img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-  { name: "Tim Symonds",      show: "The Essential Hits",        time: "Thu 6pm / Sun 12pm",    type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Tym Jeffery",      show: "The Show for Everyone",     time: "Friday, 6pm–7pm",       type: "Community",   img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Carlos Rock",      show: "Planet of Sound",           time: "Thu & Fri, 11pm",       type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Timmy Ahmet",      show: "Good Evening Country",      time: "Monday, 8pm",           type: "Music",       img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Sue",              show: "Classic Country / Sunday Night Country", time: "Tue 6pm / Sun 7pm", type: "Music", img: "/assets/images/commentary-box-action.jpg", social: { fb: true } },
-  { name: "Carlo",            show: "Viva Italia / Rock 'n' Roll Fever", time: "Tue 9pm / Thu 9pm", type: "Music",   img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Ken & Jill Gaffney", show: "Winding Back",           time: "Monday, 3pm–4pm",        type: "Music",       img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-  { name: "Judy",             show: "Butterfly Favorites",       time: "Tuesday, 3pm",          type: "Music",       img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Steve Little",     show: "All Things Rock",           time: "Wed–Thu, 3pm",          type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "KT or Ralph",      show: "Country Requests & Open Spaces", time: "Saturday, 8am",    type: "Music",       img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-  { name: "Les 'Harro' Harrison", show: "Rockin with Les Harrison", time: "Wednesday, 6pm",     type: "Community",   img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Margaret & Josh",  show: "Radio Netherlands",        time: "Monday, 7pm",            type: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Fikiri",           show: "The Afri-Connect Program (Swahili)", time: "Monday, 9pm–10pm", type: "Multicultural", img: "/assets/images/commentary-box-action.jpg", social: { fb: true } },
-  { name: "MK",               show: "Samoan Music Program",      time: "Wednesday, 9pm–10pm",   type: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Edith",            show: "Filipino Music Program",    time: "Tuesday, 10pm–11pm",    type: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Jimmy & Rainy",    show: "Mandarin Program",          time: "Monday, 10pm",          type: "Multicultural", img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
+  { name: "Tim Ahemt",        show: BREAKFAST_SHOW,             time: "Mon & Tue, 6am–9am",   type: "Breakfast",    social: { fb: true } },
+  { name: "The Big G",        show: BREAKFAST_SHOW + " / Wed Mornings", time: "Wed, 6am–12pm", type: "Breakfast",   social: { fb: true } },
+  { name: "Ralph Whitehead",  show: "Thu Mornings / Friday Arvo", time: "Thu 9am–12pm · Fri 3pm–6pm", type: "Breakfast", social: { fb: true } },
+  { name: "Josh Revens",      show: "Fri Mornings / Mon Nights",  time: "Fri 9am–12pm · Mon 6pm", type: "Breakfast", social: { fb: true } },
+  { name: "John Painter (Johnny P)", show: "Dancing through the decades", time: "Mon–Fri, 9am–12pm", type: "Music",  social: { fb: true } },
+  { name: "Di Hunter",        show: "Monday Afternoon",          time: "Monday, 12pm–3pm",      type: "Music",       social: { fb: true } },
+  { name: "Craig Stott",      show: "Tuesday Mornings",          time: "Tuesday, 9am–12pm",     type: "Music",       social: { fb: true } },
+  { name: "James Manley",     show: "The James Manley Show",     time: "Mon–Tue, 4pm–5pm",      type: "Community",   social: { fb: true } },
+  { name: "Tim Symonds",      show: "The Essential Hits",        time: "Thu 6pm / Sun 12pm",    type: "Music",       social: { fb: true } },
+  { name: "Tym Jeffery",      show: "The Show for Everyone",     time: "Friday, 6pm–7pm",       type: "Community",   social: { fb: true } },
+  { name: "Carlos Rock",      show: "Planet of Sound",           time: "Thu & Fri, 11pm",       type: "Music",       social: { fb: true } },
+  { name: "Timmy Ahmet",      show: "Good Evening Country",      time: "Monday, 8pm",           type: "Country",     social: { fb: true } },
+  { name: "Sue",              show: "Classic Country / Sunday Night Country", time: "Tue 6pm / Sun 7pm", type: "Country", social: { fb: true } },
+  { name: "Carlo",            show: "Viva Italia / Rock 'n' Roll Fever", time: "Tue 9pm / Thu 9pm", type: "Music",   social: { fb: true } },
+  { name: "Ken & Jill Gaffney", show: "Winding Back",           time: "Monday, 3pm–4pm",        type: "Music",       social: { fb: true } },
+  { name: "Judy",             show: "Butterfly Favorites",       time: "Tuesday, 3pm",          type: "Music",       social: { fb: true } },
+  { name: "Steve Little",     show: "All Things Rock",           time: "Wed–Thu, 3pm",          type: "Music",       social: { fb: true } },
+  { name: "KT or Ralph",      show: "Country Requests & Open Spaces", time: "Saturday, 8am",    type: "Country",     social: { fb: true } },
+  { name: "Les 'Harro' Harrison", show: "Rockin with Les Harrison", time: "Wednesday, 6pm",     type: "Community",   social: { fb: true } },
+  { name: "Margaret & Josh",  show: "Radio Netherlands",        time: "Monday, 7pm",            type: "Multicultural", social: { fb: true } },
+  { name: "Fikiri",           show: "The Afri-Connect Program (Swahili)", time: "Monday, 9pm–10pm", type: "Multicultural", social: { fb: true } },
+  { name: "MK",               show: "Samoan Music Program",      time: "Wednesday, 9pm–10pm",   type: "Multicultural", social: { fb: true } },
+  { name: "Edith",            show: "Filipino Music Program",    time: "Tuesday, 10pm–11pm",    type: "Multicultural", social: { fb: true } },
+  { name: "Jimmy & Rainy",    show: "Mandarin Program",          time: "Monday, 10pm",          type: "Multicultural", social: { fb: true } },
 ]
 
-const showFilters = ['All', 'Breakfast', 'Music', 'Sport', 'Community', 'Multicultural']
+const showFilters = ['All', 'Breakfast', 'Music', 'Country', 'Sport', 'Community', 'Multicultural']
 
-const hostFilters = ["All", "Breakfast", "Sport", "Music", "Community", "Multicultural"]
+const hostFilters = ["All", "Breakfast", "Sport", "Music", "Country", "Community", "Multicultural"]
 
 const CATEGORY_COLORS: Record<string, string> = {
   Breakfast: '#F2F2F2',
   Music: '#9B5DE5',
+  Country: '#F2F2F2',
   Community: '#B6FF00',
   Sport: '#E51636',
   Multicultural: '#FF6B6B',
@@ -829,28 +831,40 @@ export default function Programs() {
               <div className="glass-card p-5 group h-full" data-cursor-label="PRESENTER">
                 {(() => {
                   const avatar = getHostAvatar(host.name)
+                  const visual = presenterVisual(host.name, host.type, hi)
                   return (
                     <div className="relative mb-4 overflow-hidden rounded-lg aspect-[4/5] group-hover:scale-[1.02] transition-transform duration-500">
+                      <img
+                        src={visual.src}
+                        alt={visual.alt}
+                        className={`absolute inset-0 w-full h-full object-cover ${visual.isPortrait ? '' : 'grayscale-[25%]'}`}
+                        loading="lazy"
+                        decoding="async"
+                      />
                       <div
                         className="absolute inset-0"
-                        style={{ background: `linear-gradient(135deg, ${avatar.from} 0%, ${avatar.to} 100%)` }}
+                        style={{ background: visual.isPortrait
+                          ? 'linear-gradient(to top, rgba(7,7,7,0.72), transparent 45%)'
+                          : `linear-gradient(135deg, ${avatar.from}88 0%, ${avatar.to}99 100%)` }}
                       />
-                      <div className="absolute inset-0 opacity-[0.06]"
-                        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span
-                          className="font-heading font-black select-none"
-                          style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: avatar.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
-                        >
-                          {avatar.initials}
-                        </span>
-                      </div>
+                      {!visual.isPortrait && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span
+                            className="font-heading font-black select-none"
+                            style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: avatar.accent, opacity: 0.85, letterSpacing: '-0.04em' }}
+                          >
+                            {avatar.initials}
+                          </span>
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-one-navy/75 via-transparent to-transparent" />
                       <div aria-hidden className="explore-tile-scan" />
-                      <div className="absolute bottom-3 left-3 right-3">
+                      <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
                         <span className="font-label text-[10px] px-2 py-0.5 rounded bg-one-gold text-one-navy">
                           {host.type}
+                        </span>
+                        <span className="font-label text-[9px] tracking-[0.08em] uppercase text-white/70">
+                          {visual.isPortrait ? 'Archive portrait' : 'Station photography'}
                         </span>
                       </div>
                     </div>

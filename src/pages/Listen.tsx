@@ -197,7 +197,7 @@ export default function Listen() {
           label="On Air This Week"
           rows={ON_AIR_WEEK}
           photoNote={ON_AIR_WALL_PHOTO_NOTE}
-          portraits={['Di Hunter']}
+          portraits={['Di Hunter', 'Sally Nayler']}
         />
         <section className="px-6 md:px-12 lg:px-20 pb-6" id="guide">
           <LabelReveal className="mb-8">Full Program Guide</LabelReveal>

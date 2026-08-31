@@ -1,5 +1,4 @@
-import { ON_AIR_WALL_BACKDROPS } from '@/data/programGuide'
-import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { STATION_PHOTOS, HOST_PHOTOS } from '@/lib/stationPhotos'
 
 /**
  * Real presenter portraits — only files whose filename or archive record
@@ -10,9 +9,26 @@ export const NAMED_PORTRAITS: Record<string, string> = {
   'Sally Nayler': '/assets/images/heritage-sally-nayler-90s.jpg',
 }
 
+/** Studio / OB photography used behind names that have no cleared portrait. */
+export const ON_AIR_WALL_BACKDROPS = [
+  HOST_PHOTOS.onAirHost1,
+  HOST_PHOTOS.studioControlRoom,
+  STATION_PHOTOS.studioPresenterMic,
+  STATION_PHOTOS.obVanBranded,
+  STATION_PHOTOS.studioCommentarySelfie,
+  STATION_PHOTOS.commentaryBoxAction,
+] as const
+
+export const ON_AIR_WALL_PHOTO_NOTE =
+  'Photography: ONE FM studio and outside-broadcast archive — not presenter portraits. Named portraits exist only for Di Hunter and Sally Nayler.'
+
 export function presenterPortrait(host: string): string | null {
   if (!host) return null
-  return NAMED_PORTRAITS[host] ?? null
+  if (NAMED_PORTRAITS[host]) return NAMED_PORTRAITS[host]
+  for (const [name, src] of Object.entries(NAMED_PORTRAITS)) {
+    if (host.includes(name) || name.includes(host)) return src
+  }
+  return null
 }
 
 /** Decorative station shot. Must not be captioned as a photo of `host`. */
@@ -45,7 +61,29 @@ export function programBackdrop(category: string): string {
       return STATION_PHOTOS.eventDeniUteMuster
     case 'Community':
       return STATION_PHOTOS.communityBookStall
+    case 'Music':
+      return STATION_PHOTOS.studioPresenterMic
     default:
       return STATION_PHOTOS.studioPresenterMic
   }
 }
+
+export function presenterVisual(
+  host: string,
+  category?: string,
+  index = 0,
+): { src: string; isPortrait: boolean; alt: string } {
+  const named = presenterPortrait(host)
+  if (named) {
+    return { src: named, isPortrait: true, alt: host }
+  }
+  const src = category ? programBackdrop(category) : presenterBackdrop(host, index)
+  const topic = category ? `${category.toLowerCase()} ` : ''
+  return {
+    src,
+    isPortrait: false,
+    alt: `ONE FM ${topic}photography — not a portrait of ${host || 'the presenter'}`,
+  }
+}
+
+export const NAMED_PORTRAIT_HOSTS = Object.keys(NAMED_PORTRAITS)
