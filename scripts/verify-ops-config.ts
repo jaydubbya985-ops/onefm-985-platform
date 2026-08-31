@@ -73,6 +73,10 @@ assert(
   'supabase client fetches ops-config when Vite env is empty',
 )
 assert(
+  supabaseSource.includes('resolveOpsConfig') && supabaseSource.includes('INERT_URL'),
+  'makeClient must refuse invalid Vite secrets and fall back to inert DEMO',
+)
+assert(
   supabaseSource.includes('readFunctionJson'),
   'runtime fetch must ignore SPA HTML fallback via readFunctionJson',
 )
