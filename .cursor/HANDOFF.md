@@ -30,7 +30,9 @@ Branch `cursor/station-truth-swarm-c24f` — images, rates, coverage SSOT.
 
 ## NEED JAY (one action)
 
-Open the swarm PR. Say **EXE** to merge. Then check `/#/football` is not selling GVL from $25, `/#/programs` shows Di Hunter’s archive portrait, `/#/coverage` uses 189,680 / 39,375 from townData.
+Say **EXE** to merge PR **#18** (`cursor/station-truth-swarm-c24f`). Then check `/#/football` is not selling GVL from $25, `/#/programs` shows Di Hunter’s archive portrait, `/#/coverage` uses 189,680 / 39,375 from townData.
+
+**Cloud Agent secrets are wrong.** `VITE_SUPABASE_URL` is the project ref only (must be the full `https://….supabase.co` API URL). `VITE_SUPABASE_ANON_KEY` starts with `sb_s` — that is the secret key and must never be a `VITE_` var. Paste the real HTTPS URL + the **anon / publishable** key in Cursor Cloud secrets and Netlify. Public pages now stay DEMO instead of crashing if those stay wrong.
 
 ## Do not
 
