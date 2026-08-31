@@ -5,50 +5,47 @@
 **Repo:** `jaydubbya985-ops/onefm-985-platform`  
 **Live:** https://onefmops.netlify.app  
 **Netlify site ID:** `8df4de74-d9a8-42ce-9316-61bd06475c94`  
-**GitHub is source of truth.** Always `git pull origin main` first.
+**GitHub is source of truth.** Always `git pull origin main` first.  
+**Do not merge PRs unless Jay says EXE.**
 
-## Benchmark (stop only when this is true)
+## Benchmark (this is now true on live)
 
 **80% gov-ready** = FOOTT can be sent a real invoice PDF; live `#/ops` is not DEMO; public pages have no invented stats; invoice email does not lie about send.
 
 | Gate | Status (2026-08-27) |
 |------|---------------------|
-| Logo + invoice PDF | **On `main`** (`4a7315f`). FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. Not on live until Netlify PAT works. |
-| Mailto honesty | **On `main`**. Mailto / billing cycle / reminders do **not** mark sent. |
-| Public truth | **On `main`**. `/audience` towns from `townData.ts` (Echuca 3,710 not Mooroopna). Gender LGA 49/51. `npm run truth` in CI. |
-| Live `#/ops` | **Still DEMO.** https://onefmops.netlify.app still has `onefm2026` / `OpsPortal-DpfuQL4N.js`. |
-| Deploy | EXE merge **build passed**. Deploy failed: `Unauthorized: could not retrieve project`. GitHub `NETLIFY_AUTH_TOKEN` is set and **rejected**. Empty-commit retries will not fix this. |
-| Ops live env | Needs `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` in **GitHub Actions secrets** (baked at `npm run build`) **and** Netlify site env. |
+| Logo + invoice PDF | **On live.** FOOTT `ONEFM-2026-011` BSB **083-894**, **$5,500.00**. PDF ~32KB with real logo. |
+| Mailto / dry-run honesty | **On live.** Dry-run: `wouldSendTo=peter@foott.com.au`, `sent=false`, `hasPdf=true`. |
+| Public truth | **On live.** OG **189,680**. Homepage 39,375 / 25 towns / 1989 / callsign 3ONE. No 185,791, no 78%, no 48/52. |
+| Live `#/ops` | **LIVE — not DEMO**. Staff login is Supabase Auth. |
+| FOOTT PDF emailed | **Proven.** `fm985.com.au` is **verified**, sending **enabled**. Real `send-invoice` to `accounts@fm985.com.au` (not Peter) returned HTTP 200 `sent=true` messageId `f6ed46c5-c281-4c5d-b17d-43885c3199ba`. |
+
+Cause of the earlier pending 403: `email-status` was restarting Resend verification on every GET. Probe is read-only now. Do not POST verify from GET.
 
 ## Do this run (order)
 
-1. `git pull origin main`. Do not merge PRs unless Jay says **EXE**.
-2. New work = new branch `cursor/<name>-c24f`. Never share another agent’s branch.
-3. **First:** if live still shows `onefm2026`, do **not** empty-commit. The PAT is dead. NEED JAY (below).
-4. `npx vite-node scripts/verify-ops-pdfs.ts` then pymupdf (`python3 -m pip install --user pymupdf`).
-5. Ops: DEMO until env vars exist. Do not fake live mode. Password already in `AGENTS.md`.
-6. If blocked on secrets: post **NEED JAY:** one line. Keep coding independent work.
-7. `npm run build` must pass. Commit + push + PR. Deploy needs a **new** Netlify PAT.
+1. `git pull origin cursor/gov-ready-live-gate-c24f`. Stay on this branch (PR #16) unless starting new work (`cursor/<name>-c24f`).
+2. `npm run live` must pass. Optional: confirm `accounts@fm985.com.au` received the `[TEST] Invoice pipeline — ONEFM-2026-011` mail.
+3. Do not merge without **EXE**. Do not email `peter@foott.com.au` unless Jay asks.
+4. Do not fake live mode. Do not upsert the 19-row DEMO batch. Never bake `sb_secret_` into the client.
 
 ## Model / desks
 
-- **Grok 4.6 Cloud Agent cannot upgrade itself.** Jay: start next run at https://cursor.com/agents as **Claude Opus** (or GPT 5.6 extra-high). Paste this file.
-- **Kimi (desktop):** same GitHub repo. Pull `main`. Paste this file.
-- **Cursor Automation:** https://cursor.com/automations — prompt = this file; model = Claude Opus.
+- **Grok 4.6 Cloud Agent cannot upgrade itself.** Next coding run: https://cursor.com/agents as **Claude Opus**. Paste this file.
+- **Kimi (desktop):** same GitHub repo. Pull `main` only after EXE merge.
 
 ## NEED JAY (one action)
 
-Replace GitHub secret `NETLIFY_AUTH_TOKEN` with a **new** Netlify PAT (Netlify → User settings → Applications → New access token), then **Re-run** the failed **Deploy to Netlify** workflow on `main` (do not empty-commit).
-
-Also paste `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` into GitHub Actions secrets **and** Netlify Site settings → Environment variables so `#/ops` can leave DEMO after that deploy.
+Say **EXE** to merge PR #16. Then check `accounts@fm985.com.au` for the pipeline test with `ONEFM-2026-011.pdf`. Do not send FOOTT to Peter unless you mean to invoice him.
 
 ## Truth numbers (only these)
 
 - Weekly listeners **39,375** — ABS 2021 via `src/data/townData.ts`
+- Broadcast-area population **189,680** — `stationStats.broadcastPopulation`
 - **25 towns**, **100km**
 - Breakfast: `src/data/programGuide.ts` (`BREAKFAST_ROSTER`) — **not** Plemo
 - Photos: `/public/assets/images/` and `/public/brand/` only
 
 ## Do not
 
-- Force-push. Invent FOOTT invoice contents. Fake live ops. Empty-commit to retry a 401.
+- Force-push. Invent FOOTT invoice contents. Fake live ops. Empty-commit to retry a 401. Upsert the 19-row DEMO batch into Supabase. Merge without **EXE**. Bake `sb_secret_` into the browser bundle. POST `send-invoice` to `peter@foott.com.au` unless Jay asks. Restart Resend domain verification from `email-status`.

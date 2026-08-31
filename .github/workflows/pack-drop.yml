@@ -1,0 +1,42 @@
+# Phone-sized production zip. Does not deploy. Jay downloads the artifact
+# and drops it on https://app.netlify.com/sites/onefmops/deploys
+name: Pack production drop zip
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: pack-drop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Zip dist
+        run: node scripts/pack-drop-zip.mjs
+
+      - name: Upload drop zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: onefmops-production-drop
+          path: onefmops-production-drop.zip
+          if-no-files-found: error
+          retention-days: 14

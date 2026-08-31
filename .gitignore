@@ -13,3 +13,6 @@ scripts/google-drive.config.json
 # Agent skills installed via `npx skills add` (reinstall from package)
 .agents
 .drive-scratch/
+
+# Local Netlify drag-drop zip (built by scripts/pack-drop-zip.mjs)
+/onefmops-production-drop.zip

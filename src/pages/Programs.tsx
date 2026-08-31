@@ -1123,7 +1123,7 @@ export default function Programs() {
           transition={{ duration: 0.5 }}
           className="glass-card p-6 md:p-10"
         >
-          <AnimatePresence initial={false}>
+          <AnimatePresence mode="wait" initial={false}>
             {requestDraftOpened ? (
               <motion.div
                 key="success"

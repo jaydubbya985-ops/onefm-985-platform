@@ -18,6 +18,7 @@ import type {
   OpsInvoice,
 } from '@/components/ops/store'
 import type { ContractInvoiceEntry } from '@/components/ops/data/sponsors'
+import { isRealSponsorInvoiceNumber } from '@/components/ops/data/invoices'
 
 // ── Row mappers ────────────────────────────────────────────────
 
@@ -236,34 +237,18 @@ export async function loadAll(): Promise<{
   return { state: { enquiries, proposals, contracts, invoices }, hasData }
 }
 
-/** Seed remote DB from local demo data (first-time setup). */
-export async function seedAll(state: OpsRemoteState): Promise<void> {
+/** Seed only the two real sponsor invoices. Never dump the DEMO batch. */
+export async function seedRealSponsorInvoices(invoices: OpsInvoice[]): Promise<void> {
   if (!isSupabaseConfigured()) return
+  const real = invoices.filter((i) => isRealSponsorInvoiceNumber(i.number))
+  for (const invoice of real) {
+    await upsertInvoice(invoice)
+  }
+}
 
-  // Only seed enquiries that use UUID-compatible ids or skip mock ENQ-* ids
-  const remoteEnquiries = state.enquiries
-    .filter((e) => !e.id.startsWith('ENQ-'))
-    .map(enquiryToRow)
-
-  if (remoteEnquiries.length) {
-    await supabase.from('contact_enquiries').upsert(remoteEnquiries)
-  }
-
-  if (state.proposals.length) {
-    await supabase
-      .from('ops_proposals')
-      .upsert(state.proposals.map(proposalToRow))
-  }
-  if (state.contracts.length) {
-    await supabase
-      .from('ops_contracts')
-      .upsert(state.contracts.map(contractToRow))
-  }
-  if (state.invoices.length) {
-    await supabase
-      .from('ops_invoices')
-      .upsert(state.invoices.map(invoiceToRow))
-  }
+/** @deprecated Use seedRealSponsorInvoices. Will not write DEMO CRM/invoice rows. */
+export async function seedAll(state: OpsRemoteState): Promise<void> {
+  await seedRealSponsorInvoices(state.invoices)
 }
 
 // ── Enquiry mutations ──────────────────────────────────────────
@@ -381,9 +366,14 @@ export async function updateContract(
 
 // ── Invoice mutations ──────────────────────────────────────────
 
-export async function upsertInvoice(invoice: OpsInvoice): Promise<void> {
-  if (!isSupabaseConfigured()) return
-  await supabase.from('ops_invoices').upsert(invoiceToRow(invoice))
+export async function upsertInvoice(invoice: OpsInvoice): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false
+  const { error } = await supabase.from('ops_invoices').upsert(invoiceToRow(invoice))
+  if (error) {
+    console.warn('[opsApi] upsertInvoice failed:', error.message)
+    return false
+  }
+  return true
 }
 
 export async function updateInvoice(

@@ -71,6 +71,11 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
             <p className="text-xs text-one-muted">
               {useAuthGate ? 'Staff sign in required' : 'Authorised access only'}
             </p>
+            {useAuthGate ? (
+              <p className="text-xs text-emerald-400 font-semibold mt-1">LIVE — not DEMO</p>
+            ) : (
+              <p className="text-xs text-one-gold font-semibold mt-1">DEMO MODE</p>
+            )}
           </div>
         </div>
 
@@ -121,6 +126,9 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
               {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
               Sign In
             </button>
+            <p className="text-center text-xs text-one-muted">
+              Staff logins are created in Supabase Authentication. This is not the DEMO password gate.
+            </p>
           </form>
         ) : (
           <form onSubmit={handleDemoSubmit} className="space-y-4">

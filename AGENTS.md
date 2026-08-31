@@ -137,7 +137,7 @@ Read and follow .cursor/HANDOFF.md. Pull origin main first. Do not merge PRs unl
 
 Benchmark 80% gov-ready: FOOTT can be sent a real invoice PDF; live #/ops is not DEMO; no invented stats; mailto does not mark sent.
 
-PR #12 is already merged (4a7315f). Live is still DEMO — GitHub NETLIFY_AUTH_TOKEN is unauthorized. Do not empty-commit retry.
+PR #12 / #14 / #15 are on `main` (`e511343`). Live is still DEMO — GitHub NETLIFY_AUTH_TOKEN is unauthorized (HTTP 401). Do not empty-commit retry.
 
 If this is a new Cloud Agent: use Claude Opus. New branch off main.
 

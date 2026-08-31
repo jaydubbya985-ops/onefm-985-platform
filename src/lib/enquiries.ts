@@ -22,8 +22,13 @@ export interface SubmitEnquiryInput {
 export interface SubmitEnquiryResult {
   success: boolean
   id?: string
+  stored?: boolean
+  emailed?: boolean
   error?: string
 }
+
+const NOT_SENT =
+  'Nothing was stored or emailed. Call (03) 5831 3131 or email admin@fm985.com.au.'
 
 export async function submitEnquiry(
   input: SubmitEnquiryInput,
@@ -31,6 +36,7 @@ export async function submitEnquiry(
   const enquiryType = input.enquiryType ?? input.subject
 
   let insertedId: string | undefined
+  let stored = false
 
   if (isSupabaseConfigured()) {
     const { data, error } = await supabase
@@ -57,11 +63,11 @@ export async function submitEnquiry(
       console.warn('[Enquiries] Supabase insert failed:', error.message)
     } else {
       insertedId = data?.id
+      stored = true
     }
   }
 
-  // Always attempt email notification (works in dev log mode without API key)
-  await sendEnquiryNotification({
+  const email = await sendEnquiryNotification({
     name: input.name,
     email: input.email,
     phone: input.phone ?? '',
@@ -71,5 +77,16 @@ export async function submitEnquiry(
     preferredContact: input.preferredContact ?? 'email',
   })
 
-  return { success: true, id: insertedId }
+  if (stored || email.success) {
+    return { success: true, id: insertedId, stored, emailed: !!email.success }
+  }
+
+  return {
+    success: false,
+    stored: false,
+    emailed: false,
+    error: email.devMode
+      ? 'Nothing was sent — email is not configured. Call (03) 5831 3131 or email admin@fm985.com.au.'
+      : email.error || NOT_SENT,
+  }
 }

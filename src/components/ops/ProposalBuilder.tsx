@@ -242,18 +242,13 @@ export default function ProposalBuilder() {
     if (saved) toast(`Draft ${saved.doc.number} saved`, 'success')
   }
 
-  const handlePdf = async (markSent = false) => {
+  const handlePdf = async () => {
     const saved = persist()
     if (!saved) return
     setBusy(true)
     try {
       await downloadDoc(saved.doc)
-      if (markSent) {
-        sendProposal(saved.id)
-        toast(`PDF downloaded — marked sent to ${saved.doc.company}`, 'success')
-      } else {
-        toast(`Downloaded ${saved.doc.number}.pdf`, 'success')
-      }
+      toast(`Downloaded ${saved.doc.number}.pdf`, 'success')
     } catch (err) {
       console.error(err)
       toast('PDF failed — try again', 'error')
@@ -494,7 +489,7 @@ export default function ProposalBuilder() {
                   Preview
                 </Button>
                 <Button
-                  onClick={() => void handlePdf(false)}
+                  onClick={() => void handlePdf()}
                   disabled={busy}
                   className="bg-one-gold text-one-navy hover:bg-one-gold/90 min-h-11"
                 >

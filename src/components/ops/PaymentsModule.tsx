@@ -105,11 +105,31 @@ import {
   type PaymentMethod,
   type RecurringDonation,
   type RecurringStatus,
+  type OutstandingInvoice,
 } from './data/payments'
+import { opsInitial, opsStorageKey } from '@/lib/opsMode'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB, bankPayLine } from '@/lib/bankDetails'
+import { useOpsStore, type OpsInvoice } from './store'
 
 // ---------------------------------------------------------------------------
 // Persistence + shared helpers
 // ---------------------------------------------------------------------------
+
+function outstandingFromLedger(storeInvoices: OpsInvoice[]): OutstandingInvoice[] {
+  if (isSupabaseConfigured()) {
+    return storeInvoices
+      .filter((i) => i.status !== 'paid')
+      .map((i) => ({
+        id: i.id,
+        number: i.number,
+        client: i.company,
+        balance: i.total - (i.paidAmount ?? 0),
+        dueDate: i.dueDate,
+      }))
+  }
+  return SEED_OUTSTANDING_INVOICES
+}
 
 function usePersistentState<T>(
   key: string,
@@ -269,9 +289,11 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
 
 function PaymentsTab() {
   const { toast } = useToast()
+  const { invoices } = useOpsStore()
+  const outstanding = useMemo(() => outstandingFromLedger(invoices), [invoices])
   const [payments, setPayments] = usePersistentState<ClientPayment[]>(
-    'onefm_payments',
-    SEED_CLIENT_PAYMENTS,
+    opsStorageKey('onefm_payments'),
+    opsInitial(SEED_CLIENT_PAYMENTS, []),
   )
   const [search, setSearch] = useState('')
   const [methodFilter, setMethodFilter] = useState('all')
@@ -284,7 +306,6 @@ function PaymentsTab() {
   const [reference, setReference] = useState('')
   const [notes, setNotes] = useState('')
   const [copied, setCopied] = useState(false)
-  const [stripeConnected, setStripeConnected] = useState(STRIPE_KEY_CONFIGURED)
   const [stripeTestMode, setStripeTestMode] = useState(true)
   const [paypalConnected, setPaypalConnected] = useState(false)
   const [paypalTestMode, setPaypalTestMode] = useState(true)
@@ -297,8 +318,8 @@ function PaymentsTab() {
     [payments],
   )
   const totalOutstanding = useMemo(
-    () => SEED_OUTSTANDING_INVOICES.reduce((sum, inv) => sum + inv.balance, 0),
-    [],
+    () => outstanding.reduce((sum, inv) => sum + inv.balance, 0),
+    [outstanding],
   )
   const collectionRate = useMemo(() => {
     const total = totalPaid + totalOutstanding
@@ -329,7 +350,7 @@ function PaymentsTab() {
     [payments, search, methodFilter],
   )
 
-  const selectedInvoice = SEED_OUTSTANDING_INVOICES.find(
+  const selectedInvoice = outstanding.find(
     (inv) => inv.id === selectedInvoiceId,
   )
 
@@ -359,13 +380,20 @@ function PaymentsTab() {
   }
 
   function copyLink(link: string) {
+    if (!link) {
+      toast('Online pay links are not configured', 'error')
+      return
+    }
     navigator.clipboard.writeText(link).catch(() => {})
     setCopied(true)
-    toast('Payment link copied to clipboard', 'success')
+    toast('Copied to clipboard', 'success')
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const paymentLink = selectedInvoice ? buildPaymentLink(selectedInvoice.id) : ''
+  const paymentLink = selectedInvoice ? buildPaymentLink(selectedInvoice.id) : null
+  const bankLine = selectedInvoice
+    ? bankPayLine(selectedInvoice.number)
+    : bankPayLine()
 
   return (
     <motion.div
@@ -386,7 +414,7 @@ function PaymentsTab() {
         <StatCard
           title="Total Outstanding"
           value={`$${totalOutstanding.toLocaleString('en-AU', { minimumFractionDigits: 0 })}`}
-          subtitle={`${SEED_OUTSTANDING_INVOICES.length} invoices pending`}
+          subtitle={`${outstanding.length} invoices pending`}
           icon={AlertTriangle}
           color={ACCENT.warning}
           delay={0.05}
@@ -473,7 +501,7 @@ function PaymentsTab() {
                   <SelectValue placeholder="Search invoices..." />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0F1D2F] border-slate-700">
-                  {SEED_OUTSTANDING_INVOICES.map((inv) => (
+                  {outstanding.map((inv) => (
                     <SelectItem key={inv.id} value={inv.id} className={selectItemClass}>
                       {inv.number} — {inv.client} (Balance: ${inv.balance.toLocaleString()})
                     </SelectItem>
@@ -590,7 +618,7 @@ function PaymentsTab() {
                   <SelectValue placeholder="Choose an invoice..." />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0F1D2F] border-slate-700">
-                  {SEED_OUTSTANDING_INVOICES.map((inv) => (
+                  {outstanding.map((inv) => (
                     <SelectItem key={inv.id} value={inv.id} className={selectItemClass}>
                       {inv.number} — {inv.client} (${inv.balance.toLocaleString()})
                     </SelectItem>
@@ -601,41 +629,53 @@ function PaymentsTab() {
             {selectedInvoice && (
               <>
                 <div className="rounded-lg bg-[#1E293B] border border-slate-700 p-4 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-[#D4A853] p-2 rounded-lg">
-                      <QrCode className="h-8 w-8 text-[#101010]" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-[#F4F1EA]">Scan to Pay</p>
-                      <p className="text-xs text-slate-400">
-                        QR code for {selectedInvoice.number}
-                      </p>
-                    </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#F4F1EA]">
+                      Online pay links are not configured
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Ask {selectedInvoice.client} to pay {selectedInvoice.number} by bank
+                      transfer. Do not invent a hosted pay URL.
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2 rounded bg-[#101010] border border-slate-700 p-2.5">
-                    <code className="text-xs text-[#D4A853] flex-1 truncate">
-                      {paymentLink}
+                  <div className="rounded bg-[#101010] border border-slate-700 p-2.5 space-y-1">
+                    <p className="text-xs text-slate-400">
+                      {BANK_ACCOUNT_NAME} · NAB
+                    </p>
+                    <code className="text-xs text-[#D4A853] block">
+                      BSB {BANK_BSB} · Account {BANK_ACCOUNT}
                     </code>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => copyLink(paymentLink)}
-                      className="h-7 px-2 text-slate-400 hover:text-[#D4A853]"
-                    >
-                      {copied ? (
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5" />
-                      )}
-                    </Button>
+                    <p className="text-[11px] text-slate-500">
+                      Reference: {selectedInvoice.number}
+                    </p>
                   </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => copyLink(bankLine)}
+                    className="h-8 border-slate-700 text-slate-300 hover:text-[#D4A853]"
+                  >
+                    {copied ? (
+                      <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5 mr-1.5" />
+                    )}
+                    Copy bank details
+                  </Button>
+                  {paymentLink && (
+                    <div className="flex items-center gap-2 rounded bg-[#101010] border border-slate-700 p-2.5">
+                      <code className="text-xs text-[#D4A853] flex-1 truncate">
+                        {paymentLink}
+                      </code>
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     onClick={() =>
                       toast(
                         STRIPE_KEY_CONFIGURED
-                          ? 'Stripe Checkout session would open here'
+                          ? 'Stripe Checkout is not wired for invoices yet — use BSB 083-894'
                           : 'Add VITE_STRIPE_PUBLISHABLE_KEY to enable Stripe checkout',
                         STRIPE_KEY_CONFIGURED ? 'info' : 'error',
                       )
@@ -645,7 +685,9 @@ function PaymentsTab() {
                     <CreditCard className="h-4 w-4 mr-1.5" /> Pay with Stripe
                   </Button>
                   <Button
-                    onClick={() => toast('PayPal checkout is not configured in this demo', 'info')}
+                    onClick={() =>
+                      toast('PayPal is not configured — use BSB 083-894', 'info')
+                    }
                     className="bg-[#0070BA] hover:bg-[#0085E0] text-white font-semibold"
                   >
                     <Wallet className="h-4 w-4 mr-1.5" /> Pay with PayPal
@@ -813,11 +855,13 @@ function PaymentsTab() {
                 <div className="flex items-center gap-2.5">
                   <div
                     className={`h-2.5 w-2.5 rounded-full ${
-                      stripeConnected ? 'bg-emerald-500' : 'bg-red-500'
+                      STRIPE_KEY_CONFIGURED ? 'bg-amber-500' : 'bg-red-500'
                     }`}
                   />
                   <span className="text-sm text-[#F4F1EA]">
-                    {stripeConnected ? 'Connected' : 'Disconnected'}
+                    {STRIPE_KEY_CONFIGURED
+                      ? 'Publishable key present — invoice checkout not wired'
+                      : 'Not connected'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -838,23 +882,17 @@ function PaymentsTab() {
               )}
               <Button
                 onClick={() => {
-                  if (!stripeConnected && !STRIPE_KEY_CONFIGURED) {
-                    toast(
-                      'Add VITE_STRIPE_PUBLISHABLE_KEY to your environment first',
-                      'error',
-                    )
-                    return
-                  }
-                  setStripeConnected((c) => !c)
+                  toast(
+                    STRIPE_KEY_CONFIGURED
+                      ? 'Stripe Checkout is not wired for invoices — use BSB 083-894'
+                      : 'Add VITE_STRIPE_PUBLISHABLE_KEY to your environment first',
+                    STRIPE_KEY_CONFIGURED ? 'info' : 'error',
+                  )
                 }}
                 variant="outline"
-                className={`w-full text-xs font-semibold ${
-                  stripeConnected
-                    ? 'border-red-800 text-red-400 hover:bg-red-950/30'
-                    : 'border-[#635BFF] text-[#635BFF] hover:bg-[#635BFF]/10'
-                }`}
+                className="w-full text-xs font-semibold border-[#635BFF] text-[#635BFF] hover:bg-[#635BFF]/10"
               >
-                {stripeConnected ? 'Disconnect Stripe' : 'Connect Stripe Account'}
+                Pay invoices via NAB BSB 083-894
               </Button>
             </CardContent>
           </Card>
@@ -889,7 +927,13 @@ function PaymentsTab() {
                 <code className="text-xs text-[#0070BA] font-mono">{PAYPAL_WEBHOOK_URL}</code>
               </div>
               <Button
-                onClick={() => setPaypalConnected((c) => !c)}
+                onClick={() => {
+                  if (isSupabaseConfigured()) {
+                    toast('PayPal is not configured — use BSB 083-894', 'error')
+                    return
+                  }
+                  setPaypalConnected((c) => !c)
+                }}
                 variant="outline"
                 className={`w-full text-xs font-semibold ${
                   paypalConnected
@@ -925,12 +969,12 @@ interface DonorSummary {
 function DonationsTab() {
   const { toast } = useToast()
   const [donations, setDonations] = usePersistentState<DonationRecord[]>(
-    'onefm_donations',
-    SEED_DONATIONS,
+    opsStorageKey('onefm_donations'),
+    opsInitial(SEED_DONATIONS, []),
   )
   const [recurring] = usePersistentState<RecurringDonation[]>(
-    'onefm_recurring',
-    SEED_RECURRING_DONATIONS,
+    opsStorageKey('onefm_recurring'),
+    opsInitial(SEED_RECURRING_DONATIONS, []),
   )
   const [search, setSearch] = useState('')
   const [sourceFilter, setSourceFilter] = useState('all')
@@ -1081,7 +1125,11 @@ function DonationsTab() {
         <StatCard
           title="Donations This Month"
           value={`$${donationsThisMonth.toLocaleString()}`}
-          subtitle={`Goal: $${MONTHLY_DONATION_GOAL.toLocaleString()}`}
+          subtitle={
+            isSupabaseConfigured()
+              ? 'No monthly goal set'
+              : `Goal: $${MONTHLY_DONATION_GOAL.toLocaleString()}`
+          }
           icon={Heart}
           color={ACCENT.danger}
           delay={0}
@@ -1120,6 +1168,7 @@ function DonationsTab() {
         />
       </div>
 
+      {!isSupabaseConfigured() && (
       <motion.div variants={itemVariants}>
         <Card className="border border-slate-800 bg-[#0F1D2F]">
           <CardContent className="p-4">
@@ -1149,6 +1198,7 @@ function DonationsTab() {
           </CardContent>
         </Card>
       </motion.div>
+      )}
 
       <motion.div variants={itemVariants} className="flex flex-wrap gap-3">
         <Button
@@ -1863,8 +1913,8 @@ function MembershipsTab() {
   const [cardOpen, setCardOpen] = useState(false)
   const [cardMember, setCardMember] = useState<MemberRecord | null>(null)
   const [members, setMembers] = usePersistentState<MemberRecord[]>(
-    'onefm_members',
-    SEED_MEMBERS,
+    opsStorageKey('onefm_members'),
+    opsInitial(SEED_MEMBERS, []),
   )
 
   const [name, setName] = useState('')
@@ -2596,14 +2646,17 @@ export default function PaymentsModule() {
 
   // Header total reads the same persisted stores the tabs use.
   const [payments] = usePersistentState<ClientPayment[]>(
-    'onefm_payments',
-    SEED_CLIENT_PAYMENTS,
+    opsStorageKey('onefm_payments'),
+    opsInitial(SEED_CLIENT_PAYMENTS, []),
   )
   const [donations] = usePersistentState<DonationRecord[]>(
-    'onefm_donations',
-    SEED_DONATIONS,
+    opsStorageKey('onefm_donations'),
+    opsInitial(SEED_DONATIONS, []),
   )
-  const [members] = usePersistentState<MemberRecord[]>('onefm_members', SEED_MEMBERS)
+  const [members] = usePersistentState<MemberRecord[]>(
+    opsStorageKey('onefm_members'),
+    opsInitial(SEED_MEMBERS, []),
+  )
 
   const totalIncomeYtd =
     payments.filter((p) => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0) +

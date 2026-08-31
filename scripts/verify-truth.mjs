@@ -6,6 +6,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const ROOT = new URL('../src', import.meta.url).pathname
+const INDEX_HTML = new URL('../index.html', import.meta.url).pathname
 
 /** Phrases that must never ship in src/ (gov-truth). */
 const FORBIDDEN = [
@@ -26,6 +27,17 @@ const FORBIDDEN = [
   { re: /Mooroopna',\s*listeners:\s*3710/, why: '3710 is Echuca listener estimate, not Mooroopna' },
   { re: /12 345 678 901/, why: 'placeholder ABN — station ABN is 92 117 291 771' },
   { re: /registered as a Deductible Gift Recipient/i, why: 'DGR status is data pending — do not claim it' },
+  { re: /185,?791/, why: 'stale OG population — use 189,680 from townData / stationStats' },
+  { re: /36 years/, why: 'stale year count — licensed 1989 (37 in 2026) or omit years' },
+  { re: /25\+ language communities/i, why: 'programGuide has 8 multicultural programs, not 25+ language communities' },
+  { re: /8\+ languages/i, why: 'use the exact multicultural program count from programGuide' },
+  { re: /never gone dark/i, why: 'unsourced transmitter uptime claim' },
+  { re: /pay\.onefm985\.com\.au/i, why: 'hosted pay domain does not exist — use BSB 083-894' },
+  { re: /api\.onefm985\.com\.au\/webhooks/i, why: 'webhook domain does not exist' },
+  { re: /checkout\.stripe\.com\/pay\?/i, why: 'do not invent Stripe Checkout query URLs' },
+  { re: /Request Received!/, why: 'mailto song request is a draft, not a received request' },
+  { re: /Enquiry Sent!/, why: 'enquiry forms must not claim sent unless stored or emailed' },
+  { re: /Sent via ONE FM Operations Portal/, why: 'invoice email footer must not claim the message was sent' },
 ]
 
 function walk(dir) {
@@ -39,13 +51,47 @@ function walk(dir) {
 }
 
 const hits = []
-for (const file of walk(ROOT)) {
-  const text = readFileSync(file, 'utf8')
+const files = [
+  ...walk(ROOT).map((p) => ({ label: relative(ROOT, p), text: readFileSync(p, 'utf8') })),
+  { label: 'index.html', text: readFileSync(INDEX_HTML, 'utf8') },
+]
+for (const file of files) {
   for (const rule of FORBIDDEN) {
-    if (rule.re.test(text)) {
-      hits.push(`${relative(ROOT, file)}: ${rule.why}`)
+    if (rule.re.test(file.text)) {
+      hits.push(`${file.label}: ${rule.why}`)
     }
   }
+}
+
+const listen = files.find((f) => f.label === 'pages/Listen.tsx')
+if (
+  !listen ||
+  !listen.text.includes('Email draft opened') ||
+  !listen.text.includes('Open email draft')
+) {
+  hits.push(
+    'pages/Listen.tsx: routed song request must open a mailto draft and say so',
+  )
+}
+
+const programs = files.find((f) => f.label === 'pages/Programs.tsx')
+if (
+  !programs ||
+  !programs.text.includes('Email Draft Opened') ||
+  /Request Received/i.test(programs.text)
+) {
+  hits.push(
+    'pages/Programs.tsx: song request must say a draft opened — not that it was received',
+  )
+}
+
+const app = files.find((f) => f.label === 'App.tsx')
+if (
+  !app ||
+  !app.text.includes("path=\"/programs\"") ||
+  /path=\"\/programs\" element=\{<Navigate to=\"\/listen\"/.test(app.text)
+) {
+  hits.push('App.tsx: /programs must mount Programs, not redirect to /listen')
 }
 
 if (hits.length) {

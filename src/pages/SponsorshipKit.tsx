@@ -84,7 +84,7 @@ function EnquiryForm() {
     return (
       <div className="border-2 rounded-2xl p-10 text-center" style={{ borderColor: RED }}>
         <div className="font-poster uppercase text-[34px] text-white">You're in the pipeline<span style={{ color: RED }}>.</span></div>
-        <p className="text-white/55 mt-2 text-[15px]">We'll be in touch within one business day. — ONE FM 98.5</p>
+        <p className="text-white/55 mt-2 text-[15px]">We'll be in touch. — ONE FM 98.5</p>
       </div>
     )
   }

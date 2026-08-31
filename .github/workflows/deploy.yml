@@ -31,7 +31,7 @@ jobs:
             -H "Authorization: Bearer ${NETLIFY_AUTH_TOKEN}" \
             "https://api.netlify.com/api/v1/sites/${NETLIFY_SITE_ID}")
           if [ "$code" != "200" ]; then
-            echo "::error::Netlify HTTP ${code}: could not retrieve site. Replace GitHub secret NETLIFY_AUTH_TOKEN with a NEW personal access token (Netlify → User settings → Applications → New access token). Then re-run this workflow. Empty-commit retries will not fix this. Site ID must be 8df4de74-d9a8-42ce-9316-61bd06475c94."
+            echo "::error::Netlify HTTP ${code}: this GitHub PAT cannot see the site. Empty-commit retries will not fix this. Easier than a new PAT: Netlify → Site configuration → Build & deploy → Continuous Deployment → Link repository → GitHub → jaydubbya985-ops/onefm-985-platform → branch main. Site ID must stay 8df4de74-d9a8-42ce-9316-61bd06475c94."
             exit 1
           fi
 
@@ -65,3 +65,6 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 5
+
+      - name: Prove production is not the stale DEMO deploy
+        run: node scripts/verify-live.mjs

@@ -2,6 +2,8 @@
 // Sponsor billing directory + active contracts — extracted verbatim from the
 // deployed OpsPortal bundle (`Qt` and `Dt` constants). Used by the Invoice
 // Generator's "Create Invoice" and "From Contract" flows.
+// DEMO DATA except FOOTT Waste Solutions and Jason's TV / Pest Control.
+// LIVE Invoice Generator must not list this full directory (see InvoiceGenerator).
 // ---------------------------------------------------------------------------
 
 export interface SponsorContact {

@@ -7,6 +7,7 @@
  */
 import type { jsPDF } from 'jspdf'
 import { sendEmail } from '@/lib/email'
+import { readFunctionJson } from '@/lib/readFunctionJson'
 import {
   BANK_ACCOUNT,
   BANK_ACCOUNT_NAME,
@@ -53,6 +54,18 @@ export interface SendResult {
 
 function pdfToBase64(pdf: jsPDF): string {
   return pdf.output('datauristring').split(',')[1] ?? ''
+}
+
+/** Dry-run or sent:false must never be treated as a real email. */
+function readSendResult(
+  data: { success?: boolean; messageId?: string; dryRun?: boolean; sent?: boolean } | null,
+): SendResult | null {
+  if (!data) return null
+  if (data.dryRun || data.sent === false) {
+    return { success: false, error: 'Invoice was not emailed (dry-run or send failed).' }
+  }
+  if (data.success) return { success: true, messageId: data.messageId }
+  return null
 }
 
 function buildInvoiceHtml(payload: InvoiceSendPayload): string {
@@ -116,10 +129,15 @@ export async function dispatchInvoiceEmail(
       }),
     })
 
-    if (res.ok) {
-      const data = await res.json() as { success?: boolean; messageId?: string }
-      if (data.success) return { success: true, messageId: data.messageId }
-    } else {
+    const data = await readFunctionJson<{
+      success?: boolean
+      messageId?: string
+      dryRun?: boolean
+      sent?: boolean
+    }>(res)
+    const parsed = readSendResult(data)
+    if (parsed) return parsed
+    if (!res.ok) {
       console.warn('[InvoiceSend] Netlify function responded:', res.status)
     }
   } catch (err) {
@@ -141,8 +159,8 @@ export async function dispatchInvoiceEmail(
     return { success: true, messageId: directResult.messageId }
   }
 
-  if (directResult.success && directResult.devMode) {
-    return { success: true, devMode: true }
+  if (directResult.devMode) {
+    return { success: false, devMode: true }
   }
 
   return {
@@ -174,10 +192,14 @@ export async function dispatchReceiptEmail(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ to: payload.to, subject, html, replyTo: 'accounts@fm985.com.au' }),
     })
-    if (res.ok) {
-      const data = await res.json() as { success?: boolean; messageId?: string }
-      if (data.success) return { success: true, messageId: data.messageId }
-    }
+    const data = await readFunctionJson<{
+      success?: boolean
+      messageId?: string
+      dryRun?: boolean
+      sent?: boolean
+    }>(res)
+    const parsed = readSendResult(data)
+    if (parsed) return parsed
   } catch {
     // fall through to direct send
   }
@@ -189,7 +211,8 @@ export async function dispatchReceiptEmail(
     replyTo: 'accounts@fm985.com.au',
   })
 
-  if (result.success) return { success: true, messageId: result.messageId, devMode: result.devMode }
+  if (result.devMode) return { success: false, devMode: true }
+  if (result.success) return { success: true, messageId: result.messageId }
   return { success: false, usedMailtoFallback: true, error: result.error }
 }
 

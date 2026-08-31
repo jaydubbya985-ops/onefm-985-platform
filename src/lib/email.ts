@@ -9,6 +9,8 @@
  * Dev fallback: VITE_RESEND_API_KEY in .env.local (never set this in production)
  */
 
+import { readFunctionJson } from '@/lib/readFunctionJson'
+
 export interface EmailPayload {
   to: string | string[]
   subject: string
@@ -214,7 +216,7 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
       subject: payload.subject,
       attachments: payload.attachments?.length ?? 0,
     })
-    return { success: true, devMode: true }
+    return { success: false, devMode: true }
   }
 
   try {
@@ -248,7 +250,9 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
 
 /* ── Convenience wrappers ───────────────────────────────── */
 
-export async function sendEnquiryNotification(data: EnquiryEmailData) {
+export async function sendEnquiryNotification(
+  data: EnquiryEmailData,
+): Promise<{ success: boolean; devMode?: boolean; error?: string }> {
   const stationHtml = buildEnquiryEmailHtml(data)
   const confirmationHtml = buildEnquiryConfirmationHtml(data)
 
@@ -266,27 +270,29 @@ export async function sendEnquiryNotification(data: EnquiryEmailData) {
         confirmationHtml,
       }),
     })
-    if (res.ok) {
-      const result = (await res.json()) as { success?: boolean }
-      if (result.success) return
-    }
+    const result = await readFunctionJson<{ success?: boolean }>(res)
+    if (result?.success) return { success: true }
     console.warn('[Email] send-enquiry function responded:', res.status)
   } catch (err) {
     console.warn('[Email] send-enquiry function unavailable (dev mode?), falling back:', err)
   }
 
-  // Fallback: direct Resend or dev log mode
-  await sendEmail({
+  const station = await sendEmail({
     to: STATION_EMAIL,
     subject: `New ${data.enquiryType} Enquiry — ${data.name}`,
     html: stationHtml,
     replyTo: data.email,
   })
+  if (!station.success) {
+    return { success: false, devMode: station.devMode, error: station.error }
+  }
+
   await sendEmail({
     to: data.email,
     subject: `We've received your message — ONE FM 98.5`,
     html: confirmationHtml,
   })
+  return { success: true }
 }
 
 export async function sendProposalEmail(data: ProposalEmailData) {
