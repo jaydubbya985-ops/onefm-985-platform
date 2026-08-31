@@ -12,7 +12,9 @@ import { SEO } from '@/components/SEO'
 import { CinegraphBackground } from '@/components/CinegraphBackground'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { towns } from '@/data/townData'
 import { footballTiers, stationStats } from '@/data/pricing'
+import { GVL_PREMIUM_INTRO, GVL_PREMIUM_SEO, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
@@ -157,13 +159,7 @@ const reachFacts = [
   { label: 'Area population (2026 est.)', value: stationStats.broadcastPopulation.toLocaleString() },
 ]
 
-const townData = [
-  'Shepparton', 'Mooroopna', 'Tatura', 'Kyabram', 'Numurkah',
-  'Nathalia', 'Rushworth', 'Murchison', 'Violet Town', 'Euroa',
-  'Seymour', 'Benalla', 'Shepparton East', 'Congupna', 'Undera',
-  'Stanhope', 'Girgarre', ' Merrigum', 'Toolamba', 'Dookie',
-  'Barmah', 'Picola', 'Wunghnu', 'Katandra', 'Tallygaroopna',
-]
+const townNames = towns.map((t) => t.name)
 
 /* ─── What we can say about ourselves, with nobody else's words in our mouth ─── */
 const communityVoice = {
@@ -296,7 +292,7 @@ export default function Football() {
 
   return (
     <Layout>
-      <SEO title="GVL Football Sponsorship" description="Partner with ONE FM 98.5 for Goulburn Valley Football & Netball. 9 sponsorship tiers from $25/week." />
+      <SEO title="GVL Football Sponsorship" description={GVL_PREMIUM_SEO} />
       {/* ═══════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
@@ -358,7 +354,7 @@ export default function Football() {
             className="font-body text-one-white/70 max-w-[520px] mb-10"
           >
             Put your business in front of {stationStats.weeklyListeners.toLocaleString()} weekly listeners across {stationStats.totalTowns} communities
-            in the Goulburn Valley. From $25/week to full naming rights — there's a tier for every budget.
+            in the Goulburn Valley. {GVL_PREMIUM_INTRO} {STANDARD_SPOT_PLUS_GST}.
           </motion.p>
 
           <motion.div
@@ -413,7 +409,7 @@ export default function Football() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE MATCH COMMENTARY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · GOULBURN VALLEY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FROM $25/WEEK · NAMING RIGHTS AVAILABLE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL MATCH-DAY · PREMIUM INVENTORY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ROUND-BY-ROUND BROADCAST</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.weeklyListeners.toLocaleString()} WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">COMMENTARY TEAM · MATCHDAY PRESENCE</span>,
@@ -436,8 +432,8 @@ export default function Football() {
             </div>
             <WordReveal text="CHOOSE YOUR IMPACT" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              From community supporters to naming rights partners — every dollar goes toward
-              supporting local football and getting your brand heard.
+              Community Supporter is a match-day name-read and logo listing — not a GVL commercial spot.
+              {STANDARD_SPOT_PLUS_GST}. GVL match-day commercials and live calls are quoted separately.
             </p>
           </ScrollReveal>
 
@@ -646,7 +642,7 @@ export default function Football() {
               <div aria-hidden className="explore-tile-scan" />
               <h4 className="font-h4 text-one-white mb-4">{stationStats.totalTowns} Communities Covered</h4>
               <div className="flex flex-wrap gap-1.5 mb-4">
-                {townData.map((town, i) => (
+                {townNames.map((town, i) => (
                   <motion.span
                     key={town}
                     initial={{ opacity: 0, scale: 0.8 }}

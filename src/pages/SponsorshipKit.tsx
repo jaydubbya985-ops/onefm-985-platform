@@ -12,6 +12,8 @@ import { SEO } from '@/components/SEO'
 import { OnAirTicker, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { generalTiers, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
+import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 
 const RED = '#E51636'
 
@@ -39,7 +41,7 @@ function SponsorHero() {
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
           Radio advertising that supports the community it sells to — from $50 a week,
-          heard across 25 towns of the Goulburn Valley.
+          heard across {formatTowns()} of the Goulburn Valley.
         </p>
         <a
           href="#enquire"
@@ -123,7 +125,7 @@ export default function SponsorshipKit() {
     <Layout>
       <SEO
         title="Sponsor ONE FM 98.5 — Advertise Across the Goulburn Valley"
-        description="Sponsorship from $50/week: est. 39,375 weekly listeners across 25 towns. Packages, GVL football, and a real conversation — not a call centre."
+        description={`Sponsorship from $50/week: ${formatWeeklyListeners()} across ${formatTowns()}. ${STANDARD_SPOT_PLUS_GST}. GVL is premium inventory.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -131,6 +133,7 @@ export default function SponsorshipKit() {
             `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
             `${stationStats.totalTowns} towns across the Goulburn Valley`,
             'Packages from $50/week',
+            STANDARD_SPOT_PLUS_GST,
             'Donated airtime for local not-for-profits',
           ]}
           delay={0.4}
@@ -152,7 +155,7 @@ export default function SponsorshipKit() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football — sponsor the live call on ONE FM 98.5"
-          badge="GVL Footy Sponsorship · From $25/week"
+          badge="GVL Footy · Premium inventory"
         />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">

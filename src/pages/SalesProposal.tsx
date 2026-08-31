@@ -21,6 +21,8 @@ import {
 } from '@/components/onair/kit'
 import { generalTiers, footballTiers, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
+import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
@@ -276,7 +278,7 @@ export default function SalesProposal() {
     <Layout>
       <SEO
         title="Request a Sponsorship Proposal"
-        description="Request a tailored ONE FM 98.5 sponsorship proposal. Est. 39,375 weekly listeners across 25 towns (ABS 2021). Station staff send the PDF."
+        description={`Request a tailored ONE FM 98.5 sponsorship proposal. ${formatWeeklyListeners()} across ${formatTowns()} (ABS 2021). ${STANDARD_SPOT_PLUS_GST}. Station staff send the PDF.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -284,6 +286,7 @@ export default function SalesProposal() {
             `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
             `${stationStats.totalTowns} towns · ~${stationStats.broadcastRadiusKm}km radius`,
             'Packages from $50/week',
+            STANDARD_SPOT_PLUS_GST,
             'Staff-written PDF — not a public generator',
           ]}
           delay={0.4}
@@ -345,7 +348,7 @@ export default function SalesProposal() {
           to="/football"
           img={STATION_PHOTOS.gvlActionSprint}
           alt="GVL football — sponsor the live call on ONE FM 98.5"
-          badge="GVL Footy · From $25/week · 9 tiers"
+          badge="GVL Footy · Premium inventory"
         />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
