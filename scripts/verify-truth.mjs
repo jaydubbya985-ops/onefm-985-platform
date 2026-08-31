@@ -38,6 +38,10 @@ const FORBIDDEN = [
   { re: /Request Received!/, why: 'mailto song request is a draft, not a received request' },
   { re: /Enquiry Sent!/, why: 'enquiry forms must not claim sent unless stored or emailed' },
   { re: /Sent via ONE FM Operations Portal/, why: 'invoice email footer must not claim the message was sent' },
+  { re: /GVL Footy Sponsorship · From \$25/i, why: 'GVL is premium — never advertise from $25' },
+  { re: /GVL Footy · From \$25/i, why: 'GVL is premium — never advertise from $25' },
+  { re: /9 sponsorship tiers from \$25\/week/i, why: 'GVL is premium — never advertise from $25' },
+  { re: /FROM \$25\/WEEK · NAMING RIGHTS/i, why: 'GVL is premium — never advertise from $25' },
 ]
 
 function walk(dir) {

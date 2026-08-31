@@ -6,9 +6,10 @@ export const generalTiers = {
   signaturePartner: { name: 'Signature Partner', minPrice: 500, maxPrice: 600, weeklyPrice: 550, spots: 40, socialPosts: 12, exclusivity: true },
 };
 
-// Football tiers (9-tier from brief)
+// Football season packages. Community Supporter $25/wk is a name-read + logo —
+// not a GVL commercial spot. Never market GVL as “from $25”.
 export const footballTiers = [
-  { id: 1, name: 'Community Supporter', price: 25, features: ['Name read on match day', '1 social mention/month', 'Website logo listing'] },
+  { id: 1, name: 'Community Supporter', price: 25, features: ['Name read on match day (not a GVL commercial spot)', '1 social mention/month', 'Website logo listing'] },
   { id: 2, name: 'Community Partner', price: 50, features: ['5 radio spots', '2 social posts/month', 'Logo on website', 'Quarter-page ad'] },
   { id: 3, name: 'Local Champion', price: 100, features: ['10 radio spots', '4 social posts/month', 'Quarter-page ad', 'Newsletter mention'] },
   { id: 4, name: 'Champion Partner', price: 150, features: ['20 radio spots', '6 social posts/month', 'Half-page ad', 'Newsletter mention', 'Live read by commentators'], badge: 'MOST POPULAR' },

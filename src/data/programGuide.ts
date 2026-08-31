@@ -220,7 +220,13 @@ export const ON_AIR_WEEK: { name: string; sub: string; img: string }[] = [
   })),
   { name: 'Johnny P', sub: 'Dancing through the decades · Mon–Fri 9AM' },
   { name: 'James Manley', sub: 'The James Manley Show · Mon & Tue 4PM' },
-].map((row, i) => ({ ...row, img: ON_AIR_WALL_BACKDROPS[i % ON_AIR_WALL_BACKDROPS.length] }))
+].map((row, i) => ({
+  ...row,
+  img:
+    row.name === 'Di Hunter'
+      ? '/assets/images/heritage-di-hunter-carols-2014.jpg'
+      : ON_AIR_WALL_BACKDROPS[i % ON_AIR_WALL_BACKDROPS.length],
+}))
 
 /** All unique presenters from the guide */
 export const ALL_PRESENTERS = [
