@@ -5,6 +5,9 @@
  * Does not run during `npm run build` — local dist is not production.
  */
 const LIVE = 'https://onefmops.netlify.app'
+const FETCH_ATTEMPTS = 4
+const FETCH_RETRY_MS = [500, 1000, 2000]
+const RETRYABLE_HTTP = new Set([408, 425, 429, 500, 502, 503, 504])
 
 /** Bundles known to be the pre-EXE DEMO deploy. */
 const STALE_CHUNKS = [
@@ -15,9 +18,38 @@ const STALE_CHUNKS = [
 
 const fail = []
 
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function isRetryableFetchError(err) {
+  const text = err instanceof Error ? `${err.name} ${err.message} ${err.cause?.code ?? ''}` : String(err)
+  return /fetch failed|ECONNRESET|ETIMEDOUT|ECONNREFUSED|EAI_AGAIN|UND_ERR/i.test(text)
+}
+
+async function liveFetch(path) {
+  const url = path.startsWith('http') ? path : LIVE + path
+  let lastError
+  for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt += 1) {
+    try {
+      const res = await fetch(url)
+      if (res.ok || !RETRYABLE_HTTP.has(res.status) || attempt === FETCH_ATTEMPTS) {
+        return res
+      }
+      lastError = new Error(`${url} HTTP ${res.status}`)
+    } catch (err) {
+      if (!isRetryableFetchError(err) || attempt === FETCH_ATTEMPTS) throw err
+      lastError = err
+    }
+    await wait(FETCH_RETRY_MS[attempt - 1] ?? FETCH_RETRY_MS.at(-1))
+  }
+
+  throw lastError instanceof Error ? lastError : new Error(`${url} fetch failed`)
+}
+
 async function get(path) {
   const url = path.startsWith('http') ? path : LIVE + path
-  const res = await fetch(url)
+  const res = await liveFetch(path)
   if (!res.ok) throw new Error(`${url} HTTP ${res.status}`)
   return res.text()
 }
@@ -85,7 +117,7 @@ else {
 
   let runtimeConfigured = false
   try {
-    const cfgRes = await fetch(LIVE + '/.netlify/functions/ops-config')
+    const cfgRes = await liveFetch('/.netlify/functions/ops-config')
     const cfgText = await cfgRes.text()
     const looksLikeHtml = cfgText.trimStart().startsWith('<')
     if (cfgRes.ok && !looksLikeHtml) {
@@ -116,7 +148,7 @@ else {
 }
 
 try {
-  const statusRes = await fetch(LIVE + '/.netlify/functions/email-status')
+  const statusRes = await liveFetch('/.netlify/functions/email-status')
   const statusText = await statusRes.text()
   if (!statusRes.ok || statusText.trimStart().startsWith('<')) {
     fail.push('live email-status is missing or SPA HTML — invoice email cannot be proven')
@@ -136,7 +168,7 @@ try {
 }
 
 try {
-  const sendRes = await fetch(LIVE + '/.netlify/functions/send-invoice')
+  const sendRes = await liveFetch('/.netlify/functions/send-invoice')
   const sendText = await sendRes.text()
   if (sendText.trimStart().startsWith('<')) {
     fail.push('live send-invoice is SPA HTML — function is not deployed')
