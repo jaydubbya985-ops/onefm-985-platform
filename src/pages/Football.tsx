@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label'
 import { towns } from '@/data/townData'
 import { footballTiers, stationStats } from '@/data/pricing'
 import { GVL_PREMIUM_INTRO, GVL_PREMIUM_SEO, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { InventoryLadder } from '@/components/InventoryLadder'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
@@ -419,6 +420,12 @@ export default function Football() {
 
       {/* ─── GVL Sports Photo Strip ─── */}
       <GVLGalleryStrip />
+
+      <section className="bg-surface-mid px-4 sm:px-6 py-10">
+        <div className="max-w-[800px] mx-auto">
+          <InventoryLadder />
+        </div>
+      </section>
 
       {/* ═══════════════════════════════════════════
           SECTION 2 — THE 9 TIERS

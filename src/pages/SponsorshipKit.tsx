@@ -14,6 +14,7 @@ import { generalTiers, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
 import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { InventoryLadder } from '@/components/InventoryLadder'
 
 const RED = '#E51636'
 
@@ -150,6 +151,10 @@ export default function SponsorshipKit() {
         />
 
         <EditorialCards label="The Packages" items={tiers} columns={2} />
+
+        <section className="px-6 md:px-12 lg:px-20 pb-10">
+          <InventoryLadder />
+        </section>
 
         <FeatureFrame
           to="/football"
