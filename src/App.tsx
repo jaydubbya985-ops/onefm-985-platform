@@ -21,6 +21,7 @@ const Home = lazy(() => import('./pages/Home'))
 const Listen = lazy(() => import('./pages/Listen'))
 const Football = lazy(() => import('./pages/Football'))
 const CoverageMap = lazy(() => import('./pages/CoverageMap'))
+const Programs = lazy(() => import('./pages/Programs'))
 const SponsorshipKit = lazy(() => import('./pages/SponsorshipKit'))
 const AudienceAnalytics = lazy(() => import('./pages/AudienceAnalytics'))
 const SalesProposal = lazy(() => import('./pages/SalesProposal'))
@@ -242,8 +243,14 @@ export default function App() {
             </LazyRoute>
           }
         />
-        {/* Absorbed into /listen per REBUILD-SPEC.md */}
-        <Route path="/programs" element={<Navigate to="/listen" replace />} />
+        <Route
+          path="/programs"
+          element={
+            <LazyRoute variant="list" routeName="Programs">
+              <Programs />
+            </LazyRoute>
+          }
+        />
         {/* Absorbed into /heritage per REBUILD-SPEC.md */}
         <Route path="/story" element={<Navigate to="/heritage" replace />} />
         <Route

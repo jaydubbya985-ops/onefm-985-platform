@@ -70,8 +70,28 @@ if (
   !listen.text.includes('Open email draft')
 ) {
   hits.push(
-    'pages/Listen.tsx: routed song request must open a mailto draft and say so ( /programs redirects to /listen )',
+    'pages/Listen.tsx: routed song request must open a mailto draft and say so',
   )
+}
+
+const programs = files.find((f) => f.label === 'pages/Programs.tsx')
+if (
+  !programs ||
+  !programs.text.includes('Email Draft Opened') ||
+  /Request Received/i.test(programs.text)
+) {
+  hits.push(
+    'pages/Programs.tsx: song request must say a draft opened — not that it was received',
+  )
+}
+
+const app = files.find((f) => f.label === 'App.tsx')
+if (
+  !app ||
+  !app.text.includes("path=\"/programs\"") ||
+  /path=\"\/programs\" element=\{<Navigate to=\"\/listen\"/.test(app.text)
+) {
+  hits.push('App.tsx: /programs must mount Programs, not redirect to /listen')
 }
 
 if (hits.length) {
