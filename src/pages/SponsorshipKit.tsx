@@ -11,7 +11,9 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { generalTiers } from '@/data/pricing'
+import { BREAKFAST_SHOW, BREAKFAST_TIME, getBreakfastScheduleLabel } from '@/data/programGuide'
 import { submitEnquiry } from '@/lib/enquiries'
+import { BRAND } from '@/lib/brand'
 import {
   coverageStatsStrip,
   formatTowns,
@@ -19,10 +21,11 @@ import {
   formatWeeklyListeners,
   tickerWeeklyListenersItem,
 } from '@/lib/coverageCopy'
-import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { GVL_PREMIUM_BADGE, PARTNERSHIP_FROM_WEEKLY, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 
 const RED = '#E51636'
+const ENTRY_WEEKLY = generalTiers.communityPartner.minPrice
 
 function SponsorHero() {
   const reduced = useReducedMotion()
@@ -47,8 +50,9 @@ function SponsorHero() {
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Radio advertising that supports the community it sells to — from $50 a week,
-          heard across {formatTowns()} of the Goulburn Valley.
+          Radio advertising that supports the community it sells to — {PARTNERSHIP_FROM_WEEKLY},
+          heard across {formatTowns()} of the Goulburn Valley. {BREAKFAST_SHOW} runs {BREAKFAST_TIME} weekdays.
+          GVL match-day commercials are premium inventory — not the standard 30-second floor.
         </p>
         <a
           href="#enquire"
@@ -84,7 +88,7 @@ function EnquiryForm() {
     if (result.success) {
       setState('done')
     } else {
-      setError(result.error ?? 'Something went wrong — email admin@fm985.com.au instead.')
+      setError(result.error ?? `Something went wrong — email ${BRAND.email} instead.`)
       setState('error')
     }
   }
@@ -132,23 +136,25 @@ export default function SponsorshipKit() {
     <Layout>
       <SEO
         title="Sponsor ONE FM 98.5 — Advertise Across the Goulburn Valley"
-        description={`Sponsorship from $50/week: ${formatWeeklyListeners()} across ${formatTowns()}. ${STANDARD_SPOT_PLUS_GST}. GVL is premium inventory.`}
+        description={`${PARTNERSHIP_FROM_WEEKLY}. ${formatWeeklyListeners()} across ${formatTowns()}. ${STANDARD_SPOT_PLUS_GST}. ${GVL_PREMIUM_BADGE}. ${BREAKFAST_SHOW} ${BREAKFAST_TIME}.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             tickerWeeklyListenersItem(),
             formatTownsGvl(),
-            'Packages from $50/week',
+            PARTNERSHIP_FROM_WEEKLY,
             STANDARD_SPOT_PLUS_GST,
-            'Donated airtime for local not-for-profits',
+            `${BREAKFAST_SHOW} · ${BREAKFAST_TIME}`,
+            getBreakfastScheduleLabel(),
+            GVL_PREMIUM_BADGE,
           ]}
           delay={0.4}
         />
         <SponsorHero />
 
         <StatsStrip
-          stats={[...coverageStatsStrip(), { n: '$50', t: 'Per week — entry package' }]}
+          stats={[...coverageStatsStrip(), { n: `$${ENTRY_WEEKLY}`, t: 'Per week — Community Partner floor' }]}
         />
 
         <EditorialCards label="The Packages" items={tiers} columns={2} />
@@ -161,7 +167,7 @@ export default function SponsorshipKit() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football — sponsor the live call on ONE FM 98.5"
-          badge="GVL Footy · Premium inventory"
+          badge={GVL_PREMIUM_BADGE}
         />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
@@ -169,12 +175,12 @@ export default function SponsorshipKit() {
           <div className="grid md:grid-cols-2 gap-5">
             <Link to="/audience" className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636] block" data-cursor-label="DATA">
               <h3 className="font-poster uppercase text-[26px] text-white">Audience &amp; Reach Data</h3>
-              <p className="text-[15px] text-white/55 mt-2">Demographics, listening habits and platform numbers — the full picture behind the stats.</p>
+              <p className="text-[15px] text-white/55 mt-2">ABS 2021 modelled reach via townData — not a measured listener survey. Stream analytics pending Radio.co.</p>
               <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>See the data →</span>
             </Link>
             <Link to="/media-kit" className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636] block" data-cursor-label="KIT">
               <h3 className="font-poster uppercase text-[26px] text-white">Media Kit &amp; Rate Card</h3>
-              <p className="text-[15px] text-white/55 mt-2">Downloadable rates, specs and station assets for your marketing team or agency.</p>
+              <p className="text-[15px] text-white/55 mt-2">Rate card, coverage, and station brand files for your marketing team or agency.</p>
               <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>Open the kit →</span>
             </Link>
           </div>
@@ -187,7 +193,11 @@ export default function SponsorshipKit() {
           </h2>
           <EnquiryForm />
           <p className="text-[13px] text-white/35 mt-4">
-            Goes straight to the station's pipeline — or email <a href="mailto:admin@fm985.com.au" className="underline hover:text-white">admin@fm985.com.au</a> / call (03) 5831 3131.
+            Goes straight to the station's pipeline — or email{' '}
+            <a href={`mailto:${BRAND.email}`} className="underline hover:text-white">
+              {BRAND.email}
+            </a>{' '}
+            / call {BRAND.phone}.
           </p>
         </section>
 
