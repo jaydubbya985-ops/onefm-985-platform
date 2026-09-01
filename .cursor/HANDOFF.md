@@ -25,10 +25,13 @@
 3. Do not merge without **EXE**. Never merge PR **#13**.
 4. After you open a PR, start the next desk immediately.
 
+## Open now
+
+PR **#24** `cursor/continuous-run-c24f` — continuous-run prompt + Home/Listen/Community/OnAirNav via `coverageCopy`. Do not merge without **EXE**.
+
 ## Next desks (do not wait)
 
-- Public home/listen/community craft from `programGuide.ts` + `townData.ts` + station photos.
-- Leftover hardcoded coverage strings → `coverageCopy.ts`.
+- Leftover `stationStats` coverage strings → `coverageCopy.ts` (MediaKit, Football, SponsorshipKit, SalesProposal, Support).
 - Stale drafts (all CONFLICTING): **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13** (would regress `#/ops` to DEMO).
 
 ## NEED JAY (one action)
