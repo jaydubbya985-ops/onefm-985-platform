@@ -1,8 +1,8 @@
 ﻿import { useState, useEffect, useRef, memo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
-  Search, ChevronDown, Download, Copy, Check, Instagram, Twitter, Facebook,
-  Smartphone, Globe, Image, Palette, Type, Grid, Music, ArrowRight,
+  Search, ChevronDown, Download, Copy, Check, Instagram, Facebook,
+  Smartphone, Globe, Image, Palette, Type, Grid, ArrowRight,
   Sparkles, X, Eye, Hash, Shield,
   Mic, Clock, Plus, Wand2, Radio
 } from 'lucide-react'
@@ -24,6 +24,12 @@ import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { SOCIAL_LINKS } from '@/lib/socialLinks'
+
+/** Confirmed public profiles only — twitter, instagram, tiktok, youtube stay null. */
+const LIVE_PROFILE_LABELS = (Object.entries(SOCIAL_LINKS) as [string, string | null][])
+  .filter(([, href]) => Boolean(href))
+  .map(([name]) => (name === 'facebook' ? 'Facebook' : name === 'soundcloud' ? 'SoundCloud' : name))
 import { InventoryLadder } from '@/components/InventoryLadder'
 import {
   BREAKFAST_SHOW,
@@ -107,15 +113,16 @@ const TEMPLATES = [
   { name: 'First Nations in the Valley', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Community', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
   { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
   { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
-  { name: 'TikTok Vertical — Now Playing', platform: 'TikTok', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
-  { name: 'LinkedIn Community Partner', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
-  { name: 'Threads Quote Card', platform: 'Twitter/X', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Vertical Now Playing', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'Community Partner Landscape', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Quote Card', platform: 'Facebook', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
   { name: 'Carousel Slide 1 — Breakfast', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Carousel)', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
   { name: 'GVL Scoreboard Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
   { name: 'Presenter Spotlight Reel', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
 ]
 
-const PLATFORM_FILTERS = ['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'Stories', 'Reels']
+/** Canva size buckets — not a claim we post on Twitter/TikTok (those URLs are null). */
+const PLATFORM_FILTERS = ['All', 'Instagram', 'Facebook', 'Stories', 'Reels']
 
 // Page counts were invented, so the cards link to the live page instead of
 // claiming a document length we cannot produce.
@@ -563,7 +570,10 @@ function TemplatesSection() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <WordReveal text="CONTENT TEMPLATES" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted">Ready-made designs for every platform</p>
+            <p className="font-body-small text-muted">
+              Canva-sized layouts for story/reel formats. Live station profiles:{' '}
+              {LIVE_PROFILE_LABELS.join(' and ')}.
+            </p>
           </div>
 
           <div className="flex gap-1 flex-wrap">
@@ -963,34 +973,23 @@ function PostingToolkit() {
  * have, so it now says what it is and every control shown does something.
  */
 const CAPTION_TEMPLATES: Record<string, string[]> = {
-  Instagram: [
-    `🎙️ ${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays on ONE FM 98.5. #ONEFMBreakfast #OneFM`,
-    '📻 Community radio, made in Shepparton. Tune to 98.5 FM or stream at fm985.com.au. #OneFM #RadioLife',
-  ],
-  TikTok: [
-    'Community radio from the Goulburn Valley, on air since 1989 🎧 #OneFM #RadioTok',
-    'Behind the desk at ONE FM 98.5 — volunteer-run, live and local 🎙️ #OneFM #MusicTok',
-  ],
-  'Twitter/X': [
-    `🎵 ${BREAKFAST_SHOW} — ${BREAKFAST_TIME} weekdays on ONE FM 98.5. Tune in → 98.5 FM #ONEFMBreakfast`,
-    `${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Stream at fm985.com.au #OneFM #GVL`,
-  ],
   Facebook: [
     `${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays — news, music, and community from your local station. 🎙️`,
     `Catch ${GVL_MATCH?.name ?? 'GVL Match of the Day'} ${GVL_WHEN} on ONE FM 98.5, or stream anywhere at fm985.com.au. Friday night is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL'}. 🎉`,
   ],
-  LinkedIn: [
-    'ONE FM 98.5 is a volunteer-powered community broadcaster licensed to Goulburn Valley Community Radio Inc., on air from Shepparton since 1989.',
+  SoundCloud: [
+    'Catch the latest interviews and replays on the ONE FM SoundCloud. Search the station from the Listen page.',
+    `${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays on ONE FM 98.5 — then find the conversation again on SoundCloud.`,
   ],
 }
 
 function CaptionGenerator() {
-  const [platform, setPlatform] = useState('Instagram')
+  const [platform, setPlatform] = useState('Facebook')
   const [variant, setVariant] = useState(0)
   const [result, setResult] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const options = CAPTION_TEMPLATES[platform] ?? CAPTION_TEMPLATES.Instagram
+  const options = CAPTION_TEMPLATES[platform] ?? CAPTION_TEMPLATES.Facebook
 
   const generate = () => setResult(options[variant % options.length])
 
@@ -1016,8 +1015,8 @@ function CaptionGenerator() {
           </div>
           <WordReveal text="CAPTION TEMPLATES" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
           <p className="font-body-small text-muted">
-            Pick a platform, copy a starter caption, then edit it for the post. Written by the
-            station — no generated copy.
+            Starter captions for {LIVE_PROFILE_LABELS.join(' and ')}. Written by the station — no
+            generated copy.
           </p>
         </motion.div>
 
@@ -1037,7 +1036,7 @@ function CaptionGenerator() {
                 onChange={(e) => setPlatform(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white focus:outline-none focus:border-one-gold text-sm"
               >
-                {['Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'LinkedIn'].map((p) => (
+                {Object.keys(CAPTION_TEMPLATES).map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
               </select>
@@ -1099,7 +1098,7 @@ function CaptionGenerator() {
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="font-label text-[10px] text-data-teal">
-                  Character count: {result.length} / {platform === 'Twitter/X' ? 280 : 2200}
+                  Character count: {result.length} / 2200
                 </div>
                 <div className="flex gap-2">
                   <button onClick={copyResult} data-cursor-label={copied ? 'COPIED' : 'COPY'} className="btn-secondary text-xs">
@@ -1132,8 +1131,6 @@ function SocialFeedPreview() {
   const platformIcon = (platform: string) => {
     switch (platform) {
       case 'Instagram': return <Instagram size={14} />
-      case 'TikTok': return <Music size={14} />
-      case 'Twitter/X': return <Twitter size={14} />
       case 'Facebook': return <Facebook size={14} />
       default: return <Globe size={14} />
     }
@@ -1145,11 +1142,13 @@ function SocialFeedPreview() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <WordReveal text="LATEST FROM THE FEED" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted">Recent posts across all platforms</p>
+            <p className="font-body-small text-muted">
+              Recent posts from the Facebook page.
+            </p>
           </div>
 
           <div className="flex gap-1 flex-wrap">
-            {['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook'].map((f) => (
+            {['All', 'Facebook'].map((f) => (
               <button
                 key={f}
                 onClick={() => { setFeedFilter(f); setVisibleCount(4) }}
