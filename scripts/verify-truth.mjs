@@ -51,6 +51,8 @@ const FORBIDDEN = [
   { re: /5555 0198/, why: 'placeholder phone — use BRAND.phone (03) 5831 3131' },
   { re: /The World, On the Weekend Dial/i, why: 'multicultural programs are Mon–Wed evenings in programGuide, not weekend' },
   { re: /languages on the weekend dial/i, why: 'multicultural programs are Mon–Wed evenings in programGuide, not weekend' },
+  { re: /dangerouslyAllowBrowser/i, why: 'never expose provider API keys directly in the browser bundle' },
+  { re: /VITE_OPENAI_API_KEY/i, why: 'OpenAI secret keys must not be Vite/browser environment variables' },
 ]
 
 function walk(dir) {
