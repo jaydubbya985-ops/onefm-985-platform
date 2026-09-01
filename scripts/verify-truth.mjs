@@ -44,6 +44,7 @@ const FORBIDDEN = [
   { re: /FROM \$25\/WEEK · NAMING RIGHTS/i, why: 'GVL is premium — never advertise from $25' },
   { re: /advertise on GVL.{0,40}from \$25/i, why: 'GVL must never be sold from $25' },
   { re: /~100km radius/, why: 'use formatRadius() from coverageCopy — do not hardcode ~100km' },
+  { re: /roughly 30 km/, why: 'coverage model is townData / coverageCopy radius, not a 30km city-centre shorthand' },
   { re: /~\$\{stationStats\.broadcastRadiusKm\}/, why: 'use formatRadius() from coverageCopy — do not hardcode ~km' },
   { re: /Peak listening: breakfast/, why: 'do not invent peak listening hours — Radio.co daypart share is data pending' },
   { re: /drive \(4–7pm\)/, why: 'drive 4–7pm is not a programGuide slot and is not a measured peak' },
@@ -323,7 +324,7 @@ assertCoverageCopy('pages/AudienceAnalytics.tsx', [
   'formatWeeklyListenersPlain()',
   'formatBroadcastPopulation()',
 ])
-assertCoverageCopy('pages/Heritage.tsx', ['formatTowns()'])
+assertCoverageCopy('pages/Heritage.tsx', ['formatTowns()', 'yearsBroadcastingValue()'])
 assertCoverageCopy('pages/Story.tsx', [
   'formatTowns()',
   'formatRadius()',

@@ -3,6 +3,7 @@
  * Master research integrated 2026-07-06. No fabricated stats or awards.
  */
 import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
+import { formatRadius, formatTowns } from '@/lib/coverageCopy'
 
 export type HistorySource =
   | 'ACMA community licence register'
@@ -160,7 +161,7 @@ export const INSTITUTION_FACTS = [
   {
     tag: 'Signal',
     title: '10 kW from Shepparton',
-    body: 'ACMA lists 3ONE as a 10 kW community FM service. The station says coverage extends roughly 30 km from Shepparton city centre — Euroa, Nagambie, Benalla and surrounding towns.',
+    body: `ACMA lists 3ONE as a 10 kW community FM service. Reach on this site is modelled as ${formatTowns()} within a ${formatRadius()} radius of Shepparton (ABS 2021 via townData) — Euroa, Nagambie, Benalla and surrounding towns.`,
   },
   {
     tag: 'Multicultural',
