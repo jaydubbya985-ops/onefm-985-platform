@@ -25,6 +25,38 @@ import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
+import {
+  BREAKFAST_SHOW,
+  BREAKFAST_TIME,
+  FULL_SCHEDULE,
+  MULTICULTURAL_PROGRAM_COUNT,
+} from '@/data/programGuide'
+
+/** programGuide day 0=Sunday … 6=Saturday */
+const GUIDE_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
+
+function formatGuideHour(h: number): string {
+  if (h === 0 || h === 24) return '12:00am'
+  if (h === 12) return '12:00pm'
+  return h < 12 ? `${h}:00am` : `${h - 12}:00pm`
+}
+
+function guideSlot(name: string) {
+  const slot = FULL_SCHEDULE.find((s) => s.name === name)
+  if (!slot) return null
+  return {
+    name: slot.name,
+    dayName: GUIDE_DAYS[slot.day],
+    time: `${formatGuideHour(slot.startHour)}–${formatGuideHour(slot.endHour)}`,
+  }
+}
+
+const GVL_MATCH = guideSlot('GVL Match of the Day')
+const NIRS_AFL_FRIDAY = guideSlot('NIRS AFL Friday Night Footy')
+const GVL_WHEN = GVL_MATCH ? `${GVL_MATCH.dayName} ${GVL_MATCH.time}` : 'Saturday'
+const NIRS_WHEN = NIRS_AFL_FRIDAY
+  ? `${NIRS_AFL_FRIDAY.dayName} ${NIRS_AFL_FRIDAY.time}`
+  : 'Friday night'
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -72,7 +104,7 @@ const TEMPLATES = [
   { name: 'Live Stream Now Playing', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
   { name: 'Sponsor Thank You', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Sponsor', 'Community', 'Thank You'], image: '/assets/images/gvl-player-high-five.jpg' },
   { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
-  { name: 'First Nations Program', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
+  { name: 'First Nations in the Valley', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Community', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
   { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
   { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
   { name: 'TikTok Vertical — Now Playing', platform: 'TikTok', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
@@ -100,30 +132,30 @@ const GUIDES = [
  * metrics into this repo, so the cards show the copy and the artwork only.
  */
 const FEED_POSTS = [
-  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage is LIVE on ONE FM 98.5! Follow every bounce on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM' },
+  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: `${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Follow the local call on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM` },
   { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton' },
   { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley' },
   { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community' },
-  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL — nothing beats local footy on a Friday night. Catch us on 98.5 FM 🔴 #GVL #LocalFooty' },
+  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: `Under the lights at the GVL — ${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Friday night on the guide is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL Friday Night Footy'}. Catch us on 98.5 FM 🔴 #GVL #LocalFooty` },
   { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM' },
-  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: 'Live and local — eight language programs keeping every corner of the Goulburn Valley connected. #OneFM985 #Community' },
+  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: `Live and local — ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide keeping every corner of the Goulburn Valley connected. #OneFM985 #Community` },
   { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️' },
 ]
 
-// Content calendar — GVL events & ONE FM programming (update monthly)
+// Cadence reminders, not a fixture list. Sport labels match programGuide.ts.
 const CALENDAR_EVENTS = [
-  { day: 1,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
-  { day: 5,  type: 'Content', color: '#9B5DE5', name: 'Multicultural Program Spotlight' },
-  { day: 8,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 1,  type: 'Live',    color: '#E51636', name: `Saturday · ${GVL_MATCH?.name ?? 'GVL Match of the Day'}` },
+  { day: 5,  type: 'Live',    color: '#E51636', name: `Friday · ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL Friday Night Footy'}` },
+  { day: 8,  type: 'Live',    color: '#E51636', name: `Saturday · ${GVL_MATCH?.name ?? 'GVL Match of the Day'}` },
   { day: 10, type: 'Partner', color: '#B6FF00', name: 'Sponsor Shoutout' },
-  { day: 12, type: 'Content', color: '#9B5DE5', name: 'Breakfast Behind the Scenes' },
-  { day: 15, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 12, type: 'Content', color: '#9B5DE5', name: `${BREAKFAST_SHOW} behind the scenes` },
+  { day: 15, type: 'Live',    color: '#E51636', name: `Saturday · ${GVL_MATCH?.name ?? 'GVL Match of the Day'}` },
   { day: 18, type: 'Content', color: '#1B458F', name: 'Goulburn Valley Heritage Post' },
   { day: 20, type: 'Partner', color: '#B6FF00', name: 'Community Org Feature' },
-  { day: 22, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 22, type: 'Live',    color: '#E51636', name: `Saturday · ${GVL_MATCH?.name ?? 'GVL Match of the Day'}` },
   { day: 25, type: 'Content', color: '#9B5DE5', name: 'Regional Feature — Town of the Week' },
   { day: 27, type: 'Partner', color: '#B6FF00', name: 'Sponsor Spotlight' },
-  { day: 29, type: 'Live',    color: '#E51636', name: 'GVL Final / Major Event' },
+  { day: 29, type: 'Content', color: '#9B5DE5', name: 'Multicultural Program Spotlight' },
 ]
 
 /* ─── Animated Grid Pattern Background ─── */
@@ -713,7 +745,9 @@ function CampaignCalendar() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <WordReveal text="CAMPAIGN CALENDAR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted">Plan and coordinate social campaigns</p>
+            <p className="font-body-small text-muted">
+              Posting cadence reminders — sport labels from the station guide (GVL Saturday, NIRS AFL Friday), not a fixture list.
+            </p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -824,7 +858,7 @@ function CampaignCalendar() {
           >
             {CALENDAR_EVENTS.map((event, i) => (
               <motion.div
-                key={event.name}
+                key={`${event.day}-${event.name}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05, duration: 0.3 }}
@@ -930,7 +964,7 @@ function PostingToolkit() {
  */
 const CAPTION_TEMPLATES: Record<string, string[]> = {
   Instagram: [
-    '🎙️ Live now on ONE FM 98.5 — ONE FM Breakfast, 6AM–9AM weekdays. #ONEFMBreakfast #OneFM',
+    `🎙️ ${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays on ONE FM 98.5. #ONEFMBreakfast #OneFM`,
     '📻 Community radio, made in Shepparton. Tune to 98.5 FM or stream at fm985.com.au. #OneFM #RadioLife',
   ],
   TikTok: [
@@ -938,12 +972,12 @@ const CAPTION_TEMPLATES: Record<string, string[]> = {
     'Behind the desk at ONE FM 98.5 — volunteer-run, live and local 🎙️ #OneFM #MusicTok',
   ],
   'Twitter/X': [
-    '🎵 LIVE NOW: ONE FM Breakfast on ONE FM 98.5. News, music, and your calls. Tune in → 98.5 FM #ONEFMBreakfast',
-    'GVL football, called live on ONE FM 98.5. Stream at fm985.com.au #OneFM #GVL',
+    `🎵 ${BREAKFAST_SHOW} — ${BREAKFAST_TIME} weekdays on ONE FM 98.5. Tune in → 98.5 FM #ONEFMBreakfast`,
+    `${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Stream at fm985.com.au #OneFM #GVL`,
   ],
   Facebook: [
-    'ONE FM Breakfast is live from 6AM weekdays — news, music, and community from your local station. 🎙️',
-    'Catch GVL football and netball called live on ONE FM 98.5, or stream anywhere at fm985.com.au. 🎉',
+    `${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays — news, music, and community from your local station. 🎙️`,
+    `Catch ${GVL_MATCH?.name ?? 'GVL Match of the Day'} ${GVL_WHEN} on ONE FM 98.5, or stream anywhere at fm985.com.au. Friday night is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL'}. 🎉`,
   ],
   LinkedIn: [
     'ONE FM 98.5 is a volunteer-powered community broadcaster licensed to Goulburn Valley Community Radio Inc., on air from Shepparton since 1989.',
@@ -1243,7 +1277,7 @@ function MailchimpExportSection() {
 export default function SocialHub() {
   return (
     <Layout>
-      <SEO title="Social Media Hub" description="ONE FM 98.5 brand assets, content templates, caption starters, and campaign calendar." />
+      <SEO title="Social Media Hub" description={`ONE FM 98.5 brand assets and caption starters from the station guide: ${BREAKFAST_SHOW} weekdays, GVL Match of the Day ${GVL_WHEN}, NIRS AFL ${NIRS_WHEN}.`} />
       <HeroSection />
       <LiveFacebookSection />
       <AssetLibrary />
