@@ -4,7 +4,7 @@
  */
 
 import { getCurrentLiveShow, type LiveShowInfo } from '@/data/programGuide'
-import { STREAM_STATUS_URL } from '@/lib/streamConfig'
+import { AUDIO_PLAYER_URL, STREAM_STATUS_URL } from '@/lib/streamConfig'
 
 export type MetadataSource = 'schedule' | 'rds' | 'stream' | 'manual' | 'unavailable'
 
@@ -29,10 +29,13 @@ export interface TickerItem {
   href?: string
 }
 
-/** Approved station messages — not invented stats */
+/** Approved station messages — not invented stats.
+ *  Official listen: 98.5 FM, Radio.co stream, fm985.com.au web player.
+ *  Do not advertise Community Radio Plus (national CBAA app, not a verified ONE FM listing).
+ */
 export const STATION_TICKER: TickerItem[] = [
   { id: '1', text: 'Live & Local — Goulburn Murray', href: 'https://fm985.com.au' },
-  { id: '2', text: 'Listen on 98.5 FM · fm985.com.au · Community Radio Plus', href: 'https://fm985.com.au/audio-player/' },
+  { id: '2', text: 'Listen on 98.5 FM · Radio.co · fm985.com.au web player', href: AUDIO_PLAYER_URL },
   { id: '3', text: 'Goulburn Valley Community Radio Inc. · Callsign 3ONE', href: '/heritage' },
   { id: '4', text: 'Latest interviews & community news at fm985.com.au', href: 'https://fm985.com.au' },
 ]
