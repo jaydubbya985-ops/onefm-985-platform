@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
-import { BRAND_COLORS } from '@/lib/brand'
+import { BRAND, BRAND_COLORS } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 
 export interface FeaturePortalProps {
   to: string
@@ -26,16 +27,20 @@ export function FeaturePortal({
   className = '',
   imageClassName = '',
 }: FeaturePortalProps) {
+  const coverage = formatCoverageShort()
+  const lockup = `${title} — ${BRAND.fullName} · ${coverage}`
+
   return (
     <Link
       to={to}
+      title={lockup}
       data-cursor-label={title.toUpperCase()}
       className={`group relative block overflow-hidden rounded-2xl border border-one-border bg-one-midnight aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] hover:border-one-gold/40 transition-all duration-500 ${className}`}
     >
       <MediaImage
         src={image}
         fallbackSrc={imageFallback ?? image}
-        alt=""
+        alt={lockup}
         className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${imageClassName}`}
       />
       <div
@@ -66,6 +71,9 @@ export function FeaturePortal({
               {title}
             </h2>
             <p className="font-body-small text-one-muted text-xs mt-1 line-clamp-2">{description}</p>
+            <p className="font-label text-[9px] tracking-[0.12em] uppercase text-one-white/45 mt-1.5">
+              {coverage}
+            </p>
           </div>
           <span
             className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-black/30 group-hover:border-one-gold/50 group-hover:bg-one-gold/10 transition-all"
