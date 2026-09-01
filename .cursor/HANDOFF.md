@@ -4,38 +4,27 @@
 
 **Repo:** `jaydubbya985-ops/onefm-985-platform`  
 **Live:** https://onefmops.netlify.app  
-**Netlify site ID:** `8df4de74-d9a8-42ce-9316-61bd06475c94`  
 **GitHub `main` is source of truth.** Always `git pull origin main` first.  
-**Do not merge PRs unless Jay says EXE.**
+**Do not merge PRs unless Jay says EXE.** Never merge PR **#13**.
 
-**CONTINUOUS RUN IS ON.** Do not idle. Do not wait for Jay to start the next agent. Read `.cursor/CONTINUOUS.md`. Arm a 20-minute continue timer. Keep shipping.
+**CONTINUOUS RUN IS ON.** Read `.cursor/CONTINUOUS.md`. Keep shipping.
 
-## Already true on GitHub `main` (`f867787`)
+## Already true on GitHub `main` (`1b34f20`)
 
-- PR **#29** EXE'd. Footer, nav, SEO, HorizontalGallery via `coverageCopy.ts`.
-- PR **#28** EXE'd. Audience, Heritage, Story, Contact via `coverageCopy.ts`.
-- PR **#27** EXE'd. MediaKit, Football, SponsorshipKit, SalesProposal via `coverageCopy.ts`.
-- PR **#25** EXE'd. Invoice Design Lab — 3 variants at `#/ops` → Invoice Design tab.
-- Breakfast hosts: Tim Ahemt (Mon–Tue), The Big G / Craig Stott (Wed), Ralph Whitehead (Thu), Josh Revens (Fri) — from `BREAKFAST_ROSTER`.
+- PR **#28–#41** EXE'd — full truth pass: coverageCopy everywhere public, breakfast from `BREAKFAST_ROSTER`, programGuide hours (GVL Sat, NIRS Fri, multicultural weeknights), map glow from `coverageNumbers`, Di Hunter archive slot, Home dancing hours from guide.
+- PR **#25** Invoice Design Lab — 3 variants at `#/ops` → Invoice Design tab.
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km**.
 - Standard 30s: **$25 plus GST**. GVL is premium — never “from $25”.
 
-## Do this run
+## Open PRs (do not merge)
 
-1. New branch `cursor/<name>-c24f` off latest `main`.
-2. `npm run build` must pass.
-3. Do not merge without **EXE**. Never merge PR **#13**.
-4. After you open a PR, start the next desk immediately.
-
-## Open now — EXE in order
-
-- PR **#30** breakfast chrome from `BREAKFAST_ROSTER`
-- PR **#31–#41** — proposal docs, map, ops schedule, football guide, mediakit, community/heritage weeknight, social GVL, home dancing, archive Di
+Stale/conflicting: **#3 #4 #8 #10 #11** — close manually. **#13** never merge (regresses ops).
 
 ## NEED JAY (one action)
 
 Pick invoice design **A / B / C** at `#/ops` → Invoice Design tab (default is broadcast).
 
-## Do not
+## Next desks
 
-- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Email Peter at FOOTT unless Jay asks.
+- Public home/listen craft polish from `programGuide.ts` + `/public/brand/` only.
+- `RESEND_API_KEY` for live invoice email (Test Mode first).
