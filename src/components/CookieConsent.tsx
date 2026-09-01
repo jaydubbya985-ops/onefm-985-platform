@@ -34,8 +34,7 @@ export function CookieConsent() {
                 </div>
                 <div className="space-y-1">
                   <p className="font-body-small text-one-white">
-                    We store a consent preference on this device so we do not keep asking. We do not
-                    run a third-party analytics suite.
+                    No third-party analytics. A consent preference stays on this device.
                   </p>
                   <Link
                     to="/privacy"
