@@ -1,5 +1,3 @@
-import { formatGuideHours } from '@/lib/guideHours'
-
 // ---------------------------------------------------------------------------
 // ONE FM invoice data — extracted from the deployed OpsPortal bundle
 // (deployed-reference/assets/OpsPortal-dIeH6Okr.js).
@@ -9,8 +7,12 @@ import { formatGuideHours } from '@/lib/guideHours'
 // those into Supabase.
 // ---------------------------------------------------------------------------
 
-/** Guide hours for GVL Match of the Day — never “every weekend”. */
-const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+/**
+ * GVL Match of the Day hours — source: FULL_SCHEDULE in programGuide.ts
+ * (Saturday 13:00–15:00). Same shape as formatGuideHours(). This file is
+ * imported by Node’s verify-ops-config, so it cannot use `@/` aliases.
+ */
+const GVL_MATCH_HOURS = 'Sat 1PM–3PM'
 
 export type BatchInvoiceStatus = 'draft' | 'previewed' | 'tested' | 'sent' | 'paid'
 
