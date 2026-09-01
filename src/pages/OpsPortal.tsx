@@ -6,6 +6,7 @@ import {
   FileText,
   Inbox,
   LogOut,
+  Palette,
   Radio,
   Receipt,
   RotateCcw,
@@ -30,6 +31,7 @@ const BroadcastSchedule = lazy(() => import('@/components/ops/BroadcastSchedule'
 const InvoiceGenerator = lazy(() => import('@/components/ops/InvoiceGenerator'))
 const InvoiceBatchSender = lazy(() => import('@/components/ops/InvoiceBatchSender'))
 const BillingEngine = lazy(() => import('@/components/ops/BillingEngine'))
+const InvoiceDesignLab = lazy(() => import('@/components/ops/InvoiceDesignLab'))
 const PaymentsModule = lazy(() => import('@/components/ops/PaymentsModule'))
 
 function OpsTabPanel({ children }: { children: React.ReactNode }) {
@@ -53,6 +55,7 @@ const TABS: {
   { id: 'schedule', label: 'Schedule', icon: Radio, description: 'Broadcast & ad schedule' },
   { id: 'invoices', label: 'Invoices', icon: Receipt, description: 'Create, send & track invoices' },
   { id: 'batch', label: 'Batch Send', icon: Send, description: 'Send a batch of invoices' },
+  { id: 'design', label: 'Invoice Design', icon: Palette, description: 'Pick from 3 world-class invoice designs' },
   { id: 'billing', label: 'Billing', icon: BarChart3, description: 'Payments, aging & reports' },
   { id: 'payments', label: 'Payments', icon: CreditCard, description: 'Donations & memberships' },
 ]
@@ -260,6 +263,9 @@ function OpsPortalContent() {
         )}
         {activeTab === 'batch' && (
           <OpsTabPanel><InvoiceBatchSender /></OpsTabPanel>
+        )}
+        {activeTab === 'design' && (
+          <OpsTabPanel><InvoiceDesignLab /></OpsTabPanel>
         )}
         {activeTab === 'billing' && (
           <OpsTabPanel><BillingEngine /></OpsTabPanel>
