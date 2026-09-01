@@ -312,7 +312,7 @@ function renderOnAir(ctx: RenderCtx): string {
     <tr><td style="padding:24px 40px;text-align:center;" class="mp">
       <div style="color:rgba(255,255,255,0.35);font-size:11px;line-height:1.8;">
         ${INVOICE_STATION.communityLine}<br>
-        ${INVOICE_STATION.org} · ${formatCoverageShort()}
+        ${INVOICE_STATION.org}
       </div>
     </td></tr>
   </table>`
