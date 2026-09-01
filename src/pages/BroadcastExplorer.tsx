@@ -14,6 +14,9 @@ import { SEO } from '@/components/SEO'
 import { Link } from 'react-router-dom'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
 import { HOST_PHOTOS, STATION_PHOTOS } from '@/lib/stationPhotos'
+import { presenterVisual, programScene } from '@/lib/presenterAssets'
+import { InventoryLadder } from '@/components/InventoryLadder'
+import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import {
   FULL_SCHEDULE,
   PROGRAM_PREVIEW_CARDS,
@@ -576,8 +579,8 @@ function ShowSpotlight() {
           <div className="flex flex-col md:flex-row" style={{ minHeight: 400 }}>
             <div className="md:w-[45%] relative overflow-hidden">
               <img
-                src="/assets/images/commentary-box-action.jpg"
-                alt="ONE FM Breakfast"
+                src={programScene('ONE FM Breakfast')}
+                alt="ONE FM breakfast — station photography, not a presenter portrait"
                 className="w-full h-full object-cover md:absolute md:inset-0 group-hover:scale-105 transition-transform duration-700"
                 style={{ maxHeight: 400 }}
               />
@@ -643,19 +646,17 @@ function ShowSpotlight() {
               className="glass-card overflow-hidden cursor-pointer group h-full"
             >
               <div className="relative h-[180px] overflow-hidden">
-                {/* Gradient feature visual derived from category color */}
-                <div
-                  className="absolute inset-0 group-hover:scale-105 transition-transform duration-500"
-                  style={{ background: `linear-gradient(135deg, ${show.color}33 0%, #070707 60%)` }}
+                <img
+                  src={programScene(show.name)}
+                  alt={`ONE FM ${show.category.toLowerCase()} photography — ${show.name}`}
+                  className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  decoding="async"
                 />
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <span
-                    className="font-heading font-black select-none opacity-20"
-                    style={{ fontSize: '5rem', color: show.color, letterSpacing: '-0.04em' }}
-                  >
-                    FM
-                  </span>
-                </div>
+                <div
+                  className="absolute inset-0"
+                  style={{ background: `linear-gradient(135deg, ${show.color}33 0%, #070707 70%)` }}
+                />
                 <div aria-hidden className="explore-tile-scan" />
                 <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md font-label text-[10px] text-one-white" style={{ backgroundColor: show.color + 'CC' }}>
                   {show.category || 'MUSIC'}
@@ -711,7 +712,7 @@ function HostRoster() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <WordReveal text="MEET THE VOICES" className="font-h2 text-one-white mb-2 block" as="h2" />
-            <p className="font-body-small text-muted">16 real presenters behind the microphone</p>
+            <p className="font-body-small text-muted">{HOSTS.length} presenters from the station guide. Named portraits only where the archive names the person.</p>
           </div>
 
           <div className="relative">
@@ -765,19 +766,25 @@ function HostRoster() {
               >
                 {(() => {
                   const av = getPresenterAvatar(host.name)
+                  const visual = presenterVisual(host.name, host.shift === 'Weekend' ? 'Sport' : undefined, i)
                   return (
                     <div className="relative mb-4 mx-auto rounded-2xl overflow-hidden border-2 border-one-gold/30 group-hover:border-one-gold transition-colors duration-300 group-hover:scale-105 transition-transform duration-500" style={{ width: 200, height: 200 }}>
-                      <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${av.from} 0%, ${av.to} 100%)` }} />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span
-                          className="font-heading font-black select-none"
-                          style={{ fontSize: '3.5rem', color: av.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
-                        >
-                          {av.initials}
-                        </span>
+                      <img src={visual.src} alt={visual.alt} className="absolute inset-0 w-full h-full object-cover" />
+                      <div className="absolute inset-0" style={{ background: visual.isPortrait ? 'linear-gradient(to top, rgba(7,7,7,0.55), transparent 50%)' : `linear-gradient(135deg, ${av.from}88 0%, ${av.to}99 100%)` }} />
+                      {!visual.isPortrait && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span
+                            className="font-heading font-black select-none"
+                            style={{ fontSize: '3.5rem', color: av.accent, opacity: 0.85, letterSpacing: '-0.04em' }}
+                          >
+                            {av.initials}
+                          </span>
+                        </div>
+                      )}
+                      <div className="absolute bottom-2 inset-x-0 text-center font-label text-[8px] uppercase tracking-wider text-white/70">
+                        {visual.isPortrait ? 'Archive portrait' : 'Station photography'}
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-one-navy/40 via-transparent to-transparent" />
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: '0 0 40px rgba(212,175,55,0.15)' }} />
                     </div>
                   )
                 })()}
@@ -1098,6 +1105,12 @@ export default function BroadcastExplorer() {
       <ShowSpotlight />
       <HostRoster />
       <SegmentDeepDive />
+      <section className="bg-surface-deep px-4 sm:px-6 py-12">
+        <div className="max-w-[800px] mx-auto">
+          <p className="font-label text-[10px] text-one-gold mb-3">{STANDARD_SPOT_PLUS_GST}</p>
+          <InventoryLadder />
+        </div>
+      </section>
       <BehindTheScenes />
       <ListenLiveCTA />
     </Layout>

@@ -21,8 +21,9 @@ import {
 } from '@/components/onair/kit'
 import { generalTiers, footballTiers, stationStats } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
-import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
-import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { formatRadius, formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { InventoryLadder } from '@/components/InventoryLadder'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
@@ -41,12 +42,16 @@ const GENERAL_PACKAGES = Object.entries(generalTiers).map(([id, t]) => ({
 
 const FOOTBALL_PACKAGES = footballTiers.map((t) => ({
   id: `fb-${t.id}`,
-  name: `GVL ${t.name}`,
+  name: t.id === 1 ? t.name : `GVL ${t.name}`,
   weekly: t.price,
-  range: `$${t.price}/week · football season`,
+  range: t.id === 1
+    ? `$${t.price}/week · name-read (not a GVL commercial)`
+    : `$${t.price}/week · GVL premium`,
   spots: null as number | null,
   social: null as number | null,
-  extra: t.features[0] ?? null,
+  extra: t.id === 1
+    ? 'Match-day name-read and logo — not a GVL commercial spot'
+    : 'GVL premium inventory — quoted above the $25 standard spot',
   group: 'football' as const,
 }))
 
@@ -284,9 +289,10 @@ export default function SalesProposal() {
         <OnAirTicker
           items={[
             `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
-            `${stationStats.totalTowns} towns · ~${stationStats.broadcastRadiusKm}km radius`,
+            `${formatTowns()} · ${formatRadius()} radius`,
             'Packages from $50/week',
             STANDARD_SPOT_PLUS_GST,
+            GVL_PREMIUM_BADGE,
             'Staff-written PDF — not a public generator',
           ]}
           delay={0.4}
@@ -299,9 +305,13 @@ export default function SalesProposal() {
             { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
             { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in broadcast area (townData 2026 est.)' },
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
-            { n: `${stationStats.broadcastRadiusKm}km`, t: 'Broadcast radius' },
+            { n: formatRadius(), t: 'Broadcast radius' },
           ]}
         />
+
+        <section className="px-6 md:px-12 lg:px-20 pb-10">
+          <InventoryLadder />
+        </section>
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
           <LabelReveal className="mb-3">Station packages</LabelReveal>
@@ -393,7 +403,7 @@ export default function SalesProposal() {
             >
               <h3 className="font-poster uppercase text-[22px] text-white">Coverage map</h3>
               <p className="text-[15px] text-white/55 mt-2">
-                {stationStats.totalTowns} towns within ~{stationStats.broadcastRadiusKm}km of Shepparton.
+                {formatTowns()} within a {formatRadius()} radius of Shepparton. {GVL_PREMIUM_BADGE}.
               </p>
               <span
                 className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5"

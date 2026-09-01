@@ -16,6 +16,7 @@ import { ON_AIR_WALL_PHOTO_NOTE, ON_AIR_WEEK } from '@/data/programGuide'
 import { stationStats } from '@/data/pricing'
 import { BRAND } from '@/lib/brand'
 import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
+import { InventoryLadder } from '@/components/InventoryLadder'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
@@ -207,6 +208,9 @@ export default function Listen() {
           <LatestInterviews />
         </section>
         <WaysToListen />
+        <section className="px-6 md:px-12 lg:px-20 pb-10">
+          <InventoryLadder />
+        </section>
         <SongRequest />
         <StatsStrip
           stats={[

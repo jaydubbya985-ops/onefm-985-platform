@@ -61,11 +61,34 @@ export function programBackdrop(category: string): string {
       return STATION_PHOTOS.eventDeniUteMuster
     case 'Community':
       return STATION_PHOTOS.communityBookStall
+    case 'Heritage':
+      return STATION_PHOTOS.heritageOriginalPanel1988
+    case 'Outside broadcast':
+      return STATION_PHOTOS.heritageObMall1989
     case 'Music':
       return STATION_PHOTOS.studioPresenterMic
     default:
       return STATION_PHOTOS.studioPresenterMic
   }
+}
+
+/** Scene for a named program — station photography only. */
+export function programScene(program: string): string {
+  const n = program.toLowerCase()
+  if (n.includes('gvl') || n.includes('football') || n.includes('afl') || n.includes('sport')) {
+    return STATION_PHOTOS.gvlNightPanorama
+  }
+  if (n.includes('breakfast') || n.includes('breaky')) {
+    return STATION_PHOTOS.commentaryBoxAction
+  }
+  if (n.includes('country')) return STATION_PHOTOS.eventDeniUteMuster
+  if (n.includes('samoan') || n.includes('filipino') || n.includes('mandarin') || n.includes('punjabi') || n.includes('italia') || n.includes('swahili') || n.includes('netherland')) {
+    return STATION_PHOTOS.cultureAlbanianDancers
+  }
+  if (n.includes('heritage') || n.includes('1989') || n.includes('panel')) {
+    return STATION_PHOTOS.heritageOriginalPanel1988
+  }
+  return STATION_PHOTOS.studioPresenterMic
 }
 
 export function presenterVisual(

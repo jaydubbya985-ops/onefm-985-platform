@@ -27,6 +27,8 @@ const AudienceAnalytics = lazy(() => import('./pages/AudienceAnalytics'))
 const SalesProposal = lazy(() => import('./pages/SalesProposal'))
 const Heritage = lazy(() => import('./pages/Heritage'))
 const Community = lazy(() => import('./pages/Community'))
+const BroadcastExplorer = lazy(() => import('./pages/BroadcastExplorer'))
+const SocialHub = lazy(() => import('./pages/SocialHub'))
 const Support = lazy(() => import('./pages/Support'))
 const Contact = lazy(() => import('./pages/Contact'))
 const MediaKit = lazy(() => import('./pages/MediaKit'))
@@ -207,8 +209,14 @@ export default function App() {
             </LazyRoute>
           }
         />
-        {/* Absorbed into /listen per REBUILD-SPEC.md */}
-        <Route path="/broadcast" element={<Navigate to="/listen" replace />} />
+        <Route
+          path="/broadcast"
+          element={
+            <LazyRoute variant="list" routeName="Broadcast Explorer">
+              <BroadcastExplorer />
+            </LazyRoute>
+          }
+        />
         <Route
           path="/audience"
           element={
@@ -217,8 +225,14 @@ export default function App() {
             </LazyRoute>
           }
         />
-        {/* Absorbed into /community per REBUILD-SPEC.md */}
-        <Route path="/social" element={<Navigate to="/community" replace />} />
+        <Route
+          path="/social"
+          element={
+            <LazyRoute variant="card" routeName="Social Hub">
+              <SocialHub />
+            </LazyRoute>
+          }
+        />
         <Route
           path="/proposal"
           element={

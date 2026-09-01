@@ -22,7 +22,9 @@ import { Marquee } from '@/components/Marquee'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { stationStats } from '@/data/pricing'
+import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { InventoryLadder } from '@/components/InventoryLadder'
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -41,7 +43,7 @@ const ASSETS = [
   { name: 'Space Grotesk Specimen', format: 'OTF, WOFF', category: 'Typography', preview: 'bg-one-navy' },
   { name: 'Waveform Pattern', format: 'SVG, PNG', category: 'Patterns', preview: 'bg-one-navy' },
   { name: 'Studio Photos Pack', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
-  { name: 'Host Portraits', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
+  { name: 'Station photography (no presenter portraits pack)', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
   { name: 'Event Coverage', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
   { name: 'Social Media Kit', format: 'PSD, Canva', category: 'Patterns', preview: 'bg-data-violet' },
 ]
@@ -1181,7 +1183,7 @@ function MailchimpExportSection() {
   const handleCopySnippet = async () => {
     const snippet = buildMailchimpNewsletterSnippet({
       headline: 'Your brand across the Goulburn Valley',
-      body: `ONE FM 98.5 reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} communities. Explore sponsorship packages tailored to regional businesses.`,
+      body: `ONE FM 98.5: ${formatWeeklyListeners()} across ${formatTowns()} (ABS 2021 via townData). ${STANDARD_SPOT_PLUS_GST}. GVL match-day and live reads are premium inventory — never sold as the $25 floor.`,
       ctaLabel: 'View Media Kit',
       ctaUrl: 'https://fm985.com.au/#/media-kit',
     })
@@ -1201,6 +1203,7 @@ function MailchimpExportSection() {
         >
           <span className="section-label mb-4 block">Marketing workflow</span>
           <WordReveal text="EXPORT FOR MAILCHIMP" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+          <InventoryLadder className="mb-10" />
           <p className="font-body-small text-muted max-w-2xl">
             Resend handles transactional invoice and enquiry emails. Use these tools to export sponsor
             leads and copy branded HTML into Mailchimp campaigns (audience: <strong className="text-one-white">One FM Sales</strong>).

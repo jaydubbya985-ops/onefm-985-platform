@@ -13,6 +13,7 @@ import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, Editorial
 import { towns } from '@/data/townData'
 import { stationStats } from '@/data/pricing'
 import { formatRadius, formatTowns } from '@/lib/coverageCopy'
+import { InventoryLadder } from '@/components/InventoryLadder'
 import { MULTICULTURAL_PROGRAMS, MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 const RED = '#E51636'
@@ -132,12 +133,16 @@ export default function Community() {
           </div>
         </section>
 
+        <section className="px-6 md:px-12 lg:px-20 pb-10">
+          <InventoryLadder />
+        </section>
+
         <StatsStrip
           stats={[
             { n: String(stationStats.totalTowns), t: 'Towns across the Valley', red: true },
             { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in broadcast area (townData 2026 est.)' },
             { n: String(MULTICULTURAL_PROGRAM_COUNT), t: 'Multicultural programs (station guide)' },
-            { n: `${stationStats.broadcastRadiusKm}km`, t: 'Signal radius from Mt Major' },
+            { n: formatRadius(), t: 'Signal radius from Mt Major' },
           ]}
         />
         <div className="pb-32" />

@@ -56,6 +56,7 @@ import { WeatherWidget } from '@/components/WeatherWidget'
 import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
 import { MagneticButton } from '@/components/MagneticButton'
 import { towns, broadcastArea, type Town, type SizeCategory } from '@/data/townData'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { coveragePins, coveragePinCounts, type CoveragePin } from '@/data/coverageMapPins'
 import {
   mountCoverageGlow,
@@ -82,20 +83,33 @@ import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 
 /* ─────────────────────── helpers ─────────────────────── */
 
-function getMarkerConfig(size: SizeCategory) {
+const MAX_TOWN_LISTENERS = Math.max(...towns.map((t) => t.listenersEstimate))
+
+function markerColor(size: SizeCategory) {
   const { gold, blue, muted } = BRAND_COLORS
   switch (size) {
     case 'hub':
-      return { fillColor: gold, scale: 14, strokeColor: BRAND_COLORS.white, strokeWeight: 2 }
+      return { fillColor: gold, strokeColor: BRAND_COLORS.white, strokeWeight: 2 }
     case 'major':
-      return { fillColor: gold, scale: 10, strokeColor: gold, strokeWeight: 1 }
+      return { fillColor: gold, strokeColor: gold, strokeWeight: 1 }
     case 'medium':
-      return { fillColor: blue, scale: 8, strokeColor: blue, strokeWeight: 1 }
+      return { fillColor: blue, strokeColor: blue, strokeWeight: 1 }
     case 'small':
-      return { fillColor: '#0066CC', scale: 6, strokeColor: '#0066CC', strokeWeight: 1 }
+      return { fillColor: '#0066CC', strokeColor: '#0066CC', strokeWeight: 1 }
     case 'village':
-      return { fillColor: muted, scale: 6, strokeColor: muted, strokeWeight: 1 }
+      return { fillColor: muted, strokeColor: muted, strokeWeight: 1 }
   }
+}
+
+/** Marker size follows modelled listeners (townData), not invented reach. */
+function getMarkerConfig(town: Town | SizeCategory) {
+  const size = typeof town === 'string' ? town : town.sizeCategory
+  const listeners = typeof town === 'string' ? 0 : town.listenersEstimate
+  const color = markerColor(size)
+  const scale = typeof town === 'string'
+    ? 8
+    : 6 + 10 * (listeners / MAX_TOWN_LISTENERS)
+  return { ...color, scale }
 }
 
 function exportCSV() {
@@ -212,6 +226,7 @@ export default function CoverageMap() {
   const [mobileListOpen, setMobileListOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [mapTypeId, setMapTypeIdState] = useState<'satellite' | 'terrain' | 'roadmap'>('satellite')
+  const [heartlandOnly, setHeartlandOnly] = useState(false)
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)')
@@ -222,11 +237,17 @@ export default function CoverageMap() {
   }, [])
 
   /* ── filtered / sorted towns ── */
+  const heartlandCutoff = useMemo(() => {
+    const ranked = [...towns].sort((a, b) => b.listenersEstimate - a.listenersEstimate)
+    return ranked[9]?.listenersEstimate ?? 0
+  }, [])
+
   const filteredTowns = useMemo(() => {
     let list = towns.filter(
       (t) =>
-        t.name.toLowerCase().includes(search.toLowerCase()) ||
-        t.lga.toLowerCase().includes(search.toLowerCase())
+        (t.name.toLowerCase().includes(search.toLowerCase()) ||
+        t.lga.toLowerCase().includes(search.toLowerCase())) &&
+        (!heartlandOnly || t.listenersEstimate >= heartlandCutoff)
     )
     switch (sortKey) {
       case 'name':
@@ -243,7 +264,16 @@ export default function CoverageMap() {
         break
     }
     return list
-  }, [search, sortKey])
+  }, [search, sortKey, heartlandOnly, heartlandCutoff])
+
+  useEffect(() => {
+    markersRef.current.forEach((marker) => {
+      const name = marker.getTitle()?.split(' — ')[0]
+      const town = towns.find((t) => t.name === name)
+      const dim = heartlandOnly && town && town.listenersEstimate < heartlandCutoff
+      marker.setOpacity(dim ? 0.28 : 1)
+    })
+  }, [heartlandOnly, heartlandCutoff])
 
   /* ── chart data ── */
   const lgaChartData = useMemo(() => {
@@ -311,7 +341,7 @@ export default function CoverageMap() {
       glowHandleRef.current = glow
 
       towns.forEach((town) => {
-        const config = getMarkerConfig(town.sizeCategory)
+        const config = getMarkerConfig(town)
         // A few towns sit only 2-5km apart in reality (Echuca/Moama,
         // Tocumwal/Picola, Shepparton/Mooroopna) \u2014 close enough to stack
         // directly on top of each other at this map's default zoom. Leave
@@ -327,7 +357,7 @@ export default function CoverageMap() {
             strokeWeight: config.strokeWeight,
             scale: config.scale,
           },
-          title: `${town.name} \u2014 ${town.population2026.toLocaleString()} (2026 est.)`,
+          title: `${town.name} — ${town.listenersEstimate.toLocaleString()} est. weekly listeners (townData)`,
           zIndex: town.sizeCategory === 'hub' ? 200 : 100,
           animation: town.sizeCategory === 'hub' ? google.maps.Animation.DROP : undefined,
         })
@@ -679,6 +709,24 @@ export default function CoverageMap() {
                 </div>
               ))}
             </div>
+
+            <div className="relative mt-5 grid grid-cols-3 gap-2 sm:grid-cols-6">
+              {[
+                { src: STATION_PHOTOS.geoTownAerial, alt: 'Goulburn Valley town aerial — station archive' },
+                { src: STATION_PHOTOS.towerMountMajorDay, alt: 'Mt Major transmitter — station archive' },
+                { src: STATION_PHOTOS.heritageObMall1989, alt: 'ONE FM outside broadcast, 1989 mall' },
+                { src: STATION_PHOTOS.gvlNightPanorama, alt: 'GVL ground at night — called on 98.5' },
+                { src: STATION_PHOTOS.heritageTruck2005, alt: 'ONE FM broadcast truck, 2005' },
+                { src: STATION_PHOTOS.geoRollingGreenHills, alt: `Valley landscape in the ${formatRadius()} broadcast area` },
+              ].map((shot) => (
+                <div key={shot.src} className="relative aspect-[4/3] overflow-hidden rounded-md border border-one-border/60">
+                  <img src={shot.src} alt={shot.alt} className="h-full w-full object-cover" loading="lazy" />
+                </div>
+              ))}
+            </div>
+            <p className="relative mt-2 text-[10px] text-one-muted/70">
+              Station photography of the valley and transmitter — not a coverage contour.
+            </p>
           </div>
         </section>
 
@@ -744,6 +792,21 @@ export default function CoverageMap() {
               >
                 <Sparkles size={12} className="text-one-gold" />
                 Sponsors ({coveragePinCounts.sponsor})
+              </button>
+              <button
+                type="button"
+                onClick={() => setHeartlandOnly((v) => !v)}
+                data-cursor-label={heartlandOnly ? 'ALL TOWNS' : 'HEARTLAND'}
+                title={`Top 10 towns by modelled weekly listeners (townData). Glow stays a visual ${formatRadius()} guide — not an ACMA contour.`}
+                className={cn(
+                  'flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium transition-colors',
+                  heartlandOnly
+                    ? 'border-one-gold/50 bg-one-gold/10 text-one-white'
+                    : 'border-one-border text-one-muted hover:text-one-white',
+                )}
+              >
+                <Users size={12} className="text-one-gold" />
+                Heartland
               </button>
             </div>
 
@@ -819,7 +882,9 @@ export default function CoverageMap() {
 
             {/* Sort */}
             <div className="flex items-center justify-between border-b border-one-border px-3 py-2">
-              <span className="text-xs text-one-muted">{filteredTowns.length} communities</span>
+              <span className="text-xs text-one-muted">
+                {filteredTowns.length} {heartlandOnly ? 'heartland towns (top 10 by modelled listeners)' : 'communities'}
+              </span>
               <div className="flex items-center gap-1">
                 <ChevronDown size={12} className="text-one-muted" />
                 <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
@@ -840,7 +905,7 @@ export default function CoverageMap() {
             <ScrollArea className="flex-1">
               <div className="p-2 space-y-1">
                 {filteredTowns.map((town) => {
-                  const config = getMarkerConfig(town.sizeCategory)
+                  const config = getMarkerConfig(town)
                   return (
                     <button
                       key={town.name}
@@ -867,6 +932,12 @@ export default function CoverageMap() {
                         <div className="text-xs font-medium text-white truncate">{town.name}</div>
                         <div className="text-[10px] text-one-muted truncate">
                           {town.listenersEstimate.toLocaleString()} listeners/wk &middot; {town.population2026.toLocaleString()} pop &middot; {town.distanceFromSheppartonKm} km
+                        </div>
+                        <div className="mt-1 h-1 rounded-full bg-one-border/60 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-one-gold/80"
+                            style={{ width: `${Math.max(6, (town.listenersEstimate / MAX_TOWN_LISTENERS) * 100)}%` }}
+                          />
                         </div>
                       </div>
                     </button>
@@ -937,6 +1008,7 @@ export default function CoverageMap() {
               </div>
               <div className="mt-1.5 space-y-0.5 border-t border-one-border/50 pt-1.5">
                 <div className="text-one-gold/90">Gold glow = visual {formatRadius()} guide</div>
+                <div className="text-one-electric/80">Dot size = modelled listeners (townData)</div>
                 <div className="text-one-electric/80">Not an ACMA contour or live count</div>
               </div>
             </div>
@@ -1132,7 +1204,7 @@ export default function CoverageMap() {
                     <div
                       className="relative h-24 sm:h-28"
                       style={{
-                        background: `linear-gradient(135deg, ${getMarkerConfig(selectedTown.sizeCategory).fillColor}33, ${BRAND_COLORS.navy})`,
+                        background: `linear-gradient(135deg, ${getMarkerConfig(selectedTown).fillColor}33, ${BRAND_COLORS.navy})`,
                       }}
                     >
                       <button
