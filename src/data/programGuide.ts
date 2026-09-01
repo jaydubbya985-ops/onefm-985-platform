@@ -288,7 +288,7 @@ export const HOMEPAGE_FEATURED_SHOWS = [
   },
   {
     name: 'Planet of Sound',
-    time: 'Thu & Fri 11:00PM',
+    time: 'Thu 11:00PM–12:00AM',
     hostLabel: 'Carlos Rock',
     scheduleKey: 'planet' as const,
   },
@@ -326,7 +326,7 @@ export const PROGRAM_PREVIEW_CARDS = [
   {
     title: 'Planet of Sound',
     presenter: 'Carlos Rock',
-    schedule: 'Thursday & Friday, 11PM',
+    schedule: 'Thursday, 11PM–12AM',
     description:
       'Rock music program spanning 19–20 years on air with Carlos Rock. A Valley institution for rock fans.',
   },
