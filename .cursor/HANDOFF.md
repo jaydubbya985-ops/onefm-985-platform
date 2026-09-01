@@ -10,10 +10,12 @@
 
 **CONTINUOUS RUN IS ON.** Do not idle. Do not wait for Jay to start the next agent. Read `.cursor/CONTINUOUS.md`. Arm a 20-minute continue timer. Keep shipping.
 
-## Already true on GitHub `main` (`8b3dfe2`)
+## Already true on GitHub `main` (`29fb88a`)
 
-- PR **#24** merged. Home/Listen/Community/OnAirNav coverage strings go through `coverageCopy.ts`. Continuous-run prompt is in `.cursor/CONTINUOUS.md`.
-- PR **#22** EXE’d. `#/coverage` Heartland + listener-scaled dots. `#/broadcast` and `#/social` mounted. Inventory ladder. Named portraits: Di Hunter, Sally Nayler only.
+- PR **#26** EXE'd. Support coverage via `coverageCopy.ts` + truth guards.
+- PR **#25** EXE'd. Invoice Design Lab — 3 variants (broadcast / on-air / valley) at `#/ops` → Invoice Design tab.
+- PR **#24** merged. Home/Listen/Community/OnAirNav coverage strings go through `coverageCopy.ts`.
+- PR **#22** EXE'd. `#/coverage` Heartland + listener-scaled dots. `#/broadcast` and `#/social` mounted. Inventory ladder. Named portraits: Di Hunter, Sally Nayler only.
 - `#/ops` is LIVE when Netlify has real `VITE_SUPABASE_*` (anon key, not `sb_secret_`).
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km**.
 - Standard 30s: **$25 plus GST**. GVL is premium — never “from $25”.
@@ -28,18 +30,18 @@
 
 ## Open now
 
-- `cursor/support-coverage-11c2` — Support leftover coverage → `coverageCopy.ts` + truth guards. Listen breakfast comment cites BREAKFAST_ROSTER. Do not merge without **EXE**.
-- PR **#25** Invoice Design Lab — sibling. Do not merge without **EXE**.
+PR **#27** `cursor/sponsor-pages-coverage-c24f` — MediaKit, Football, SponsorshipKit, SalesProposal via `coverageCopy.ts`. Do not merge without **EXE**.
 
 ## Next desks (do not wait)
 
-- Leftover `stationStats` coverage strings → `coverageCopy.ts` on **MediaKit, Football, SponsorshipKit, SalesProposal**.
-- Stale drafts (all CONFLICTING): recommend **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13** (would regress `#/ops` to DEMO).
+- Leftover `stationStats` on Story, Contact, AudienceAnalytics, Heritage, HorizontalGallery, proposal/contract docs.
+- Jay picks invoice design: **A** broadcast / **B** on-air / **C** valley — set default before live batch.
+- Stale drafts: recommend **close** #1 #3 #4 #11 (agent lacks close permission — Jay can close). **Do not merge** #8 #10 without rebase. **Never merge #13**.
 
 ## NEED JAY (one action)
 
-**EXE the support-coverage PR** (`cursor/support-coverage-11c2`). That is the only merge this agent cannot do.
+Pick invoice design **A / B / C** at `#/ops` → Invoice Design tab (default is broadcast).
 
 ## Do not
 
-- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Restart Resend verification. Email Peter at FOOTT unless Jay asks. Bake `sb_secret_` into the browser bundle. Idle after opening a PR. Ask Jay to start the next agent.
+- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Restart Resend verification. Email Peter at FOOTT unless Jay asks. Bake `sb_secret_` into the browser bundle. Idle after opening a PR.
