@@ -8,6 +8,7 @@ import {
   type InvoiceDesignVariantId,
 } from '@/lib/invoiceDesignVariants'
 import type { InvoiceEmailData } from '@/components/ops/InvoiceEmailTemplate'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 
 const esc = (v?: string) =>
   (v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -251,7 +252,7 @@ function renderBroadcast(ctx: RenderCtx): string {
     <tr><td style="padding:28px 40px;text-align:center;" class="mp">
       <div style="color:rgba(255,255,255,0.45);font-size:12px;line-height:1.9;">
         <strong style="color:#D4AF37;">ONE FM 98.5</strong> · ${INVOICE_STATION.org}<br>
-        Callsign ${INVOICE_STATION.callsign} · ABN ${INVOICE_STATION.abn}
+        Callsign ${INVOICE_STATION.callsign} · ABN ${INVOICE_STATION.abn} · ${formatCoverageShort()}
       </div>
     </td></tr>
   </table>`
@@ -311,7 +312,7 @@ function renderOnAir(ctx: RenderCtx): string {
     <tr><td style="padding:24px 40px;text-align:center;" class="mp">
       <div style="color:rgba(255,255,255,0.35);font-size:11px;line-height:1.8;">
         ${INVOICE_STATION.communityLine}<br>
-        ${INVOICE_STATION.org}
+        ${INVOICE_STATION.org} · ${formatCoverageShort()}
       </div>
     </td></tr>
   </table>`
@@ -368,7 +369,7 @@ function renderValley(ctx: RenderCtx): string {
     <tr><td style="padding:24px 40px;text-align:center;" class="mp">
       <div style="color:rgba(255,255,255,0.5);font-size:11px;line-height:1.9;">
         Licensed ${INVOICE_STATION.licensed} · Callsign ${INVOICE_STATION.callsign}<br>
-        ${INVOICE_STATION.org} · ABN ${INVOICE_STATION.abn}
+        ${INVOICE_STATION.org} · ABN ${INVOICE_STATION.abn} · ${formatCoverageShort()}
       </div>
     </td></tr>
   </table>`
