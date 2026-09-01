@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { MediaImage } from '@/components/MediaImage'
 import { getCinegraph, type CinegraphKey } from '@/lib/cinegraphAssets'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 
 interface CinegraphBackgroundProps {
   slot: CinegraphKey
@@ -43,6 +45,8 @@ export function CinegraphBackground({
     return () => mq.removeEventListener('change', apply)
   }, [asset.videoActive])
 
+  const lockup = `${asset.brief} — ${BRAND.fullName} · ${formatCoverageShort()}`
+
   if (mode === 'video' && asset.videoActive) {
     return (
       <video
@@ -51,6 +55,8 @@ export function CinegraphBackground({
         loop
         playsInline
         poster={asset.poster}
+        title={lockup}
+        aria-label={lockup}
         className={className}
         style={{ opacity }}
         onError={() => setMode('image')}
@@ -64,7 +70,7 @@ export function CinegraphBackground({
     <MediaImage
       src={asset.poster}
       fallbackSrc={asset.fallback}
-      alt=""
+      alt={lockup}
       priority={priority}
       skeleton={false}
       className={`${className} ${imageClassName ?? ''} ${reducedMotion ? '' : 'animate-ken-burns'}`}
