@@ -42,9 +42,8 @@ export function SEO({
       <meta property="og:site_name" content="ONE FM 98.5" />
       <meta property="og:url" content={canonicalUrl} />
 
-      {/* Twitter Card */}
+      {/* Twitter Card — no twitter:site. socialLinks.twitter is null until a handle is confirmed. */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@onefm985" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`} />
