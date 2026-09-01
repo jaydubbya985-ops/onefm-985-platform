@@ -230,6 +230,8 @@ export function Footer() {
             {formatCoverageShort()} · {formatWeeklyListeners()}
             {' · '}
             GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
+            {' · '}
+            NIRS AFL Friday Night Footy · {formatGuideHours('NIRS AFL Friday Night Footy') ?? 'Friday'}
             <span className="text-one-muted/60"> · ABS 2021 via townData</span>
           </p>
           <Link
