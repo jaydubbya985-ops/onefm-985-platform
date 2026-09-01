@@ -1,4 +1,3 @@
-import OpenAI from 'openai';
 import {
   formatBroadcastPopulation,
   formatCoverageShort,
@@ -7,15 +6,10 @@ import {
   weeklyListenersValue,
 } from '@/lib/coverageCopy';
 
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
-
-export const openai = new OpenAI({
-  apiKey,
-  dangerouslyAllowBrowser: true, // For demo only — use backend proxy in production
-});
-
 export function hasApiKey(): boolean {
-  return !!apiKey && apiKey.startsWith('sk-');
+  // Browser bundles must never carry provider secret keys. Use a server proxy
+  // before enabling live generation.
+  return false;
 }
 
 export interface GenerateOptions {
@@ -159,31 +153,12 @@ export function estimateCost(tokens: number, model = 'gpt-4o-mini'): string {
 
 /* ────────────────────────────────────────────── */
 export async function generateContent(options: GenerateOptions): Promise<string> {
-  const { prompt, maxTokens = 800, temperature = 0.7, onChunk } = options;
-
-  if (!hasApiKey()) {
-    const fallback = 'AI features require an OpenAI API key. Add VITE_OPENAI_API_KEY to your .env file.';
-    if (onChunk) {
-      await simulateStreaming(fallback, onChunk);
-    }
-    return fallback;
+  const { onChunk } = options;
+  const fallback = 'AI generation is disabled in the browser until a server-side proxy is connected.';
+  if (onChunk) {
+    await simulateStreaming(fallback, onChunk);
   }
-
-  const stream = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    max_tokens: maxTokens,
-    temperature,
-    stream: true,
-  });
-
-  let fullText = '';
-  for await (const chunk of stream) {
-    const content = chunk.choices[0]?.delta?.content || '';
-    fullText += content;
-    if (onChunk) onChunk(content);
-  }
-  return fullText;
+  return fallback;
 }
 
 let captionCycleIndex = 0;
