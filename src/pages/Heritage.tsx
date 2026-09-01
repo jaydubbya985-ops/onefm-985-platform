@@ -21,7 +21,8 @@ import {
   PosterReveal,
   StrokeFill,
 } from '@/components/onair/kit'
-import { formatTowns } from '@/lib/coverageCopy'
+import { formatTowns, yearsBroadcastingValue } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import {
   ACMA_FACTS,
   EMERGENCY_BROADCAST_NARRATIVE,
@@ -82,7 +83,7 @@ function HeritageHero() {
           />
         </h1>
         <p className="mt-7 max-w-[600px] text-[17px] leading-relaxed text-white/60">
-          For more than three decades, ONE FM 98.5 has carried the voices, stories, sport, music,
+          For {yearsBroadcastingValue()} years, ONE FM 98.5 has carried the voices, stories, sport, music,
           emergencies and community life of the Goulburn Valley. Callsign{' '}
           <strong className="text-white/80">{ACMA_FACTS.callsign}</strong> · licensed{' '}
           {ACMA_FACTS.licenceCommenced}.
@@ -191,7 +192,7 @@ export default function Heritage() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football — live on ONE FM 98.5"
-          badge="GVL & local sport · Since May 1989"
+          badge={`GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} · live since May 1989`}
         />
 
         <ProseSection
