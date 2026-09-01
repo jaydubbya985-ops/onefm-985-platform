@@ -10,9 +10,15 @@ import { Loader2 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
-import { generalTiers, stationStats } from '@/data/pricing'
+import { generalTiers } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
-import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import {
+  coverageStatsStrip,
+  formatTowns,
+  formatTownsGvl,
+  formatWeeklyListeners,
+  tickerWeeklyListenersItem,
+} from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 
@@ -131,8 +137,8 @@ export default function SponsorshipKit() {
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
-            `${stationStats.totalTowns} towns across the Goulburn Valley`,
+            tickerWeeklyListenersItem(),
+            formatTownsGvl(),
             'Packages from $50/week',
             STANDARD_SPOT_PLUS_GST,
             'Donated airtime for local not-for-profits',
@@ -142,12 +148,7 @@ export default function SponsorshipKit() {
         <SponsorHero />
 
         <StatsStrip
-          stats={[
-            { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in broadcast area (townData 2026 est.)' },
-            { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
-            { n: '$50', t: 'Per week — entry package' },
-          ]}
+          stats={[...coverageStatsStrip(), { n: '$50', t: 'Per week — entry package' }]}
         />
 
         <EditorialCards label="The Packages" items={tiers} columns={2} />
