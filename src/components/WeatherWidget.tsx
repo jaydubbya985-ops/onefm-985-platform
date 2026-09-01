@@ -2,7 +2,14 @@ import { Sun, Cloud, CloudRain, CloudLightning, CloudFog, Snowflake, Wind, Therm
 import { motion, AnimatePresence } from 'framer-motion'
 import { useWeatherCycle } from '@/hooks/useWeatherCycle'
 import { gvWeatherTowns } from '@/data/weatherLocations'
-import { getWeatherDescription, getWeatherIconKey, formatTempC, type WeatherIconKey } from '@/lib/weather'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import {
+  WEATHER_SOURCE_LABEL,
+  getWeatherDescription,
+  getWeatherIconKey,
+  formatTempC,
+  type WeatherIconKey,
+} from '@/lib/weather'
 
 const iconMap: Record<WeatherIconKey, React.ReactNode> = {
   sun: <Sun className="h-5 w-5 text-one-gold" />,
@@ -24,7 +31,9 @@ const iconMapSmall: Record<WeatherIconKey, React.ReactNode> = {
   snowflake: <Snowflake className="h-3.5 w-3.5 text-one-electric" />,
 }
 
-// Full version — cycles through Shepparton + GV major towns
+const coverageCaption = `${WEATHER_SOURCE_LABEL} · hub & major towns · ${formatCoverageShort()}`
+
+// Full version — cycles hub/major towns from townData (Open-Meteo, Melbourne TZ)
 export function WeatherWidget() {
   const { location, weather, loading } = useWeatherCycle(gvWeatherTowns)
 
@@ -40,56 +49,63 @@ export function WeatherWidget() {
   if (!weather) return null
 
   const iconKey = getWeatherIconKey(weather.weatherCode)
+  const label = `${location.name} ${formatTempC(weather.tempC)} · ${coverageCaption}`
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.name}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{ duration: 0.35 }}
-        className="flex items-center gap-3"
-      >
-        {/* Town */}
-        <div className="hidden sm:flex items-center gap-1 text-xs text-one-gold font-label tracking-wide">
-          <MapPin className="h-3 w-3" />
-          <span>{location.name}</span>
-        </div>
+    <div className="flex flex-col gap-1 min-w-0">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.name}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.35 }}
+          className="flex items-center gap-3"
+          aria-label={label}
+        >
+          {/* Always name the town — parent strips may still say Shepparton */}
+          <div className="flex items-center gap-1 text-xs text-one-gold font-label tracking-wide">
+            <MapPin className="h-3 w-3" />
+            <span>{location.name}</span>
+          </div>
 
-        <div className="hidden sm:block h-4 w-px bg-one-border" />
+          <div className="h-4 w-px bg-one-border" />
 
-        {/* Current temp */}
-        <div className="flex items-center gap-1.5">
-          {iconMap[iconKey]}
-          <span className="text-one-white font-h4 text-sm">{formatTempC(weather.tempC)}</span>
-        </div>
+          {/* Current temp */}
+          <div className="flex items-center gap-1.5">
+            {iconMap[iconKey]}
+            <span className="text-one-white font-h4 text-sm">{formatTempC(weather.tempC)}</span>
+          </div>
 
-        <div className="h-4 w-px bg-one-border" />
+          <div className="h-4 w-px bg-one-border" />
 
-        {/* High/Low */}
-        <div className="hidden sm:flex items-center gap-1 text-xs text-one-muted">
-          <Thermometer className="h-3 w-3" />
-          <span>H:{formatTempC(weather.tempMaxC)}</span>
-          <span>L:{formatTempC(weather.tempMinC)}</span>
-        </div>
+          {/* High/Low */}
+          <div className="hidden sm:flex items-center gap-1 text-xs text-one-muted">
+            <Thermometer className="h-3 w-3" />
+            <span>H:{formatTempC(weather.tempMaxC)}</span>
+            <span>L:{formatTempC(weather.tempMinC)}</span>
+          </div>
 
-        {/* Wind */}
-        <div className="hidden md:flex items-center gap-1 text-xs text-one-muted">
-          <Wind className="h-3 w-3" />
-          <span>{Math.round(weather.windKmh)} km/h</span>
-        </div>
+          {/* Wind */}
+          <div className="hidden md:flex items-center gap-1 text-xs text-one-muted">
+            <Wind className="h-3 w-3" />
+            <span>{Math.round(weather.windKmh)} km/h</span>
+          </div>
 
-        {/* Conditions */}
-        <div className="hidden lg:block text-xs text-one-muted">
-          {getWeatherDescription(weather.weatherCode)}
-        </div>
-      </motion.div>
-    </AnimatePresence>
+          {/* Conditions */}
+          <div className="hidden lg:block text-xs text-one-muted">
+            {getWeatherDescription(weather.weatherCode)}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+      <p className="font-label text-[9px] tracking-[0.14em] uppercase text-one-muted/75">
+        {coverageCaption}
+      </p>
+    </div>
   )
 }
 
-// Compact version for the live player bar — cycles through the same towns
+// Compact version for the live player bar — same townData cycle + Open-Meteo
 export function WeatherMini() {
   const { location, weather, loading } = useWeatherCycle(gvWeatherTowns)
 
@@ -97,6 +113,7 @@ export function WeatherMini() {
   if (!weather) return null
 
   const iconKey = getWeatherIconKey(weather.weatherCode)
+  const label = `${location.name} ${formatTempC(weather.tempC)} · ${WEATHER_SOURCE_LABEL}`
 
   return (
     <AnimatePresence mode="wait">
@@ -107,6 +124,8 @@ export function WeatherMini() {
         exit={{ opacity: 0, y: -4 }}
         transition={{ duration: 0.3 }}
         className="flex items-center gap-1.5 text-xs text-one-muted"
+        title={label}
+        aria-label={label}
       >
         {iconMapSmall[iconKey]}
         <span className="text-one-white font-medium">{formatTempC(weather.tempC)}</span>
