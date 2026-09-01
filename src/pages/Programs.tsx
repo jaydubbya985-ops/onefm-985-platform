@@ -18,6 +18,7 @@ import {
   getBreakfastScheduleLabel,
   getCurrentLiveShow,
 } from '@/data/programGuide'
+import { formatGuideHours, formatHostHours } from '@/lib/guideHours'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
@@ -126,7 +127,8 @@ function OnAirNow() {
 /* ────────────────────────────────────────────────────────── */
 /*  Section 2 — Featured Shows                                */
 /* ────────────────────────────────────────────────────────── */
-// Source: fm985.com.au/guide/ (scraped June 2026)
+// Copy from fm985.com.au/guide/. Times resolved from FULL_SCHEDULE
+// via formatGuideHours — do not keep a second handwritten hours list.
 const shows = [
   {
     name: BREAKFAST_SHOW,
@@ -344,12 +346,16 @@ const shows = [
     tag: "Music",
     icon: Music,
   },
-]
+].map((show) => ({
+  ...show,
+  time: formatGuideHours(show.name) ?? show.time,
+}))
 
 /* ────────────────────────────────────────────────────────── */
 /*  Section 3 — Host Roster                                   */
 /* ────────────────────────────────────────────────────────── */
-// Source: fm985.com.au/guide/ (scraped June 2026)
+// Names from fm985.com.au/guide/. Times resolved from FULL_SCHEDULE
+// via formatHostHours — Ralph's Friday Arvo is 3–4pm, not 3–6pm.
 const hosts = [
   { name: "Tim Ahemt",        show: BREAKFAST_SHOW,             time: "Mon & Tue, 6am–9am",   type: "Breakfast",    social: { fb: true } },
   { name: "The Big G",        show: BREAKFAST_SHOW + " / Wed Mornings", time: "Wed, 6am–12pm", type: "Breakfast",   social: { fb: true } },
@@ -375,7 +381,10 @@ const hosts = [
   { name: "MK",               show: "Samoan Music Program",      time: "Wednesday, 9pm–10pm",   type: "Multicultural", social: { fb: true } },
   { name: "Edith",            show: "Filipino Music Program",    time: "Tuesday, 10pm–11pm",    type: "Multicultural", social: { fb: true } },
   { name: "Jimmy & Rainy",    show: "Mandarin Program",          time: "Monday, 10pm",          type: "Multicultural", social: { fb: true } },
-]
+].map((host) => ({
+  ...host,
+  time: formatHostHours(host.name) ?? host.time,
+}))
 
 const showFilters = ['All', 'Breakfast', 'Music', 'Country', 'Sport', 'Community', 'Multicultural']
 
@@ -429,7 +438,10 @@ const gvlSportBlocks = [
     time: 'Fri 7pm–10pm',
     desc: 'AFL coverage via the National Indigenous Radio Service network.',
   },
-]
+].map((block) => ({
+  ...block,
+  time: formatGuideHours(block.title) ?? block.time,
+}))
 
 /* ────────────────────────────────────────────────────────── */
 /*  Section 5 — Podcasts                                      */
