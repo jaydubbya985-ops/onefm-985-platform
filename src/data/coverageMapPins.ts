@@ -1,4 +1,8 @@
 import { towns } from '@/data/townData'
+import { formatGuideHours } from '@/lib/guideHours'
+
+/** GVL Match of the Day hours from FULL_SCHEDULE — never a bare “Saturday”. */
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
 
 export type CoveragePinType = 'station' | 'football' | 'sponsor'
 
@@ -38,7 +42,7 @@ export const coveragePins: CoveragePin[] = [
   },
   // GVL football & netball clubs (town-anchored)
   ...([
-    ['gvl-shepp-swans', 'Shepparton Swans', 'Shepparton', 0.014, -0.01, 'GVL senior club — Saturday broadcast territory'],
+    ['gvl-shepp-swans', 'Shepparton Swans', 'Shepparton', 0.014, -0.01, `GVL senior club — GVL Match of the Day · ${GVL_MATCH_HOURS}`],
     ['gvl-mooroopna', 'Mooroopna', 'Mooroopna', 0, 0.012, 'GVL club — twin-city rivalry and loyal local crowd'],
     ['gvl-tatura', 'Tatura', 'Tatura', -0.01, 0.008, 'GVL club — heart of the orchard district'],
     ['gvl-kyabram', 'Kyabram', 'Kyabram', 0.012, 0, 'GVL club — strong community footy town'],
@@ -46,7 +50,7 @@ export const coveragePins: CoveragePin[] = [
     ['gvl-benalla', 'Benalla', 'Benalla', 0, -0.012, 'GVL club — gateway to the high country'],
     ['gvl-seymour', 'Seymour', 'Seymour', 0.01, 0.01, 'GVL club — southern reach of our footprint'],
     ['gvl-cobram', 'Cobram', 'Cobram', -0.008, 0.01, 'GVL club — irrigated Murray communities'],
-    ['gvl-numurkah', 'Numurkah', 'Numurkah', 0.01, -0.008, 'GVL club — loyal Saturday listenership'],
+    ['gvl-numurkah', 'Numurkah', 'Numurkah', 0.01, -0.008, `GVL club — GVL Match of the Day · ${GVL_MATCH_HOURS}`],
     ['gvl-rochester', 'Rochester', 'Rochester', 0, 0.01, 'GVL club — Campaspe Shire heartland'],
     ['gvl-nathalia', 'Nathalia', 'Nathalia', -0.01, 0, 'GVL club — northern Murray irrigation belt'],
     ['gvl-euroa', 'Euroa', 'Euroa', 0.008, -0.01, 'GVL club — Strathbogie approaches'],
@@ -66,7 +70,7 @@ export const coveragePins: CoveragePin[] = [
   }),
   // Real local sponsors (invoice partners — town-centroid, not street-precise)
   ...([
-    ['sp-gvl', 'Goulburn Valley Football League', 'Shepparton', 0.018, 0.014, 'League naming partner — live Saturday coverage on 98.5 FM', '/football'],
+    ['sp-gvl', 'Goulburn Valley Football League', 'Shepparton', 0.018, 0.014, `League naming partner — GVL Match of the Day · ${GVL_MATCH_HOURS} on 98.5 FM`, '/football'],
     ['sp-peppermill', 'Peppermill Inn', 'Mooroopna', -0.012, -0.01, 'Major GVL sponsor — hospitality landmark', '/football'],
     ['sp-foott', 'FOOTT Waste Solutions', 'Shepparton', -0.016, 0.012, 'Local business sponsor — community radio partner', '/sponsorship'],
     ['sp-sam', 'SAM — Shepparton Art Museum', 'Shepparton', 0.02, -0.014, 'Media partner — arts & culture in the Valley', '/sponsorship'],
