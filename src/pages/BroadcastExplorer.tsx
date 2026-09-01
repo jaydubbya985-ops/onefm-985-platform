@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play, Pause, Search, Grid3X3, List, ChevronDown,
   ChevronLeft, ChevronRight, Radio, Globe, Smartphone,
-  Headphones, Sparkles, Calendar,
-  Instagram, Twitter, Music, ArrowRight
+  Headphones, Sparkles, Calendar, Phone, ArrowRight,
 } from 'lucide-react'
 import { WordReveal } from '@/components/WordReveal'
 import { TiltCard } from '@/components/TiltCard'
@@ -13,7 +12,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { Link } from 'react-router-dom'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
-import { HOST_PHOTOS, STATION_PHOTOS } from '@/lib/stationPhotos'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { presenterVisual, programScene } from '@/lib/presenterAssets'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
@@ -22,11 +21,15 @@ import {
   PROGRAM_PREVIEW_CARDS,
   ALL_PRESENTERS,
   BREAKFAST_SHOW,
+  BREAKFAST_TIME,
+  MULTICULTURAL_PROGRAM_COUNT,
   getCurrentLiveShow,
   getBreakfastScheduleLabel,
 } from '@/data/programGuide'
 import { useLiveStream } from '@/hooks/useLiveStream'
-import { formatRadius } from '@/lib/coverageCopy'
+import { formatCoverageShort, formatRadius } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { LISTEN_LINKS } from '@/lib/listenLinks'
 
 const CATEGORY_COLORS: Record<string, string> = {
   Breakfast: '#F2F2F2',
@@ -66,38 +69,31 @@ const SHOWS = FULL_SCHEDULE.map((slot, i) => {
   }
 })
 
-const HOST_AVATARS: Record<string, string> = {
-  Morning:    STATION_PHOTOS.commentaryBoxAction,
-  Daytime:    STATION_PHOTOS.studioCommentarySelfie,
-  Afternoon:  STATION_PHOTOS.commentaryBoxWide,
-  Evening:    HOST_PHOTOS.onAirHost2,
-  Weekend:    STATION_PHOTOS.gvlNightPanorama,
-  Specialist: STATION_PHOTOS.studioSbsDiversity,
-}
-
 const HOSTS = ALL_PRESENTERS.map((p) => ({
   name: p.name,
   role: p.show,
   shows: [p.show],
-  avatar: HOST_AVATARS[p.shift] ?? STATION_PHOTOS.studioCommentarySelfie,
   shift: p.shift,
 }))
 
-const SEGMENTS = PROGRAM_PREVIEW_CARDS.map((card, i) => ({
-  id: String(i + 1).padStart(2, '0'),
-  name: card.title,
-  duration: card.schedule,
-  category: card.title.includes('Breakfast') ? 'Breakfast' : 'Program',
-  desc: card.description,
-  stats: { editions: 'Weekly', avg: card.schedule, source: 'fm985.com.au' },
-}))
+const SEGMENTS = PROGRAM_PREVIEW_CARDS.map((card, i) => {
+  const hours = formatGuideHours(card.title) ?? card.schedule
+  return {
+    id: String(i + 1).padStart(2, '0'),
+    name: card.title,
+    duration: hours,
+    category: card.title.includes('Breakfast') ? 'Breakfast' : 'Program',
+    desc: card.description,
+    stats: { editions: 'Weekly', avg: hours, source: 'fm985.com.au/guide' },
+  }
+})
 
 const SHOW_CARDS = PROGRAM_PREVIEW_CARDS.slice(0, 6).map((card) => {
   const cat = card.title.includes('Breakfast')
     ? 'Breakfast'
     : card.title.includes('Sport') || card.title.includes('GVL') || card.title.includes('AFL')
       ? 'Sport'
-      : card.title.includes('Multicultural') || card.title.includes('Samoan') || card.title.includes('Punjabi')
+      : card.title.includes('Afri-Connect') || card.title.includes('Samoan') || card.title.includes('Punjabi')
         ? 'Multicultural'
         : card.title.includes('Country')
           ? 'Music'
@@ -107,7 +103,7 @@ const SHOW_CARDS = PROGRAM_PREVIEW_CARDS.slice(0, 6).map((card) => {
   return {
     name: card.title,
     host: card.presenter,
-    schedule: card.schedule,
+    schedule: formatGuideHours(card.title) ?? card.schedule,
     desc: card.description,
     tags: [cat, 'Live'],
     color: CATEGORY_COLORS[cat] ?? '#B6FF00',
@@ -598,7 +594,7 @@ function ShowSpotlight() {
                 </div>
                 <div>
                   <div className="font-h4 text-one-white">Rotating hosts</div>
-                  <div className="font-label text-one-gold text-[10px]">MON–FRI 6AM–9AM</div>
+                  <div className="font-label text-one-gold text-[10px]">{BREAKFAST_TIME} weekdays</div>
                 </div>
               </div>
               <div className="font-label text-one-gold mb-4">{getBreakfastScheduleLabel()}</div>
@@ -792,11 +788,6 @@ function HostRoster() {
                 <h3 className="font-h3 text-one-white text-center group-hover:translate-x-1 transition-transform duration-300">{host.name}</h3>
                 <div className="font-label text-one-muted text-[10px] text-center mt-1">{host.role}</div>
                 <div className="font-body-small text-muted text-xs text-center mt-2">{host.shows.join(', ')}</div>
-                <div className="flex justify-center gap-3 mt-3 opacity-50 group-hover:opacity-100 transition-opacity">
-                  <Twitter size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                  <Instagram size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                  <Music size={14} className="text-muted hover:text-one-white transition-colors cursor-pointer" />
-                </div>
                 <div className="text-center mt-3">
                   <Link to="/programs" data-cursor-label="PROGRAMS" className="font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">View Programs →</Link>
                 </div>
@@ -952,14 +943,16 @@ function BehindTheScenes() {
               transition={{ delay: 0.1, duration: 0.6, ease: easeOutExpo }}
               className="font-body text-one-white mb-8"
             >
-              ONE FM 98.5 — Callsign 3ONE, ACMA License 1385226/1, licensed by APRA AMCOS. Our state-of-the-art broadcast facility combines professional audio equipment with community-focused programming. From the early morning breakfast show to late-night multicultural programs, we're the heartbeat of the Goulburn Valley.
+              ONE FM 98.5 — callsign 3ONE, ACMA licence 1385226/1. Volunteer presenters from the Shepparton studio.
+              Breakfast is {BREAKFAST_TIME} weekdays ({getBreakfastScheduleLabel()}). {MULTICULTURAL_PROGRAM_COUNT} multicultural
+              programs sit Monday–Wednesday evenings on the station guide — not a weekend dial.
             </motion.p>
 
             <div className="space-y-4 mb-8">
               {[
-                { title: 'Live Community Programming', desc: 'Real local voices, real local stories' },
-                { title: 'HD Broadcast Suite', desc: `Crystal-clear transmission across a ${formatRadius()} radius` },
-                { title: 'Live Stream Infrastructure', desc: 'Global reach, local heart' },
+                { title: 'Live community programming', desc: 'Real local voices, from the weekly guide (fm985.com.au/guide)' },
+                { title: `FM 98.5 · ${formatRadius()} from Mt Major`, desc: 'Licensed community broadcast — not a stream-only station' },
+                { title: 'Stream anywhere', desc: `${LISTEN_LINKS.web.label} · ${LISTEN_LINKS.crp.label}` },
               ].map((item, i) => (
                 <motion.div
                   key={item.title}
@@ -997,12 +990,12 @@ function BehindTheScenes() {
 
 /* ─── Section 7: Listen Live / CTA ─── */
 function ListenLiveCTA() {
+  const stream = useLiveStream()
   const platforms = [
-    { name: 'FM 98.5', icon: <Radio size={24} /> },
-    { name: 'Web', icon: <Globe size={24} /> },
-    { name: 'iOS', icon: <Smartphone size={24} /> },
-    { name: 'Android', icon: <Smartphone size={24} /> },
-    { name: 'Alexa', icon: <Headphones size={24} /> },
+    { name: '98.5 FM', hint: LISTEN_LINKS.fm.description, href: '/listen', external: false, icon: <Radio size={24} /> },
+    { name: 'Web', hint: LISTEN_LINKS.web.description, href: LISTEN_LINKS.web.href, external: true, icon: <Globe size={24} /> },
+    { name: 'CR+', hint: LISTEN_LINKS.crp.description, href: LISTEN_LINKS.crp.href, external: true, icon: <Smartphone size={24} /> },
+    { name: 'Studio', hint: LISTEN_LINKS.phone.description, href: LISTEN_LINKS.phone.href, external: false, icon: <Phone size={24} /> },
   ]
 
   return (
@@ -1031,24 +1024,43 @@ function ListenLiveCTA() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="font-body text-one-white mb-10"
         >
-          FM 98.5 · Stream online · iOS &amp; Android · Smart speakers · Ask Alexa
+          {LISTEN_LINKS.fm.label} · {LISTEN_LINKS.web.label} · {LISTEN_LINKS.crp.label} · studio {LISTEN_LINKS.phone.description}
         </motion.p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-10">
-          {platforms.map((p, i) => (
-            <motion.div
-              key={p.name}
-              initial={{ scale: 0, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 + i * 0.1, duration: 0.5, ease: easeOutBack }}
-              whileHover={{ scale: 1.05 }}
-              className="glass-card w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-one-gold/10 transition-colors group"
-            >
-              <div className="text-muted group-hover:text-one-gold transition-colors">{p.icon}</div>
-              <span className="font-label text-[9px] text-muted group-hover:text-one-gold transition-colors">{p.name}</span>
-            </motion.div>
-          ))}
+          {platforms.map((p, i) => {
+            const inner = (
+              <>
+                <div className="text-muted group-hover:text-one-gold transition-colors">{p.icon}</div>
+                <span className="font-label text-[9px] text-muted group-hover:text-one-gold transition-colors">{p.name}</span>
+              </>
+            )
+            const cls = 'glass-card w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center gap-1 hover:bg-one-gold/10 transition-colors group'
+            return (
+              <motion.div
+                key={p.name}
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 + i * 0.1, duration: 0.5, ease: easeOutBack }}
+                whileHover={{ scale: 1.05 }}
+              >
+                {p.external ? (
+                  <a href={p.href} target="_blank" rel="noopener noreferrer" aria-label={p.hint} data-cursor-label="OPEN" className={cls}>
+                    {inner}
+                  </a>
+                ) : p.href.startsWith('/') ? (
+                  <Link to={p.href} aria-label={p.hint} data-cursor-label="LISTEN" className={cls}>
+                    {inner}
+                  </Link>
+                ) : (
+                  <a href={p.href} aria-label={p.hint} data-cursor-label="CALL" className={cls}>
+                    {inner}
+                  </a>
+                )}
+              </motion.div>
+            )
+          })}
         </div>
 
         <motion.div
@@ -1060,8 +1072,15 @@ function ListenLiveCTA() {
         >
           <div className="relative">
             <div className="absolute inset-0 rounded-full bg-one-gold animate-ping opacity-30" />
-            <button className="relative w-20 h-20 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform" data-cursor-label="PLAY">
-              <Play size={32} fill="currentColor" />
+            <button
+              type="button"
+              onClick={() => void stream.toggle()}
+              aria-pressed={stream.playing}
+              aria-label={stream.playing ? 'Pause the live stream' : 'Play the live stream'}
+              className="relative w-20 h-20 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform"
+              data-cursor-label={stream.playing ? 'PAUSE' : 'PLAY'}
+            >
+              {stream.playing ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" />}
             </button>
           </div>
           <div className="flex items-center gap-2">
@@ -1069,7 +1088,7 @@ function ListenLiveCTA() {
               <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-one-red" />
             </span>
-            <span className="font-label text-one-red text-xs">LIVE</span>
+            <span className="font-label text-one-red text-xs">{stream.playing ? 'PLAYING' : 'LIVE'}</span>
           </div>
         </motion.div>
       </div>
@@ -1081,7 +1100,10 @@ function ListenLiveCTA() {
 export default function BroadcastExplorer() {
   return (
     <Layout>
-      <SEO title="Broadcast Explorer" description="Explore ONE FM 98.5's full program schedule with real presenters, shows, and GVL football broadcasts. Callsign 3ONE, ACMA License 1385226/1." />
+      <SEO
+        title="Broadcast Explorer"
+        description={`Explore ONE FM 98.5's weekly guide — breakfast, GVL Saturday, NIRS Friday, weeknight multicultural programs. ${formatCoverageShort()} (ABS 2021 via townData). Callsign 3ONE.`}
+      />
       <HeroSection />
 
       {/* ── Broadcast Marquee Strip ── */}
