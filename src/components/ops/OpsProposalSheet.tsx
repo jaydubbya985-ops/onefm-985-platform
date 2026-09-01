@@ -5,7 +5,7 @@
 import { BrandLogo } from '@/components/BrandLogo'
 import { DS } from '@/lib/invoiceDesignSystem'
 import { formatAud, type ProposalDocData } from '@/lib/proposalDocument'
-import { stationStats } from '@/data/pricing'
+import { formatRadius, townCountValue, weeklyListenersValue } from '@/lib/coverageCopy'
 
 export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
   return (
@@ -52,16 +52,16 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
         <div className="mt-5 grid grid-cols-3 gap-3 rounded-md bg-[#F8F8FA] px-4 py-3 text-sm">
           <div>
             <p className="text-lg font-bold text-[#071D3A]">
-              {stationStats.weeklyListeners.toLocaleString('en-AU')}
+              {weeklyListenersValue()}
             </p>
             <p className="text-[11px] text-[#6B6B6B]">est. weekly listeners</p>
           </div>
           <div>
-            <p className="text-lg font-bold text-[#071D3A]">{stationStats.totalTowns}</p>
+            <p className="text-lg font-bold text-[#071D3A]">{townCountValue()}</p>
             <p className="text-[11px] text-[#6B6B6B]">towns</p>
           </div>
           <div>
-            <p className="text-lg font-bold text-[#071D3A]">{stationStats.broadcastRadiusKm}km</p>
+            <p className="text-lg font-bold text-[#071D3A]">{formatRadius()}</p>
             <p className="text-[11px] text-[#6B6B6B]">radius</p>
           </div>
         </div>
