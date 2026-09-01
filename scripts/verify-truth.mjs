@@ -112,6 +112,20 @@ if (
 ) {
   hits.push('App.tsx: /programs must mount Programs, not redirect to /listen')
 }
+if (
+  !app ||
+  !app.text.includes('BroadcastExplorer') ||
+  /path=\"\/broadcast\" element=\{<Navigate to=\"\/listen\"/.test(app.text)
+) {
+  hits.push('App.tsx: /broadcast must mount BroadcastExplorer, not redirect to /listen')
+}
+if (
+  !app ||
+  !app.text.includes('SocialHub') ||
+  /path=\"\/social\" element=\{<Navigate to=\"\/community\"/.test(app.text)
+) {
+  hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
+}
 
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
