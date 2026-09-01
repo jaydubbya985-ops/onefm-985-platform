@@ -154,8 +154,8 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
               <div className="mt-6 flex flex-wrap gap-4 font-label text-[10px] text-muted">
                 <span>{LISTEN_LINKS.fm.label}</span>
                 <span className="text-one-border">|</span>
-                <a href={LISTEN_LINKS.crp.href} target="_blank" rel="noopener noreferrer" className="hover:text-one-gold transition-colors inline-flex items-center gap-1">
-                  {LISTEN_LINKS.crp.label} <ExternalLink size={10} />
+                <a href={LISTEN_LINKS.web.href!} target="_blank" rel="noopener noreferrer" className="hover:text-one-gold transition-colors inline-flex items-center gap-1">
+                  {LISTEN_LINKS.web.label} <ExternalLink size={10} />
                 </a>
                 <span className="text-one-border">|</span>
                 <a href={LISTEN_LINKS.phone.href!} className="hover:text-one-gold transition-colors">
