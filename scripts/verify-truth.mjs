@@ -111,6 +111,29 @@ if (!support || !support.text.includes('formatTowns()')) {
   hits.push('pages/Support.tsx: town count must use formatTowns()')
 }
 
+const sponsorPages = [
+  'pages/SponsorshipKit.tsx',
+  'pages/SalesProposal.tsx',
+  'pages/MediaKit.tsx',
+  'pages/Football.tsx',
+]
+for (const label of sponsorPages) {
+  const page = files.find((f) => f.label === label)
+  if (
+    page &&
+    /stationStats\.(totalTowns|weeklyListeners|broadcastPopulation|broadcastRadiusKm)/.test(
+      page.text,
+    )
+  ) {
+    hits.push(`${label}: coverage stats must come from coverageCopy, not stationStats`)
+  }
+}
+if (
+  !files.find((f) => f.label === 'pages/SponsorshipKit.tsx')?.text.includes('coverageStatsStrip')
+) {
+  hits.push('pages/SponsorshipKit.tsx: stats strip must use coverageStatsStrip()')
+}
+
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
   !programs ||

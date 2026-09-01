@@ -13,7 +13,15 @@ import { CinegraphBackground } from '@/components/CinegraphBackground'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { towns } from '@/data/townData'
-import { footballTiers, stationStats } from '@/data/pricing'
+import { footballTiers } from '@/data/pricing'
+import {
+  broadcastPopulationValue,
+  coverageNumbers,
+  formatTownsGvl,
+  reachFactsRows,
+  townCountValue,
+  weeklyListenersValue,
+} from '@/lib/coverageCopy'
 import { GVL_PREMIUM_INTRO, GVL_PREMIUM_SEO, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { submitEnquiry } from '@/lib/enquiries'
@@ -142,23 +150,18 @@ const tiers = footballTiers.map((t) => {
   }
 })
 
-/* ─── ONE FM reach row (sourced from stationStats) ─── */
+/* ─── ONE FM reach row (sourced via coverageCopy) ─── */
 const roiData = [
   {
     medium: 'ONE FM Football',
-    reach: `${stationStats.weeklyListeners.toLocaleString()} est./wk`,
+    reach: `${weeklyListenersValue()} est./wk`,
     frequency: 'Sat matchday + drive-time',
     notes: 'GVL live coverage — local trust, loyal audience',
   },
 ]
 
 /* ─── Regional reach facts (no unsourced age breakdown) ─── */
-const reachFacts = [
-  { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString() },
-  { label: 'Towns in broadcast area', value: String(stationStats.totalTowns) },
-  { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km` },
-  { label: 'Area population (2026 est.)', value: stationStats.broadcastPopulation.toLocaleString() },
-]
+const reachFacts = reachFactsRows()
 
 const townNames = towns.map((t) => t.name)
 
@@ -354,7 +357,7 @@ export default function Football() {
             transition={{ duration: 0.5, delay: 0.65, ease: easeOutExpo }}
             className="font-body text-one-white/70 max-w-[520px] mb-10"
           >
-            Put your business in front of {stationStats.weeklyListeners.toLocaleString()} weekly listeners across {stationStats.totalTowns} communities
+            Put your business in front of {weeklyListenersValue()} weekly listeners across {coverageNumbers.totalTowns} communities
             in the Goulburn Valley. {GVL_PREMIUM_INTRO} {STANDARD_SPOT_PLUS_GST}.
           </motion.p>
 
@@ -365,9 +368,9 @@ export default function Football() {
             className="flex flex-wrap gap-8 mb-10"
           >
             {[
-              { num: stationStats.weeklyListeners, label: 'Weekly Listeners', suffix: '' },
-              { num: stationStats.totalTowns, label: 'Communities', suffix: '' },
-              { num: stationStats.broadcastRadiusKm, label: 'km Radius', suffix: 'km' },
+              { num: coverageNumbers.weeklyListeners, label: 'Weekly Listeners', suffix: '' },
+              { num: coverageNumbers.totalTowns, label: 'Communities', suffix: '' },
+              { num: coverageNumbers.broadcastRadiusKm, label: 'km Radius', suffix: 'km' },
             ].map((s, i) => (
               <div key={s.label} className="flex items-center gap-8">
                 <div>
@@ -409,10 +412,10 @@ export default function Football() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL FOOTBALL LEAGUE COVERAGE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE MATCH COMMENTARY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · GOULBURN VALLEY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{townCountValue()} COMMUNITIES · GOULBURN VALLEY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL MATCH-DAY · PREMIUM INVENTORY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ROUND-BY-ROUND BROADCAST</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.weeklyListeners.toLocaleString()} WEEKLY LISTENERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{weeklyListenersValue()} WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">COMMENTARY TEAM · MATCHDAY PRESENCE</span>,
           ]}
         />
@@ -589,8 +592,8 @@ export default function Football() {
             <div className="flex items-start gap-3">
               <TrendingUp size={18} className="text-one-gold shrink-0 mt-0.5" />
               <p className="font-body-small text-one-white">
-                ONE FM reaches an estimated <strong className="text-one-gold">{stationStats.weeklyListeners.toLocaleString()}</strong> listeners
-                weekly across {stationStats.totalTowns} communities. GVL packages put your brand alongside live match commentary every Saturday.
+                ONE FM reaches an estimated <strong className="text-one-gold">{weeklyListenersValue()}</strong> listeners
+                weekly across {coverageNumbers.totalTowns} communities. GVL packages put your brand alongside live match commentary every Saturday.
               </p>
             </div>
           </motion.div>
@@ -610,7 +613,7 @@ export default function Football() {
             </div>
             <WordReveal text="YOUR AUDIENCE, YOUR COMMUNITY" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley. {stationStats.broadcastPopulation.toLocaleString()} people live in that broadcast area (townData 2026 est.).
+              ONE FM broadcasts to {formatTownsGvl()}. {broadcastPopulationValue()} people live in that broadcast area (townData 2026 est.).
             </p>
           </ScrollReveal>
 
@@ -647,7 +650,7 @@ export default function Football() {
               className="glass-card p-6 h-full group relative overflow-hidden"
             >
               <div aria-hidden className="explore-tile-scan" />
-              <h4 className="font-h4 text-one-white mb-4">{stationStats.totalTowns} Communities Covered</h4>
+              <h4 className="font-h4 text-one-white mb-4">{townCountValue()} Communities Covered</h4>
               <div className="flex flex-wrap gap-1.5 mb-4">
                 {townNames.map((town, i) => (
                   <motion.span
@@ -664,7 +667,7 @@ export default function Football() {
               </div>
               <div className="flex items-center gap-2 mt-4">
                 <MapPin size={14} className="text-one-electric" />
-                <span className="font-label text-xs text-one-electric">{stationStats.broadcastRadiusKm}km broadcast radius from Shepparton</span>
+                <span className="font-label text-xs text-one-electric">{coverageNumbers.broadcastRadiusKm}km broadcast radius from Shepparton</span>
               </div>
             </motion.div>
             </TiltCard>
@@ -685,7 +688,7 @@ export default function Football() {
                   { icon: Clock, label: 'Peak Footy Hours', value: 'Sat 1pm — 6pm', color: '#F2F2F2' },
                   { icon: Target, label: 'Live Match Coverage', value: 'Every weekend', color: '#B6FF00' },
                   { icon: Radio, label: 'GVL Commentary', value: 'FM 98.5 + stream', color: '#F2F2F2' },
-                  { icon: Users, label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners.toLocaleString(), color: '#9B5DE5' },
+                  { icon: Users, label: 'Est. Weekly Listeners', value: weeklyListenersValue(), color: '#9B5DE5' },
                 ].map((item) => {
                   const Icon = item.icon
                   return (

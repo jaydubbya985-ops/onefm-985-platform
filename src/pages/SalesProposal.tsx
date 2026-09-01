@@ -19,9 +19,16 @@ import {
   PosterReveal,
   StrokeFill,
 } from '@/components/onair/kit'
-import { generalTiers, footballTiers, stationStats } from '@/data/pricing'
+import { generalTiers, footballTiers } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
-import { formatRadius, formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import {
+  coverageStatsStrip,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+  tickerWeeklyListenersItem,
+  weeklyListenersValue,
+} from '@/lib/coverageCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { BRAND } from '@/lib/brand'
@@ -288,7 +295,7 @@ export default function SalesProposal() {
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
+            tickerWeeklyListenersItem(),
             `${formatTowns()} · ${formatRadius()} radius`,
             'Packages from $50/week',
             STANDARD_SPOT_PLUS_GST,
@@ -301,10 +308,7 @@ export default function SalesProposal() {
 
         <StatsStrip
           stats={[
-            // source: ABS 2021 via townData / stationStats
-            { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in broadcast area (townData 2026 est.)' },
-            { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
+            ...coverageStatsStrip(),
             { n: formatRadius(), t: 'Broadcast radius' },
           ]}
         />
@@ -414,7 +418,7 @@ export default function SalesProposal() {
             </Link>
           </div>
           <p className="text-[13px] text-white/35 mt-6 max-w-2xl">
-            Weekly listeners {stationStats.weeklyListeners.toLocaleString()} is an estimate from ABS 2021
+            Weekly listeners {weeklyListenersValue()} is an estimate from ABS 2021
             census populations in the broadcast area (source: townData). We do not publish a 25–34 age
             split — that figure is not in our research.
           </p>
