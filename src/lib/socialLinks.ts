@@ -35,3 +35,8 @@ export type SocialPlatform = keyof typeof SOCIAL_LINKS
 export function getSocialHref(platform: SocialPlatform): string | null {
   return SOCIAL_LINKS[platform]
 }
+
+/** Confirmed public profiles only. Do not invent Instagram, X, YouTube, or TikTok URLs. */
+export function confirmedSocialNote(): string {
+  return 'Facebook and SoundCloud only'
+}
