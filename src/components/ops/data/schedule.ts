@@ -16,7 +16,9 @@
 import {
   BREAKFAST_ROSTER,
   BREAKFAST_TIME,
+  FULL_SCHEDULE,
   getBreakfastScheduleLabel,
+  isBreakfastProgram,
 } from '@/data/programGuide'
 
 export type DaypartCode = 'EM' | 'B' | 'M' | 'L' | 'D' | 'LN'
@@ -82,24 +84,50 @@ export interface ProgrammeEntry {
   dayparts: DaypartCode[]
 }
 
-const WEEKDAYS = [1, 2, 3, 4, 5]
+function formatClock(h: number): string {
+  if (h === 0 || h === 24) return '12:00am'
+  if (h === 12) return '12:00pm'
+  if (h < 12) return `${h}:00am`
+  return `${h - 12}:00pm`
+}
 
-function weekdayStrip(
-  idPrefix: string,
-  time: string,
-  show: string,
-  presenter: string,
-  category: ProgrammeCategory,
-  dayparts: DaypartCode[],
-): ProgrammeEntry[] {
-  return WEEKDAYS.map((day) => ({
-    id: `${idPrefix}-${day}`,
-    day,
-    time,
-    show,
-    presenter,
-    category,
-    dayparts,
+const CATEGORY_FROM_GUIDE: Record<string, ProgrammeCategory> = {
+  Breakfast: 'breakfast',
+  Music: 'music',
+  Community: 'community',
+  Multicultural: 'multicultural',
+  Country: 'country',
+  Sport: 'sport',
+}
+
+const DAYPART_HOURS: Array<{ code: DaypartCode; start: number; end: number }> = [
+  { code: 'EM', start: 5, end: 7 },
+  { code: 'B', start: 7, end: 10 },
+  { code: 'M', start: 10, end: 13 },
+  { code: 'L', start: 13, end: 16 },
+  { code: 'D', start: 16, end: 20 },
+  { code: 'LN', start: 20, end: 24 },
+]
+
+function daypartsForHours(startHour: number, endHour: number): DaypartCode[] {
+  const hit = DAYPART_HOURS.filter((p) => startHour < p.end && endHour > p.start).map((p) => p.code)
+  return hit.length ? hit : ['LN']
+}
+
+/** Non-breakfast, non-overnight slots from FULL_SCHEDULE (fm985.com.au/guide). */
+function fromFullSchedule(): ProgrammeEntry[] {
+  return FULL_SCHEDULE.filter((s) => {
+    if (s.name === 'Overnight Mix') return false
+    if (s.day >= 1 && s.day <= 5 && isBreakfastProgram(s.name)) return false
+    return true
+  }).map((s) => ({
+    id: `guide-${s.day}-${s.startHour}-${s.name.replace(/\W+/g, '-').slice(0, 28)}`,
+    day: s.day,
+    time: `${formatClock(s.startHour)} – ${formatClock(s.endHour)}`,
+    show: s.name,
+    presenter: s.host,
+    category: CATEGORY_FROM_GUIDE[s.category] ?? 'music',
+    dayparts: daypartsForHours(s.startHour, s.endHour),
   }))
 }
 
@@ -126,13 +154,11 @@ function weekdayBreakfastGuide(): ProgrammeEntry[] {
 }
 
 /**
- * Real ONE FM 98.5 programme grid, cross-referenced between the deployed
- * bundle and oneFmScrapedData.json. Note: the scraped presenter roster lists
- * Rowan Farren-Parnell for The Regional Voice; the deployed site credits
- * James Manley — the deployed credit is used here for fidelity.
+ * Ops programme grid from FULL_SCHEDULE (fm985.com.au/guide).
+ * Weekday breakfast hosts still come from BREAKFAST_ROSTER so ops matches public chrome.
+ * Do not invent Mon–Fri dancing 9am–12pm or a weekday 12pm–3pm strip that is not on the guide.
  */
 export const PROGRAMME_GUIDE: ProgrammeEntry[] = [
-  // Daily overnight automation
   ...[0, 1, 2, 3, 4, 5, 6].map<ProgrammeEntry>((day) => ({
     id: `overnight-${day}`,
     day,
@@ -142,22 +168,8 @@ export const PROGRAMME_GUIDE: ProgrammeEntry[] = [
     category: 'automation',
     dayparts: ['EM'],
   })),
-  // Weekday breakfast — BREAKFAST_ROSTER / getBreakfastScheduleLabel()
   ...weekdayBreakfastGuide(),
-  ...weekdayStrip('decades', '9:00am – 12:00pm', 'Dancing through the decades', 'Johnny P', 'music', ['B', 'M']),
-  ...weekdayStrip('regional-voice', '12:00pm – 3:00pm', 'The Regional Voice', 'James Manley', 'community', ['M', 'L']),
-  // Specialty evening programmes
-  { id: 'africonnect-mon', day: 1, time: '9:00pm – 10:00pm', show: 'Africonnect', presenter: 'Fikiri (Swahili)', category: 'multicultural', dayparts: ['LN'] },
-  { id: 'punjabi-mon', day: 1, time: '11:00pm – 12:00am', show: 'Punjabi Music Program', presenter: 'Rai, Aanchal or Sahil', category: 'multicultural', dayparts: ['LN'] },
-  { id: 'samoan-wed', day: 3, time: '9:00pm – 10:00pm', show: 'Samoan Program', presenter: 'MK', category: 'multicultural', dayparts: ['LN'] },
-  { id: 'filipino-wed', day: 3, time: '10:00pm – 11:00pm', show: 'Filipino Music Program', presenter: 'Edith', category: 'multicultural', dayparts: ['LN'] },
-  { id: 'planet-thu', day: 4, time: '11:00pm – 12:00am', show: 'Planet of Sound', presenter: 'Carlos Rock', category: 'music', dayparts: ['LN'] },
-  // Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — not Friday (NIRS occupies Fri 7–10pm).
-  { id: 'country-mon', day: 1, time: '8:00pm – 9:00pm', show: 'Good Evening Country', presenter: 'Timmy Ahmet', category: 'country', dayparts: ['LN'] },
-  { id: 'nirs-fri', day: 5, time: '7:00pm – 10:00pm', show: 'NIRS AFL Friday Night Footy', presenter: 'ONE FM', category: 'sport', dayparts: ['LN'] },
-  // Planet of Sound is Thursday only in FULL_SCHEDULE (fm985.com.au/guide). Do not invent Friday.
-  // Saturday sport block
-  { id: 'super-saturday', day: 6, time: 'Saturday daytime', show: 'Super Saturday Sports Show', presenter: 'Craig Stott & John Painter', category: 'sport', dayparts: ['M', 'L', 'D'] },
+  ...fromFullSchedule(),
 ]
 
 export interface SportsProgramme {
