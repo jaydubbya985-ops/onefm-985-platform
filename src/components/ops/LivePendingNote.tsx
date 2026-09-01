@@ -1,3 +1,5 @@
+import { formatCoverageShort } from '@/lib/coverageCopy'
+
 /** Empty-state for DEMO chart series that must not appear in live #/ops. */
 export function LivePendingNote({
   title,
@@ -11,7 +13,7 @@ export function LivePendingNote({
       <p className="text-one-white/80 text-sm font-medium">{title}</p>
       <p className="text-one-white/40 text-xs mt-2 max-w-md">
         {detail ??
-          'DEMO figures are hidden in live mode. This fills in once station-audited data is loaded.'}
+          `DEMO figures are hidden in live mode. Licensed coverage is ${formatCoverageShort()} (ABS 2021 via townData). Revenue charts wait on station-audited data.`}
       </p>
     </div>
   )
