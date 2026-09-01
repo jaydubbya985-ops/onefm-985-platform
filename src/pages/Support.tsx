@@ -1,6 +1,7 @@
 /**
  * DONATE — rebuilt per REBUILD-SPEC.md (page 6 of 6).
  * Honest bank transfer flow until Stripe keys arrive. No fake patron names.
+ * Impact copy from programGuide / BRAND / bankDetails — no invented programs.
  */
 import { Link } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
@@ -14,18 +15,20 @@ import {
   PosterReveal,
   StrokeFill,
 } from '@/components/onair/kit'
-import { donationTiers, stationStats } from '@/data/pricing'
-import { formatTowns, formatCoverageShort, formatWeeklyListeners, formatWeeklyListenersPlain } from '@/lib/coverageCopy'
+import { donationTiers } from '@/data/pricing'
+import { BREAKFAST_SHOW, MULTICULTURAL_PROGRAM_COUNT, getBreakfastScheduleLabel } from '@/data/programGuide'
+import { formatTowns, formatCoverageShort, formatWeeklyListeners, formatWeeklyListenersPlain, yearsBroadcastingValue } from '@/lib/coverageCopy'
+import { PARTNERSHIP_FROM_WEEKLY } from '@/lib/inventoryCopy'
+import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { BRAND } from '@/lib/brand'
 
 const RED = '#E51636'
 
 const BANK = {
-  name: '98.5 One FM',
+  name: BANK_ACCOUNT_NAME,
   bank: 'NAB',
-  bsb: '083-894',
-  account: '553 219 432',
-  email: 'admin@fm985.com.au',
-  phone: '(03) 5831 3131',
+  bsb: BANK_BSB,
+  account: BANK_ACCOUNT,
 } as const
 
 const STRIPE_READY =
@@ -36,12 +39,12 @@ const IMPACT = [
   {
     tag: 'Programming',
     title: 'Keep the Valley on air',
-    body: 'Volunteer-run community radio — live local content 24/7 from Shepparton. Your support helps cover transmission, studio and programming costs.',
+    body: `Volunteer-run community radio from Shepparton — overnight mix plus live local shifts on the weekly guide. Donations help cover transmission, studio and programming costs.`,
   },
   {
     tag: 'Community',
     title: 'Airtime for local NFPs',
-    body: 'ONE FM donates airtime to charities and community groups across the Goulburn Murray — sport, multicultural programs and local notices.',
+    body: `Community notices, GVL sport and ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide (fm985.com.au/guide) — airtime for groups across the Goulburn Murray.`,
   },
   {
     tag: 'Resilience',
@@ -49,9 +52,9 @@ const IMPACT = [
     body: 'When floods and storms isolate towns, local radio is part of the practical information network — community notices alongside sport and events.',
   },
   {
-    tag: 'Next generation',
-    title: 'ONE Youth & training',
-    body: 'Training presenters and supporting youth programming — building the next generation of Valley broadcasters.',
+    tag: 'Breakfast',
+    title: BREAKFAST_SHOW,
+    body: `${getBreakfastScheduleLabel()} — volunteer weekday breakfast from the weekly guide (fm985.com.au/guide).`,
   },
 ]
 
@@ -103,7 +106,7 @@ function DonateHero() {
           />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Goulburn Valley Community Radio Inc. is a not-for-profit, volunteer-run station.
+          {BRAND.org} is a not-for-profit, volunteer-run station.
           Donations help keep 98.5 FM live and local for {formatTowns()}.
         </p>
         <a
@@ -173,17 +176,17 @@ function BankDetails() {
             </p>
           )}
           <a
-            href={`mailto:${BANK.email}?subject=Donation%20to%20ONE%20FM%2098.5&body=${mailBody}`}
+            href={`mailto:${BRAND.email}?subject=Donation%20to%20ONE%20FM%2098.5&body=${mailBody}`}
             className="inline-flex justify-center rounded-full px-7 py-4 font-bold text-[13px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
             style={{ background: RED }}
           >
-            Email {BANK.email} →
+            Email {BRAND.email} →
           </a>
           <a
             href={`tel:+61358313131`}
             className="text-center text-[14px] text-white/45 hover:text-white/70 transition-colors"
           >
-            Or call {BANK.phone}
+            Or call {BRAND.phone}
           </a>
         </div>
       </div>
@@ -195,23 +198,26 @@ export default function Support() {
   const tiers = donationTiers.map((t) => ({
     tag: t.period === 'month' ? `$${t.amount}/month` : 'One-off',
     title: t.name,
-    body: t.description,
+    body:
+      t.period === 'month'
+        ? `Suggested monthly amount of $${t.amount}. On-air thanks and recognition are arranged with the station — not automatic.`
+        : `Suggested one-off amount of $${t.amount}.`,
   }))
 
   return (
     <Layout>
       <SEO
         title="Donate — Support ONE FM 98.5"
-        description={`Support volunteer-run community radio across ${formatTowns()}. ${formatCoverageShort()} (ABS 2021 via townData). Bank transfer: NAB BSB 083-894 · Acct 553 219 432 · 98.5 One FM.`}
+        description={`Support volunteer-run community radio across ${formatTowns()}. ${formatCoverageShort()} (ABS 2021 via townData). Bank transfer: NAB BSB ${BANK_BSB} · Acct ${BANK_ACCOUNT} · ${BANK_ACCOUNT_NAME}.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             'Volunteer-run · community-owned · not for profit',
-            'Goulburn Valley Community Radio Inc.',
+            BRAND.org,
             formatCoverageShort(),
             formatWeeklyListeners(),
-            'ABN 92 117 291 771',
+            `ABN ${BRAND.abn}`,
             'Every dollar stays local',
           ]}
           delay={0.4}
@@ -245,7 +251,7 @@ export default function Support() {
             >
               <h3 className="font-poster uppercase text-[22px] text-white">Sponsor</h3>
               <p className="text-[15px] text-white/55 mt-2">
-                Partner with the Valley on air — packages from $50/week across {formatTowns()}.
+                Partner with the Valley on air — {PARTNERSHIP_FROM_WEEKLY} across {formatTowns()}.
               </p>
               <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>
                 View packages →
@@ -254,7 +260,7 @@ export default function Support() {
           </div>
           <p className="text-[13px] text-white/35 mt-8 max-w-xl">
             Major donor and patron recognition is handled by the station directly —{' '}
-            <a href={`mailto:${BANK.email}`} className="underline hover:text-white/60">
+            <a href={`mailto:${BRAND.email}`} className="underline hover:text-white/60">
               contact us
             </a>{' '}
             to discuss on-air thanks. We do not list unverified names publicly.
@@ -263,8 +269,8 @@ export default function Support() {
 
         <StatsStrip
           stats={[
-            { n: String(stationStats.yearsBroadcasting), t: 'Years on air', red: true },
-            { n: '98.5', t: 'FM · Callsign 3ONE' },
+            { n: yearsBroadcastingValue(), t: 'Years on air', red: true },
+            { n: BRAND.frequency, t: `FM · Callsign ${BRAND.callsign}` },
             { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners' },
             { n: formatTowns(), t: 'Across the Goulburn Valley' },
           ]}
