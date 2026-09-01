@@ -22,20 +22,9 @@ import {
   LIFE_MEMBER_NOTE,
 } from '@/data/stationHistory'
 import {
-  ALL_PRESENTERS,
-  BREAKFAST_ROSTER,
-  BREAKFAST_SHOW,
-  BREAKFAST_TIME,
-  FULL_SCHEDULE,
-  MULTICULTURAL_PROGRAM_COUNT,
-  MULTICULTURAL_PROGRAMS,
-  getBreakfastScheduleLabel,
-} from '@/data/programGuide'
-import { formatGuideHours } from '@/lib/guideHours'
-import { ON_AIR_WALL_PHOTO_NOTE, presenterPortrait } from '@/lib/presenterAssets'
-import {
   Radio,
   Mic,
+  Calendar,
   MapPin,
   Users,
   Heart,
@@ -96,70 +85,24 @@ function getTeamAvatar(name: string) {
   return { ...palette, initials }
 }
 
-const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+/* ─── Team data ─── */
+const team = [
+  { name: "Tim Ahemt", role: "Breakfast Host (Mon–Tue)", years: "2026", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts ONE FM Breakfast Monday and Tuesday — community interviews and local news." },
+  { name: "The Big G (Craig Stott)", role: "Breakfast (Wed) / Tuesday Mornings", years: "2026", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Wednesday breakfast and Tuesday morning music on ONE FM." },
+  { name: "Ralph Whitehead", role: "Thu Breakfast / Friday Arvo / Friday Morning", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
+  { name: "Josh Revens", role: "Fri Breakfast / Monday Nights / Community Interviews", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Friday breakfast, Monday night community programming, and community interviews covering local events, sports and initiatives." },
+  { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", years: "4", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
+  { name: "James Manley", role: "Host — The James Manley Show", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Community-focused afternoon programming Mon–Tue with local interviews and advocacy." },
+  { name: "Carlos Rock", role: "Host — Planet of Sound", years: "19-20", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },
+  { name: "Timmy Ahmet", role: "Host — Good Evening Country", years: "", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
+  { name: "Les 'Harro' Harrison", role: "Community Host / Various", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
+  { name: "Fikiri", role: "Host — Africonnect (Swahili)", years: "", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
+  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", years: "", cat: "Multicultural", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
+  { name: "Edith", role: "Host — Filipino Music Program", years: "", cat: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
+  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "", cat: "Multicultural", img: "/assets/images/studio-presenter-mic.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
+]
 
-/** Breakfast roster match uses the primary name only — "The Big G", not "Craig Stott". */
-function breakfastDaysFor(name: string): string[] {
-  return BREAKFAST_ROSTER.filter((slot) => {
-    const aka = slot.host.match(/^(.+?)\s*\((.+)\)$/)
-    const primary = aka ? aka[1].trim() : slot.host
-    return name === slot.host || name === primary
-  }).map((slot) => slot.day.slice(0, 3))
-}
-
-function presenterHours(name: string, show: string): string {
-  const breakfastDays = breakfastDaysFor(name)
-  if (breakfastDays.length) {
-    return `${BREAKFAST_SHOW} · ${breakfastDays.join(' & ')} · ${BREAKFAST_TIME}`
-  }
-  const fromShow = formatGuideHours(show)
-  if (fromShow) return `${show} · ${fromShow}`
-  const hosted = FULL_SCHEDULE.filter(
-    (slot) => slot.host === name || slot.host.startsWith(`${name} `) || slot.host.includes(`(${name})`),
-  )
-  const unique = [...new Map(hosted.map((slot) => [slot.name, slot])).values()]
-  if (unique.length) {
-    return unique
-      .map((slot) => {
-        const hours = formatGuideHours(slot.name)
-        return hours ? `${slot.name} · ${hours}` : slot.name
-      })
-      .join(' · ')
-  }
-  return show
-}
-
-function isMulticulturalPresenter(name: string): boolean {
-  return FULL_SCHEDULE.some((slot) => {
-    if (slot.category !== 'Multicultural') return false
-    if (slot.host === name) return true
-    return slot.host.startsWith(`${name} `) || name.startsWith(`${slot.host} `)
-  })
-}
-
-const MULTICULTURAL_WEEKNIGHTS = (() => {
-  const days = [...new Set(FULL_SCHEDULE.filter((s) => s.category === 'Multicultural').map((s) => s.day))]
-    .sort((a, b) => a - b)
-  if (!days.length) return 'Hours on the weekly guide'
-  const first = DAY_ABBR[days[0]]
-  const last = DAY_ABBR[days[days.length - 1]]
-  const run = days.length > 1 && days.every((d, i) => i === 0 || d === days[i - 1] + 1)
-  return `${run ? `${first}–${last}` : days.map((d) => DAY_ABBR[d]).join(' & ')} evenings on the weekly guide`
-})()
-
-/**
- * Voices of the Valley — every row is ALL_PRESENTERS (programGuide.ts).
- * Named portraits: Di Hunter and Sally Nayler only. Sally is archive, not this wall.
- */
-const team = ALL_PRESENTERS.map((p) => ({
-  name: p.name,
-  role: p.show,
-  cat: isMulticulturalPresenter(p.name) ? 'Multicultural' : 'On-Air',
-  hours: presenterHours(p.name, p.show),
-  portrait: presenterPortrait(p.name),
-}))
-
-const teamCategories = ['All', 'On-Air', 'Multicultural'] as const
+const teamCategories = ["All", "On-Air", "Multicultural"]
 
 /**
  * Facilities cards. Equipment inventories are not on the public record, so these
@@ -181,11 +124,7 @@ const studios = [
     title: "Live from Shepparton",
     desc: "Volunteer presenters host the weekday desk from the station's Shepparton studios, with an automated overnight mix between shifts.",
     icon: Mic,
-    specs: [
-      `Breakfast ${BREAKFAST_TIME} weekdays`,
-      getBreakfastScheduleLabel(),
-      'Source: fm985.com.au/guide via programGuide.ts',
-    ],
+    specs: ["Breakfast 6AM–9AM weekdays", "Rotating volunteer roster", "Source: fm985.com.au/guide"],
   },
   {
     title: "Outside broadcast",
@@ -194,10 +133,10 @@ const studios = [
     specs: ["GVL match broadcasts", "NIRS AFL rebroadcasts", "2019 SCMA X-Awards finalist"],
   },
   {
-    title: `${MULTICULTURAL_PROGRAM_COUNT} multicultural programs`,
-    desc: MULTICULTURAL_PROGRAMS.map((s) => s.name).join(', ') + ' — from the weekly guide, not a weekend dial.',
+    title: "Eight language strands",
+    desc: "Africonnect, Arabic, Filipino, Mandarin, Persian, Punjabi, Samoan and Swahili/Congolese programs run alongside ONE Youth.",
     icon: Languages,
-    specs: [MULTICULTURAL_WEEKNIGHTS, 'Volunteer-presented', 'Source: fm985.com.au/guide via programGuide.ts'],
+    specs: ["Weekend and evening slots", "Volunteer-presented", "Source: Annual Report 2024"],
   },
 ]
 
@@ -447,7 +386,7 @@ export default function Story() {
           <div>
             <WordReveal text="Meet the Voices of the Valley" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white max-w-xl">
-              Every name is from the weekly guide (fm985.com.au/guide via programGuide.ts). Named portraits exist only for Di Hunter and Sally Nayler — Sally is in the living archive; Di hosts Monday Afternoon.
+              Our team is a mix of lifelong locals and passionate broadcasters who found their home at ONE FM.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -483,25 +422,15 @@ export default function Story() {
                 const av = getTeamAvatar(member.name)
                 return (
                   <div className="relative aspect-[4/5] overflow-hidden">
-                    {member.portrait ? (
-                      <img
-                        src={member.portrait}
-                        alt={member.name}
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                    ) : (
-                      <>
-                        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${av.from} 0%, ${av.to} 100%)` }} />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span
-                            className="font-heading font-black select-none"
-                            style={{ fontSize: 'clamp(2.5rem, 6vw, 3.5rem)', color: av.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
-                          >
-                            {av.initials}
-                          </span>
-                        </div>
-                      </>
-                    )}
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${av.from} 0%, ${av.to} 100%)` }} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span
+                        className="font-heading font-black select-none"
+                        style={{ fontSize: 'clamp(2.5rem, 6vw, 3.5rem)', color: av.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
+                      >
+                        {av.initials}
+                      </span>
+                    </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-one-navy/75 via-transparent to-transparent" />
                     <div aria-hidden className="explore-tile-scan" />
                     <div className="absolute bottom-4 left-4 right-4">
@@ -515,16 +444,25 @@ export default function Story() {
                 )
               })()}
               <div className="p-5">
-                <p className="font-body-small text-one-white/80">{member.hours}</p>
-                <p className="font-label text-[10px] tracking-[0.14em] uppercase text-muted mt-2">
-                  fm985.com.au/guide
-                </p>
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar size={12} className="text-muted" />
+                  <span className="font-label text-muted">
+                    {member.years
+                      ? /^\d{4}$/.test(member.years)
+                        ? `On air since ${member.years}`
+                        : `${member.years} years at ONE FM`
+                      : 'Presenter at ONE FM'}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Quote size={14} className="text-one-gold/50 shrink-0 mt-1" />
+                  <p className="font-body-small text-one-white italic">{member.quote}</p>
+                </div>
               </div>
             </motion.div>
             </TiltCard>
           ))}
         </div>
-        <p className="font-body-small text-muted mt-8 max-w-2xl">{ON_AIR_WALL_PHOTO_NOTE}</p>
       </section>
 
       {/* ═══════ Section 4 — Studio & Facilities ═══════ */}
@@ -552,14 +490,14 @@ export default function Story() {
           >
             <img
               src="/assets/images/studio-presenter-mic.jpg"
-              alt="ONE FM Shepparton studio — station photography, not a presenter portrait"
+              alt="ONE FM presenter on air"
               className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-one-navy/80 via-transparent to-transparent" />
             <div aria-hidden className="explore-tile-scan" />
             <div className="absolute bottom-6 left-6 right-6">
               <h3 className="font-h3 text-one-white mb-1">Live On Air</h3>
-              <p className="font-body-small text-one-white">Shepparton studios · {BREAKFAST_SHOW} {BREAKFAST_TIME} weekdays.</p>
+              <p className="font-body-small text-one-white">Where the magic happens, every single day.</p>
             </div>
           </motion.div>
 
