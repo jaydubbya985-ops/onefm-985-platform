@@ -5,13 +5,7 @@ import { Loader2, Pause, Play, Radio, X } from 'lucide-react'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
-import {
-  BREAKFAST_SHOW,
-  BREAKFAST_TIME,
-  getBreakfastScheduleLabel,
-  getWeekdayBreakfastHost,
-  isBreakfastProgram,
-} from '@/data/programGuide'
+import { liveNowFromMetadata } from '@/lib/liveNow'
 
 const HIDE_ON = ['/listen', '/ops']
 
@@ -43,12 +37,11 @@ export function MiniPlayer() {
   const { playing, loading, toggle } = useLiveStream()
 
   const hidden = HIDE_ON.some((p) => location.pathname === p) || dismissed
-  const breakfastHost = getWeekdayBreakfastHost(new Date().getDay())
-  const breakfastOnAir = Boolean(breakfastHost) && isBreakfastProgram(meta.program)
-  const program = breakfastOnAir ? BREAKFAST_SHOW : meta.program
-  const presenterLine = breakfastOnAir
-    ? `with ${breakfastHost} · ${BREAKFAST_TIME}`
-    : `with ${meta.presenter}`
+  const live = liveNowFromMetadata(meta)
+  const program = live.program
+  const presenterLine = live.breakfastOnAir
+    ? `with ${live.presenter} · ${live.programTime}`
+    : `with ${live.presenter}`
 
   return (
     <AnimatePresence>
@@ -87,9 +80,9 @@ export function MiniPlayer() {
                 <p className="font-label text-[10px] text-muted truncate">
                   {presenterLine}
                 </p>
-                {breakfastOnAir && (
+                {live.breakfastOnAir && live.breakfastLabel && (
                   <p className="font-label text-[9px] text-muted/80 truncate hidden md:block">
-                    {getBreakfastScheduleLabel()}
+                    {live.breakfastLabel}
                   </p>
                 )}
               </div>

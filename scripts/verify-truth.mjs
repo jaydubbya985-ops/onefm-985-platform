@@ -108,19 +108,35 @@ if (
 }
 if (
   !listen ||
-  !listen.text.includes('BREAKFAST_SHOW') ||
-  !listen.text.includes('getBreakfastScheduleLabel')
+  !listen.text.includes('liveNowFromMetadata') ||
+  !listen.text.includes('ON_AIR_WEEK')
 ) {
-  hits.push('pages/Listen.tsx: weekday breakfast hero must use BREAKFAST_SHOW / getBreakfastScheduleLabel')
+  hits.push('pages/Listen.tsx: live hero from liveNowFromMetadata; on-air wall from ON_AIR_WEEK')
+}
+
+const home = files.find((f) => f.label === 'pages/Home.tsx')
+if (!home || !home.text.includes('liveNowFromMetadata')) {
+  hits.push('pages/Home.tsx: hero must show liveNowFromMetadata (programGuide + BREAKFAST_ROSTER)')
+}
+
+const liveNow = files.find((f) => f.label === 'lib/liveNow.ts')
+if (
+  !liveNow ||
+  !liveNow.text.includes('BREAKFAST_SHOW') ||
+  !liveNow.text.includes('getBreakfastScheduleLabel') ||
+  !liveNow.text.includes('getWeekdayBreakfastHost')
+) {
+  hits.push('lib/liveNow.ts: weekday breakfast must use BREAKFAST_SHOW / BREAKFAST_ROSTER helpers')
+}
+
+const onAirKit = files.find((f) => f.label === 'components/onair/kit.tsx')
+if (!onAirKit || !onAirKit.text.includes('onAirWallSub')) {
+  hits.push('components/onair/kit.tsx: NameWall hours must come from onAirWallSub / FULL_SCHEDULE')
 }
 
 const miniPlayer = files.find((f) => f.label === 'components/MiniPlayer.tsx')
-if (
-  !miniPlayer ||
-  !miniPlayer.text.includes('BREAKFAST_SHOW') ||
-  !miniPlayer.text.includes('getBreakfastScheduleLabel')
-) {
-  hits.push('components/MiniPlayer.tsx: breakfast chrome must use BREAKFAST_SHOW and getBreakfastScheduleLabel')
+if (!miniPlayer || !miniPlayer.text.includes('liveNowFromMetadata')) {
+  hits.push('components/MiniPlayer.tsx: breakfast chrome must use liveNowFromMetadata')
 }
 
 const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')

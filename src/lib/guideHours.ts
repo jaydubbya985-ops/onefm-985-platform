@@ -109,8 +109,20 @@ export function formatHostHours(hostName: string): string | null {
   return formatHoursFromSlots(FULL_SCHEDULE.filter((s) => hostOverlaps(s.host, hostName)))
 }
 
-/** On-air wall subtitle: dancing hours come from FULL_SCHEDULE, not a Mon–Fri 9AM shorthand. */
+/** Wall name → FULL_SCHEDULE show. Breakfast rows already carry roster days. */
+const WALL_SHOW_BY_NAME: Record<string, string> = {
+  'Johnny P': 'Dancing through the decades',
+  'Johnny P (John Painter)': 'Dancing through the decades',
+  'James Manley': 'The James Manley Show',
+}
+
+/** On-air wall subtitle: hours come from FULL_SCHEDULE, not a Mon–Fri 9AM shorthand. */
 export function onAirWallSub(name: string, fallback: string): string {
+  const show = WALL_SHOW_BY_NAME[name]
+  if (show) {
+    const hours = formatGuideHours(show)
+    if (hours) return `${show} · ${hours}`
+  }
   if (/johnny p|john painter/i.test(name)) {
     const hours = formatGuideHours('Dancing through the decades')
     if (hours) return `Dancing through the decades · ${hours}`

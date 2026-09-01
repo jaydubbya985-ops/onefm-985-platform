@@ -13,15 +13,11 @@ import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFil
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import {
-  BREAKFAST_SHOW,
-  BREAKFAST_TIME,
-  getBreakfastScheduleLabel,
-  getWeekdayBreakfastHost,
-  isBreakfastProgram,
   ON_AIR_WALL_PHOTO_NOTE,
   ON_AIR_WEEK,
 } from '@/data/programGuide'
 import { BRAND } from '@/lib/brand'
+import { liveNowFromMetadata } from '@/lib/liveNow'
 import {
   formatCoverageShort,
   formatRadius,
@@ -39,11 +35,8 @@ const LIME = '#B6FF00'
 function ListenHero() {
   const { playing, loading, toggle } = useLiveStream()
   const meta = usePlayerMetadata()
-  const breakfastHost = getWeekdayBreakfastHost(new Date().getDay())
-  const breakfastOnAir = Boolean(breakfastHost) && isBreakfastProgram(meta.program)
-  const program = breakfastOnAir ? BREAKFAST_SHOW : meta.program
-  const presenter = breakfastOnAir && breakfastHost ? breakfastHost : meta.presenter
-  const programTime = breakfastOnAir ? BREAKFAST_TIME : meta.programTime
+  const live = liveNowFromMetadata(meta)
+  const { program, presenter, programTime } = live
   return (
     <section className="relative px-6 md:px-12 lg:px-20 pt-24 pb-16 min-h-[80vh] flex flex-col justify-center">
       <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,160px)]">
@@ -74,9 +67,9 @@ function ListenHero() {
           <div className="text-[14px] text-white/50">
             with {presenter} · {programTime}
           </div>
-          {breakfastOnAir && (
+          {live.breakfastOnAir && live.breakfastLabel && (
             <div className="text-[12px] text-white/40 mt-1.5">
-              {getBreakfastScheduleLabel()}
+              {live.breakfastLabel}
             </div>
           )}
           {meta.nowPlaying && (
@@ -201,6 +194,7 @@ function SongRequest() {
 
 export default function Listen() {
   const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   return (
     <Layout>
       <SEO
@@ -210,7 +204,7 @@ export default function Listen() {
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            meta.isLive ? `● ON AIR — ${meta.program}${meta.presenter ? ` with ${meta.presenter}` : ''}` : `● ${meta.program}`,
+            live.isLive ? `● ON AIR — ${live.program}${live.presenter ? ` with ${live.presenter}` : ''}` : `● ${live.program}`,
             meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
             formatWeeklyListeners(),
             formatCoverageShort(),
