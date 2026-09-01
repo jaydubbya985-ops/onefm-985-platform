@@ -1,4 +1,5 @@
 import { coverageNumbers, formatBroadcastPopulation, formatRadius } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { BRAND_COLORS } from '@/lib/brand'
 import type { CoveragePin, CoveragePinType } from '@/data/coverageMapPins'
 import type { Town } from '@/data/townData'
@@ -246,7 +247,7 @@ export function buildAdvertiserTour(towns: Town[], pins: CoveragePin[]): TourSto
     {
       kind: 'fit',
       pins: football,
-      caption: `GVL Saturday coverage — ${football.length} clubs in our broadcast heartland`,
+      caption: `GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} — ${football.length} clubs in our broadcast heartland`,
       dwellMs: 5000,
       maxZoom: 10,
     },
