@@ -42,7 +42,13 @@ import {
   weeklyListenersCount,
   yearsBroadcastingValue,
 } from '@/lib/coverageCopy'
-import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
+import {
+  BREAKFAST_SHOW,
+  BREAKFAST_TIME,
+  MULTICULTURAL_PROGRAM_COUNT,
+  MULTICULTURAL_PROGRAMS,
+  getBreakfastScheduleLabel,
+} from '@/data/programGuide'
 
 /* ─────────── easing ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -112,7 +118,7 @@ const platformCards = [
     title: 'Live Stream',
     stat: 'Online',
     label: 'fm985.com.au',
-    share: 'Radio.co · Community Radio Plus',
+    share: 'Radio.co stream via fm985.com.au',
     status: 'Analytics pending',
     statusColor: '#F0C75E',
     accent: '#B6FF00',
@@ -408,15 +414,15 @@ export default function AudienceAnalytics() {
                 },
                 {
                   title: 'Breakfast',
-                  text: 'ONE FM Breakfast Mon–Fri 6–9am',
-                  sub: 'Tim Ahemt · The Big G · Ralph Whitehead · Josh Revens',
+                  text: `${BREAKFAST_SHOW} · ${BREAKFAST_TIME} weekdays`,
+                  sub: getBreakfastScheduleLabel(),
                   border: '#F0C75E',
                   icon: Radio,
                 },
                 {
                   title: 'Community',
                   text: `${MULTICULTURAL_PROGRAM_COUNT} multicultural programs each week`,
-                  sub: 'Swahili, Italian, Filipino, Mandarin, Punjabi, Samoan, Arabic, Radio Netherlands — programGuide.ts',
+                  sub: `${MULTICULTURAL_PROGRAMS.map((s) => s.name).join(', ')} — fm985.com.au/guide`,
                   border: '#D4963A',
                   icon: Sparkles,
                 },
