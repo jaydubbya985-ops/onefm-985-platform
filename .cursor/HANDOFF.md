@@ -10,8 +10,9 @@
 
 **CONTINUOUS RUN IS ON.** Do not idle. Do not wait for Jay to start the next agent. Read `.cursor/CONTINUOUS.md`. Arm a 20-minute continue timer. Keep shipping.
 
-## Already true on GitHub `main` (`29fb88a`)
+## Already true on GitHub `main` (`41d18f7`)
 
+- PR **#27** EXE'd. MediaKit, Football, SponsorshipKit, SalesProposal via `coverageCopy.ts`.
 - PR **#26** EXE'd. Support coverage via `coverageCopy.ts` + truth guards.
 - PR **#25** EXE'd. Invoice Design Lab — 3 variants (broadcast / on-air / valley) at `#/ops` → Invoice Design tab.
 - PR **#24** merged. Home/Listen/Community/OnAirNav coverage strings go through `coverageCopy.ts`.
@@ -30,7 +31,7 @@
 
 ## Open now
 
-PR **#27** `cursor/sponsor-pages-coverage-c24f` — MediaKit, Football, SponsorshipKit, SalesProposal via `coverageCopy.ts`. Do not merge without **EXE**.
+None — start next desk on a fresh `cursor/<name>-c24f` branch.
 
 ## Next desks (do not wait)
 
