@@ -3,6 +3,7 @@
  * Community broadcaster invoices: trustworthy, distinctive, send-ready.
  */
 
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { DS } from '@/lib/invoiceDesignSystem'
 
 export type InvoiceDesignVariantId = 'broadcast' | 'on-air' | 'valley'
@@ -29,7 +30,7 @@ export const INVOICE_DESIGN_VARIANTS: InvoiceDesignVariant[] = [
     name: 'Broadcast Letter',
     tagline: 'Premium navy & gold — the corporate broadcast standard',
     description:
-      'Full-bleed navy hero, 64px gold amount, solid gold rule. Feels like a letter from a major broadcaster — serious, trusted, partner-grade.',
+      `Full-bleed navy hero, 64px gold amount, solid gold rule. Feels like a letter from a major broadcaster — serious, trusted, partner-grade. Licensed community radio · ${formatCoverageShort()}.`,
     mood: 'ABC annual report × community radio board pack',
     bestFor: 'Major sponsors, councils, corporates (FOOTT, GVFL)',
     palette: {
@@ -44,7 +45,7 @@ export const INVOICE_DESIGN_VARIANTS: InvoiceDesignVariant[] = [
     name: 'ON AIR Poster',
     tagline: 'Ink, signal red, fluoro lime — matches the public site',
     description:
-      'Black canvas, red poster amount block, lime reference accent. Same design language as onefmops.netlify.app — bold, contemporary, unmistakably ONE FM.',
+      `Black canvas, red poster amount block, lime reference accent. Same design language as onefmops.netlify.app — bold, contemporary, unmistakably ONE FM. Licensed community radio · ${formatCoverageShort()}.`,
     mood: 'Rock hall poster × live broadcast ticker',
     bestFor: 'Sport partners, GVL, brands that know the station already',
     palette: {
@@ -59,7 +60,7 @@ export const INVOICE_DESIGN_VARIANTS: InvoiceDesignVariant[] = [
     name: 'Valley Partner',
     tagline: 'Warm editorial — community first, human touch',
     description:
-      'Eucalypt green masthead, wheat-cream paper, ochre amount. Reads like a regional festival program or community annual — approachable, proud, local.',
+      `Eucalypt green masthead, wheat-cream paper, ochre amount. Reads like a regional festival program or community annual — approachable, proud, local. Licensed community radio · ${formatCoverageShort()}.`,
     mood: 'Shepparton Art Museum × canola fields × local NFP annual',
     bestFor: 'Long-term locals, NFPs, family businesses, multicultural partners',
     palette: {
@@ -105,6 +106,6 @@ export const INVOICE_STATION = {
   callsign: '3ONE',
   licensed: '1989',
   tagline: "Goulburn Valley's Community Radio",
-  communityLine: 'Licensed community broadcaster · ACMA 1385226/1',
+  communityLine: `Licensed community broadcaster · ACMA 1385226/1 · ${formatCoverageShort()}`,
   org: 'Goulburn Valley Community Radio Inc.',
 } as const
