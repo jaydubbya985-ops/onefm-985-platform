@@ -34,7 +34,8 @@ export function CookieConsent() {
                 </div>
                 <div className="space-y-1">
                   <p className="font-body-small text-one-white">
-                    We use cookies and analytics to improve your experience.
+                    We store a consent preference on this device so we do not keep asking. We do not
+                    run a third-party analytics suite.
                   </p>
                   <Link
                     to="/privacy"
