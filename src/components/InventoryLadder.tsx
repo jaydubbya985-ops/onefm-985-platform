@@ -1,5 +1,8 @@
 import { STANDARD_SPOT_PLUS_GST, PARTNERSHIP_FROM_WEEKLY, GVL_PREMIUM_INTRO } from '@/lib/inventoryCopy'
 import { rateCard } from '@/data/pricing'
+import { formatGuideHours } from '@/lib/guideHours'
+
+const GVL_GUIDE_HOURS = formatGuideHours('GVL Match of the Day')
 
 const ROWS: { label: string; rate: string; note: string; premium?: boolean }[] = [
   {
@@ -27,7 +30,9 @@ const ROWS: { label: string; rate: string; note: string; premium?: boolean }[] =
   {
     label: 'GVL match-day / live call',
     rate: 'Premium — quoted separately',
-    note: GVL_PREMIUM_INTRO,
+    note: GVL_GUIDE_HOURS
+      ? `${GVL_PREMIUM_INTRO} On the weekly guide: ${GVL_GUIDE_HOURS}.`
+      : GVL_PREMIUM_INTRO,
     premium: true,
   },
 ]
