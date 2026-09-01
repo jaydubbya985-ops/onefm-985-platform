@@ -54,6 +54,7 @@ import {
   yearsBroadcastingValue,
 } from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { BREAKFAST_TIME } from '@/data/programGuide'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { MediaImage } from '@/components/MediaImage'
 import { TiltCard } from '@/components/TiltCard'
@@ -344,7 +345,7 @@ export default function MediaKit() {
         audienceStats,
         platformReach,
         contactEmail: BRAND.email,
-        contactPhone: '+61 2 5555 0198',
+        contactPhone: BRAND.phone,
       })
 
       const url = window.URL.createObjectURL(blob)
@@ -590,7 +591,7 @@ export default function MediaKit() {
                     ))}
                   </div>
                   <p className="font-body-small text-muted mt-4 text-xs">
-                    Peak listening: breakfast (6–9am) and drive (4–7pm). Detailed demographics available on request.
+                    Breakfast is {BREAKFAST_TIME} weekdays (fm985.com.au/guide via programGuide). Daypart listenership share is data pending until Radio.co analytics are connected.
                   </p>
                 </div>
                 </TiltCard>
