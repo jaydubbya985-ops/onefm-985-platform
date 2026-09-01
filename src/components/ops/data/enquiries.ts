@@ -34,6 +34,12 @@ export interface Enquiry {
   value?: number
 }
 
+/**
+ * Weekday breakfast — source: BREAKFAST_SHOW / BREAKFAST_TIME in programGuide.ts.
+ * Saturday 6–9am on the guide is Songs of the Spirit, not breakfast.
+ */
+const WEEKDAY_BREAKFAST = 'ONE FM Breakfast (Breaky) · Mon–Fri 6:00am–9:00am'
+
 // DEMO DATA — synthetic CRM pipeline rows for ops UI. Not real sponsors.
 // Do not email these addresses. Real enquiries arrive via Supabase contact_enquiries.
 export const MOCK_ENQUIRIES: Enquiry[] = [
@@ -60,16 +66,16 @@ export const MOCK_ENQUIRIES: Enquiry[] = [
     email: 'david.chen@urbangrill.net',
     phone: '0433 876 543',
     company: 'Urban Grill Restaurant',
-    subject: 'Weekend promotion partnership',
+    subject: 'Weekday breakfast promotion partnership',
     message:
-      'We are a new restaurant opening in South Geelong and would love to explore a promotional partnership. Interested in sponsored segments during your Saturday breakfast show.',
+      `We are a new restaurant opening in South Geelong and would love to explore a promotional partnership. Interested in sponsored segments during ${WEEKDAY_BREAKFAST}.`,
     status: 'in_progress',
     priority: 'medium',
     assignedTo: 'Ricardo B',
     notes: [
       {
         id: 'n1',
-        text: 'Called David — keen on Saturday breakfast slot. Budget around $2k.',
+        text: `Called David — keen on weekday breakfast slot (${WEEKDAY_BREAKFAST}). Budget around $2k.`,
         author: 'Ricardo B',
         createdAt: '2025-05-18T10:15:00Z',
       },
