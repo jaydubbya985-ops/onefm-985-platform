@@ -23,8 +23,33 @@ export function getBreakfastHost(day: number): string {
   return BREAKFAST_HOSTS[day] ?? 'ONE FM'
 }
 
+export function isBreakfastProgram(name: string): boolean {
+  return /breakfast|breaky/i.test(name)
+}
+
+/** Weekday breakfast host from BREAKFAST_ROSTER (Mon=1 … Fri=5). Sunday/Saturday: null. */
+export function getWeekdayBreakfastHost(day: number): string | null {
+  if (day < 1 || day > 5) return null
+  return BREAKFAST_ROSTER[day - 1]?.host ?? null
+}
+
+/**
+ * Compact weekday breakfast line for chrome (mini player, nav, listen hero).
+ * Built from BREAKFAST_ROSTER — never a second handwritten host list.
+ */
 export function getBreakfastScheduleLabel(): string {
-  return 'Mon–Tue: Tim Ahemt · Wed: Craig Stott (The Big G) · Thu: Ralph Whitehead · Fri: Josh Revens'
+  return mergedBreakfastRoster()
+    .map((row) => {
+      const first = row.days[0].slice(0, 3)
+      const last = row.days[row.days.length - 1].slice(0, 3)
+      const days = row.days.length === 1 ? first : `${first}–${last}`
+      return `${days}: ${row.host}`
+    })
+    .join(' · ')
+}
+
+export function formatBreakfastChromeLabel(): string {
+  return `${BREAKFAST_SHOW} · ${getBreakfastScheduleLabel()}`
 }
 
 export interface LiveShowInfo {

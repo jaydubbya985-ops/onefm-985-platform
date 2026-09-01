@@ -1,6 +1,6 @@
 # ONE FM — continuous run (paste this as a Cursor Automation prompt)
 
-**Do not idle. Do not wait for Jay to start the next agent.** Pull `origin main`. New branch `cursor/<desk>-c24f`. Ship something visible. Build must pass. Push a PR. Do not merge unless Jay says **EXE**. Never merge PR **#13**.
+**Do not idle. Do not wait for Jay to start the next agent.** Pull `origin main`. New branch `cursor/<desk>-c24f`. Ship something visible. Build must pass. Push a PR. Do not merge unless Jay says **EXE**. Never merge PR **#13**. Never merge PR **#28**. Never merge PR **#29**.
 
 ## Who
 
@@ -17,7 +17,7 @@ Pick the first desk that is not already in an open PR:
 1. Leftover `stationStats` → `coverageCopy.ts` on **ai.ts, proposalDocument, contractDocument, OpsProposalSheet**
 2. Public home/listen craft from `programGuide.ts` + `townData.ts` + `/public/brand/` + `/public/assets/images/`
 3. Named portraits only if Jay drops new filename-verified files into `NAMED_PORTRAITS`
-4. Stale PR hygiene: recommend **close** on conflicting drafts #1 #3 #4 #8 #10 #11. Never merge #13.
+4. Stale PR hygiene: recommend **close** on conflicting drafts #1 #3 #4 #8 #10 #11. Never merge #13. Never merge #28 or #29 without EXE.
 
 ## Loop rules
 

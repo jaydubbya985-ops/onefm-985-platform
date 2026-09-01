@@ -5,6 +5,13 @@ import { Loader2, Pause, Play, Radio, X } from 'lucide-react'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
+import {
+  BREAKFAST_SHOW,
+  BREAKFAST_TIME,
+  getBreakfastScheduleLabel,
+  getWeekdayBreakfastHost,
+  isBreakfastProgram,
+} from '@/data/programGuide'
 
 const HIDE_ON = ['/listen', '/ops']
 
@@ -36,6 +43,12 @@ export function MiniPlayer() {
   const { playing, loading, toggle } = useLiveStream()
 
   const hidden = HIDE_ON.some((p) => location.pathname === p) || dismissed
+  const breakfastHost = getWeekdayBreakfastHost(new Date().getDay())
+  const breakfastOnAir = Boolean(breakfastHost) && isBreakfastProgram(meta.program)
+  const program = breakfastOnAir ? BREAKFAST_SHOW : meta.program
+  const presenterLine = breakfastOnAir
+    ? `with ${breakfastHost} · ${BREAKFAST_TIME}`
+    : `with ${meta.presenter}`
 
   return (
     <AnimatePresence>
@@ -66,14 +79,19 @@ export function MiniPlayer() {
 
               <div className="w-px h-4 bg-one-border/60 shrink-0 hidden sm:block" />
 
-              {/* Program info */}
+              {/* Program info — breakfast uses BREAKFAST_ROSTER, not a second host list */}
               <div className="flex-1 min-w-0">
                 <p className="font-body text-sm text-one-white truncate leading-tight">
-                  {meta.program}
+                  {program}
                 </p>
                 <p className="font-label text-[10px] text-muted truncate">
-                  with {meta.presenter}
+                  {presenterLine}
                 </p>
+                {breakfastOnAir && (
+                  <p className="font-label text-[9px] text-muted/80 truncate hidden md:block">
+                    {getBreakfastScheduleLabel()}
+                  </p>
+                )}
               </div>
 
               {/* Live weather */}

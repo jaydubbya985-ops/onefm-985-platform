@@ -39,7 +39,7 @@ import {
 } from 'lucide-react'
 
 const PAGE_JOBS: PageJob[] = [
-  { label: 'Listen Live', path: '/listen', description: 'Stream now', icon: Headphones, accent: '#E51636' },
+  { label: 'Listen Live', path: '/listen', description: BREAKFAST_SHOW, icon: Headphones, accent: '#E51636' },
   { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule', icon: Radio, accent: '#F2F2F2' },
   { label: 'Coverage Map', path: '/coverage', description: formatTowns(), icon: MapPin, accent: '#1B458F' },
   { label: 'GVL Football', path: '/football', description: 'Season sponsorship', icon: Trophy, accent: '#B6FF00' },

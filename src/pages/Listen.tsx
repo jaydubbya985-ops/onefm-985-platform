@@ -12,7 +12,15 @@ import { LatestInterviews } from '@/components/LatestInterviews'
 import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
-import { ON_AIR_WALL_PHOTO_NOTE, ON_AIR_WEEK } from '@/data/programGuide'
+import {
+  BREAKFAST_SHOW,
+  BREAKFAST_TIME,
+  getBreakfastScheduleLabel,
+  getWeekdayBreakfastHost,
+  isBreakfastProgram,
+  ON_AIR_WALL_PHOTO_NOTE,
+  ON_AIR_WEEK,
+} from '@/data/programGuide'
 import { BRAND } from '@/lib/brand'
 import {
   formatCoverageShort,
@@ -31,6 +39,11 @@ const LIME = '#B6FF00'
 function ListenHero() {
   const { playing, loading, toggle } = useLiveStream()
   const meta = usePlayerMetadata()
+  const breakfastHost = getWeekdayBreakfastHost(new Date().getDay())
+  const breakfastOnAir = Boolean(breakfastHost) && isBreakfastProgram(meta.program)
+  const program = breakfastOnAir ? BREAKFAST_SHOW : meta.program
+  const presenter = breakfastOnAir && breakfastHost ? breakfastHost : meta.presenter
+  const programTime = breakfastOnAir ? BREAKFAST_TIME : meta.programTime
   return (
     <section className="relative px-6 md:px-12 lg:px-20 pt-24 pb-16 min-h-[80vh] flex flex-col justify-center">
       <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,160px)]">
@@ -57,10 +70,15 @@ function ListenHero() {
           <div className="text-[12px] font-bold tracking-[0.18em] uppercase" style={{ color: RED }}>
             ● On Air Now
           </div>
-          <div className="font-poster uppercase text-[28px] text-white leading-tight mt-1">{meta.program}</div>
+          <div className="font-poster uppercase text-[28px] text-white leading-tight mt-1">{program}</div>
           <div className="text-[14px] text-white/50">
-            with {meta.presenter} · {meta.programTime}
+            with {presenter} · {programTime}
           </div>
+          {breakfastOnAir && (
+            <div className="text-[12px] text-white/40 mt-1.5">
+              {getBreakfastScheduleLabel()}
+            </div>
+          )}
           {meta.nowPlaying && (
             <div className="text-[13px] font-bold mt-1.5" style={{ color: LIME }}>
               ♪ {meta.nowPlaying}{meta.artist ? ` — ${meta.artist}` : ''}
