@@ -13,6 +13,11 @@ import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
 import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
 import type { DbContactEnquiry } from '@/lib/supabase'
 import * as opsApi from '@/lib/opsApi'
+import {
+  getInvoiceDesignVariant,
+  setInvoiceDesignVariant as persistInvoiceDesignVariant,
+  type InvoiceDesignVariantId,
+} from '@/lib/invoiceDesignVariants'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -26,6 +31,7 @@ export type OpsTab =
   | 'schedule'
   | 'invoices'
   | 'batch'
+  | 'design'
   | 'billing'
   | 'payments'
 
@@ -153,6 +159,8 @@ export interface OpsStore extends OpsState {
   queueForBatch: (invoiceId: string) => void
   removeFromBatch: (invoiceId: string) => void
   sendBatch: (ids: string[]) => void
+  invoiceDesignVariant: InvoiceDesignVariantId
+  setInvoiceDesignVariant: (id: InvoiceDesignVariantId) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -310,6 +318,9 @@ export function OpsProvider({ children }: { children: ReactNode }) {
   const [activeTab, setActiveTab] = useState<OpsTab>(() => loadSession().activeTab)
   const [focusProposalId, setFocusProposalId] = useState<string | null>(
     () => loadSession().focusProposalId,
+  )
+  const [invoiceDesignVariant, setVariantState] = useState<InvoiceDesignVariantId>(
+    () => getInvoiceDesignVariant(),
   )
   const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
 
@@ -776,8 +787,14 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         }))
         void opsApi.updateInvoicesBatch(ids, { status: 'sent' })
       },
+
+      invoiceDesignVariant,
+      setInvoiceDesignVariant: (id) => {
+        setVariantState(id)
+        persistInvoiceDesignVariant(id)
+      },
     }
-  }, [state, activeTab, focusProposalId])
+  }, [state, activeTab, focusProposalId, invoiceDesignVariant])
 
   return <OpsContext.Provider value={value}>{children}</OpsContext.Provider>
 }

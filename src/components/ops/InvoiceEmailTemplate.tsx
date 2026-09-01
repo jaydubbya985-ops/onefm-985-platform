@@ -11,10 +11,17 @@ import { useState } from 'react'
 import { jsPDF } from 'jspdf'
 import { Check, Copy, CreditCard } from 'lucide-react'
 import { useToast } from './Toast'
+import { useOpsStore } from './store'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
-import { createPdfPen, drawAmountBand, drawInteriorHeader, drawSlimFooter } from '@/lib/pdfLetterhead'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import {
+  getInvoiceDesignVariant,
+  getVariantMeta,
+  type InvoiceDesignVariantId,
+} from '@/lib/invoiceDesignVariants'
+import { generateVariantInvoiceEmailHtml } from '@/lib/invoiceVariantEmail'
+import { generateInvoicePdfForVariant } from '@/lib/invoiceVariantPdf'
 
 export { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB }
 
@@ -97,10 +104,6 @@ export interface PdfInvoiceData {
 const esc = (v?: string) =>
   (v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-
-const aud = (n: number) =>
-  `$${n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-
 // ---------------------------------------------------------------------------
 // generateInvoiceEmailHtml — Broadcast Letter
 // Table-based, Outlook-safe, max 600px.
@@ -111,291 +114,19 @@ export function generateInvoiceEmailHtml(
   bsb: string = BANK_BSB,
   account: string = BANK_ACCOUNT,
   accountName: string = BANK_ACCOUNT_NAME,
+  variantId?: InvoiceDesignVariantId,
 ): string {
-  const {
-    contactName, company, invoiceNumber, total, dueDate,
-    customMessage, campaign, addressLine1, addressLine2, addressLine3,
-  } = data
-
-  const payLink       = getStripePaymentLink(invoiceNumber, total, company)
-  const hasPaymentLink = !!PAYMENT_LINKS[invoiceNumber]
-
-  const dateLine = new Date().toLocaleDateString('en-AU', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  })
-
-  const name          = esc(contactName) || 'there'
-  const companyName   = esc(company)
-  const campaignLabel = esc(campaign) || 'Sponsorship'
-  const ref           = esc(invoiceNumber)
-  const totalFmt      = total.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-
-  const messageHtml = (customMessage || DEFAULT_EMAIL_BODY)
-    .split('\n')
-    .map(line => `<p style="margin:0 0 14px 0;color:#1A1A1A;font-size:15px;line-height:1.75;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">${esc(line)}</p>`)
-    .join('')
-
-  let addressBlock = ''
-  if (companyName)       addressBlock += `<div style="font-size:13px;font-weight:600;color:#1A1A1A;line-height:1.7;">${companyName}</div>`
-  if (esc(addressLine1)) addressBlock += `<div style="font-size:13px;color:#3D3D3D;line-height:1.7;">${esc(addressLine1)}</div>`
-  if (esc(addressLine2)) addressBlock += `<div style="font-size:13px;color:#3D3D3D;line-height:1.7;">${esc(addressLine2)}</div>`
-  if (esc(addressLine3)) addressBlock += `<div style="font-size:13px;color:#3D3D3D;line-height:1.7;">${esc(addressLine3)}</div>`
-
-  const payRow = hasPaymentLink ? `
-      <!-- PAY NOW — red sharp rect, only when Stripe link exists -->
-      <tr>
-        <td style="padding:24px 40px 0 40px;">
-          <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-              <td style="background-color:#E51636;">
-                <!--[if mso]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:220px;height:46px;"><v:fill type="solid" color="#E51636"/><v:textbox inset="0,0,0,0"><![endif]-->
-                <a href="${payLink}"
-                   style="display:inline-block;background-color:#E51636;color:#FFFFFF;padding:13px 32px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  Pay $${totalFmt} via Stripe
-                </a>
-                <!--[if mso]></v:textbox></v:rect><![endif]-->
-              </td>
-            </tr>
-          </table>
-          <div style="margin-top:8px;color:#6B6B6B;font-size:11px;letter-spacing:0.3px;">
-            Secure card payment &middot; SSL encrypted &middot; Powered by Stripe
-          </div>
-        </td>
-      </tr>` : ''
-
-  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="color-scheme" content="light" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Invoice ${ref} &mdash; ONE FM 98.5</title>
-<!--[if mso]>
-<noscript><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
-<![endif]-->
-<style type="text/css">
-  body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}
-  table,td{mso-table-lspace:0pt;mso-table-rspace:0pt;}
-  img{-ms-interpolation-mode:bicubic;border:0;outline:none;text-decoration:none;display:block;}
-  body{margin:0!important;padding:0!important;background-color:#D8D8D8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
-  .wrapper{max-width:600px;margin:0 auto;}
-  @media screen and (max-width:480px){
-    .mp{padding-left:20px!important;padding-right:20px!important;}
-    .amt{font-size:44px!important;}
-  }
-</style>
-</head>
-<body style="margin:0;padding:0;background-color:#D8D8D8;">
-
-  <!-- PREHEADER -->
-  <div style="display:none;font-size:1px;color:#D8D8D8;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
-    Invoice ${ref} &mdash; $${totalFmt} due ${dueDate} &middot; ONE FM 98.5
-  </div>
-
-  <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" align="center"><tr><td><![endif]-->
-  <div class="wrapper" style="max-width:600px;margin:0 auto;">
-
-    <!-- ══ HERO — NAVY FULL-BLEED ══════════════════════════════════════════ -->
-    <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" bgcolor="#071D3A"><tr><td><![endif]-->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
-           style="background-color:#071D3A;">
-      <tr>
-        <td style="padding:40px 40px 36px 40px;" class="mp">
-
-          <!-- Logo row -->
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-              <td style="vertical-align:middle;">
-                <img src="${DS.logoUrl}"
-                     alt="ONE FM 98.5" width="110" height="auto"
-                     style="width:110px;height:auto;display:block;border:0;" />
-              </td>
-              <td style="vertical-align:middle;text-align:right;">
-                <div style="color:rgba(255,255,255,0.5);font-size:12px;line-height:1.6;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  ${dateLine}
-                </div>
-                <div style="color:rgba(255,255,255,0.3);font-size:10px;margin-top:2px;letter-spacing:0.5px;">
-                  ABN: 92 117 291 771
-                </div>
-              </td>
-            </tr>
-          </table>
-
-          <!-- INVOICE caption -->
-          <div style="margin-top:30px;color:rgba(255,255,255,0.45);font-size:10px;text-transform:uppercase;letter-spacing:4px;font-weight:600;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            Invoice
-          </div>
-
-          <!-- AMOUNT CARD — the poster moment -->
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
-                 style="margin-top:12px;">
-            <tr>
-              <td style="padding:28px 32px;background-color:rgba(0,0,0,0.28);border:1px solid rgba(255,255,255,0.07);">
-                <div style="color:rgba(255,255,255,0.45);font-size:9px;text-transform:uppercase;letter-spacing:3.5px;font-weight:700;margin-bottom:10px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  Amount Due
-                </div>
-                <div class="amt" style="font-size:64px;font-weight:800;color:#D4AF37;letter-spacing:-2px;line-height:1;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  $${totalFmt}
-                </div>
-                <div style="margin-top:14px;color:rgba(255,255,255,0.5);font-size:13px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  Due&nbsp;${dueDate}&nbsp;&nbsp;&middot;&nbsp;&nbsp;Ref&nbsp;<span style="color:#D4AF37;font-weight:600;">${ref}</span>
-                </div>
-              </td>
-            </tr>
-          </table>
-
-        </td>
-      </tr>
-    </table>
-    <!--[if mso]></td></tr></table><![endif]-->
-
-    <!-- 3px SOLID GOLD RULE -->
-    <div style="height:3px;background-color:#D4AF37;font-size:0;line-height:0;">&nbsp;</div>
-
-    <!-- ══ WHITE BODY ═══════════════════════════════════════════════════════ -->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
-           style="background-color:#FAFAF8;">
-
-      <!-- Recipient -->
-      <tr>
-        <td style="padding:40px 40px 0 40px;" class="mp">
-          <div style="color:#6B6B6B;font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:8px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            Addressed To
-          </div>
-          <div style="color:#1A1A1A;font-size:14px;font-weight:700;margin-bottom:4px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            ${name}
-          </div>
-          ${addressBlock}
-        </td>
-      </tr>
-
-      <!-- Salutation -->
-      <tr>
-        <td style="padding:32px 40px 0 40px;" class="mp">
-          <div style="color:#1A1A1A;font-size:18px;font-weight:700;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            Dear ${name},
-          </div>
-        </td>
-      </tr>
-
-      <!-- RE: line -->
-      <tr>
-        <td style="padding:20px 40px 0 40px;" class="mp">
-          <div style="border-left:3px solid #D4AF37;padding:10px 16px;background-color:rgba(212,175,55,0.05);">
-            <div style="color:#1A1A1A;font-size:15px;font-weight:700;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-              RE: Invoice ${ref} &mdash; ${campaignLabel}
-            </div>
-            <div style="color:#6B6B6B;font-size:12px;margin-top:3px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-              Please find your invoice details below.
-            </div>
-          </div>
-        </td>
-      </tr>
-
-      <!-- Custom message -->
-      <tr>
-        <td style="padding:28px 40px 0 40px;" class="mp">
-          ${messageHtml}
-        </td>
-      </tr>
-
-      <!-- Wire-transfer slip -->
-      <tr>
-        <td style="padding:32px 40px 0 40px;" class="mp">
-          <div style="color:#6B6B6B;font-size:10px;text-transform:uppercase;letter-spacing:2.5px;font-weight:600;margin-bottom:14px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            Payment by Bank Transfer &mdash; Preferred
-          </div>
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
-                 style="border:1px solid rgba(26,26,26,0.1);background-color:#FFFFFF;">
-            <tr>
-              <td style="padding:22px 24px;">
-                <div style="color:#3A6E22;font-size:11px;font-weight:600;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  National Australia Bank
-                </div>
-                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td style="padding:0 28px 0 0;vertical-align:top;">
-                      <div style="color:#6B6B6B;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">BSB</div>
-                      <div style="font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#071D3A;">${bsb}</div>
-                    </td>
-                    <td style="padding:0 28px 0 0;vertical-align:top;">
-                      <div style="color:#6B6B6B;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">Account</div>
-                      <div style="font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#071D3A;">${account}</div>
-                    </td>
-                    <td style="padding:0;vertical-align:top;">
-                      <div style="color:#6B6B6B;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">Reference</div>
-                      <div style="font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#D4AF37;">${ref}</div>
-                    </td>
-                  </tr>
-                </table>
-                <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(26,26,26,0.06);color:#6B6B6B;font-size:12px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  Account Name: <span style="color:#1A1A1A;font-weight:600;">${accountName}</span>
-                </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-
-      ${payRow}
-
-      <!-- Closing -->
-      <tr>
-        <td style="padding:36px 40px 0 40px;" class="mp">
-          <p style="margin:0 0 10px 0;color:#1A1A1A;font-size:15px;line-height:1.7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            If you have any questions, please don't hesitate to contact us.
-          </p>
-          <p style="margin:0;color:#1A1A1A;font-size:15px;line-height:1.7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            Thank you for your continued support of community radio.
-          </p>
-        </td>
-      </tr>
-
-      <!-- Signature -->
-      <tr>
-        <td style="padding:36px 40px 48px 40px;" class="mp">
-          <div style="width:36px;height:3px;background-color:#D4AF37;margin-bottom:18px;"></div>
-          <div style="color:#1A1A1A;font-size:15px;font-weight:700;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            Jason Welsh
-          </div>
-          <div style="color:#D4AF37;font-size:13px;margin-top:3px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            Vice Chair, ONE FM 98.5
-          </div>
-          <div style="color:#6B6B6B;font-size:13px;margin-top:10px;line-height:1.7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            (03) 5831 3131 &nbsp;|&nbsp; accounts@fm985.com.au<br>
-            47 Parkside Drive, Shepparton VIC 3630
-          </div>
-        </td>
-      </tr>
-
-    </table>
-
-    <!-- ══ NAVY FOOTER ══════════════════════════════════════════════════════ -->
-    <!--[if mso]><table role="presentation" border="0" cellspacing="0" cellpadding="0" width="600" bgcolor="#071D3A"><tr><td><![endif]-->
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
-           style="background-color:#071D3A;">
-      <tr>
-        <td style="padding:28px 40px;text-align:center;" class="mp">
-          <div style="color:rgba(255,255,255,0.45);font-size:12px;line-height:1.9;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            <strong style="color:#D4AF37;letter-spacing:0.5px;">ONE FM 98.5</strong>
-            &nbsp;&middot;&nbsp;Goulburn Valley Community Radio Inc.<br>
-            ABN 92 117 291 771 &nbsp;&middot;&nbsp; (03) 5831 3131 &nbsp;&middot;&nbsp; accounts@fm985.com.au
-          </div>
-          <div style="margin-top:12px;color:rgba(255,255,255,0.18);font-size:10px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-            ONE FM Operations Portal
-          </div>
-        </td>
-      </tr>
-    </table>
-    <!--[if mso]></td></tr></table><![endif]-->
-
-  </div>
-  <!--[if mso]></td></tr></table><![endif]-->
-
-</body>
-</html>`
+  const variant = variantId ?? getInvoiceDesignVariant()
+  return generateVariantInvoiceEmailHtml(
+    data,
+    variant,
+    bsb,
+    account,
+    accountName,
+    DEFAULT_EMAIL_BODY,
+  )
 }
+
 
 // ---------------------------------------------------------------------------
 // generateReceiptEmailHtml — same shell, "PAYMENT RECEIVED"
@@ -562,127 +293,11 @@ export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
 // A4, 20mm margins, Helvetica, matches email header/footer geometry.
 // ---------------------------------------------------------------------------
 
-export async function generateInvoicePdf(invoice: PdfInvoiceData): Promise<jsPDF> {
-  const doc  = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
-  const p = createPdfPen(doc)
-  const {
-    W, M, CW,
-    fillLight, fillRed,
-    inkNavy, inkGrey, inkDark, inkDim, inkNab, inkRed,
-    bold, norm, box, tl, tr, kicker,
-  } = p
-
-  const today     = new Date()
-  const issueDate = (invoice.issueDate ? new Date(invoice.issueDate) : today)
-    .toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
-  const dueDate   = new Date(invoice.dueDate).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
-
-  let y = drawInteriorHeader(p, 'Tax invoice', invoice.number)
-
-  bold(42)
-  inkRed()
-  tl(aud(invoice.total), M, y + 10)
-  y += 16
-  norm(10)
-  inkDim()
-  tl(`AUD due ${dueDate}  ·  includes GST of ${aud(invoice.gst)}`, M, y)
-  y += 12
-
-  kicker('Bill to', M, y)
-  kicker('From', W / 2 + 4, y)
-  y += 6
-  bold(13)
-  inkNavy()
-  tl(invoice.contactName || invoice.company, M, y)
-  tl(DS.station.name, W / 2 + 4, y)
-  y += 6
-  norm(9)
-  inkGrey()
-  tl(invoice.company, M, y)
-  tl(DS.station.address, W / 2 + 4, y)
-  y += 5
-  if (invoice.email) tl(invoice.email, M, y)
-  tl(`${DS.station.phone}  ·  ${DS.station.accountsEmail}`, W / 2 + 4, y)
-  y += 14
-
-  const COL3 = CW / 3
-  kicker('Issue date', M, y)
-  kicker('Due date', M + COL3, y)
-  kicker('Reference', M + COL3 * 2, y)
-  y += 6
-  bold(12)
-  inkNavy()
-  tl(issueDate, M, y)
-  inkRed()
-  tl(dueDate, M + COL3, y)
-  inkNavy()
-  tl(invoice.number, M + COL3 * 2, y)
-  y += 12
-
-  kicker('Description', M, y)
-  kicker('Amount', W - M - 24, y)
-  y += 4
-  p.doc.setDrawColor(230, 230, 232)
-  p.doc.setLineWidth(0.3)
-  p.doc.line(M, y, W - M, y)
-  y += 8
-
-  const descLines = doc.splitTextToSize(invoice.description, CW - 50) as string[]
-  norm(11)
-  inkDark()
-  descLines.forEach((line, i) => {
-    tl(line, M, y)
-    if (i === 0) tr(aud(invoice.amountExclGst), W - M, y)
-    y += 6
-  })
-  if (invoice.period) {
-    norm(9)
-    inkDim()
-    tl(`Period: ${invoice.period}`, M, y)
-    y += 6
-  }
-  y += 4
-  p.doc.line(M, y, W - M, y)
-  y += 8
-  norm(10)
-  inkGrey()
-  tl('Subtotal (ex GST)', M, y)
-  inkDark()
-  tr(aud(invoice.amountExclGst), W - M, y)
-  y += 6
-  inkGrey()
-  tl('GST (10%)', M, y)
-  inkDark()
-  tr(aud(invoice.gst), W - M, y)
-  y += 8
-
-  y = drawAmountBand(p, y, 'Total due', aud(invoice.total))
-  y += 4
-
-  fillLight()
-  box(M, y, CW, 36)
-  fillRed()
-  box(M, y, 1.8, 36)
-  kicker('Pay by bank transfer', M + 6, y + 7)
-  norm(9)
-  inkNab()
-  tl('National Australia Bank', M + 6, y + 14)
-  bold(11)
-  inkNavy()
-  tl(`BSB ${BANK_BSB}`, M + 6, y + 22)
-  tl(`Acc ${BANK_ACCOUNT}`, M + 62, y + 22)
-  tl(BANK_ACCOUNT_NAME, M + 118, y + 22)
-  norm(8)
-  inkDim()
-  tl(`Reference  ${invoice.number}  ·  payment due within 14 days`, M + 6, y + 30)
-
-  drawSlimFooter(
-    p,
-    `Goulburn Valley Community Radio Inc.  ·  ABN ${DS.station.abn}  ·  ${DS.station.phone}`,
-    `Generated ${today.toLocaleDateString('en-AU')}`,
-  )
-
-  return doc
+export async function generateInvoicePdf(
+  invoice: PdfInvoiceData,
+  variantId?: InvoiceDesignVariantId,
+): Promise<jsPDF> {
+  return generateInvoicePdfForVariant(invoice, variantId)
 }
 
 // ---------------------------------------------------------------------------
@@ -696,6 +311,8 @@ interface InvoiceEmailTemplateProps {
 
 export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceEmailTemplateProps) {
   const { toast }    = useToast()
+  const { invoiceDesignVariant, setActiveTab } = useOpsStore()
+  const variantMeta = getVariantMeta(invoiceDesignVariant)
   const [editing, setEditing]       = useState(false)
   const [message, setMessage]       = useState(data.customMessage)
   const [copiedField, setCopiedField] = useState<string | null>(null)
@@ -717,6 +334,7 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
     const html = generateInvoiceEmailHtml(
       { ...data, customMessage: message },
       BANK_BSB, BANK_ACCOUNT, BANK_ACCOUNT_NAME,
+      invoiceDesignVariant,
     )
     navigator.clipboard.writeText(html).then(() => {
       setCopiedHtml(true)
@@ -729,14 +347,24 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
   const emailHtml = generateInvoiceEmailHtml(
     { ...data, customMessage: message },
     BANK_BSB, BANK_ACCOUNT, BANK_ACCOUNT_NAME,
+    invoiceDesignVariant,
   )
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="font-label text-xs text-one-muted uppercase tracking-wider">
-          Email Preview
-        </h4>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <h4 className="font-label text-xs text-one-muted uppercase tracking-wider">
+            Email Preview
+          </h4>
+          <button
+            type="button"
+            onClick={() => setActiveTab('design')}
+            className="text-xs text-[#E51636] hover:underline mt-0.5"
+          >
+            Design: {variantMeta.name} — change
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={copyHtml}
