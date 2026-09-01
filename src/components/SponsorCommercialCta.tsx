@@ -3,6 +3,8 @@ import { motion } from 'framer-motion'
 import { ArrowRight, MapPin, FileText, Mail } from 'lucide-react'
 import { WordReveal } from '@/components/WordReveal'
 import { MagneticButton } from '@/components/MagneticButton'
+import { BRAND } from '@/lib/brand'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 interface SponsorCommercialCtaProps {
   headline?: string
@@ -14,17 +16,24 @@ const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 export function SponsorCommercialCta({
   headline = 'Ready to reach the Goulburn Valley?',
-  subline = 'Explore coverage, request a proposal, or speak with our partnerships team.',
+  subline = `Explore coverage, request a proposal, or email ${BRAND.email}.`,
   className = '',
 }: SponsorCommercialCtaProps) {
   return (
     <section className={`relative overflow-hidden bg-surface-deep section-bleed-top ${className}`} data-cursor-label="PARTNER UP">
+      {/* Unused station archive photo — valley lookout, not a presenter portrait. */}
+      <img
+        src={STATION_PHOTOS.geoMtbLookout}
+        alt=""
+        aria-hidden
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
       <div aria-hidden className="grain-overlay" />
-      {/* Gold ambient glow — bottom-center */}
-      <div aria-hidden style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse at 50% 130%, rgba(212,168,75,0.10) 0%, transparent 60%)',
-      }} />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-r from-[#101010]/92 via-[#101010]/84 to-[#101010]/72"
+      />
       {/* Hairline gold accent — top edge */}
       <div aria-hidden style={{
         position: 'absolute', top: 0, left: '10%', right: '10%', height: 1, pointerEvents: 'none',
