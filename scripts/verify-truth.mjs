@@ -337,6 +337,15 @@ if (
     'pages/Programs.tsx: song request must say a draft opened — not that it was received',
   )
 }
+if (
+  !programs ||
+  !programs.text.includes('formatGuideHours') ||
+  !programs.text.includes('formatHostHours')
+) {
+  hits.push(
+    'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
