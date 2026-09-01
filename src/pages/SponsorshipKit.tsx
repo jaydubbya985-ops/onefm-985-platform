@@ -13,10 +13,11 @@ import { OnAirTicker, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, Pos
 import { generalTiers } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
 import {
-  formatBroadcastPopulation,
+  coverageStatsStrip,
   formatTowns,
+  formatTownsGvl,
   formatWeeklyListeners,
-  formatWeeklyListenersPlain,
+  tickerWeeklyListenersItem,
 } from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
@@ -136,8 +137,8 @@ export default function SponsorshipKit() {
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            `● ${formatWeeklyListeners()}`,
-            `${formatTowns()} across the Goulburn Valley`,
+            tickerWeeklyListenersItem(),
+            formatTownsGvl(),
             'Packages from $50/week',
             STANDARD_SPOT_PLUS_GST,
             'Donated airtime for local not-for-profits',
@@ -147,12 +148,7 @@ export default function SponsorshipKit() {
         <SponsorHero />
 
         <StatsStrip
-          stats={[
-            { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners', red: true },
-            { n: formatBroadcastPopulation(), t: 'People in broadcast area (townData 2026 est.)' },
-            { n: formatTowns(), t: 'Across the Goulburn Valley' },
-            { n: '$50', t: 'Per week — entry package' },
-          ]}
+          stats={[...coverageStatsStrip(), { n: '$50', t: 'Per week — entry package' }]}
         />
 
         <EditorialCards label="The Packages" items={tiers} columns={2} />

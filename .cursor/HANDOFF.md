@@ -10,11 +10,13 @@
 
 **CONTINUOUS RUN IS ON.** Do not idle. Do not wait for Jay to start the next agent. Read `.cursor/CONTINUOUS.md`. Arm a 20-minute continue timer. Keep shipping.
 
-## Already true on GitHub `main`
+## Already true on GitHub `main` (`3ad7f7f`)
 
-- PR **#26** merged. Support leftover coverage → `coverageCopy.ts`.
+- PR **#27** EXE'd. MediaKit, Football, SponsorshipKit, SalesProposal via `coverageCopy.ts`.
+- PR **#26** EXE'd. Support coverage via `coverageCopy.ts` + truth guards.
+- PR **#25** EXE'd. Invoice Design Lab — 3 variants (broadcast / on-air / valley) at `#/ops` → Invoice Design tab.
 - PR **#24** merged. Home/Listen/Community/OnAirNav coverage strings go through `coverageCopy.ts`.
-- PR **#22** EXE’d. `#/coverage` Heartland + listener-scaled dots. `#/broadcast` and `#/social` mounted. Inventory ladder. Named portraits: Di Hunter, Sally Nayler only.
+- PR **#22** EXE'd. `#/coverage` Heartland + listener-scaled dots. `#/broadcast` and `#/social` mounted. Inventory ladder. Named portraits: Di Hunter, Sally Nayler only.
 - `#/ops` is LIVE when Netlify has real `VITE_SUPABASE_*` (anon key, not `sb_secret_`).
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km**.
 - Standard 30s: **$25 plus GST**. GVL is premium — never “from $25”.
@@ -29,8 +31,10 @@
 
 ## Open now
 
-- `cursor/kit-pages-coverage-c24f` — MediaKit / Football / SponsorshipKit / Contact / AudienceAnalytics / SalesProposal / Heritage / Story leftover coverage → `coverageCopy.ts`. Do not merge without **EXE**.
-- Stale drafts (CONFLICTING): recommend **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13**.
+- PR **#28** `cursor/kit-pages-coverage-c24f` — leftover Audience / Contact / Heritage / Story via `coverageCopy.ts` (kit pages already on main from #27). Rebased onto `3ad7f7f`. Do not merge without **EXE**.
+- PR **#29** `cursor/chrome-coverage-c24f` — footer / nav / SEO via `coverageCopy`. MERGEABLE.
+- PR **#30** `cursor/leftover-breakfast-c24f` — breakfast chrome from `BREAKFAST_ROSTER`. MERGEABLE.
+- Stale drafts: recommend **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13**.
 
 ## Next desks (do not wait)
 
@@ -40,8 +44,8 @@
 
 ## NEED JAY (one action)
 
-**EXE the kit-pages-coverage PR** (`cursor/kit-pages-coverage-c24f`).
+**EXE #28 then #29 then #30.** Oldest clean coverage PR first.
 
 ## Do not
 
-- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Restart Resend verification. Email Peter at FOOTT unless Jay asks. Bake `sb_secret_` into the browser bundle. Idle after opening a PR. Ask Jay to start the next agent.
+- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Restart Resend verification. Email Peter at FOOTT unless Jay asks. Bake `sb_secret_` in the browser bundle. Idle after opening a PR.
