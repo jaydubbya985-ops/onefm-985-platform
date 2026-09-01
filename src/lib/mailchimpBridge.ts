@@ -6,6 +6,8 @@
 import type { Enquiry } from '@/components/ops/data/enquiries'
 import { buildEnquiryEmailHtml, type EnquiryEmailData } from '@/lib/email'
 import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatBreakfastChromeLabel } from '@/data/programGuide'
 
 export interface MailchimpLeadRow {
   email: string
@@ -89,7 +91,7 @@ export function sampleMailchimpCsv(): string {
     phone: '0400 000 000',
     source: 'sponsorship',
     tags: 'enquiry,sponsorship,new',
-    notes: 'Interested in Q3 breakfast sponsorship',
+    notes: `Weekday breakfast (${formatBreakfastChromeLabel()}) — not a Saturday breakfast slot`,
   }
   return [CSV_HEADERS.join(','), CSV_HEADERS.map((h) => escapeCsv(sample[h])).join(',')].join('\n')
 }
@@ -115,7 +117,7 @@ export function buildMailchimpNewsletterSnippet(opts: {
   <tr>
     <td style="background:#101010;padding:32px 40px;text-align:center;">
       <div style="font-size:22px;font-weight:700;color:#F2F2F2;letter-spacing:0.02em;">ONE FM 98.5</div>
-      <div style="font-size:11px;color:#8A9199;letter-spacing:0.12em;text-transform:uppercase;margin-top:6px;">Goulburn Valley Community Radio</div>
+      <div style="font-size:11px;color:#8A9199;letter-spacing:0.12em;text-transform:uppercase;margin-top:6px;">${BRAND.org} · ${formatCoverageShort()}</div>
     </td>
   </tr>
   <tr>
@@ -127,7 +129,7 @@ export function buildMailchimpNewsletterSnippet(opts: {
   </tr>
   <tr>
     <td style="background:#F5F5F5;padding:20px 40px;text-align:center;font-size:11px;color:#666666;">
-      ${BRAND.org} · ${BRAND.address} · <a href="https://fm985.com.au" style="color:#1B458F;">fm985.com.au</a>
+      ${BRAND.org} · ${formatCoverageShort()} · ${BRAND.address} · <a href="https://fm985.com.au" style="color:#1B458F;">fm985.com.au</a>
     </td>
   </tr>
 </table>`
