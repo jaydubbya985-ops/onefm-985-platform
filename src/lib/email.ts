@@ -9,6 +9,7 @@
  *
  */
 
+import { BRAND } from '@/lib/brand'
 import { readFunctionJson } from '@/lib/readFunctionJson'
 
 export interface EmailPayload {
@@ -130,13 +131,13 @@ export function buildEnquiryConfirmationHtml(data: EnquiryEmailData): string {
         </div>
         <div style="padding: 32px 40px;">
           <h2 style="margin: 0 0 16px; font-size: 22px; color: #0A1628;">
-            Thanks, ${data.name}! 👋
+            Thanks, ${data.name}!
           </h2>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 16px;">
-            We've received your <strong>${data.enquiryType.toLowerCase()}</strong> enquiry and we'll be in touch within <strong>24 hours</strong>.
+            We've received your <strong>${data.enquiryType.toLowerCase()}</strong> enquiry. Call <strong>${BRAND.phone}</strong> or email <strong>${BRAND.email}</strong> if you need us sooner.
           </p>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 32px;">
-            In the meantime, you can tune into ONE FM 98.5 live on FM, online at <a href="https://www.fm985.com.au" style="color: #D4A84B;">fm985.com.au</a>, or via our app.
+            In the meantime, listen to ${BRAND.fullName} on ${BRAND.frequency} FM or stream at <a href="${BRAND.website}" style="color: #D4A84B;">fm985.com.au</a>.
           </p>
           <div style="background: #F9FAFB; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
             <div style="font-size: 12px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Your message</div>
@@ -181,7 +182,7 @@ export function buildProposalEmailHtml(data: ProposalEmailData): string {
             </div>
           </div>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 24px;">
-            Our partnerships team will follow up within 24 hours to answer any questions and discuss next steps.
+            Reply to this email, call ${BRAND.phone}, or write to ${BRAND.email} if you have questions.
           </p>
         </div>
         <div style="background: #F9FAFB; padding: 20px 40px; border-top: 1px solid #E5E7EB;">
