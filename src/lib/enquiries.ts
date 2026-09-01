@@ -2,6 +2,7 @@
  * Shared enquiry submission — used by Contact, Football, SponsorshipKit, etc.
  * Inserts into Supabase contact_enquiries and sends email notifications.
  */
+import { BRAND } from '@/lib/brand'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { sendEnquiryNotification } from '@/lib/email'
 import type { EnquirySource } from '@/components/ops/data/enquiries'
@@ -27,8 +28,12 @@ export interface SubmitEnquiryResult {
   error?: string
 }
 
-const NOT_SENT =
-  'Nothing was stored or emailed. Call (03) 5831 3131 or email admin@fm985.com.au.'
+/** Public fallback when store/send fails — same station contact as the Contact page. */
+export function enquiryFallbackContact(): string {
+  return `Call ${BRAND.phone} or email ${BRAND.email}.`
+}
+
+const NOT_SENT = `Nothing was stored or emailed. ${enquiryFallbackContact()}`
 
 export async function submitEnquiry(
   input: SubmitEnquiryInput,
@@ -86,7 +91,7 @@ export async function submitEnquiry(
     stored: false,
     emailed: false,
     error: email.devMode
-      ? 'Nothing was sent — email is not configured. Call (03) 5831 3131 or email admin@fm985.com.au.'
+      ? `Nothing was sent — email is not configured. ${enquiryFallbackContact()}`
       : email.error || NOT_SENT,
   }
 }
