@@ -291,6 +291,11 @@ for (const label of sponsorPages) {
   }
 }
 
+const salesProposal = files.find((f) => f.label === 'pages/SalesProposal.tsx')
+if (!salesProposal || !salesProposal.text.includes("formatGuideHours('GVL Match of the Day')")) {
+  hits.push('pages/SalesProposal.tsx: GVL photo badge hours must come from formatGuideHours / FULL_SCHEDULE')
+}
+
 const leftoverProposalDocs = [
   'lib/ai.ts',
   'lib/proposalDocument.ts',
