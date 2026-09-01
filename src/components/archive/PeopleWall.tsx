@@ -3,6 +3,7 @@ import { Search } from 'lucide-react'
 import type { ArchivePerson, PersonCategory, SourceConfidence } from '@/types/livingArchive'
 import { CATEGORY_LABELS, CONFIDENCE_LABELS } from '@/types/livingArchive'
 import { LabelReveal } from '@/components/onair/kit'
+import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 
 const RED = '#E51636'
 
@@ -32,13 +33,14 @@ function ConfidenceBadge({ level }: { level: SourceConfidence }) {
 }
 
 function PersonCard({ person }: { person: ArchivePerson }) {
+  const namedPortrait = person.photo && presenterPhotoIsPortrait(person.name) ? person.photo : null
   return (
     <article className="border border-white/12 rounded-xl p-5 hover:border-[#E51636] transition-colors">
       <div className="flex gap-4">
-        {person.photo ? (
+        {namedPortrait ? (
           <div
             className="shrink-0 w-14 h-14 rounded-lg bg-cover bg-center grayscale-[30%]"
-            style={{ backgroundImage: `url('${person.photo}')` }}
+            style={{ backgroundImage: `url('${namedPortrait}')` }}
             role="img"
             aria-label={person.name}
           />

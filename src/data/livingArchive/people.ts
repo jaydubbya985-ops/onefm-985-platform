@@ -1,5 +1,15 @@
 import type { ArchivePerson } from '@/types/livingArchive'
 import { BOARD_2024, LIFE_MEMBERS } from '@/data/stationHistory'
+import { BREAKFAST_ROSTER } from '@/data/programGuide'
+
+/** Weekday breakfast hosts from programGuide.ts — not historical or board labels. */
+const CURRENT_BREAKFAST_HOSTS: ReadonlySet<string> = new Set(
+  BREAKFAST_ROSTER.flatMap((slot) => {
+    const host = slot.host
+    const aka = host.match(/^(.+?)\s*\((.+)\)$/)
+    return aka ? [host, aka[1].trim(), aka[2].trim()] : [host]
+  }),
+)
 
 const AGM_2024: ArchivePerson['sources'] = [
   { label: 'ONE FM Annual Report 2024', type: 'annual-report', url: 'https://fm985.com.au/about/' },
@@ -13,7 +23,6 @@ const FEATURED: ArchivePerson[] = [
     categories: ['sport-caller', 'volunteer', 'presenter'],
     roles: ['GVL historian', 'Early volunteer'],
     programs: ['Match Day Live', 'Saturday sport'],
-    photo: '/assets/images/commentary-box-action.jpg',
     confidence: 'confirmed-newspaper',
     sources: [
       { label: 'Shepparton News retrospective', type: 'newspaper', date: '2022' },
@@ -24,9 +33,10 @@ const FEATURED: ArchivePerson[] = [
   {
     id: 'di-hunter',
     name: 'Di Hunter',
-    categories: ['presenter', 'breakfast-host', 'volunteer'],
+    categories: ['presenter', 'volunteer'],
     years: '15 years on air',
-    roles: ['Breakfast host (Fri)', 'Trainer — 103 presenters'],
+    roles: ['Monday Afternoon', 'Trainer — 103 presenters'],
+    programs: ['Monday Afternoon'],
     photo: '/assets/images/heritage-di-hunter-carols-2014.jpg',
     confidence: 'confirmed-newspaper',
     sources: [{ label: 'Shepparton News profile', type: 'newspaper', date: '2023' }],
@@ -108,7 +118,12 @@ function buildArchivePeople(): ArchivePerson[] {
     add({
       id: slug(name),
       name,
-      categories: name === 'John Painter' ? ['board', 'presenter', 'breakfast-host'] : ['board'],
+      categories:
+        name === 'John Painter'
+          ? ['board', 'presenter']
+          : CURRENT_BREAKFAST_HOSTS.has(name)
+            ? ['board', 'breakfast-host']
+            : ['board'],
       roles: [role],
       confidence: 'confirmed-one-fm-document',
       sources: AGM_2024,
