@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useState } from 'react'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 interface MarqueeProps {
   items: ReactNode[]
@@ -6,6 +7,33 @@ interface MarqueeProps {
   separator?: ReactNode
   className?: string
   reverse?: boolean
+}
+
+/**
+ * Unused match-day banner still (1600×1537). Mark size only — not a hero
+ * or presenter portrait. Station archive OB signage, unique of the van still.
+ */
+function MatchDayBannerMark() {
+  return (
+    <img
+      src={STATION_PHOTOS.obMatchDayBanner}
+      alt=""
+      aria-hidden
+      width={56}
+      height={28}
+      decoding="async"
+      className="mx-6 inline-block align-middle shrink-0"
+      style={{
+        width: 56,
+        height: 28,
+        objectFit: 'cover',
+        objectPosition: 'center',
+        borderRadius: 3,
+        border: '1px solid rgba(255,255,255,0.14)',
+        opacity: 0.88,
+      }}
+    />
+  )
 }
 
 /**
@@ -33,9 +61,7 @@ export function Marquee({
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  const sep = separator ?? (
-    <span aria-hidden className="mx-6 w-1 h-1 rounded-full bg-one-gold/50 inline-block align-middle shrink-0" />
-  )
+  const sep = separator ?? <MatchDayBannerMark />
 
   const track = items.flatMap((item, i) => [
     <span key={`a-${i}`} className="inline-flex items-center whitespace-nowrap shrink-0">{item}</span>,
