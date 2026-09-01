@@ -48,6 +48,7 @@ const FORBIDDEN = [
   { re: /Peak listening: breakfast/, why: 'do not invent peak listening hours — Radio.co daypart share is data pending' },
   { re: /drive \(4–7pm\)/, why: 'drive 4–7pm is not a programGuide slot and is not a measured peak' },
   { re: /5555 0198/, why: 'placeholder phone — use BRAND.phone (03) 5831 3131' },
+  { re: /The World, On the Weekend Dial/i, why: 'multicultural programs are Mon–Wed evenings in programGuide, not weekend' },
 ]
 
 function walk(dir) {
@@ -130,6 +131,15 @@ if (community && /stationStats/.test(community.text)) {
 }
 if (!community || !community.text.includes('formatBroadcastPopulation')) {
   hits.push('pages/Community.tsx: broadcast population must use formatBroadcastPopulation()')
+}
+if (
+  !community ||
+  !community.text.includes('multiculturalWhen') ||
+  !community.text.includes('Weeknight world programs')
+) {
+  hits.push(
+    'pages/Community.tsx: multicultural cards must show programGuide weeknight hours, not a weekend dial',
+  )
 }
 
 const support = files.find((f) => f.label === 'pages/Support.tsx')
@@ -258,7 +268,6 @@ if (
   hits.push('pages/SponsorshipKit.tsx: stats strip must use coverageStatsStrip()')
 }
 
-<<<<<<< HEAD
 function assertCoverageCopy(label, requiredFns) {
   const file = files.find((f) => f.label === label)
   if (
@@ -294,7 +303,6 @@ assertCoverageCopy('pages/Story.tsx', [
   'formatBroadcastPopulation()',
 ])
 
-=======
 const mediaKit = files.find((f) => f.label === 'pages/MediaKit.tsx')
 if (
   !mediaKit ||
@@ -307,7 +315,6 @@ if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
   hits.push('pages/MediaKit.tsx: media-kit DOCX must use BRAND.phone, not a placeholder')
 }
 
->>>>>>> 6518755 (Media kit: breakfast hours from programGuide, real station phone)
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
   !programs ||
