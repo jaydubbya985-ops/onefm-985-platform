@@ -21,6 +21,9 @@ import { SkeletonLoader } from '@/components/SkeletonLoader'
 import { ToastProvider, useToast } from '@/components/ops/Toast'
 import { OpsProvider, useOpsStore, type OpsTab } from '@/components/ops/store'
 import { useAuth } from '@/hooks/useAuth'
+import { BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { isSupabaseConfigured, getOpsCredentialSource, opsCredentialSourceLabel } from '@/lib/supabase'
 
 const EnquiryDashboard = lazy(() => import('@/components/ops/EnquiryDashboard'))
@@ -148,7 +151,19 @@ function OpsPortalContent() {
 
   return (
     <div className="min-h-screen bg-[#101010]">
-      <div className="px-6 md:px-12 lg:px-20 pt-24 pb-6 border-b border-[#2A2A2A]/30">
+      <div className="relative overflow-hidden border-b border-[#2A2A2A]/30">
+        <img
+          src={STATION_PHOTOS.studioChristmasBroadcast}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-24 pb-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -156,8 +171,8 @@ function OpsPortalContent() {
               <h1 className="font-h1 text-one-white text-3xl md:text-4xl">Operations Portal</h1>
             </div>
             <p className="text-one-white/50 text-sm max-w-2xl">
-              Manage enquiries, sponsors, invoices, and revenue — all in one place. This portal
-              replaces spreadsheets and Word docs with a professional system.
+              Station ops for {formatTowns()} — {formatCoverageShort()} (ABS 2021 via townData).
+              Invoice payments: NAB BSB {BANK_BSB}. This screen is not a Stripe receipt.
             </p>
             {isSupabaseConfigured() && user && (
               <p className="text-one-muted text-xs mt-1">Signed in as {user.email}</p>
@@ -216,6 +231,7 @@ function OpsPortalContent() {
         </div>
         <OpsResumeCard />
         <PipelineIndicator />
+        </div>
       </div>
 
       <div className="px-6 md:px-12 lg:px-20 py-4 border-b border-[#2A2A2A]/20">
