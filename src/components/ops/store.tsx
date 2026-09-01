@@ -15,7 +15,6 @@ import type { DbContactEnquiry } from '@/lib/supabase'
 import * as opsApi from '@/lib/opsApi'
 import {
   getInvoiceDesignVariant,
-  setInvoiceDesignVariant as persistInvoiceDesignVariant,
   type InvoiceDesignVariantId,
 } from '@/lib/invoiceDesignVariants'
 
@@ -319,7 +318,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
   const [focusProposalId, setFocusProposalId] = useState<string | null>(
     () => loadSession().focusProposalId,
   )
-  const [invoiceDesignVariant, setVariantState] = useState<InvoiceDesignVariantId>(
+  const [invoiceDesignVariant] = useState<InvoiceDesignVariantId>(
     () => getInvoiceDesignVariant(),
   )
   const [remoteReady, setRemoteReady] = useState(!isSupabaseConfigured())
@@ -789,9 +788,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       },
 
       invoiceDesignVariant,
-      setInvoiceDesignVariant: (id) => {
-        setVariantState(id)
-        persistInvoiceDesignVariant(id)
+      setInvoiceDesignVariant: () => {
+        /* Locked — STATION_INVOICE_DESIGN_CHOICE in invoiceDesignVariants.ts */
       },
     }
   }, [state, activeTab, focusProposalId, invoiceDesignVariant])

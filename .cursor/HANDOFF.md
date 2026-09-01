@@ -22,7 +22,11 @@ Stale/conflicting: **#3 #4 #8 #10 #11** — close manually. **#13** never merge 
 
 ## NEED JAY (one action)
 
-Pick invoice design **A / B / C** at `#/ops` → Invoice Design tab (default is broadcast).
+`RESEND_API_KEY` in Netlify for live invoice email — test send one invoice to `jasonstv1@bigpond.com` in Test Mode first.
+
+## Invoice design (locked)
+
+**A · Broadcast Letter** — Jay confirmed Sep 2026. All batch sends use navy & gold (`STATION_INVOICE_DESIGN_CHOICE` in `invoiceDesignVariants.ts`).
 
 ## Next desks
 

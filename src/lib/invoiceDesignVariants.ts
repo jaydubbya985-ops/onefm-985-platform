@@ -73,16 +73,25 @@ export const INVOICE_DESIGN_VARIANTS: InvoiceDesignVariant[] = [
 
 export const DEFAULT_INVOICE_DESIGN: InvoiceDesignVariantId = 'broadcast'
 
+/** Jay confirmed Sep 2026 — A · Broadcast Letter for June batch sends. Change + EXE to switch. */
+export const STATION_INVOICE_DESIGN_CHOICE: InvoiceDesignVariantId = 'broadcast'
+
 const STORAGE_KEY = 'onefm_invoice_design_variant'
 
+/** Active design for PDF/email/batch send — always the station choice, not lab preview. */
 export function getInvoiceDesignVariant(): InvoiceDesignVariantId {
-  if (typeof window === 'undefined') return DEFAULT_INVOICE_DESIGN
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored === 'broadcast' || stored === 'on-air' || stored === 'valley') return stored
-  return DEFAULT_INVOICE_DESIGN
+  return STATION_INVOICE_DESIGN_CHOICE
 }
 
-export function setInvoiceDesignVariant(id: InvoiceDesignVariantId): void {
+/** Lab preview only — does not affect batch send. */
+export function getInvoiceDesignPreviewVariant(): InvoiceDesignVariantId {
+  if (typeof window === 'undefined') return STATION_INVOICE_DESIGN_CHOICE
+  const stored = localStorage.getItem(STORAGE_KEY)
+  if (stored === 'broadcast' || stored === 'on-air' || stored === 'valley') return stored
+  return STATION_INVOICE_DESIGN_CHOICE
+}
+
+export function setInvoiceDesignPreviewVariant(id: InvoiceDesignVariantId): void {
   localStorage.setItem(STORAGE_KEY, id)
 }
 

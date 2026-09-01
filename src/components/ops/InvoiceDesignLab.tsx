@@ -7,10 +7,11 @@ import { Check, Download, Mail, Palette, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
-  DEFAULT_INVOICE_DESIGN,
-  getInvoiceDesignVariant,
+  getInvoiceDesignPreviewVariant,
+  getVariantMeta,
   INVOICE_DESIGN_VARIANTS,
-  setInvoiceDesignVariant,
+  setInvoiceDesignPreviewVariant,
+  STATION_INVOICE_DESIGN_CHOICE,
   type InvoiceDesignVariantId,
 } from '@/lib/invoiceDesignVariants'
 import { generateVariantInvoiceEmailHtml } from '@/lib/invoiceVariantEmail'
@@ -61,34 +62,30 @@ function toPdfData() {
 }
 
 export default function InvoiceDesignLab() {
-  const { invoiceDesignVariant, setInvoiceDesignVariant: setStoreVariant } = useOpsStore()
-  const [active, setActive] = useState<InvoiceDesignVariantId>(
-    invoiceDesignVariant ?? getInvoiceDesignVariant() ?? DEFAULT_INVOICE_DESIGN,
+  const { invoiceDesignVariant } = useOpsStore()
+  const [preview, setPreview] = useState<InvoiceDesignVariantId>(
+    () => getInvoiceDesignPreviewVariant(),
   )
   const [previewScale, setPreviewScale] = useState<'fit' | 'full'>('fit')
 
   const emailData = useMemo(() => toEmailData(), [])
 
-  const selectVariant = useCallback(
-    (id: InvoiceDesignVariantId) => {
-      setActive(id)
-      setInvoiceDesignVariant(id)
-      setStoreVariant(id)
-    },
-    [setStoreVariant],
-  )
+  const selectPreview = useCallback((id: InvoiceDesignVariantId) => {
+    setPreview(id)
+    setInvoiceDesignPreviewVariant(id)
+  }, [])
 
   const activeHtml = useMemo(
     () =>
       generateVariantInvoiceEmailHtml(
         emailData,
-        active,
+        preview,
         BANK_BSB,
         BANK_ACCOUNT,
         BANK_ACCOUNT_NAME,
         DEFAULT_EMAIL_BODY,
       ),
-    [emailData, active],
+    [emailData, preview],
   )
 
   const downloadPdf = async (id: InvoiceDesignVariantId) => {
@@ -113,20 +110,25 @@ export default function InvoiceDesignLab() {
             </div>
           </div>
           <p className="text-sm text-[#F4F1EA]/60 max-w-3xl mt-3">
-            Pick the design language for the June 2026 batch. Your choice applies to email HTML and PDF attachments
-            across Batch Send. All three use real bank details and Vice Chair signature.
+            Station choice locked:{' '}
+            <strong className="text-[#B8860B]">A · Broadcast Letter</strong> (navy &amp; gold) for the
+            June 2026 batch — email HTML and PDF attachments. B and C are preview-only here.
+          </p>
+          <p className="text-xs text-[#F4F1EA]/40 mt-2">
+            Active sends use: {getVariantMeta(invoiceDesignVariant).name}
           </p>
         </div>
 
         {/* Option cards */}
         <div className="grid lg:grid-cols-3 gap-4 mb-8">
           {INVOICE_DESIGN_VARIANTS.map((v) => {
-            const selected = active === v.id
+            const selected = preview === v.id
+            const isStationChoice = v.id === STATION_INVOICE_DESIGN_CHOICE
             return (
               <button
                 key={v.id}
                 type="button"
-                onClick={() => selectVariant(v.id)}
+                onClick={() => selectPreview(v.id)}
                 className={`text-left rounded-xl border-2 p-5 transition-all ${
                   selected
                     ? 'border-[#E51636] bg-[#1A1A1A] shadow-lg shadow-[#E51636]/10'
@@ -137,10 +139,13 @@ export default function InvoiceDesignLab() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h2 className="font-bold text-lg">{v.name}</h2>
-                      {selected && (
-                        <Badge className="bg-[#E51636] text-white border-0 text-[10px]">
-                          <Check className="w-3 h-3 mr-1" /> Active
+                      {isStationChoice && (
+                        <Badge className="bg-[#B8860B] text-[#071D3A] border-0 text-[10px]">
+                          <Check className="w-3 h-3 mr-1" /> Station choice
                         </Badge>
+                      )}
+                      {selected && !isStationChoice && (
+                        <Badge className="bg-[#444] text-white border-0 text-[10px]">Preview</Badge>
                       )}
                     </div>
                     <p className="text-xs text-[#E51636] font-medium mt-0.5">{v.tagline}</p>
@@ -169,10 +174,10 @@ export default function InvoiceDesignLab() {
                     className={selected ? 'bg-[#E51636] hover:bg-[#c4122f]' : 'border-[#444]'}
                     onClick={(e) => {
                       e.stopPropagation()
-                      selectVariant(v.id)
+                      selectPreview(v.id)
                     }}
                   >
-                    {selected ? 'Selected' : 'Select'}
+                    {selected ? 'Previewing' : 'Preview'}
                   </Button>
                   <Button
                     type="button"
@@ -198,7 +203,7 @@ export default function InvoiceDesignLab() {
             <div>
               <span className="text-xs uppercase tracking-wider text-[#F4F1EA]/40">Live preview</span>
               <span className="ml-2 font-semibold text-[#E51636]">
-                {INVOICE_DESIGN_VARIANTS.find((v) => v.id === active)?.name}
+                {INVOICE_DESIGN_VARIANTS.find((v) => v.id === preview)?.name}
               </span>
             </div>
             <div className="flex gap-2">
@@ -220,7 +225,7 @@ export default function InvoiceDesignLab() {
                 size="sm"
                 variant="outline"
                 className="border-[#444] text-xs"
-                onClick={() => void downloadPdf(active)}
+                onClick={() => void downloadPdf(preview)}
               >
                 <Download className="w-3 h-3 mr-1" /> Download PDF
               </Button>
