@@ -1,4 +1,5 @@
 import { AlertTriangle, CheckCircle2, HelpCircle } from 'lucide-react'
+import { BRAND } from '@/lib/brand'
 import { useEmailServiceStatus } from '@/hooks/useEmailServiceStatus'
 
 /**
@@ -39,7 +40,8 @@ export function EmailServiceBanner() {
         <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
         <span>
           Resend has a key, but the three <code className="font-mono">fm985.com.au</code> DNS
-          records do not match — invoice email will not send from accounts@fm985.com.au.
+          records do not match — invoice email will not send from{' '}
+          <code className="font-mono">{BRAND.accountsEmail}</code>.
           NEED JAY: SiteGround DNS — paste the expected TXT <code className="font-mono">resend._domainkey</code>,
           MX <code className="font-mono">send</code>, and TXT <code className="font-mono">send</code> values
           (Resend → Domains, or live <code className="font-mono">email-status</code>). Do not change the Outlook MX. Then click Verify.
