@@ -8,37 +8,37 @@
 **GitHub `main` is source of truth.** Always `git pull origin main` first.  
 **Do not merge PRs unless Jay says EXE.**
 
-## Already true on live (`main` `f8de525`)
+**CONTINUOUS RUN IS ON.** Do not idle. Do not wait for Jay to start the next agent. Read `.cursor/CONTINUOUS.md`. Arm a 20-minute continue timer. Keep shipping.
 
-- PR **#22** EXE’d. Deploy to Netlify on that merge is **green**.
-- `#/coverage` — listener-scaled dots, Heartland (top 10 by townData), valley photo strip. Glow is a visual 100km guide, not an ACMA contour.
-- `#/broadcast` and `#/social` are **mounted** (no redirect to listen/community). Truth check fails the build if those redirects return.
-- `#/programs` + `#/broadcast` — `programScene()` station photography. Named portraits only: Di Hunter, Sally Nayler.
-- `#/proposal` + `#/social` + `#/broadcast` — `InventoryLadder`. Standard 30s **$25 plus GST**. GVL is premium — never “from $25”. Community Supporter = name-read, not a GVL commercial.
+## Already true on live (`main` `95b6281`)
+
+- PR **#22** EXE’d. `#/coverage` Heartland + listener-scaled dots. `#/broadcast` and `#/social` mounted. Inventory ladder. Named portraits: Di Hunter, Sally Nayler only.
 - `#/ops` is LIVE when Netlify has real `VITE_SUPABASE_*` (anon key, not `sb_secret_`).
-- Coverage / listenership: **39,375** weekly / **189,680** people / **25 towns** / **100km** via `coverageCopy.ts` + `townData.ts`.
+- Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km**.
+- Standard 30s: **$25 plus GST**. GVL is premium — never “from $25”.
 - FOOTT `ONEFM-2026-011` PDF send proven. Do not email `peter@foott.com.au` unless Jay asks.
-- Resend probe is read-only. Do not POST verify. Do not change Outlook MX.
 
 ## Do this run
 
 1. New branch `cursor/<name>-c24f` off latest `main`.
-2. `npm run build` must pass (truth + ops-config + tsc).
-3. Do not merge without **EXE**. Do not merge PR **#13** as-is (CONFLICTING; would regress `#/ops` to DEMO).
-4. Do not empty-commit to retry CI. Push-to-main deploys.
+2. `npm run build` must pass.
+3. Do not merge without **EXE**. Never merge PR **#13**.
+4. After you open a PR, start the next desk immediately.
 
-## Next desk
+## Open now
 
-**D — Stale PR audit (no merge)**  
-Open drafts #1 #3 #4 #8 #10 #11 vs current `main`. List what is already shipped vs leftover. Recommend **close** or **rebase-then-EXE**. Never merge #13 as-is.
+- PR **#24** `cursor/continuous-run-c24f` — Home/Listen/Community ticker via `coverageCopy` + continuous-run docs. Do not merge without **EXE**.
+- Branch `cursor/coverage-kit-c24f` — leftover Listen / Community / Support coverage strings → `coverageCopy.ts`. Do not merge without **EXE**.
 
-Public-site craft only from `programGuide.ts` + `townData.ts` + `/public/brand/` + `/public/assets/images/`. If Jay drops new named portrait files, add them to `NAMED_PORTRAITS`.
+## Next desks (do not wait)
+
+- Leftover `stationStats` coverage strings → `coverageCopy.ts` on **MediaKit, Football, SponsorshipKit, SalesProposal**.
+- Stale drafts (all CONFLICTING): recommend **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13** (would regress `#/ops` to DEMO).
 
 ## NEED JAY (one action)
 
-Start the next Cloud Agent as **Claude Opus** and paste this whole file.  
-Optional: in Cursor Cloud secrets, set `VITE_SUPABASE_URL` to the full `https://….supabase.co` API URL and `VITE_SUPABASE_ANON_KEY` to the **anon / publishable** key (never `sb_secret_`).
+**EXE the coverage-kit PR** (`cursor/coverage-kit-c24f`) and **#24** if still open. That is the only merge this agent cannot do.
 
 ## Do not
 
-- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Restart Resend verification. Email Peter at FOOTT unless Jay asks. Bake `sb_secret_` into the browser bundle.
+- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Restart Resend verification. Email Peter at FOOTT unless Jay asks. Bake `sb_secret_` into the browser bundle. Idle after opening a PR. Ask Jay to start the next agent.
