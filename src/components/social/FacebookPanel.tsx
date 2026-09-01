@@ -2,16 +2,19 @@ import { Facebook, Radio, Calendar, Users } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
+import { formatGuideHours } from '@/lib/guideHours'
 import { SocialPlatformFrame } from '@/components/social/SocialPlatformFrame'
 import { cn } from '@/lib/utils'
 
 const FACEBOOK_ACCENT = '#1877F2'
 
+const GVL_GAME_DAY_CAPTION = `GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'}`
+
 const HIGHLIGHTS = [
   {
     image: STATION_PHOTOS.gvlNightPanorama,
     label: 'GVL game day',
-    caption: 'Live footy & netball updates every Saturday.',
+    caption: GVL_GAME_DAY_CAPTION,
     icon: Radio,
   },
   {
