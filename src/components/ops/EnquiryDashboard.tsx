@@ -34,6 +34,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { cn } from '@/lib/utils'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
@@ -201,7 +203,7 @@ export default function EnquiryDashboard() {
               <div>
                 <h1 className="text-lg font-bold tracking-tight">Enquiry Management</h1>
                 <p className="text-[11px] text-one-muted leading-none mt-0.5">
-                  ONE FM 98.5 — Track, manage & convert incoming enquiries
+                  {BRAND.fullName} · {formatCoverageShort()} — Track, manage & convert incoming enquiries
                 </p>
               </div>
             </div>
