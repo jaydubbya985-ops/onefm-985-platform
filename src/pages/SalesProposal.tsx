@@ -365,7 +365,7 @@ export default function SalesProposal() {
           to="/football"
           img={STATION_PHOTOS.gvlActionSprint}
           alt="GVL football — sponsor the live call on ONE FM 98.5"
-          badge={`${GVL_PREMIUM_BADGE} · ${GVL_MATCH_HOURS ?? 'Saturday'}`}
+          badge={GVL_PREMIUM_BADGE}
         />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
