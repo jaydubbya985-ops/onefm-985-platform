@@ -1,6 +1,9 @@
 import { useRef, useState, useLayoutEffect } from 'react'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
+
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
 
 interface Slide {
   img: string
@@ -27,7 +30,7 @@ const SLIDES: Slide[] = [
     img: '/assets/images/commentary-box-action.jpg',
     num: '03', ghost: 'SPORT',
     title: 'Call of the Match',
-    caption: 'GVL Football, live every weekend. The voice of the game since the first bounce.',
+    caption: `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}. The voice of the game since the first bounce.`,
   },
   {
     img: '/assets/images/gvl-championship-mcg.jpg',
