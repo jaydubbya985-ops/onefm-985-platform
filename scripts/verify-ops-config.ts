@@ -3,7 +3,7 @@
  * Run: node --experimental-strip-types scripts/verify-ops-config.ts
  */
 import { readFileSync } from 'node:fs'
-import { resolveOpsConfig } from '../src/lib/opsConfigResolve.ts'
+import { isValidSupabaseKey, resolveOpsConfig } from '../src/lib/opsConfigResolve.ts'
 import { readFunctionJson } from '../src/lib/readFunctionJson.ts'
 import { realBatchInvoices } from '../src/components/ops/data/invoices.ts'
 
@@ -11,6 +11,26 @@ const fail: string[] = []
 
 function assert(cond: boolean, msg: string) {
   if (!cond) fail.push(msg)
+}
+
+function looksLikeSupabaseProjectUrl(url: string): boolean {
+  return /^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url)
+}
+
+const currentViteUrl = (process.env.VITE_SUPABASE_URL || '').trim()
+const currentViteAnonKey = (process.env.VITE_SUPABASE_ANON_KEY || '').trim()
+if (currentViteUrl && !looksLikeSupabaseProjectUrl(currentViteUrl)) {
+  fail.push(
+    'VITE_SUPABASE_URL must be the full https://<project-ref>.supabase.co API URL, not just the project ref',
+  )
+}
+if (currentViteAnonKey && !isValidSupabaseKey(currentViteAnonKey)) {
+  fail.push(
+    'VITE_SUPABASE_ANON_KEY must be a browser-safe anon JWT or sb_publishable_ key; never use sb_secret_ / service-role keys in VITE_*',
+  )
+}
+if ((currentViteUrl || currentViteAnonKey) && !resolveOpsConfig(process.env).configured) {
+  fail.push('current VITE_SUPABASE_* environment would keep Ops in DEMO or expose the wrong key shape')
 }
 
 const empty = resolveOpsConfig({})
