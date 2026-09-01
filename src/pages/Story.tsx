@@ -3,13 +3,14 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { WordReveal } from '@/components/WordReveal'
-import { stationStats } from '@/data/pricing'
 import {
+  coverageNumbers,
   formatBroadcastPopulation,
   formatCoverageShort,
   formatRadius,
   formatTowns,
   townsCount,
+  yearsBroadcastingValue,
 } from '@/lib/coverageCopy'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
@@ -238,7 +239,7 @@ export default function Story() {
             transition={{ duration: 0.5, delay: 0.65, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             className="font-body text-one-white/65 max-w-[520px] mb-10 italic leading-relaxed"
           >
-            {stationStats.yearsBroadcasting} years of keeping the Valley connected — through flood, storm, footy finals and everything in between.
+            {yearsBroadcastingValue()} years of keeping the Valley connected — through flood, storm, footy finals and everything in between.
           </motion.p>
 
           <motion.div
@@ -263,7 +264,7 @@ export default function Story() {
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BORN 1989 · CALLSIGN: 3ONE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">SHEPPARTON · GOULBURN VALLEY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{yearsBroadcastingValue()} YEARS ON AIR</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD · STORM · FOOTY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{formatBroadcastPopulation()} PEOPLE IN THE BROADCAST AREA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatCoverageShort().toUpperCase()}</span>,
@@ -547,7 +548,7 @@ export default function Story() {
             <WordReveal text="Community Impact" className="font-h2 text-one-white mb-6 block" as="h2" />
             <div className="grid grid-cols-2 gap-6 mb-8">
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.yearsBroadcasting} suffix="" /></p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={coverageNumbers.yearsBroadcasting} suffix="" /></p>
                 <p className="font-label text-muted mt-1">Years On Air</p>
               </div>
               <div>

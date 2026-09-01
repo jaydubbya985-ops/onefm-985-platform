@@ -182,6 +182,13 @@ if (
   hits.push('pages/Support.tsx: leftover coverage must use formatCoverageShort and formatWeeklyListenersPlain')
 }
 
+for (const label of ['pages/Story.tsx', 'pages/AudienceAnalytics.tsx']) {
+  const page = files.find((f) => f.label === label)
+  if (page && /stationStats/.test(page.text)) {
+    hits.push(`${label}: public year stats must come from coverageCopy, not stationStats`)
+  }
+}
+
 const footer = files.find((f) => f.label === 'components/Footer.tsx')
 if (
   !footer ||
