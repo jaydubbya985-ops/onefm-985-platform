@@ -13,6 +13,7 @@ import { CinegraphBackground } from '@/components/CinegraphBackground'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { towns } from '@/data/townData'
+import { FULL_SCHEDULE } from '@/data/programGuide'
 import { footballTiers } from '@/data/pricing'
 import {
   broadcastPopulationValue,
@@ -38,6 +39,79 @@ import { AnimatedNumber } from '@/components/AnimatedNumber'
 
 /* ─── easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
+
+const DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+
+function formatGuideHour(h: number): string {
+  if (h === 0 || h === 24) return '12am'
+  if (h === 12) return '12pm'
+  return h < 12 ? `${h}am` : `${h - 12}pm`
+}
+
+type SportGuideRow = {
+  name: string
+  host: string
+  days: string
+  time: string
+}
+
+/** Sport shows exactly as listed in programGuide.ts FULL_SCHEDULE — no invented peak hours. */
+function sportShowsFromGuide(): SportGuideRow[] {
+  const sport = FULL_SCHEDULE.filter((s) => s.category === 'Sport').slice().sort((a, b) => {
+    const dayA = a.day === 0 ? 7 : a.day
+    const dayB = b.day === 0 ? 7 : b.day
+    return dayA - dayB || a.startHour - b.startHour
+  })
+
+  const groups: {
+    name: string
+    host: string
+    startHour: number
+    endHour: number
+    days: number[]
+  }[] = []
+
+  for (const slot of sport) {
+    const last = groups[groups.length - 1]
+    if (
+      last &&
+      last.name === slot.name &&
+      last.host === slot.host &&
+      last.startHour === slot.startHour &&
+      last.endHour === slot.endHour
+    ) {
+      last.days.push(slot.day)
+    } else {
+      groups.push({
+        name: slot.name,
+        host: slot.host,
+        startHour: slot.startHour,
+        endHour: slot.endHour,
+        days: [slot.day],
+      })
+    }
+  }
+
+  return groups.map((g) => ({
+    name: g.name,
+    host: g.host,
+    days: g.days.map((d) => DAY_SHORT[d]).join(' · '),
+    time: `${formatGuideHour(g.startHour)} – ${formatGuideHour(g.endHour)}`,
+  }))
+}
+
+function sportGuideDaysLabel(rows: SportGuideRow[]): string {
+  const order = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  const seen = new Set<string>()
+  for (const row of rows) {
+    for (const d of row.days.split(' · ')) seen.add(d)
+  }
+  return order.filter((d) => seen.has(d)).join(' · ')
+}
+
+const SPORT_GUIDE = sportShowsFromGuide()
+const GVL_MATCH_SLOT = SPORT_GUIDE.find((s) => /gvl match of the day/i.test(s.name)) ?? SPORT_GUIDE[0]
+const SPORT_GUIDE_DAYS = sportGuideDaysLabel(SPORT_GUIDE)
 
 /* ─── Particle Canvas (football field themed) ─── */
 const ParticleField = memo(function ParticleField() {
@@ -411,7 +485,7 @@ export default function Football() {
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL FOOTBALL LEAGUE COVERAGE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE MATCH COMMENTARY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">SPORT ON THE WEEKLY GUIDE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{townCountValue()} COMMUNITIES · GOULBURN VALLEY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL MATCH-DAY · PREMIUM INVENTORY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ROUND-BY-ROUND BROADCAST</span>,
@@ -420,6 +494,41 @@ export default function Football() {
           ]}
         />
       </div>
+
+      {/* ─── Sport on the weekly guide (programGuide.ts / fm985.com.au/guide) ─── */}
+      <section className="bg-one-navy border-b border-one-gold/15 py-12 px-4 sm:px-6" data-cursor-label="STATION GUIDE">
+        <div className="max-w-[1200px] mx-auto">
+          <ScrollReveal className="mb-8">
+            <span className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-2">
+              Source: fm985.com.au/guide
+            </span>
+            <h2 className="font-h3 text-one-white mb-2">Sport on the weekly guide</h2>
+            <p className="font-body-small text-muted max-w-[640px]">
+              Show names and times from the station guide — GVL Match of the Day is Saturday afternoon,
+              not the only sports broadcast.
+            </p>
+          </ScrollReveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {SPORT_GUIDE.map((show) => (
+              <div
+                key={`${show.name}-${show.days}-${show.time}`}
+                className="glass-card p-5 border border-one-gold/15"
+              >
+                <p className="font-label text-[10px] tracking-[0.2em] text-one-gold uppercase mb-2">
+                  {show.days} · {show.time}
+                </p>
+                <h3 className="font-h4 text-one-white mb-1">{show.name}</h3>
+                <p className="font-body-small text-muted">{show.host}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 font-body-small text-muted">
+            <Link to="/programs" className="text-one-gold hover:underline" data-cursor-label="GUIDE">
+              Full program guide
+            </Link>
+          </p>
+        </div>
+      </section>
 
       {/* ─── GVL Sports Photo Strip ─── */}
       <GVLGalleryStrip />
@@ -593,7 +702,7 @@ export default function Football() {
               <TrendingUp size={18} className="text-one-gold shrink-0 mt-0.5" />
               <p className="font-body-small text-one-white">
                 ONE FM reaches an estimated <strong className="text-one-gold">{weeklyListenersValue()}</strong> listeners
-                weekly across {coverageNumbers.totalTowns} communities. GVL packages put your brand alongside live match commentary every Saturday.
+                weekly across {coverageNumbers.totalTowns} communities. GVL packages sit beside the sport slots on the weekly guide ({SPORT_GUIDE_DAYS}).
               </p>
             </div>
           </motion.div>
@@ -685,8 +794,13 @@ export default function Football() {
               <h4 className="font-h4 text-one-white mb-5">Listener Habits</h4>
               <div className="space-y-5">
                 {[
-                  { icon: Clock, label: 'Peak Footy Hours', value: 'Sat 1pm — 6pm', color: '#F2F2F2' },
-                  { icon: Target, label: 'Live Match Coverage', value: 'Every weekend', color: '#B6FF00' },
+                  {
+                    icon: Clock,
+                    label: GVL_MATCH_SLOT.name,
+                    value: `${GVL_MATCH_SLOT.days} ${GVL_MATCH_SLOT.time}`,
+                    color: '#F2F2F2',
+                  },
+                  { icon: Target, label: 'Sport on the guide', value: SPORT_GUIDE_DAYS, color: '#B6FF00' },
                   { icon: Radio, label: 'GVL Commentary', value: 'FM 98.5 + stream', color: '#F2F2F2' },
                   { icon: Users, label: 'Est. Weekly Listeners', value: weeklyListenersValue(), color: '#9B5DE5' },
                 ].map((item) => {
