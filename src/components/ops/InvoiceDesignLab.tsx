@@ -24,7 +24,7 @@ import {
 } from '@/components/ops/InvoiceEmailTemplate'
 import { BATCH_INVOICES, DEFAULT_EMAIL_BODY } from '@/components/ops/data/invoices'
 import { useOpsStore } from '@/components/ops/store'
-import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const SAMPLE = BATCH_INVOICES[0]
@@ -128,8 +128,8 @@ export default function InvoiceDesignLab() {
             June 2026 batch — email HTML and PDF attachments. B and C are preview-only here.
           </p>
           <p className="text-xs text-[#F4F1EA]/50 mt-2">
-            Coverage: {formatTowns()} — {formatCoverageShort()} (ABS 2021 via townData). Invoice
-            payments: NAB BSB {BANK_BSB} · {BANK_ACCOUNT_NAME}. This lab is not a Stripe receipt.
+            Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
+            {BANK_BSB} · {BANK_ACCOUNT_NAME}. This lab is not a Stripe receipt.
           </p>
           <p className="text-xs text-[#F4F1EA]/40 mt-2">
             Active sends use: {getVariantMeta(invoiceDesignVariant).name}
