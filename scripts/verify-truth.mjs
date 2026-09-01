@@ -125,6 +125,14 @@ if (
 ) {
   hits.push('data/programGuide.ts: getBreakfastScheduleLabel must be derived from BREAKFAST_ROSTER')
 }
+if (
+  !guide ||
+  !guide.text.includes("timeZone: 'Australia/Melbourne'") ||
+  /const day = now\.getDay\(\)/.test(guide.text) ||
+  /const hour = now\.getHours\(\)/.test(guide.text)
+) {
+  hits.push('data/programGuide.ts: live show detection must use Australia/Melbourne time, not viewer/server local time')
+}
 
 const community = files.find((f) => f.label === 'pages/Community.tsx')
 if (community && /stationStats/.test(community.text)) {

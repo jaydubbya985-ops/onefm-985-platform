@@ -155,10 +155,34 @@ export const MULTICULTURAL_PROGRAMS = Array.from(
 )
 export const MULTICULTURAL_PROGRAM_COUNT = MULTICULTURAL_PROGRAMS.length
 
+const MELBOURNE_DAY_INDEX: Record<string, number> = {
+  Sun: 0,
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6,
+}
+
+function getMelbourneDayHour(now: Date): { day: number; hour: number } {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Melbourne',
+    weekday: 'short',
+    hour: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(now)
+  const weekday = parts.find((p) => p.type === 'weekday')?.value ?? 'Sun'
+  const hour = Number(parts.find((p) => p.type === 'hour')?.value ?? '0')
+  return {
+    day: MELBOURNE_DAY_INDEX[weekday] ?? 0,
+    hour,
+  }
+}
+
 /** Get current on-air show from full schedule */
 export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
-  const day = now.getDay()
-  const hour = now.getHours()
+  const { day, hour } = getMelbourneDayHour(now)
 
   const candidates = FULL_SCHEDULE.filter(s => {
     if (s.day !== day) return false
