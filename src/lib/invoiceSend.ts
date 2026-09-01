@@ -144,8 +144,8 @@ export async function dispatchInvoiceEmail(
     console.warn('[InvoiceSend] Netlify function unavailable (dev mode?):', err)
   }
 
-  // 2. Direct Resend (local dev with VITE_RESEND_API_KEY in .env.local)
-  const directResult = await sendEmail({
+  // 2. Browser fallback reports unsent; real email requires the Netlify function.
+  const fallbackResult = await sendEmail({
     to: recipient,
     subject,
     html,
@@ -155,18 +155,18 @@ export async function dispatchInvoiceEmail(
       : undefined,
   })
 
-  if (directResult.success && directResult.messageId) {
-    return { success: true, messageId: directResult.messageId }
+  if (fallbackResult.success && fallbackResult.messageId) {
+    return { success: true, messageId: fallbackResult.messageId }
   }
 
-  if (directResult.devMode) {
+  if (fallbackResult.devMode) {
     return { success: false, devMode: true }
   }
 
   return {
     success: false,
     usedMailtoFallback: true,
-    error: directResult.error ?? 'Email service unavailable',
+    error: fallbackResult.error ?? 'Email service unavailable',
   }
 }
 
@@ -201,7 +201,7 @@ export async function dispatchReceiptEmail(
     const parsed = readSendResult(data)
     if (parsed) return parsed
   } catch {
-    // fall through to direct send
+    // fall through to browser fallback
   }
 
   const result = await sendEmail({
