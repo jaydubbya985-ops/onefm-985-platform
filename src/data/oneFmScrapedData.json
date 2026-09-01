@@ -4,7 +4,7 @@
     "callsign": "3ONE",
     "frequency": "98.5 FM",
     "location": "Shepparton, Victoria, Australia",
-    "established": 1989,
+    "established": 1980,
     "slogan": "Live and Local",
     "email": "admin@fm985.com.au",
     "phone": "(03) 5831 3131",
@@ -13,7 +13,7 @@
     "licensed_by": "APRA AMCOS & ACMA",
     "broadcast_radius_km": 100,
     "weekly_listeners": 39375,
-    "area_population_2026": 185791,
+    "area_population_2026": 189680,
     "communities_served": 25
   },
   "program_guide": {
@@ -85,7 +85,7 @@
       {
         "time": "6:00am - 9:00am",
         "show": "ONE FM Breakfast",
-        "presenter": "Lillian Stone"
+        "presenter": "The Big G (Craig Stott)"
       },
       {
         "time": "9:00am - 12:00pm",
@@ -117,7 +117,7 @@
       {
         "time": "6:00am - 9:00am",
         "show": "ONE FM Breakfast",
-        "presenter": "Craig Stott"
+        "presenter": "Ralph Whitehead"
       },
       {
         "time": "9:00am - 12:00pm",
@@ -144,7 +144,7 @@
       {
         "time": "6:00am - 9:00am",
         "show": "ONE FM Breakfast",
-        "presenter": "Di Hunter"
+        "presenter": "Josh Revens"
       },
       {
         "time": "9:00am - 12:00pm",
@@ -196,32 +196,25 @@
       "category": "Breakfast"
     },
     {
-      "name": "Lillian Stone",
+      "name": "The Big G (Craig Stott)",
       "show": "ONE FM Breakfast",
       "timeslot": "Wednesday, 6am–9am",
-      "bio": "ONE FM 98.5 breakfast host Wednesday.",
-      "category": "Breakfast"
-    },
-    {
-      "name": "Craig Stott",
-      "show": "ONE FM Breakfast / Super Saturday Sports Show",
-      "timeslot": "Thursday breakfast · Saturday sport",
-      "bio": "Thursday breakfast host and Saturday sports coverage.",
+      "bio": "Wednesday breakfast host (The Big G) — from the fm985.com.au program guide.",
       "category": "Breakfast"
     },
     {
       "name": "Di Hunter",
-      "show": "ONE FM Breakfast",
-      "timeslot": "Friday, 6am–9am",
-      "bio": "ONE FM 98.5 breakfast host Friday.",
-      "category": "Breakfast"
+      "show": "Monday Afternoon",
+      "timeslot": "Monday afternoon",
+      "bio": "Monday Afternoon — from the fm985.com.au program guide. Named archive portrait only.",
+      "category": "Community"
     },
     {
       "name": "Josh Revens",
-      "show": "Interviews / Various",
-      "timeslot": "Various",
-      "bio": "ONE FM announcer who conducts community interviews covering local events, sports, and community initiatives.",
-      "category": "Community"
+      "show": "ONE FM Breakfast / Monday Nights",
+      "timeslot": "Friday, 6am–9am · Monday nights",
+      "bio": "Friday breakfast host and Monday Nights. Also conducts community interviews.",
+      "category": "Breakfast"
     },
     {
       "name": "Johnny P (John Painter)",
@@ -239,8 +232,8 @@
     },
     {
       "name": "Ralph Whitehead",
-      "show": "Friday Arvo / Friday Morning",
-      "timeslot": "Friday afternoons / mornings",
+      "show": "ONE FM Breakfast / Friday Arvo",
+      "timeslot": "Thursday, 6am–9am · Friday arvo",
       "bio": "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter.",
       "category": "Music"
     },
@@ -325,7 +318,7 @@
   "regular_segments": [
     {
       "name": "ONE FM Breakfast",
-      "description": "Rotating breakfast hosts Mon–Fri 6am–9am: Tim Ahemt, Lillian Stone, Craig Stott, Di Hunter.",
+      "description": "Rotating breakfast hosts Mon–Fri 6am–9am: Tim Ahemt, The Big G (Craig Stott), Ralph Whitehead, Josh Revens.",
       "host": "Rotating"
     },
     {
