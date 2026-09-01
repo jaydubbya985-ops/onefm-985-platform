@@ -52,6 +52,7 @@ import {
   yearsBroadcastingValue,
 } from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { BREAKFAST_TIME } from '@/data/programGuide'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { MediaImage } from '@/components/MediaImage'
@@ -130,9 +131,9 @@ const platformCards = [
     icon: Headphones,
     title: 'Live Stream',
     stat: 'Online',
-    statLabel: 'via fm985.com.au',
-    reach: 'Worldwide',
-    coverage: 'Radio.co stream · Community Radio Plus app',
+    statLabel: `via ${LISTEN_LINKS.web.label}`,
+    reach: LISTEN_LINKS.web.description,
+    coverage: `${LISTEN_LINKS.stream.description} · ${LISTEN_LINKS.web.description}`,
     accent: '#B6FF00',
   },
   {
@@ -146,7 +147,7 @@ const platformCards = [
   },
   {
     icon: Mic,
-    title: 'Interviews & Podcasts',
+    title: 'SoundCloud interviews',
     stat: 'SoundCloud',
     statLabel: 'interview archive',
     reach: 'soundcloud.com',
@@ -372,7 +373,7 @@ export default function MediaKit() {
 
       const platformReach = [
         { platform: 'FM Radio', stat: '98.5 FM', reach: `${weeklyListenersValue()} est. weekly listeners` },
-        { platform: 'Live Stream', stat: 'fm985.com.au', reach: 'Radio.co · Community Radio Plus app' },
+        { platform: 'Live Stream', stat: LISTEN_LINKS.web.label, reach: `${LISTEN_LINKS.stream.description} · ${LISTEN_LINKS.web.description}` },
         { platform: 'Social Media', stat: 'Facebook', reach: 'facebook.com/onefmshepparton — follower count reported by the platform' },
         { platform: 'SoundCloud', stat: 'Interview archive', reach: 'Community interviews on fm985.com.au' },
       ]
