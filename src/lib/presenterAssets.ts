@@ -9,7 +9,7 @@ export const NAMED_PORTRAITS: Record<string, string> = {
   'Sally Nayler': '/assets/images/heritage-sally-nayler-90s.jpg',
 }
 
-/** Studio / OB photography used behind names that have no cleared portrait. */
+/** Studio / OB / valley photography used behind names that have no cleared portrait. */
 export const ON_AIR_WALL_BACKDROPS = [
   HOST_PHOTOS.onAirHost1,
   HOST_PHOTOS.studioControlRoom,
@@ -17,10 +17,12 @@ export const ON_AIR_WALL_BACKDROPS = [
   STATION_PHOTOS.obVanBranded,
   STATION_PHOTOS.studioCommentarySelfie,
   STATION_PHOTOS.commentaryBoxAction,
+  // Unused Goulburn Valley housing-estate sunset — station archive, not a portrait.
+  STATION_PHOTOS.geoHousingEstateSunset,
 ] as const
 
 export const ON_AIR_WALL_PHOTO_NOTE =
-  'Photography: ONE FM studio and outside-broadcast archive — not presenter portraits. Named portraits exist only for Di Hunter and Sally Nayler.'
+  'Photography: ONE FM studio, outside-broadcast, and Goulburn Valley archive — not presenter portraits. Named portraits exist only for Di Hunter and Sally Nayler.'
 
 export function presenterPortrait(host: string): string | null {
   if (!host) return null
@@ -60,7 +62,7 @@ export function programBackdrop(category: string): string {
     case 'Country':
       return STATION_PHOTOS.eventDeniUteMuster
     case 'Community':
-      return STATION_PHOTOS.communityBookStall
+      return STATION_PHOTOS.geoHousingEstateSunset
     case 'Heritage':
       return STATION_PHOTOS.heritageOriginalPanel1988
     case 'Outside broadcast':
@@ -87,6 +89,9 @@ export function programScene(program: string): string {
   }
   if (n.includes('heritage') || n.includes('1989') || n.includes('panel')) {
     return STATION_PHOTOS.heritageOriginalPanel1988
+  }
+  if (n.includes('community') || n.includes('interview')) {
+    return STATION_PHOTOS.geoHousingEstateSunset
   }
   return STATION_PHOTOS.studioPresenterMic
 }
