@@ -53,6 +53,7 @@ const FORBIDDEN = [
   { re: /languages on the weekend dial/i, why: 'multicultural programs are Mon–Wed evenings in programGuide, not weekend' },
   { re: /dangerouslyAllowBrowser/i, why: 'never expose provider API keys directly in the browser bundle' },
   { re: /VITE_OPENAI_API_KEY/i, why: 'OpenAI secret keys must not be Vite/browser environment variables' },
+  { re: /AIza[0-9A-Za-z_-]{20,}/, why: 'Google Maps browser keys must come from VITE_GOOGLE_MAPS_API_KEY, not source code' },
 ]
 
 function walk(dir) {

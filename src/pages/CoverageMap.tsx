@@ -164,8 +164,7 @@ function exportCSV() {
 
 type SortKey = 'name' | 'population' | 'distance' | 'listeners'
 
-const GOOGLE_MAPS_API_KEY =
-  import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? 'AIzaSyDCWBY7YnPmk75dXdNKFoJKU-rUzbQe344'
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? ''
 const SHEPPARTON = { lat: -36.38, lng: 145.4 }
 
 // Hides Google's own default point-of-interest icons/labels (real businesses,
