@@ -11,6 +11,12 @@ import {
   formatTowns,
   townsCount,
 } from '@/lib/coverageCopy'
+import {
+  BREAKFAST_TIME,
+  MULTICULTURAL_PROGRAMS,
+  MULTICULTURAL_PROGRAM_COUNT,
+  getBreakfastScheduleLabel,
+} from '@/data/programGuide'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { Marquee } from '@/components/Marquee'
@@ -108,6 +114,8 @@ const teamCategories = ["All", "On-Air", "Multicultural"]
  * Facilities cards. Equipment inventories are not on the public record, so these
  * describe the licence and the programming we can evidence rather than listing
  * desks, software or room capacities.
+ * Breakfast hours and multicultural names come from programGuide.ts
+ * (fm985.com.au/guide). Do not invent ONE Youth, Persian, or extra voices here.
  */
 const studios = [
   {
@@ -124,7 +132,11 @@ const studios = [
     title: "Live from Shepparton",
     desc: "Volunteer presenters host the weekday desk from the station's Shepparton studios, with an automated overnight mix between shifts.",
     icon: Mic,
-    specs: ["Breakfast 6AM–9AM weekdays", "Rotating volunteer roster", "Source: fm985.com.au/guide"],
+    specs: [
+      `Breakfast ${BREAKFAST_TIME} weekdays`,
+      getBreakfastScheduleLabel(),
+      'Source: fm985.com.au/guide via programGuide',
+    ],
   },
   {
     title: "Outside broadcast",
@@ -133,10 +145,14 @@ const studios = [
     specs: ["GVL match broadcasts", "NIRS AFL rebroadcasts", "2019 SCMA X-Awards finalist"],
   },
   {
-    title: "Eight language strands",
-    desc: "Africonnect, Arabic, Filipino, Mandarin, Persian, Punjabi, Samoan and Swahili/Congolese programs run alongside ONE Youth.",
+    title: `${MULTICULTURAL_PROGRAM_COUNT} multicultural programs`,
+    desc: `${MULTICULTURAL_PROGRAMS.map((s) => s.name).join(', ')} — volunteer-presented on the weekly station guide.`,
     icon: Languages,
-    specs: ["Weekend and evening slots", "Volunteer-presented", "Source: Annual Report 2024"],
+    specs: [
+      `${MULTICULTURAL_PROGRAM_COUNT} programs on fm985.com.au/guide`,
+      'Weeknight evening slots',
+      'Source: fm985.com.au/guide via programGuide',
+    ],
   },
 ]
 
