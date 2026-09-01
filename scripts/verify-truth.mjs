@@ -56,6 +56,7 @@ const FORBIDDEN = [
   { re: /AIza[0-9A-Za-z_-]{20,}/, why: 'Google Maps browser keys must come from VITE_GOOGLE_MAPS_API_KEY, not source code' },
   { re: /VITE_RESEND_API_KEY/i, why: 'Resend keys must stay server-side as RESEND_API_KEY, not Vite/browser variables' },
   { re: /api\.resend\.com\/emails/i, why: 'browser code must send email through Netlify functions, not Resend directly' },
+  { re: /VITE_PLAYHQ_API_KEY/i, why: 'PlayHQ API keys must stay server-side, not in Vite/browser variables' },
 ]
 
 function walk(dir) {
