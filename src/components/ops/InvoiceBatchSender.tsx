@@ -89,6 +89,8 @@ import {
   dispatchReceiptEmail,
   type InvoiceSendPayload,
 } from '@/lib/invoiceSend'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
 // Types + status config (bundle `jt`, `ip`)
@@ -773,54 +775,73 @@ export default function InvoiceBatchSender() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-[#101010] text-[#F4F1EA] p-6">
-        <div className="max-w-[1600px] mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#D4A853] to-[#D4A853]/60 flex items-center justify-center">
-                  <Receipt className="w-5 h-5 text-[#101010]" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice Batch — June 2026</h1>
-                  <p className="text-sm text-[#F4F1EA]/50">
-                    ONE FM 98.5 • {rows.length} invoice{rows.length === 1 ? '' : 's'} • {formatCurrency(stats.total)} inc GST
-                    {rows.length > 0 ? ` • Due ${formatDate(BATCH_DUE_DATE)}` : ''}
-                  </p>
+      <div className="min-h-screen bg-[#101010] text-[#F4F1EA]">
+        <div className="relative overflow-hidden border-b border-[#2A2A2A]">
+          {/* Unused Shepparton Illuminate water still — station archive, not a presenter portrait. */}
+          <img
+            src={STATION_PHOTOS.eventIlluminateWater}
+            alt=""
+            aria-hidden
+            loading="eager"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+          />
+          <div className="relative z-10 p-6 max-w-[1600px] mx-auto">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#D4A853] to-[#D4A853]/60 flex items-center justify-center">
+                    <Receipt className="w-5 h-5 text-[#101010]" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice Batch — June 2026</h1>
+                    <p className="text-sm text-[#F4F1EA]/50">
+                      ONE FM 98.5 • {rows.length} invoice{rows.length === 1 ? '' : 's'} • {formatCurrency(stats.total)} inc GST
+                      {rows.length > 0 ? ` • Due ${formatDate(BATCH_DUE_DATE)}` : ''}
+                    </p>
+                    <p className="text-xs text-[#F4F1EA]/50 mt-2">
+                      Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
+                      {BANK_BSB} · {BANK_ACCOUNT_NAME}. Mailto does not mark sent.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className={`border-[#1E293B] ${
-                  testMode
-                    ? 'bg-purple-900/30 text-purple-400 border-purple-700'
-                    : 'text-[#F4F1EA]/50'
-                }`}
-              >
-                {testMode ? (
-                  <span className="flex items-center gap-1">
-                    <FlaskConical className="w-3 h-3" /> Test Mode Active
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> Live Mode
-                  </span>
-                )}
-              </Badge>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTestMode(!testMode)}
-                className="border-[#1E293B] text-[#F4F1EA] hover:bg-[#1E293B]"
-              >
-                {testMode ? 'Switch to Live' : 'Test Mode'}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant="outline"
+                  className={`border-[#1E293B] ${
+                    testMode
+                      ? 'bg-purple-900/30 text-purple-400 border-purple-700'
+                      : 'text-[#F4F1EA]/50'
+                  }`}
+                >
+                  {testMode ? (
+                    <span className="flex items-center gap-1">
+                      <FlaskConical className="w-3 h-3" /> Test Mode Active
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> Live Mode
+                    </span>
+                  )}
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTestMode(!testMode)}
+                  className="border-[#1E293B] text-[#F4F1EA] hover:bg-[#1E293B]"
+                >
+                  {testMode ? 'Switch to Live' : 'Test Mode'}
+                </Button>
+              </div>
             </div>
           </div>
+        </div>
 
+        <div className="p-6 max-w-[1600px] mx-auto">
           <EmailServiceBanner />
 
           {/* Stat cards */}
