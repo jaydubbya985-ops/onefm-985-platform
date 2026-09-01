@@ -145,7 +145,7 @@ export default function NotFound() {
           position: 'relative',
           zIndex: 10,
           textAlign: 'center',
-          padding: '2rem 1.25rem',
+          padding: '2rem 1.25rem 7.5rem',
           maxWidth: 640,
         }}
       >
