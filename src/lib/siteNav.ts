@@ -6,6 +6,7 @@
 import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
 import { BREAKFAST_SHOW } from '@/data/programGuide'
 import { STATION_PHOTOS, HOST_PHOTOS } from '@/lib/stationPhotos'
+import { LISTEN_LINKS } from '@/lib/listenLinks'
 
 export interface NavItem {
   label: string
@@ -60,7 +61,7 @@ export const HOME_JOBS = [
   {
     label: 'Listen Live',
     path: '/listen',
-    description: 'Stream ONE FM on FM, web, or app',
+    description: `Stream ${LISTEN_LINKS.fm.label} · Radio.co · ${LISTEN_LINKS.crp.label}`,
     accent: '#E51636',
     image: STATION_PHOTOS.commentaryBoxAction,
     tags: ['Live', '98.5 FM', 'Stream'],
@@ -99,7 +100,7 @@ export const FOOTER_SUPPORT = NAV_GROUPS[3].items
 
 export const FOOTER_RESOURCES: NavItem[] = [
   { label: 'Privacy Policy', path: '/privacy' },
-  { label: 'Media Kit (PDF)', path: '/media-kit' },
+  { label: 'Media Kit', path: '/media-kit' },
   { label: 'Rate Card', path: '/sponsorship' },
   { label: 'Program Guide', path: '/programs' },
 ]
