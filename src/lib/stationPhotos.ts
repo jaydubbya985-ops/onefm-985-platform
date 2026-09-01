@@ -93,6 +93,13 @@ export const STATION_PHOTOS = {
   matchDayFlag: `${IMG}/match-day-flag.jpg`,
   commentaryTeamSelfie: `${IMG}/commentary-team-selfie.jpg`,
   commentaryCallAction: `${IMG}/commentary-call-action.jpg`,
+
+  // Heritage archive — filename-verified (not presenter portraits unless named)
+  heritageOriginalPanel1988: `${IMG}/heritage-original-panel-1988.jpg`,
+  heritageObMall1989: `${IMG}/heritage-ob-mall-1989.jpg`,
+  heritageTruck2005: `${IMG}/heritage-truck-2005.jpg`,
+  heritageDiHunter: `${IMG}/heritage-di-hunter-carols-2014.jpg`,
+  heritageSallyNayler: `${IMG}/heritage-sally-nayler-90s.jpg`,
 } as const
 
 /**

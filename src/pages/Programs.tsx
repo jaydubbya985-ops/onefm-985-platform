@@ -11,7 +11,7 @@ import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { BRAND } from '@/lib/brand'
 import { formatTowns } from '@/lib/coverageCopy'
 import { HOST_PHOTOS } from '@/lib/stationPhotos'
-import { presenterVisual } from '@/lib/presenterAssets'
+import { presenterVisual, programScene } from '@/lib/presenterAssets'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
@@ -712,6 +712,16 @@ export default function Programs() {
                   className="absolute left-0 top-0 bottom-0 rounded-l"
                   style={{ width: '3px', backgroundColor: CATEGORY_COLORS[show.tag] ?? '#B6FF00' }}
                 />
+                <div className="relative -mx-6 -mt-6 aspect-[16/9] overflow-hidden">
+                  <img
+                    src={programScene(show.name)}
+                    alt={`ONE FM ${show.tag.toLowerCase()} photography — ${show.name}`}
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-transparent to-transparent" />
+                </div>
                 <div aria-hidden className="explore-tile-scan" />
                 <div className="flex items-start justify-between">
                   <div
