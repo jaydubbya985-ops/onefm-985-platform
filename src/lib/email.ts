@@ -1,12 +1,12 @@
 /**
- * Email Service — payload builder
- * Sends via Netlify Function (production) or Resend API direct (dev).
+ * Email Service — payload builder.
+ * Browser code may build payloads, but real sends must go through Netlify
+ * functions so provider API keys stay server-side.
  *
  * Production setup:
  *   1. Netlify functions send-enquiry + send-invoice deploy with the site
  *   2. Set RESEND_API_KEY (no VITE_ prefix) in Netlify env — stays server-side
  *
- * Dev fallback: VITE_RESEND_API_KEY in .env.local (never set this in production)
  */
 
 import { readFunctionJson } from '@/lib/readFunctionJson'
@@ -49,7 +49,6 @@ export interface InvoiceEmailData {
 }
 
 const STATION_EMAIL = import.meta.env.VITE_STATION_EMAIL || 'admin@fm985.com.au'
-const STATION_NAME  = import.meta.env.VITE_STATION_NAME  || 'ONE FM 98.5'
 
 /* ── Template builders ──────────────────────────────────── */
 
@@ -199,53 +198,16 @@ export function buildProposalEmailHtml(data: ProposalEmailData): string {
 /* ── Send function ───────────────────────────────────────── */
 
 /**
- * Send an email via Resend API.
- * In dev mode (no API key) logs the payload to console.
- *
- * For production: proxy this through a Supabase Edge Function
- * so RESEND_API_KEY never touches the browser.
+ * Browser fallback. It never sends directly because RESEND_API_KEY must stay
+ * server-side in Netlify functions.
  */
 export async function sendEmail(payload: EmailPayload): Promise<{ success: boolean; error?: string; messageId?: string; devMode?: boolean }> {
-  const apiKey = import.meta.env.VITE_RESEND_API_KEY
-
-  if (!apiKey) {
-    // Dev mode — no email service configured, nothing actually sent.
-    // Caller MUST surface devMode honestly — do not present this as a real send.
-    console.warn('[EmailService] DEV MODE — email NOT sent (no VITE_RESEND_API_KEY):', {
-      to: payload.to,
-      subject: payload.subject,
-      attachments: payload.attachments?.length ?? 0,
-    })
-    return { success: false, devMode: true }
-  }
-
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: payload.from || `${STATION_NAME} <accounts@fm985.com.au>`,
-        to: Array.isArray(payload.to) ? payload.to : [payload.to],
-        subject: payload.subject,
-        html: payload.html,
-        reply_to: payload.replyTo,
-        attachments: payload.attachments?.length ? payload.attachments : undefined,
-      }),
-    })
-
-    if (!res.ok) {
-      const err = await res.text()
-      return { success: false, error: err }
-    }
-
-    const data = (await res.json()) as { id?: string }
-    return { success: true, messageId: data.id }
-  } catch (err) {
-    return { success: false, error: err instanceof Error ? err.message : 'Unknown error' }
-  }
+  console.warn('[EmailService] Email NOT sent from browser; use Netlify function path.', {
+    to: payload.to,
+    subject: payload.subject,
+    attachments: payload.attachments?.length ?? 0,
+  })
+  return { success: false, devMode: true }
 }
 
 /* ── Convenience wrappers ───────────────────────────────── */

@@ -54,6 +54,8 @@ const FORBIDDEN = [
   { re: /dangerouslyAllowBrowser/i, why: 'never expose provider API keys directly in the browser bundle' },
   { re: /VITE_OPENAI_API_KEY/i, why: 'OpenAI secret keys must not be Vite/browser environment variables' },
   { re: /AIza[0-9A-Za-z_-]{20,}/, why: 'Google Maps browser keys must come from VITE_GOOGLE_MAPS_API_KEY, not source code' },
+  { re: /VITE_RESEND_API_KEY/i, why: 'Resend keys must stay server-side as RESEND_API_KEY, not Vite/browser variables' },
+  { re: /api\.resend\.com\/emails/i, why: 'browser code must send email through Netlify functions, not Resend directly' },
 ]
 
 function walk(dir) {
