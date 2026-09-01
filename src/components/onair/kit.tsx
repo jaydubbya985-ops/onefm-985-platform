@@ -8,6 +8,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { LabelReveal } from '@/components/motion/PosterReveal'
+import { onAirWallSub } from '@/lib/guideHours'
 
 const RED = '#E51636'
 const INK = '#0A0A0A'
@@ -63,6 +64,7 @@ export function NameWall({
       <div>
         {rows.map((p, i) => {
           const isPortrait = portraits.includes(p.name)
+          const sub = onAirWallSub(p.name, p.sub)
           return (
           <motion.div
             key={p.name}
@@ -75,7 +77,7 @@ export function NameWall({
             <div className="font-poster uppercase leading-none whitespace-nowrap text-white text-[clamp(40px,7vw,104px)] poster-hover">
               {p.name}
               <span className="block font-body normal-case text-[13px] tracking-[0.14em] text-white/40 mt-1.5">
-                {p.sub}
+                {sub}
               </span>
             </div>
             <div
@@ -84,7 +86,7 @@ export function NameWall({
               role="img"
               aria-label={
                 isPortrait
-                  ? `${p.name} — ${p.sub}`
+                  ? `${p.name} — ${sub}`
                   : `ONE FM station photography beside ${p.name} — not a presenter portrait`
               }
             />

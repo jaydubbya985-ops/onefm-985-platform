@@ -12,7 +12,7 @@ import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
-import { onAirWallSub } from '@/lib/guideHours'
+import { formatGuideHours, onAirWallSub } from '@/lib/guideHours'
 import {
   formatCoverageShort,
   formatRadius,
@@ -21,6 +21,7 @@ import {
   formatWeeklyListenersPlain,
 } from '@/lib/coverageCopy'
 import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
+import { liveNowFromMetadata } from '@/lib/liveNow'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
 
@@ -37,8 +38,9 @@ const reveal = {
 
 function Ticker() {
   const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   const items = [
-    meta.isLive ? `● ON AIR — ${meta.program}${meta.presenter ? ` with ${meta.presenter}` : ''}` : `● ${meta.program}`,
+    live.isLive ? `● ON AIR — ${live.program}${live.presenter ? ` with ${live.presenter}` : ''}` : `● ${live.program}`,
     meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
     formatWeeklyListeners(),
     formatCoverageShort(),
@@ -113,19 +115,32 @@ function HeroReel() {
 
 function Hero() {
   const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   return (
     <section className="relative overflow-hidden px-6 md:px-12 lg:px-20 pt-24 pb-20 min-h-[88vh] flex flex-col justify-center">
       <HeroReel />
       <div className="relative">
       <Link
         to="/listen"
-        className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 mb-9 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03] bloom-red"
+        className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 mb-4 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03] bloom-red"
         style={{ background: RED }}
         data-cursor="LISTEN"
       >
         <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-        {meta.isLive ? 'On Air Now · Listen Live' : 'Listen Live · 98.5 FM'}
+        {live.isLive ? 'On Air Now · Listen Live' : 'Listen Live · 98.5 FM'}
       </Link>
+      <p className="mb-9 max-w-[560px]">
+        <span className="block font-poster uppercase text-[clamp(22px,3.2vw,36px)] text-white leading-tight">
+          {live.program}
+        </span>
+        <span className="block mt-1.5 text-[14px] text-white/50">
+          {live.presenter ? `with ${live.presenter} · ` : ''}
+          {live.programTime}
+        </span>
+        {live.breakfastOnAir && live.breakfastLabel ? (
+          <span className="block mt-1.5 text-[12px] text-white/40">{live.breakfastLabel}</span>
+        ) : null}
+      </p>
       <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]">
         <PosterReveal
           lines={[
@@ -220,7 +235,7 @@ function FeatureFrame() {
           className="absolute bottom-6 left-6 px-5 py-2.5 rounded font-bold text-[13px] tracking-[0.13em] uppercase text-white"
           style={{ background: RED }}
         >
-          GVL Footy · Called Live on 98.5
+          GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
         </div>
       </Link>
     </motion.div>
