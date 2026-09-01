@@ -13,12 +13,31 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { formatCoverageShort, formatWeeklyListenersPlain } from '@/lib/coverageCopy'
 import { formatBreakfastChromeLabel } from '@/data/programGuide'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const RED = '#E51636'
 const EXPO = [0.16, 1, 0.3, 1] as const
 
+/** Unused station archive still — tall transmitter mast. Not a live listener count. */
+function TowerMastBackdrop() {
+  return (
+    <>
+      <img
+        src={STATION_PHOTOS.towerTallMast}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A]/78 via-[#0A0A0A]/68 to-[#0A0A0A]/92"
+      />
+    </>
+  )
+}
+
 const MENU: { label: string; to: string; img: string }[] = [
-  { label: 'Home', to: '/', img: '/studio-control-room.jpg' },
+  { label: 'Home', to: '/', img: STATION_PHOTOS.towerTallMast },
   { label: 'Listen', to: '/listen', img: '/on-air-host-1.jpg' },
   { label: 'Our Community', to: '/community', img: '/assets/images/heritage-ob-mall-1989.jpg' },
   { label: 'History', to: '/heritage', img: '/assets/images/heritage-original-panel-1988.jpg' },
@@ -123,7 +142,8 @@ export function OnAirNav() {
             transition={{ duration: 0.25 }}
             className="fixed inset-0 z-[290] bg-[#0A0A0A] overflow-y-auto"
           >
-            <div className="min-h-full flex flex-col px-5 md:px-10 pt-24 pb-8">
+            <TowerMastBackdrop />
+            <div className="relative min-h-full flex flex-col px-5 md:px-10 pt-24 pb-8">
               <div className="flex-1">
                 {MENU.map((item, i) => {
                   const active = location.pathname === item.to
@@ -185,6 +205,9 @@ export function OnAirNav() {
                 <div className="mt-2 text-[11px] tracking-[0.12em] uppercase text-white/30">
                   {formatBreakfastChromeLabel()}
                 </div>
+                <p className="mt-2 text-[10px] tracking-[0.16em] uppercase text-white/25">
+                  Station archive · transmitter mast
+                </p>
               </motion.div>
             </div>
           </motion.div>
