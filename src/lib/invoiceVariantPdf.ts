@@ -15,6 +15,7 @@ import {
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import type { InvoiceDesignVariantId } from '@/lib/invoiceDesignVariants'
 import { INVOICE_STATION } from '@/lib/invoiceDesignVariants'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 
 const aud = (n: number) =>
   `$${n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -301,12 +302,14 @@ export async function generateVariantInvoicePdf(
 
   y = drawBankBlock(p, y, invoice.number, variant)
 
+  // source: townData / coverageCopy — 25 towns · 100km radius (ABS 2021)
+  const coverage = formatCoverageShort()
   const footerLine =
     variant === 'valley'
-      ? `${INVOICE_STATION.org}  ·  Callsign 3ONE  ·  ABN ${DS.station.abn}`
+      ? `${INVOICE_STATION.org}  ·  Callsign 3ONE  ·  ABN ${DS.station.abn}  ·  ${coverage}`
       : variant === 'on-air'
-        ? `${INVOICE_STATION.org}  ·  Licensed community broadcaster  ·  ABN ${DS.station.abn}`
-        : `${INVOICE_STATION.org}  ·  ABN ${DS.station.abn}  ·  ${DS.station.phone}`
+        ? `${INVOICE_STATION.org}  ·  ABN ${DS.station.abn}  ·  ${coverage}`
+        : `${INVOICE_STATION.org}  ·  ABN ${DS.station.abn}  ·  ${DS.station.phone}  ·  ${coverage}`
 
   drawSlimFooter(p, footerLine, `Generated ${today.toLocaleDateString('en-AU')}`)
 
