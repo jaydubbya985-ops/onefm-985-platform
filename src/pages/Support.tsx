@@ -15,7 +15,7 @@ import {
   StrokeFill,
 } from '@/components/onair/kit'
 import { donationTiers, stationStats } from '@/data/pricing'
-import { formatTowns } from '@/lib/coverageCopy'
+import { formatTowns, formatCoverageShort, formatWeeklyListeners, formatWeeklyListenersPlain } from '@/lib/coverageCopy'
 
 const RED = '#E51636'
 
@@ -202,13 +202,15 @@ export default function Support() {
     <Layout>
       <SEO
         title="Donate — Support ONE FM 98.5"
-        description="Support volunteer-run community radio in the Goulburn Valley. Bank transfer: NAB BSB 083-894 · Acct 553 219 432 · 98.5 One FM."
+        description={`Support volunteer-run community radio across ${formatTowns()}. ${formatCoverageShort()} (ABS 2021 via townData). Bank transfer: NAB BSB 083-894 · Acct 553 219 432 · 98.5 One FM.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             'Volunteer-run · community-owned · not for profit',
             'Goulburn Valley Community Radio Inc.',
+            formatCoverageShort(),
+            formatWeeklyListeners(),
             'ABN 92 117 291 771',
             'Every dollar stays local',
           ]}
@@ -263,7 +265,7 @@ export default function Support() {
           stats={[
             { n: String(stationStats.yearsBroadcasting), t: 'Years on air', red: true },
             { n: '98.5', t: 'FM · Callsign 3ONE' },
-            { n: '24/7', t: 'Live & local' },
+            { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners' },
             { n: formatTowns(), t: 'Across the Goulburn Valley' },
           ]}
         />

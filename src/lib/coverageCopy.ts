@@ -46,6 +46,16 @@ export function formatCoverageLong(): string {
   return `${formatWeeklyListeners()} across ${formatTowns()} within a ${formatRadius()} broadcast area (${formatBroadcastPopulation()} people — ABS 2021 via townData)`
 }
 
+/** Crawler OG / twitter default. Vite injects this into index.html at build. */
+export function formatOgDescription(): string {
+  return `Community radio from Shepparton, VIC. ${formatTowns()}. ${formatBroadcastPopulation()} people in the broadcast area.`
+}
+
+/** Fallback meta description when a page does not pass its own. */
+export function formatSeoDefault(): string {
+  return `ONE FM 98.5 — The Voice of the Goulburn Valley. Volunteer-run community radio from Shepparton, Victoria. ${formatCoverageShort()} (ABS 2021 via townData).`
+}
+
 /** Numeric strings for stats strips and data tables (en-AU). */
 export function weeklyListenersValue(): string {
   return stationStats.weeklyListeners.toLocaleString('en-AU')

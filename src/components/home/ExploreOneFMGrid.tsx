@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
-import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
+import { BREAKFAST_SHOW } from '@/data/programGuide'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
 import { WordReveal } from '@/components/WordReveal'
 import { TiltCard } from '@/components/TiltCard'
@@ -18,14 +19,14 @@ const TILES = [
   },
   {
     title: 'Programs',
-    desc: 'Full program guide',
+    desc: BREAKFAST_SHOW,
     path: '/programs',
     image: STATION_PHOTOS.studioPresenterMic,
     fallback: PHOTO_DEFAULTS.regional,
   },
   {
     title: 'Local Sport',
-    desc: 'GVL & community sport',
+    desc: `GVL called live · ${formatTowns()}`,
     path: '/football',
     image: STATION_PHOTOS.gvlNightPanorama,
     fallback: PHOTO_DEFAULTS.regional,
@@ -56,7 +57,7 @@ const TILES = [
   },
   {
     title: 'Sponsor ONE FM',
-    desc: 'Partner with the Valley',
+    desc: `Partner across ${formatTowns()}`,
     path: '/sponsorship',
     image: STATION_PHOTOS.gvlPlayerHighFive,
     fallback: PHOTO_DEFAULTS.regional,

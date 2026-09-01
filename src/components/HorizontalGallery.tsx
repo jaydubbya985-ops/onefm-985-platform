@@ -1,5 +1,5 @@
 import { useRef, useState, useLayoutEffect } from 'react'
-import { stationStats } from '@/data/pricing'
+import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 interface Slide {
@@ -21,7 +21,7 @@ const SLIDES: Slide[] = [
     img: '/assets/images/ob-van-branded.jpg',
     num: '02', ghost: 'FIELD',
     title: 'We Come to You',
-    caption: `The ONE FM OB van takes the station wherever the story is — ${stationStats.totalTowns} towns, one broadcast team.`,
+    caption: `The ONE FM OB van takes the station wherever the story is — ${formatTowns()}, one broadcast team.`,
   },
   {
     img: '/assets/images/commentary-box-action.jpg',
@@ -45,13 +45,13 @@ const SLIDES: Slide[] = [
     img: '/assets/images/culture-indigenous-elders.jpg',
     num: '06', ghost: 'VOICES',
     title: 'Every Voice',
-    caption: `First Nations voices and ${stationStats.totalTowns} towns — plus ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs each week from the station guide.`,
+    caption: `First Nations voices and ${formatTowns()} — plus ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs each week from the station guide.`,
   },
   {
     img: '/assets/images/geo-lake-aerial.jpg',
     num: '07', ghost: 'HOME',
     title: 'The Region',
-    caption: `${stationStats.broadcastPopulation.toLocaleString()} people. ${stationStats.broadcastRadiusKm}km broadcast radius. One station that belongs to all of them.`,
+    caption: `${formatBroadcastPopulation()} people. ${formatRadius()} broadcast radius. One station that belongs to all of them.`,
   },
   {
     img: '/assets/images/studio-exterior-rainbow.jpg',

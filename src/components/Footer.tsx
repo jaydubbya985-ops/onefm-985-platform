@@ -6,6 +6,7 @@ import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import { BrandLogo } from '@/components/BrandLogo'
 import { BRAND } from '@/lib/brand'
 import { FOOTER_LISTEN, FOOTER_SPONSOR, FOOTER_ABOUT, FOOTER_SUPPORT, FOOTER_RESOURCES } from '@/lib/siteNav'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
 import { MagneticButton } from '@/components/MagneticButton'
 import { WordReveal } from '@/components/WordReveal'
 
@@ -86,6 +87,9 @@ export function Footer() {
             <p className="font-body-small text-one-muted max-w-xs leading-relaxed">
               {BRAND.org} — community radio for the Goulburn Valley.
               Callsign {BRAND.callsign} · Licensed since {BRAND.licensed}.
+            </p>
+            <p className="font-label text-[10px] tracking-[0.16em] uppercase text-one-muted/85 leading-relaxed max-w-xs">
+              {formatCoverageShort()} · {formatWeeklyListeners()}
             </p>
             <div className="flex items-center gap-5 pt-1">
               <motion.a
@@ -215,6 +219,23 @@ export function Footer() {
             </div>
           </motion.div>
 
+        </div>
+      </div>
+
+      {/* ── Coverage strip — sourced via coverageCopy, never hardcoded ── */}
+      <div className="border-t border-white/10" data-cursor-label="COVERAGE">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-muted">
+            {formatCoverageShort()} · {formatWeeklyListeners()}
+            <span className="text-one-muted/60"> · ABS 2021 via townData</span>
+          </p>
+          <Link
+            to="/coverage"
+            className="font-label text-[10px] tracking-[0.18em] uppercase text-one-electric hover:text-one-white transition-colors"
+            data-cursor-label="MAP"
+          >
+            Coverage map →
+          </Link>
         </div>
       </div>
 

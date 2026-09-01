@@ -4,6 +4,7 @@
  */
 
 import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
+import { BREAKFAST_SHOW } from '@/data/programGuide'
 import { STATION_PHOTOS, HOST_PHOTOS } from '@/lib/stationPhotos'
 
 export interface NavItem {
@@ -24,7 +25,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Listen',
     items: [
       { label: 'Listen Live', path: '/listen', description: 'Stream 98.5 FM · Radio.co' },
-      { label: 'Program Guide', path: '/listen', description: 'Weekly guide from fm985.com.au' },
+      { label: 'Program Guide', path: '/listen', description: `${BREAKFAST_SHOW} · fm985.com.au guide` },
       { label: 'Coverage Map', path: '/coverage', description: formatCoverageShort() },
     ],
   },
@@ -41,14 +42,14 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'About',
     items: [
       { label: 'History', path: '/heritage', description: 'Since 1989 · callsign 3ONE · station archive' },
-      { label: 'Community', path: '/community', description: 'NFPs & local organisations' },
+      { label: 'Community', path: '/community', description: `${formatTowns()} · GVL sport & local life` },
       { label: 'GVL Football', path: '/football', description: 'Season sponsorship tiers' },
     ],
   },
   {
     label: 'Support',
     items: [
-      { label: 'Donate', path: '/support', description: 'Support community radio · bank transfer' },
+      { label: 'Donate', path: '/support', description: `Support community radio across ${formatTowns()}` },
       { label: 'Contact', path: '/contact', description: 'Studio · partnerships · enquiries' },
     ],
   },
@@ -67,7 +68,7 @@ export const HOME_JOBS = [
   {
     label: 'Programs',
     path: '/listen',
-    description: 'Breakfast, sport, multicultural & more',
+    description: `${BREAKFAST_SHOW} · sport, multicultural & more`,
     accent: '#F2F2F2',
     image: STATION_PHOTOS.studioPresenterMic,
     tags: ['Guide', 'Hosts', 'Weekly'],
@@ -75,7 +76,7 @@ export const HOME_JOBS = [
   {
     label: 'Community',
     path: '/community',
-    description: 'Towns, GVL sport & local life',
+    description: `${formatTowns()}, GVL sport & local life`,
     accent: '#B6FF00',
     image: HOST_PHOTOS.studioControlRoom,
     tags: ['Towns', 'GVL', 'Local'],
