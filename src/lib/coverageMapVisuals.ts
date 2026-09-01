@@ -1,4 +1,4 @@
-import { formatBroadcastPopulation, formatRadius } from '@/lib/coverageCopy'
+import { coverageNumbers, formatBroadcastPopulation, formatRadius } from '@/lib/coverageCopy'
 import { BRAND_COLORS } from '@/lib/brand'
 import type { CoveragePin, CoveragePinType } from '@/data/coverageMapPins'
 import type { Town } from '@/data/townData'
@@ -20,7 +20,7 @@ export function mountCoverageGlow(
 ): CoverageGlowHandle & { circles: google.maps.Circle[]; stopPulse: () => void } {
   const handle = mountCanvasCoverageGlow(map, {
     center,
-    radiusMeters: 100_000,
+    radiusMeters: coverageNumbers.broadcastRadiusKm * 1000,
     station: ONE_FM_STUDIO,
   })
   return {
