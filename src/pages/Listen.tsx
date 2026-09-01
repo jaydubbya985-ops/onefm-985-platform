@@ -13,15 +13,20 @@ import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFil
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { ON_AIR_WALL_PHOTO_NOTE, ON_AIR_WEEK } from '@/data/programGuide'
-import { stationStats } from '@/data/pricing'
 import { BRAND } from '@/lib/brand'
-import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
+import {
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+  formatWeeklyListenersPlain,
+} from '@/lib/coverageCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
 
-/** Same wall as Home — programGuide.ts. Di Hunter is the only named portrait. */
+/** Same wall as Home — programGuide.ts BREAKFAST_ROSTER. Named portraits: Di Hunter, Sally Nayler. */
 
 function ListenHero() {
   const { playing, loading, toggle } = useLiveStream()
@@ -182,13 +187,15 @@ export default function Listen() {
     <Layout>
       <SEO
         title="Listen Live — ONE FM 98.5"
-        description="Stream ONE FM 98.5 live from Shepparton. Full program guide, this week's presenters, and the latest from the studio."
+        description={`Stream ONE FM 98.5 live from Shepparton. ${formatCoverageShort()} (ABS 2021 via townData). Full program guide and this week's presenters.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             meta.isLive ? `● ON AIR — ${meta.program}${meta.presenter ? ` with ${meta.presenter}` : ''}` : `● ${meta.program}`,
             meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
+            formatWeeklyListeners(),
+            formatCoverageShort(),
             'Community radio since 1989 · Callsign 3ONE',
           ]}
           delay={0.4}
@@ -214,9 +221,9 @@ export default function Listen() {
         <SongRequest />
         <StatsStrip
           stats={[
-            { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners' },
+            { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners' },
             { n: '98.5', t: 'FM · Callsign 3ONE', red: true },
-            { n: '24/7', t: 'On air, every day' },
+            { n: formatTowns(), t: `Within a ${formatRadius()} radius` },
             { n: '1989', t: 'Broadcasting ever since' },
           ]}
         />
