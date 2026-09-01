@@ -7,6 +7,7 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { BRAND } from '@/lib/brand'
 import { FOOTER_LISTEN, FOOTER_SPONSOR, FOOTER_ABOUT, FOOTER_SUPPORT, FOOTER_RESOURCES } from '@/lib/siteNav'
 import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { MagneticButton } from '@/components/MagneticButton'
 import { WordReveal } from '@/components/WordReveal'
 
@@ -224,14 +225,21 @@ export function Footer() {
 
       {/* ── Coverage strip — sourced via coverageCopy, never hardcoded ── */}
       <div className="border-t border-white/10" data-cursor-label="COVERAGE">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-muted">
-            {formatCoverageShort()} · {formatWeeklyListeners()}
-            <span className="text-one-muted/60"> · ABS 2021 via townData</span>
-          </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div className="min-w-0 space-y-1.5">
+            <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-muted">
+              {formatCoverageShort()} · {formatWeeklyListeners()}
+              <span className="text-one-muted/60"> · ABS 2021 via townData</span>
+            </p>
+            <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-muted">
+              GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
+              {' · '}
+              NIRS AFL Friday Night Footy · {formatGuideHours('NIRS AFL Friday Night Footy') ?? 'Friday'}
+            </p>
+          </div>
           <Link
             to="/coverage"
-            className="font-label text-[10px] tracking-[0.18em] uppercase text-one-electric hover:text-one-white transition-colors"
+            className="font-label text-[10px] tracking-[0.18em] uppercase text-one-electric hover:text-one-white transition-colors shrink-0"
             data-cursor-label="MAP"
           >
             Coverage map →
