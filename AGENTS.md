@@ -128,6 +128,8 @@ Push to `main` triggers `.github/workflows/deploy.yml` → build → Netlify pro
 
 **This conversation:** Cloud Agents with `subscribe_timer` must arm a **20-minute** continue timer named `onefm-continuous` (prompt in `.cursor/CONTINUOUS.md`).
 
+**Mobile control:** `.cursor/MOBILE.md` is Jay's phone-first runbook. Use it when Jay needs one concrete action from the Fold instead of a long handoff.
+
 **Overnight (Jay, one click this agent cannot do):** https://cursor.com/automations → new automation → repo `onefm-985-platform` → model **Claude Opus** → prompt = contents of `.cursor/CONTINUOUS.md` → every 2 hours.
 
 **Kimi (desktop):** `git pull origin main`, paste `.cursor/CONTINUOUS.md`. Do not treat a Downloads folder as source of truth.
