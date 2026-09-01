@@ -98,6 +98,8 @@ import {
   type RichContract,
 } from './contracts/constants'
 import { buildXeroLinesFromContracts, downloadXeroCsv, summarizeXeroExport } from './contracts/xero'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { generateContractPdf } from '@/lib/contractDocument'
 
 // ---------------------------------------------------------------------------
@@ -810,7 +812,7 @@ export default function ContractManager() {
         <div>
           <h1 className="text-[#F4F1EA] text-3xl font-bold">Contract Manager</h1>
           <p className="text-[#5B8DB8]/60 text-sm mt-1">
-            Manage sponsorship contracts — create, track, renew, and invoice
+            {BRAND.fullName} · {formatCoverageShort()} — create, track, renew, and invoice
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
