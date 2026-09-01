@@ -2,13 +2,14 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { BRAND } from '@/lib/brand'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 
 export default function Privacy() {
   return (
     <Layout>
       <SEO
         title="Privacy Policy"
-        description="ONE FM 98.5 privacy policy — how we collect, use, and protect your information."
+        description={`${BRAND.org} privacy policy. Licensed community radio · ${formatCoverageShort()} (ABS 2021 via townData).`}
       />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 md:py-24">
         <p className="font-label text-[10px] tracking-[0.22em] text-one-electric/85 uppercase mb-4">
@@ -19,7 +20,7 @@ export default function Privacy() {
           {BRAND.org} (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) respects your privacy. This policy
           explains how we collect, use, and protect information when you visit this site or{' '}
           <strong className="text-one-white/80">{BRAND.website.replace('https://', '')}</strong>, or
-          interact with our services.
+          interact with our services across {formatCoverageShort()} (ABS 2021 via townData).
         </p>
 
         <div className="space-y-10 text-one-white/75 font-body-small leading-relaxed">
@@ -77,7 +78,7 @@ export default function Privacy() {
               <li><strong className="text-one-white/90">SoundCloud</strong> — interview audio from the station SoundCloud profile.</li>
               <li><strong className="text-one-white/90">Radio.co</strong> — live stream audio (same source as fm985.com.au/audio-player/).</li>
               <li><strong className="text-one-white/90">Google Maps</strong> — the coverage map on this site may load Maps when a Maps key is configured; otherwise the town list still works.</li>
-              <li><strong className="text-one-white/90">NAB bank transfer</strong> — public donations are not taken by card on this site. Pay {BANK_ACCOUNT_NAME}, BSB {BANK_BSB}, account {BANK_ACCOUNT}. Card checkout is data pending until a Stripe key is wired.</li>
+              <li><strong className="text-one-white/90">NAB bank transfer</strong> — public donations are not taken by card on this site. Pay {BANK_ACCOUNT_NAME} ({BRAND.org}), BSB {BANK_BSB}, account {BANK_ACCOUNT}. Card checkout is data pending until a Stripe key is wired.</li>
             </ul>
           </section>
 
@@ -107,7 +108,7 @@ export default function Privacy() {
             <p>
               By using this website you agree to use it for lawful purposes only. Content on this site
               is provided for general information about ONE FM 98.5 community radio in the Goulburn
-              Valley and may not be reproduced without written permission.
+              Valley ({formatCoverageShort()}) and may not be reproduced without written permission.
             </p>
           </section>
 
