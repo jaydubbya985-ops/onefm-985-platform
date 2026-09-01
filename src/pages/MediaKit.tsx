@@ -14,9 +14,7 @@ import {
   FileText,
   Image,
   Music,
-  Layers,
   Package,
-  Check,
   ArrowRight,
   TrendingUp,
   FileDown,
@@ -37,7 +35,7 @@ import { rateCard } from '@/data/pricing'
 import { towns } from '@/data/townData'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { BRAND } from '@/lib/brand'
+import { BRAND, LOGO } from '@/lib/brand'
 import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
 import { WordReveal } from '@/components/WordReveal'
 import { MagneticButton } from '@/components/MagneticButton'
@@ -157,13 +155,66 @@ const platformCards = [
   },
 ]
 
-const assetCards = [
-  { icon: Package, name: 'Logo Package', format: 'AI, EPS, PNG, SVG', size: '2.4 MB', popular: false },
-  { icon: FileText, name: 'Brand Guidelines', format: 'PDF', size: '24 pages', popular: false },
-  { icon: Image, name: 'Photo Library', format: 'JPG, PNG', size: '120+ images', popular: false },
-  { icon: Music, name: 'Audio Ident & Jingles', format: 'WAV, MP3', size: '12 tracks', popular: false },
-  { icon: Layers, name: 'Social Media Templates', format: 'PSD, Canva', size: '24 templates', popular: false },
-  { icon: FileText, name: 'Complete Media Kit', format: 'PDF, PPT', size: '18 MB', popular: true },
+/** Real files in /public/brand/ only. No invented pack sizes or fake “Downloaded” buttons. */
+const PHOTO_REQUEST_MAILTO = `mailto:${BRAND.email}?subject=${encodeURIComponent('ONE FM photography request')}&body=${encodeURIComponent('Hi — please send station photography for a campaign.\n\n')}`
+const AUDIO_REQUEST_MAILTO = `mailto:${BRAND.email}?subject=${encodeURIComponent('ONE FM audio ident request')}&body=${encodeURIComponent('Hi — please send audio ident / jingle files for a campaign.\n\n')}`
+
+const assetCards: Array<{
+  icon: typeof Package
+  name: string
+  format: string
+  note: string
+  popular?: boolean
+  href?: string
+  download?: string
+  action?: 'docx'
+}> = [
+  {
+    icon: Package,
+    name: 'ONE FM logo',
+    format: 'SVG',
+    note: 'Primary lockup from the V3 brand pack',
+    href: LOGO.primarySvg,
+    download: 'one-fm-logo.svg',
+  },
+  {
+    icon: Package,
+    name: 'Reversed logo',
+    format: 'SVG',
+    note: 'White-on-dark lockup',
+    href: LOGO.reversed,
+    download: 'one-fm-logo-reversed.svg',
+  },
+  {
+    icon: FileText,
+    name: 'Brand tokens',
+    format: 'JSON',
+    note: 'Official V3 colour tokens',
+    href: '/brand/brand-tokens.json',
+    download: 'one-fm-brand-tokens.json',
+  },
+  {
+    icon: FileText,
+    name: 'Media kit',
+    format: 'DOCX',
+    note: 'Rates, reach and studio contact — generated on this page',
+    action: 'docx',
+    popular: true,
+  },
+  {
+    icon: Image,
+    name: 'Station photography',
+    format: 'Email request',
+    note: 'No zip pack is hosted here — the station sends files on request',
+    href: PHOTO_REQUEST_MAILTO,
+  },
+  {
+    icon: Music,
+    name: 'Audio ident & jingles',
+    format: 'Email request',
+    note: 'Not hosted as a public download',
+    href: AUDIO_REQUEST_MAILTO,
+  },
 ]
 
 /* ─────────── helpers ─────────── */
@@ -293,7 +344,6 @@ function StudioPhotoStrip() {
 export default function MediaKit() {
   const [demoTab, setDemoTab] = useState<'Overview' | 'Reach' | 'Top Towns'>('Overview')
   const [currency, setCurrency] = useState('AUD')
-  const [downloading, setDownloading] = useState<string | null>(null)
   const [docxGenerating, setDocxGenerating] = useState(false)
 
   const currencyRates: Record<string, number> = { AUD: 1, USD: 0.65, GBP: 0.52, EUR: 0.6 }
@@ -308,11 +358,6 @@ export default function MediaKit() {
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroImgY = useTransform(heroScroll, [0, 1], ['0%', '20%'])
-
-  const handleDownload = (name: string) => {
-    setDownloading(name)
-    setTimeout(() => setDownloading(null), 2000)
-  }
 
   const handleDownloadDocx = async () => {
     setDocxGenerating(true)
@@ -438,7 +483,7 @@ export default function MediaKit() {
             transition={{ duration: 0.5, delay: 0.65, ease: easeOutExpo }}
           >
             Everything you need to know about ONE FM's audience, reach, and advertising
-            opportunities. Download the complete kit or explore sections below.
+            opportunities. Download the Word kit (rates and sourced reach) or explore sections below.
           </motion.p>
 
           <motion.div
@@ -447,17 +492,12 @@ export default function MediaKit() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.8, ease: easeOutExpo }}
           >
-            <MagneticButton strength={10}>
-              <button data-cursor-label="DOWNLOAD PDF" className="btn-primary text-sm flex items-center gap-2">
-                <Download size={16} />
-                Download Full Kit (PDF)
-              </button>
-            </MagneticButton>
             <MagneticButton strength={8}>
               <button
+                type="button"
                 data-cursor-label="DOWNLOAD DOCX"
                 className="btn-primary text-sm flex items-center gap-2"
-                onClick={handleDownloadDocx}
+                onClick={() => void handleDownloadDocx()}
                 disabled={docxGenerating}
               >
                 {docxGenerating ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
@@ -815,9 +855,15 @@ export default function MediaKit() {
                 </Link>
               </MagneticButton>
               <MagneticButton strength={6}>
-                <button data-cursor-label="DOWNLOAD" className="btn-secondary text-xs">
-                  <Download size={14} />
-                  Rate Card
+                <button
+                  type="button"
+                  data-cursor-label="DOWNLOAD"
+                  className="btn-secondary text-xs"
+                  onClick={() => void handleDownloadDocx()}
+                  disabled={docxGenerating}
+                >
+                  {docxGenerating ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                  Rate Card (in DOCX)
                 </button>
               </MagneticButton>
             </div>
@@ -836,7 +882,7 @@ export default function MediaKit() {
             variants={fadeUp}
           >
             <WordReveal text="BRAND ASSETS" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted mt-2">Logos, guidelines, and creative resources</p>
+            <p className="font-body-small text-muted mt-2">Official V3 logos and tokens — no invented packs</p>
           </motion.div>
 
           <motion.div
@@ -848,7 +894,38 @@ export default function MediaKit() {
           >
             {assetCards.map((asset, i) => {
               const Icon = asset.icon
-              const isDownloading = downloading === asset.name
+              const ctaClass = `inline-flex items-center gap-2 px-4 py-2 rounded-full font-label text-xs transition-all duration-300 ${
+                asset.popular
+                  ? 'btn-primary text-xs'
+                  : 'border border-ivory/40 text-ivory hover:bg-ivory/10'
+              }`
+              const cta = asset.action === 'docx' ? (
+                <button
+                  type="button"
+                  onClick={() => void handleDownloadDocx()}
+                  disabled={docxGenerating}
+                  data-cursor-label="DOWNLOAD"
+                  className={ctaClass}
+                >
+                  {docxGenerating ? <Loader2 size={14} className="animate-spin" /> : <FileDown size={14} />}
+                  Download DOCX
+                </button>
+              ) : asset.href?.startsWith('mailto:') ? (
+                <a href={asset.href} data-cursor-label="EMAIL" className={ctaClass}>
+                  <Mail size={14} />
+                  Email the station
+                </a>
+              ) : (
+                <a
+                  href={asset.href}
+                  download={asset.download}
+                  data-cursor-label="DOWNLOAD"
+                  className={ctaClass}
+                >
+                  <Download size={14} />
+                  Download
+                </a>
+              )
               return (
                 <TiltCard key={asset.name} maxTilt={5} className="h-full">
                 <motion.div
@@ -869,34 +946,14 @@ export default function MediaKit() {
                     </div>
                     {asset.popular && (
                       <span className="px-3 py-1 rounded-full bg-gold/20 text-gold font-label text-[10px]">
-                        Most Popular
+                        Working download
                       </span>
                     )}
                   </div>
                   <h4 className="font-h4 text-ivory mb-1">{asset.name}</h4>
                   <p className="font-body-small text-muted mb-1">{asset.format}</p>
-                  <p className="font-micro text-muted mb-4">{asset.size}</p>
-                  <button
-                    onClick={() => handleDownload(asset.name)}
-                    data-cursor-label={isDownloading ? 'DONE' : 'DOWNLOAD'}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-label text-xs transition-all duration-300 ${
-                      asset.popular
-                        ? 'btn-primary text-xs'
-                        : 'border border-ivory/40 text-ivory hover:bg-ivory/10'
-                    }`}
-                  >
-                    {isDownloading ? (
-                      <>
-                        <Check size={14} />
-                        Downloaded
-                      </>
-                    ) : (
-                      <>
-                        <Download size={14} />
-                        {asset.popular ? 'Download All' : 'Download'}
-                      </>
-                    )}
-                  </button>
+                  <p className="font-micro text-muted mb-4">{asset.note}</p>
+                  {cta}
                 </motion.div>
                 </TiltCard>
               )
@@ -916,7 +973,7 @@ export default function MediaKit() {
           >
             <WordReveal text="READY TO AMPLIFY?" className="font-h2 text-ivory mb-4 block" as="h2" stagger={0.05} />
             <p className="font-body text-chalk mb-10">
-              Our partnerships team is ready to build a campaign that works for your brand.
+              Talk to the station on {BRAND.email} or {BRAND.phone} — we&apos;ll build a campaign that works for your brand.
             </p>
           </motion.div>
 
@@ -953,10 +1010,10 @@ export default function MediaKit() {
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <MagneticButton strength={10} cursorLabel="BOOK">
-              <button className="btn-primary text-sm">
+              <Link to="/contact" className="btn-primary text-sm">
                 <Calendar size={16} />
-                Book a Meeting
-              </button>
+                Contact the station
+              </Link>
             </MagneticButton>
             <MagneticButton strength={6} cursorLabel="REQUEST">
               <Link to="/proposal" className="flex items-center gap-2 font-label text-xs text-one-gold hover:text-gold transition-colors link-hover">
