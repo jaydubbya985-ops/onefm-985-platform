@@ -142,6 +142,9 @@ if (
     'pages/Community.tsx: multicultural cards must show programGuide weeknight hours, not a weekend dial',
   )
 }
+if (!community || !community.text.includes("formatGuideHours('GVL Match of the Day')")) {
+  hits.push('pages/Community.tsx: GVL badge/ticker hours must come from formatGuideHours / FULL_SCHEDULE')
+}
 
 const stationHistory = files.find((f) => f.label === 'data/stationHistory.ts')
 if (
