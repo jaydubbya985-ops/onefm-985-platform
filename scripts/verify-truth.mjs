@@ -90,6 +90,36 @@ if (
 ) {
   hits.push('pages/Listen.tsx: weekly listeners via coverageCopy; on-air wall from ON_AIR_WEEK')
 }
+if (
+  !listen ||
+  !listen.text.includes('BREAKFAST_SHOW') ||
+  !listen.text.includes('getBreakfastScheduleLabel')
+) {
+  hits.push('pages/Listen.tsx: weekday breakfast hero must use BREAKFAST_SHOW / getBreakfastScheduleLabel')
+}
+
+const miniPlayer = files.find((f) => f.label === 'components/MiniPlayer.tsx')
+if (
+  !miniPlayer ||
+  !miniPlayer.text.includes('BREAKFAST_SHOW') ||
+  !miniPlayer.text.includes('getBreakfastScheduleLabel')
+) {
+  hits.push('components/MiniPlayer.tsx: breakfast chrome must use BREAKFAST_SHOW and getBreakfastScheduleLabel')
+}
+
+const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
+if (!onAirNav || !onAirNav.text.includes('formatBreakfastChromeLabel')) {
+  hits.push('components/OnAirNav.tsx: menu footer must show formatBreakfastChromeLabel from programGuide')
+}
+
+const guide = files.find((f) => f.label === 'data/programGuide.ts')
+if (
+  !guide ||
+  !guide.text.includes('mergedBreakfastRoster()') ||
+  /return 'Mon–Tue: Tim Ahemt/.test(guide.text)
+) {
+  hits.push('data/programGuide.ts: getBreakfastScheduleLabel must be derived from BREAKFAST_ROSTER')
+}
 
 const community = files.find((f) => f.label === 'pages/Community.tsx')
 if (community && /stationStats/.test(community.text)) {
