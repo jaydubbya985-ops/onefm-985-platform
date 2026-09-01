@@ -28,7 +28,7 @@
 
 ## Open now
 
-- `cursor/coverage-kit-11c2` — Support leftover coverage → `coverageCopy.ts` + truth guards. Listen breakfast comment cites BREAKFAST_ROSTER. Do not merge without **EXE**.
+- `cursor/support-coverage-11c2` — Support leftover coverage → `coverageCopy.ts` + truth guards. Listen breakfast comment cites BREAKFAST_ROSTER. Do not merge without **EXE**.
 - PR **#25** Invoice Design Lab — sibling. Do not merge without **EXE**.
 
 ## Next desks (do not wait)
@@ -38,7 +38,7 @@
 
 ## NEED JAY (one action)
 
-**EXE the coverage-kit PR** (`cursor/coverage-kit-11c2`). That is the only merge this agent cannot do.
+**EXE the support-coverage PR** (`cursor/support-coverage-11c2`). That is the only merge this agent cannot do.
 
 ## Do not
 
