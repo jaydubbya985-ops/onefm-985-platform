@@ -718,7 +718,7 @@ export default function CoverageMap() {
                 { src: STATION_PHOTOS.heritageObMall1989, alt: 'ONE FM outside broadcast, 1989 mall' },
                 { src: STATION_PHOTOS.gvlNightPanorama, alt: 'GVL ground at night — called on 98.5' },
                 { src: STATION_PHOTOS.heritageTruck2005, alt: 'ONE FM broadcast truck, 2005' },
-                { src: STATION_PHOTOS.geoRollingGreenHills, alt: `Valley landscape in the ${formatRadius()} broadcast area` },
+                { src: STATION_PHOTOS.ecoTractorSunrise, alt: `Valley paddock at sunrise — station archive in the ${formatRadius()} broadcast area` },
               ].map((shot) => (
                 <div key={shot.src} className="relative aspect-[4/3] overflow-hidden rounded-md border border-one-border/60">
                   <img src={shot.src} alt={shot.alt} className="h-full w-full object-cover" loading="lazy" />
@@ -1299,7 +1299,7 @@ export default function CoverageMap() {
       <div className="shrink-0 border-t border-one-border bg-one-midnight/40 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 text-center">
-            <p className="mb-2 font-label text-[11px] uppercase tracking-[0.2em] text-one-gold">Area analytics</p>
+            <p className="mb-2 font-label text-[11px] uppercase tracking-[0.2em] text-one-gold">ABS 2021 via townData</p>
             <WordReveal text="Coverage by the numbers" as="h2" className="font-heading text-2xl text-one-white sm:text-3xl block" stagger={0.04} />
           </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
