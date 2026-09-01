@@ -48,6 +48,7 @@ const FORBIDDEN = [
   { re: /Peak listening: breakfast/, why: 'do not invent peak listening hours — Radio.co daypart share is data pending' },
   { re: /drive \(4–7pm\)/, why: 'drive 4–7pm is not a programGuide slot and is not a measured peak' },
   { re: /5555 0198/, why: 'placeholder phone — use BRAND.phone (03) 5831 3131' },
+  { re: /On the Weekend Dial/i, why: 'multicultural programs are Mon–Wed evenings in programGuide, not weekend' },
 ]
 
 function walk(dir) {
@@ -130,6 +131,15 @@ if (community && /stationStats/.test(community.text)) {
 }
 if (!community || !community.text.includes('formatBroadcastPopulation')) {
   hits.push('pages/Community.tsx: broadcast population must use formatBroadcastPopulation()')
+}
+if (
+  !community ||
+  !community.text.includes('multiculturalWhen') ||
+  !community.text.includes('Weeknight world programs')
+) {
+  hits.push(
+    'pages/Community.tsx: multicultural cards must show programGuide weeknight hours, not a weekend dial',
+  )
 }
 
 const support = files.find((f) => f.label === 'pages/Support.tsx')

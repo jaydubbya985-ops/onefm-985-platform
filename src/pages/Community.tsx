@@ -13,7 +13,24 @@ import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, Editorial
 import { towns } from '@/data/townData'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
-import { MULTICULTURAL_PROGRAMS, MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
+import {
+  MULTICULTURAL_PROGRAMS,
+  MULTICULTURAL_PROGRAM_COUNT,
+  type ScheduleSlot,
+} from '@/data/programGuide'
+
+const WEEKDAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
+
+/** Guide hours as spoken labels — source: programGuide FULL_SCHEDULE (fm985.com.au/guide). */
+function guideHour(h: number): string {
+  if (h === 0 || h === 24) return '12am'
+  if (h === 12) return '12pm'
+  return h < 12 ? `${h}am` : `${h - 12}pm`
+}
+
+function multiculturalWhen(slot: ScheduleSlot): string {
+  return `${WEEKDAY[slot.day]} ${guideHour(slot.startHour)}–${guideHour(slot.endHour)}`
+}
 
 const RED = '#E51636'
 
@@ -67,9 +84,9 @@ export default function Community() {
   }))
 
   const multicultural = MULTICULTURAL_PROGRAMS.map((s) => ({
-    tag: 'Multicultural',
+    tag: multiculturalWhen(s),
     title: s.name,
-    body: `With ${s.host} — part of the weekly world programming that keeps every corner of the Valley tuned in, in their own language.`,
+    body: `With ${s.host}. From the weekly guide (fm985.com.au/guide).`,
   }))
 
   return (
@@ -110,7 +127,7 @@ export default function Community() {
           </button>
         </div>
 
-        <EditorialCards label="The World, On the Weekend Dial" items={multicultural} columns={3} />
+        <EditorialCards label="Weeknight world programs" items={multicultural} columns={3} />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
           <LabelReveal className="mb-8">Where the Signal Reaches</LabelReveal>
