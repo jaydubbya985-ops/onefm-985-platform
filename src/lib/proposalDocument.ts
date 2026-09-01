@@ -21,6 +21,7 @@ import {
   PDF_COVER_STUDIO_PX,
 } from '@/lib/pdfCoverImages'
 import {
+  formatCoverageShort,
   formatRadius,
   formatTowns,
   townCountValue,
@@ -334,9 +335,10 @@ export async function generateProposalPdf(data: ProposalDocData): Promise<jsPDF>
   const pages = doc.getNumberOfPages()
   for (let i = 2; i <= pages; i++) {
     doc.setPage(i)
+    // source: townData / coverageCopy — 25 towns · 100km radius (ABS 2021)
     drawSlimFooter(
       p,
-      `Goulburn Valley Community Radio Inc.  ·  ABN ${DS.station.abn}  ·  ${DS.station.phone}`,
+      `Goulburn Valley Community Radio Inc.  ·  ABN ${DS.station.abn}  ·  ${formatCoverageShort()}`,
       String(i),
     )
   }
