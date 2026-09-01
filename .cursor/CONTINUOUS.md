@@ -15,7 +15,7 @@ https://onefmops.netlify.app — `main` deploys via GitHub Actions. Read `.curso
 Pick the first desk that is not already in an open PR:
 
 1. Public home/listen craft from `programGuide.ts` + `townData.ts` + `/public/brand/` + `/public/assets/images/`
-2. Leftover hardcoded coverage strings → `coverageCopy.ts`
+2. Leftover `stationStats` coverage strings → `coverageCopy.ts` on HorizontalGallery, ai.ts, proposalDocument, contractDocument, OpsProposalSheet
 3. Named portraits only if Jay drops new filename-verified files into `NAMED_PORTRAITS`
 4. Stale PR hygiene: recommend **close** on conflicting drafts #1 #3 #4 #8 #10 #11. Never merge #13.
 

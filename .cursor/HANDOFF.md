@@ -10,9 +10,10 @@
 
 **CONTINUOUS RUN IS ON.** Do not idle. Do not wait for Jay to start the next agent. Read `.cursor/CONTINUOUS.md`. Arm a 20-minute continue timer. Keep shipping.
 
-## Already true on GitHub `main` (`8b3dfe2`)
+## Already true on GitHub `main`
 
-- PR **#24** merged. Home/Listen/Community/OnAirNav coverage strings go through `coverageCopy.ts`. Continuous-run prompt is in `.cursor/CONTINUOUS.md`.
+- PR **#26** merged. Support leftover coverage → `coverageCopy.ts`.
+- PR **#24** merged. Home/Listen/Community/OnAirNav coverage strings go through `coverageCopy.ts`.
 - PR **#22** EXE’d. `#/coverage` Heartland + listener-scaled dots. `#/broadcast` and `#/social` mounted. Inventory ladder. Named portraits: Di Hunter, Sally Nayler only.
 - `#/ops` is LIVE when Netlify has real `VITE_SUPABASE_*` (anon key, not `sb_secret_`).
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km**.
@@ -28,17 +29,18 @@
 
 ## Open now
 
-- `cursor/support-coverage-11c2` — Support leftover coverage → `coverageCopy.ts` + truth guards. Listen breakfast comment cites BREAKFAST_ROSTER. Do not merge without **EXE**.
-- PR **#25** Invoice Design Lab — sibling. Do not merge without **EXE**.
+- `cursor/kit-pages-coverage-c24f` — MediaKit / Football / SponsorshipKit / Contact / AudienceAnalytics / SalesProposal / Heritage / Story leftover coverage → `coverageCopy.ts`. Do not merge without **EXE**.
+- Stale drafts (CONFLICTING): recommend **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13**.
 
 ## Next desks (do not wait)
 
-- Leftover `stationStats` coverage strings → `coverageCopy.ts` on **MediaKit, Football, SponsorshipKit, SalesProposal**.
-- Stale drafts (all CONFLICTING): recommend **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13** (would regress `#/ops` to DEMO).
+- Leftover `stationStats` coverage strings → `coverageCopy.ts` on **HorizontalGallery, ai.ts, proposalDocument, contractDocument, OpsProposalSheet**.
+- Public home/listen craft from `programGuide.ts` + `townData.ts` + `/public/brand/` only.
+- Named portraits only if Jay drops new filename-verified files into `NAMED_PORTRAITS`.
 
 ## NEED JAY (one action)
 
-**EXE the support-coverage PR** (`cursor/support-coverage-11c2`). That is the only merge this agent cannot do.
+**EXE the kit-pages-coverage PR** (`cursor/kit-pages-coverage-c24f`).
 
 ## Do not
 
