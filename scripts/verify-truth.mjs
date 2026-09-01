@@ -182,6 +182,9 @@ if (
 ) {
   hits.push('components/Footer.tsx: coverage strip must use coverageCopy')
 }
+if (!footer || !footer.text.includes("formatGuideHours('GVL Match of the Day')")) {
+  hits.push('components/Footer.tsx: GVL hours in the coverage strip must come from formatGuideHours / FULL_SCHEDULE')
+}
 
 const seo = files.find((f) => f.label === 'components/SEO.tsx')
 if (!seo || !seo.text.includes('formatSeoDefault()')) {

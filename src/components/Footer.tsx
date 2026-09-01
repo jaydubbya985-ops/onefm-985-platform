@@ -7,6 +7,7 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { BRAND } from '@/lib/brand'
 import { FOOTER_LISTEN, FOOTER_SPONSOR, FOOTER_ABOUT, FOOTER_SUPPORT, FOOTER_RESOURCES } from '@/lib/siteNav'
 import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { MagneticButton } from '@/components/MagneticButton'
 import { WordReveal } from '@/components/WordReveal'
 
@@ -227,6 +228,8 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-muted">
             {formatCoverageShort()} · {formatWeeklyListeners()}
+            {' · '}
+            GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
             <span className="text-one-muted/60"> · ABS 2021 via townData</span>
           </p>
           <Link
