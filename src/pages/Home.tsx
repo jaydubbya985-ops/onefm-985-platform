@@ -13,7 +13,7 @@ import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { stationStats } from '@/data/pricing'
 import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
-import { formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatCoverageShort, formatRadius, formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
 import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
@@ -35,6 +35,7 @@ function Ticker() {
     meta.isLive ? `● ON AIR — ${meta.program}${meta.presenter ? ` with ${meta.presenter}` : ''}` : `● ${meta.program}`,
     meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
     formatWeeklyListeners(),
+    formatCoverageShort(),
     'Community radio since 1989 · Callsign 3ONE',
   ]
   const line = items.join('   ·   ')
@@ -137,7 +138,7 @@ function Hero() {
       </p>
       <div className="mt-9 flex items-center gap-8 flex-wrap">
         <Link
-          to="/listen"
+          to="/programs"
           className="font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-1 hover:opacity-80"
           style={{ borderColor: RED }}
         >
@@ -224,7 +225,7 @@ function StatsStrip() {
   const stats = [
     { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: false },
     { n: '98.5', t: 'FM · Callsign 3ONE', red: true },
-    { n: String(stationStats.totalTowns), t: 'Towns across the Valley', red: false },
+    { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: false },
     { n: '1989', t: 'On air ever since', red: false },
   ]
   return (
@@ -249,7 +250,7 @@ export default function Home() {
     <Layout>
       <SEO
         title="ONE FM 98.5 — The Voice of the Goulburn Valley"
-        description="Community radio for the Goulburn Valley. Volunteer-run since 1989. Listen live, program guide, GVL football, and local voices from Shepparton."
+        description={`Community radio for the Goulburn Valley. Volunteer-run since 1989. ${formatCoverageShort()} (ABS 2021 via townData). Listen live, program guide, GVL football.`}
       />
       <div style={{ background: INK }} className="min-h-screen">
         <Ticker />

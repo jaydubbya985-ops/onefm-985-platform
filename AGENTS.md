@@ -124,29 +124,20 @@ Push to `main` triggers `.github/workflows/deploy.yml` → build → Netlify pro
 
 ## Non-stop loop (Cloud / Claude / Kimi)
 
-**This Grok 4.6 Cloud Agent cannot change its own model.** Next run: https://cursor.com/agents → **Claude Opus** (or GPT 5.6 extra-high). Paste `.cursor/HANDOFF.md`.
+**Continuous run is on.** After EXE, keep coding the next desk. Do not end a run with “start the next agent” as the only action.
 
-**Kimi (desktop):** `git pull origin main` in the GitHub checkout, then paste `.cursor/HANDOFF.md`. Do not treat a Downloads folder as source of truth.
+**This conversation:** Cloud Agents with `subscribe_timer` must arm a **20-minute** continue timer named `onefm-continuous` (prompt in `.cursor/CONTINUOUS.md`).
 
-**Cursor Automation (overnight):** https://cursor.com/automations → new automation → repo `onefm-985-platform` → model Claude Opus → prompt = contents of `.cursor/HANDOFF.md`.
+**Overnight (Jay, one click this agent cannot do):** https://cursor.com/automations → new automation → repo `onefm-985-platform` → model **Claude Opus** → prompt = contents of `.cursor/CONTINUOUS.md` → every 2 hours.
 
-## NEXT RUN (copy `.cursor/HANDOFF.md` as the whole prompt)
+**Kimi (desktop):** `git pull origin main`, paste `.cursor/CONTINUOUS.md`. Do not treat a Downloads folder as source of truth.
 
-```
-Read and follow .cursor/HANDOFF.md. Pull origin main first. Do not merge PRs unless Jay says EXE.
+## NEXT RUN (copy `.cursor/CONTINUOUS.md` as the whole prompt)
 
-Benchmark 80% gov-ready: FOOTT can be sent a real invoice PDF; live #/ops is not DEMO; no invented stats; mailto does not mark sent.
-
-PR #12 / #14 / #15 are on `main` (`e511343`). Live is still DEMO — GitHub NETLIFY_AUTH_TOKEN is unauthorized (HTTP 401). Do not empty-commit retry.
-
-If this is a new Cloud Agent: use Claude Opus. New branch off main.
-
-If blocked on secrets: NEED JAY one line. Keep coding independent work. Build must pass.
-```
+Keep shipping. Pull origin main first. Do not merge PRs unless Jay says EXE. Never merge PR #13.
 
 ## Current priorities
 
-1. Replace GitHub `NETLIFY_AUTH_TOKEN` with a **new** Netlify PAT, then re-run **Deploy to Netlify** on `main`
-2. `VITE_SUPABASE_*` in GitHub Actions secrets + Netlify env so live `#/ops` leaves DEMO
-3. Start the next Cloud Agent as Claude Opus with `.cursor/HANDOFF.md` (this Grok run cannot upgrade itself)
-4. Public site craft from `programGuide.ts` + `townData.ts` + `/public/brand/` only
+1. Public site craft from `programGuide.ts` + `townData.ts` + `/public/brand/` + station photos
+2. Close conflicting stale drafts #1 #3 #4 #11 (do not merge). Never merge #13
+3. Optional: `VITE_SUPABASE_*` in Cloud secrets must be the full URL + **anon** key (never `sb_secret_`)
