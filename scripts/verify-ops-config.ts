@@ -3,7 +3,11 @@
  * Run: node --experimental-strip-types scripts/verify-ops-config.ts
  */
 import { readFileSync } from 'node:fs'
-import { isValidSupabaseKey, resolveOpsConfig } from '../src/lib/opsConfigResolve.ts'
+import {
+  normalizeSupabaseUrl,
+  resolveOpsConfig,
+  sanitizeViteSupabaseEnv,
+} from '../src/lib/opsConfigResolve.ts'
 import { readFunctionJson } from '../src/lib/readFunctionJson.ts'
 import { realBatchInvoices } from '../src/components/ops/data/invoices.ts'
 
@@ -13,24 +17,13 @@ function assert(cond: boolean, msg: string) {
   if (!cond) fail.push(msg)
 }
 
-function looksLikeSupabaseProjectUrl(url: string): boolean {
-  return /^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url)
-}
-
-const currentViteUrl = (process.env.VITE_SUPABASE_URL || '').trim()
-const currentViteAnonKey = (process.env.VITE_SUPABASE_ANON_KEY || '').trim()
-if (currentViteUrl && !looksLikeSupabaseProjectUrl(currentViteUrl)) {
-  fail.push(
-    'VITE_SUPABASE_URL must be the full https://<project-ref>.supabase.co API URL, not just the project ref',
+// Inherited Cloud/GitHub junk must not fail this script. Sanitize, then stay DEMO.
+sanitizeViteSupabaseEnv()
+const inherited = resolveOpsConfig(process.env)
+if (!inherited.configured && (process.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_ANON_KEY)) {
+  console.warn(
+    'verify-ops-config: inherited VITE_SUPABASE_* is not a usable anon pair — staying DEMO (public site still builds)',
   )
-}
-if (currentViteAnonKey && !isValidSupabaseKey(currentViteAnonKey)) {
-  fail.push(
-    'VITE_SUPABASE_ANON_KEY must be a browser-safe anon JWT or sb_publishable_ key; never use sb_secret_ / sb_s... / service-role keys in VITE_*',
-  )
-}
-if ((currentViteUrl || currentViteAnonKey) && !resolveOpsConfig(process.env).configured) {
-  fail.push('current VITE_SUPABASE_* environment would keep Ops in DEMO or expose the wrong key shape')
 }
 
 const empty = resolveOpsConfig({})
@@ -54,6 +47,40 @@ const secretKey = resolveOpsConfig({
   VITE_SUPABASE_ANON_KEY: 'sb_secret_not_for_the_browser',
 })
 assert(secretKey.configured === false, 'sb_secret_ must stay DEMO — never bake the secret key')
+
+const EXAMPLE_REF = 'exampleref1234567890'
+assert(
+  normalizeSupabaseUrl(EXAMPLE_REF) === `https://${EXAMPLE_REF}.supabase.co`,
+  'project-ref-only URL must expand to Project URL',
+)
+
+const refPlusSecret = resolveOpsConfig({
+  VITE_SUPABASE_URL: EXAMPLE_REF,
+  VITE_SUPABASE_ANON_KEY: 'sb_secret_not_for_the_browser',
+})
+assert(refPlusSecret.configured === false, 'Cloud-agent default (ref + sb_secret_) must stay DEMO')
+
+const refPlusAnon = resolveOpsConfig({
+  VITE_SUPABASE_URL: EXAMPLE_REF,
+  VITE_SUPABASE_ANON_KEY:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSJ9.testhash',
+})
+assert(refPlusAnon.configured === true, 'project ref + real anon JWT must be LIVE')
+if (refPlusAnon.configured) {
+  assert(
+    refPlusAnon.url === `https://${EXAMPLE_REF}.supabase.co`,
+    'LIVE url must be the expanded Project URL',
+  )
+}
+
+const junkEnv: Record<string, string | undefined> = {
+  VITE_SUPABASE_URL: EXAMPLE_REF,
+  VITE_SUPABASE_ANON_KEY: 'sb_secret_not_for_the_browser',
+}
+sanitizeViteSupabaseEnv(junkEnv)
+assert(junkEnv.VITE_SUPABASE_URL === `https://${EXAMPLE_REF}.supabase.co`, 'sanitize expands ref')
+assert(!junkEnv.VITE_SUPABASE_ANON_KEY, 'sanitize must drop sb_secret_ so Vite cannot inline it')
+assert(resolveOpsConfig(junkEnv).configured === false, 'sanitized junk env stays DEMO')
 
 const liveVite = resolveOpsConfig({
   VITE_SUPABASE_URL: 'https://example.supabase.co',
@@ -160,6 +187,10 @@ const viteSource = readFileSync(new URL('../vite.config.ts', import.meta.url), '
 assert(
   viteSource.includes('omitUnusedClubLogos'),
   'production build must omit unused club logo dumps from dist',
+)
+assert(
+  viteSource.includes('sanitizeViteSupabaseEnv'),
+  'Vite boot must sanitize VITE_SUPABASE_* so Cloud junk cannot fail the build or leak sb_secret_',
 )
 
 const emailStatusHook = readFileSync(
@@ -290,4 +321,8 @@ if (fail.length) {
   process.exit(1)
 }
 
-console.log('verify-ops-config: ok — empty env is DEMO; Netlify env flips LIVE')
+console.log(
+  inherited.configured
+    ? 'verify-ops-config: ok — LIVE credentials resolved'
+    : 'verify-ops-config: ok — DEMO (wrong or missing VITE_SUPABASE_* is ignored; public site still builds)',
+)

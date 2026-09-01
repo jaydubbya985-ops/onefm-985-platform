@@ -22,8 +22,8 @@ Pick the first desk that is not already in an open PR:
 ## Loop rules
 
 - Keep coding after you open a PR. Do not sit waiting for EXE.
-- If blocked on secrets: `NEED JAY:` one line, then keep coding independent work.
+- Wrong or missing `VITE_SUPABASE_*` is DEMO, not a blocker. Read `.cursor/SECRETS.md`. Do not `NEED JAY` about Supabase every run. Do not stop. Keep shipping the public site.
 - If Jay is on mobile or overwhelmed, point him to `.cursor/MOBILE.md` and give one next action.
 - GVL is never “from $25”. Standard 30s is $25 plus GST.
-- No empty-commit CI retries. No `sb_secret_` in the browser bundle.
+- No empty-commit CI retries. Never bake `sb_secret_` into the browser bundle (code drops it).
 - Re-arm a 20-minute continue timer on this conversation if you are a Cloud Agent with `subscribe_timer`.

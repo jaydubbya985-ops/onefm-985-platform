@@ -87,10 +87,12 @@ npx skills add supabase/agent-skills
 2. Run `npm run build` before opening a PR or deploying.
 3. Deploy: `npx netlify deploy --prod --dir=dist` (needs `NETLIFY_AUTH_TOKEN` secret).
 4. Do **not** commit `.env` or secrets.
-5. If blocked on credentials or human approval, **stop and leave a clear message** listing exactly what Jay must provide — do not invent workarounds.
+5. Wrong or missing `VITE_SUPABASE_*` is DEMO — **do not stop**. See `.cursor/SECRETS.md`. If blocked on a human-only action (EXE, Netlify token), one `NEED JAY:` line then keep shipping.
 6. After meaningful changes: commit, push to `main`, deploy, verify live URL.
 
-## Secrets (add at cursor.com/dashboard → Cloud Agents → Secrets)
+## Secrets
+
+**Source of truth:** `.cursor/SECRETS.md`. Wrong Cloud values stay DEMO and must not fail the build.
 
 Runtime secrets for cloud agents:
 
@@ -142,4 +144,4 @@ Keep shipping. Pull origin main first. Do not merge PRs unless Jay says EXE. Nev
 
 1. Public site craft from `programGuide.ts` + `townData.ts` + `/public/brand/` + station photos
 2. Close conflicting stale drafts #1 #3 #4 #11 (do not merge). Never merge #13
-3. Optional: `VITE_SUPABASE_*` in Cloud secrets must be the full URL + **anon** key (never `sb_secret_`)
+3. Do not `NEED JAY` about Supabase every run — `.cursor/SECRETS.md`
