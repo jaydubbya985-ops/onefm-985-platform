@@ -100,6 +100,10 @@ import { opsInitial } from '@/lib/opsMode'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { LivePendingNote } from './LivePendingNote'
 import { downloadXeroCsv, type XeroExportableInvoice } from './invoices/xeroExport'
+import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -537,7 +541,10 @@ export default function BillingEngine() {
     setRenewals((prev) =>
       prev.map((r) => (r.id === record.id ? { ...r, status: 'proposal_sent' } : r)),
     )
-    toast(`Renewal proposal generated for ${record.sponsorName}`, 'success')
+    toast(
+      `Renewal proposal draft created for ${record.sponsorName}. It is not emailed. Mailto does not mark it sent.`,
+      'success',
+    )
   }
 
   function exportXero() {
@@ -620,7 +627,32 @@ export default function BillingEngine() {
   // ----- Render ---------------------------------------------------------------
 
   return (
-    <div className="space-y-6">
+    <div>
+      <div className="relative overflow-hidden border-b border-[#2A2A2A]/30 rounded-xl mb-6">
+        {/* Unused GVL team-celebration still — station archive, not a presenter portrait. */}
+        <img
+          src={STATION_PHOTOS.gvlTeamCelebration}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-5 pt-5 pb-4">
+          <p className="font-label text-[10px] tracking-[0.22em] uppercase text-white/40">
+            Station archive · GVL team celebration
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            Coverage: {formatCoverageShort()} (ABS 2021 via townData). {STANDARD_SPOT_PLUS_GST}.{' '}
+            {GVL_PREMIUM_BADGE} — never sold as the $25 floor. Invoice payments: NAB BSB {BANK_BSB} ·{' '}
+            {BANK_ACCOUNT_NAME}. Mailto opens a draft — it does not mark an invoice or reminder sent.
+          </p>
+        </div>
+      </div>
+      <div className="space-y-6">
       <motion.div
         variants={fadeUp}
         initial="hidden"
@@ -1172,18 +1204,18 @@ export default function BillingEngine() {
             {[
               {
                 step: cycleSteps[1],
-                title: 'Week 1: Send Invoices',
-                detail: `Send all invoices for ${currentMonthLabel}. ${monthInvoices.filter((i) => displayStatus(i) === 'draft').length} invoices ready to send.`,
-                action: 'Send All',
+                title: 'Week 1: Invoice drafts',
+                detail: `Draft invoices for ${currentMonthLabel} stay in Batch Send. ${monthInvoices.filter((i) => displayStatus(i) === 'draft').length} drafts — mailto does not mark an invoice sent.`,
+                action: 'Open batch',
                 color: 'text-blue-400',
                 bg: 'bg-blue-500/10',
                 border: 'border-blue-500/20',
               },
               {
                 step: cycleSteps[2],
-                title: 'Week 2: Payment Reminders',
-                detail: `Send reminders for overdue invoices. ${invoices.filter((i) => displayStatus(i) === 'overdue').length} invoices currently overdue.`,
-                action: 'Send Reminders',
+                title: 'Week 2: Payment reminders',
+                detail: `Overdue reminders open a mailto draft. ${invoices.filter((i) => displayStatus(i) === 'overdue').length} invoices currently overdue — mailto does not mark a reminder sent.`,
+                action: 'Open draft',
                 color: 'text-amber-400',
                 bg: 'bg-amber-500/10',
                 border: 'border-amber-500/20',
@@ -1782,7 +1814,7 @@ export default function BillingEngine() {
                             : 'bg-one-gold hover:bg-one-gold/90 text-one-navy'
                         }`}
                       >
-                        {renewal.status === 'proposal_sent' ? 'Sent' : 'Generate Proposal'}
+                        {renewal.status === 'proposal_sent' ? 'Draft ready' : 'Generate Proposal'}
                       </Button>
                     </div>
                   ))}
@@ -2583,8 +2615,8 @@ export default function BillingEngine() {
                 </div>
               </div>
               <p className="text-xs text-one-white/50">
-                This will mark the acquittal as complete. All deliverables have been
-                verified and payment confirmed.
+                This marks the row complete in ops. It does not email the sponsor or
+                confirm a NAB receipt.
               </p>
             </div>
           )}
@@ -2606,6 +2638,7 @@ export default function BillingEngine() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }
