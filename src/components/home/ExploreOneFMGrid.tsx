@@ -4,6 +4,7 @@ import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
 import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
 import { BREAKFAST_SHOW } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
 import { WordReveal } from '@/components/WordReveal'
 import { TiltCard } from '@/components/TiltCard'
@@ -26,7 +27,7 @@ const TILES = [
   },
   {
     title: 'Local Sport',
-    desc: `GVL called live · ${formatTowns()}`,
+    desc: `GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} · ${formatTowns()}`,
     path: '/football',
     image: STATION_PHOTOS.gvlNightPanorama,
     fallback: PHOTO_DEFAULTS.regional,

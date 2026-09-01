@@ -189,8 +189,15 @@ if (!seo || !seo.text.includes('formatSeoDefault()')) {
 }
 
 const explore = files.find((f) => f.label === 'components/home/ExploreOneFMGrid.tsx')
-if (!explore || !explore.text.includes('BREAKFAST_SHOW') || !explore.text.includes('formatTowns()')) {
-  hits.push('components/home/ExploreOneFMGrid.tsx: programs tile from BREAKFAST_SHOW; sport/sponsor via formatTowns')
+if (
+  !explore ||
+  !explore.text.includes('BREAKFAST_SHOW') ||
+  !explore.text.includes('formatTowns()') ||
+  !explore.text.includes("formatGuideHours('GVL Match of the Day')")
+) {
+  hits.push(
+    'components/home/ExploreOneFMGrid.tsx: programs tile from BREAKFAST_SHOW; sport tile hours from formatGuideHours / FULL_SCHEDULE',
+  )
 }
 
 const siteNav = files.find((f) => f.label === 'lib/siteNav.ts')
