@@ -2,10 +2,31 @@ import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'rea
 import { Lock, Loader2, Mail } from 'lucide-react'
 import { useOpsAccess } from '@/hooks/useOpsAccess'
 import { useAuth } from '@/hooks/useAuth'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { isSupabaseConfigured } from '@/lib/supabase'
 
 interface OpsRouteGuardProps {
   children: ReactNode
+}
+
+/** Unused station archive photo — valley sunrise, not a presenter portrait. */
+function OpsGatePhoto() {
+  return (
+    <>
+      <img
+        src={STATION_PHOTOS.ecoTractorSunrise}
+        alt=""
+        aria-hidden
+        loading="eager"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-b from-[#101010]/70 via-[#101010]/82 to-[#101010]"
+      />
+    </>
+  )
 }
 
 export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
@@ -49,8 +70,9 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-[#101010] flex items-center justify-center">
-        <div className="text-one-gold font-label text-sm animate-pulse">Checking access...</div>
+      <div className="relative min-h-screen bg-[#101010] flex items-center justify-center overflow-hidden">
+        <OpsGatePhoto />
+        <div className="relative z-10 text-one-gold font-label text-sm animate-pulse">Checking access...</div>
       </div>
     )
   }
@@ -60,8 +82,9 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#101010] flex items-center justify-center px-4">
-      <div className="bg-[#161616] border border-[#2A2A2A]/40 rounded-xl max-w-sm w-full shadow-2xl p-8">
+    <div className="relative min-h-screen bg-[#101010] flex items-center justify-center px-4 overflow-hidden">
+      <OpsGatePhoto />
+      <div className="relative z-10 bg-[#161616]/92 backdrop-blur-sm border border-[#2A2A2A]/40 rounded-xl max-w-sm w-full shadow-2xl p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 rounded-xl bg-one-gold/10 flex items-center justify-center">
             <Lock className="w-6 h-6 text-one-gold" />
@@ -158,6 +181,9 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
             <p className="text-center text-xs text-one-muted">Hint: Ask Jason for the password</p>
           </form>
         )}
+        <p className="text-center text-[11px] text-one-muted/80 mt-6">
+          {formatCoverageShort()} — ABS 2021 via townData
+        </p>
       </div>
     </div>
   )
