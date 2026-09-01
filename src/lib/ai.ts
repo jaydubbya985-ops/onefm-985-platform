@@ -1,6 +1,11 @@
 import OpenAI from 'openai';
-import { stationStats } from '@/data/pricing';
-import { formatBroadcastPopulation, formatCoverageShort, formatTowns } from '@/lib/coverageCopy';
+import {
+  formatBroadcastPopulation,
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  weeklyListenersValue,
+} from '@/lib/coverageCopy';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
 
@@ -23,7 +28,7 @@ export interface GenerateOptions {
 /* ── Proposal content pools ── */
 const demoProposalPool: Record<string, string[]> = {
   'Executive Summary': [
-    `ONE FM 98.5 is excited to partner with you to achieve your campaign goals. As the Goulburn Murray's community broadcaster (callsign 3ONE, operated by Goulburn Valley Community Radio Inc.), we reach an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns within our ${stationStats.broadcastRadiusKm}km broadcast area. This proposal outlines a genuine regional partnership.`,
+    `ONE FM 98.5 is excited to partner with you to achieve your campaign goals. As the Goulburn Murray's community broadcaster (callsign 3ONE, operated by Goulburn Valley Community Radio Inc.), we reach an estimated ${weeklyListenersValue()} weekly listeners across ${formatTowns()} within our ${formatRadius()} broadcast area. This proposal outlines a genuine regional partnership.`,
     'We are proud to present this sponsorship opportunity. ONE FM 98.5 has served the Goulburn Murray since 1980 — a trusted community voice across Shepparton, Mooroopna, Cobram, Echuca, Kyabram and surrounding communities.',
     'This proposal introduces a partnership between your brand and ONE FM 98.5. As a licensed community broadcaster since 1989, we combine deep local trust with a genuine connection to the Goulburn Murray community.',
   ],
@@ -33,7 +38,7 @@ const demoProposalPool: Record<string, string[]> = {
     'Our mission is to inform, entertain, and connect the Goulburn Murray community. ONE FM is volunteer-supported and community-owned, making your sponsorship a genuine investment in local broadcasting.',
   ],
   'Audience Overview': [
-    `ONE FM reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns in the Goulburn Murray region (source: population-based estimate from ABS 2021 census data). Our audience is local, community-focused, and connected to the station that reflects their region.`,
+    `ONE FM reaches an estimated ${weeklyListenersValue()} weekly listeners across ${formatTowns()} in the Goulburn Murray region (source: population-based estimate from ABS 2021 census data). Our audience is local, community-focused, and connected to the station that reflects their region.`,
     `Our listeners are the Goulburn Murray community — families, farmers, business owners, workers, and volunteers across ${formatTowns()}. They trust ONE FM because we are genuinely local and community-owned.`,
     `The Goulburn Murray broadcast area is home to ${formatBroadcastPopulation()} people across ${formatTowns()} (ABS 2021 via townData). ONE FM is their community radio station — the one that covers their local sport, their local news, and their local events.`,
   ],
@@ -110,7 +115,7 @@ const demoCaptionPool: Record<string, string[]> = {
     'Celebrating the diversity of our community on ONE FM 98.5. Multicultural programs every week — check the guide at fm985.com.au/guide/ 🌍',
   ],
   LinkedIn: [
-    'Goulburn Valley Community Radio Inc. has been serving the Goulburn Murray region since 1980. ONE FM 98.5 (callsign 3ONE) delivers live local content across 25 communities within our broadcast area.',
+    `Goulburn Valley Community Radio Inc. has been serving the Goulburn Murray region since 1980. ONE FM 98.5 (callsign 3ONE) delivers live local content across ${formatTowns()} within our broadcast area.`,
     'ONE FM 98.5 is a licensed community broadcaster under Goulburn Valley Community Radio Inc. We are a not-for-profit organisation committed to live, local content for the Goulburn Murray region.',
   ],
 };
@@ -118,7 +123,7 @@ const demoCaptionPool: Record<string, string[]> = {
 // Forecast reasoning — real streaming analytics not yet connected; placeholder note
 const demoForecastReasonings = [
   'Real-time streaming analytics require Radio.co API connection. Once connected, this will show live listening trends for ONE FM 98.5.',
-  `Historical listenership data will display here when Radio.co analytics are integrated. Current estimate: ~${stationStats.weeklyListeners.toLocaleString()} weekly listeners (ABS 2021 population base).`,
+  `Historical listenership data will display here when Radio.co analytics are integrated. Current estimate: ~${weeklyListenersValue()} weekly listeners (ABS 2021 population base).`,
   'Connect Radio.co analytics (station: sae3372059) to enable real forecast modelling for the Goulburn Murray broadcast area.',
 ];
 

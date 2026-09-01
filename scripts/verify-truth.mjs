@@ -223,6 +223,32 @@ for (const label of sponsorPages) {
     hits.push(`${label}: coverage stats must come from coverageCopy, not stationStats`)
   }
 }
+
+const leftoverProposalDocs = [
+  'lib/ai.ts',
+  'lib/proposalDocument.ts',
+  'lib/contractDocument.ts',
+  'components/ops/OpsProposalSheet.tsx',
+]
+for (const label of leftoverProposalDocs) {
+  const file = files.find((f) => f.label === label)
+  if (
+    file &&
+    /stationStats\.(totalTowns|weeklyListeners|broadcastPopulation|broadcastRadiusKm)/.test(
+      file.text,
+    )
+  ) {
+    hits.push(`${label}: coverage stats must come from coverageCopy, not stationStats`)
+  }
+}
+if (!files.find((f) => f.label === 'lib/ai.ts')?.text.includes('weeklyListenersValue()')) {
+  hits.push('lib/ai.ts: proposal copy must use weeklyListenersValue()')
+}
+if (
+  !files.find((f) => f.label === 'lib/proposalDocument.ts')?.text.includes('weeklyListenersValue()')
+) {
+  hits.push('lib/proposalDocument.ts: proposal PDF/email must use weeklyListenersValue()')
+}
 if (
   !files.find((f) => f.label === 'pages/SponsorshipKit.tsx')?.text.includes('coverageStatsStrip')
 ) {

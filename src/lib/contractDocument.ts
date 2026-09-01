@@ -17,7 +17,7 @@ import {
   PDF_COVER_STUDIO_JPEG,
   PDF_COVER_STUDIO_PX,
 } from '@/lib/pdfCoverImages'
-import { stationStats } from '@/data/pricing'
+import { formatRadius, formatTowns, weeklyListenersValue } from '@/lib/coverageCopy'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import type { Contract } from '@/components/ops/data/sponsors'
 import {
@@ -46,9 +46,9 @@ export async function generateContractPdf(contract: Contract): Promise<jsPDF> {
     title: c.companyName,
     subtitle: `${c.campaignName}  ·  ${c.tier}`,
     number: c.contractNumber,
-    statValue: stationStats.weeklyListeners.toLocaleString('en-AU'),
+    statValue: weeklyListenersValue(),
     statLabel: 'Est. weekly listeners  ·  ABS 2021 via townData',
-    statAside: `${stationStats.totalTowns} towns  ·  ${stationStats.broadcastRadiusKm}km`,
+    statAside: `${formatTowns()}  ·  ${formatRadius()}`,
   })
 
   doc.addPage()

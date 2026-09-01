@@ -1,8 +1,7 @@
 /**
  * Sponsorship proposal document — PDF + email copy.
  *
- * Stats are sourced. Weekly listeners 39,375 = ABS 2021 via src/data/townData.ts
- * (also exported on stationStats). Never invent demographics.
+ * Stats are sourced via coverageCopy.ts (ABS 2021 via townData). Never invent demographics.
  */
 import { jsPDF } from 'jspdf'
 import { DS } from '@/lib/invoiceDesignSystem'
@@ -21,7 +20,12 @@ import {
   PDF_COVER_STUDIO_JPEG,
   PDF_COVER_STUDIO_PX,
 } from '@/lib/pdfCoverImages'
-import { stationStats } from '@/data/pricing'
+import {
+  formatRadius,
+  formatTowns,
+  townCountValue,
+  weeklyListenersValue,
+} from '@/lib/coverageCopy'
 import type { ProposalDeliverable, ProposalPackage } from '@/components/ops/data/sponsors'
 
 export const GST_RATE = 0.1
@@ -172,7 +176,7 @@ export function proposalEmailBody(data: ProposalDocData): string {
     `Investment: ${formatAud(data.money.total)} incl. GST (${formatAud(data.money.exGst)} ex GST)`,
     `Proposal ${data.number} is valid until ${formatAuDate(data.validUntil)}.`,
     '',
-    `Audience (sourced): ${stationStats.weeklyListeners.toLocaleString('en-AU')} estimated weekly listeners across ${stationStats.totalTowns} towns within ${stationStats.broadcastRadiusKm}km of Shepparton (ABS 2021 via townData).`,
+    `Audience (sourced): ${weeklyListenersValue()} estimated weekly listeners across ${formatTowns()} within ${formatRadius()} of Shepparton (ABS 2021 via townData).`,
     '',
     'Happy to walk through it — reply to this email or call (03) 5831 3131.',
     '',
@@ -214,9 +218,9 @@ export async function generateProposalPdf(data: ProposalDocData): Promise<jsPDF>
     title: data.company,
     subtitle: `${data.packageName}  ·  ${data.term}`,
     number: data.number,
-    statValue: stationStats.weeklyListeners.toLocaleString('en-AU'),
+    statValue: weeklyListenersValue(),
     statLabel: 'Est. weekly listeners  ·  ABS 2021 via townData',
-    statAside: `${stationStats.totalTowns} towns  ·  ${stationStats.broadcastRadiusKm}km`,
+    statAside: `${formatTowns()}  ·  ${formatRadius()}`,
   })
 
   doc.addPage()
@@ -240,9 +244,9 @@ export async function generateProposalPdf(data: ProposalDocData): Promise<jsPDF>
   y += 8
 
   y = drawStatCards(p, y, [
-    { n: stationStats.weeklyListeners.toLocaleString('en-AU'), t: 'Est. weekly listeners' },
-    { n: String(stationStats.totalTowns), t: 'Towns in the Valley' },
-    { n: `${stationStats.broadcastRadiusKm}km`, t: 'Broadcast radius' },
+    { n: weeklyListenersValue(), t: 'Est. weekly listeners' },
+    { n: townCountValue(), t: 'Towns in the Valley' },
+    { n: formatRadius(), t: 'Broadcast radius' },
   ])
   norm(7)
   inkDim()
