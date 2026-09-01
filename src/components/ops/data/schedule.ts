@@ -153,7 +153,7 @@ export const PROGRAMME_GUIDE: ProgrammeEntry[] = [
   { id: 'filipino-wed', day: 3, time: '10:00pm – 11:00pm', show: 'Filipino Music Program', presenter: 'Edith', category: 'multicultural', dayparts: ['LN'] },
   { id: 'planet-thu', day: 4, time: '11:00pm – 12:00am', show: 'Planet of Sound', presenter: 'Carlos Rock', category: 'music', dayparts: ['LN'] },
   { id: 'country-fri', day: 5, time: '8:00pm – 9:00pm', show: 'Good Evening Country', presenter: 'Timmy Ahmet', category: 'country', dayparts: ['LN'] },
-  { id: 'planet-fri', day: 5, time: '11:00pm – 12:00am', show: 'Planet of Sound', presenter: 'Carlos Rock', category: 'music', dayparts: ['LN'] },
+  // Planet of Sound is Thursday only in FULL_SCHEDULE (fm985.com.au/guide). Do not invent Friday.
   // Saturday sport block
   { id: 'super-saturday', day: 6, time: 'Saturday daytime', show: 'Super Saturday Sports Show', presenter: 'Craig Stott & John Painter', category: 'sport', dayparts: ['M', 'L', 'D'] },
 ]
