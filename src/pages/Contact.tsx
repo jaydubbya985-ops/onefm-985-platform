@@ -14,16 +14,14 @@ import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
-import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
+import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
+import { BREAKFAST_SHOW, BREAKFAST_TIME } from '@/data/programGuide'
 import {
   Phone,
   Mail,
   MapPin,
   Clock,
-  Instagram,
   Facebook,
-  Twitter,
-  Youtube,
   Send,
   Loader2,
   CheckCircle2,
@@ -62,21 +60,23 @@ import {
 } from '@/components/ui/form'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
+/** Studio tel: from BRAND.phone — never a placeholder like (03) 5000 0000. */
+function studioTelHref(): string {
+  return `tel:${BRAND.phone.replace(/[^\d]/g, '').replace(/^0/, '+61')}`
+}
+
 /* ─── Section 1: Hero ─── */
 function ContactHero() {
   const socials = [
-    { icon: Instagram, label: 'Instagram', href: '#' },
     { icon: Facebook, label: 'Facebook', href: FACEBOOK_PAGE_URL, external: true },
-    { icon: Twitter, label: 'Twitter', href: '#' },
-    { icon: Youtube, label: 'YouTube', href: '#' },
   ]
 
   const marqueeItems = [
-    { text: 'Phone: (03) 5831 3131', cls: 'text-one-gold/60' },
-    { text: 'Email: admin@fm985.com.au', cls: 'text-one-white/40' },
-    { text: 'Shepparton · Victoria · Australia', cls: 'text-one-gold/60' },
+    { text: `Phone: ${BRAND.phone}`, cls: 'text-one-gold/60' },
+    { text: `Email: ${BRAND.email}`, cls: 'text-one-white/40' },
+    { text: BRAND.address, cls: 'text-one-gold/60' },
     { text: 'Sponsorship · Volunteering · Programming', cls: 'text-one-white/40' },
-    { text: 'Open 7 Days', cls: 'text-one-gold/60' },
+    { text: `On air 24 hours · ${BREAKFAST_SHOW} ${BREAKFAST_TIME} weekdays`, cls: 'text-one-gold/60' },
   ]
 
   const heroRef = useRef<HTMLElement>(null)
@@ -154,17 +154,17 @@ function ContactHero() {
             transition={{ duration: 0.6, delay: 0.42 }}
             className="flex flex-wrap gap-x-8 gap-y-3 mb-10"
           >
-            <a href="tel:+61358313131" data-cursor-label="CALL" className="flex items-center gap-2.5 group">
+            <a href={studioTelHref()} data-cursor-label="CALL" className="flex items-center gap-2.5 group">
               <Phone size={13} className="text-one-gold flex-shrink-0" />
-              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/60 group-hover:text-one-white transition-colors">(03) 5831 3131</span>
+              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/60 group-hover:text-one-white transition-colors">{BRAND.phone}</span>
             </a>
-            <a href="mailto:admin@fm985.com.au" data-cursor-label="EMAIL" className="flex items-center gap-2.5 group">
+            <a href={`mailto:${BRAND.email}`} data-cursor-label="EMAIL" className="flex items-center gap-2.5 group">
               <Mail size={13} className="text-one-gold flex-shrink-0" />
-              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/60 group-hover:text-one-white transition-colors">admin@fm985.com.au</span>
+              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/60 group-hover:text-one-white transition-colors">{BRAND.email}</span>
             </a>
             <div className="flex items-center gap-2.5">
               <MapPin size={13} className="text-one-gold flex-shrink-0" />
-              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/40">Shepparton, Victoria</span>
+              <span className="font-label text-[11px] tracking-[0.15em] text-one-white/40">{BRAND.address}</span>
             </div>
           </motion.div>
 
@@ -180,7 +180,7 @@ function ContactHero() {
               </a>
             </MagneticButton>
             <MagneticButton>
-              <a href="tel:+61358313131" data-cursor-label="CALL" className="btn-ghost px-8 py-3.5 rounded-full font-label text-[11px] tracking-[0.2em] uppercase">
+              <a href={studioTelHref()} data-cursor-label="CALL" className="btn-ghost px-8 py-3.5 rounded-full font-label text-[11px] tracking-[0.2em] uppercase">
                 Call the Studio
               </a>
             </MagneticButton>
@@ -458,7 +458,7 @@ function ContactForm() {
                       <FormControl>
                         <Input
                           type="tel"
-                          placeholder="(03) 5000 0000"
+                          placeholder="Your phone"
                           {...field}
                           className="bg-one-navy border-one-border text-one-white placeholder:text-one-muted focus:ring-one-gold/20 focus:border-one-gold h-11"
                         />
@@ -612,7 +612,7 @@ function FAQSection() {
     {
       question: 'How do I request a song?',
       answer:
-        'Call the studio line on (03) 5831 3131 during broadcast hours, or message us on social media. Our hosts love taking requests — especially for local artists.',
+        `Call the studio line on ${BRAND.phone} while we are live, or message us on Facebook. Our hosts love taking requests — especially for local artists.`,
     },
     {
       question: 'What area does ONE FM cover?',
@@ -622,12 +622,12 @@ function FAQSection() {
     {
       question: 'How do I submit community news?',
       answer:
-        'Email your news, events, or announcements to admin@fm985.com.au, or use the General enquiry form above. We read community bulletins throughout the day.',
+        `Email your news, events, or announcements to ${BRAND.email}, or use the General enquiry form above. We read community bulletins throughout the day.`,
     },
     {
       question: 'What are your broadcast hours?',
       answer:
-        'ONE FM broadcasts 24 hours a day, 7 days a week. Live programming runs from 6:00 AM to 10:00 PM daily, with automated music and syndicated content overnight.',
+        `ONE FM broadcasts 24 hours a day. Overnight Mix (automated) is midnight to 6am. Weekday ${BREAKFAST_SHOW} is ${BREAKFAST_TIME}. Later live slots follow the weekly guide at fm985.com.au/guide — some evenings run through to midnight, not a 6am–10pm daily window.`,
     },
     {
       question: 'How do I advertise my business?',
@@ -637,7 +637,7 @@ function FAQSection() {
     {
       question: 'Can I listen online?',
       answer:
-        'Yes — stream ONE FM live via our website player, or find us on TuneIn, iHeartRadio, and the RadioApp. The stream is available worldwide, so you can take the Valley with you anywhere.',
+        `Yes — stream ONE FM live via the player on this site or at ${BRAND.website}. Interviews live on SoundCloud after broadcast (${SOUNDCLOUD_PROFILE_URL.replace('https://', '')}).`,
     },
   ]
 
@@ -767,7 +767,7 @@ function MapMini() {
           </span>
           <WordReveal text="Studio Location" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-muted max-w-xl mx-auto">
-            ONE FM 98.5, Shepparton, Victoria, Australia
+            {BRAND.address}
           </p>
         </motion.div>
 
@@ -790,7 +790,7 @@ function MapMini() {
               <div>
                 <div className="font-h4 text-one-white text-sm">ONE FM 98.5</div>
                 <div className="font-body-small text-one-muted">
-                  Shepparton, Victoria
+                  {BRAND.address}
                 </div>
               </div>
             </div>
@@ -802,9 +802,9 @@ function MapMini() {
           <div className="glass-card p-5 text-center h-full group relative overflow-hidden">
             <div aria-hidden className="explore-tile-scan" />
             <Clock size={20} className="text-one-gold mx-auto mb-3" />
-            <div className="font-label text-one-muted mb-1">Office Hours</div>
+            <div className="font-label text-one-muted mb-1">Weekday Breakfast</div>
             <div className="font-body-small text-one-white">
-              Mon – Fri: 9AM – 5PM
+              {BREAKFAST_TIME}
             </div>
           </div>
           </TiltCard>
@@ -821,7 +821,9 @@ function MapMini() {
             <div aria-hidden className="explore-tile-scan" />
             <Headphones size={20} className="text-one-gold mx-auto mb-3" />
             <div className="font-label text-one-muted mb-1">Studio Line</div>
-            <div className="font-body-small text-one-white">(03) 5831 3131</div>
+            <div className="font-body-small text-one-white">
+              <a href={studioTelHref()} className="hover:text-one-gold transition-colors">{BRAND.phone}</a>
+            </div>
           </div>
           </TiltCard>
         </div>
@@ -837,11 +839,11 @@ function MapMini() {
           <div className="flex flex-wrap items-center justify-center gap-6 text-one-muted">
             <div className="flex items-center gap-2">
               <Radio size={16} className="text-one-gold" />
-              <span className="font-label text-xs">Callsign: 3ONE</span>
+              <span className="font-label text-xs">Callsign: {BRAND.callsign}</span>
             </div>
             <div className="flex items-center gap-2">
               <ExternalLink size={16} className="text-one-gold" />
-              <span className="font-label text-xs">ACMA License: 1385226/1</span>
+              <span className="font-label text-xs">ACMA License: {BRAND.acma}</span>
             </div>
             <div className="flex items-center gap-2">
               <Heart size={16} className="text-one-gold" />
@@ -849,7 +851,7 @@ function MapMini() {
             </div>
             <div className="flex items-center gap-2">
               <MapPin size={16} className="text-one-gold" />
-              <span className="font-label text-xs">Goulburn Valley Community Radio Inc.</span>
+              <span className="font-label text-xs">{BRAND.org}</span>
             </div>
           </div>
         </motion.div>
@@ -863,7 +865,7 @@ function MapMini() {
 export default function Contact() {
   return (
     <Layout>
-      <SEO title="Contact Us" description="Get in touch with ONE FM 98.5. Phone: (03) 5831 3131. Email: admin@fm985.com.au. Sponsorship, volunteering, programming, or general enquiries." />
+      <SEO title="Contact Us" description={`Get in touch with ${BRAND.fullName}. Phone: ${BRAND.phone}. Email: ${BRAND.email}. Sponsorship, volunteering, programming, or general enquiries.`} />
       <ContactHero />
       <ContactForm />
       <FAQSection />
