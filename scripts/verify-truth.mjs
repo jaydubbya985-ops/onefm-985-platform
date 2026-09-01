@@ -49,6 +49,7 @@ const FORBIDDEN = [
   { re: /drive \(4–7pm\)/, why: 'drive 4–7pm is not a programGuide slot and is not a measured peak' },
   { re: /5555 0198/, why: 'placeholder phone — use BRAND.phone (03) 5831 3131' },
   { re: /The World, On the Weekend Dial/i, why: 'multicultural programs are Mon–Wed evenings in programGuide, not weekend' },
+  { re: /languages on the weekend dial/i, why: 'multicultural programs are Mon–Wed evenings in programGuide, not weekend' },
 ]
 
 function walk(dir) {
@@ -139,6 +140,17 @@ if (
 ) {
   hits.push(
     'pages/Community.tsx: multicultural cards must show programGuide weeknight hours, not a weekend dial',
+  )
+}
+
+const stationHistory = files.find((f) => f.label === 'data/stationHistory.ts')
+if (
+  !stationHistory ||
+  !stationHistory.text.includes('MULTICULTURAL_PROGRAM_COUNT') ||
+  /weekend dial/i.test(stationHistory.text)
+) {
+  hits.push(
+    'data/stationHistory.ts: Heritage institution fact must use programGuide weeknight count, not weekend dial',
   )
 }
 

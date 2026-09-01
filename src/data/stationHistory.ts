@@ -2,6 +2,7 @@
  * ONE FM station history — public record + station sources.
  * Master research integrated 2026-07-06. No fabricated stats or awards.
  */
+import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 export type HistorySource =
   | 'ACMA community licence register'
@@ -163,8 +164,8 @@ export const INSTITUTION_FACTS = [
   },
   {
     tag: 'Multicultural',
-    title: 'Eight languages on the weekend dial',
-    body: 'Program pages and AGM reports document Africonnect, Arabic, Filipino, Mandarin, Persian, Punjabi, Samoan, Swahili/Congolese strands and ONE Youth — structural to the station, not incidental.',
+    title: `${MULTICULTURAL_PROGRAM_COUNT} multicultural programs on weeknights`,
+    body: `The weekly guide (fm985.com.au/guide via programGuide.ts) lists ${MULTICULTURAL_PROGRAM_COUNT} multicultural slots Monday–Wednesday evenings: Radio Netherlands, Afri-Connect (Swahili), Mandarin, Punjabi, Viva Italia, Filipino, Samoan and Arabic — structural to the station, not incidental.`,
   },
   {
     tag: 'Archive',
