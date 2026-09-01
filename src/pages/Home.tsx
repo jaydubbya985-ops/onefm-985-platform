@@ -12,7 +12,7 @@ import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
-import { onAirWallSub } from '@/lib/guideHours'
+import { formatGuideHours, onAirWallSub } from '@/lib/guideHours'
 import {
   formatCoverageShort,
   formatRadius,
@@ -235,7 +235,7 @@ function FeatureFrame() {
           className="absolute bottom-6 left-6 px-5 py-2.5 rounded font-bold text-[13px] tracking-[0.13em] uppercase text-white"
           style={{ background: RED }}
         >
-          GVL Footy · Called Live on 98.5
+          GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
         </div>
       </Link>
     </motion.div>
