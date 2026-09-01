@@ -183,7 +183,7 @@ export function buildProposalEmailHtml(data: ProposalEmailData): string {
             </div>
           </div>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 24px;">
-            Our partnerships team will follow up within 24 hours to answer any questions and discuss next steps.
+            Reply to this email, call ${BRAND.phone}, or write to ${BRAND.email} if you have questions.
           </p>
         </div>
         <div style="background: #F9FAFB; padding: 20px 40px; border-top: 1px solid #E5E7EB;">
