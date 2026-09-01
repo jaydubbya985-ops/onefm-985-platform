@@ -26,7 +26,7 @@ if (currentViteUrl && !looksLikeSupabaseProjectUrl(currentViteUrl)) {
 }
 if (currentViteAnonKey && !isValidSupabaseKey(currentViteAnonKey)) {
   fail.push(
-    'VITE_SUPABASE_ANON_KEY must be a browser-safe anon JWT or sb_publishable_ key; never use sb_secret_ / service-role keys in VITE_*',
+    'VITE_SUPABASE_ANON_KEY must be a browser-safe anon JWT or sb_publishable_ key; never use sb_secret_ / sb_s... / service-role keys in VITE_*',
   )
 }
 if ((currentViteUrl || currentViteAnonKey) && !resolveOpsConfig(process.env).configured) {
