@@ -14,6 +14,29 @@ const DAY_TABS = [
   { index: 0, label: 'Sun' },
 ] as const
 
+const WEEKDAY_INDEX: Record<string, number> = {
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+}
+
+/** Guide day/hour in Australia/Melbourne — not the viewer's local clock. */
+function melbourneDayAndHour(now = new Date()): { day: number; hour: number } {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Melbourne',
+    weekday: 'long',
+    hour: 'numeric',
+    hourCycle: 'h23',
+  }).formatToParts(now)
+  const weekday = parts.find((p) => p.type === 'weekday')?.value ?? 'Monday'
+  const hour = Number(parts.find((p) => p.type === 'hour')?.value)
+  return { day: WEEKDAY_INDEX[weekday] ?? 1, hour: Number.isFinite(hour) ? hour : 0 }
+}
+
 function formatSlotTime(slot: ScheduleSlot): string {
   const fmt = (h: number) => {
     if (h === 0 || h === 24) return '12am'
@@ -39,9 +62,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 export function WeeklySchedule() {
-  const now = new Date()
-  const today = now.getDay()
-  const currentHour = now.getHours()
+  const { day: today, hour: currentHour } = melbourneDayAndHour()
   const defaultDay = DAY_TABS.find((d) => d.index === today)?.index ?? 1
   const [activeDay, setActiveDay] = useState(defaultDay)
   const slots = slotsForDay(activeDay)
