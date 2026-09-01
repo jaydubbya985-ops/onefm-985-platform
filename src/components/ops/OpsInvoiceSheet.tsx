@@ -4,6 +4,7 @@
  */
 import { BrandLogo } from '@/components/BrandLogo'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { DS } from '@/lib/invoiceDesignSystem'
 
 export interface OpsInvoiceSheetLine {
@@ -135,8 +136,10 @@ export function OpsInvoiceSheet({ invoice }: { invoice: OpsInvoiceSheetData }) {
           </p>
         </div>
 
+        {/* source: townData / coverageCopy — 25 towns · 100km radius (ABS 2021) */}
         <p className="mt-4 text-xs text-[#6B6B6B]">
-          Goulburn Valley Community Radio Inc. · ABN {DS.station.abn} · {DS.station.phone}
+          Goulburn Valley Community Radio Inc. · ABN {DS.station.abn} · {DS.station.phone} ·{' '}
+          {formatCoverageShort()}
         </p>
       </div>
     </div>
