@@ -17,6 +17,17 @@ import {
   PageBreak,
 } from 'docx'
 import { saveAs } from 'file-saver'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+
+/** Footer / cover lines for Word exports — licensed year + townData coverage, not prestige puffery. */
+export function docxStationFooter(): string {
+  return `${BRAND.fullName} · licensed ${BRAND.licensed} · ${formatCoverageShort()}`
+}
+
+export function docxKitTagline(): string {
+  return `${BRAND.org} — licensed community radio since ${BRAND.licensed} · ${formatCoverageShort()}`
+}
 
 /* ────────────────────────────────────────────────────────────────── */
 /*  Types                                                              */
@@ -111,7 +122,7 @@ export async function generateProposalDocx(data: ProposalDocxData): Promise<Blob
             children: [
               new Paragraph({
                 children: [
-                  new TextRun({ text: 'ONE FM 98.5 — Community Radio Since 1989', size: 16, color: mutedColor, font: 'JetBrains Mono' }),
+                  new TextRun({ text: docxStationFooter(), size: 16, color: mutedColor, font: 'JetBrains Mono' }),
                 ],
                 alignment: AlignmentType.CENTER,
                 spacing: { before: 100 },
@@ -305,7 +316,7 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
             children: [
               new Paragraph({
                 children: [
-                  new TextRun({ text: 'ONE FM 98.5 — Community Radio Since 1989', size: 16, color: mutedColor, font: 'JetBrains Mono' }),
+                  new TextRun({ text: docxStationFooter(), size: 16, color: mutedColor, font: 'JetBrains Mono' }),
                 ],
                 alignment: AlignmentType.CENTER,
                 spacing: { before: 100 },
@@ -337,7 +348,7 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
             alignment: AlignmentType.CENTER,
           }),
           new Paragraph({
-            children: [new TextRun({ text: 'Premier Heritage Broadcaster — Community Radio Since 1989', size: 22, color: mutedColor })],
+            children: [new TextRun({ text: docxKitTagline(), size: 22, color: mutedColor })],
             spacing: { after: 600 },
             alignment: AlignmentType.CENTER,
           }),
@@ -445,7 +456,7 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
           new Paragraph({
             children: [
               new TextRun({ text: 'Address: ', size: 22, color: mutedColor }),
-              new TextRun({ text: '47 Parkside Drive, Shepparton VIC 3630', size: 22, color: darkColor }),
+              new TextRun({ text: BRAND.address, size: 22, color: darkColor }),
             ],
             spacing: { after: 80 },
           }),
