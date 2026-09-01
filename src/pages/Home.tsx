@@ -11,9 +11,14 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
-import { stationStats } from '@/data/pricing'
 import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
-import { formatCoverageShort, formatRadius, formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import {
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+  formatWeeklyListenersPlain,
+} from '@/lib/coverageCopy'
 import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
@@ -223,7 +228,7 @@ function FeatureFrame() {
 
 function StatsStrip() {
   const stats = [
-    { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: false },
+    { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners', red: false },
     { n: '98.5', t: 'FM · Callsign 3ONE', red: true },
     { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: false },
     { n: '1989', t: 'On air ever since', red: false },

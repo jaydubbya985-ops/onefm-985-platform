@@ -11,7 +11,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { X, Menu } from 'lucide-react'
 import { BrandLogo } from '@/components/BrandLogo'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
-import { stationStats } from '@/data/pricing'
+import { formatCoverageShort, formatWeeklyListenersPlain } from '@/lib/coverageCopy'
 
 const RED = '#E51636'
 const EXPO = [0.16, 1, 0.3, 1] as const
@@ -179,7 +179,7 @@ export function OnAirNav() {
                   ))}
                 </div>
                 <div className="mt-5 pt-4 border-t border-white/8 text-[11px] tracking-[0.16em] uppercase text-white/30">
-                  98.5 FM · Shepparton · Est. {stationStats.weeklyListeners.toLocaleString()} weekly listeners · Community radio since 1989
+                  98.5 FM · Shepparton · Est. {formatWeeklyListenersPlain()} weekly listeners · {formatCoverageShort()} · Community radio since 1989
                 </div>
               </motion.div>
             </div>

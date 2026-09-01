@@ -11,8 +11,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
-import { stationStats } from '@/data/pricing'
-import { formatRadius, formatTowns } from '@/lib/coverageCopy'
+import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { MULTICULTURAL_PROGRAMS, MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
@@ -77,12 +76,12 @@ export default function Community() {
     <Layout>
       <SEO
         title="Our Community — ONE FM 98.5"
-        description={`${stationStats.totalTowns} towns across the Goulburn Valley: GVL footy called live, ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the station guide, and the communities ONE FM serves.`}
+        description={`${formatTowns()} across the Goulburn Valley: GVL footy called live, ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the station guide, and the communities ONE FM serves.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            `● ${stationStats.totalTowns} towns across the Goulburn Valley`,
+            `● ${formatTowns()} across the Goulburn Valley`,
             'GVL footy called live every season',
             `Multicultural programming — ${MULTICULTURAL_PROGRAM_COUNT} programs on the weekly guide`,
             'Community radio since 1989',
@@ -139,8 +138,8 @@ export default function Community() {
 
         <StatsStrip
           stats={[
-            { n: String(stationStats.totalTowns), t: 'Towns across the Valley', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in broadcast area (townData 2026 est.)' },
+            { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: true },
+            { n: formatBroadcastPopulation(), t: 'People in broadcast area (ABS 2021 via townData)' },
             { n: String(MULTICULTURAL_PROGRAM_COUNT), t: 'Multicultural programs (station guide)' },
             { n: formatRadius(), t: 'Signal radius from Mt Major' },
           ]}
