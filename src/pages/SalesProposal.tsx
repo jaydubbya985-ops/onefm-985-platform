@@ -2,7 +2,7 @@
  * Public proposal request — not a DIY PDF generator.
  * Station staff send a tailored PDF from the ops portal.
  *
- * Stats on this page: stationStats only (ABS 2021 via townData).
+ * Stats on this page: coverageCopy.ts (ABS 2021 via townData).
  * Do not add age-band % or invented demographics.
  */
 import { useEffect, useState } from 'react'
@@ -30,11 +30,13 @@ import {
   weeklyListenersValue,
 } from '@/lib/coverageCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const RED = '#E51636'
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
 
 const GENERAL_PACKAGES = Object.entries(generalTiers).map(([id, t]) => ({
   id,
@@ -300,6 +302,7 @@ export default function SalesProposal() {
             'Packages from $50/week',
             STANDARD_SPOT_PLUS_GST,
             GVL_PREMIUM_BADGE,
+            `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`,
             'Staff-written PDF — not a public generator',
           ]}
           delay={0.4}
@@ -362,7 +365,7 @@ export default function SalesProposal() {
           to="/football"
           img={STATION_PHOTOS.gvlActionSprint}
           alt="GVL football — sponsor the live call on ONE FM 98.5"
-          badge="GVL Footy · Premium inventory"
+          badge={`${GVL_PREMIUM_BADGE} · ${GVL_MATCH_HOURS ?? 'Saturday'}`}
         />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
