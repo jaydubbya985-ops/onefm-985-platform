@@ -1,3 +1,5 @@
+import { BANK_BSB } from '@/lib/bankDetails'
+
 export type EnquiryStatus =
   | 'new'
   | 'in_progress'
@@ -321,12 +323,12 @@ export const MOCK_ENQUIRIES: Enquiry[] = [
     phone: '0392 123 456',
     subject: 'Monthly donation setup',
     message: 'I would like to set up a monthly donation to support ONE FM community work. $50/month.',
-    status: 'closed_won',
+    status: 'in_progress',
     priority: 'low',
     notes: [
       {
         id: 'n13',
-        text: 'Lovely supporter — $50/month recurring donation set up via Stripe.',
+        text: `DEMO — $50/month supporter enquiry. Recurring gifts are NAB BSB ${BANK_BSB}, not Stripe. Card checkout is data pending.`,
         author: 'Admin',
         createdAt: '2025-05-13T10:00:00Z',
       },
