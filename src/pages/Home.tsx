@@ -12,6 +12,7 @@ import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
 import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
+import { onAirWallSub } from '@/lib/guideHours'
 import {
   formatCoverageShort,
   formatRadius,
@@ -178,7 +179,7 @@ function NameWall() {
             <div className="font-poster uppercase leading-none whitespace-nowrap text-white text-[clamp(40px,7vw,104px)]">
               {p.name}
               <span className="block font-body normal-case text-[13px] tracking-[0.14em] text-white/40 mt-1.5">
-                {p.sub}
+                {onAirWallSub(p.name, p.sub)}
               </span>
             </div>
             <div
