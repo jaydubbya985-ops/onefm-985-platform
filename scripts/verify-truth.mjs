@@ -79,6 +79,37 @@ if (
     'pages/Listen.tsx: routed song request must open a mailto draft and say so',
   )
 }
+if (listen && /stationStats/.test(listen.text)) {
+  hits.push('pages/Listen.tsx: coverage stats must come from coverageCopy, not stationStats')
+}
+if (
+  !listen ||
+  !listen.text.includes('formatWeeklyListenersPlain') ||
+  !listen.text.includes('ON_AIR_WEEK')
+) {
+  hits.push('pages/Listen.tsx: weekly listeners via coverageCopy; on-air wall from ON_AIR_WEEK')
+}
+
+const community = files.find((f) => f.label === 'pages/Community.tsx')
+if (community && /stationStats/.test(community.text)) {
+  hits.push('pages/Community.tsx: coverage stats must come from coverageCopy, not stationStats')
+}
+if (!community || !community.text.includes('formatBroadcastPopulation')) {
+  hits.push('pages/Community.tsx: broadcast population must use formatBroadcastPopulation()')
+}
+
+const support = files.find((f) => f.label === 'pages/Support.tsx')
+if (
+  support &&
+  /stationStats\.(totalTowns|weeklyListeners|broadcastPopulation|broadcastRadiusKm)/.test(
+    support.text,
+  )
+) {
+  hits.push('pages/Support.tsx: coverage stats must come from coverageCopy')
+}
+if (!support || !support.text.includes('formatTowns()')) {
+  hits.push('pages/Support.tsx: town count must use formatTowns()')
+}
 
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (

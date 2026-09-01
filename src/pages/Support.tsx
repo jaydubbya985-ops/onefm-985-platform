@@ -104,7 +104,7 @@ function DonateHero() {
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
           Goulburn Valley Community Radio Inc. is a not-for-profit, volunteer-run station.
-          Donations help keep 98.5 FM live and local for {stationStats.totalTowns} towns.
+          Donations help keep 98.5 FM live and local for {formatTowns()}.
         </p>
         <a
           href="#give"
@@ -264,7 +264,7 @@ export default function Support() {
             { n: String(stationStats.yearsBroadcasting), t: 'Years on air', red: true },
             { n: '98.5', t: 'FM · Callsign 3ONE' },
             { n: '24/7', t: 'Live & local' },
-            { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
+            { n: formatTowns(), t: 'Across the Goulburn Valley' },
           ]}
         />
 

@@ -26,7 +26,7 @@ import { InventoryLadder } from '@/components/InventoryLadder'
 const RED = '#E51636'
 const LIME = '#B6FF00'
 
-/** Same wall as Home — programGuide.ts. Named portraits: Di Hunter, Sally Nayler. */
+/** Same wall as Home — programGuide.ts BREAKFAST_ROSTER. Named portraits: Di Hunter, Sally Nayler. */
 
 function ListenHero() {
   const { playing, loading, toggle } = useLiveStream()
