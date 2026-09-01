@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { cn } from '@/lib/utils'
 
 export interface SocialPlatformFrameProps {
@@ -33,8 +35,12 @@ export function SocialPlatformFrame({
   className,
   compact = false,
 }: SocialPlatformFrameProps) {
+  const coverage = formatCoverageShort()
+  const lockup = `${title} — ${BRAND.fullName} · ${coverage}`
+
   return (
     <article
+      title={lockup}
       data-cursor-label={eyebrow}
       className={cn(
         'relative overflow-hidden rounded-2xl border border-one-border bg-one-midnight group',
@@ -42,11 +48,11 @@ export function SocialPlatformFrame({
         className
       )}
     >
-      <div className={cn('relative overflow-hidden', compact ? 'h-28' : 'h-36 sm:h-40')}>
+      <div className={cn('relative overflow-hidden', compact ? 'h-32' : 'h-36 sm:h-40')}>
         <MediaImage
           src={image}
           fallbackSrc={imageFallback ?? image}
-          alt=""
+          alt={lockup}
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out"
         />
         <div
@@ -86,6 +92,9 @@ export function SocialPlatformFrame({
             {description && !compact && (
               <p className="font-body-small text-one-muted text-xs mt-1 line-clamp-2 max-w-md">{description}</p>
             )}
+            <p className="font-label text-[9px] tracking-[0.12em] uppercase text-one-white/45 mt-1">
+              {coverage}
+            </p>
           </div>
         </div>
       </div>
