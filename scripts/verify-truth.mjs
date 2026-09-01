@@ -424,6 +424,19 @@ if (
   hits.push('lib/presenterAssets.ts: only Di Hunter and Sally Nayler may be named portraits')
 }
 
+const opsPayments = files.find((f) => f.label === 'components/ops/data/payments.ts')
+for (const required of [
+  'DEMO DATA — payment history',
+  'DEMO DATA — contract renewal pipeline',
+  'DEMO DATA — sponsor acquittal reports',
+  'DEMO DATA — client payment rows',
+  'DEMO DATA — donations, members, and recurring donors',
+]) {
+  if (!opsPayments?.text.includes(required)) {
+    hits.push(`components/ops/data/payments.ts: missing ${required} label`)
+  }
+}
+
 const app = files.find((f) => f.label === 'App.tsx')
 if (
   !app ||

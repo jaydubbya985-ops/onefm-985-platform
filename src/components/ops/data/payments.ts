@@ -24,7 +24,8 @@ export interface PaymentRecord {
   allocated: boolean
 }
 
-/** Payment history shown in the Billing → Payments tab (verbatim from bundle). */
+// DEMO DATA — payment history shown in the Billing → Payments tab.
+// Real payment records must come from Supabase/accounting exports.
 export const MOCK_PAYMENTS: PaymentRecord[] = [
   { id: 'pay_1', invoiceId: 'inv_1', invoiceNumber: 'INV-2026-001', company: 'Peppermill Inn', amount: 1240, date: '2026-01-15', method: 'Bank Transfer', reference: 'REF-PM-001', notes: 'Full payment received', allocated: true },
   { id: 'pay_2', invoiceId: 'inv_2', invoiceNumber: 'INV-2026-002', company: 'Aussie Ag Supplies Pty Ltd', amount: 669, date: '2026-02-01', method: 'Direct Debit', reference: 'DD-AAG-669', notes: 'Auto debit processed', allocated: true },
@@ -57,7 +58,8 @@ export interface RenewalRecord {
   notes: string
 }
 
-/** Contract renewal pipeline (verbatim from bundle). */
+// DEMO DATA — contract renewal pipeline copied from the old local bundle.
+// Treat probabilities/notes as illustrative until backed by CRM records.
 export const MOCK_RENEWALS: RenewalRecord[] = [
   { id: 'ren_1', sponsorId: 'sp_1', sponsorName: 'Peppermill Inn', currentContractValue: 7436, endDate: '2026-09-30', daysRemaining: 58, probability: 92, status: 'upcoming', lastYearCampaign: 'GVL 2026 MAJOR', tier: 'Gold', notes: 'Long-term partner, renews annually. Todd prefers phone contact.' },
   { id: 'ren_2', sponsorId: 'sp_2', sponsorName: 'Aussie Ag Supplies Pty Ltd', currentContractValue: 8030, endDate: '2026-09-24', daysRemaining: 73, probability: 85, status: 'proposal_sent', lastYearCampaign: 'Parts & Wrecking (PDL)', tier: 'Gold', notes: 'Daryl interested in renewal. Proposal sent.' },
@@ -86,7 +88,8 @@ export interface AcquittalRecord {
   status: AcquittalStatus
 }
 
-/** Sponsor acquittal reports (verbatim from bundle). */
+// DEMO DATA — sponsor acquittal reports copied from the old local bundle.
+// Do not use as audited delivery or receivables records.
 export const MOCK_ACQUITTALS: AcquittalRecord[] = [
   { id: 'acq_1', sponsorName: 'Peppermill Inn', campaign: 'GVL 2026 MAJOR', contractPeriod: 'Mar - Sep 2026', contractValue: 7436, invoicesIssued: 3, invoicesPaid: 2, amountBilled: 3718, amountPaid: 2479, spotsDelivered: 48, spotsScheduled: 72, balanceRemaining: 1239, status: 'in_progress' },
   { id: 'acq_2', sponsorName: 'Aussie Ag Supplies Pty Ltd', campaign: 'Parts & Wrecking (PDL)', contractPeriod: 'Sep 2025 - Sep 2026', contractValue: 8030, invoicesIssued: 5, invoicesPaid: 5, amountBilled: 3345, amountPaid: 3345, spotsDelivered: 20, spotsScheduled: 20, balanceRemaining: 0, status: 'acquitted' },
@@ -391,6 +394,7 @@ export const SEED_OUTSTANDING_INVOICES: OutstandingInvoice[] = [
   { id: 'out-006', number: 'ONEFM-2026-029', client: 'Donuts A Go Go', balance: 109.98, dueDate: '2026-06-23' },
 ]
 
+// DEMO DATA — client payment rows are seed examples, not bank reconciled records.
 export const SEED_CLIENT_PAYMENTS: ClientPayment[] = [
   { id: 'cp-001', invoiceId: 'inv_1', invoiceNumber: 'INV-2026-001', clientName: 'Peppermill Inn', amount: 1240, method: 'bank_transfer', date: '2026-06-02', reference: 'TRX-PM1240', notes: 'GVL 2026 MAJOR instalment', status: 'completed' },
   { id: 'cp-002', invoiceId: 'inv_2', invoiceNumber: 'INV-2026-002', clientName: 'Aussie Ag Supplies Pty Ltd', amount: 669, method: 'direct_debit', date: '2026-06-03', reference: 'DD-AAG-669', notes: 'Auto debit processed', status: 'completed' },
