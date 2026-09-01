@@ -81,6 +81,9 @@ import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
 import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
 import { OpsInvoiceSheet } from '@/components/ops/OpsInvoiceSheet'
 import { isSupabaseConfigured } from '@/lib/supabase'
+import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -865,7 +868,31 @@ export default function InvoiceGenerator() {
   }
 
   return (
-    <div className="min-h-screen bg-[#101010] text-white p-6">
+    <div className="min-h-screen bg-[#101010] text-white">
+      <div className="relative overflow-hidden border-b border-[#2A2A2A]">
+        {/* Unused match-day OB banner — station archive, not a presenter portrait. */}
+        <img
+          src={STATION_PHOTOS.obMatchDayBanner}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-6 pt-6 pb-4">
+          <p className="font-label text-[10px] tracking-[0.22em] uppercase text-white/40">
+            Station archive · match-day outside-broadcast banner
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
+            {BANK_BSB} · {BANK_ACCOUNT_NAME}. This screen is not a Stripe receipt.
+          </p>
+        </div>
+      </div>
+      <div className="p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -2146,6 +2173,7 @@ export default function InvoiceGenerator() {
           .print-area .grid { display: grid !important; }
         }
       `}</style>
+      </div>
     </div>
   )
 }
