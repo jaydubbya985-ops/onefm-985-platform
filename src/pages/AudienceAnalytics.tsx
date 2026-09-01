@@ -31,7 +31,16 @@ import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { SEO } from '@/components/SEO'
 import { stationStats } from '@/data/pricing'
 import { towns } from '@/data/townData'
-import { formatCoverageShort } from '@/lib/coverageCopy'
+import {
+  broadcastPopulationCount,
+  formatBroadcastPopulation,
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListenersPlain,
+  townsCount,
+  weeklyListenersCount,
+} from '@/lib/coverageCopy'
 import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
 /* ─────────── easing ─────────── */
@@ -79,7 +88,7 @@ const genderData = [
 ]
 
 // Top towns by estimated weekly listeners (source: townData.ts / ABS 2021).
-// Do not invent a remainder bucket against weeklyListeners 39,375 — town
+// Do not invent a remainder bucket against formatWeeklyListenersPlain() — town
 // estimates sum to a different figure (see scripts/audit-town-data.ts).
 const locationData = [...towns]
   .sort((a, b) => b.listenersEstimate - a.listenersEstimate)
@@ -91,8 +100,8 @@ const platformCards = [
     icon: Radio,
     title: 'FM Radio',
     stat: '98.5 FM',
-    label: `${stationStats.broadcastRadiusKm}km radius`,
-    share: `${stationStats.totalTowns} towns · Goulburn Murray`,
+    label: `${formatRadius()} radius`,
+    share: `${formatTowns()} · Goulburn Murray`,
     status: 'On air',
     statusColor: '#B6FF00',
     accent: '#D4963A',
@@ -143,7 +152,7 @@ export default function AudienceAnalytics() {
 
   return (
     <Layout>
-      <SEO title="Audience Analytics" description={`Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across ${stationStats.totalTowns} towns. Live stream analytics pending Radio.co integration.`} />
+      <SEO title="Audience Analytics" description={`Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across ${formatTowns()}. Live stream analytics pending Radio.co integration.`} />
       {/* ═══════ HERO ═══════ */}
       <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="AUDIENCE">
         {/* Animated grid background */}
@@ -211,9 +220,9 @@ export default function AudienceAnalytics() {
             data-cursor-label="KEY METRICS"
           >
             {[
-              { label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners, color: '#B6FF00', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
-              { label: 'Towns in Broadcast Area', value: stationStats.totalTowns, color: '#D4963A', suffix: '', sparkline: false, extra: `~${stationStats.broadcastRadiusKm}km radius from Shepparton` },
-              { label: 'Broadcast Area Population', value: stationStats.broadcastPopulation, color: '#F0C75E', suffix: '', sparkline: false, extra: `Source: ABS 2021 · ${stationStats.totalTowns} towns` },
+              { label: 'Est. Weekly Listeners', value: weeklyListenersCount(), color: '#B6FF00', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
+              { label: 'Towns in Broadcast Area', value: townsCount(), color: '#D4963A', suffix: '', sparkline: false, extra: `${formatRadius()} radius from Shepparton` },
+              { label: 'Broadcast Area Population', value: broadcastPopulationCount(), color: '#F0C75E', suffix: '', sparkline: false, extra: `Source: ABS 2021 · ${formatTowns()}` },
               { label: 'Years Broadcasting', value: stationStats.yearsBroadcasting, color: '#9B5DE5', suffix: ' yrs', sparkline: false, extra: 'Licensed 1989 · callsign 3ONE' },
             ].map((stat) => (
               <TiltCard key={stat.label} maxTilt={5} className="flex flex-col min-h-[140px]">
@@ -253,11 +262,11 @@ export default function AudienceAnalytics() {
           speed={30}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">MODELLED AUDIENCE · ABS 2021</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.weeklyListeners.toLocaleString()} EST. WEEKLY LISTENERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatWeeklyListenersPlain()} EST. WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DEMOGRAPHICS · REACH · PERFORMANCE</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatCoverageShort().toUpperCase()}</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 POPULATION · LICENSED 1989</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.broadcastPopulation.toLocaleString()} BROADCAST AREA POPULATION</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatBroadcastPopulation()} BROADCAST AREA POPULATION</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 · NOT LIVE STREAM COUNTS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.yearsBroadcasting} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
           ]}
@@ -342,10 +351,10 @@ export default function AudienceAnalytics() {
                   {chartTab === 'Listeners' && (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-3">
                       <p className="font-h3 text-one-white">
-                        {stationStats.weeklyListeners.toLocaleString('en-AU')}
+                        {formatWeeklyListenersPlain()}
                       </p>
                       <p className="font-body-small text-muted text-center px-8 max-w-md">
-                        Est. weekly listeners (ABS 2021 via townData, {stationStats.totalTowns} towns / {stationStats.broadcastRadiusKm}km). Month-by-month stream counts: data pending until Radio.co is connected.
+                        Est. weekly listeners (ABS 2021 via townData, {formatTowns()} / {formatRadius()}). Month-by-month stream counts: data pending until Radio.co is connected.
                       </p>
                     </div>
                   )}
@@ -391,8 +400,8 @@ export default function AudienceAnalytics() {
               {[
                 {
                   title: 'Broadcast Reach',
-                  text: `${stationStats.weeklyListeners.toLocaleString()} est. weekly listeners`,
-                  sub: `${stationStats.totalTowns} towns · ~${stationStats.broadcastRadiusKm}km radius · source: townData / ABS 2021`,
+                  text: `${formatWeeklyListenersPlain()} est. weekly listeners`,
+                  sub: `${formatCoverageShort()} · source: townData / ABS 2021`,
                   border: '#B6FF00',
                   icon: TrendingUp,
                 },
@@ -677,7 +686,7 @@ export default function AudienceAnalytics() {
               <div aria-hidden className="explore-tile-scan" />
               <h4 className="font-h4 text-one-white mb-4">Weekly Listener Distribution</h4>
               <p className="font-body-small text-muted p-4 rounded-lg bg-one-navy/50">
-                Day-by-day listener counts are data pending. Approved figure is {stationStats.weeklyListeners.toLocaleString('en-AU')} estimated weekly listeners (ABS 2021 via townData), not a modelled Sat peak.
+                Day-by-day listener counts are data pending. Approved figure is {formatWeeklyListenersPlain()} estimated weekly listeners (ABS 2021 via townData), not a modelled Sat peak.
               </p>
             </motion.div>
             </TiltCard>

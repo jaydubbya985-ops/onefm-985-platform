@@ -44,6 +44,7 @@ const FORBIDDEN = [
   { re: /FROM \$25\/WEEK · NAMING RIGHTS/i, why: 'GVL is premium — never advertise from $25' },
   { re: /advertise on GVL.{0,40}from \$25/i, why: 'GVL must never be sold from $25' },
   { re: /~100km radius/, why: 'use formatRadius() from coverageCopy — do not hardcode ~100km' },
+  { re: /~\$\{stationStats\.broadcastRadiusKm\}/, why: 'use formatRadius() from coverageCopy — do not hardcode ~km' },
 ]
 
 function walk(dir) {
@@ -110,6 +111,64 @@ if (
 if (!support || !support.text.includes('formatTowns()')) {
   hits.push('pages/Support.tsx: town count must use formatTowns()')
 }
+
+function assertCoverageCopy(label, requiredFns) {
+  const file = files.find((f) => f.label === label)
+  if (
+    file &&
+    /stationStats\.(totalTowns|weeklyListeners|broadcastPopulation|broadcastRadiusKm)/.test(
+      file.text,
+    )
+  ) {
+    hits.push(`${label}: coverage stats must come from coverageCopy`)
+  }
+  for (const fn of requiredFns) {
+    if (!file || !file.text.includes(fn)) {
+      hits.push(`${label}: must use ${fn}`)
+    }
+  }
+}
+
+assertCoverageCopy('pages/MediaKit.tsx', [
+  'formatTowns()',
+  'formatRadius()',
+  'formatWeeklyListenersPlain()',
+  'formatBroadcastPopulation()',
+])
+assertCoverageCopy('pages/Football.tsx', [
+  'formatTowns()',
+  'formatRadius()',
+  'formatWeeklyListenersPlain()',
+  'formatBroadcastPopulation()',
+])
+assertCoverageCopy('pages/SponsorshipKit.tsx', [
+  'formatTowns()',
+  'formatWeeklyListeners()',
+  'formatBroadcastPopulation()',
+])
+assertCoverageCopy('pages/Contact.tsx', [
+  'formatTowns()',
+  'formatRadius()',
+  'formatBroadcastPopulation()',
+])
+assertCoverageCopy('pages/AudienceAnalytics.tsx', [
+  'formatTowns()',
+  'formatRadius()',
+  'formatWeeklyListenersPlain()',
+  'formatBroadcastPopulation()',
+])
+assertCoverageCopy('pages/SalesProposal.tsx', [
+  'formatTowns()',
+  'formatRadius()',
+  'formatWeeklyListeners()',
+  'formatBroadcastPopulation()',
+])
+assertCoverageCopy('pages/Heritage.tsx', ['formatTowns()'])
+assertCoverageCopy('pages/Story.tsx', [
+  'formatTowns()',
+  'formatRadius()',
+  'formatBroadcastPopulation()',
+])
 
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (

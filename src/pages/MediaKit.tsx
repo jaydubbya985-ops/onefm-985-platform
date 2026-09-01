@@ -43,7 +43,14 @@ import { WordReveal } from '@/components/WordReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { formatRadius } from '@/lib/coverageCopy'
+import {
+  formatBroadcastPopulation,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListenersPlain,
+  townsCount,
+  weeklyListenersCount,
+} from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { MediaImage } from '@/components/MediaImage'
@@ -87,16 +94,16 @@ const cardStagger = {
 
 /* ─────────── data (sourced — no fabricated percentages) ─────────── */
 const reachChannels = [
-  { name: 'FM Radio', detail: `98.5 FM · ${stationStats.broadcastRadiusKm} km radius`, color: '#F2F2F2' },
+  { name: 'FM Radio', detail: `98.5 FM · ${formatRadius()} radius`, color: '#F2F2F2' },
   { name: 'Live Stream', detail: 'fm985.com.au · Radio.co', color: '#B6FF00' },
   { name: 'SoundCloud', detail: 'Interview archive after broadcast', color: '#FF5500' },
   { name: 'Facebook', detail: 'facebook.com/onefmshepparton', color: '#1877F2' },
 ]
 
 const audienceStats = [
-  { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString(), note: 'Regional reach estimate' },
-  { label: 'Population in broadcast area', value: stationStats.broadcastPopulation.toLocaleString(), note: `2026 est. · ${stationStats.totalTowns} towns` },
-  { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km`, note: 'From Shepparton' },
+  { label: 'Est. weekly listeners', value: formatWeeklyListenersPlain(), note: 'Regional reach estimate' },
+  { label: 'Population in broadcast area', value: formatBroadcastPopulation(), note: `2026 est. · ${formatTowns()}` },
+  { label: 'Broadcast radius', value: formatRadius(), note: 'From Shepparton' },
   { label: 'Years on air', value: String(stationStats.yearsBroadcasting), note: 'Licensed since 1989' },
 ]
 
@@ -120,7 +127,7 @@ const platformCards = [
     stat: '98.5 FM',
     statLabel: 'broadcast frequency',
     reach: `${formatRadius()} radius`,
-    coverage: `Goulburn Murray region — ${stationStats.totalTowns} towns`,
+    coverage: `Goulburn Murray region — ${formatTowns()}`,
     accent: '#F2F2F2',
   },
   {
@@ -313,15 +320,15 @@ export default function MediaKit() {
     setDocxGenerating(true)
     try {
       const audienceStats = [
-        { label: 'Weekly Listeners', value: stationStats.weeklyListeners.toLocaleString() },
-        { label: 'Broadcast Population', value: stationStats.broadcastPopulation.toLocaleString() },
-        { label: 'Towns Covered', value: String(stationStats.totalTowns) },
-        { label: 'Broadcast Radius', value: `${stationStats.broadcastRadiusKm} km` },
+        { label: 'Weekly Listeners', value: formatWeeklyListenersPlain() },
+        { label: 'Broadcast Population', value: formatBroadcastPopulation() },
+        { label: 'Towns Covered', value: formatTowns() },
+        { label: 'Broadcast Radius', value: formatRadius() },
         { label: 'Years Broadcasting', value: String(stationStats.yearsBroadcasting) },
       ]
 
       const platformReach = [
-        { platform: 'FM Radio', stat: '98.5 FM', reach: `${stationStats.weeklyListeners.toLocaleString()} est. weekly listeners` },
+        { platform: 'FM Radio', stat: '98.5 FM', reach: `${formatWeeklyListenersPlain()} est. weekly listeners` },
         { platform: 'Live Stream', stat: 'fm985.com.au', reach: 'Radio.co · Community Radio Plus app' },
         { platform: 'Social Media', stat: 'Facebook', reach: 'facebook.com/onefmshepparton — follower count reported by the platform' },
         { platform: 'SoundCloud', stat: 'Interview archive', reach: 'Community interviews on fm985.com.au' },
@@ -473,8 +480,8 @@ export default function MediaKit() {
             transition={{ duration: 0.6, delay: 1.0 }}
           >
             {[
-              { value: stationStats.weeklyListeners, label: 'Est. listeners', suffix: '' },
-              { value: stationStats.totalTowns, label: 'Towns', suffix: '' },
+              { value: weeklyListenersCount(), label: 'Est. listeners', suffix: '' },
+              { value: townsCount(), label: 'Towns', suffix: '' },
               { value: stationStats.yearsBroadcasting, label: 'Years on air', suffix: '' },
               { value: 24, label: 'Broadcast', suffix: '/7' },
             ].map((stat, i) => (
@@ -501,10 +508,10 @@ export default function MediaKit() {
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ADVERTISING RATES 2026</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE IN THE BROADCAST AREA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{formatBroadcastPopulation()} PEOPLE IN THE BROADCAST AREA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">GOULBURN VALLEY · VICTORIA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE READS · SPOT ADS · SPONSORSHIP</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">~{stationStats.broadcastRadiusKm} KM BROADCAST RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">{formatRadius()} BROADCAST RADIUS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · CALLSIGN: 3ONE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-chalk/40">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
           ]}

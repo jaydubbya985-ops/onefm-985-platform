@@ -2,30 +2,46 @@ import { stationStats } from '@/data/pricing'
 
 /** Single source for coverage / listenership strings. Never hardcode 25 / 100 / 39,375 / 189,680. */
 
+export function townsCount(): number {
+  return stationStats.totalTowns
+}
+
+export function radiusKmCount(): number {
+  return stationStats.broadcastRadiusKm
+}
+
+export function weeklyListenersCount(): number {
+  return stationStats.weeklyListeners
+}
+
+export function broadcastPopulationCount(): number {
+  return stationStats.broadcastPopulation
+}
+
 export function formatTowns(): string {
-  return `${stationStats.totalTowns} towns`
+  return `${townsCount()} towns`
 }
 
 export function formatRadius(): string {
-  return `${stationStats.broadcastRadiusKm}km`
+  return `${radiusKmCount()}km`
 }
 
 export function formatCoverageShort(): string {
-  return `${stationStats.totalTowns} towns · ${stationStats.broadcastRadiusKm}km radius`
+  return `${formatTowns()} · ${formatRadius()} radius`
 }
 
 export function formatWeeklyListeners(): string {
-  return `Est. ${stationStats.weeklyListeners.toLocaleString('en-AU')} weekly listeners`
+  return `Est. ${formatWeeklyListenersPlain()} weekly listeners`
 }
 
 export function formatWeeklyListenersPlain(): string {
-  return stationStats.weeklyListeners.toLocaleString('en-AU')
+  return weeklyListenersCount().toLocaleString('en-AU')
 }
 
 export function formatBroadcastPopulation(): string {
-  return stationStats.broadcastPopulation.toLocaleString('en-AU')
+  return broadcastPopulationCount().toLocaleString('en-AU')
 }
 
 export function formatCoverageLong(): string {
-  return `${formatWeeklyListeners()} across ${formatTowns()} within a ${stationStats.broadcastRadiusKm}km broadcast area (${formatBroadcastPopulation()} people — ABS 2021 via townData)`
+  return `${formatWeeklyListeners()} across ${formatTowns()} within a ${formatRadius()} broadcast area (${formatBroadcastPopulation()} people — ABS 2021 via townData)`
 }

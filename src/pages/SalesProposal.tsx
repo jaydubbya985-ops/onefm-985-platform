@@ -2,7 +2,7 @@
  * Public proposal request — not a DIY PDF generator.
  * Station staff send a tailored PDF from the ops portal.
  *
- * Stats on this page: stationStats only (ABS 2021 via townData).
+ * Stats on this page: coverageCopy (ABS 2021 via townData).
  * Do not add age-band % or invented demographics.
  */
 import { useEffect, useState } from 'react'
@@ -19,9 +19,15 @@ import {
   PosterReveal,
   StrokeFill,
 } from '@/components/onair/kit'
-import { generalTiers, footballTiers, stationStats } from '@/data/pricing'
+import { generalTiers, footballTiers } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
-import { formatRadius, formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import {
+  formatBroadcastPopulation,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+  formatWeeklyListenersPlain,
+} from '@/lib/coverageCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { BRAND } from '@/lib/brand'
@@ -288,7 +294,7 @@ export default function SalesProposal() {
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
+            `● ${formatWeeklyListeners()}`,
             `${formatTowns()} · ${formatRadius()} radius`,
             'Packages from $50/week',
             STANDARD_SPOT_PLUS_GST,
@@ -301,10 +307,10 @@ export default function SalesProposal() {
 
         <StatsStrip
           stats={[
-            // source: ABS 2021 via townData / stationStats
-            { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in broadcast area (townData 2026 est.)' },
-            { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
+            // source: ABS 2021 via townData / coverageCopy
+            { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners', red: true },
+            { n: formatBroadcastPopulation(), t: 'People in broadcast area (townData 2026 est.)' },
+            { n: formatTowns(), t: 'Across the Goulburn Valley' },
             { n: formatRadius(), t: 'Broadcast radius' },
           ]}
         />
@@ -414,7 +420,7 @@ export default function SalesProposal() {
             </Link>
           </div>
           <p className="text-[13px] text-white/35 mt-6 max-w-2xl">
-            Weekly listeners {stationStats.weeklyListeners.toLocaleString()} is an estimate from ABS 2021
+            Weekly listeners {formatWeeklyListenersPlain()} is an estimate from ABS 2021
             census populations in the broadcast area (source: townData). We do not publish a 25–34 age
             split — that figure is not in our research.
           </p>
