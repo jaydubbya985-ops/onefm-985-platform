@@ -37,7 +37,7 @@ export interface StripeConfig {
 export const STRIPE_CONFIG: StripeConfig = {
   accountId: 'acct_1J696RS3NlaEohlL',
   needsSetup: !(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined)?.startsWith('pk_'),
-  publishableKey: (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? 'pk_live_placeholder',
+  publishableKey: (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? '',
   currency: 'aud',
   successUrl: 'https://onefmops.netlify.app/#/payment/success',
   cancelUrl:  'https://onefmops.netlify.app/#/payment/cancel',

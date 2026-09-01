@@ -35,6 +35,7 @@ const FORBIDDEN = [
   { re: /pay\.onefm985\.com\.au/i, why: 'hosted pay domain does not exist — use BSB 083-894' },
   { re: /api\.onefm985\.com\.au\/webhooks/i, why: 'webhook domain does not exist' },
   { re: /checkout\.stripe\.com\/pay\?/i, why: 'do not invent Stripe Checkout query URLs' },
+  { re: /pk_live_placeholder/i, why: 'do not ship fake Stripe publishable-key placeholders' },
   { re: /Request Received!/, why: 'mailto song request is a draft, not a received request' },
   { re: /Enquiry Sent!/, why: 'enquiry forms must not claim sent unless stored or emailed' },
   { re: /Sent via ONE FM Operations Portal/, why: 'invoice email footer must not claim the message was sent' },
