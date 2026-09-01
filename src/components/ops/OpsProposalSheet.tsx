@@ -3,9 +3,10 @@
  * Real brand lockup. Sourced stats only (ABS 2021 via townData).
  */
 import { BrandLogo } from '@/components/BrandLogo'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort, formatRadius, townCountValue, weeklyListenersValue } from '@/lib/coverageCopy'
 import { DS } from '@/lib/invoiceDesignSystem'
 import { formatAud, type ProposalDocData } from '@/lib/proposalDocument'
-import { formatRadius, townCountValue, weeklyListenersValue } from '@/lib/coverageCopy'
 
 export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
   return (
@@ -44,7 +45,7 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
             <p className="mt-1 font-semibold text-[#071D3A]">{DS.station.name}</p>
             <p className="text-[#6B6B6B]">{DS.station.address}</p>
             <p className="text-[#6B6B6B]">
-              {DS.station.phone} · admin@fm985.com.au
+              {DS.station.phone} · {BRAND.email}
             </p>
           </div>
         </div>
@@ -66,7 +67,7 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
           </div>
         </div>
         <p className="mt-2 text-[11px] text-[#6B6B6B]">
-          Source: ABS 2021 via townData — Goulburn Valley coverage, not national stream totals
+          Source: ABS 2021 via townData — {formatCoverageShort()}, not national stream totals
         </p>
 
         <div className="mt-5">
