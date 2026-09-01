@@ -124,7 +124,7 @@ export const ARCHIVE_CARDS: ArchiveCard[] = [
     topic: 'sport',
     cardType: 'football',
     title: 'GVL broadcasts return',
-    body: 'ONE FM covers under-18, reserves and senior GVL grand finals — live from 8am.',
+    body: 'GVL match broadcasts returned in 2024, including under-18, reserves and senior grand finals.',
     confidence: 'confirmed-newspaper',
     sources: [{ label: 'Shepparton News', type: 'newspaper', date: '2024' }],
   },
