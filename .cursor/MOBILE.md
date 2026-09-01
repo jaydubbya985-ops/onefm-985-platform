@@ -12,20 +12,16 @@ Read .cursor/CONTINUOUS.md. Pull origin main first. Do not merge PRs unless I sa
 
 ## When an agent needs a secret
 
-1. Open `cursor.com/dashboard/cloud-agents?view=my-secrets`.
-2. Click `Add Secrets`.
-3. Add the exact secret name the agent gave you.
-4. Paste the value from the service dashboard.
-5. Save.
-6. Reply `done`.
+Read `.cursor/SECRETS.md` first. Supabase is **not** an every-run blocker.
 
-Never paste secret values into chat.
+If you still need to set Ops LIVE (once):
 
-## Supabase key check
+1. Open [Cloud Agent Secrets](https://cursor.com/dashboard/cloud-agents?view=my-secrets).
+2. `VITE_SUPABASE_URL` = Project URL (`https://….supabase.co`).
+3. `VITE_SUPABASE_ANON_KEY` = **anon public** / publishable key only (`eyJ…` or `sb_publishable_…`).
+4. Save. Reply `done`.
 
-- `VITE_SUPABASE_URL` must be the full Supabase project API URL from Supabase Project Settings -> API.
-- `VITE_SUPABASE_ANON_KEY` must start with `eyJ...` or `sb_publishable_...`.
-- Never use `sb_secret...`, `sb_s...`, or `service_role` in a `VITE_*` secret.
+Never paste secret values into chat. Never paste `sb_secret_` into a `VITE_*` name.
 
 ## Merge command
 

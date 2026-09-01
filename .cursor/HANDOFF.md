@@ -12,7 +12,7 @@
 ## Already true on GitHub `main` (`e9ce482`)
 
 - PR **#28–#41** and the Sep 1 truth/security batch through **#137** are on `main`.
-- Netlify deploy works again; `npm run build` passes when malformed local `VITE_SUPABASE_*` values are unset.
+- Netlify deploy works. `npm run build` stays green even if Cloud `VITE_SUPABASE_*` is a project-ref or `sb_secret_` (those stay DEMO).
 - Browser provider keys have been removed/guarded: OpenAI, Resend, PlayHQ, Google Maps literal fallback, fake Stripe placeholder.
 - PR **#25** Invoice Design Lab — design **A · Broadcast Letter** is locked for batch sends.
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km**.
@@ -26,14 +26,9 @@ Stale/conflicting: **#1 #3 #4 #8 #10 #11** — close manually. **#13** never mer
 
 ## NEED JAY (one action)
 
-Replace the two Cursor Cloud Supabase secrets:
+`RESEND_API_KEY` in Netlify for live invoice email — test send one invoice to `jasonstv1@bigpond.com` in Test Mode first.
 
-- `VITE_SUPABASE_URL` must be the full Project URL from Supabase Project Settings → API.
-- `VITE_SUPABASE_ANON_KEY` must be the anon / publishable key (`eyJ...` or `sb_publishable_...`), never `sb_secret...` / `sb_s...`.
-
-After that, start a fresh Cloud Agent and ask it to classify secret shapes without printing values.
-
-Next human blocker after Supabase: `RESEND_API_KEY` in Netlify for live invoice email — test send one invoice to `jasonstv1@bigpond.com` in Test Mode first.
+Do **not** ask about `VITE_SUPABASE_*` every run. Wrong Cloud values stay DEMO and no longer fail the build. One-time pair: `.cursor/SECRETS.md`.
 
 ## Invoice design (locked)
 
@@ -43,3 +38,4 @@ Next human blocker after Supabase: `RESEND_API_KEY` in Netlify for live invoice 
 
 - Public home/listen craft polish from `programGuide.ts` + `/public/brand/` only.
 - `RESEND_API_KEY` for live invoice email (Test Mode first).
+- Ops LIVE only if Jay pastes the pair in `.cursor/SECRETS.md` once. Not an every-run ask.

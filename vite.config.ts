@@ -3,6 +3,11 @@ import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { inspectAttr } from 'plugin-inspect-react-code'
+import { sanitizeViteSupabaseEnv } from './src/lib/opsConfigResolve'
+
+// Cloud/GitHub often have a project-ref URL or sb_secret_ in VITE_*.
+// Expand the URL, drop the secret key, stay DEMO. Never fail the build.
+sanitizeViteSupabaseEnv()
 
 /** Read stationStats from pricing.ts so crawler OG stays on the same source as coverageCopy. */
 function readStationStats() {
