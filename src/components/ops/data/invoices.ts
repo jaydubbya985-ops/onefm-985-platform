@@ -7,6 +7,13 @@
 // those into Supabase.
 // ---------------------------------------------------------------------------
 
+/**
+ * GVL Match of the Day hours — source: FULL_SCHEDULE in programGuide.ts
+ * (Saturday 13:00–15:00). Same shape as formatGuideHours(). This file is
+ * imported by Node’s verify-ops-config, so it cannot use `@/` aliases.
+ */
+const GVL_MATCH_HOURS = 'Sat 1PM–3PM'
+
 export type BatchInvoiceStatus = 'draft' | 'previewed' | 'tested' | 'sent' | 'paid'
 
 export interface BatchInvoice {
@@ -55,7 +62,7 @@ export const INVOICE_THANK_YOU_MESSAGES: Record<string, string> = {
   'inv-003':
     "Rocky, Gagliardi Scott's backing of local sport and community radio is what makes this region special. Your full GVL 2026 sponsorship helps us bring the footy to every home and keep local stories alive. Thanks for being such a massive part of the Goulburn Valley, Rocky.",
   'inv-004':
-    "Josephine, the Goulburn Valley Football League and ONE FM go together like pie and sauce at the footy. Broadcasting the league is at the heart of everything we do, and your partnership makes it possible for families right across the region to tune in every weekend. Here's to another cracking season together!",
+    `Josephine, the Goulburn Valley Football League and ONE FM go together like pie and sauce at the footy. Broadcasting the league is at the heart of everything we do, and your partnership makes it possible for families right across the region to tune in for GVL Match of the Day (${GVL_MATCH_HOURS}). Here's to another cracking season together!`,
   'inv-005':
     "Todd, having the Peppermill Inn as a major GVL sponsor is an absolute ripper for us! The Peppermill's been a community landmark for years, and now you're helping keep local radio thriving too. Cheers for stepping up — our listeners love hearing your name on air.",
   'inv-006':
