@@ -9,20 +9,31 @@
 
 **CONTINUOUS RUN IS ON.** Read `.cursor/CONTINUOUS.md`. Keep shipping.
 
-## Already true on GitHub `main` (`1b34f20`)
+## Already true on GitHub `main` (`e9ce482`)
 
-- PR **#28–#41** EXE'd — full truth pass: coverageCopy everywhere public, breakfast from `BREAKFAST_ROSTER`, programGuide hours (GVL Sat, NIRS Fri, multicultural weeknights), map glow from `coverageNumbers`, Di Hunter archive slot, Home dancing hours from guide.
-- PR **#25** Invoice Design Lab — 3 variants at `#/ops` → Invoice Design tab.
+- PR **#28–#41** and the Sep 1 truth/security batch through **#137** are on `main`.
+- Netlify deploy works again; `npm run build` passes when malformed local `VITE_SUPABASE_*` values are unset.
+- Browser provider keys have been removed/guarded: OpenAI, Resend, PlayHQ, Google Maps literal fallback, fake Stripe placeholder.
+- PR **#25** Invoice Design Lab — design **A · Broadcast Letter** is locked for batch sends.
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km**.
 - Standard 30s: **$25 plus GST**. GVL is premium — never “from $25”.
 
 ## Open PRs (do not merge)
 
-Stale/conflicting: **#3 #4 #8 #10 #11** — close manually. **#13** never merge (regresses ops).
+Ready as of this handoff: **#135 #121 #51**. Review before EXE because `main` has moved fast.
+
+Stale/conflicting: **#1 #3 #4 #8 #10 #11** — close manually. **#13** never merge (regresses ops).
 
 ## NEED JAY (one action)
 
-`RESEND_API_KEY` in Netlify for live invoice email — test send one invoice to `jasonstv1@bigpond.com` in Test Mode first.
+Replace the two Cursor Cloud Supabase secrets:
+
+- `VITE_SUPABASE_URL` must be the full Project URL from Supabase Project Settings → API.
+- `VITE_SUPABASE_ANON_KEY` must be the anon / publishable key (`eyJ...` or `sb_publishable_...`), never `sb_secret...` / `sb_s...`.
+
+After that, start a fresh Cloud Agent and ask it to classify secret shapes without printing values.
+
+Next human blocker after Supabase: `RESEND_API_KEY` in Netlify for live invoice email — test send one invoice to `jasonstv1@bigpond.com` in Test Mode first.
 
 ## Invoice design (locked)
 
