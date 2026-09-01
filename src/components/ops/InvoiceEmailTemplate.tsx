@@ -9,12 +9,13 @@
 // ---------------------------------------------------------------------------
 import { useState } from 'react'
 import { jsPDF } from 'jspdf'
-import { Check, Copy, CreditCard } from 'lucide-react'
+import { Check, Copy } from 'lucide-react'
 import { useToast } from './Toast'
 import { useOpsStore } from './store'
 import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import {
   getInvoiceDesignVariant,
   getVariantMeta,
@@ -24,34 +25,6 @@ import { generateVariantInvoiceEmailHtml } from '@/lib/invoiceVariantEmail'
 import { generateInvoicePdfForVariant } from '@/lib/invoiceVariantPdf'
 
 export { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB }
-
-export interface StripeConfig {
-  accountId: string
-  needsSetup: boolean
-  publishableKey: string
-  currency: string
-  successUrl: string
-  cancelUrl: string
-}
-
-export const STRIPE_CONFIG: StripeConfig = {
-  accountId: 'acct_1J696RS3NlaEohlL',
-  needsSetup: !(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined)?.startsWith('pk_'),
-  publishableKey: (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? '',
-  currency: 'aud',
-  successUrl: 'https://onefmops.netlify.app/#/payment/success',
-  cancelUrl:  'https://onefmops.netlify.app/#/payment/cancel',
-}
-
-export const PAYMENT_LINKS: Record<string, string> = {}
-
-export function getStripePaymentLink(
-  invoiceNumber: string,
-  _total: number,
-  _company?: string,
-): string {
-  return PAYMENT_LINKS[invoiceNumber] ?? ''
-}
 
 // ---------------------------------------------------------------------------
 // Data interfaces
@@ -274,7 +247,8 @@ export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
           <div style="color:rgba(255,255,255,0.45);font-size:12px;line-height:1.9;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
             <strong style="color:#D4AF37;">ONE FM 98.5</strong>
             &nbsp;&middot;&nbsp;Goulburn Valley Community Radio Inc.<br>
-            ABN 92 117 291 771 &nbsp;&middot;&nbsp; (03) 5831 3131 &nbsp;&middot;&nbsp; accounts@fm985.com.au
+            ABN 92 117 291 771 &nbsp;&middot;&nbsp; (03) 5831 3131 &nbsp;&middot;&nbsp; accounts@fm985.com.au<br>
+            ${esc(formatCoverageShort())} &nbsp;&middot;&nbsp; ABS 2021 via townData
           </div>
         </td>
       </tr>
@@ -343,7 +317,6 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
     })
   }
 
-  const paymentLinkCount = Object.keys(PAYMENT_LINKS).length
   const emailHtml = generateInvoiceEmailHtml(
     { ...data, customMessage: message },
     BANK_BSB, BANK_ACCOUNT, BANK_ACCOUNT_NAME,
@@ -409,7 +382,7 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
       )}
 
       <div className="bg-[#0F1D32] border border-[#1E293B] rounded-lg p-3 flex flex-wrap items-center gap-3 text-xs">
-        <span className="text-one-muted uppercase tracking-wider font-label">Bank Details:</span>
+        <span className="text-one-muted uppercase tracking-wider font-label">NAB pay — no Stripe:</span>
         {[
           { label: 'BSB', value: BANK_BSB, key: 'bsb', mono: true },
           { label: 'Acct', value: BANK_ACCOUNT, key: 'acct', mono: true },
@@ -431,15 +404,6 @@ export default function InvoiceEmailTemplate({ data, onMessageChange }: InvoiceE
           </button>
         ))}
       </div>
-
-      {paymentLinkCount > 0 && (
-        <div className="bg-[#1B2A1B] border border-[#2A3A2A] rounded-lg p-3 flex items-center gap-2 text-xs">
-          <CreditCard className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-          <span className="text-emerald-300">
-            Stripe payment link{paymentLinkCount !== 1 ? 's' : ''} configured for this send.
-          </span>
-        </div>
-      )}
 
       <div className="rounded-lg overflow-hidden border border-one-border">
         <div data-invoice-email dangerouslySetInnerHTML={{ __html: emailHtml }} />
