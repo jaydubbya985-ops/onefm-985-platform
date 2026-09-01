@@ -146,7 +146,7 @@ const FEED_POSTS = [
   { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: `Under the lights at the GVL — ${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Friday night on the guide is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL Friday Night Footy'}. Catch us on 98.5 FM 🔴 #GVL #LocalFooty` },
   { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM' },
   { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: `Live and local — ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide keeping every corner of the Goulburn Valley connected. #OneFM985 #Community` },
-  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️' },
+  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM at fm985.com.au 🎙️' },
 ]
 
 // Cadence reminders, not a fixture list. Sport labels match programGuide.ts.
@@ -219,9 +219,9 @@ const GridPattern = memo(function GridPattern() {
 /* ─── Section 1: Hero ─── */
 function HeroSection() {
   const stats = [
-    { value: '18', label: 'Templates' },
-    { value: '120+', label: 'Images' },
-    { value: '4', label: 'Platforms' },
+    { value: String(TEMPLATES.length), label: 'Templates' },
+    { value: String(LIVE_PROFILE_LABELS.length), label: 'Confirmed profiles' },
+    { value: '98.5', label: 'FM' },
   ]
 
   const heroRef = useRef<HTMLElement>(null)
@@ -289,7 +289,7 @@ function HeroSection() {
             transition={{ delay: 0.65, duration: 0.5, ease: easeOutExpo }}
             className="font-body text-one-white/70 max-w-[500px] mb-10"
           >
-            Brand assets, content templates, and campaign tools. Everything you need to amplify ONE FM across every platform.
+            Brand assets, content templates, and campaign tools for the confirmed Facebook page and SoundCloud interviews.
           </motion.p>
 
           <motion.div
@@ -330,9 +330,9 @@ function HeroSection() {
         <Marquee
           speed={28}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK · INSTAGRAM · X · SOUNDCLOUD</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24 CONTENT TEMPLATES</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">120+ BRAND IMAGES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{LIVE_PROFILE_LABELS.map((n) => n.toUpperCase()).join(' · ')}</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{TEMPLATES.length} CONTENT TEMPLATES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">STATION ARCHIVE PHOTOS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">CAPTION TEMPLATES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CAMPAIGN CALENDAR TOOLS</span>,
@@ -612,7 +612,7 @@ function TemplatesSection() {
           />
           <div aria-hidden className="explore-tile-scan" />
           <div className="absolute inset-0 bg-one-navy/60 flex flex-col justify-end p-6 md:p-8">
-            <h3 className="font-h3 text-one-white mb-3">Event Promo — Instagram Post</h3>
+            <h3 className="font-h3 text-one-white mb-3">Event Promo — Canva square</h3>
             <div className="flex flex-wrap gap-2 mb-4">
               {['1080×1080', 'PSD + Canva', 'Event'].map((tag) => (
                 <span key={tag} className="px-3 py-1 rounded-full border border-one-border font-label text-muted text-[10px]">
@@ -975,7 +975,7 @@ function PostingToolkit() {
 const CAPTION_TEMPLATES: Record<string, string[]> = {
   Facebook: [
     `${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays — news, music, and community from your local station. 🎙️`,
-    `Catch ${GVL_MATCH?.name ?? 'GVL Match of the Day'} ${GVL_WHEN} on ONE FM 98.5, or stream anywhere at fm985.com.au. Friday night is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL'}. 🎉`,
+    `Catch ${GVL_MATCH?.name ?? 'GVL Match of the Day'} ${GVL_WHEN} on ONE FM 98.5, or stream at fm985.com.au. Friday night is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL'}. 🎉`,
   ],
   SoundCloud: [
     'Catch the latest interviews and replays on the ONE FM SoundCloud. Search the station from the Listen page.',
@@ -1098,7 +1098,7 @@ function CaptionGenerator() {
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="font-label text-[10px] text-data-teal">
-                  Character count: {result.length} / 2200
+                  Character count: {result.length}
                 </div>
                 <div className="flex gap-2">
                   <button onClick={copyResult} data-cursor-label={copied ? 'COPIED' : 'COPY'} className="btn-secondary text-xs">
