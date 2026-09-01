@@ -3,13 +3,11 @@ import { BOARD_2024, LIFE_MEMBERS } from '@/data/stationHistory'
 import { BREAKFAST_ROSTER } from '@/data/programGuide'
 
 /** Weekday breakfast hosts from programGuide.ts — not historical or board labels. */
-const CURRENT_BREAKFAST_HOSTS = new Set(
+const CURRENT_BREAKFAST_HOSTS: ReadonlySet<string> = new Set(
   BREAKFAST_ROSTER.flatMap((slot) => {
     const host = slot.host
-    const names = [host]
     const aka = host.match(/^(.+?)\s*\((.+)\)$/)
-    if (aka) names.push(aka[1].trim(), aka[2].trim())
-    return names
+    return aka ? [host, aka[1].trim(), aka[2].trim()] : [host]
   }),
 )
 
