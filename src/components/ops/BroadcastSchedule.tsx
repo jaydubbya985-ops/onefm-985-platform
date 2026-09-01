@@ -65,7 +65,6 @@ import {
   DAY_NAMES_SHORT,
   PROGRAMME_CATEGORY_META,
   PROGRAMME_GUIDE,
-  SATURDAY_SPORTS_LINEUP,
   SEED_CAMPAIGNS,
   SEED_SPONSORS,
   buildSeedSpots,
@@ -77,6 +76,7 @@ import {
   type ScheduleSponsor,
   type SpotStatus,
 } from './data/schedule'
+import { FULL_SCHEDULE } from '@/data/programGuide'
 import { opsInitial, opsStorageKey } from '@/lib/opsMode'
 
 // ----------------------------- shared helpers ------------------------------
@@ -138,6 +138,16 @@ function mondayIndex(date: Date): number {
 function makeId(prefix: string): string {
   return `${prefix}_${Math.random().toString(36).slice(2, 9)}`
 }
+
+function formatGuideClock(h: number): string {
+  if (h === 0 || h === 24) return '12:00am'
+  if (h === 12) return '12:00pm'
+  if (h < 12) return `${h}:00am`
+  return `${h - 12}:00pm`
+}
+
+/** Saturday rows from FULL_SCHEDULE — not the scraped Super Saturday name list. */
+const SATURDAY_GUIDE_SLOTS = FULL_SCHEDULE.filter((s) => s.day === 6 && s.name !== 'Overnight Mix')
 
 /** localStorage-backed state, matching the deployed build's persistence keys. */
 function usePersistentState<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
@@ -1969,14 +1979,19 @@ function ProgrammeGuide({ spots }: { spots: AdSpot[] }) {
             <CardHeader className="pb-2">
               <CardTitle className="text-one-gold text-sm flex items-center gap-2">
                 <Music className="w-4 h-4" />
-                Super Saturday Lineup
+                Saturday on the weekly guide
               </CardTitle>
+              <p className="text-one-white/40 text-[11px] font-label uppercase tracking-wider mt-1">
+                Source: fm985.com.au/guide
+              </p>
             </CardHeader>
             <CardContent className="p-4 pt-0 space-y-2">
-              {SATURDAY_SPORTS_LINEUP.map((show) => (
-                <div key={show.name} className="rounded-lg bg-[#101010] border border-[#2A2A2A]/40 p-2.5">
-                  <p className="text-one-white text-xs font-semibold">{show.name}</p>
-                  <p className="text-one-white/40 text-[11px] mt-0.5">{show.description}</p>
+              {SATURDAY_GUIDE_SLOTS.map((slot) => (
+                <div key={`${slot.name}-${slot.startHour}`} className="rounded-lg bg-[#101010] border border-[#2A2A2A]/40 p-2.5">
+                  <p className="text-one-white text-xs font-semibold">{slot.name}</p>
+                  <p className="text-one-white/40 text-[11px] mt-0.5">
+                    {formatGuideClock(slot.startHour)} – {formatGuideClock(slot.endHour)} · {slot.host}
+                  </p>
                 </div>
               ))}
             </CardContent>
