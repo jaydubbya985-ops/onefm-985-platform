@@ -1,12 +1,7 @@
 /**
- * Cinegraph asset registry — drop MP4 loops into /public/assets/cinegraphs/
- *
- * Export from Pica / Pixart as:
- *   - MP4 (H.264), no audio, 3–8s seamless loop
- *   - 1920×1080 (16:9), target < 3 MB for mobile
- *   - Subtle motion only (clouds, lights, crowd ripple — not full scene change)
- *
- * When a file is ready: set `videoActive: true` on that slot (or we auto-fallback to poster).
+ * Cinegraph asset registry — station stills from /public/assets/images/.
+ * No invented Pica/Pixart clips. videoActive stays false until a real
+ * station MP4 exists in /public/assets/cinegraphs/.
  */
 
 import { STATION_PHOTOS, PHOTO_DEFAULTS, HOST_PHOTOS } from '@/lib/stationPhotos'
@@ -20,9 +15,9 @@ export interface CinegraphSlot {
   poster: string
   /** Secondary still if poster fails */
   fallback: string
-  /** Set true once you've dropped the MP4 into public/ */
+  /** Set true only when a real station MP4 exists in public/ */
   videoActive: boolean
-  /** Brief for Jason — what to generate in Pica/Pixart */
+  /** Station-archive note — stills only, not a generated clip */
   brief: string
 }
 
@@ -32,35 +27,35 @@ export const CINEGRAPHS = {
     poster: STATION_PHOTOS.geoLakeAerial,
     fallback: STATION_PHOTOS.geoTownAerial,
     videoActive: false,
-    brief: 'Goulburn Valley lake aerial — slow cloud drift, golden hour, very subtle. ONE FM navy grade at edges.',
+    brief: 'Goulburn Valley lake aerial — station archive still. No invented cinegraph clip.',
   },
   listenStudio: {
     video: `${CG}/listen-studio.mp4`,
     poster: HOST_PHOTOS.studioControlRoom,
     fallback: STATION_PHOTOS.commentaryBoxAction,
     videoActive: false,
-    brief: 'Commentary box or studio mic — soft LED blink, shallow depth. No faces if unclear rights.',
+    brief: 'Studio control room and commentary box — station archive stills. No invented cinegraph clip.',
   },
   programsOnAir: {
     video: `${CG}/programs-on-air.mp4`,
     poster: STATION_PHOTOS.communityOutdoorMarket,
     fallback: STATION_PHOTOS.eventFoodTrucks,
     videoActive: false,
-    brief: 'Community event / market bustle — gentle crowd movement, warm tones.',
+    brief: 'Community book stall and food trucks — station archive stills. No invented cinegraph clip.',
   },
   gvlGameDay: {
     video: `${CG}/gvl-game-day.mp4`,
-    poster: STATION_PHOTOS.commentaryBoxWide,
-    fallback: STATION_PHOTOS.gvlNightPanorama,
+    poster: STATION_PHOTOS.matchDayFlag,
+    fallback: STATION_PHOTOS.gvlSpectacularMark,
     videoActive: false,
-    brief: 'GVL night panorama — stadium lights flicker, crowd subtle sway.',
+    brief: 'ONE FM match-day flag and GVL mark — station archive stills. No invented cinegraph clip.',
   },
   sponsorValley: {
     video: `${CG}/sponsor-valley.mp4`,
     poster: PHOTO_DEFAULTS.regional,
     fallback: STATION_PHOTOS.geoPinkOrchard,
     videoActive: false,
-    brief: 'Canola fields or orchard — wind through crop, premium sponsor mood.',
+    brief: 'Valley hills and pink orchard — station archive stills. No invented cinegraph clip.',
   },
 } as const satisfies Record<string, CinegraphSlot>
 
