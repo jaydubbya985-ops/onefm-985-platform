@@ -55,7 +55,7 @@ import { Link } from 'react-router-dom'
 import { WeatherWidget } from '@/components/WeatherWidget'
 import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
 import { MagneticButton } from '@/components/MagneticButton'
-import { towns, broadcastArea, type Town, type SizeCategory } from '@/data/townData'
+import { towns, type Town, type SizeCategory } from '@/data/townData'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { coveragePins, coveragePinCounts, type CoveragePin } from '@/data/coverageMapPins'
 import {
@@ -78,6 +78,7 @@ import {
   formatTowns,
   formatWeeklyListeners,
   formatWeeklyListenersPlain,
+  townCountValue,
 } from '@/lib/coverageCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 
@@ -643,7 +644,7 @@ export default function CoverageMap() {
                 {[
                   { icon: Users, label: 'Population', value: formatBroadcastPopulation() },
                   { icon: Radio, label: 'Listeners/wk', value: formatWeeklyListenersPlain() },
-                  { icon: MapPin, label: 'Communities', value: String(broadcastArea.totalTowns) },
+                  { icon: MapPin, label: 'Communities', value: townCountValue() },
                   { icon: Signal, label: 'Radius', value: formatRadius() },
                 ].map(({ icon: Icon, label, value }) => (
                   <div
@@ -746,7 +747,7 @@ export default function CoverageMap() {
               className="flex shrink-0 items-center gap-1.5 rounded-md border border-one-border px-3 py-1.5 text-xs font-medium text-one-white transition-colors hover:border-one-gold/50 md:hidden"
             >
               <MapPin size={14} className="text-one-gold" />
-              {mobileListOpen ? 'Hide list' : `${broadcastArea.totalTowns} towns`}
+              {mobileListOpen ? 'Hide list' : formatTowns()}
             </button>
 
             <div className="hidden items-center gap-3 text-[11px] font-label md:flex">
@@ -973,7 +974,7 @@ export default function CoverageMap() {
                     onClick={() => setMobileListOpen(true)}
                     className="mt-4 rounded-md bg-one-gold px-4 py-2 text-xs font-medium text-one-navy md:hidden"
                   >
-                    Browse {broadcastArea.totalTowns} towns
+                    Browse {formatTowns()}
                   </button>
                 </div>
               </div>
