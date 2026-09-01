@@ -60,7 +60,7 @@ export const HOME_JOBS = [
   {
     label: 'Listen Live',
     path: '/listen',
-    description: '98.5 FM · live stream on this site',
+    description: 'Stream ONE FM on FM, web, or app',
     accent: '#E51636',
     image: STATION_PHOTOS.commentaryBoxAction,
     tags: ['Live', '98.5 FM', 'Stream'],
