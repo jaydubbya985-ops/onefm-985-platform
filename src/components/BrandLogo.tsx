@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { logoCandidates, BRAND, type LogoVariant } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+
+const DEFAULT_ALT = `${BRAND.fullName} — ${BRAND.tagline} · ${formatCoverageShort()}`
 
 interface BrandLogoProps {
   variant?: LogoVariant
@@ -14,7 +17,7 @@ interface BrandLogoProps {
 export function BrandLogo({
   variant = 'primary',
   className = 'h-10 w-auto object-contain',
-  alt = `${BRAND.fullName} — ${BRAND.tagline}`,
+  alt = DEFAULT_ALT,
   style,
 }: BrandLogoProps) {
   const candidates = logoCandidates(variant)
@@ -26,6 +29,7 @@ export function BrandLogo({
     <img
       src={src}
       alt={alt}
+      title={alt}
       className={`brand-logo ${className}`}
       style={style}
       decoding="async"
