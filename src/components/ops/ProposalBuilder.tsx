@@ -52,6 +52,10 @@ import {
   proposalEmailSubject,
   type ProposalDocData,
 } from '@/lib/proposalDocument'
+import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const PROPOSAL_STATUS_STYLES: Record<ProposalStatus, string> = {
   draft: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
@@ -305,14 +309,39 @@ export default function ProposalBuilder() {
   }
 
   return (
-    <div className="space-y-6">
+    <div>
+      <div className="relative overflow-hidden border-b border-one-border rounded-xl mb-6">
+        {/* Unused Goulburn Valley silo-art still — station archive, not a presenter portrait. */}
+        <img
+          src={STATION_PHOTOS.cultureSiloArtBirds}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-5 pt-5 pb-4">
+          <p className="font-label text-[10px] tracking-[0.22em] uppercase text-white/40">
+            Station archive · Goulburn Valley silo art
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            Coverage: {formatCoverageShort()} (ABS 2021 via townData). {STANDARD_SPOT_PLUS_GST}.{' '}
+            {GVL_PREMIUM_BADGE} — never sold as the $25 floor. Invoice payments: NAB BSB {BANK_BSB} ·{' '}
+            {BANK_ACCOUNT_NAME}. Mailto opens a draft — it does not mark the proposal sent.
+          </p>
+        </div>
+      </div>
+      <div className="space-y-6">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
           <FileText className="w-6 h-6 text-one-gold" />
           <div>
             <h2 className="text-xl font-bold text-one-white">Proposal Builder</h2>
             <p className="text-sm text-one-muted">
-              Pick a package, save a draft, download a PDF you can send tonight.
+              Pick a package, save a draft, download a PDF. Opening mail does not mark the proposal sent.
             </p>
           </div>
         </div>
@@ -708,6 +737,7 @@ export default function ProposalBuilder() {
           <ProposalPreviewSheet data={draft} />
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }
