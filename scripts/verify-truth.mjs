@@ -58,6 +58,7 @@ const FORBIDDEN = [
   { re: /api\.resend\.com\/emails/i, why: 'browser code must send email through Netlify functions, not Resend directly' },
   { re: /VITE_PLAYHQ_API_KEY/i, why: 'PlayHQ API keys must stay server-side, not in Vite/browser variables' },
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
+  { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
 ]
 
 function walk(dir) {

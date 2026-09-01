@@ -152,7 +152,9 @@ export const PROGRAMME_GUIDE: ProgrammeEntry[] = [
   { id: 'samoan-wed', day: 3, time: '9:00pm – 10:00pm', show: 'Samoan Program', presenter: 'MK', category: 'multicultural', dayparts: ['LN'] },
   { id: 'filipino-wed', day: 3, time: '10:00pm – 11:00pm', show: 'Filipino Music Program', presenter: 'Edith', category: 'multicultural', dayparts: ['LN'] },
   { id: 'planet-thu', day: 4, time: '11:00pm – 12:00am', show: 'Planet of Sound', presenter: 'Carlos Rock', category: 'music', dayparts: ['LN'] },
-  { id: 'country-fri', day: 5, time: '8:00pm – 9:00pm', show: 'Good Evening Country', presenter: 'Timmy Ahmet', category: 'country', dayparts: ['LN'] },
+  // Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — not Friday (NIRS occupies Fri 7–10pm).
+  { id: 'country-mon', day: 1, time: '8:00pm – 9:00pm', show: 'Good Evening Country', presenter: 'Timmy Ahmet', category: 'country', dayparts: ['LN'] },
+  { id: 'nirs-fri', day: 5, time: '7:00pm – 10:00pm', show: 'NIRS AFL Friday Night Footy', presenter: 'ONE FM', category: 'sport', dayparts: ['LN'] },
   // Planet of Sound is Thursday only in FULL_SCHEDULE (fm985.com.au/guide). Do not invent Friday.
   // Saturday sport block
   { id: 'super-saturday', day: 6, time: 'Saturday daytime', show: 'Super Saturday Sports Show', presenter: 'Craig Stott & John Painter', category: 'sport', dayparts: ['M', 'L', 'D'] },
