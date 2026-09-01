@@ -1,4 +1,4 @@
-// DEMO DATA — campaign/spot seeds are synthetic. Breakfast hosts must match programGuide.ts.
+// DEMO DATA — campaign/spot seeds are synthetic. Breakfast hosts come from BREAKFAST_ROSTER.
 // ---------------------------------------------------------------------------
 // Broadcast schedule data — dayparts, programme guide, campaigns & ad spots
 //
@@ -6,10 +6,18 @@
 // bundle (deployed-reference/assets/OpsPortal-dIeH6Okr.js, BroadcastSchedule
 // region). The programme guide is cross-referenced between the bundle and
 // src/data/oneFmScrapedData.json (the station's real published grid).
+// Weekday breakfast presenters are NOT hardcoded — they resolve from
+// src/data/programGuide.ts BREAKFAST_ROSTER / getBreakfastScheduleLabel().
 // Campaign/spot seeds exist because the deployed build initialised its
 // localStorage stores empty — these provide the populated state the deployed
 // UI was designed around, aligned with the sponsor records in data/sponsors.ts.
 // ---------------------------------------------------------------------------
+
+import {
+  BREAKFAST_ROSTER,
+  BREAKFAST_TIME,
+  getBreakfastScheduleLabel,
+} from '@/data/programGuide'
 
 export type DaypartCode = 'EM' | 'B' | 'M' | 'L' | 'D' | 'LN'
 
@@ -95,6 +103,28 @@ function weekdayStrip(
   }))
 }
 
+/** Same weekday line as the public site — do not hardcode hosts here. */
+export const OPS_BREAKFAST_HOST_LINE = getBreakfastScheduleLabel()
+
+/** Weekday breakfast rows from BREAKFAST_ROSTER (Mon–Fri). */
+function weekdayBreakfastGuide(): ProgrammeEntry[] {
+  return BREAKFAST_ROSTER.flatMap((slot) => {
+    const day = DAY_NAMES_FULL.indexOf(slot.day as (typeof DAY_NAMES_FULL)[number])
+    if (day < 1 || day > 5) return []
+    return [
+      {
+        id: `breaky-${day}`,
+        day,
+        time: BREAKFAST_TIME,
+        show: 'ONE FM Breakfast',
+        presenter: slot.host,
+        category: 'breakfast' as const,
+        dayparts: ['EM', 'B'] as DaypartCode[],
+      },
+    ]
+  })
+}
+
 /**
  * Real ONE FM 98.5 programme grid, cross-referenced between the deployed
  * bundle and oneFmScrapedData.json. Note: the scraped presenter roster lists
@@ -112,12 +142,8 @@ export const PROGRAMME_GUIDE: ProgrammeEntry[] = [
     category: 'automation',
     dayparts: ['EM'],
   })),
-  // Weekday breakfast — source: src/data/programGuide.ts BREAKFAST_ROSTER
-  { id: 'breaky-1', day: 1, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Tim Ahemt', category: 'breakfast', dayparts: ['EM', 'B'] },
-  { id: 'breaky-2', day: 2, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Tim Ahemt', category: 'breakfast', dayparts: ['EM', 'B'] },
-  { id: 'breaky-3', day: 3, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'The Big G (Craig Stott)', category: 'breakfast', dayparts: ['EM', 'B'] },
-  { id: 'breaky-4', day: 4, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Ralph Whitehead', category: 'breakfast', dayparts: ['EM', 'B'] },
-  { id: 'breaky-5', day: 5, time: '6:00am – 9:00am', show: 'ONE FM Breakfast', presenter: 'Josh Revens', category: 'breakfast', dayparts: ['EM', 'B'] },
+  // Weekday breakfast — BREAKFAST_ROSTER / getBreakfastScheduleLabel()
+  ...weekdayBreakfastGuide(),
   ...weekdayStrip('decades', '9:00am – 12:00pm', 'Dancing through the decades', 'Johnny P', 'music', ['B', 'M']),
   ...weekdayStrip('regional-voice', '12:00pm – 3:00pm', 'The Regional Voice', 'James Manley', 'community', ['M', 'L']),
   // Specialty evening programmes
