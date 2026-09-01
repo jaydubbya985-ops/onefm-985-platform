@@ -485,7 +485,9 @@ export default function Football() {
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL FOOTBALL LEAGUE COVERAGE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">SPORT ON THE WEEKLY GUIDE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">
+              {`${GVL_MATCH_SLOT.name} · ${GVL_MATCH_SLOT.days} ${GVL_MATCH_SLOT.time}`.toUpperCase()}
+            </span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{townCountValue()} COMMUNITIES · GOULBURN VALLEY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL MATCH-DAY · PREMIUM INVENTORY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ROUND-BY-ROUND BROADCAST</span>,
@@ -504,8 +506,8 @@ export default function Football() {
             </span>
             <h2 className="font-h3 text-one-white mb-2">Sport on the weekly guide</h2>
             <p className="font-body-small text-muted max-w-[640px]">
-              Show names and times from the station guide — GVL Match of the Day is Saturday afternoon,
-              not the only sports broadcast.
+              Show names and times from the station guide — {GVL_MATCH_SLOT.name} is{' '}
+              {GVL_MATCH_SLOT.days} {GVL_MATCH_SLOT.time}, not the only sports broadcast.
             </p>
           </ScrollReveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -253,6 +253,17 @@ if (!viteConfig.includes('inject-coverage-og') || !viteConfig.includes('stationS
   hits.push('vite.config.ts: must inject OG description from stationStats')
 }
 
+const football = files.find((f) => f.label === 'pages/Football.tsx')
+if (
+  !football ||
+  /GVL Match of the Day is Saturday afternoon/.test(football.text) ||
+  !football.text.includes('GVL_MATCH_SLOT.name')
+) {
+  hits.push(
+    'pages/Football.tsx: GVL Match of the Day hours must come from GVL_MATCH_SLOT / FULL_SCHEDULE, not “Saturday afternoon”',
+  )
+}
+
 const sponsorPages = [
   'pages/SponsorshipKit.tsx',
   'pages/SalesProposal.tsx',
