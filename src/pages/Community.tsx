@@ -12,6 +12,7 @@ import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import {
   MULTICULTURAL_PROGRAMS,
@@ -32,6 +33,7 @@ function multiculturalWhen(slot: ScheduleSlot): string {
   return `${WEEKDAY[slot.day]} ${guideHour(slot.startHour)}–${guideHour(slot.endHour)}`
 }
 
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
 const RED = '#E51636'
 
 /** Town wall photos — real station/valley imagery (not per-town photos yet). */
@@ -99,7 +101,7 @@ export default function Community() {
         <OnAirTicker
           items={[
             `● ${formatTowns()} across the Goulburn Valley`,
-            'GVL footy called live every season',
+            `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`,
             `Multicultural programming — ${MULTICULTURAL_PROGRAM_COUNT} programs on the weekly guide`,
             'Community radio since 1989',
           ]}
@@ -111,7 +113,7 @@ export default function Community() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football under lights — called live on ONE FM 98.5"
-          badge="GVL Footy · Called Live on 98.5"
+          badge={`GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`}
         />
 
         <NameWall label={`The Towns We Serve${showAllTowns ? '' : ' · Top 6'}`} rows={wallTowns} />
