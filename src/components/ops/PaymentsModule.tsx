@@ -110,6 +110,7 @@ import {
 import { opsInitial, opsStorageKey } from '@/lib/opsMode'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB, bankPayLine } from '@/lib/bankDetails'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { useOpsStore, type OpsInvoice } from './store'
 
 // ---------------------------------------------------------------------------
@@ -307,7 +308,6 @@ function PaymentsTab() {
   const [notes, setNotes] = useState('')
   const [copied, setCopied] = useState(false)
   const [stripeTestMode, setStripeTestMode] = useState(true)
-  const [paypalConnected, setPaypalConnected] = useState(false)
   const [paypalTestMode, setPaypalTestMode] = useState(true)
 
   const totalPaid = useMemo(
@@ -673,16 +673,11 @@ function PaymentsTab() {
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     onClick={() =>
-                      toast(
-                        STRIPE_KEY_CONFIGURED
-                          ? 'Stripe Checkout is not wired for invoices yet — use BSB 083-894'
-                          : 'Add VITE_STRIPE_PUBLISHABLE_KEY to enable Stripe checkout',
-                        STRIPE_KEY_CONFIGURED ? 'info' : 'error',
-                      )
+                      toast('Card checkout is not wired — pay NAB BSB 083-894', 'info')
                     }
                     className="bg-[#635BFF] hover:bg-[#7A73FF] text-white font-semibold"
                   >
-                    <CreditCard className="h-4 w-4 mr-1.5" /> Pay with Stripe
+                    <CreditCard className="h-4 w-4 mr-1.5" /> Card checkout not wired
                   </Button>
                   <Button
                     onClick={() =>
@@ -690,7 +685,7 @@ function PaymentsTab() {
                     }
                     className="bg-[#0070BA] hover:bg-[#0085E0] text-white font-semibold"
                   >
-                    <Wallet className="h-4 w-4 mr-1.5" /> Pay with PayPal
+                    <Wallet className="h-4 w-4 mr-1.5" /> PayPal not configured
                   </Button>
                 </div>
               </>
@@ -875,18 +870,16 @@ function PaymentsTab() {
               </div>
               {!STRIPE_KEY_CONFIGURED && (
                 <p className="text-[11px] text-amber-400/80 leading-relaxed">
-                  No publishable key found. Set{' '}
-                  <code className="font-mono">VITE_STRIPE_PUBLISHABLE_KEY</code> in your
-                  environment to enable live Stripe checkout.
+                  No publishable key found. Invoice card checkout is not wired — collect
+                  NAB BSB 083-894. A Stripe key alone does not enable donations or invoice
+                  pay links.
                 </p>
               )}
               <Button
                 onClick={() => {
                   toast(
-                    STRIPE_KEY_CONFIGURED
-                      ? 'Stripe Checkout is not wired for invoices — use BSB 083-894'
-                      : 'Add VITE_STRIPE_PUBLISHABLE_KEY to your environment first',
-                    STRIPE_KEY_CONFIGURED ? 'info' : 'error',
+                    'Invoice card checkout is not wired — use NAB BSB 083-894',
+                    'info',
                   )
                 }}
                 variant="outline"
@@ -908,14 +901,8 @@ function PaymentsTab() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div
-                    className={`h-2.5 w-2.5 rounded-full ${
-                      paypalConnected ? 'bg-emerald-500' : 'bg-red-500'
-                    }`}
-                  />
-                  <span className="text-sm text-[#F4F1EA]">
-                    {paypalConnected ? 'Connected' : 'Disconnected'}
-                  </span>
+                  <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
+                  <span className="text-sm text-[#F4F1EA]">Not configured</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-slate-400">Test Mode</span>
@@ -928,20 +915,12 @@ function PaymentsTab() {
               </div>
               <Button
                 onClick={() => {
-                  if (isSupabaseConfigured()) {
-                    toast('PayPal is not configured — use BSB 083-894', 'error')
-                    return
-                  }
-                  setPaypalConnected((c) => !c)
+                  toast('PayPal is not configured — use BSB 083-894', 'info')
                 }}
                 variant="outline"
-                className={`w-full text-xs font-semibold ${
-                  paypalConnected
-                    ? 'border-red-800 text-red-400 hover:bg-red-950/30'
-                    : 'border-[#0070BA] text-[#0070BA] hover:bg-[#0070BA]/10'
-                }`}
+                className="w-full text-xs font-semibold border-[#0070BA] text-[#0070BA] hover:bg-[#0070BA]/10"
               >
-                {paypalConnected ? 'Disconnect PayPal' : 'Connect PayPal Account'}
+                PayPal is not configured
               </Button>
             </CardContent>
           </Card>
@@ -1381,7 +1360,7 @@ function DonationsTab() {
         <DialogContent className="bg-[#101010] border border-slate-800 text-[#F4F1EA] max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#D4A853] text-lg flex items-center gap-2">
-              <FileText className="h-5 w-5" /> Tax Receipt
+              <FileText className="h-5 w-5" /> Donation record
             </DialogTitle>
           </DialogHeader>
           {receiptDonation && (
@@ -1395,7 +1374,7 @@ function DonationsTab() {
                     ONE FM 98.5
                   </h2>
                   <p className="text-xs text-slate-400 mt-1">
-                    Official Tax Donation Receipt
+                    Donation record — DGR pending
                   </p>
                 </div>
                 <div className="flex justify-between items-start">
@@ -2680,16 +2659,24 @@ export default function PaymentsModule() {
       className="w-full space-y-6"
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2
-            className="text-2xl font-bold tracking-tight"
-            style={{ color: ACCENT.gold, fontFamily: 'var(--font-heading)' }}
-          >
-            Payments &amp; Donations
-          </h2>
-          <p className="text-sm text-slate-400 mt-1">
-            Manage invoice payments, tax-deductible donations, and community memberships
-          </p>
+        <div className="flex items-start gap-3">
+          <img
+            src={STATION_PHOTOS.studioChristmasBroadcast}
+            alt="ONE FM studio Christmas broadcast — station archive"
+            className="h-14 w-14 rounded-lg object-cover border border-slate-800 shrink-0"
+          />
+          <div>
+            <h2
+              className="text-2xl font-bold tracking-tight"
+              style={{ color: ACCENT.gold, fontFamily: 'var(--font-heading)' }}
+            >
+              Payments &amp; Donations
+            </h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Invoice payments and recorded donations via NAB. DGR status is data pending —
+              not tax-deductible until confirmed. Card checkout is not wired.
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-[#0F1D2F] border border-slate-800 px-3 py-2">
           <DollarSign className="h-4 w-4 text-[#D4A853]" />
