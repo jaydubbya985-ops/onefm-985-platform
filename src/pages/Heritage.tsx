@@ -21,7 +21,7 @@ import {
   PosterReveal,
   StrokeFill,
 } from '@/components/onair/kit'
-import { stationStats } from '@/data/pricing'
+import { formatTowns } from '@/lib/coverageCopy'
 import {
   ACMA_FACTS,
   EMERGENCY_BROADCAST_NARRATIVE,
@@ -229,7 +229,7 @@ export default function Heritage() {
             { n: '1989', t: 'ACMA licence commenced', red: true },
             { n: ACMA_FACTS.power, t: 'Community FM (3ONE)' },
             { n: String(ARCHIVE_PEOPLE.length), t: 'People in living archive' },
-            { n: String(stationStats.totalTowns), t: 'Towns in station reach model' },
+            { n: formatTowns(), t: 'Towns in station reach model' },
           ]}
         />
 

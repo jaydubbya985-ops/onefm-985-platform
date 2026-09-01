@@ -12,8 +12,8 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
-import { stationStats } from '@/data/pricing'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import {
   Phone,
@@ -617,7 +617,7 @@ function FAQSection() {
     {
       question: 'What area does ONE FM cover?',
       answer:
-        `ONE FM broadcasts to ${stationStats.totalTowns} towns across the Goulburn Valley and surrounding regions. ${stationStats.broadcastPopulation.toLocaleString()} people live in the broadcast area (townData 2026 est.) within a ${stationStats.broadcastRadiusKm}km radius of Shepparton.`,
+        `ONE FM broadcasts to ${formatTowns()} across the Goulburn Valley and surrounding regions. ${formatBroadcastPopulation()} people live in the broadcast area (townData 2026 est.) within a ${formatRadius()} radius of Shepparton.`,
     },
     {
       question: 'How do I submit community news?',

@@ -4,6 +4,13 @@ import { SEO } from '@/components/SEO'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { WordReveal } from '@/components/WordReveal'
 import { stationStats } from '@/data/pricing'
+import {
+  formatBroadcastPopulation,
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  townsCount,
+} from '@/lib/coverageCopy'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { Marquee } from '@/components/Marquee'
@@ -147,7 +154,7 @@ const pillars = [
   },
   {
     title: "Community Partnership",
-    desc: `GVL sports coverage, community notices and emergency broadcasting for the ${stationStats.totalTowns} towns inside the ${stationStats.broadcastRadiusKm}km broadcast area.`,
+    desc: `GVL sports coverage, community notices and emergency broadcasting for ${formatTowns()} inside the ${formatRadius()} broadcast area.`,
     icon: Heart,
   },
 ]
@@ -258,8 +265,8 @@ export default function Story() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">SHEPPARTON · GOULBURN VALLEY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD · STORM · FOOTY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE IN THE BROADCAST AREA</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{formatBroadcastPopulation()} PEOPLE IN THE BROADCAST AREA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatCoverageShort().toUpperCase()}</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · NON-PROFIT</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSED · 98.5 FM</span>,
           ]}
@@ -552,7 +559,7 @@ export default function Story() {
                 <p className="font-label text-muted mt-1">Licensed Signal Power</p>
               </div>
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.totalTowns} suffix="" /></p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={townsCount()} suffix="" /></p>
                 <p className="font-label text-muted mt-1">Towns Across the Valley</p>
               </div>
             </div>
