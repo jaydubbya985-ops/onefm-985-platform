@@ -111,6 +111,70 @@ if (
 if (!support || !support.text.includes('formatTowns()')) {
   hits.push('pages/Support.tsx: town count must use formatTowns()')
 }
+if (
+  !support ||
+  !support.text.includes('formatCoverageShort()') ||
+  !support.text.includes('formatWeeklyListenersPlain()')
+) {
+  hits.push('pages/Support.tsx: leftover coverage must use formatCoverageShort and formatWeeklyListenersPlain')
+}
+
+const footer = files.find((f) => f.label === 'components/Footer.tsx')
+if (
+  !footer ||
+  !footer.text.includes('formatCoverageShort()') ||
+  !footer.text.includes('formatWeeklyListeners()')
+) {
+  hits.push('components/Footer.tsx: coverage strip must use coverageCopy')
+}
+
+const seo = files.find((f) => f.label === 'components/SEO.tsx')
+if (!seo || !seo.text.includes('formatSeoDefault()')) {
+  hits.push('components/SEO.tsx: default description must use formatSeoDefault()')
+}
+
+const explore = files.find((f) => f.label === 'components/home/ExploreOneFMGrid.tsx')
+if (!explore || !explore.text.includes('BREAKFAST_SHOW') || !explore.text.includes('formatTowns()')) {
+  hits.push('components/home/ExploreOneFMGrid.tsx: programs tile from BREAKFAST_SHOW; sport/sponsor via formatTowns')
+}
+
+const siteNav = files.find((f) => f.label === 'lib/siteNav.ts')
+if (!siteNav || !siteNav.text.includes('BREAKFAST_SHOW') || !siteNav.text.includes('formatTowns()')) {
+  hits.push('lib/siteNav.ts: Program Guide and Community/Donate must use BREAKFAST_SHOW / formatTowns')
+}
+
+const gallery = files.find((f) => f.label === 'components/HorizontalGallery.tsx')
+if (
+  gallery &&
+  /stationStats\.(totalTowns|weeklyListeners|broadcastPopulation|broadcastRadiusKm)/.test(gallery.text)
+) {
+  hits.push('components/HorizontalGallery.tsx: coverage captions must come from coverageCopy')
+}
+if (
+  !gallery ||
+  !gallery.text.includes('formatTowns()') ||
+  !gallery.text.includes('formatBroadcastPopulation()') ||
+  !gallery.text.includes('formatRadius()')
+) {
+  hits.push('components/HorizontalGallery.tsx: captions must use formatTowns, formatBroadcastPopulation, formatRadius')
+}
+
+const indexHtml = files.find((f) => f.label === 'index.html')
+if (
+  !indexHtml ||
+  !indexHtml.text.includes('__ONEFM_OG_DESCRIPTION__') ||
+  !indexHtml.text.includes('__ONEFM_META_DESCRIPTION__')
+) {
+  hits.push('index.html: OG/meta must use Vite coverage placeholders, not hardcoded 25 / 189,680')
+}
+if (indexHtml && /25 towns/.test(indexHtml.text)) {
+  hits.push('index.html: do not hardcode 25 towns — inject formatOgDescription at build')
+}
+
+const viteConfig = readFileSync(new URL('../vite.config.ts', import.meta.url).pathname, 'utf8')
+if (!viteConfig.includes('inject-coverage-og') || !viteConfig.includes('stationStats')) {
+  hits.push('vite.config.ts: must inject OG description from stationStats')
+}
 
 const sponsorPages = [
   'pages/SponsorshipKit.tsx',
@@ -184,6 +248,13 @@ if (
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
   hits.push('lib/coverageCopy.ts: coverage strings must read stationStats')
+}
+if (
+  !coverageCopy ||
+  !coverageCopy.text.includes('formatOgDescription') ||
+  !coverageCopy.text.includes('formatSeoDefault')
+) {
+  hits.push('lib/coverageCopy.ts: must export formatOgDescription and formatSeoDefault')
 }
 const presenterAssets = files.find((f) => f.label === 'lib/presenterAssets.ts')
 if (

@@ -10,8 +10,9 @@
 
 **CONTINUOUS RUN IS ON.** Do not idle. Do not wait for Jay to start the next agent. Read `.cursor/CONTINUOUS.md`. Arm a 20-minute continue timer. Keep shipping.
 
-## Already true on GitHub `main` (`3ad7f7f`)
+## Already true on GitHub `main` (`62cfdfd`)
 
+- PR **#28** EXE'd. Audience, Heritage, Story, Contact via `coverageCopy.ts`.
 - PR **#27** EXE'd. MediaKit, Football, SponsorshipKit, SalesProposal via `coverageCopy.ts`.
 - PR **#26** EXE'd. Support coverage via `coverageCopy.ts` + truth guards.
 - PR **#25** EXE'd. Invoice Design Lab — 3 variants (broadcast / on-air / valley) at `#/ops` → Invoice Design tab.
@@ -29,23 +30,21 @@
 3. Do not merge without **EXE**. Never merge PR **#13**.
 4. After you open a PR, start the next desk immediately.
 
-## Open now
+## Open now — EXE in order
 
-- PR **#28** `cursor/kit-pages-coverage-c24f` — leftover Audience / Contact / Heritage / Story via `coverageCopy.ts` (kit pages already on main from #27). Rebased onto `3ad7f7f`. Do not merge without **EXE**.
-- PR **#29** `cursor/chrome-coverage-c24f` — footer / nav / SEO via `coverageCopy`. MERGEABLE.
-- PR **#30** `cursor/leftover-breakfast-c24f` — breakfast chrome from `BREAKFAST_ROSTER`. MERGEABLE.
-- Stale drafts: recommend **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13**.
+- PR **#29** `cursor/chrome-coverage-c24f` — footer / nav / SEO via `coverageCopy`.
+- PR **#30–#41** — breakfast chrome, proposal docs, map, ops schedule, football guide, mediakit, community/heritage weeknight, social GVL, home dancing, archive Di. MERGEABLE after #29.
 
 ## Next desks (do not wait)
 
-- Leftover `stationStats` coverage strings → `coverageCopy.ts` on **HorizontalGallery, ai.ts, proposalDocument, contractDocument, OpsProposalSheet**.
-- Public home/listen craft from `programGuide.ts` + `townData.ts` + `/public/brand/` only.
-- Named portraits only if Jay drops new filename-verified files into `NAMED_PORTRAITS`.
+- Leftover `stationStats` on ai.ts, proposalDocument, contractDocument, OpsProposalSheet.
+- Jay picks invoice design: **A** broadcast / **B** on-air / **C** valley — set default before live batch.
+- Stale drafts: recommend **close** #1 #3 #4 #11. **Do not merge** #8 #10 without rebase. **Never merge #13**.
 
 ## NEED JAY (one action)
 
-**EXE #28 then #29 then #30.** Oldest clean coverage PR first.
+Pick invoice design **A / B / C** at `#/ops` → Invoice Design tab (default is broadcast).
 
 ## Do not
 
-- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Restart Resend verification. Email Peter at FOOTT unless Jay asks. Bake `sb_secret_` in the browser bundle. Idle after opening a PR.
+- Force-push. Invent portraits or stats. Market GVL as from $25. Merge #13 as-is. Restart Resend verification. Email Peter at FOOTT unless Jay asks. Bake `sb_secret_` into the browser bundle. Idle after opening a PR.

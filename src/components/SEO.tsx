@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async';
+import { formatSeoDefault } from '@/lib/coverageCopy'
 
 const SITE_URL = 'https://fm985.com.au'
 const DEFAULT_OG_IMAGE = '/assets/images/studio-exterior-rainbow.jpg'
@@ -7,12 +8,17 @@ const DEFAULT_TITLE = 'ONE FM 98.5 — The Voice of the Goulburn Valley'
 
 interface SEOProps {
   title: string;
-  description: string;
+  description?: string;
   ogImage?: string;
   ogType?: string;
 }
 
-export function SEO({ title, description, ogImage = DEFAULT_OG_IMAGE, ogType = 'website' }: SEOProps) {
+export function SEO({
+  title,
+  description = formatSeoDefault(),
+  ogImage = DEFAULT_OG_IMAGE,
+  ogType = 'website',
+}: SEOProps) {
   const fullTitle = `${title} | ONE FM 98.5`
   const canonicalUrl = `${SITE_URL}/${window.location.hash}`
 
