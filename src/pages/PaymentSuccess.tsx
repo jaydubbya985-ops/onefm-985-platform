@@ -41,6 +41,11 @@ export default function PaymentSuccess() {
           <span className="section-label justify-center mb-3 block">
             Volunteer-run · {formatCoverageShort()}
           </span>
+          <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/55 mb-4 leading-relaxed">
+            Weekday breakfast · {BREAKFAST_CHROME}
+            <br />
+            GVL Match of the Day · {GVL_MATCH_HOURS}
+          </p>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -63,13 +68,8 @@ export default function PaymentSuccess() {
             {BRAND.org} is volunteer-run. Invoice and donation payments are matched
             to our NAB account — this page does not send a receipt automatically.
           </p>
-          <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/50 mb-3">
+          <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/50 mb-8">
             {BANK_ACCOUNT_NAME} · NAB BSB {BANK_BSB} · {BANK_ACCOUNT}
-          </p>
-          <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/45 mb-8 leading-relaxed">
-            Weekday breakfast · {BREAKFAST_CHROME}
-            <br />
-            GVL Match of the Day · {GVL_MATCH_HOURS}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
