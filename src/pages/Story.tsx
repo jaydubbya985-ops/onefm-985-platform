@@ -9,9 +9,15 @@ import {
   formatCoverageShort,
   formatRadius,
   formatTowns,
+  formatWeeklyListeners,
   townsCount,
   yearsBroadcastingValue,
 } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import {
+  formatBreakfastChromeLabel,
+  getBreakfastScheduleLabel,
+} from '@/data/programGuide'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { Marquee } from '@/components/Marquee'
@@ -63,6 +69,11 @@ const milestones = HISTORY_MILESTONES.map((m) => ({
   desc: m.body,
   ...MILESTONE_ART[m.year],
 }))
+
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
+const BREAKFAST_HOURS = formatGuideHours('ONE FM Breakfast (Breaky)') ?? 'Mon–Fri 6AM–9AM'
 
 /* ─── Deterministic gradient avatars (same palette as Programs page) ─── */
 const TEAM_PALETTES = [
@@ -125,7 +136,7 @@ const studios = [
     title: "Live from Shepparton",
     desc: "Volunteer presenters host the weekday desk from the station's Shepparton studios, with an automated overnight mix between shifts.",
     icon: Mic,
-    specs: ["Breakfast 6AM–9AM weekdays", "Rotating volunteer roster", "Source: fm985.com.au/guide"],
+    specs: [`Breakfast ${BREAKFAST_HOURS}`, BREAKFAST_ROSTER_LINE, "Source: fm985.com.au/guide"],
   },
   {
     title: "Outside broadcast",
@@ -155,7 +166,7 @@ const pillars = [
   },
   {
     title: "Community Partnership",
-    desc: `GVL sports coverage, community notices and emergency broadcasting for ${formatTowns()} inside the ${formatRadius()} broadcast area.`,
+    desc: `GVL Match of the Day · ${GVL_MATCH_HOURS}. Community notices and emergency broadcasting for ${formatTowns()} inside the ${formatRadius()} broadcast area.`,
     icon: Heart,
   },
 ]
@@ -173,7 +184,10 @@ export default function Story() {
 
   return (
     <Layout>
-      <SEO title="Our Story" description="The story of ONE FM 98.5 — from 1989 to today. Callsign 3ONE, ACMA License 1385226/1. Meet the real presenters behind the mic." />
+      <SEO
+        title="Our Story"
+        description={`The story of ONE FM 98.5 — from 1989 to today. Callsign 3ONE, ACMA License 1385226/1. ${formatWeeklyListeners()} across ${formatCoverageShort()} (ABS 2021 via townData). GVL Match of the Day · ${GVL_MATCH_HOURS}. Weekday breakfast: ${BREAKFAST_ROSTER_LINE}.`}
+      />
       {/* ═══════ Section 1 — Hero ═══════ */}
       <section ref={heroRef} className="relative min-h-[85dvh] flex items-end overflow-hidden bg-[#071D3A]" data-cursor-label="THE STORY">
         <div aria-hidden className="grain-overlay" />
@@ -237,9 +251,21 @@ export default function Story() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.65, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-            className="font-body text-one-white/65 max-w-[520px] mb-10 italic leading-relaxed"
+            className="font-body text-one-white/65 max-w-[520px] mb-5 italic leading-relaxed"
           >
             {yearsBroadcastingValue()} years of keeping the Valley connected — through flood, storm, footy finals and everything in between.
+            {' '}
+            {formatWeeklyListeners()} across {formatCoverageShort()} (ABS 2021 via townData).
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.72, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            className="font-label text-[10px] tracking-[0.16em] text-one-gold/70 uppercase max-w-[560px] mb-10 leading-relaxed"
+          >
+            Weekday breakfast · {BREAKFAST_CHROME}
+            <br />
+            GVL Match of the Day · {GVL_MATCH_HOURS}
           </motion.p>
 
           <motion.div
@@ -268,6 +294,9 @@ export default function Story() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD · STORM · FOOTY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{formatBroadcastPopulation()} PEOPLE IN THE BROADCAST AREA</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatCoverageShort().toUpperCase()}</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{formatWeeklyListeners().toUpperCase()}</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">WEEKDAY BREAKFAST · {BREAKFAST_CHROME.toUpperCase()}</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL MATCH OF THE DAY · {GVL_MATCH_HOURS.toUpperCase()}</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · NON-PROFIT</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSED · 98.5 FM</span>,
           ]}
@@ -387,7 +416,7 @@ export default function Story() {
           <div>
             <WordReveal text="Meet the Voices of the Valley" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white max-w-xl">
-              Our team is a mix of lifelong locals and passionate broadcasters who found their home at ONE FM.
+              Voices from the weekly guide. Weekday breakfast: {BREAKFAST_ROSTER_LINE}. Named portraits stay Di Hunter and Sally Nayler only — cards here use initials, not stock photos.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -565,7 +594,7 @@ export default function Story() {
               </div>
             </div>
             <p className="font-body-small text-muted mb-8">
-              {LIFE_MEMBER_NOTE} Signal power and licence details from the ACMA community licence register.
+              {formatWeeklyListeners()} across {formatCoverageShort()} (ABS 2021 via townData). {LIFE_MEMBER_NOTE} Signal power and licence details from the ACMA community licence register.
             </p>
             <TiltCard maxTilt={4}>
             <div className="glass-card p-6 border-l-4 border-l-one-gold">
