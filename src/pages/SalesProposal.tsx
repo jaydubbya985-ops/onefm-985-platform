@@ -348,7 +348,7 @@ export default function SalesProposal() {
                     </span>
                   </div>
                   <p className="text-[15px] text-white/55 mt-2">
-                    {p.spots} announcements a week · {p.social} social posts a month. Range {p.range}.
+                    {p.spots} announcements a week · {p.social} Facebook posts a month. Range {p.range}.
                     {p.extra ? ` ${p.extra}.` : ''}
                   </p>
                   <span className="inline-flex items-center gap-1.5 mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white">
