@@ -8,16 +8,8 @@ import { NAV_GROUPS, type NavGroup } from '@/lib/siteNav'
 import { useWeatherCycle } from '@/hooks/useWeatherCycle'
 import { gvWeatherTowns } from '@/data/weatherLocations'
 import { formatTempC } from '@/lib/weather'
-import { formatCoverageShort } from '@/lib/coverageCopy'
-import { formatGuideHours } from '@/lib/guideHours'
-import { formatBreakfastChromeLabel } from '@/data/programGuide'
-import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const SHEPPARTON_ONLY = gvWeatherTowns.slice(0, 1)
-const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
-const COVERAGE_SHORT = formatCoverageShort()
-const BREAKFAST_CHROME = formatBreakfastChromeLabel()
-const TRUTH_LINE = `${COVERAGE_SHORT} · GVL Match of the Day · ${GVL_MATCH_HOURS}`
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -363,8 +355,6 @@ export function Navbar() {
           scrolled ? 'glass-nav' : 'bg-transparent'
         }`}
         style={{ height: 72 }}
-        aria-label={`ONE FM 98.5 · ${COVERAGE_SHORT}`}
-        title={`${BREAKFAST_CHROME} · ${TRUTH_LINE}`}
       >
         {/* Scroll progress bar */}
         <div
@@ -425,7 +415,6 @@ export function Navbar() {
               to="/listen"
               className="btn-primary text-xs px-4 py-2.5 whitespace-nowrap inline-flex items-center gap-1.5"
               data-cursor-label="TUNE IN"
-              title={TRUTH_LINE}
             >
               <Headphones size={14} />
               Listen Live
@@ -433,28 +422,12 @@ export function Navbar() {
             <Link to="/proposal" className="btn-secondary text-xs px-4 py-2.5 whitespace-nowrap" data-cursor-label="REQUEST">
               Request Proposal
             </Link>
-            <div
-              className="flex items-center gap-2 pl-2 border-l border-white/15"
-              data-cursor-label="LIVE STATUS"
-              title={`${BREAKFAST_CHROME} · ${TRUTH_LINE}`}
-            >
-              <img
-                src={STATION_PHOTOS.towerMountMajorDay}
-                alt=""
-                aria-hidden
-                width={28}
-                height={28}
-                decoding="async"
-                className="h-7 w-7 rounded object-cover object-center border border-white/15"
-              />
+            <div className="flex items-center gap-2 pl-2 border-l border-white/15" data-cursor-label="LIVE STATUS">
               <span className="relative flex h-2 w-2">
                 <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-one-red" />
               </span>
               <span className="font-label text-one-red text-xs">ON AIR</span>
-              <span className="hidden xl:block font-label text-[9px] tracking-[0.12em] uppercase text-white/40 max-w-[11rem] truncate">
-                {COVERAGE_SHORT}
-              </span>
               <span className="w-px h-3 bg-one-border/60" aria-hidden />
               <BroadcastClock />
               <span className="w-px h-3 bg-one-border/60" aria-hidden />
@@ -523,32 +496,11 @@ export function Navbar() {
               <Link
                 to="/listen"
                 data-cursor-label="LISTEN"
-                className="btn-primary w-full text-center mb-3 inline-flex items-center justify-center gap-2"
-                title={TRUTH_LINE}
+                className="btn-primary w-full text-center mb-6 inline-flex items-center justify-center gap-2"
               >
                 <Headphones size={18} />
                 Listen Live
               </Link>
-              <p className="mb-6 flex items-start gap-2 font-label text-[10px] tracking-[0.12em] uppercase text-white/40 leading-relaxed">
-                <img
-                  src={STATION_PHOTOS.towerMountMajorDay}
-                  alt=""
-                  aria-hidden
-                  width={28}
-                  height={28}
-                  decoding="async"
-                  className="h-7 w-7 rounded object-cover object-center border border-white/15 shrink-0"
-                />
-                <span>
-                  {COVERAGE_SHORT}
-                  <span className="block mt-0.5 text-white/30 normal-case tracking-normal">
-                    {BREAKFAST_CHROME}
-                  </span>
-                  <span className="block mt-0.5 text-white/30">
-                    GVL Match of the Day · {GVL_MATCH_HOURS}
-                  </span>
-                </span>
-              </p>
               <Link
                 to="/"
                 className={`block py-3 font-heading text-xl ${location.pathname === '/' ? 'text-[#E51636]' : 'text-one-white hover:text-white'}`}
