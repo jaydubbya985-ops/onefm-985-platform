@@ -1,8 +1,14 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import { BRAND } from '@/lib/brand'
 import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
+const COVERAGE = formatCoverageShort()
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
+export const CANOLA_ROAD_ALT = `Cyclists on a Goulburn Valley canola road — ${BRAND.fullName} station archive · ${COVERAGE}`
 
 export type SkeletonVariant = 'card' | 'chart' | 'map' | 'table' | 'form' | 'text' | 'list'
 
@@ -109,12 +115,13 @@ function renderVariant(variant: SkeletonVariant) {
 }
 
 /** Unused Goulburn Valley canola-road still — not a presenter portrait. */
-function RouteStill() {
+export function SkeletonRouteStill() {
   return (
     <div className="relative overflow-hidden rounded-xl border border-one-border aspect-[16/7] min-h-[140px]">
       <img
         src={STATION_PHOTOS.geoCyclistsCanola}
-        alt="Cyclists on a Goulburn Valley canola road — station archive"
+        alt={CANOLA_ROAD_ALT}
+        title={CANOLA_ROAD_ALT}
         loading="eager"
         className="absolute inset-0 w-full h-full object-cover object-center"
       />
@@ -124,14 +131,19 @@ function RouteStill() {
       />
       <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
         <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-gold/80">
-          ONE FM 98.5 · loading
+          {BRAND.fullName} · loading
         </p>
         <p className="mt-1 text-one-white text-sm font-medium">
-          {formatCoverageShort()}
+          {COVERAGE}
         </p>
         <p className="text-one-muted text-xs mt-0.5">
           {formatWeeklyListeners()} — ABS 2021 via townData
         </p>
+        {GVL_HOURS && (
+          <p className="font-label text-[10px] tracking-[0.12em] uppercase text-one-white/50 mt-1">
+            GVL Match of the Day · {GVL_HOURS}
+          </p>
+        )}
         <p className="mt-2 flex flex-wrap gap-3 text-[11px]">
           <a
             href={FACEBOOK_PAGE_URL}
@@ -158,7 +170,7 @@ function RouteStill() {
 export function SkeletonLoader({ variant = 'card', count = 1, className }: SkeletonLoaderProps) {
   return (
     <div role="status" aria-label="Loading content" className={cn('space-y-4 p-4 sm:p-6', className)}>
-      <RouteStill />
+      <SkeletonRouteStill />
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} aria-hidden>{renderVariant(variant)}</div>
       ))}
@@ -170,7 +182,7 @@ export function PageSkeleton({ variant = 'card' }: { variant?: SkeletonVariant }
   return (
     <div className="w-full min-h-[50vh] bg-one-navy flex items-center justify-center px-4">
       <div className="max-w-[600px] w-full text-center space-y-6">
-        <RouteStill />
+        <SkeletonRouteStill />
         <div className="pt-2">{renderVariant(variant)}</div>
       </div>
     </div>
