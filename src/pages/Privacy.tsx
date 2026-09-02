@@ -119,7 +119,7 @@ export default function Privacy() {
               communications, please contact us:
             </p>
             <div className="mt-3 glass-card p-5 inline-block">
-              <p className="font-label text-[10px] tracking-[0.2em] text-one-electric/85 mb-2">PRIVACY OFFICER</p>
+              <p className="font-label text-[10px] tracking-[0.2em] text-one-electric/85 mb-2">STUDIO PHONE · ADMIN INBOX</p>
               <p className="font-body-small text-one-white">{BRAND.org}</p>
               <a href={`mailto:${BRAND.email}`} data-cursor-label="EMAIL" className="font-mono text-[11px] text-one-gold link-hover block mt-1">
                 {BRAND.email}
