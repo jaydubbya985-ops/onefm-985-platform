@@ -81,6 +81,12 @@ import {
   townCountValue,
 } from '@/lib/coverageCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { formatBreakfastChromeLabel, getBreakfastScheduleLabel } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
+
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 /* ─────────────────────── helpers ─────────────────────── */
 
@@ -593,7 +599,7 @@ export default function CoverageMap() {
     <Layout>
       <SEO
         title="Coverage Map"
-        description={`Interactive coverage map: ${formatCoverageShort()} — ${formatWeeklyListeners()} in a ${formatBroadcastPopulation()}-person broadcast area (ABS 2021 via townData).`}
+        description={`Interactive coverage map: ${formatCoverageShort()} — ${formatWeeklyListeners()} in a ${formatBroadcastPopulation()}-person broadcast area (ABS 2021 via townData). GVL Match of the Day · ${GVL_MATCH_HOURS}. Breakfast: ${BREAKFAST_ROSTER_LINE}.`}
       />
 
       <div className="flex flex-col min-h-[calc(100dvh-72px)] bg-one-navy">
@@ -623,7 +629,16 @@ export default function CoverageMap() {
                   See where your brand lands — {formatTowns()}, {formatBroadcastPopulation()} people,
                   and {formatWeeklyListeners()} across a {formatRadius()} radius from {BRAND.fullName}.
                   Town markers and listener estimates come from townData (ABS 2021). The glow ring is a visual {formatRadius()} guide — not an ACMA coverage contour and not a live listener count.
+                  GVL Match of the Day is {GVL_MATCH_HOURS}. Weekday breakfast is {BREAKFAST_CHROME}.
                 </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="rounded-md border border-one-gold/30 bg-one-midnight/40 px-3 py-1.5 font-label text-[10px] tracking-[0.14em] uppercase text-one-gold">
+                    GVL Match of the Day · {GVL_MATCH_HOURS}
+                  </span>
+                  <span className="rounded-md border border-one-border bg-one-midnight/40 px-3 py-1.5 font-label text-[10px] text-one-muted">
+                    {BREAKFAST_CHROME}
+                  </span>
+                </div>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
                   <MagneticButton strength={6} cursorLabel="MEDIA KIT">
                     <Link to="/media-kit" className="btn-secondary text-xs">Request media kit</Link>
@@ -700,7 +715,7 @@ export default function CoverageMap() {
                 },
                 {
                   title: 'What you can buy',
-                  body: `${STANDARD_SPOT_PLUS_GST} for valley-wide spots. GVL match-day and live reads sit above that floor and are quoted separately.`,
+                  body: `${STANDARD_SPOT_PLUS_GST} for valley-wide spots. GVL Match of the Day · ${GVL_MATCH_HOURS} and live reads sit above that floor and are quoted separately — never sold from $25.`,
                 },
               ].map((card) => (
                 <div key={card.title} className="rounded-lg border border-one-border/70 bg-one-midnight/40 px-3 py-3">
@@ -715,7 +730,7 @@ export default function CoverageMap() {
                 { src: STATION_PHOTOS.geoTownAerial, alt: 'Goulburn Valley town aerial — station archive' },
                 { src: STATION_PHOTOS.towerMountMajorDay, alt: 'Mt Major transmitter — station archive' },
                 { src: STATION_PHOTOS.heritageObMall1989, alt: 'ONE FM outside broadcast, 1989 mall' },
-                { src: STATION_PHOTOS.gvlNightPanorama, alt: 'GVL ground at night — called on 98.5' },
+                { src: STATION_PHOTOS.gvlNightPanorama, alt: `GVL Match of the Day · ${GVL_MATCH_HOURS} — station archive, not a live crowd count` },
                 { src: STATION_PHOTOS.heritageTruck2005, alt: 'ONE FM broadcast truck, 2005' },
                 { src: STATION_PHOTOS.ecoTractorSunrise, alt: `Valley paddock at sunrise — station archive in the ${formatRadius()} broadcast area` },
               ].map((shot) => (
@@ -777,7 +792,7 @@ export default function CoverageMap() {
                 )}
               >
                 <Trophy size={12} className="text-one-red" />
-                GVL ({coveragePinCounts.football})
+                GVL · {GVL_MATCH_HOURS} ({coveragePinCounts.football})
               </button>
               <button
                 type="button"
@@ -1003,7 +1018,7 @@ export default function CoverageMap() {
               <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-one-muted" /> Village</div>
               <div className="mt-1.5 space-y-0.5 border-t border-one-border/50 pt-1.5">
                 <div className="flex items-center gap-2"><img src="/brand/favicon.svg" alt="" className="h-3 w-3" /> ONE FM studio</div>
-                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-one-red" /> GVL club</div>
+                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-one-red" /> GVL club · {GVL_MATCH_HOURS}</div>
                 <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-one-gold" /> Local sponsor</div>
               </div>
               <div className="mt-1.5 space-y-0.5 border-t border-one-border/50 pt-1.5">
@@ -1133,7 +1148,7 @@ export default function CoverageMap() {
                             {selectedPin.type === 'station'
                               ? 'Broadcast hub'
                               : selectedPin.type === 'football'
-                                ? 'GVL club'
+                                ? `GVL club · ${GVL_MATCH_HOURS}`
                                 : 'Local sponsor'}
                           </Badge>
                           <h3 className="font-heading text-lg text-one-white">{selectedPin.name}</h3>
@@ -1156,6 +1171,11 @@ export default function CoverageMap() {
                         />
                       )}
                       <p className="text-sm leading-relaxed text-one-muted">{selectedPin.blurb}</p>
+                      {selectedPin.type === 'football' && (
+                        <p className="mt-2 font-label text-[10px] tracking-[0.12em] uppercase text-one-gold/80">
+                          GVL Match of the Day · {GVL_MATCH_HOURS}
+                        </p>
+                      )}
                       {selectedPin.link && (
                         <Link
                           to={selectedPin.link}
