@@ -5,6 +5,10 @@ import { WordReveal } from '@/components/WordReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatBreakfastChromeLabel } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 
 interface SponsorCommercialCtaProps {
   headline?: string
@@ -13,6 +17,12 @@ interface SponsorCommercialCtaProps {
 }
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
+
+const COVERAGE = formatCoverageShort()
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+/** Unused valley lookout — not a presenter portrait. Named portraits: Di Hunter, Sally Nayler only. */
+const LOOKOUT_ALT = `Mountain-bike lookout over the Goulburn Valley — ${BRAND.fullName} station archive · ${COVERAGE}`
 
 export function SponsorCommercialCta({
   headline = 'Ready to reach the Goulburn Valley?',
@@ -24,8 +34,7 @@ export function SponsorCommercialCta({
       {/* Unused station archive photo — valley lookout, not a presenter portrait. */}
       <img
         src={STATION_PHOTOS.geoMtbLookout}
-        alt=""
-        aria-hidden
+        alt={LOOKOUT_ALT}
         loading="lazy"
         className="absolute inset-0 w-full h-full object-cover object-center"
       />
@@ -68,6 +77,16 @@ export function SponsorCommercialCta({
             </motion.div>
             <WordReveal text={headline} className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.04} />
             <p className="font-body-small text-muted">{subline}</p>
+            <p className="font-label text-[10px] tracking-[0.12em] uppercase text-one-muted/80 mt-3 max-w-xl leading-relaxed">
+              {formatWeeklyListeners()} across {COVERAGE}
+              <span className="text-one-muted/60"> · ABS 2021 via townData</span>
+              <br />
+              Weekday breakfast · {BREAKFAST_CHROME}
+              <br />
+              GVL Match of the Day · {GVL_MATCH_HOURS}
+              <br />
+              {STANDARD_SPOT_PLUS_GST}. {GVL_PREMIUM_BADGE} — never the $25 floor.
+            </p>
           </motion.div>
 
           <motion.div
