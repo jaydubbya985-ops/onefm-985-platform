@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom'
 import { LabelReveal } from '@/components/onair/kit'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { getBreakfastScheduleLabel } from '@/data/programGuide'
 
 const RED = '#E51636'
+const COVERAGE = formatCoverageShort()
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 const CONTRIBUTION_TYPES = [
   'I was a presenter',
@@ -22,9 +28,15 @@ export function ContributePortal() {
           <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,44px)] text-white leading-[0.95] mb-4">
             Were you part of ONE FM history?
           </h2>
-          <p className="text-[17px] text-white/55 max-w-[600px] mb-8 leading-relaxed">
+          <p className="text-[17px] text-white/55 max-w-[600px] mb-3 leading-relaxed">
             The Living Archive is an active preservation project — not a finished monument. Photos,
-            program guides, clippings and memories help fill the drawers.
+            program guides, clippings and memories help fill the drawers.{' '}
+            {formatWeeklyListeners()} across {COVERAGE} (ABS 2021 via townData).
+          </p>
+          <p className="text-[12px] font-bold tracking-[0.08em] uppercase text-white/40 max-w-[600px] mb-8 leading-relaxed">
+            Breakfast: {BREAKFAST_ROSTER_LINE}
+            {' · '}
+            GVL Match of the Day · {GVL_MATCH_HOURS}
           </p>
 
           <ul className="grid sm:grid-cols-2 gap-3 mb-10 max-w-2xl">
@@ -51,13 +63,13 @@ export function ContributePortal() {
         <figure className="relative overflow-hidden rounded-xl border border-white/12 aspect-[4/3] bg-[#111]">
           <img
             src={STATION_PHOTOS.towerTallMast}
-            alt="ONE FM broadcast mast — station archive"
+            alt={`ONE FM broadcast mast — station archive · ${COVERAGE} (ABS 2021 via townData)`}
             loading="lazy"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-center"
           />
           <figcaption className="absolute inset-x-0 bottom-0 px-4 py-3 text-[11px] tracking-[0.08em] uppercase text-white/70 bg-gradient-to-t from-black/70 to-transparent">
-            Station archive · broadcast mast
+            Station archive · broadcast mast · {COVERAGE} · GVL Match of the Day · {GVL_MATCH_HOURS}
           </figcaption>
         </figure>
       </div>
