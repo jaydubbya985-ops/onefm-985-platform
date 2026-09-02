@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
+export const SCROLL_COVERAGE = formatCoverageShort()
+export const SILO_ARCHIVE_ALT = `Shepparton silo-art mural — ${BRAND.fullName} station archive · ${SCROLL_COVERAGE}`
 
 /**
  * Unused Shepparton silo-art still (287×175 — mark size only, not a hero).
@@ -9,8 +14,8 @@ function SiloArchiveMark() {
   return (
     <img
       src={STATION_PHOTOS.cultureSiloArtFaces}
-      alt=""
-      aria-hidden
+      alt={SILO_ARCHIVE_ALT}
+      title={SILO_ARCHIVE_ALT}
       width={72}
       height={44}
       decoding="async"
@@ -52,7 +57,8 @@ export function ScrollProgress() {
 
   return (
     <div
-      aria-hidden
+      title={SILO_ARCHIVE_ALT}
+      aria-label={`Page scroll · ${SCROLL_COVERAGE}`}
       style={{
         position: 'fixed',
         right: 18,
@@ -98,6 +104,19 @@ export function ScrollProgress() {
         }}
       >
         {Math.round(progress).toString().padStart(2, '0')}%
+      </span>
+      <span
+        style={{
+          fontFamily: 'JetBrains Mono, monospace',
+          fontSize: 7,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.28)',
+          writingMode: 'vertical-rl',
+          userSelect: 'none',
+        }}
+      >
+        {SCROLL_COVERAGE}
       </span>
     </div>
   )
