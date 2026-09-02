@@ -5,15 +5,21 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { BRAND } from '@/lib/brand'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
-import { formatTowns } from '@/lib/coverageCopy'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatBreakfastChromeLabel, getBreakfastScheduleLabel } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 export default function PaymentSuccess() {
   return (
     <Layout>
       <SEO
         title="Thank you"
-        description={`Thank you for supporting ${BRAND.org} — volunteer-run community radio across ${formatTowns()}. Payments are confirmed against our NAB account.`}
+        description={`Thank you for supporting ${BRAND.org} — volunteer-run community radio. ${formatWeeklyListeners()} across ${formatCoverageShort()} (ABS 2021 via townData). GVL Match of the Day · ${GVL_MATCH_HOURS}. Breakfast: ${BREAKFAST_ROSTER_LINE}. Payments are confirmed against our NAB account.`}
       />
       <section className="relative min-h-[70dvh] flex items-center justify-center overflow-hidden bg-[#101010]">
         <img
@@ -32,7 +38,9 @@ export default function PaymentSuccess() {
             <Heart size={32} className="text-one-gold" />
           </div>
 
-          <span className="section-label justify-center mb-3 block">Volunteer-run · Shepparton</span>
+          <span className="section-label justify-center mb-3 block">
+            Volunteer-run · {formatCoverageShort()}
+          </span>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -50,12 +58,18 @@ export default function PaymentSuccess() {
           </motion.div>
           <h1 className="font-hero text-gold-gradient mb-4">THANK YOU</h1>
           <p className="font-body text-one-white/70 mb-6 leading-relaxed">
-            Your support keeps {BRAND.fullName} live and local across {formatTowns()}.{' '}
+            Your support keeps {BRAND.fullName} live and local — {formatWeeklyListeners()}{' '}
+            across {formatCoverageShort()} (ABS 2021 via townData).{' '}
             {BRAND.org} is volunteer-run. Invoice and donation payments are matched
             to our NAB account — this page does not send a receipt automatically.
           </p>
-          <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/50 mb-8">
+          <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/50 mb-3">
             {BANK_ACCOUNT_NAME} · NAB BSB {BANK_BSB} · {BANK_ACCOUNT}
+          </p>
+          <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/45 mb-8 leading-relaxed">
+            Weekday breakfast · {BREAKFAST_CHROME}
+            <br />
+            GVL Match of the Day · {GVL_MATCH_HOURS}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
