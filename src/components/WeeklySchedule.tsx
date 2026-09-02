@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Clock } from 'lucide-react'
 import { FULL_SCHEDULE, type ScheduleSlot } from '@/data/programGuide'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+
+const COVERAGE = formatCoverageShort()
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
 
 const DAY_TABS = [
   { index: 1, label: 'Mon' },
@@ -170,6 +175,9 @@ export function WeeklySchedule() {
         >
           fm985.com.au/guide/
         </a>
+        {' · '}
+        {COVERAGE} (ABS 2021 via townData)
+        {GVL_HOURS ? ` · GVL Match of the Day ${GVL_HOURS}` : ''}
         {' · '}
         <Link to="/broadcast" data-cursor-label="EXPLORE" className="text-one-gold link-hover inline-flex items-center gap-1">
           Open broadcast explorer <ArrowRight size={12} />
