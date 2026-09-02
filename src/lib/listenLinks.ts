@@ -1,3 +1,4 @@
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { AUDIO_PLAYER_URL, STREAM_URL } from '@/lib/streamConfig'
 
 /**
@@ -7,15 +8,29 @@ import { AUDIO_PLAYER_URL, STREAM_URL } from '@/lib/streamConfig'
  * or station-specific reach figure. Do not advertise it here.
  */
 
+const coverage = formatCoverageShort()
+
 export const LISTEN_LINKS = {
-  fm: { label: '98.5 FM', href: null as string | null, description: 'Shepparton & Goulburn Murray' },
-  stream: { label: 'Listen Live', href: STREAM_URL, description: 'Direct stream (Radio.co)' },
-  web: { label: 'fm985.com.au', href: AUDIO_PLAYER_URL, description: 'Official web audio player' },
+  fm: {
+    label: '98.5 FM',
+    href: null as string | null,
+    description: `${coverage} — Shepparton & Goulburn Murray`,
+  },
+  stream: {
+    label: 'Listen Live',
+    href: STREAM_URL,
+    description: `Radio.co stream · ${coverage} (not national totals)`,
+  },
+  web: {
+    label: 'fm985.com.au',
+    href: AUDIO_PLAYER_URL,
+    description: `Official web audio player · ${coverage}`,
+  },
   /** Slot still named `crp` for existing consumers — values are the official web player, not Community Radio Plus. */
   crp: {
     label: 'fm985.com.au',
     href: AUDIO_PLAYER_URL,
-    description: 'Official web audio player',
+    description: `Official web audio player · ${coverage}`,
   },
   phone: { label: 'Studio', href: 'tel:+61358313131', description: '(03) 5831 3131' },
 } as const
