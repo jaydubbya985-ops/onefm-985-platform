@@ -71,7 +71,7 @@ export const coveragePins: CoveragePin[] = [
   // Real local sponsors (invoice partners — town-centroid, not street-precise)
   ...([
     ['sp-gvl', 'Goulburn Valley Football League', 'Shepparton', 0.018, 0.014, `League naming partner — GVL Match of the Day · ${GVL_MATCH_HOURS} on 98.5 FM`, '/football'],
-    ['sp-peppermill', 'Peppermill Inn', 'Mooroopna', -0.012, -0.01, 'Major GVL sponsor — hospitality landmark', '/football'],
+    ['sp-peppermill', 'Peppermill Inn', 'Mooroopna', -0.012, -0.01, 'Major GVL sponsor — community landmark', '/football'],
     ['sp-foott', 'FOOTT Waste Solutions', 'Shepparton', -0.016, 0.012, 'Local business sponsor — community radio partner', '/sponsorship'],
     ['sp-sam', 'SAM — Shepparton Art Museum', 'Shepparton', 0.02, -0.014, 'Media partner — arts & culture in the Valley', '/sponsorship'],
     ['sp-mcrae', 'McRae Demolitions', 'Shepparton', -0.02, -0.01, 'Long-term sponsor — backs local radio year-round', '/sponsorship'],
