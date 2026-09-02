@@ -5,8 +5,15 @@
 import { BrandLogo } from '@/components/BrandLogo'
 import { BRAND } from '@/lib/brand'
 import { formatCoverageShort, formatRadius, townCountValue, weeklyListenersValue } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { GVL_PREMIUM_INTRO } from '@/lib/inventoryCopy'
 import { DS } from '@/lib/invoiceDesignSystem'
 import { formatAud, type ProposalDocData } from '@/lib/proposalDocument'
+
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
+export const PROPOSAL_SHEET_GVL_LINE = GVL_HOURS
+  ? `GVL Match of the Day · ${GVL_HOURS}`
+  : null
 
 export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
   return (
@@ -69,6 +76,11 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
         <p className="mt-2 text-[11px] text-[#6B6B6B]">
           Source: ABS 2021 via townData — {formatCoverageShort()}, not national stream totals
         </p>
+        {PROPOSAL_SHEET_GVL_LINE && (
+          <p className="mt-1 text-[11px] font-medium text-[#071D3A]">
+            {PROPOSAL_SHEET_GVL_LINE} — {GVL_PREMIUM_INTRO}
+          </p>
+        )}
 
         <div className="mt-5">
           <p className="font-semibold text-[#071D3A]">{data.packageName}</p>
