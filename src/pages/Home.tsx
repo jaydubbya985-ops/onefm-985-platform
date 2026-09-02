@@ -11,7 +11,12 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
-import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
+import {
+  ON_AIR_WEEK,
+  ON_AIR_WALL_PHOTO_NOTE,
+  formatBreakfastChromeLabel,
+  getBreakfastScheduleLabel,
+} from '@/data/programGuide'
 import { formatGuideHours, onAirWallSub } from '@/lib/guideHours'
 import {
   formatCoverageShort,
@@ -28,6 +33,9 @@ import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/Poste
 const RED = '#E51636'
 const INK = '#071D3A'
 const BAR = '#0B2A52'
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 const reveal = {
   initial: { opacity: 0, y: 24 },
@@ -44,6 +52,8 @@ function Ticker() {
     meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
     formatWeeklyListeners(),
     formatCoverageShort(),
+    `Weekday breakfast · ${BREAKFAST_CHROME}`,
+    `GVL Match of the Day · ${GVL_MATCH_HOURS}`,
     'Community radio since 1989 · Callsign 3ONE',
   ]
   const line = items.join('   ·   ')
@@ -139,7 +149,11 @@ function Hero() {
         </span>
         {live.breakfastOnAir && live.breakfastLabel ? (
           <span className="block mt-1.5 text-[12px] text-white/40">{live.breakfastLabel}</span>
-        ) : null}
+        ) : (
+          <span className="block mt-1.5 text-[12px] text-white/40">
+            Weekday breakfast · {BREAKFAST_CHROME}
+          </span>
+        )}
       </p>
       <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]">
         <PosterReveal
@@ -155,7 +169,7 @@ function Hero() {
       </h1>
       <p className="mt-7 max-w-[520px] text-[17px] leading-relaxed text-white/60">
         Volunteer-run, community-owned. From emergency broadcasts during the 2022 floods to
-        calling the GVL Grand Final live — on air since 1989.
+        GVL Match of the Day · {GVL_MATCH_HOURS} — on air since 1989. {formatWeeklyListeners()} across {formatCoverageShort()} (ABS 2021 via townData).
       </p>
       <div className="mt-9 flex items-center gap-8 flex-wrap">
         <Link
@@ -235,7 +249,7 @@ function FeatureFrame() {
           className="absolute bottom-6 left-6 px-5 py-2.5 rounded font-bold text-[13px] tracking-[0.13em] uppercase text-white"
           style={{ background: RED }}
         >
-          GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
+          GVL Match of the Day · {GVL_MATCH_HOURS}
         </div>
       </Link>
     </motion.div>
@@ -271,7 +285,7 @@ export default function Home() {
     <Layout>
       <SEO
         title="ONE FM 98.5 — The Voice of the Goulburn Valley"
-        description={`Community radio for the Goulburn Valley. Volunteer-run since 1989. ${formatCoverageShort()} (ABS 2021 via townData). Listen live, program guide, GVL football.`}
+        description={`Community radio for the Goulburn Valley. Volunteer-run since 1989. ${formatWeeklyListeners()} across ${formatCoverageShort()} (ABS 2021 via townData). GVL Match of the Day · ${GVL_MATCH_HOURS}. Weekday breakfast: ${BREAKFAST_ROSTER_LINE}.`}
       />
       <div style={{ background: INK }} className="min-h-screen">
         <Ticker />
