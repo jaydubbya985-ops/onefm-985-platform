@@ -475,7 +475,7 @@ const podcasts = [
   },
   {
     title: "Community Interviews",
-    hosts: "John Painter & Team",
+    hosts: "John Painter",
     eps: null,
     latest: "Local community voices",
     desc: "Community members, local events, and the stories that matter to the Goulburn Murray region.",
