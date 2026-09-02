@@ -25,7 +25,71 @@ import {
 import { BATCH_INVOICES, DEFAULT_EMAIL_BODY } from '@/components/ops/data/invoices'
 import { useOpsStore } from '@/components/ops/store'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { GVL_PREMIUM_INTRO } from '@/lib/inventoryCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
+export const INVOICE_LAB_GVL_LINE = GVL_HOURS
+  ? `GVL Match of the Day · ${GVL_HOURS}`
+  : null
+
+export function InvoiceLabHero({
+  sampleLabel,
+  activeVariantName,
+}: {
+  sampleLabel: string
+  activeVariantName?: string
+}) {
+  return (
+    <div className="relative overflow-hidden border-b border-[#2A2A2A]">
+      {/* Unused Tungamah silo-art birds — station archive, not a presenter portrait. */}
+      <img
+        src={STATION_PHOTOS.cultureSiloArtBirds}
+        alt=""
+        aria-hidden
+        loading="eager"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+      />
+      <div className="relative z-10 p-6 max-w-[1600px] mx-auto">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#E51636] to-[#B8860B] flex items-center justify-center">
+            <Palette className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">Invoice Design Lab</h1>
+            <p className="text-sm text-[#F4F1EA]/50">
+              Three world-class options · Sample: {sampleLabel}
+            </p>
+          </div>
+        </div>
+        <p className="text-sm text-[#F4F1EA]/60 max-w-3xl mt-3">
+          Station choice locked:{' '}
+          <strong className="text-[#B8860B]">A · Broadcast Letter</strong> (navy &amp; gold) for the
+          June 2026 batch — email HTML and PDF attachments. B and C are preview-only here.
+        </p>
+        <p className="text-xs text-[#F4F1EA]/50 mt-2">
+          Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
+          {BANK_BSB} · {BANK_ACCOUNT_NAME}. This lab is not a Stripe receipt.
+        </p>
+        {INVOICE_LAB_GVL_LINE && (
+          <p className="text-xs text-[#F4F1EA]/70 mt-2">
+            {INVOICE_LAB_GVL_LINE} — {GVL_PREMIUM_INTRO}
+          </p>
+        )}
+        {activeVariantName && (
+          <p className="text-xs text-[#F4F1EA]/40 mt-2">
+            Active sends use: {activeVariantName}
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
 
 const SAMPLE = BATCH_INVOICES[0]
 
@@ -97,45 +161,10 @@ export default function InvoiceDesignLab() {
 
   return (
     <div className="min-h-screen bg-[#101010] text-[#F4F1EA]">
-      <div className="relative overflow-hidden border-b border-[#2A2A2A]">
-        {/* Unused Tungamah silo-art birds — station archive, not a presenter portrait. */}
-        <img
-          src={STATION_PHOTOS.cultureSiloArtBirds}
-          alt=""
-          aria-hidden
-          loading="eager"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
-        />
-        <div className="relative z-10 p-6 max-w-[1600px] mx-auto">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#E51636] to-[#B8860B] flex items-center justify-center">
-              <Palette className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Invoice Design Lab</h1>
-              <p className="text-sm text-[#F4F1EA]/50">
-                Three world-class options · Sample: {SAMPLE.company} ({SAMPLE.number})
-              </p>
-            </div>
-          </div>
-          <p className="text-sm text-[#F4F1EA]/60 max-w-3xl mt-3">
-            Station choice locked:{' '}
-            <strong className="text-[#B8860B]">A · Broadcast Letter</strong> (navy &amp; gold) for the
-            June 2026 batch — email HTML and PDF attachments. B and C are preview-only here.
-          </p>
-          <p className="text-xs text-[#F4F1EA]/50 mt-2">
-            Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
-            {BANK_BSB} · {BANK_ACCOUNT_NAME}. This lab is not a Stripe receipt.
-          </p>
-          <p className="text-xs text-[#F4F1EA]/40 mt-2">
-            Active sends use: {getVariantMeta(invoiceDesignVariant).name}
-          </p>
-        </div>
-      </div>
+      <InvoiceLabHero
+        sampleLabel={`${SAMPLE.company} (${SAMPLE.number})`}
+        activeVariantName={getVariantMeta(invoiceDesignVariant).name}
+      />
       <div className="p-6 max-w-[1600px] mx-auto">
 
         {/* Option cards */}
