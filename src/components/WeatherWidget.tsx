@@ -33,6 +33,20 @@ const iconMapSmall: Record<WeatherIconKey, React.ReactNode> = {
 
 const coverageCaption = `${WEATHER_SOURCE_LABEL} · hub & major towns · ${formatCoverageShort()}`
 
+/** Compact player-bar stamp — licensed coverage even before Open-Meteo resolves. */
+function WeatherMiniCoverage({ announce = true }: { announce?: boolean }) {
+  return (
+    <span
+      className="font-label text-[9px] tracking-[0.12em] uppercase text-one-muted/75"
+      title={announce ? coverageCaption : undefined}
+      aria-label={announce ? coverageCaption : undefined}
+      aria-hidden={announce ? undefined : true}
+    >
+      {formatCoverageShort()}
+    </span>
+  )
+}
+
 // Full version — cycles hub/major towns from townData (Open-Meteo, Melbourne TZ)
 export function WeatherWidget() {
   const { location, weather, loading } = useWeatherCycle(gvWeatherTowns)
@@ -109,11 +123,11 @@ export function WeatherWidget() {
 export function WeatherMini() {
   const { location, weather, loading } = useWeatherCycle(gvWeatherTowns)
 
-  if (loading && !weather) return null
-  if (!weather) return null
+  if (loading && !weather) return <WeatherMiniCoverage />
+  if (!weather) return <WeatherMiniCoverage />
 
   const iconKey = getWeatherIconKey(weather.weatherCode)
-  const label = `${location.name} ${formatTempC(weather.tempC)} · ${WEATHER_SOURCE_LABEL}`
+  const label = `${location.name} ${formatTempC(weather.tempC)} · ${coverageCaption}`
 
   return (
     <AnimatePresence mode="wait">
@@ -130,6 +144,9 @@ export function WeatherMini() {
         {iconMapSmall[iconKey]}
         <span className="text-one-white font-medium">{formatTempC(weather.tempC)}</span>
         <span className="hidden sm:inline">{location.name}</span>
+        <span className="hidden xl:inline">
+          <WeatherMiniCoverage announce={false} />
+        </span>
       </motion.div>
     </AnimatePresence>
   )
