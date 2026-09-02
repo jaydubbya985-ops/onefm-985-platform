@@ -21,8 +21,9 @@ import {
   PosterReveal,
   StrokeFill,
 } from '@/components/onair/kit'
-import { formatTowns, yearsBroadcastingValue } from '@/lib/coverageCopy'
+import { formatCoverageShort, formatRadius, formatTowns, formatWeeklyListeners, yearsBroadcastingValue } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
+import { formatBreakfastChromeLabel } from '@/data/programGuide'
 import {
   ACMA_FACTS,
   EMERGENCY_BROADCAST_NARRATIVE,
@@ -34,6 +35,7 @@ import {
 } from '@/data/stationHistory'
 
 const RED = '#E51636'
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
 
 function HeritageHero() {
   const reduced = useReducedMotion()
@@ -84,7 +86,9 @@ function HeritageHero() {
         </h1>
         <p className="mt-7 max-w-[600px] text-[17px] leading-relaxed text-white/60">
           For {yearsBroadcastingValue()} years, ONE FM 98.5 has carried the voices, stories, sport, music,
-          emergencies and community life of the Goulburn Valley. Callsign{' '}
+          emergencies and community life of the Goulburn Valley. Licensed coverage{' '}
+          <strong className="text-white/80">{formatCoverageShort()}</strong>
+          {' '}(ABS 2021 via townData). Callsign{' '}
           <strong className="text-white/80">{ACMA_FACTS.callsign}</strong> · licensed{' '}
           {ACMA_FACTS.licenceCommenced}.
         </p>
@@ -160,7 +164,7 @@ export default function Heritage() {
     <Layout>
       <SEO
         title="The Living Archive — ONE FM 98.5 · 3ONE Since 1989"
-        description="The Living Archive of the Goulburn Valley — decades, people, sport, floods, multicultural voices. Searchable history from Shepparton community radio 3ONE."
+        description={`The Living Archive of the Goulburn Valley — decades, people, sport, floods, multicultural voices. Licensed community radio · ${formatCoverageShort()} (ABS 2021 via townData). Searchable history from Shepparton community radio 3ONE.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -168,7 +172,10 @@ export default function Heritage() {
             `Callsign ${ACMA_FACTS.callsign} · ${ACMA_FACTS.frequency} · ${ACMA_FACTS.power}`,
             `Licensed ${ACMA_FACTS.licenceCommenced}`,
             'Est. 1980 · organising from late 1970s',
-            'GVL football · multicultural · emergency information',
+            formatCoverageShort(),
+            formatWeeklyListeners(),
+            formatBreakfastChromeLabel(),
+            `GVL Match of the Day · ${GVL_MATCH_HOURS}`,
           ]}
           delay={0.4}
         />
@@ -192,7 +199,7 @@ export default function Heritage() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football — live on ONE FM 98.5"
-          badge={`GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} · live since May 1989`}
+          badge={`GVL Match of the Day · ${GVL_MATCH_HOURS} · live since May 1989`}
         />
 
         <ProseSection
@@ -230,7 +237,7 @@ export default function Heritage() {
             { n: '1989', t: 'ACMA licence commenced', red: true },
             { n: ACMA_FACTS.power, t: 'Community FM (3ONE)' },
             { n: String(ARCHIVE_PEOPLE.length), t: 'People in living archive' },
-            { n: formatTowns(), t: 'Towns in station reach model' },
+            { n: formatTowns(), t: `${formatRadius()} licensed radius (ABS 2021 via townData)` },
           ]}
         />
 
