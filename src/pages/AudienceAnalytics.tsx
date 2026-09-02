@@ -10,6 +10,7 @@ import {
   Mic,
   X,
   AlertTriangle,
+  Trophy,
 } from 'lucide-react'
 import {
   BarChart,
@@ -47,8 +48,15 @@ import {
   BREAKFAST_TIME,
   MULTICULTURAL_PROGRAM_COUNT,
   MULTICULTURAL_PROGRAMS,
+  formatBreakfastChromeLabel,
   getBreakfastScheduleLabel,
 } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
 
 /* ─────────── easing ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -159,7 +167,7 @@ export default function AudienceAnalytics() {
 
   return (
     <Layout>
-      <SEO title="Audience Analytics" description={`Modelled audience insights for ONE FM 98.5 — demographics, listenership trends and coverage across ${formatTowns()}. Live stream analytics pending Radio.co integration.`} />
+      <SEO title="Audience Analytics" description={`Modelled audience insights for ONE FM 98.5 — ${formatCoverageShort()}. GVL Match of the Day · ${GVL_MATCH_HOURS}. Breakfast: ${getBreakfastScheduleLabel()}. Live stream analytics pending Radio.co integration.`} />
       {/* ═══════ HERO ═══════ */}
       <section className="relative min-h-[40vh] bg-surface-deep overflow-hidden" data-cursor-label="AUDIENCE">
         {/* Animated grid background */}
@@ -276,6 +284,8 @@ export default function AudienceAnalytics() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatBroadcastPopulation()} BROADCAST AREA POPULATION</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 · NOT LIVE STREAM COUNTS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{yearsBroadcastingValue()} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL MATCH OF THE DAY · {GVL_MATCH_HOURS.toUpperCase()}</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{BREAKFAST_CHROME.toUpperCase()}</span>,
           ]}
         />
       </div>
@@ -418,6 +428,13 @@ export default function AudienceAnalytics() {
                   sub: getBreakfastScheduleLabel(),
                   border: '#F0C75E',
                   icon: Radio,
+                },
+                {
+                  title: 'GVL Match of the Day',
+                  text: `GVL Match of the Day · ${GVL_MATCH_HOURS}`,
+                  sub: `${GVL_PREMIUM_BADGE} — quoted separately, not the $25 30s floor. ${STANDARD_SPOT_PLUS_GST}.`,
+                  border: '#E51636',
+                  icon: Trophy,
                 },
                 {
                   title: 'Community',
@@ -756,8 +773,20 @@ export default function AudienceAnalytics() {
             <div aria-hidden className="explore-tile-scan" />
             <h4 className="font-h4 text-one-white mb-4">Programming Blocks</h4>
             <p className="font-body-small text-muted mb-4">
-              Daypart share of listenership is data pending. Breakfast is 6:00am–9:00am (ONE FM Breakfast). We do not publish invented percentages.
+              Daypart share of listenership is data pending. {BREAKFAST_SHOW} is {BREAKFAST_TIME} weekdays ({getBreakfastScheduleLabel()}). GVL Match of the Day is {GVL_MATCH_HOURS}. We do not publish invented percentages.
             </p>
+            <div className="relative h-36 overflow-hidden rounded-lg border border-one-border/60">
+              <img
+                src={STATION_PHOTOS.gvlCrowdStands}
+                alt={`GVL Match of the Day · ${GVL_MATCH_HOURS} — station archive, not a live crowd count`}
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+              />
+              <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/40 to-transparent" />
+              <p className="absolute bottom-2 left-3 right-3 font-label text-[10px] tracking-[0.14em] uppercase text-white/80">
+                GVL Match of the Day · {GVL_MATCH_HOURS} · station archive
+              </p>
+            </div>
           </motion.div>
           </TiltCard>
         </div>
