@@ -17,7 +17,7 @@ export const footballTiers = [
   { id: 6, name: 'Premier Partner', price: 300, features: ['30 radio spots', '10 Facebook posts/month', 'Full-page ad', 'Branded match reports', 'Priority placement'], badge: 'BEST VALUE' },
   { id: 7, name: 'Elite Partner', price: 400, features: ['35 radio spots', '12 Facebook posts/month', 'Branded segment', 'Player interview', 'Facebook match-day post'] },
   { id: 8, name: 'Signature Partner', price: 500, features: ['40 radio spots', '15 Facebook posts/month', 'Category exclusivity', 'Naming rights for segment', 'Ground mention'], badge: 'ULTIMATE' },
-  { id: 9, name: 'Naming Rights Partner', price: 600, features: ['Everything included', 'Ground naming mention', 'Jersey sponsor read', 'Exclusive category lock', 'VIP hospitality'] },
+  { id: 9, name: 'Naming Rights Partner', price: 600, features: ['Everything included', 'Ground naming mention', 'Jersey sponsor read', 'Exclusive category lock', 'Quoted with the station — no hospitality inventory'] },
 ];
 
 // Rate card (media kit)
