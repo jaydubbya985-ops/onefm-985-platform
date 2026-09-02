@@ -435,7 +435,7 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
           }),
           new Paragraph({
             children: [
-              new TextRun({ text: 'Partnerships Team', bold: true, size: 24, color: darkColor }),
+              new TextRun({ text: BRAND.org, bold: true, size: 24, color: darkColor }),
             ],
             spacing: { after: 120 },
           }),
@@ -462,7 +462,7 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
           }),
           new Paragraph({
             children: [
-              new TextRun({ text: 'Ready to amplify your brand? Our partnerships team is ready to build a campaign that works for you.', size: 22, color: darkColor, italics: true }),
+              new TextRun({ text: `Talk to the station — we'll follow up from ${BRAND.email} or ${BRAND.phone}.`, size: 22, color: darkColor, italics: true }),
             ],
             spacing: { before: 200, after: 200 },
           }),
@@ -512,7 +512,7 @@ function buildPricingTable(data: ProposalDocxData): Table {
     new TableRow({
       children: [
         makeCell(data.tierName || 'Base Package'),
-        makeCell('Annual sponsorship package including on-air spots, social posts, and digital assets'),
+        makeCell(`Annual sponsorship package including on-air spots, Facebook posts (${BRAND.facebook.replace('https://www.', '')}), and digital assets`),
         makeCell('1', false, AlignmentType.CENTER),
         makeCell(fmtCurrency(data.tierPrice), false, AlignmentType.RIGHT),
         makeCell(fmtCurrency(data.tierPrice), false, AlignmentType.RIGHT),
