@@ -350,8 +350,8 @@ function ContactForm() {
           </div>
           <WordReveal text="Multi-Pathway Enquiry" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-muted max-w-xl mx-auto">
-            Choose the path that fits your needs and we'll route your message to the
-            right team.
+            Choose the path that fits your needs and we'll get back to you from the
+            station.
           </p>
         </motion.div>
 
@@ -602,7 +602,7 @@ function FAQSection() {
     {
       question: 'How do I become a sponsor?',
       answer:
-        'Head to our Sponsorship page to explore packages, or select "Sponsorship" in the enquiry form above. Our partnerships team will follow up.',
+        `Head to our Sponsorship page to explore packages, or select "Sponsorship" in the enquiry form above. We'll follow up from the station.`,
     },
     {
       question: 'Can I volunteer at the station?',
@@ -632,7 +632,7 @@ function FAQSection() {
     {
       question: 'How do I advertise my business?',
       answer:
-        'We offer radio spots, sponsorships, digital packages, and event partnerships. Select "Advertising" in the enquiry form and our sales team will prepare a custom proposal for your budget.',
+        `We offer radio spots and sponsorships from the published rate card (standard 30-second spots from $25 plus GST). Select "Advertising" in the enquiry form and we'll get back to you.`,
     },
     {
       question: 'Can I listen online?',
