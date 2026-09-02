@@ -142,7 +142,7 @@ const studios = [
     title: "Outside broadcast",
     desc: "Match Day Live takes the desk to the ground for GVL football and netball, alongside cricket, bowls and harness racing coverage.",
     icon: Wifi,
-    specs: ["GVL match broadcasts", "NIRS AFL rebroadcasts", "2019 SCMA X-Awards finalist"],
+    specs: [`GVL Match of the Day · ${GVL_MATCH_HOURS}`, "NIRS AFL rebroadcasts", "2019 SCMA X-Awards finalist"],
   },
   {
     title: "Eight language strands",
