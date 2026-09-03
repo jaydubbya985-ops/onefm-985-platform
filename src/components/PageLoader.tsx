@@ -121,6 +121,11 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
               <p className="font-label text-[9px] tracking-[0.14em] uppercase text-white/40 leading-relaxed">
                 Weekday breakfast · {BREAKFAST_LINE}
               </p>
+              <p className="font-label text-[9px] tracking-[0.14em] uppercase text-white/35 leading-relaxed">
+                GVL Match of the Day · {GVL_MATCH_HOURS} · premium, never the $25 floor
+                {' · '}
+                {confirmedSocialNote()}
+              </p>
             </motion.div>
           </div>
         </motion.div>
