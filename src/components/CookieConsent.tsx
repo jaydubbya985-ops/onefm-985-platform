@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Cookie } from 'lucide-react'
@@ -13,6 +13,10 @@ export function CookieConsent() {
   })
   const location = useLocation()
   const sitAboveMini = !isMiniPlayerHidden(location.pathname)
+
+  useEffect(() => {
+    setVisible(!localStorage.getItem(CONSENT_KEY))
+  }, [location.pathname])
 
   const accept = () => {
     localStorage.setItem(CONSENT_KEY, 'accepted')
