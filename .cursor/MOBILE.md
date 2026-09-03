@@ -7,7 +7,7 @@ Use this when you are on the Fold and the project feels stuck.
 Paste this into a new Cloud Agent:
 
 ```text
-Read .cursor/CONTINUOUS.md. Pull origin main first. Do not merge PRs unless I say EXE. Keep shipping the next unblocked ONE FM improvement. If blocked, say NEED JAY in one line, then keep coding independent work. Build must pass.
+Read .cursor/ULTRA.md then .cursor/CONTINUOUS.md. Pull origin main first. World class is the only pass mark. One deep PR — do not stamp coverage onto another page. Do not merge PRs unless I say EXE. Keep shipping the next unblocked ONE FM improvement. If blocked, say NEED JAY in one line, then keep coding independent work. Build must pass.
 ```
 
 ## When an agent needs a secret

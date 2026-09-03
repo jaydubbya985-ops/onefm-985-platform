@@ -29,6 +29,7 @@ import {
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { formatCoverageShort, formatRadius } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
+import { formatWithPresenter } from '@/lib/liveNow'
 import { LISTEN_LINKS } from '@/lib/listenLinks'
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -260,7 +261,7 @@ function HeroSection() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="font-h3 text-one-white mb-2 text-center"
         >
-          with {live.host}
+          {formatWithPresenter(live.host) || live.category}
         </motion.p>
 
         <motion.div
@@ -269,7 +270,7 @@ function HeroSection() {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="font-label text-one-electric mb-4"
         >
-          {live.time}
+          {live.time}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
         </motion.div>
 
         <motion.div
