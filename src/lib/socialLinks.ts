@@ -16,19 +16,7 @@ export const SOCIAL_LINKS = {
   tiktok: null as string | null,
 } as const
 
-export function facebookPageEmbedUrl(width = 500, height = 400): string {
-  const params = new URLSearchParams({
-    href: FACEBOOK_PAGE_URL,
-    tabs: 'timeline',
-    width: String(width),
-    height: String(height),
-    small_header: 'true',
-    adapt_container_width: 'true',
-    hide_cover: 'false',
-    show_facepile: 'true',
-  })
-  return `https://www.facebook.com/plugins/page.php?${params.toString()}`
-}
+/** Facebook is a follow link only. Do not add a page-plugin embed helper. */
 
 export type SocialPlatform = keyof typeof SOCIAL_LINKS
 
