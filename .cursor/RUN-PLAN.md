@@ -1,35 +1,26 @@
-# ONE FM RUN PLAN — Non-stop to 80% gov-ready
+# ONE FM RUN PLAN — Ultra, world class, continuous
 
-**Current score: code is past 70%; live site is still the stale DEMO deploy.** Truth + FOOTT PDF + honest send **on `main`**; OG 189,680 + LIVE-without-DEMO-batch **on `cursor/gov-ready-live-gate-c24f`**. Live `#/ops` is still DEMO because Netlify PAT is unauthorized.
+**Current score:** public site craft is on `main` through #143. Live deploys via GitHub Actions. Ops `#/ops` is DEMO until `VITE_SUPABASE_*` secrets are the real URL + anon key.
 
-Target **80%**: FOOTT can be sent a PDF; ops is not DEMO **on live**; no invented stats on public pages; invoice email does not lie about send.
+**Target:** a site a 2026 community station would be proud to show ACMA, FOOTT, and a listener on the Fold. Truth first. World class second. Volume last.
 
-**Paste for every desk:** `.cursor/HANDOFF.md`
+**Paste for every desk:** `.cursor/ULTRA.md` then `.cursor/HANDOFF.md`
 
-## Live verification (2026-08-27)
+## Ultra allocations (3 September 2026)
 
-| Check | Status |
-|------|--------|
-| EXE merge | PRs #12, #14, #15 on `main` (`e511343`) |
-| GitHub Actions build | Passed on EXE; later pushes fail at Netlify preflight |
-| Deploy to Netlify | Failed: HTTP 401. Token is set and rejected. |
-| Live site | Still old DEMO (`index-BJ4yefZ1.js`) |
-| `/audience` sourced towns | On `main`, not live |
-| Ops portal live (not DEMO) | Needs working deploy **and** `VITE_SUPABASE_*` in GitHub + Netlify env |
-| Production gate | `npm run live` after deploy |
-| Stripe payments | Needs `VITE_STRIPE_PUBLISHABLE_KEY` |
+Jay is on Cursor Ultra. **6.3×** the old bar. One deep ship per PR. The stamp factory (#170–#200) is closed.
 
 ## Agent continuity (no stop-start)
 
 | Desk | How to ship work |
 |------|------------------|
-| Cursor Cloud | https://cursor.com/agents — **Claude Opus**, paste `HANDOFF.md` |
-| This Grok run | Cannot change model |
-| Kimi desktop | `git pull origin main` then paste `HANDOFF.md` |
-| Overnight loop | https://cursor.com/automations — prompt = `HANDOFF.md`, model Opus |
+| Cursor Cloud | https://cursor.com/agents — paste `ULTRA.md` + `HANDOFF.md` |
+| This run | Keep coding. Do not end with “start the next agent”. |
+| Kimi desktop | `git pull origin main` then paste `ULTRA.md` + `HANDOFF.md` |
+| Overnight loop | https://cursor.com/automations — prompt = `CONTINUOUS.md`, model Opus |
 
 ## NEED JAY (only if blocked)
 
-1. Replace GitHub `NETLIFY_AUTH_TOKEN` with a **new** Netlify PAT, then re-run **Deploy to Netlify** on `main` (no empty-commit).
-2. `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` in GitHub Actions secrets and Netlify env.
-3. Start next Cloud Agent as Claude Opus with `.cursor/HANDOFF.md`.
+1. Cursor Cloud secrets: full `VITE_SUPABASE_URL` + anon `VITE_SUPABASE_ANON_KEY` (never `sb_secret_`).
+2. `RESEND_API_KEY` in Netlify — Test Mode invoice to `jasonstv1@bigpond.com` first.
+3. **EXE PR #__** when a world-class PR is ready to go live.

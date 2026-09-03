@@ -1,24 +1,23 @@
-# NEXT CLOUD AGENT — paste `.cursor/HANDOFF.md` as the whole prompt
+# NEXT CLOUD AGENT — paste `.cursor/ULTRA.md` then `.cursor/HANDOFF.md`
 
-**This file is a pointer.** The full brief is `.cursor/HANDOFF.md`.
+**This file is a pointer.** Ultra allocations: `.cursor/ULTRA.md`. Full brief: `.cursor/HANDOFF.md`. Loop: `.cursor/CONTINUOUS.md`.
 
-You are continuing ONE FM 98.5. Benchmark: **80% = gov-ready / send-to-FOOTT without DEMO or invented stats**.
+You are continuing ONE FM 98.5. Benchmark: **world class** — a listener or FOOTT would feel the ship. Gov-ready means no DEMO lies and no invented stats.
 
 ## Model
 
-If you are Grok: do the work you can, then tell Jay to start the **next** run as **Claude Opus** at https://cursor.com/agents. You cannot upgrade yourself.
+Prefer thorough (Claude Opus / Grok high). Fast-and-shallow is a fail on Ultra.
 
 ## Single next action (do this first)
 
-`git pull origin cursor/gov-ready-live-gate-c24f`. Read `.cursor/HANDOFF.md`. Stay on that branch (PR #16) unless starting new work (`cursor/<name>-c24f`). Do not merge without **EXE**.
+`git pull origin main`. Read `.cursor/ULTRA.md`. New branch `cursor/<desk>-273d` (or the suffix this run requires). Do not merge without **EXE**.
 
-Live `#/ops` is **LIVE — not DEMO**. `fm985.com.au` is **verified**. A real send of `ONEFM-2026-011.pdf` to `accounts@fm985.com.au` succeeded (`sent=true`). Peter was not emailed.
+Do **not** stamp coverage / breakfast / GVL hours onto another page. That desk is closed.
 
 ## After that
 
-1. `npm run live` must pass.
+1. `npm run build` must pass. Never bake `sb_secret_` into the client.
 2. Do not POST `send-invoice` to `peter@foott.com.au` unless Jay asks.
-3. `npm run build` must pass. Never bake `sb_secret_` into the client.
-4. NEED JAY: **EXE** to merge PR #16.
+3. One PR. Then keep coding a *different* desk.
 
-Commit, push, update PR #16. Deploy from this branch is allowed; merging to `main` is not, until EXE.
+If Jay is on the Fold, one next action only — see `.cursor/MOBILE.md`.
