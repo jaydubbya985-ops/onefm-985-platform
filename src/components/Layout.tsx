@@ -7,6 +7,7 @@ import { OnAirNav } from './OnAirNav'
 import { Footer } from './Footer'
 import { MiniPlayer } from './MiniPlayer'
 import { useLiveStream } from '@/hooks/useLiveStream'
+import { useMediaSession } from '@/hooks/useMediaSession'
 import { scrollToTop } from '@/lib/scrollTop'
 
 interface LayoutProps {
@@ -16,6 +17,7 @@ interface LayoutProps {
 
 export function Layout({ children, hideFooter = false }: LayoutProps) {
   const { toggle, playing } = useLiveStream()
+  useMediaSession()
   const [toast, setToast] = useState<'playing' | 'paused' | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
