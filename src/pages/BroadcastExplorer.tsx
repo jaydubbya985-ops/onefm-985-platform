@@ -1112,7 +1112,7 @@ export default function BroadcastExplorer() {
         <Marquee
           speed={34}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE &amp; LOCAL · 24/7</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE &amp; LOCAL · WEEKLY GUIDE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BREAKFAST · MUSIC · SPORT · CULTURE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CALLSIGN 3ONE · SINCE 1989</span>,
