@@ -4,6 +4,12 @@ import { BRAND_COLORS } from '@/lib/brand'
 
 const { gold, champagne, blue, navy, cyan } = BRAND_COLORS
 
+function prefersReducedMotion() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
 export interface CoverageGlowOptions {
   center: google.maps.LatLngLiteral
   /** Broadcast radius in metres (default: coverageNumbers.broadcastRadiusKm). */
@@ -166,6 +172,9 @@ function createGlowOverlayClass() {
   }
 
   private drawSonarRings(cx: number, cy: number, maxR: number): void {
+    // Sonar ripples read as a live transmitter pulse. Static range rings
+    // already show the sourced 100km footprint — do not invent a heartbeat.
+    if (prefersReducedMotion()) return
     const ctx = this.ctx!
     for (let i = 0; i < 3; i++) {
       const offset = (this.phase + i * 0.34) % 1
@@ -197,7 +206,7 @@ function createGlowOverlayClass() {
 
   private drawStationHalo(cx: number, cy: number): void {
     const ctx = this.ctx!
-    const pulse = 0.5 + Math.sin(this.phase * Math.PI * 2) * 0.5
+    const pulse = prefersReducedMotion() ? 0 : 0.5 + Math.sin(this.phase * Math.PI * 2) * 0.5
     const r = 34 + pulse * 18
 
     const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
@@ -217,6 +226,11 @@ function createGlowOverlayClass() {
   }
 
   private startAnimation(): void {
+    if (prefersReducedMotion()) {
+      this.phase = 0
+      this.draw()
+      return
+    }
     const tick = () => {
       this.phase += 0.0055
       if (this.phase > 1) this.phase -= 1
