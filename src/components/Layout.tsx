@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pause, Play } from 'lucide-react'
@@ -86,13 +85,28 @@ export function Layout({ children, hideFooter = false }: LayoutProps) {
     document.body
   )
 
+  // HashRouter treats href="#main-content" as a route → 404. Stay on this page.
+  const skipToMain = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const main = document.getElementById('main-content')
+    if (!(main instanceof HTMLElement)) return
+    main.focus({ preventScroll: true })
+    main.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start',
+    })
+  }
+
   return (
     <>
       <div className="min-h-[100dvh] bg-surface-deep text-one-white">
-        <a href="#main-content" className="skip-to-content">Skip to content</a>
+        <a href="#main-content" className="skip-to-content" onClick={skipToMain}>
+          Skip to content
+        </a>
         <OnAirNav />
         <motion.main
           id="main-content"
+          tabIndex={-1}
           className="pt-[72px]"
           initial={{ opacity: 0, clipPath: 'inset(0 0 6% 0 round 0px)' }}
           animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0 round 0px)' }}
