@@ -1,79 +1,68 @@
-import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useEffect, useState } from 'react'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import type { DbOpsProposal } from '@/lib/supabase'
 
-interface RealtimeState {
-  viewers: number
-  lastUpdate: DbOpsProposal | null
+export interface DeskPresence {
+  live: boolean
   isSubscribed: boolean
+  lastCompany: string | null
 }
 
-export function useRealtime(table: string = 'proposals') {
-  const [state, setState] = useState<RealtimeState>({
-    viewers: 0,
-    lastUpdate: null,
-    isSubscribed: false,
-  })
+/** Never invent a live viewer count. Gov-truth forbids live-now theatre. */
+export function deskPresenceLabel(presence: DeskPresence): string {
+  if (!presence.live) {
+    return 'Realtime is off in DEMO mode. Desk updates stay on this browser.'
+  }
+  if (!presence.isSubscribed) {
+    return 'Realtime is not connected. Refresh or check ops-config.'
+  }
+  if (presence.lastCompany) {
+    return `Last proposal update: ${presence.lastCompany}.`
+  }
+  return 'Desk is listening for proposal changes. Presence is not counted.'
+}
 
-  const [channel, setChannel] = useState<ReturnType<typeof supabase.channel> | null>(null)
-
-  const subscribe = useCallback(
-    (filter?: string) => {
-      const ch = supabase
-        .channel(`realtime:${table}`)
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table,
-            filter: filter || undefined,
-          },
-          (payload: RealtimePostgresChangesPayload<DbOpsProposal>) => {
-            setState((prev) => ({
-              ...prev,
-              lastUpdate: payload.new as DbOpsProposal,
-              viewers: Math.floor(Math.random() * 3) + 1,
-            }))
-          }
-        )
-        .subscribe((status) => {
-          setState((prev) => ({
-            ...prev,
-            isSubscribed: status === 'SUBSCRIBED',
-          }))
-        })
-
-      setChannel(ch)
-      return ch
-    },
-    [table]
-  )
-
-  const unsubscribe = useCallback(() => {
-    if (channel) {
-      supabase.removeChannel(channel)
-      setChannel(null)
-      setState({
-        viewers: 0,
-        lastUpdate: null,
-        isSubscribed: false,
-      })
-    }
-  }, [channel])
+export function useRealtime(table: string = 'ops_proposals') {
+  const live = isSupabaseConfigured()
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [lastCompany, setLastCompany] = useState<string | null>(null)
 
   useEffect(() => {
-    return () => {
-      if (channel) {
-        supabase.removeChannel(channel)
-      }
+    if (!live) {
+      setIsSubscribed(false)
+      setLastCompany(null)
+      return
     }
-  }, [channel])
+
+    const ch = supabase
+      .channel(`realtime:${table}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table,
+        },
+        (payload: RealtimePostgresChangesPayload<DbOpsProposal>) => {
+          const row = payload.new as DbOpsProposal | undefined
+          const company = row?.company?.trim()
+          if (company) setLastCompany(company)
+        },
+      )
+      .subscribe((status) => {
+        setIsSubscribed(status === 'SUBSCRIBED')
+      })
+
+    return () => {
+      supabase.removeChannel(ch)
+    }
+  }, [live, table])
 
   return {
-    ...state,
-    subscribe,
-    unsubscribe,
+    live,
+    isSubscribed,
+    lastCompany,
+    label: deskPresenceLabel({ live, isSubscribed, lastCompany }),
   }
 }
