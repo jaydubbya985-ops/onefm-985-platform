@@ -113,6 +113,18 @@ if (
 ) {
   hits.push('pages/Listen.tsx: live hero from liveNowFromMetadata; on-air wall from ON_AIR_WEEK')
 }
+if (!listen || !listen.text.includes('StreamVolume')) {
+  hits.push('pages/Listen.tsx: hero must expose StreamVolume — play without a volume control is not a player')
+}
+
+const liveStream = files.find((f) => f.label === 'hooks/useLiveStream.ts')
+if (
+  !liveStream ||
+  !liveStream.text.includes('setVolume') ||
+  !liveStream.text.includes('onefm-stream-volume')
+) {
+  hits.push('hooks/useLiveStream.ts: stream volume must live on the shared Audio singleton')
+}
 
 const home = files.find((f) => f.label === 'pages/Home.tsx')
 if (!home || !home.text.includes('liveNowFromMetadata')) {
@@ -140,6 +152,9 @@ if (!onAirKit || !onAirKit.text.includes('onAirWallSub')) {
 const miniPlayer = files.find((f) => f.label === 'components/MiniPlayer.tsx')
 if (!miniPlayer || !miniPlayer.text.includes('liveNowFromMetadata')) {
   hits.push('components/MiniPlayer.tsx: breakfast chrome must use liveNowFromMetadata')
+}
+if (!miniPlayer || !miniPlayer.text.includes('StreamVolume')) {
+  hits.push('components/MiniPlayer.tsx: mini player must share StreamVolume with Listen')
 }
 
 const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')

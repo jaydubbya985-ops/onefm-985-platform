@@ -28,6 +28,7 @@ import {
   formatWeeklyListenersPlain,
 } from '@/lib/coverageCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
+import { StreamVolume } from '@/components/StreamVolume'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
@@ -105,8 +106,8 @@ function ListenHero() {
           </div>
         </div>
 
-        <div className="mt-8 max-w-xl" aria-hidden>
-          <div className="h-1 rounded-full bg-white/10 overflow-hidden">
+        <div className="mt-8 max-w-xl">
+          <div className="h-1 rounded-full bg-white/10 overflow-hidden" aria-hidden>
             <div
               className="h-full rounded-full"
               style={{ width: `${progressPct}%`, background: RED }}
@@ -115,6 +116,9 @@ function ListenHero() {
           <div className="mt-2 flex justify-between text-[11px] tracking-[0.12em] uppercase text-white/35">
             <span>This show on the guide</span>
             <span>{live.remainingLabel}</span>
+          </div>
+          <div className="mt-5">
+            <StreamVolume />
           </div>
         </div>
 
