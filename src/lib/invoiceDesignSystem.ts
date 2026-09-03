@@ -8,6 +8,8 @@
 //   ✅ PDF header/footer matches email — same navy band, 3px solid gold rule
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { BRAND } from '@/lib/brand'
+
 export const DS = {
   color: {
     navy:     '#071D3A',
@@ -39,14 +41,14 @@ export const DS = {
   logoUrl: 'https://onefmops.netlify.app/brand/one-fm-logo-primary.png',
 
   station: {
-    name:          'ONE FM 98.5',
-    tagline:       "Goulburn Valley's Community Radio",
-    abn:           '92 117 291 771',
-    address:       '47 Parkside Drive, Shepparton VIC 3630',
-    phone:         '(03) 5831 3131',
-    accountsEmail: 'accounts@fm985.com.au',
+    name:          BRAND.fullName,
+    tagline:       BRAND.tagline,
+    abn:           BRAND.abn,
+    address:       BRAND.address,
+    phone:         BRAND.phone,
+    accountsEmail: BRAND.accountsEmail,
     sigName:       'Jason Welsh',
-    sigTitle:      'Vice Chair, ONE FM 98.5',
-    sigEmail:      'accounts@fm985.com.au',
+    sigTitle:      'Vice Chairperson, ONE FM 98.5',
+    sigEmail:      BRAND.accountsEmail,
   },
 } as const

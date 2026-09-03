@@ -3,6 +3,7 @@
  * Community broadcaster invoices: trustworthy, distinctive, send-ready.
  */
 
+import { BRAND } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
 import { DS } from '@/lib/invoiceDesignSystem'
 
@@ -100,12 +101,11 @@ export function getVariantMeta(id: InvoiceDesignVariantId): InvoiceDesignVariant
   return INVOICE_DESIGN_VARIANTS.find((v) => v.id === id) ?? INVOICE_DESIGN_VARIANTS[0]
 }
 
-/** Shared station facts for all variants */
+/** Shared station facts for all variants — BRAND is the source, not a second tagline. */
 export const INVOICE_STATION = {
   ...DS.station,
-  callsign: '3ONE',
-  licensed: '1989',
-  tagline: "Goulburn Valley's Community Radio",
-  communityLine: `Licensed community broadcaster · ACMA 1385226/1 · ${formatCoverageShort()}`,
-  org: 'Goulburn Valley Community Radio Inc.',
+  callsign: BRAND.callsign,
+  licensed: String(BRAND.licensed),
+  communityLine: `Licensed community broadcaster · ACMA ${BRAND.acma} · ${formatCoverageShort()}`,
+  org: BRAND.org,
 } as const
