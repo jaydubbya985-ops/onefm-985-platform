@@ -31,8 +31,7 @@ export function FacebookPanel({ compact, className }: FacebookPanelProps) {
     >
       <div className="space-y-3">
         <p className="font-body-small text-one-muted text-sm leading-relaxed">
-          This site does not load a Facebook timeline. The photo above is a station still — not a
-          Facebook post.
+          This site does not load a Facebook timeline. The photo above is a station still — not a Facebook post.
         </p>
         <a
           href={FACEBOOK_PAGE_URL}
