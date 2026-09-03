@@ -1,12 +1,8 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
 import { BRAND, BRAND_COLORS } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
-import { useLiveStream } from '@/hooks/useLiveStream'
-import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
-import { liveNowFromMetadata } from '@/lib/liveNow'
 
 export interface FeaturePortalProps {
   to: string
@@ -20,10 +16,6 @@ export interface FeaturePortalProps {
   imageClassName?: string
 }
 
-function isListenPortal(to: string, title: string): boolean {
-  return to === '/listen' && /listen live/i.test(title)
-}
-
 export function FeaturePortal({
   to,
   title,
@@ -35,44 +27,14 @@ export function FeaturePortal({
   className = '',
   imageClassName = '',
 }: FeaturePortalProps) {
-  const listen = isListenPortal(to, title)
-  const { playing, loading, error, toggle } = useLiveStream()
-  const metadata = usePlayerMetadata()
-  const [tick, setTick] = useState(() => new Date())
-
-  useEffect(() => {
-    if (!listen) return
-    const id = window.setInterval(() => setTick(new Date()), 30_000)
-    return () => window.clearInterval(id)
-  }, [listen])
-
-  const live = liveNowFromMetadata(metadata, tick)
   const coverage = formatCoverageShort()
-  const lockup = listen
-    ? `${title} — ${live.program}${live.withLine ? ` ${live.withLine}` : ''}`
-    : `${title} — ${BRAND.fullName} · ${coverage}`
-
-  const status = listen
-    ? error
-      ? error
-      : [
-          loading ? 'Tuning…' : playing ? 'On air' : 'Listen now',
-          live.program,
-          live.remainingLabel,
-          live.withLine,
-        ]
-          .filter(Boolean)
-          .join(' · ')
-    : coverage
+  const lockup = `${title} — ${BRAND.fullName} · ${coverage}`
 
   return (
     <Link
       to={to}
       title={lockup}
-      data-cursor-label={listen ? (playing ? 'ON AIR' : 'PLAY') : title.toUpperCase()}
-      onClick={() => {
-        if (listen && !playing) void toggle()
-      }}
+      data-cursor-label={title.toUpperCase()}
       className={`group relative block overflow-hidden rounded-2xl border border-one-border bg-one-midnight aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] hover:border-one-gold/40 transition-all duration-500 ${className}`}
     >
       <MediaImage
@@ -109,8 +71,8 @@ export function FeaturePortal({
               {title}
             </h2>
             <p className="font-body-small text-one-muted text-xs mt-1 line-clamp-2">{description}</p>
-            <p className="font-label text-[9px] tracking-[0.12em] uppercase text-one-white/45 mt-1.5 line-clamp-2">
-              {status}
+            <p className="font-label text-[9px] tracking-[0.12em] uppercase text-one-white/45 mt-1.5">
+              {coverage}
             </p>
           </div>
           <span
