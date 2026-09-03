@@ -302,6 +302,9 @@ if (
     'pages/Football.tsx: GVL Match of the Day hours must come from GVL_MATCH_SLOT / FULL_SCHEDULE, not “Saturday afternoon”',
   )
 }
+if (football && /reaches an estimated/.test(football.text)) {
+  hits.push('Football: do not say the station reaches the modelled weekly-listener figure')
+}
 
 const sponsorPages = [
   'pages/SponsorshipKit.tsx',
@@ -434,6 +437,23 @@ if (
   !coverageCopy.text.includes('formatSeoDefault')
 ) {
   hits.push('lib/coverageCopy.ts: must export formatOgDescription and formatSeoDefault')
+}
+if (coverageCopy && /formatBroadcastPopulation\(\) people — ABS 2021/.test(coverageCopy.text)) {
+  hits.push('coverageCopy: 189,680 is townData 2026 town estimates, not ABS 2021')
+}
+if (
+  !coverageCopy ||
+  !coverageCopy.text.includes('BROADCAST_POPULATION_SOURCE') ||
+  !coverageCopy.text.includes('townData 2026 town estimates')
+) {
+  hits.push('coverageCopy: must export BROADCAST_POPULATION_SOURCE as townData 2026 town estimates')
+}
+if (
+  !coverageCopy ||
+  !coverageCopy.text.includes('WEEKLY_LISTENERS_SOURCE') ||
+  !coverageCopy.text.includes('ABS 2021 via townData')
+) {
+  hits.push('coverageCopy: must export WEEKLY_LISTENERS_SOURCE as ABS 2021 via townData')
 }
 const presenterAssets = files.find((f) => f.label === 'lib/presenterAssets.ts')
 if (

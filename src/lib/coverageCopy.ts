@@ -42,8 +42,14 @@ export function formatBroadcastPopulation(): string {
   return broadcastPopulationCount().toLocaleString('en-AU')
 }
 
+/** Weekly listeners 39,375 — modelled from ABS 2021 via townData. */
+export const WEEKLY_LISTENERS_SOURCE = 'ABS 2021 via townData'
+
+/** 189,680 — sum of townData population2026 fields, not the 2021 census count. */
+export const BROADCAST_POPULATION_SOURCE = 'townData 2026 town estimates'
+
 export function formatCoverageLong(): string {
-  return `${formatWeeklyListeners()} across ${formatTowns()} within a ${formatRadius()} broadcast area (${formatBroadcastPopulation()} people — ABS 2021 via townData)`
+  return `${formatWeeklyListeners()} (${WEEKLY_LISTENERS_SOURCE}) across ${formatTowns()} within a ${formatRadius()} broadcast area (${formatBroadcastPopulation()} people — ${BROADCAST_POPULATION_SOURCE})`
 }
 
 /** Crawler OG / twitter default. Vite injects this into index.html at build. */
@@ -112,7 +118,7 @@ export function reachFactsRows(): Array<{ label: string; value: string }> {
 
 export function audienceStatsRows(): Array<{ label: string; value: string; note: string }> {
   return [
-    { label: 'Est. weekly listeners', value: weeklyListenersValue(), note: 'Regional reach estimate' },
+    { label: 'Est. weekly listeners', value: weeklyListenersValue(), note: WEEKLY_LISTENERS_SOURCE },
     {
       label: 'Population in broadcast area',
       value: broadcastPopulationValue(),

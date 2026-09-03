@@ -35,9 +35,9 @@ const demoProposalPool: Record<string, string[]> = {
     'Our mission is to inform, entertain, and connect the Goulburn Murray community. ONE FM is volunteer-supported and community-owned, making your sponsorship a genuine investment in local broadcasting.',
   ],
   'Audience Overview': [
-    `ONE FM reaches an estimated ${weeklyListenersValue()} weekly listeners across ${formatTowns()} in the Goulburn Murray region (source: population-based estimate from ABS 2021 census data). Our audience is local, community-focused, and connected to the station that reflects their region.`,
+    `Modelled weekly listenership is ${weeklyListenersValue()} across ${formatTowns()} in the Goulburn Murray (ABS 2021 via townData) — a broadcast-area estimate, not a measured reach count. Our audience is local, community-focused, and connected to the station that reflects their region.`,
     `Our listeners are the Goulburn Murray community — families, farmers, business owners, workers, and volunteers across ${formatTowns()}. They trust ONE FM because we are genuinely local and community-owned.`,
-    `The Goulburn Murray broadcast area is home to ${formatBroadcastPopulation()} people across ${formatTowns()} (ABS 2021 via townData). ONE FM is their community radio station — the one that covers their local sport, their local news, and their local events.`,
+    `The Goulburn Murray broadcast area is home to ${formatBroadcastPopulation()} people across ${formatTowns()} (townData 2026 town estimates — the sum of each town's population2026, not the 2021 census count). ONE FM is their community radio station — the one that covers their local sport, their local news, and their local events.`,
   ],
   'Platform Reach': [
     `ONE FM 98.5 delivers reach through FM broadcast (98.5 FM, ${formatCoverageShort()}), live streaming at fm985.com.au, community Facebook (${FACEBOOK_PAGE_URL.replace('https://www.', '')}), and SoundCloud interviews (${SOUNDCLOUD_PROFILE_URL.replace('https://', '')}). Confirmed social: Facebook and SoundCloud only.`,
