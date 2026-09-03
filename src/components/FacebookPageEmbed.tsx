@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
-import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { liveNowFromMetadata, type LiveNowDisplay } from '@/lib/liveNow'
 import { confirmedSocialNote, FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
@@ -24,26 +23,17 @@ export function compactShowName(name: string): string {
   return name.replace(/\s*\(Breaky\)\s*/i, '').trim()
 }
 
-/** Shorten the stream hook's real errors — do not invent a new failure. */
-export function shortStreamError(error: string): string {
-  if (/unavailable/i.test(error)) return 'Stream unavailable'
-  if (/blocked/i.test(error)) return 'Playback blocked'
-  return error
-}
-
 /**
  * Follow-block headline. Hosts come from liveNow (BREAKFAST_ROSTER).
- * No live-now listener counts. No unnamed social.
+ * No live-now listener counts. Playback errors belong to the stream hook.
  */
-export function facebookOnAirLine(live: LiveNowDisplay, error: string | null): string {
-  if (error) return shortStreamError(error)
+export function facebookOnAirLine(live: LiveNowDisplay): string {
   return [compactShowName(live.program), live.withLine, live.remainingLabel]
     .filter(Boolean)
     .join(' · ')
 }
 
-export function facebookOnAirEyebrow(live: LiveNowDisplay, error: string | null): string {
-  if (error) return 'Stream'
+export function facebookOnAirEyebrow(live: LiveNowDisplay): string {
   return live.isLive ? 'On air now' : 'Melbourne guide'
 }
 
@@ -62,11 +52,9 @@ export function FacebookPageEmbed({
 }) {
   const now = useGuideClock()
   const meta = usePlayerMetadata()
-  const { error } = useLiveStream()
   const live = liveNowFromMetadata(meta, now)
-  const failed = Boolean(error)
-  const line = facebookOnAirLine(live, error)
-  const eyebrow = facebookOnAirEyebrow(live, error)
+  const line = facebookOnAirLine(live)
+  const eyebrow = facebookOnAirEyebrow(live)
 
   return (
     <div className={className}>
@@ -78,9 +66,9 @@ export function FacebookPageEmbed({
           <div className="min-w-0">
             <p
               className="font-label text-[9px] tracking-[0.18em] uppercase"
-              style={{ color: failed ? RED : live.isLive ? RED : 'rgba(255,255,255,0.45)' }}
+              style={{ color: live.isLive ? RED : 'rgba(255,255,255,0.45)' }}
             >
-              {live.isLive && !failed ? '● ' : ''}
+              {live.isLive ? '● ' : ''}
               {eyebrow}
             </p>
             <p className="mt-1 font-body text-sm text-one-white leading-snug">{line}</p>
