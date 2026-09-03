@@ -52,4 +52,8 @@ if (!src.includes('setCount(value)')) {
   fail('must snap to the sourced figure if IntersectionObserver never fires')
 }
 
+if (!src.includes('Math.max((now - start) / duration, 0)')) {
+  fail('progress must clamp at 0 so a late start clock cannot flash a negative count')
+}
+
 console.log('verify-animated-number: ok — SR hears the finished figure once; tick is theatre')

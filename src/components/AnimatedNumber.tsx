@@ -39,11 +39,14 @@ export function AnimatedNumber({
     if (inView) {
       if (hasRun.current) return
       hasRun.current = true
-      const start = performance.now()
+      let start: number | undefined
       const tick = (now: number) => {
-        const p = Math.min((now - start) / duration, 1)
+        if (start === undefined) start = now
+        // Clamp — a first rAF timestamp before performance.now() made
+        // p negative and the theatre flashed invented counts like -297.
+        const p = Math.min(Math.max((now - start) / duration, 0), 1)
         const eased = 1 - Math.pow(1 - p, 3)
-        setCount(Math.floor(eased * value))
+        setCount(p < 1 ? Math.floor(eased * value) : value)
         if (p < 1) requestAnimationFrame(tick)
       }
       requestAnimationFrame(tick)
