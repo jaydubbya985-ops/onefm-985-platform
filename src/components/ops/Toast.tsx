@@ -5,6 +5,11 @@ import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react'
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning'
 
+/** Error / warning stay long enough to read “NOT sent”. Info / success stay brief. */
+export function toastHoldMs(type: ToastType): number {
+  return type === 'error' || type === 'warning' ? 8000 : 3000
+}
+
 export interface ToastItem {
   id: string
   message: string
@@ -41,7 +46,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const toast = useCallback((message: string, type: ToastType = 'info') => {
     const id = Math.random().toString(36).substring(2, 9)
     setToasts((prev) => [...prev, { id, message, type }])
-    setTimeout(() => remove(id), 3000)
+    setTimeout(() => remove(id), toastHoldMs(type))
   }, [remove])
 
   return (
