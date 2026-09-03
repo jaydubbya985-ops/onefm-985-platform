@@ -81,7 +81,7 @@ export default function Community() {
   const [showAllTowns, setShowAllTowns] = useState(false)
   const wallTowns = (showAllTowns ? towns : towns.slice(0, 6)).map((t, i) => ({
     name: t.name,
-    sub: `${t.lga} · pop. ${t.population2021.toLocaleString()}`,
+    sub: `${t.lga} · pop. ${t.population2021.toLocaleString()} (ABS 2021)`,
     img: TOWN_IMGS[i % TOWN_IMGS.length],
   }))
 
@@ -132,12 +132,12 @@ export default function Community() {
         <EditorialCards label="Weeknight world programs" items={multicultural} columns={3} />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
-          <LabelReveal className="mb-8">Where the Signal Reaches</LabelReveal>
+          <LabelReveal className="mb-8">The broadcast area</LabelReveal>
           <div className="border border-white/12 rounded-xl p-8 flex items-center justify-between gap-6 flex-wrap transition-colors hover:border-[#E51636]">
             <div>
               <h3 className="font-poster uppercase text-[30px] text-white">The Coverage Map</h3>
               <p className="text-[15px] text-white/55 mt-1 max-w-[480px]">
-                {formatRadius()} of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
+                {formatRadius()} from Mt Major — towns from townData and GVL clubs pinned on the map. Not a measured listener-reach count.
               </p>
             </div>
             <Link
@@ -158,7 +158,7 @@ export default function Community() {
         <StatsStrip
           stats={[
             { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: true },
-            { n: formatBroadcastPopulation(), t: 'People in broadcast area (ABS 2021 via townData)' },
+            { n: formatBroadcastPopulation(), t: 'People in broadcast area (townData 2026 town estimates)' },
             { n: String(MULTICULTURAL_PROGRAM_COUNT), t: 'Multicultural programs (station guide)' },
             { n: formatRadius(), t: 'Signal radius from Mt Major' },
           ]}
