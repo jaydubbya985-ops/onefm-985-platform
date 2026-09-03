@@ -30,14 +30,18 @@ export interface DaypartInfo {
   description: string
 }
 
-/** Sales dayparts (verbatim from bundle). */
+/**
+ * Sales dayparts (time windows from the deployed bundle).
+ * Do not name a daypart after one guide show — Planet of Sound is Thu 11PM–12AM only,
+ * and weekday breakfast on the Amrap grid is 6:00am–9:00am (BREAKFAST_TIME), not 7–10.
+ */
 export const DAYPARTS: DaypartInfo[] = [
-  { code: 'EM', label: 'Early Morning', timeRange: '5:00 AM – 7:00 AM', description: 'Drive time, breakfast prep' },
-  { code: 'B', label: 'Breakfast', timeRange: '7:00 AM – 10:00 AM', description: 'Peak morning, The ONE FM Breakfast Show' },
-  { code: 'M', label: 'Morning', timeRange: '10:00 AM – 1:00 PM', description: 'Mid-morning programming' },
-  { code: 'L', label: 'Lunch', timeRange: '1:00 PM – 4:00 PM', description: 'Afternoon programming' },
-  { code: 'D', label: 'Drive', timeRange: '4:00 PM – 8:00 PM', description: 'Peak afternoon, drive home' },
-  { code: 'LN', label: 'Late Night', timeRange: '8:00 PM – 12:00 AM', description: 'Evening programming, Planet of Sound' },
+  { code: 'EM', label: 'Early Morning', timeRange: '5:00 AM – 7:00 AM', description: 'Sales daypart before / overlapping breakfast' },
+  { code: 'B', label: 'Breakfast', timeRange: '7:00 AM – 10:00 AM', description: `Sales daypart overlapping ${BREAKFAST_TIME} ONE FM Breakfast` },
+  { code: 'M', label: 'Morning', timeRange: '10:00 AM – 1:00 PM', description: 'Mid-morning sales daypart' },
+  { code: 'L', label: 'Lunch', timeRange: '1:00 PM – 4:00 PM', description: 'Afternoon sales daypart' },
+  { code: 'D', label: 'Drive', timeRange: '4:00 PM – 8:00 PM', description: 'Drive-home sales daypart' },
+  { code: 'LN', label: 'Late Night', timeRange: '8:00 PM – 12:00 AM', description: 'Evening sales daypart — not a single named show' },
 ]
 
 export const DAY_NAMES_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
@@ -177,15 +181,21 @@ export interface SportsProgramme {
   description: string
 }
 
-/** Saturday sports lineup inside the Super Saturday block (from scraped data). */
-export const SATURDAY_SPORTS_LINEUP: SportsProgramme[] = [
-  { name: 'Square Gaiters', description: 'Harness racing show covering the Goulburn Valley racing scene.' },
-  { name: 'Hole In One', description: 'Golf show covering local golf events and news.' },
-  { name: 'At the Net', description: 'Tennis show covering local tennis competitions.' },
-  { name: 'Cricket Shepparton Show', description: 'Shepparton cricket coverage during cricket season.' },
-  { name: 'The Stats Man', description: 'GVL Football & Netball season previews and round-by-round analysis.' },
-  { name: 'KDL Show', description: 'Local sports coverage.' },
-]
+/** Saturday sport on the official Amrap grid — not the scraped Super Saturday name list. */
+export const SATURDAY_SPORTS_LINEUP: SportsProgramme[] = (() => {
+  const seen = new Set<string>()
+  return FULL_SCHEDULE.filter((s) => s.day === 6 && s.category === 'Sport').flatMap((s) => {
+    if (seen.has(s.name)) return []
+    seen.add(s.name)
+    const hours = `${formatClock(s.startHour)} – ${formatClock(s.endHour)}`
+    return [
+      {
+        name: s.name,
+        description: `${hours} · ${s.host}. Source: weekly guide (fm985.com.au/guide).`,
+      },
+    ]
+  })
+})()
 
 // --------------------------- Campaigns & ad spots ---------------------------
 
