@@ -2,7 +2,7 @@
  * Fail the build if live-now labels invent a host or drop remaining time.
  * Run: npx vite-node scripts/verify-on-air.ts
  */
-import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
+import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday, getMelbourneDateParts } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
 
@@ -28,6 +28,13 @@ assert(breakfastShow.host === 'Ralph Whitehead', `Thursday 08:13 host should be 
 assert(breakfastShow.remainingMinutes === 47, `expected 47 min left at 8:13, got ${breakfastShow.remainingMinutes}`)
 assert(breakfastShow.remainingLabel === '47 min left', `remaining label: ${breakfastShow.remainingLabel}`)
 assert(getMelbourneWeekday(thuBreakfast) === 4, `Melbourne weekday for Thu 3 Sep 2026 should be 4, got ${getMelbourneWeekday(thuBreakfast)}`)
+const thuParts = getMelbourneDateParts(thuBreakfast)
+assert(thuParts.year === 2026 && thuParts.month === 9 && thuParts.date === 3, `Melbourne date for Thu breakfast should be 2026-09-03, got ${thuParts.year}-${thuParts.month}-${thuParts.date}`)
+assert(thuParts.weekday === 4, `Melbourne date-parts weekday should be 4, got ${thuParts.weekday}`)
+// 22:00 UTC 2 Sep is already 08:00 3 Sep in Melbourne — viewer getDate() is still the 2nd.
+const utcEvening = new Date('2026-09-02T22:00:00Z')
+const melbourneMorning = getMelbourneDateParts(utcEvening)
+assert(melbourneMorning.date === 3 && melbourneMorning.weekday === 4, `UTC evening must resolve to Melbourne Thursday the 3rd, got date=${melbourneMorning.date} weekday=${melbourneMorning.weekday}`)
 assert(getWeekdayBreakfastHost(4) === 'Ralph Whitehead', 'Thursday breakfast is Ralph Whitehead')
 
 const meta = getScheduleMetadata(thuBreakfast)

@@ -4,7 +4,7 @@ import {
   Search, ChevronDown, Download, Copy, Check, Instagram, Facebook,
   Smartphone, Globe, Image, Palette, Type, Grid, ArrowRight,
   Sparkles, X, Eye, Hash, Shield,
-  Mic, Clock, Plus, Wand2, Radio
+  Mic, Clock, Wand2, Radio
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
@@ -36,6 +36,7 @@ import {
   BREAKFAST_TIME,
   FULL_SCHEDULE,
   MULTICULTURAL_PROGRAM_COUNT,
+  getMelbourneDateParts,
 } from '@/data/programGuide'
 
 /** programGuide day 0=Sunday … 6=Saturday */
@@ -146,7 +147,7 @@ const FEED_POSTS = [
   { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: `Under the lights at the GVL — ${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Friday night on the guide is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL Friday Night Footy'}. Catch us on 98.5 FM 🔴 #GVL #LocalFooty` },
   { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM' },
   { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: `Live and local — ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide keeping every corner of the Goulburn Valley connected. #OneFM985 #Community` },
-  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️' },
+  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Listen on 98.5 FM or stream at fm985.com.au 🎙️' },
 ]
 
 // Cadence reminders, not a fixture list. Sport labels match programGuide.ts.
@@ -219,9 +220,9 @@ const GridPattern = memo(function GridPattern() {
 /* ─── Section 1: Hero ─── */
 function HeroSection() {
   const stats = [
-    { value: '18', label: 'Templates' },
-    { value: '120+', label: 'Images' },
-    { value: '4', label: 'Platforms' },
+    { value: String(TEMPLATES.length), label: 'Photo sizes' },
+    { value: String(LIVE_PROFILE_LABELS.length), label: 'Live profiles' },
+    { value: 'Facebook', label: 'Confirmed page' },
   ]
 
   const heroRef = useRef<HTMLElement>(null)
@@ -289,7 +290,7 @@ function HeroSection() {
             transition={{ delay: 0.65, duration: 0.5, ease: easeOutExpo }}
             className="font-body text-one-white/70 max-w-[500px] mb-10"
           >
-            Brand assets, content templates, and campaign tools. Everything you need to amplify ONE FM across every platform.
+            Station photos, caption starters, and a Melbourne posting cadence. Confirmed profiles: Facebook and SoundCloud — not a campaign CMS, and not every platform.
           </motion.p>
 
           <motion.div
@@ -319,7 +320,7 @@ function HeroSection() {
               <a href="#templates" data-cursor-label="TEMPLATES" className="btn-primary text-xs">Browse Templates</a>
             </MagneticButton>
             <MagneticButton strength={8}>
-              <a href="#assets" data-cursor-label="DOWNLOAD" className="btn-secondary text-xs">Download Brand Kit</a>
+              <a href="#assets" data-cursor-label="ASSETS" className="btn-secondary text-xs">Browse brand assets</a>
             </MagneticButton>
           </motion.div>
         </div>
@@ -330,13 +331,13 @@ function HeroSection() {
         <Marquee
           speed={28}
           items={[
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK · INSTAGRAM · X · SOUNDCLOUD</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24 CONTENT TEMPLATES</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">120+ BRAND IMAGES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK · SOUNDCLOUD</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{TEMPLATES.length} SIZE TEMPLATES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">STATION PHOTOS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">CAPTION TEMPLATES</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CAMPAIGN CALENDAR TOOLS</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BRAND KIT DOWNLOAD</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">CAPTION STARTERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">MELBOURNE POSTING CADENCE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">CONFIRMED PROFILES ONLY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY · COMMUNITY RADIO</span>,
           ]}
         />
@@ -522,7 +523,9 @@ function AssetLibrary() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-h3 text-one-white">Typography</h3>
-            <button data-cursor-label="DOWNLOAD" className="btn-secondary text-xs">Download Font Package</button>
+            <p className="font-body-small text-muted text-xs max-w-xs text-right">
+              These faces load on this site. We do not ship a font zip.
+            </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
@@ -612,9 +615,9 @@ function TemplatesSection() {
           />
           <div aria-hidden className="explore-tile-scan" />
           <div className="absolute inset-0 bg-one-navy/60 flex flex-col justify-end p-6 md:p-8">
-            <h3 className="font-h3 text-one-white mb-3">Event Promo — Instagram Post</h3>
+            <h3 className="font-h3 text-one-white mb-3">{TEMPLATES[0].name}</h3>
             <div className="flex flex-wrap gap-2 mb-4">
-              {['1080×1080', 'PSD + Canva', 'Event'].map((tag) => (
+              {[TEMPLATES[0].dimensions, TEMPLATES[0].platform, 'Station photo'].map((tag) => (
                 <span key={tag} className="px-3 py-1 rounded-full border border-one-border font-label text-muted text-[10px]">
                   {tag}
                 </span>
@@ -624,7 +627,15 @@ function TemplatesSection() {
               <button data-cursor-label="PREVIEW" className="btn-primary text-xs" onClick={(e) => { e.stopPropagation(); openModal(TEMPLATES[0]) }}>
                 <Eye size={14} /> Preview
               </button>
-              <button data-cursor-label="DOWNLOAD" className="btn-secondary text-xs" onClick={(e) => e.stopPropagation()}>Download</button>
+              <a
+                href={TEMPLATES[0].image}
+                download
+                data-cursor-label="SAVE PHOTO"
+                className="btn-secondary text-xs"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Save station photo
+              </a>
             </div>
           </div>
         </motion.div>
@@ -717,13 +728,14 @@ function TemplatesSection() {
                       </span>
                     ))}
                   </div>
-                  <div className="font-label text-muted text-[11px] mb-1">CUSTOMIZATION</div>
+                  <div className="font-label text-muted text-[11px] mb-1">WHAT THIS IS</div>
                   <p className="font-body-small text-one-white text-sm mb-6">
-                    Easy to customize with your own images, colors, and text. All layers are clearly labeled and organized.
+                    A station photo cropped to a social size. Canva or Photoshop files are not published — save the photo and drop it into your own file.
                   </p>
                   <div className="flex gap-3">
-                    <button data-cursor-label="DOWNLOAD" className="btn-primary text-xs">Download</button>
-                    <button data-cursor-label="CANVA" className="btn-secondary text-xs">Open in Canva</button>
+                    <a href={modalTemplate.image} download data-cursor-label="SAVE PHOTO" className="btn-primary text-xs">
+                      Save station photo
+                    </a>
                   </div>
                 </div>
               </div>
@@ -736,16 +748,24 @@ function TemplatesSection() {
 }
 
 /* ─── Section 4: Campaign Calendar ─── */
-function CampaignCalendar() {
-  const [calendarView, setCalendarView] = useState<'month' | 'week' | 'list'>('month')
-  const [currentMonth] = useState(() => new Date())
+const MELBOURNE_MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+] as const
 
-  const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
-  const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay()
+function CampaignCalendar() {
+  const [calendarView, setCalendarView] = useState<'month' | 'list'>('month')
+  const melbourne = getMelbourneDateParts()
+  const [currentMonth] = useState(() => ({ year: melbourne.year, month: melbourne.month }))
+
+  const daysInMonth = new Date(Date.UTC(currentMonth.year, currentMonth.month, 0)).getUTCDate()
+  const firstWeekday = getMelbourneDateParts(new Date(Date.UTC(currentMonth.year, currentMonth.month - 1, 1))).weekday
 
   const calendarDays = Array.from({ length: daysInMonth }, (_, i) => i + 1)
-  const emptyDays = Array.from({ length: firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1 }, () => null)
+  const emptyDays = Array.from({ length: firstWeekday === 0 ? 6 : firstWeekday - 1 }, () => null)
   const allCells = [...emptyDays, ...calendarDays]
+  const isMelbourneToday = (day: number) =>
+    day === melbourne.date && currentMonth.year === melbourne.year && currentMonth.month === melbourne.month
 
   const getEventsForDay = (day: number) => CALENDAR_EVENTS.filter((e) => e.day === day)
 
@@ -756,13 +776,13 @@ function CampaignCalendar() {
           <div>
             <WordReveal text="CAMPAIGN CALENDAR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">
-              Posting cadence reminders — sport labels from the station guide (GVL Saturday, NIRS AFL Friday), not a fixture list.
+              {MELBOURNE_MONTH_NAMES[currentMonth.month - 1]} {currentMonth.year} · Melbourne. Posting cadence reminders — sport labels from the station guide (GVL Saturday, NIRS AFL Friday), not a fixture list.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex gap-1">
-              {(['month', 'week', 'list'] as const).map((v) => (
+              {(['month', 'list'] as const).map((v) => (
                 <button
                   key={v}
                   onClick={() => setCalendarView(v)}
@@ -774,9 +794,6 @@ function CampaignCalendar() {
                 </button>
               ))}
             </div>
-            <button data-cursor-label="NEW" className="btn-primary text-xs">
-              <Plus size={14} /> New Campaign
-            </button>
           </div>
         </div>
 
@@ -801,12 +818,12 @@ function CampaignCalendar() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.02, duration: 0.3 }}
                   className={`relative bg-one-navy border border-one-border rounded-lg p-2 min-h-[100px] hover:bg-one-navy/80 transition-colors ${
-                    day === new Date().getDate() ? 'ring-1 ring-one-gold' : ''
+                    day && isMelbourneToday(day) ? 'ring-1 ring-one-gold' : ''
                   }`}
                 >
                   {day && (
                     <>
-                      <div className={`font-label text-[11px] mb-1 ${day === new Date().getDate() ? 'text-one-gold' : 'text-muted'}`}>{day}</div>
+                      <div className={`font-label text-[11px] mb-1 ${isMelbourneToday(day) ? 'text-one-gold' : 'text-muted'}`}>{day}</div>
                       <div className="space-y-1">
                         {getEventsForDay(day).map((event) => (
                           <div
@@ -821,39 +838,6 @@ function CampaignCalendar() {
                     </>
                   )}
                 </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {calendarView === 'week' && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4 }}
-            className="glass-card p-6"
-          >
-            <div className="flex gap-4 overflow-x-auto">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
-                <div key={day} className="min-w-[140px] flex-1">
-                  <div className="font-label text-[11px] text-muted text-center mb-3">{day}</div>
-                  <div className="space-y-2">
-                    {getEventsForDay(i + 1).map((event) => (
-                      <div
-                        key={event.name}
-                        className="p-2 rounded-lg font-label text-[10px]"
-                        style={{ backgroundColor: event.color + '22', color: event.color, borderLeft: `2px solid ${event.color}` }}
-                      >
-                        {event.name}
-                      </div>
-                    ))}
-                    {getEventsForDay(i + 1).length === 0 && (
-                      <div className="h-12 rounded-lg border border-one-border border-dashed flex items-center justify-center">
-                        <span className="font-label text-[10px] text-muted">—</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
               ))}
             </div>
           </motion.div>
@@ -975,7 +959,7 @@ function PostingToolkit() {
 const CAPTION_TEMPLATES: Record<string, string[]> = {
   Facebook: [
     `${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays — news, music, and community from your local station. 🎙️`,
-    `Catch ${GVL_MATCH?.name ?? 'GVL Match of the Day'} ${GVL_WHEN} on ONE FM 98.5, or stream anywhere at fm985.com.au. Friday night is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL'}. 🎉`,
+    `Catch ${GVL_MATCH?.name ?? 'GVL Match of the Day'} ${GVL_WHEN} on ONE FM 98.5, or stream at fm985.com.au. Friday night is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL'}. 🎉`,
   ],
   SoundCloud: [
     'Catch the latest interviews and replays on the ONE FM SoundCloud. Search the station from the Listen page.',

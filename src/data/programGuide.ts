@@ -171,15 +171,46 @@ const MELBOURNE_DAY_INDEX: Record<string, number> = {
   Sat: 6,
 }
 
+export type MelbourneDateParts = {
+  /** 0=Sunday … 6=Saturday */
+  weekday: number
+  year: number
+  /** 1–12 */
+  month: number
+  /** 1–31 */
+  date: number
+}
+
 /** Melbourne weekday: 0=Sunday … 6=Saturday. Use this, not `Date#getDay()`. */
 export function getMelbourneWeekday(now: Date = new Date()): number {
   return getMelbourneClock(now).day
 }
 
-function getMelbourneClock(now: Date): { day: number; hour: number; minute: number } {
+/** Civil date in Australia/Melbourne. Use this, not `Date#getDate()` / `getMonth()`. */
+export function getMelbourneDateParts(now: Date = new Date()): MelbourneDateParts {
+  const clock = getMelbourneClock(now)
+  return {
+    weekday: clock.day,
+    year: clock.year,
+    month: clock.month,
+    date: clock.date,
+  }
+}
+
+function getMelbourneClock(now: Date): {
+  day: number
+  hour: number
+  minute: number
+  year: number
+  month: number
+  date: number
+} {
   const parts = new Intl.DateTimeFormat('en-AU', {
     timeZone: 'Australia/Melbourne',
     weekday: 'short',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
     hourCycle: 'h23',
@@ -187,10 +218,16 @@ function getMelbourneClock(now: Date): { day: number; hour: number; minute: numb
   const weekday = parts.find((p) => p.type === 'weekday')?.value ?? 'Sun'
   const hour = Number(parts.find((p) => p.type === 'hour')?.value ?? '0')
   const minute = Number(parts.find((p) => p.type === 'minute')?.value ?? '0')
+  const year = Number(parts.find((p) => p.type === 'year')?.value ?? '0')
+  const month = Number(parts.find((p) => p.type === 'month')?.value ?? '1')
+  const date = Number(parts.find((p) => p.type === 'day')?.value ?? '1')
   return {
     day: MELBOURNE_DAY_INDEX[weekday] ?? 0,
     hour,
     minute,
+    year,
+    month,
+    date,
   }
 }
 
