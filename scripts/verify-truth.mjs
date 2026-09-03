@@ -496,7 +496,7 @@ if (!socialHub) {
   if (/24 CONTENT TEMPLATES/.test(socialHub.text)) {
     hits.push('SocialHub: template count must match TEMPLATES.length, not an invented 24')
   }
-  if (/Open in Canva|Download Font Package|New Campaign/.test(socialHub.text)) {
+  if (/Open in Canva|Download Font Package|New Campaign|Canva \((Square|Story|Reel|Landscape|Portrait|Carousel)\)/.test(socialHub.text)) {
     hits.push('SocialHub: do not advertise Canva files, a font zip, or a campaign CMS we have not built')
   }
   if (!socialHub.text.includes('getMelbourneDateParts')) {

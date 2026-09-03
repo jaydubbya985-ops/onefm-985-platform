@@ -84,7 +84,7 @@ const ASSETS = [
   { name: 'Studio Photos Pack', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
   { name: 'Station photography (no presenter portraits pack)', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
   { name: 'Event Coverage', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
-  { name: 'Social Media Kit', format: 'PSD, Canva', category: 'Patterns', preview: 'bg-data-violet' },
+  { name: 'Social size crops', format: 'JPG from station photos', category: 'Patterns', preview: 'bg-data-violet' },
 ]
 
 // V3 Brand System colours — source: ONE_FM_brand_system_v3
@@ -102,24 +102,24 @@ const BRAND_COLORS = [
 
 // 2026 on-trend template formats — square, vertical story, horizontal, reel cover
 const TEMPLATES = [
-  { name: 'Breakfast Live Card', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
-  { name: 'GVL Match Day Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Matchday'], image: '/assets/images/gvl-night-panorama.jpg' },
-  { name: 'Community Event Reel Cover', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Event', 'Community', 'Reel'], image: '/assets/images/community-book-stall.jpg' },
-  { name: 'Multicultural Program Tile', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'Program', 'Community'], image: '/assets/images/culture-first-nations-dancer.png' },
-  { name: 'Studio Behind the Mic', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['BTS', 'Studio', 'Presenter'], image: '/assets/images/studio-commentary-selfie.jpg' },
-  { name: 'Goulburn Valley Heritage', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Heritage', 'Regional', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
-  { name: 'Live Stream Now Playing', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
-  { name: 'Sponsor Thank You', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Sponsor', 'Community', 'Thank You'], image: '/assets/images/gvl-player-high-five.jpg' },
-  { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
-  { name: 'First Nations in the Valley', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Community', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
-  { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
-  { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
-  { name: 'Vertical Now Playing', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
-  { name: 'Community Partner Landscape', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
-  { name: 'Quote Card', platform: 'Facebook', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
-  { name: 'Carousel Slide 1 — Breakfast', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Carousel)', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
-  { name: 'GVL Scoreboard Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
-  { name: 'Presenter Spotlight Reel', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
+  { name: 'Breakfast Live Card', platform: 'Instagram', dimensions: '1080×1080', format: 'Square JPG', tags: ['Live', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
+  { name: 'GVL Match Day Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Story JPG', tags: ['Sport', 'GVL', 'Matchday'], image: '/assets/images/gvl-night-panorama.jpg' },
+  { name: 'Community Event Reel Cover', platform: 'Instagram', dimensions: '1080×1920', format: 'Reel JPG', tags: ['Event', 'Community', 'Reel'], image: '/assets/images/community-book-stall.jpg' },
+  { name: 'Multicultural Program Tile', platform: 'Facebook', dimensions: '1200×630', format: 'Landscape JPG', tags: ['Multicultural', 'Program', 'Community'], image: '/assets/images/culture-first-nations-dancer.png' },
+  { name: 'Studio Behind the Mic', platform: 'Facebook', dimensions: '1200×630', format: 'Landscape JPG', tags: ['BTS', 'Studio', 'Presenter'], image: '/assets/images/studio-commentary-selfie.jpg' },
+  { name: 'Goulburn Valley Heritage', platform: 'Instagram', dimensions: '1080×1350', format: 'Portrait JPG', tags: ['Heritage', 'Regional', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Live Stream Now Playing', platform: 'Instagram', dimensions: '1080×1080', format: 'Square JPG', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'Sponsor Thank You', platform: 'Facebook', dimensions: '1200×630', format: 'Landscape JPG', tags: ['Sponsor', 'Community', 'Thank You'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080×1920', format: 'Story JPG', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
+  { name: 'First Nations in the Valley', platform: 'Facebook', dimensions: '1200×630', format: 'Landscape JPG', tags: ['Community', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
+  { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Square JPG', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
+  { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Portrait JPG', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
+  { name: 'Vertical Now Playing', platform: 'Instagram', dimensions: '1080×1920', format: 'Reel JPG', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'Community Partner Landscape', platform: 'Facebook', dimensions: '1200×627', format: 'Landscape JPG', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Quote Card', platform: 'Facebook', dimensions: '1080×1350', format: 'Portrait JPG', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Carousel Slide 1 — Breakfast', platform: 'Instagram', dimensions: '1080×1080', format: 'Carousel JPG', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
+  { name: 'GVL Scoreboard Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Story JPG', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
+  { name: 'Presenter Spotlight Reel', platform: 'Instagram', dimensions: '1080×1920', format: 'Reel JPG', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
 ]
 
 /** Canva size buckets — not a claim we post on Twitter/TikTok (those URLs are null). */
