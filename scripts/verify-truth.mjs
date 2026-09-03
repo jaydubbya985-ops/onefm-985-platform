@@ -480,6 +480,21 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const inPageHash = files.find((f) => f.label === 'lib/inPageHash.ts')
+if (
+  !inPageHash ||
+  !inPageHash.text.includes('export function installInPageHash') ||
+  !inPageHash.text.includes('isHashRouterHref')
+) {
+  hits.push(
+    'lib/inPageHash.ts: HashRouter pages must intercept bare #section clicks so they do not 404',
+  )
+}
+const mainTsx = files.find((f) => f.label === 'main.tsx')
+if (!mainTsx || !mainTsx.text.includes('installInPageHash()')) {
+  hits.push('main.tsx: must install in-page hash interceptor for HashRouter')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
