@@ -229,7 +229,7 @@ export default function AudienceAnalytics() {
             {[
               { label: 'Est. Weekly Listeners', value: weeklyListenersCount(), color: '#B6FF00', suffix: '', sparkline: false, extra: 'Source: ABS 2021 population estimate' },
               { label: 'Towns in Broadcast Area', value: townsCount(), color: '#D4963A', suffix: '', sparkline: false, extra: `${formatRadius()} radius from Shepparton` },
-              { label: 'Broadcast Area Population', value: broadcastPopulationCount(), color: '#F0C75E', suffix: '', sparkline: false, extra: `Source: ABS 2021 · ${formatTowns()}` },
+              { label: 'Broadcast Area Population', value: broadcastPopulationCount(), color: '#F0C75E', suffix: '', sparkline: false, extra: `Source: townData 2026 town estimates · ${formatTowns()}` },
               { label: 'Years Broadcasting', value: coverageNumbers.yearsBroadcasting, color: '#9B5DE5', suffix: ' yrs', sparkline: false, extra: 'Licensed 1989 · callsign 3ONE' },
             ].map((stat) => (
               <TiltCard key={stat.label} maxTilt={5} className="flex flex-col min-h-[140px]">
@@ -272,7 +272,7 @@ export default function AudienceAnalytics() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatWeeklyListenersPlain()} EST. WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">DEMOGRAPHICS · REACH · PERFORMANCE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatCoverageShort().toUpperCase()}</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 POPULATION · LICENSED 1989</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">TOWNDATA 2026 EST. · LICENSED 1989</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatBroadcastPopulation()} BROADCAST AREA POPULATION</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ABS 2021 · NOT LIVE STREAM COUNTS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{yearsBroadcastingValue()} YEARS ON AIR · 98.5 FM SHEPPARTON</span>,
