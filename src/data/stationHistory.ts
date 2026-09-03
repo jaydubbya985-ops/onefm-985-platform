@@ -120,7 +120,7 @@ export const HERITAGE_LEGENDS = [
   },
   {
     name: 'Di Hunter',
-    sub: '15 years on air · trained 103 presenters',
+    sub: 'Monday Afternoon · Carols archive, 2014',
     img: '/assets/images/heritage-di-hunter-carols-2014.jpg',
   },
   {
