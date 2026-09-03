@@ -3,7 +3,12 @@ import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
 import { BRAND } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { cn } from '@/lib/utils'
+
+const COVERAGE = formatCoverageShort()
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
+export const SOCIAL_FRAME_GVL_LINE = GVL_HOURS ? `GVL Match of the Day · ${GVL_HOURS}` : null
 
 export interface SocialPlatformFrameProps {
   eyebrow: string
@@ -35,8 +40,9 @@ export function SocialPlatformFrame({
   className,
   compact = false,
 }: SocialPlatformFrameProps) {
-  const coverage = formatCoverageShort()
-  const lockup = `${title} — ${BRAND.fullName} · ${coverage}`
+  const lockup = SOCIAL_FRAME_GVL_LINE
+    ? `${title} — ${BRAND.fullName} · ${COVERAGE} · ${SOCIAL_FRAME_GVL_LINE}`
+    : `${title} — ${BRAND.fullName} · ${COVERAGE}`
 
   return (
     <article
@@ -93,7 +99,8 @@ export function SocialPlatformFrame({
               <p className="font-body-small text-one-muted text-xs mt-1 line-clamp-2 max-w-md">{description}</p>
             )}
             <p className="font-label text-[9px] tracking-[0.12em] uppercase text-one-white/45 mt-1">
-              {coverage}
+              {COVERAGE}
+              {SOCIAL_FRAME_GVL_LINE ? ` · ${SOCIAL_FRAME_GVL_LINE}` : ''}
             </p>
           </div>
         </div>
