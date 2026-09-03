@@ -423,6 +423,17 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (
+  !programs ||
+  /\$\{host\.name\} on Facebook/.test(programs.text) ||
+  /social:\s*\{\s*fb:\s*true/.test(programs.text) ||
+  !programs.text.includes('Presenter profiles are not listed') ||
+  !programs.text.includes('confirmedSocialNote')
+) {
+  hits.push(
+    'pages/Programs.tsx: host roster must not invent per-presenter Facebook profiles — station page only',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {

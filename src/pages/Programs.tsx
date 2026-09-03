@@ -22,7 +22,7 @@ import { formatGuideHours, formatHostHours } from '@/lib/guideHours'
 import { formatWithPresenter } from '@/lib/liveNow'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
-import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
+import { FACEBOOK_PAGE_URL, confirmedSocialNote } from '@/lib/socialLinks'
 import {
   Mic2,
   Clock,
@@ -359,30 +359,30 @@ const shows = [
 // Names from fm985.com.au/guide/. Times resolved from FULL_SCHEDULE
 // via formatHostHours — Ralph's Friday Arvo is 3–4pm, not 3–6pm.
 const hosts = [
-  { name: "Tim Ahemt",        show: BREAKFAST_SHOW,             time: "Mon & Tue, 6am–9am",   type: "Breakfast",    social: { fb: true } },
-  { name: "The Big G",        show: BREAKFAST_SHOW + " / Wed Mornings", time: "Wed, 6am–12pm", type: "Breakfast",   social: { fb: true } },
-  { name: "Ralph Whitehead",  show: "Thu Mornings / Friday Arvo", time: "Thu 9am–12pm · Fri 3pm–6pm", type: "Breakfast", social: { fb: true } },
-  { name: "Josh Revens",      show: "Fri Mornings / Mon Nights",  time: "Fri 9am–12pm · Mon 6pm", type: "Breakfast", social: { fb: true } },
-  { name: "John Painter (Johnny P)", show: "Dancing through the decades", time: "Mon–Fri, 9am–12pm", type: "Music",  social: { fb: true } },
-  { name: "Di Hunter",        show: "Monday Afternoon",          time: "Monday, 12pm–3pm",      type: "Music",       social: { fb: true } },
-  { name: "Craig Stott",      show: "Tuesday Mornings",          time: "Tuesday, 9am–12pm",     type: "Music",       social: { fb: true } },
-  { name: "James Manley",     show: "The James Manley Show",     time: "Mon–Tue, 4pm–5pm",      type: "Community",   social: { fb: true } },
-  { name: "Tim Symonds",      show: "The Essential Hits",        time: "Thu 6pm / Sun 12pm",    type: "Music",       social: { fb: true } },
-  { name: "Tym Jeffery",      show: "The Show for Everyone",     time: "Friday, 6pm–7pm",       type: "Community",   social: { fb: true } },
-  { name: "Carlos Rock",      show: "Planet of Sound",           time: "Thu & Fri, 11pm",       type: "Music",       social: { fb: true } },
-  { name: "Timmy Ahmet",      show: "Good Evening Country",      time: "Monday, 8pm",           type: "Country",     social: { fb: true } },
-  { name: "Sue",              show: "Classic Country / Sunday Night Country", time: "Tue 6pm / Sun 7pm", type: "Country", social: { fb: true } },
-  { name: "Carlo",            show: "Viva Italia / Rock 'n' Roll Fever", time: "Tue 9pm / Thu 9pm", type: "Music",   social: { fb: true } },
-  { name: "Ken & Jill Gaffney", show: "Winding Back",           time: "Monday, 3pm–4pm",        type: "Music",       social: { fb: true } },
-  { name: "Judy",             show: "Butterfly Favorites",       time: "Tuesday, 3pm",          type: "Music",       social: { fb: true } },
-  { name: "Steve Little",     show: "All Things Rock",           time: "Wed–Thu, 3pm",          type: "Music",       social: { fb: true } },
-  { name: "KT or Ralph",      show: "Country Requests & Open Spaces", time: "Saturday, 8am",    type: "Country",     social: { fb: true } },
-  { name: "Les 'Harro' Harrison", show: "Rockin with Les Harrison", time: "Wednesday, 6pm",     type: "Community",   social: { fb: true } },
-  { name: "Margaret & Josh",  show: "Radio Netherlands",        time: "Monday, 7pm",            type: "Multicultural", social: { fb: true } },
-  { name: "Fikiri",           show: "The Afri-Connect Program (Swahili)", time: "Monday, 9pm–10pm", type: "Multicultural", social: { fb: true } },
-  { name: "MK",               show: "Samoan Music Program",      time: "Wednesday, 9pm–10pm",   type: "Multicultural", social: { fb: true } },
-  { name: "Edith",            show: "Filipino Music Program",    time: "Tuesday, 10pm–11pm",    type: "Multicultural", social: { fb: true } },
-  { name: "Jimmy & Rainy",    show: "Mandarin Program",          time: "Monday, 10pm",          type: "Multicultural", social: { fb: true } },
+  { name: "Tim Ahemt",        show: BREAKFAST_SHOW,             time: "Mon & Tue, 6am–9am",   type: "Breakfast" },
+  { name: "The Big G",        show: BREAKFAST_SHOW + " / Wed Mornings", time: "Wed, 6am–12pm", type: "Breakfast" },
+  { name: "Ralph Whitehead",  show: "Thu Mornings / Friday Arvo", time: "Thu 9am–12pm · Fri 3pm–6pm", type: "Breakfast" },
+  { name: "Josh Revens",      show: "Fri Mornings / Mon Nights",  time: "Fri 9am–12pm · Mon 6pm", type: "Breakfast" },
+  { name: "John Painter (Johnny P)", show: "Dancing through the decades", time: "Mon–Fri, 9am–12pm", type: "Music" },
+  { name: "Di Hunter",        show: "Monday Afternoon",          time: "Monday, 12pm–3pm",      type: "Music" },
+  { name: "Craig Stott",      show: "Tuesday Mornings",          time: "Tuesday, 9am–12pm",     type: "Music" },
+  { name: "James Manley",     show: "The James Manley Show",     time: "Mon–Tue, 4pm–5pm",      type: "Community" },
+  { name: "Tim Symonds",      show: "The Essential Hits",        time: "Thu 6pm / Sun 12pm",    type: "Music" },
+  { name: "Tym Jeffery",      show: "The Show for Everyone",     time: "Friday, 6pm–7pm",       type: "Community" },
+  { name: "Carlos Rock",      show: "Planet of Sound",           time: "Thu & Fri, 11pm",       type: "Music" },
+  { name: "Timmy Ahmet",      show: "Good Evening Country",      time: "Monday, 8pm",           type: "Country" },
+  { name: "Sue",              show: "Classic Country / Sunday Night Country", time: "Tue 6pm / Sun 7pm", type: "Country" },
+  { name: "Carlo",            show: "Viva Italia / Rock 'n' Roll Fever", time: "Tue 9pm / Thu 9pm", type: "Music" },
+  { name: "Ken & Jill Gaffney", show: "Winding Back",           time: "Monday, 3pm–4pm",        type: "Music" },
+  { name: "Judy",             show: "Butterfly Favorites",       time: "Tuesday, 3pm",          type: "Music" },
+  { name: "Steve Little",     show: "All Things Rock",           time: "Wed–Thu, 3pm",          type: "Music" },
+  { name: "KT or Ralph",      show: "Country Requests & Open Spaces", time: "Saturday, 8am",    type: "Country" },
+  { name: "Les 'Harro' Harrison", show: "Rockin with Les Harrison", time: "Wednesday, 6pm",     type: "Community" },
+  { name: "Margaret & Josh",  show: "Radio Netherlands",        time: "Monday, 7pm",            type: "Multicultural" },
+  { name: "Fikiri",           show: "The Afri-Connect Program (Swahili)", time: "Monday, 9pm–10pm", type: "Multicultural" },
+  { name: "MK",               show: "Samoan Music Program",      time: "Wednesday, 9pm–10pm",   type: "Multicultural" },
+  { name: "Edith",            show: "Filipino Music Program",    time: "Tuesday, 10pm–11pm",    type: "Multicultural" },
+  { name: "Jimmy & Rainy",    show: "Mandarin Program",          time: "Monday, 10pm",          type: "Multicultural" },
 ].map((host) => ({
   ...host,
   time: formatHostHours(host.name) ?? host.time,
@@ -812,6 +812,17 @@ export default function Programs() {
             <WordReveal text="Host Roster" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white max-w-xl">
               Meet the voices behind the mic. {hosts.length} presenters from the fm985.com.au program guide.
+              Confirmed social: {confirmedSocialNote()} —{' '}
+              <a
+                href={FACEBOOK_PAGE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-one-gold link-hover"
+                data-cursor-label="FACEBOOK"
+              >
+                facebook.com/onefmshepparton
+              </a>
+              . Presenter profiles are not listed.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -900,31 +911,7 @@ export default function Programs() {
                   <Clock size={12} />
                   {host.time}
                 </p>
-                <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-one-border">
-                  <div className="flex items-center gap-3">
-                  {host.social.fb && (
-                    <a
-                      href={FACEBOOK_PAGE_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-cursor-label="FACEBOOK"
-                      className="text-muted hover:text-one-white transition-colors"
-                      aria-label={`${host.name} on Facebook`}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                    </a>
-                  )}
-                  {(host.social as Record<string, boolean>)['ig'] === true && (
-                    <span className="text-muted hover:text-one-white transition-colors cursor-pointer">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-                    </span>
-                  )}
-                  {(host.social as Record<string, boolean>)['tw'] === true && (
-                    <span className="text-muted hover:text-one-white transition-colors cursor-pointer">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-                    </span>
-                  )}
-                  </div>
+                <div className="flex items-center justify-end gap-3 mt-3 pt-3 border-t border-one-border">
                   <MiniWaveform color="#F2F2F2" seed={hi} />
                 </div>
               </div>
