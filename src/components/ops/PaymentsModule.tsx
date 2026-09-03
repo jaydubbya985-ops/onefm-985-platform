@@ -2325,7 +2325,9 @@ function MembershipsTab() {
                     <QrCode className="h-16 w-16 text-[#101010]" />
                   </div>
                 </div>
-                <p className="text-[10px] text-slate-500">Scan at event check-in</p>
+                <p className="text-[10px] text-slate-500">
+                  Ops preview only — not an event pass, QR check-in, or membership perk
+                </p>
               </div>
               <div className="flex gap-3">
                 <Button
