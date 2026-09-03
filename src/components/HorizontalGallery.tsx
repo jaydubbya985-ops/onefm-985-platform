@@ -1,9 +1,17 @@
 import { useRef, useState, useLayoutEffect } from 'react'
-import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
+import {
+  formatBroadcastPopulation,
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+} from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
-import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
+import { getBreakfastScheduleLabel, MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
 
-const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
+const COVERAGE = formatCoverageShort()
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 interface Slide {
   img: string
@@ -18,7 +26,7 @@ const SLIDES: Slide[] = [
     img: '/assets/images/studio-presenter-mic.jpg',
     num: '01', ghost: 'ON AIR',
     title: 'Live. Every Day.',
-    caption: 'Real presenters, real voices — ONE FM 98.5 has been live and local from Shepparton since 1989.',
+    caption: `Real presenters, real voices — ONE FM Breakfast · ${BREAKFAST_ROSTER_LINE}. Live and local from Shepparton since 1989.`,
   },
   {
     img: '/assets/images/ob-van-branded.jpg',
@@ -30,7 +38,7 @@ const SLIDES: Slide[] = [
     img: '/assets/images/commentary-box-action.jpg',
     num: '03', ghost: 'SPORT',
     title: 'Call of the Match',
-    caption: `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}. The voice of the game since the first bounce.`,
+    caption: `GVL Match of the Day · ${GVL_MATCH_HOURS}. The voice of the game since the first bounce.`,
   },
   {
     img: '/assets/images/gvl-championship-mcg.jpg',
@@ -54,7 +62,7 @@ const SLIDES: Slide[] = [
     img: '/assets/images/geo-lake-aerial.jpg',
     num: '07', ghost: 'HOME',
     title: 'The Region',
-    caption: `${formatBroadcastPopulation()} people. ${formatRadius()} broadcast radius. One station that belongs to all of them.`,
+    caption: `${formatWeeklyListeners()} · ${formatBroadcastPopulation()} people · ${formatRadius()} radius (ABS 2021 via townData).`,
   },
   {
     img: '/assets/images/studio-exterior-rainbow.jpg',
@@ -202,8 +210,14 @@ export function HorizontalGallery() {
         >
           Across the Valley
         </h2>
-        <p className="text-[14px] text-white/45 mt-2 max-w-sm mx-auto">
-          Scroll through the moments that made ONE FM 98.5
+        <p className="text-[14px] text-white/45 mt-2 max-w-lg mx-auto">
+          Scroll through the moments that made ONE FM 98.5.{' '}
+          {formatWeeklyListeners()} across {COVERAGE} (ABS 2021 via townData).
+        </p>
+        <p className="text-[11px] font-bold tracking-[0.08em] uppercase text-white/40 mt-2 max-w-lg mx-auto">
+          Breakfast: {BREAKFAST_ROSTER_LINE}
+          {' · '}
+          GVL Match of the Day · {GVL_MATCH_HOURS}
         </p>
       </div>
 
