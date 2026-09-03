@@ -236,6 +236,13 @@ if (!footer || !footer.text.includes("formatGuideHours('GVL Match of the Day')")
 if (!footer || !footer.text.includes("formatGuideHours('NIRS AFL Friday Night Footy')")) {
   hits.push('components/Footer.tsx: NIRS Friday hours in the coverage strip must come from formatGuideHours / FULL_SCHEDULE')
 }
+if (
+  !footer ||
+  /24\/7/.test(footer.text) ||
+  !footer.text.includes('FOOTER_VOICE_LINE')
+) {
+  hits.push('components/Footer.tsx: editorial line must use FOOTER_VOICE_LINE — not invent 24/7 uptime')
+}
 
 const seo = files.find((f) => f.label === 'components/SEO.tsx')
 if (!seo || !seo.text.includes('formatSeoDefault()')) {

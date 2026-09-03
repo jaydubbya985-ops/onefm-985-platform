@@ -7,6 +7,7 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { BRAND } from '@/lib/brand'
 import { FOOTER_LISTEN, FOOTER_SPONSOR, FOOTER_ABOUT, FOOTER_SUPPORT, FOOTER_RESOURCES } from '@/lib/siteNav'
 import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { FOOTER_VOICE_LINE } from '@/lib/broadcastCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { MagneticButton } from '@/components/MagneticButton'
 import { WordReveal } from '@/components/WordReveal'
@@ -48,7 +49,7 @@ export function Footer() {
               style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', lineHeight: 1, letterSpacing: '-0.02em' }}
             >
               <WordReveal text="The valley's voice," as="span" className="block text-one-white" delay={0.1} stagger={0.022} variant="char" />
-              <WordReveal text="on air 24/7." as="span" className="block text-[#E51636]" delay={0.65} stagger={0.028} variant="char" />
+              <WordReveal text={FOOTER_VOICE_LINE} as="span" className="block text-[#E51636]" delay={0.65} stagger={0.028} variant="char" />
             </h2>
             <motion.div
               initial={{ opacity: 0, y: 12 }}
