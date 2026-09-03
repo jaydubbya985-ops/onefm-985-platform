@@ -61,14 +61,19 @@ export function CinegraphBackground({
   }
 
   return (
-    <MediaImage
-      src={asset.poster}
-      fallbackSrc={asset.fallback}
-      alt=""
-      priority={priority}
-      skeleton={false}
-      className={`${className} ${imageClassName ?? ''} ${reducedMotion ? '' : 'animate-ken-burns'}`}
-      style={{ opacity }}
-    />
+    <div className="absolute inset-0">
+      <MediaImage
+        src={asset.poster}
+        fallbackSrc={asset.fallback}
+        alt={asset.brief}
+        priority={priority}
+        skeleton={false}
+        className={`${className} ${imageClassName ?? ''} ${reducedMotion ? '' : 'animate-ken-burns'}`}
+        style={{ opacity }}
+      />
+      <p className="pointer-events-none absolute top-[5.75rem] left-4 z-[1] max-w-[16rem] font-label text-[9px] tracking-[0.16em] uppercase text-white/55">
+        Station archive still
+      </p>
+    </div>
   )
 }
