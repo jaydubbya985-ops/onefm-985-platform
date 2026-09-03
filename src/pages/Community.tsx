@@ -11,12 +11,21 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
-import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
+import {
+  formatBroadcastPopulation,
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+  formatWeeklyListenersPlain,
+} from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import {
   MULTICULTURAL_PROGRAMS,
   MULTICULTURAL_PROGRAM_COUNT,
+  formatBreakfastChromeLabel,
+  getBreakfastScheduleLabel,
   type ScheduleSlot,
 } from '@/data/programGuide'
 
@@ -33,7 +42,9 @@ function multiculturalWhen(slot: ScheduleSlot): string {
   return `${WEEKDAY[slot.day]} ${guideHour(slot.startHour)}–${guideHour(slot.endHour)}`
 }
 
-const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 const RED = '#E51636'
 
 /** Town wall photos — real station/valley imagery (not per-town photos yet). */
@@ -68,9 +79,16 @@ function CommunityHero() {
             <span key="b"><StrokeFill delay={0.9}>Community</StrokeFill><span style={{ color: RED }}>.</span></span>,
           ]} />
         </h1>
+        <p className="mt-4 font-label text-[11px] tracking-[0.12em] uppercase text-white/50 leading-relaxed">
+          {formatWeeklyListeners()} · {formatCoverageShort()}
+          <br />
+          Weekday breakfast · {BREAKFAST_CHROME}
+          <br />
+          GVL Match of the Day · {GVL_MATCH_HOURS}
+        </p>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          {formatTowns()}, one signal. From the GVL grand final to {MULTICULTURAL_PROGRAM_COUNT} multicultural
-          programs on the weekly guide — this is the Valley, on air.
+          {formatTowns()}, one signal. From GVL Match of the Day · {GVL_MATCH_HOURS} to {MULTICULTURAL_PROGRAM_COUNT} multicultural
+          programs on the weekly guide — this is the Valley, on air. Weekday breakfast: {BREAKFAST_ROSTER_LINE}.
         </p>
       </div>
     </section>
@@ -95,13 +113,16 @@ export default function Community() {
     <Layout>
       <SEO
         title="Our Community — ONE FM 98.5"
-        description={`${formatTowns()} across the Goulburn Valley: GVL footy called live, ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the station guide, and the communities ONE FM serves.`}
+        description={`${formatTowns()} across the Goulburn Valley. ${formatWeeklyListeners()} across ${formatCoverageShort()} (ABS 2021 via townData). GVL Match of the Day · ${GVL_MATCH_HOURS}. Breakfast: ${BREAKFAST_ROSTER_LINE}. ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the station guide.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
             `● ${formatTowns()} across the Goulburn Valley`,
-            `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`,
+            formatWeeklyListeners(),
+            formatCoverageShort(),
+            `Weekday breakfast · ${BREAKFAST_CHROME}`,
+            `GVL Match of the Day · ${GVL_MATCH_HOURS}`,
             `Multicultural programming — ${MULTICULTURAL_PROGRAM_COUNT} programs on the weekly guide`,
             'Community radio since 1989',
           ]}
@@ -113,7 +134,7 @@ export default function Community() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football under lights — called live on ONE FM 98.5"
-          badge={`GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`}
+          badge={`GVL Match of the Day · ${GVL_MATCH_HOURS}`}
         />
 
         <NameWall label={`The Towns We Serve${showAllTowns ? '' : ' · Top 6'}`} rows={wallTowns} />
@@ -137,7 +158,7 @@ export default function Community() {
             <div>
               <h3 className="font-poster uppercase text-[30px] text-white">The Coverage Map</h3>
               <p className="text-[15px] text-white/55 mt-1 max-w-[480px]">
-                {formatRadius()} of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
+                {formatWeeklyListeners()} across {formatCoverageShort()} (ABS 2021 via townData) from Mt Major — explore every town, transmitter and GVL club on the interactive map.
               </p>
             </div>
             <Link
@@ -157,10 +178,10 @@ export default function Community() {
 
         <StatsStrip
           stats={[
-            { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: true },
+            { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners (ABS 2021 via townData)', red: true },
+            { n: formatTowns(), t: `Within a ${formatRadius()} radius` },
             { n: formatBroadcastPopulation(), t: 'People in broadcast area (ABS 2021 via townData)' },
             { n: String(MULTICULTURAL_PROGRAM_COUNT), t: 'Multicultural programs (station guide)' },
-            { n: formatRadius(), t: 'Signal radius from Mt Major' },
           ]}
         />
         <div className="pb-32" />
