@@ -2,7 +2,7 @@
  * Fail the build if live-now labels invent a host or drop remaining time.
  * Run: npx vite-node scripts/verify-on-air.ts
  */
-import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
+import { FULL_SCHEDULE, getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday, slotIsCurrentGuide } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
 
@@ -50,5 +50,19 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+
+const thuRockAt = new Date('2026-09-03T15:20:00+10:00')
+const rock = FULL_SCHEDULE.find((s) => s.day === 4 && s.name === 'All Things Rock')
+assert(rock, 'Thursday All Things Rock must exist on the guide')
+assert(slotIsCurrentGuide(rock!, thuRockAt), '15:20 Melbourne Thursday is All Things Rock')
+assert(formatWithPresenter(rock!.host) === 'with Steve Little', 'All Things Rock host is Steve Little')
+const breakfastSlot = FULL_SCHEDULE.find((s) => s.day === 4 && s.name.includes('Breakfast'))
+assert(breakfastSlot && !slotIsCurrentGuide(breakfastSlot, thuRockAt), 'breakfast must not stay marked live at 15:20')
+
+const satMorning = new Date('2026-09-05T10:00:00+10:00')
+const satSport = FULL_SCHEDULE.find((s) => s.day === 6 && s.name === 'Saturday Sport')
+const countryOpen = FULL_SCHEDULE.find((s) => s.day === 6 && s.name === 'Country Requests & Open Spaces')
+assert(satSport && slotIsCurrentGuide(satSport, satMorning), 'overlapping Saturday 10:00 prefers Saturday Sport')
+assert(countryOpen && !slotIsCurrentGuide(countryOpen, satMorning), 'do not mark both overlapping Saturday rows live')
 
 console.log('verify-on-air OK')
