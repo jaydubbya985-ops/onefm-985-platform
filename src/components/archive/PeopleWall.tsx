@@ -5,6 +5,7 @@ import { CATEGORY_LABELS, CONFIDENCE_LABELS } from '@/types/livingArchive'
 import { LabelReveal } from '@/components/onair/kit'
 import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { scrollToId } from '@/lib/scrollTop'
 
 const RED = '#E51636'
 
@@ -191,18 +192,29 @@ export function PeopleWall({ people }: { people: ArchivePerson[] }) {
         Showing {filtered.length} of {people.length}
       </p>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((person, index) => (
-          <PersonCard key={person.id} person={person} index={index} />
-        ))}
-      </div>
+      {filtered.length === 0 ? (
+        <p className="text-[15px] text-white/45 py-10 max-w-md leading-relaxed">
+          No names match that search. Try another spelling, or add a memory so the archive can grow.
+        </p>
+      ) : (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((person, index) => (
+            <PersonCard key={person.id} person={person} index={index} />
+          ))}
+        </div>
+      )}
 
       <p className="text-[12px] text-white/30 mt-8">
         Photography: ONE FM studio visit and GVL ground archive — not presenter portraits. Named
         portraits exist only for Di Hunter and Sally Nayler.{' '}
-        <a href="#contribute" className="underline hover:text-white/60">
+        <button
+          type="button"
+          onClick={() => scrollToId('contribute')}
+          className="underline hover:text-white/60 bg-transparent border-0 p-0 text-inherit cursor-pointer"
+          data-cursor-label="MEMORY"
+        >
           Add your memory →
-        </a>
+        </button>
       </p>
     </section>
   )
