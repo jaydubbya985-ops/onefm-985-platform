@@ -124,9 +124,9 @@ function SlidePanel({
         </span>
       </div>
 
-      {/* Bottom: title + caption */}
+      {/* Bottom: title + caption — sit above the mini player */}
       <div
-        className="absolute bottom-12 left-10 z-10 max-w-lg"
+        className="absolute bottom-28 left-10 z-10 max-w-lg"
         style={{
           opacity: isActive ? 1 : 0,
           transform: isActive ? 'translateY(0)' : 'translateY(14px)',
@@ -290,7 +290,7 @@ export function HorizontalGallery() {
               className="absolute inset-0"
               style={{ background: 'linear-gradient(to top, rgba(3,8,16,0.92) 0%, rgba(3,8,16,0.28) 55%, transparent 100%)' }}
             />
-            <div className="absolute bottom-5 left-5 right-5 z-10">
+            <div className="absolute bottom-24 left-5 right-5 z-10">
               <span className="font-label text-[9px] tracking-[0.25em] text-one-electric block mb-1">{slide.ghost}</span>
               <h3 className="font-h4 text-white">{slide.title}</h3>
               <p className="font-body-small mt-1 line-clamp-2" style={{ color: 'rgba(255,255,255,0.5)' }}>
