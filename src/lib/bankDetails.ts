@@ -5,9 +5,11 @@ export const BANK_BSB = '083-894'
 export const BANK_ACCOUNT = '553 219 432'
 /** Name on the NAB account — do not invent a different trading name. */
 export const BANK_ACCOUNT_NAME = '98.5 One FM'
+/** Licensed entity ABN — same source as BRAND.abn. */
+export const BANK_ABN = BRAND.abn
 
 /** Copy-paste bank instruction. Online pay links are not configured. */
 export function bankPayLine(reference?: string): string {
   const ref = reference ? ` Reference: ${reference}.` : ''
-  return `Pay to ${BANK_ACCOUNT_NAME} (${BRAND.org}). NAB BSB ${BANK_BSB}, account ${BANK_ACCOUNT}.${ref}`
+  return `Pay to ${BANK_ACCOUNT_NAME} (${BRAND.org}, ABN ${BANK_ABN}). NAB BSB ${BANK_BSB}, account ${BANK_ACCOUNT}.${ref} Card checkout is not configured.`
 }
