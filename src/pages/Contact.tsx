@@ -14,6 +14,7 @@ import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
+import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { BREAKFAST_SHOW, BREAKFAST_TIME } from '@/data/programGuide'
 import {
@@ -112,7 +113,7 @@ function ContactHero() {
             transition={{ duration: 0.6 }}
             className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
           >
-            Studio Line Open · Shepparton
+            Studio line · Shepparton
           </motion.span>
 
           <motion.div
@@ -602,12 +603,12 @@ function FAQSection() {
     {
       question: 'How do I become a sponsor?',
       answer:
-        'Head to our Sponsorship page to explore packages, or select "Sponsorship" in the enquiry form above. Our partnerships team will follow up.',
+        'Open the Sponsorship page for published packages, or select "Sponsorship" in the enquiry form above. Station staff reply from the inbox — there is no separate partnerships desk.',
     },
     {
       question: 'Can I volunteer at the station?',
       answer:
-        'Absolutely. We welcome volunteers for programming, events, technical support, and administration. Select "Volunteering" in the form above, or drop by the studio during office hours. Training is provided.',
+        `Yes. Select "Volunteering" in the form above, email ${BRAND.email}, or call ${BRAND.phone}. The studio is at ${BRAND.address} — call or email first; the door is not a published reception desk.`,
     },
     {
       question: 'How do I request a song?',
@@ -617,12 +618,12 @@ function FAQSection() {
     {
       question: 'What area does ONE FM cover?',
       answer:
-        `ONE FM broadcasts to ${formatTowns()} across the Goulburn Valley and surrounding regions. ${formatBroadcastPopulation()} people live in the broadcast area (townData 2026 est.) within a ${formatRadius()} radius of Shepparton.`,
+        `ONE FM broadcasts to ${formatTowns()} across the Goulburn Valley and surrounding regions. ${formatBroadcastPopulation()} people live in the broadcast area (ABS 2021 via townData) within a ${formatRadius()} radius of Shepparton.`,
     },
     {
       question: 'How do I submit community news?',
       answer:
-        `Email your news, events, or announcements to ${BRAND.email}, or use the General enquiry form above. We read community bulletins throughout the day.`,
+        `Email your news, events, or announcements to ${BRAND.email}, or use the General enquiry form above. Notices may go to air as community information — we do not run a timed bulletin clock.`,
     },
     {
       question: 'What are your broadcast hours?',
@@ -632,7 +633,7 @@ function FAQSection() {
     {
       question: 'How do I advertise my business?',
       answer:
-        'We offer radio spots, sponsorships, digital packages, and event partnerships. Select "Advertising" in the enquiry form and our sales team will prepare a custom proposal for your budget.',
+        `On-air spots, sponsorship packages, and a digital package (Facebook, website banner, newsletter — not Instagram). Select "Advertising" in the form, or request a proposal. ${STANDARD_SPOT_PLUS_GST}. GVL match-day is premium, never the $25 floor.`,
     },
     {
       question: 'Can I listen online?',
