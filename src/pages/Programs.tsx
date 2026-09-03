@@ -20,8 +20,7 @@ import {
 } from '@/data/programGuide'
 import { formatGuideHours, formatHostHours } from '@/lib/guideHours'
 import { formatWithPresenter } from '@/lib/liveNow'
-import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
-import { FacebookPanel } from '@/components/social/FacebookPanel'
+import { InterviewOnDemand } from '@/components/InterviewOnDemand'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import {
   Mic2,
@@ -444,50 +443,6 @@ const gvlSportBlocks = [
   ...block,
   time: formatGuideHours(block.title) ?? block.time,
 }))
-
-/* ────────────────────────────────────────────────────────── */
-/*  Section 5 — Podcasts                                      */
-/* ────────────────────────────────────────────────────────── */
-// ONE FM interviews are available on SoundCloud: soundcloud.com/user-570295409
-// Podcast episode counts are indicative — check SoundCloud for latest
-const podcasts = [
-  {
-    title: "ONE FM Interviews",
-    hosts: "ONE FM Presenters",
-    eps: null,
-    latest: "Latest community interviews — soundcloud.com/user-570295409",
-    desc: "Local interviews, community stories and Goulburn Valley voices. Available on SoundCloud after broadcast.",
-    url: "https://soundcloud.com/user-570295409",
-    color: '#F2F2F2',
-    colorRgb: '212, 175, 55',
-    Icon: Mic2,
-    label: 'Broadcast',
-  },
-  {
-    title: "GVL Football & Netball",
-    hosts: "ONE FM Sport",
-    eps: null,
-    latest: "Match commentary and post-match interviews",
-    desc: "GVL Football & Netball match coverage, player interviews and round analysis during the season.",
-    url: "https://soundcloud.com/user-570295409",
-    color: '#E51636',
-    colorRgb: '229, 22, 54',
-    Icon: Trophy,
-    label: 'Sport',
-  },
-  {
-    title: "Community Interviews",
-    hosts: "John Painter & Team",
-    eps: null,
-    latest: "Local community voices",
-    desc: "Community members, local events, and the stories that matter to the Goulburn Murray region.",
-    url: "https://soundcloud.com/user-570295409",
-    color: '#B6FF00',
-    colorRgb: '46, 196, 182',
-    Icon: Radio,
-    label: 'Community',
-  },
-]
 
 /* ────────────────────────────────────────────────────────── */
 /*  MAIN PAGE                                                 */
@@ -1029,115 +984,7 @@ export default function Programs() {
         </div>
       </section>
 
-      {/* Podcasts — was Section 5 */}
-      <section className="section-padding section-bleed-top bg-surface-warm" data-cursor-label="ON DEMAND">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-          className="mb-12"
-        >
-          <WordReveal text="Interviews & On-Demand" className="font-h2 text-one-white mb-3 block" as="h2" />
-          <p className="font-body text-muted max-w-xl">
-            Community interviews and sport replays on SoundCloud — not separate podcast download counts.
-          </p>
-        </motion.div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-          <SoundCloudPanel compact />
-          <FacebookPanel compact />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {podcasts.map((pod, i) => (
-            <motion.a
-              key={pod.title}
-              href={pod.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-              whileHover={{ scale: 1.02, y: -4 }}
-              className="glass-card p-6 flex flex-col gap-4 group cursor-pointer"
-            >
-              <div
-                className="w-full aspect-square rounded-lg overflow-hidden relative"
-                style={{ background: 'linear-gradient(135deg, #101010 0%, #070707 100%)' }}
-              >
-                {/* Category-color radial glow from below */}
-                <div className="absolute inset-0" style={{
-                  background: `radial-gradient(ellipse at 50% 115%, rgba(${pod.colorRgb}, 0.38) 0%, transparent 65%)`,
-                  pointerEvents: 'none',
-                }} />
-                {/* CRT scanlines */}
-                <div className="absolute inset-0" style={{
-                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px)',
-                  pointerEvents: 'none',
-                }} />
-                {/* Animated spectrum bars */}
-                <div className="absolute inset-x-0 bottom-0 flex items-end gap-[2px] px-3 pb-0" style={{ height: '48%' }}>
-                  {[36, 60, 80, 50, 90, 42, 68, 84, 47, 72, 38, 78, 54, 88, 44].map((h, bi) => (
-                    <div
-                      key={bi}
-                      style={{
-                        flex: 1,
-                        height: `${h}%`,
-                        backgroundColor: `rgba(${pod.colorRgb}, ${0.22 + (h / 100) * 0.55})`,
-                        borderRadius: '2px 2px 0 0',
-                        animation: `waveform ${0.85 + (bi % 5) * 0.17}s ease-in-out ${bi * 0.07}s infinite`,
-                        transformOrigin: 'bottom',
-                      }}
-                    />
-                  ))}
-                </div>
-                {/* Centre icon */}
-                <div className="absolute inset-0 flex items-center justify-center" style={{ paddingBottom: '28%' }}>
-                  <div style={{
-                    width: 56, height: 56, borderRadius: '50%',
-                    background: `rgba(${pod.colorRgb}, 0.12)`,
-                    border: `1.5px solid rgba(${pod.colorRgb}, 0.45)`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <pod.Icon size={28} style={{ color: pod.color }} />
-                  </div>
-                </div>
-                {/* Category label chip */}
-                <div className="absolute top-3 left-3">
-                  <span style={{
-                    fontFamily: 'JetBrains Mono, monospace',
-                    fontSize: '0.52rem',
-                    letterSpacing: '0.2em',
-                    textTransform: 'uppercase',
-                    color: `rgba(${pod.colorRgb}, 0.85)`,
-                    background: `rgba(${pod.colorRgb}, 0.1)`,
-                    border: `1px solid rgba(${pod.colorRgb}, 0.25)`,
-                    padding: '2px 8px',
-                    borderRadius: 3,
-                  }}>
-                    {pod.label}
-                  </span>
-                </div>
-                <div aria-hidden className="explore-tile-scan" />
-              </div>
-              <div>
-                <h3 className="font-h3 text-one-white group-hover:text-one-gold transition-colors">{pod.title}</h3>
-                <p className="font-body-small text-muted mt-1">{pod.hosts}</p>
-              </div>
-              <p className="font-body-small text-one-white flex-1">{pod.desc}</p>
-              <div className="pt-4 border-t border-one-border space-y-2">
-                <span className="font-label text-one-gold flex items-center gap-1">
-                  <Play size={12} />
-                  Open on SoundCloud
-                </span>
-                <p className="font-body-small text-muted text-xs">Latest: {pod.latest}</p>
-              </div>
-            </motion.a>
-          ))}
-        </div>
-        </div>
-      </section>
+      <InterviewOnDemand />
 
       {/* ═══════ Section 6 — Request a Song ═══════ */}
       <section className="section-padding section-bleed-top bg-surface-glow pb-32" data-cursor-label="REQUEST">
