@@ -1,6 +1,12 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { isSupabaseConfigured } from '@/lib/supabase'
+import { opsLoginFailureNote } from '@/lib/opsLoginError'
+
+export interface OpsLoginResult {
+  ok: boolean
+  error?: string
+}
 
 export const OPS_PASSWORD = 'onefm2026'
 export const OPS_SESSION_KEY = 'ops_unlocked'
@@ -38,13 +44,13 @@ export function useOpsAccess() {
   }, [])
 
   const submitLogin = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string): Promise<OpsLoginResult> => {
       try {
         await login(email, password)
         setShowGate(false)
-        return true
-      } catch {
-        return false
+        return { ok: true }
+      } catch (err) {
+        return { ok: false, error: opsLoginFailureNote(err) }
       }
     },
     [login],
