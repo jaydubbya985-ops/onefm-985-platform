@@ -5,7 +5,7 @@
 
 import { BRAND } from '@/lib/brand'
 import { liveNowFromMetadata, type LiveNowDisplay } from '@/lib/liveNow'
-import type { PlayerMetadata } from '@/lib/playerMetadata'
+import { isUsableNowPlaying, type PlayerMetadata } from '@/lib/playerMetadata'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 export const MEDIA_SESSION_STATION = `${BRAND.fullName}`
@@ -65,8 +65,10 @@ export function buildMediaSessionPayload(
   const artwork = mediaSessionArtwork(origin)
   const remaining = live.remainingLabel ? ` · ${live.remainingLabel}` : ''
 
-  if (meta.nowPlaying) {
-    const title = meta.title?.trim() || meta.nowPlaying
+  const streamTitle = meta.nowPlaying?.trim() ?? ''
+  if (isUsableNowPlaying(streamTitle)) {
+    const namedTitle = isUsableNowPlaying(meta.title) ? meta.title?.trim() ?? '' : ''
+    const title = namedTitle || streamTitle
     const artist = meta.artist?.trim() || MEDIA_SESSION_STATION
     return {
       title,

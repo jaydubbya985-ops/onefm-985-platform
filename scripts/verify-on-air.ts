@@ -10,7 +10,7 @@ import {
   mediaSessionPosition,
   playingDocumentTitle,
 } from '../src/lib/mediaSession'
-import { getScheduleMetadata } from '../src/lib/playerMetadata'
+import { getScheduleMetadata, isUsableNowPlaying } from '../src/lib/playerMetadata'
 
 function assert(cond: unknown, message: string) {
   if (!cond) {
@@ -94,6 +94,21 @@ const lockTrack = buildMediaSessionPayload(live, trackMeta, ORIGIN)
 assert(lockTrack.title === 'Solid Rock', `stream title: ${lockTrack.title}`)
 assert(lockTrack.artist === 'Goanna', `stream artist: ${lockTrack.artist}`)
 assert(lockTrack.album.includes('Breakfast'), `stream album is the guide show: ${lockTrack.album}`)
+
+assert(isUsableNowPlaying('ONE FM 98.5') === false, 'station ident is not a track')
+assert(isUsableNowPlaying('ONE FM') === false, 'ONE FM alone is not a track')
+assert(isUsableNowPlaying('Solid Rock') === true, 'a real title is a track')
+const identMeta = {
+  ...meta,
+  nowPlaying: 'ONE FM 98.5',
+  title: 'ONE FM 98.5',
+  artist: null,
+  source: 'stream' as const,
+  sourceLabel: 'Stream metadata',
+}
+const lockIdent = buildMediaSessionPayload(live, identMeta, ORIGIN)
+assert(lockIdent.title.includes('Breakfast'), `station ident must not replace the show, got ${lockIdent.title}`)
+assert(lockIdent.artist === 'Ralph Whitehead', `ident fallback artist: ${lockIdent.artist}`)
 
 const pos = mediaSessionPosition(live)
 assert(pos !== null && pos.playbackRate === 1, 'position state must be rate 1')

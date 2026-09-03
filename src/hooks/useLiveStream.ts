@@ -58,7 +58,7 @@ export function pauseLiveStream(): void {
 }
 
 export function useLiveStream() {
-  const local = useSyncExternalStore(subscribe, getSnapshot)
+  const local = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 
   const play = useCallback(() => playLiveStream(), [])
   const pause = useCallback(() => pauseLiveStream(), [])
