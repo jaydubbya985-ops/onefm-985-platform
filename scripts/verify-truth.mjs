@@ -407,11 +407,13 @@ if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
   !programs ||
-  !programs.text.includes('Email Draft Opened') ||
+  !programs.text.includes('SONG_REQUEST_CTA') ||
+  !programs.text.includes('SONG_REQUEST_OPENED') ||
+  /Send Request/i.test(programs.text) ||
   /Request Received/i.test(programs.text)
 ) {
   hits.push(
-    'pages/Programs.tsx: song request must say a draft opened — not that it was received',
+    'pages/Programs.tsx: song request must use songRequestCopy — mailto is a draft, not a send',
   )
 }
 if (
