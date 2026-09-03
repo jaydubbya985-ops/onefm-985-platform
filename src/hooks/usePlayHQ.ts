@@ -1,86 +1,75 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { PlayHQGame, PlayHQGameSummary, GVLLadderTeam } from '@/lib/playhq';
-import {
-  GVL_LADDER,
-  MOCK_GVL_GAMES,
-  formatAFLScore,
-  getGameStatusLabel,
-  getTeamColor,
-} from '@/lib/playhq';
+import { useState, useEffect, useCallback } from 'react'
+import type { PlayHQGame, PlayHQGameSummary, GVLLadderTeam } from '@/lib/playhq'
+import { GVL_LADDER, formatAFLScore, getGameStatusLabel, getTeamColor } from '@/lib/playhq'
+import { PLAYHQ_HOOK_ERROR } from '@/lib/playhqCopy'
 
 export interface UsePlayHQGamesResult {
-  games: PlayHQGame[];
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
+  games: PlayHQGame[]
+  loading: boolean
+  error: string | null
+  refetch: () => void
 }
 
-// Hook for GVL games
+/** No invented fixtures. Empty until a Netlify PlayHQ proxy exists. */
 export function usePlayHQGames(gradeId?: string): UsePlayHQGamesResult {
-  const [games, setGames] = useState<PlayHQGame[]>(MOCK_GVL_GAMES);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [games, setGames] = useState<PlayHQGame[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(PLAYHQ_HOOK_ERROR)
 
   const fetchGames = useCallback(async () => {
-    // PlayHQ keys must stay server-side. Use static data until a Netlify proxy exists.
-    setError(null);
-    setLoading(false);
-    setGames(MOCK_GVL_GAMES);
-  }, [gradeId]);
+    setLoading(false)
+    setGames([])
+    setError(PLAYHQ_HOOK_ERROR)
+  }, [gradeId])
 
   useEffect(() => {
-    fetchGames();
-  }, [fetchGames]);
+    void fetchGames()
+  }, [fetchGames])
 
-  return { games, loading, error, refetch: fetchGames };
+  return { games, loading, error, refetch: fetchGames }
 }
 
-// Hook for GVL ladder
 export function usePlayHQLadder(): {
-  ladder: GVLLadderTeam[];
-  loading: boolean;
+  ladder: GVLLadderTeam[]
+  loading: boolean
+  error: string | null
 } {
-  // Ladder is static data for now - could be fetched from PlayHQ if available
-  return { ladder: GVL_LADDER, loading: false };
+  return { ladder: GVL_LADDER, loading: false, error: PLAYHQ_HOOK_ERROR }
 }
 
-// Hook for game summary with player stats
 export function usePlayHQGameSummary(gameId: string) {
-  const [summary, setSummary] = useState<PlayHQGameSummary | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [summary, setSummary] = useState<PlayHQGameSummary | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(PLAYHQ_HOOK_ERROR)
 
   const fetchSummary = useCallback(async () => {
-    // PlayHQ live summary requires a server-side proxy to keep API keys private.
-    setError(null);
-    setLoading(false);
-    setSummary(null);
-  }, [gameId]);
+    setLoading(false)
+    setSummary(null)
+    setError(PLAYHQ_HOOK_ERROR)
+  }, [gameId])
 
   useEffect(() => {
-    fetchSummary();
-  }, [fetchSummary]);
+    void fetchSummary()
+  }, [fetchSummary])
 
-  return { summary, loading, error, refetch: fetchSummary };
+  return { summary, loading, error, refetch: fetchSummary }
 }
 
-// Hook for live game polling (auto-refresh during games)
 export function useLiveGamePolling(games: PlayHQGame[], intervalMs = 60000) {
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   useEffect(() => {
-    const hasLiveGame = games.some(g => g.status === 'LIVE');
-    if (!hasLiveGame) return;
+    const hasLiveGame = games.some((g) => g.status === 'LIVE')
+    if (!hasLiveGame) return
 
     const interval = setInterval(() => {
-      setLastUpdated(new Date());
-    }, intervalMs);
+      setLastUpdated(new Date())
+    }, intervalMs)
 
-    return () => clearInterval(interval);
-  }, [games, intervalMs]);
+    return () => clearInterval(interval)
+  }, [games, intervalMs])
 
-  return lastUpdated;
+  return lastUpdated
 }
 
-// Re-export helpers for components
-export { formatAFLScore, getGameStatusLabel, getTeamColor };
+export { formatAFLScore, getGameStatusLabel, getTeamColor }
