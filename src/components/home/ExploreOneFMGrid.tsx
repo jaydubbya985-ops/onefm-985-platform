@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
 import { formatCoverageShort, formatRadius, formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
-import { formatBreakfastChromeLabel } from '@/data/programGuide'
+import { BREAKFAST_SHOW, formatBreakfastChromeLabel } from '@/data/programGuide'
 import { formatGuideHours } from '@/lib/guideHours'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { confirmedSocialNote } from '@/lib/socialLinks'
@@ -25,7 +25,7 @@ const TILES = [
   },
   {
     title: 'Programs',
-    desc: formatBreakfastChromeLabel(),
+    desc: BREAKFAST_SHOW,
     path: '/programs',
     image: STATION_PHOTOS.studioPresenterMic,
     fallback: PHOTO_DEFAULTS.regional,
