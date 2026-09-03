@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { useLiveStream } from '@/hooks/useLiveStream'
+import { pauseLiveStream, useLiveStream } from '@/hooks/useLiveStream'
 import { claimExclusivePlayback, onExclusivePlayback } from '@/lib/exclusivePlayback'
 
 /**
@@ -9,7 +9,7 @@ import { claimExclusivePlayback, onExclusivePlayback } from '@/lib/exclusivePlay
  */
 export function useExclusivePlayback(yieldPlay: () => void) {
   const owner = useRef({})
-  const { playing, toggle } = useLiveStream()
+  const { playing } = useLiveStream()
   const yieldRef = useRef(yieldPlay)
   yieldRef.current = yieldPlay
   const wasLive = useRef(playing)
@@ -23,9 +23,9 @@ export function useExclusivePlayback(yieldPlay: () => void) {
   }, [playing])
 
   const claim = useCallback(() => {
-    if (playing) void toggle()
+    pauseLiveStream()
     claimExclusivePlayback(owner.current)
-  }, [playing, toggle])
+  }, [])
 
   return claim
 }
