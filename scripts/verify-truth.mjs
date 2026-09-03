@@ -480,6 +480,26 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const horizontalGallery = files.find((f) => f.label === 'components/HorizontalGallery.tsx')
+if (
+  !horizontalGallery ||
+  /every moment/i.test(horizontalGallery.text) ||
+  /first bounce/i.test(horizontalGallery.text)
+) {
+  hits.push(
+    'components/HorizontalGallery.tsx: GVL slides must not invent “every moment” or “first bounce” presence',
+  )
+}
+if (
+  !horizontalGallery ||
+  !horizontalGallery.text.includes('Shepparton News, 2022') ||
+  !horizontalGallery.text.includes('returned in 2024')
+) {
+  hits.push(
+    'components/HorizontalGallery.tsx: sport slides must use sourced first-call and 2024 GVL return lines',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)

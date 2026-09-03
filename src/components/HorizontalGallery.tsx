@@ -30,13 +30,13 @@ const SLIDES: Slide[] = [
     img: '/assets/images/commentary-box-action.jpg',
     num: '03', ghost: 'SPORT',
     title: 'Call of the Match',
-    caption: `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}. The voice of the game since the first bounce.`,
+    caption: `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}. First live call May 1989 — Shepparton News, 2022.`,
   },
   {
     img: '/assets/images/gvl-championship-mcg.jpg',
     num: '04', ghost: 'GVL',
     title: 'The Big Stage',
-    caption: 'When Goulburn Valley Football reaches the MCG, ONE FM is there for every moment.',
+    caption: 'GVL match broadcasts returned in 2024, including senior grand finals. Station archive from the MCG — not every bounce.',
   },
   {
     img: '/assets/images/tower-mount-major-day.png',
