@@ -109,6 +109,9 @@ import { generateContractPdf } from '@/lib/contractDocument'
 
 const LOCAL_CONTRACTS_KEY = 'onefm_contracts_local'
 
+/** Jason Welsh — Vice Chairperson (BOARD_2024 / Annual Report 2024). Not Station Manager. */
+const CONTRACT_ACTIVITY_BY = 'Vice Chairperson' as const
+
 function useLocalStorage<T>(key: string, initial: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [value, setValue] = useState<T>(() => {
     try {
@@ -512,7 +515,7 @@ export default function ContractManager() {
             {
               id: `act_${Date.now()}_1`,
               action: 'Contract created',
-              performedBy: 'Station Manager',
+              performedBy: CONTRACT_ACTIVITY_BY,
               timestamp: new Date().toISOString(),
               notes: `Contract ${contractNumber} created`,
             },
@@ -548,7 +551,7 @@ export default function ContractManager() {
           {
             id: `act_${Date.now()}`,
             action: 'Contract cancelled',
-            performedBy: 'Station Manager',
+            performedBy: CONTRACT_ACTIVITY_BY,
             timestamp: new Date().toISOString(),
             notes: 'Contract cancelled by station',
           },
@@ -582,7 +585,7 @@ export default function ContractManager() {
           {
             id: `act_${Date.now()}_renew`,
             action: `Contract renewed from ${contract.contractNumber}`,
-            performedBy: 'Station Manager',
+            performedBy: CONTRACT_ACTIVITY_BY,
             timestamp: new Date().toISOString(),
             notes: `Renewed contract ${contract.contractNumber} → ${contractNumber}`,
           },
@@ -676,7 +679,7 @@ export default function ContractManager() {
           {
             id: `act_${Date.now()}`,
             action: `Generated invoice ${number}`,
-            performedBy: 'Station Manager',
+            performedBy: CONTRACT_ACTIVITY_BY,
             timestamp: new Date().toISOString(),
             notes: `Invoice ${sequence} of ${target.numberOfPeriods} — saved to shared invoice store`,
           },
