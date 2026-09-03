@@ -29,6 +29,7 @@ interface RenderCtx {
   messageHtml: string
   addressBlock: string
   dateLine: string
+  dueLine: string
   name: string
   companyName: string
   campaignLabel: string
@@ -71,6 +72,7 @@ function buildRenderCtx(data: InvoiceEmailData, bank: BankCtx, defaultBody: stri
     messageHtml,
     addressBlock,
     dateLine: formatMelbourneDate(),
+    dueLine: formatMelbourneDate(data.dueDate),
     name: esc(contactName) || 'there',
     companyName,
     campaignLabel: esc(campaign) || 'Sponsorship',
@@ -217,7 +219,7 @@ function renderBroadcast(ctx: RenderCtx): string {
           <div style="color:rgba(255,255,255,0.45);font-size:9px;text-transform:uppercase;letter-spacing:3.5px;font-weight:700;margin-bottom:10px;">Amount Due</div>
           <div class="amt" style="font-size:64px;font-weight:800;color:#D4AF37;letter-spacing:-2px;line-height:1;">$${ctx.totalFmt}</div>
           <div style="margin-top:14px;color:rgba(255,255,255,0.5);font-size:13px;">
-            Due ${ctx.data.dueDate} &nbsp;·&nbsp; Ref <span style="color:#D4AF37;font-weight:600;">${ctx.ref}</span>
+            Due ${ctx.dueLine} &nbsp;·&nbsp; Ref <span style="color:#D4AF37;font-weight:600;">${ctx.ref}</span>
           </div>
         </td></tr>
       </table>
@@ -282,7 +284,7 @@ function renderOnAir(ctx: RenderCtx): string {
             <span style="color:#B6FF00;">●</span> Amount Due
           </div>
           <div class="amt" style="font-size:56px;font-weight:800;color:#FFFFFF;letter-spacing:-2px;line-height:1;">$${ctx.totalFmt}</div>
-          <div style="margin-top:12px;color:rgba(255,255,255,0.7);font-size:12px;">Due ${ctx.data.dueDate}</div>
+          <div style="margin-top:12px;color:rgba(255,255,255,0.7);font-size:12px;">Due ${ctx.dueLine}</div>
         </td></tr>
       </table>
     </td></tr>
@@ -337,7 +339,7 @@ function renderValley(ctx: RenderCtx): string {
         <tr><td style="padding:22px 26px;">
           <div style="color:rgba(255,255,255,0.55);font-size:9px;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Amount due</div>
           <div class="amt" style="font-size:52px;font-weight:800;color:#C4A265;letter-spacing:-1px;line-height:1;">$${ctx.totalFmt}</div>
-          <div style="margin-top:10px;color:rgba(255,255,255,0.55);font-size:12px;">Payment due ${ctx.data.dueDate}</div>
+          <div style="margin-top:10px;color:rgba(255,255,255,0.55);font-size:12px;">Payment due ${ctx.dueLine}</div>
         </td></tr>
       </table>
     </td></tr>

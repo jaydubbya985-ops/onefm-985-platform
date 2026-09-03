@@ -63,5 +63,7 @@ const html = generateVariantInvoiceEmailHtml(
   'Please pay by the due date.',
 )
 assert(html.includes(todayMelbourne), `invoice email must stamp Melbourne today (${todayMelbourne})`)
+assert(html.includes('23 June 2026'), 'invoice email due date must print 23 June 2026, not raw ISO')
+assert(!html.includes('Due 2026-06-23'), 'invoice email must not print a raw ISO due date')
 
 console.log('verify-melbourne-date OK')
