@@ -2,7 +2,10 @@
  * Fail the build if live-now labels invent a host or drop remaining time.
  * Run: npx vite-node scripts/verify-on-air.ts
  */
-import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneClock, getMelbourneWeekday } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
 
@@ -12,6 +15,14 @@ function assert(cond: unknown, message: string) {
     process.exit(1)
   }
 }
+
+const here = dirname(fileURLToPath(import.meta.url))
+const weeklyGuide = readFileSync(join(here, '../src/components/WeeklySchedule.tsx'), 'utf8')
+assert(weeklyGuide.includes('formatWithPresenter'), 'WeeklySchedule must use formatWithPresenter — never print with ONE FM')
+assert(!/with \{slot\.host\}/.test(weeklyGuide), 'WeeklySchedule must not interpolate slot.host into a with-line')
+
+const melbourneThu = getMelbourneClock(new Date('2026-09-03T08:13:00+10:00'))
+assert(melbourneThu.day === 4 && melbourneThu.hour === 8 && melbourneThu.minute === 13, `getMelbourneClock Thu 08:13: ${JSON.stringify(melbourneThu)}`)
 
 assert(formatWithPresenter('') === null, 'blank presenter must not print "with"')
 assert(formatWithPresenter('   ') === null, 'whitespace presenter must not print "with"')

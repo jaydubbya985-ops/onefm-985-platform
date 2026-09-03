@@ -171,12 +171,19 @@ const MELBOURNE_DAY_INDEX: Record<string, number> = {
   Sat: 6,
 }
 
+export interface MelbourneClock {
+  day: number
+  hour: number
+  minute: number
+}
+
 /** Melbourne weekday: 0=Sunday … 6=Saturday. Use this, not `Date#getDay()`. */
 export function getMelbourneWeekday(now: Date = new Date()): number {
   return getMelbourneClock(now).day
 }
 
-function getMelbourneClock(now: Date): { day: number; hour: number; minute: number } {
+/** Melbourne guide clock — weekday, hour, minute. Not the viewer’s local clock. */
+export function getMelbourneClock(now: Date = new Date()): MelbourneClock {
   const parts = new Intl.DateTimeFormat('en-AU', {
     timeZone: 'Australia/Melbourne',
     weekday: 'short',
