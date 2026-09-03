@@ -444,6 +444,19 @@ if (
   hits.push('lib/presenterAssets.ts: only Di Hunter and Sally Nayler may be named portraits')
 }
 
+const skeletonLoader = files.find((f) => f.label === 'components/SkeletonLoader.tsx')
+if (
+  !skeletonLoader ||
+  skeletonLoader.text.includes('formatCoverageShort') ||
+  skeletonLoader.text.includes('formatWeeklyListeners') ||
+  !skeletonLoader.text.includes('BRAND.fullName') ||
+  !skeletonLoader.text.includes('BRAND.org')
+) {
+  hits.push(
+    'components/SkeletonLoader.tsx: route load still must name the station, not stamp coverage',
+  )
+}
+
 const opsPayments = files.find((f) => f.label === 'components/ops/data/payments.ts')
 for (const required of [
   'DEMO DATA — payment history',
