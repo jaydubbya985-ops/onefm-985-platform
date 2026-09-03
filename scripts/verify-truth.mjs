@@ -472,6 +472,17 @@ if (
 ) {
   hits.push('App.tsx: /broadcast must mount BroadcastExplorer, not redirect to /listen')
 }
+
+const broadcastExplorer = files.find((f) => f.label === 'pages/BroadcastExplorer.tsx')
+if (
+  !broadcastExplorer ||
+  /24\/7/.test(broadcastExplorer.text) ||
+  !broadcastExplorer.text.includes('LIVE &amp; LOCAL · WEEKLY GUIDE')
+) {
+  hits.push(
+    'pages/BroadcastExplorer.tsx: marquee must not invent 24/7 uptime — overnight mix is on the weekly guide',
+  )
+}
 if (
   !app ||
   !app.text.includes('SocialHub') ||
