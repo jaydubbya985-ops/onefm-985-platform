@@ -3,6 +3,9 @@ import { motion } from 'framer-motion'
 import { ArrowRight, type LucideIcon } from 'lucide-react'
 import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 
 export interface PageJob {
   label: string
@@ -23,9 +26,31 @@ const LEFTOVER_STILLS = [
   STATION_PHOTOS.gvlSpectacularMark,
 ] as const
 
+const STILL_BRIEF: Record<string, string> = {
+  [STATION_PHOTOS.eventOutdoorCinema]: 'Outdoor cinema',
+  [STATION_PHOTOS.eventFestivalTents]: 'Festival tents',
+  [STATION_PHOTOS.eventIlluminateWater]: 'Illuminate water',
+  [STATION_PHOTOS.gvlSpectacularMark]: 'GVL spectacular mark',
+}
+
+const COVERAGE = formatCoverageShort()
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
+
 function leftoverStill(path: string, index: number): string {
   if (path === '/football') return STATION_PHOTOS.gvlSpectacularMark
   return LEFTOVER_STILLS[index % LEFTOVER_STILLS.length]
+}
+
+function leftoverStillAlt(src: string): string {
+  const brief = STILL_BRIEF[src] ?? 'Station archive still'
+  return `${brief} — ${BRAND.fullName} · ${COVERAGE}`
+}
+
+function jobCaption(job: PageJob): string {
+  if (job.path === '/football' && GVL_HOURS) {
+    return `${job.description} · ${GVL_HOURS}`
+  }
+  return job.description
 }
 
 export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; className?: string }) {
@@ -37,6 +62,7 @@ export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; classNa
             const Icon = job.icon
             const accent = job.accent ?? '#F2F2F2'
             const still = leftoverStill(job.path, i)
+            const caption = jobCaption(job)
             return (
               <motion.div
                 key={job.path}
@@ -52,8 +78,7 @@ export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; classNa
                 >
                   <img
                     src={still}
-                    alt=""
-                    aria-hidden
+                    alt={leftoverStillAlt(still)}
                     className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700"
                   />
                   <div
@@ -66,7 +91,7 @@ export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; classNa
                   />
                   <div aria-hidden className="explore-tile-scan" />
                   <div
-                    className="relative z-10 w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                    className="relative z-10 w-9 h-9 rounded-lg flex items-center shrink-0 justify-center"
                     style={{ backgroundColor: `${accent}22` }}
                   >
                     <Icon size={18} style={{ color: accent }} />
@@ -75,7 +100,10 @@ export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; classNa
                     <p className="font-label text-one-white text-xs group-hover:text-one-gold transition-colors truncate">
                       {job.label}
                     </p>
-                    <p className="font-body-small text-muted text-[10px] truncate hidden sm:block">{job.description}</p>
+                    <p className="font-body-small text-muted text-[10px] truncate hidden sm:block">{caption}</p>
+                    {job.path === '/football' && GVL_HOURS && (
+                      <p className="font-label text-[9px] text-one-gold/85 truncate sm:hidden">{GVL_HOURS}</p>
+                    )}
                   </div>
                   <ArrowRight size={14} className="relative z-10 text-one-gold opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                 </Link>
@@ -84,6 +112,9 @@ export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; classNa
             )
           })}
         </div>
+        <p className="font-label text-[9px] tracking-[0.14em] uppercase text-one-muted/80 mt-3">
+          {COVERAGE} · ABS 2021 via townData
+        </p>
       </div>
     </section>
   )
