@@ -61,6 +61,8 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /Four years on air/i, why: 'Johnny P tenure is data pending — do not invent years on air' },
+  { re: /19[–-]20 years on air/i, why: 'Planet of Sound tenure is data pending — do not invent years on air' },
 ]
 
 function walk(dir) {

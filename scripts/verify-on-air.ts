@@ -3,6 +3,7 @@
  * Run: npx vite-node scripts/verify-on-air.ts
  */
 import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
+import { formatGuideHours } from '../src/lib/guideHours'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
 
@@ -50,5 +51,10 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+
+const dancingHours = formatGuideHours('Dancing through the decades')
+assert(dancingHours?.includes('Tue–Fri'), `Dancing hours must split days, got ${dancingHours}`)
+assert(!/Mon[–-]Fri 9/i.test(dancingHours ?? ''), `Dancing is not Mon–Fri 9AM–12PM, got ${dancingHours}`)
+assert(formatGuideHours('Songs of the Spirit') === 'Sat 6AM–9AM', `Songs of the Spirit is 6–9, got ${formatGuideHours('Songs of the Spirit')}`)
 
 console.log('verify-on-air OK')
