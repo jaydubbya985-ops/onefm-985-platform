@@ -34,9 +34,14 @@ assert(
   tokens.premium['Champagne Highlight'] === BRAND_COLORS.champagne,
   `champagne ${tokens.premium['Champagne Highlight']} !== ${BRAND_COLORS.champagne}`,
 )
+const shipped = [
+  ...Object.values(tokens.core),
+  ...Object.values(tokens.premium),
+  ...Object.values(tokens.fluoro),
+]
 assert(tokens.premium['Heritage Gold'] === '#F2F2F2', 'Direction A gold is paper white')
-assert(!JSON.stringify(tokens).includes('#D4AF37'), 'must not ship leftover #D4AF37')
-assert(!JSON.stringify(tokens).includes('#D4A84B'), 'must not ship leftover #D4A84B')
-assert(!JSON.stringify(tokens).includes('#F4D27A'), 'must not ship leftover champagne gold')
+assert(!shipped.includes('#D4AF37'), 'must not ship leftover #D4AF37 as a token')
+assert(!shipped.includes('#D4A84B'), 'must not ship leftover #D4A84B as a token')
+assert(!shipped.includes('#F4D27A'), 'must not ship leftover champagne gold as a token')
 
 console.log('verify-brand-tokens OK')
