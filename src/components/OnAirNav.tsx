@@ -12,11 +12,16 @@ import { X, Menu } from 'lucide-react'
 import { BrandLogo } from '@/components/BrandLogo'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { formatCoverageShort, formatWeeklyListenersPlain } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { formatBreakfastChromeLabel } from '@/data/programGuide'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const RED = '#E51636'
 const EXPO = [0.16, 1, 0.3, 1] as const
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const COVERAGE_SHORT = formatCoverageShort()
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const TRUTH_LINE = `${COVERAGE_SHORT} · GVL Match of the Day · ${GVL_MATCH_HOURS}`
 
 /** Unused station archive still — tall transmitter mast. Not a live listener count. */
 function TowerMastBackdrop() {
@@ -95,7 +100,8 @@ export function OnAirNav() {
           scrolled || open ? 'bg-[#0A0A0A]/92 backdrop-blur-xl border-b border-white/8' : 'bg-transparent'
         }`}
         style={{ height: 68 }}
-        aria-label="Main"
+        aria-label={`ONE FM 98.5 · ${COVERAGE_SHORT}`}
+        title={`${BREAKFAST_CHROME} · ${TRUTH_LINE}`}
       >
         <div className="h-full px-5 md:px-10 flex items-center justify-between">
           <Link to="/" className="group flex items-center gap-3 shrink-0" aria-label="ONE FM 98.5 — Home" data-cursor-label="HOME">
@@ -113,6 +119,7 @@ export function OnAirNav() {
               data-cursor-label="LISTEN"
               className="hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-bold text-[12px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
               style={{ background: RED }}
+              title={TRUTH_LINE}
             >
               ▶ Listen Live
             </Link>
@@ -200,10 +207,13 @@ export function OnAirNav() {
                   ))}
                 </div>
                 <div className="mt-5 pt-4 border-t border-white/8 text-[11px] tracking-[0.16em] uppercase text-white/30">
-                  98.5 FM · Shepparton · Est. {formatWeeklyListenersPlain()} weekly listeners · {formatCoverageShort()} · Community radio since 1989
+                  98.5 FM · Shepparton · Est. {formatWeeklyListenersPlain()} weekly listeners · {COVERAGE_SHORT} · Community radio since 1989
                 </div>
                 <div className="mt-2 text-[11px] tracking-[0.12em] uppercase text-white/30">
-                  {formatBreakfastChromeLabel()}
+                  {BREAKFAST_CHROME}
+                </div>
+                <div className="mt-2 text-[11px] tracking-[0.12em] uppercase text-white/30">
+                  GVL Match of the Day · {GVL_MATCH_HOURS}
                 </div>
                 <p className="mt-2 text-[10px] tracking-[0.16em] uppercase text-white/25">
                   Station archive · transmitter mast
