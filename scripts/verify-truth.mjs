@@ -61,6 +61,7 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /See where your brand lands/, why: 'Coverage is a listener map — do not open with sponsor “brand lands” copy' },
 ]
 
 function walk(dir) {
@@ -478,6 +479,18 @@ if (
   /path=\"\/social\" element=\{<Navigate to=\"\/community\"/.test(app.text)
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
+}
+
+const coverageMap = files.find((f) => f.label === 'pages/CoverageMap.tsx')
+if (
+  !coverageMap ||
+  !coverageMap.text.includes('Where we broadcast') ||
+  !coverageMap.text.includes('to="/listen"') ||
+  !coverageMap.text.includes('Listen Live')
+) {
+  hits.push(
+    'pages/CoverageMap.tsx: hero must speak to listeners first — Where we broadcast + Listen Live',
+  )
 }
 
 if (hits.length) {
