@@ -4,7 +4,7 @@ import { formatCoverageShort } from '@/lib/coverageCopy'
 import { TextScramble } from '@/components/TextScramble'
 
 const FACTS = [
-  { label: 'Organisation', value: 'GV Community Radio Inc.', scramble: false },
+  { label: 'Organisation', value: BRAND.org, scramble: false },
   { label: 'Callsign',     value: BRAND.callsign,           scramble: true  },
   { label: 'Frequency',   value: `${BRAND.frequency} FM`,  scramble: true  },
   { label: 'Licensed',    value: String(BRAND.licensed),   scramble: true  },

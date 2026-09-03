@@ -61,6 +61,7 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /GV Community Radio Inc\./, why: 'licensed entity is Goulburn Valley Community Radio Inc. — do not abbreviate the legal name' },
 ]
 
 function walk(dir) {
@@ -442,6 +443,17 @@ if (
   !presenterAssets.text.includes('heritage-sally-nayler-90s')
 ) {
   hits.push('lib/presenterAssets.ts: only Di Hunter and Sally Nayler may be named portraits')
+}
+
+const credibilityStrip = files.find((f) => f.label === 'components/home/CredibilityStrip.tsx')
+if (
+  !credibilityStrip ||
+  !credibilityStrip.text.includes('value: BRAND.org') ||
+  /GV Community Radio/.test(credibilityStrip.text)
+) {
+  hits.push(
+    'components/home/CredibilityStrip.tsx: Organisation must be BRAND.org — Goulburn Valley Community Radio Inc.',
+  )
 }
 
 const opsPayments = files.find((f) => f.label === 'components/ops/data/payments.ts')
