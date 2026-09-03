@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs'
 
 const src = readFileSync(new URL('../src/pages/Story.tsx', import.meta.url), 'utf8')
+const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
 function assert(cond: unknown, message: string) {
   if (!cond) {
@@ -39,6 +40,14 @@ assert(
 assert(
   !/\byears:\s*['"]/.test(src),
   'Story team rows must not carry an invented years field',
+)
+assert(
+  app.includes("import('./pages/Story')") && app.includes('<Story />'),
+  '/story must mount Story — a redirect to /heritage hides the honest team wall',
+)
+assert(
+  !app.includes("to=\"/heritage\" replace") && !app.includes("to={'/heritage'} replace"),
+  '/story must not redirect away from the presenter wall',
 )
 
 console.log('verify-story-tenure OK')

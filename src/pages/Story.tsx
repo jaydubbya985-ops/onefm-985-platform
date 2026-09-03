@@ -1,4 +1,5 @@
 ﻿import { useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { motion, useScroll, useTransform } from 'framer-motion'
@@ -390,7 +391,12 @@ export default function Story() {
           <div>
             <WordReveal text="Meet the Voices of the Valley" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white max-w-xl">
-              Our team is a mix of lifelong locals and passionate broadcasters who found their home at ONE FM.
+              Guide hosts only — no invented years-on-air. Initials stand in until a station file
+              names the person. The station archive is on{' '}
+              <Link to="/heritage" className="text-one-gold underline-offset-4 hover:underline">
+                History
+              </Link>
+              .
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
