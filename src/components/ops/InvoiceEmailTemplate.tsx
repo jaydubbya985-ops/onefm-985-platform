@@ -16,6 +16,7 @@ import { DEFAULT_EMAIL_BODY } from './data/invoices'
 import { DS } from '@/lib/invoiceDesignSystem'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatMelbourneDate } from '@/lib/melbourneDate'
 import {
   getInvoiceDesignVariant,
   getVariantMeta,
@@ -145,7 +146,7 @@ export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
               </td>
               <td style="vertical-align:middle;text-align:right;">
                 <div style="color:rgba(255,255,255,0.45);font-size:12px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-                  ${new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  ${formatMelbourneDate()}
                 </div>
               </td>
             </tr>

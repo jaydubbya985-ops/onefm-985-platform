@@ -9,6 +9,7 @@ import {
 } from '@/lib/invoiceDesignVariants'
 import type { InvoiceEmailData } from '@/components/ops/InvoiceEmailTemplate'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatMelbourneDate } from '@/lib/melbourneDate'
 
 const esc = (v?: string) =>
   (v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -69,11 +70,7 @@ function buildRenderCtx(data: InvoiceEmailData, bank: BankCtx, defaultBody: stri
     bank,
     messageHtml,
     addressBlock,
-    dateLine: new Date().toLocaleDateString('en-AU', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    }),
+    dateLine: formatMelbourneDate(),
     name: esc(contactName) || 'there',
     companyName,
     campaignLabel: esc(campaign) || 'Sponsorship',
