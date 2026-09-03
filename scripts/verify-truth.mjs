@@ -113,6 +113,20 @@ if (
 ) {
   hits.push('pages/Listen.tsx: live hero from liveNowFromMetadata; on-air wall from ON_AIR_WEEK')
 }
+if (
+  !listen ||
+  /anywhere in the world/i.test(listen.text) ||
+  listen.text.includes('Stream anywhere')
+) {
+  hits.push('pages/Listen.tsx: do not advertise worldwide stream reach — play on this page / 98.5 FM / studio')
+}
+if (
+  !listen ||
+  !listen.text.includes('LISTEN_LINKS.phone') ||
+  !listen.text.includes('aria-pressed={playing}')
+) {
+  hits.push('pages/Listen.tsx: Ways to Listen stream card must play; studio must be a tel: link')
+}
 
 const home = files.find((f) => f.label === 'pages/Home.tsx')
 if (!home || !home.text.includes('liveNowFromMetadata')) {
