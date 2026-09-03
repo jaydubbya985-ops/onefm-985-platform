@@ -1,4 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
+import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
+import { liveNowFromMetadata, type LiveNowDisplay } from '@/lib/liveNow'
 
 const FM_MIN = 87.5
 const FM_MAX = 108.0
@@ -7,6 +9,54 @@ const MAJOR_TICKS = [88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108] as const
 
 function freqToFrac(f: number) {
   return (f - FM_MIN) / (FM_MAX - FM_MIN)
+}
+
+export type TunerLock = 'locked' | 'scanning' | 'lost'
+
+/** Needle lock is frequency math only — not a live-now listener count. */
+export function tunerLockState(freq: number, target = TARGET): TunerLock {
+  if (Math.abs(freq - target) < 0.15) return 'locked'
+  if (Math.abs(freq - target) > 0.9) return 'lost'
+  return 'scanning'
+}
+
+/** Official breakfast name keeps "(Breaky)" in the guide; the dial needs the short lockup. */
+export function compactShowName(name: string): string {
+  return name.replace(/\s*\(Breaky\)\s*/i, '').trim()
+}
+
+/**
+ * Lock badge. "ON AIR" only when the Melbourne guide says the stream is live.
+ * Scanning / lost stay tuner states — they must not name a show.
+ */
+export function tunerBadge(lock: TunerLock, live: LiveNowDisplay): string {
+  if (lock === 'lost') return '✕ SIGNAL LOST'
+  if (lock === 'scanning') return '~ SCANNING'
+  return live.isLive ? '● ON AIR' : 'MELBOURNE GUIDE'
+}
+
+/** Hosts come from liveNow (BREAKFAST_ROSTER). No live-now listener counts. */
+export function tunerOnAirLine(live: LiveNowDisplay): string {
+  return [compactShowName(live.program), live.withLine, live.remainingLabel]
+    .filter(Boolean)
+    .join(' · ')
+}
+
+export function tunerOnAirSub(live: LiveNowDisplay): string {
+  if (live.breakfastOnAir && live.breakfastLabel) {
+    return `Weekday breakfast · ${live.breakfastLabel}`
+  }
+  return live.programTime
+}
+
+/** Melbourne guide clock — remaining time must not freeze after first paint. */
+function useGuideClock(ms = 30_000) {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), ms)
+    return () => window.clearInterval(id)
+  }, [ms])
+  return now
 }
 
 interface FrequencyTunerProps {
@@ -27,8 +77,16 @@ export function FrequencyTuner({ onDemodChange, className = '', autoSweep = fals
   const [hasInteracted, setHasInteracted] = useState(false)
   const draggingRef = useRef(false)
 
-  const isOnTarget = Math.abs(freq - TARGET) < 0.15
-  const isDemod = Math.abs(freq - TARGET) > 0.9
+  const lock = tunerLockState(freq)
+  const isOnTarget = lock === 'locked'
+  const isDemod = lock === 'lost'
+
+  const now = useGuideClock()
+  const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta, now)
+  const badge = tunerBadge(lock, live)
+  const onAirLine = tunerOnAirLine(live)
+  const onAirSub = tunerOnAirSub(live)
 
   useEffect(() => {
     onDemodChange?.(isDemod)
@@ -127,22 +185,26 @@ export function FrequencyTuner({ onDemodChange, className = '', autoSweep = fals
   const needlePct = freqToFrac(freq) * 100
   const targetPct = freqToFrac(TARGET) * 100
   const needleColor = isOnTarget ? '#F2F2F2' : isDemod ? '#E51636' : 'rgba(255,255,255,0.8)'
+  const ariaNow = isOnTarget
+    ? `${freq.toFixed(1)} FM — ${badge} ${onAirLine}`
+    : `${freq.toFixed(1)} FM — ${badge}`
 
   return (
     <div
       className={className}
-      data-cursor-label="TUNE"
+      data-cursor-label={isOnTarget ? 'LISTEN' : 'TUNE'}
       style={{ userSelect: 'none' }}
       role="slider"
       aria-valuemin={FM_MIN}
       aria-valuemax={FM_MAX}
       aria-valuenow={freq}
-      aria-label="Frequency tuner — drag to tune"
+      aria-valuetext={ariaNow}
+      aria-label="Frequency tuner — drag to tune 98.5 FM"
     >
       {/* Readout row — capped width so the status badge sits near the
           frequency number instead of drifting to the far edge of the
           (much wider) dial track below it. */}
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 18, maxWidth: 280 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: isOnTarget ? 8 : 18, maxWidth: 280 }}>
         <span
           style={{
             fontFamily: 'JetBrains Mono, monospace',
@@ -180,17 +242,52 @@ export function FrequencyTuner({ onDemodChange, className = '', autoSweep = fals
             borderRadius: 3,
             textTransform: 'uppercase',
             background: isOnTarget
-              ? 'rgba(212,175,55,0.12)'
+              ? live.isLive
+                ? 'rgba(229,22,54,0.16)'
+                : 'rgba(212,175,55,0.12)'
               : isDemod
               ? 'rgba(229,22,54,0.14)'
               : 'rgba(255,255,255,0.06)',
-            color: isOnTarget ? '#F2F2F2' : isDemod ? '#E51636' : 'rgba(255,255,255,0.45)',
+            color: isOnTarget
+              ? live.isLive
+                ? '#E51636'
+                : '#F2F2F2'
+              : isDemod
+              ? '#E51636'
+              : 'rgba(255,255,255,0.45)',
             transition: 'all 0.25s',
           }}
         >
-          {isOnTarget ? '● ON AIR' : isDemod ? '✕ SIGNAL LOST' : '~ SCANNING'}
+          {badge}
         </span>
       </div>
+
+      {isOnTarget ? (
+        <div style={{ marginBottom: 18, maxWidth: 420 }} aria-live="polite">
+          <p
+            style={{
+              fontFamily: 'Inter, system-ui, sans-serif',
+              fontSize: '0.875rem',
+              lineHeight: 1.35,
+              color: '#F2F2F2',
+              margin: 0,
+            }}
+          >
+            {onAirLine}
+          </p>
+          <p
+            style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '0.625rem',
+              letterSpacing: '0.08em',
+              color: 'rgba(255,255,255,0.45)',
+              margin: '4px 0 0',
+            }}
+          >
+            {onAirSub}
+          </p>
+        </div>
+      ) : null}
 
       {/* Dial track */}
       <div
