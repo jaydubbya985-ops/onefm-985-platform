@@ -11,11 +11,5 @@ export const LISTEN_LINKS = {
   fm: { label: '98.5 FM', href: null as string | null, description: 'Shepparton & Goulburn Murray' },
   stream: { label: 'Listen Live', href: STREAM_URL, description: 'Direct stream (Radio.co)' },
   web: { label: 'fm985.com.au', href: AUDIO_PLAYER_URL, description: 'Official web audio player' },
-  /** Slot still named `crp` for existing consumers — values are the official web player, not Community Radio Plus. */
-  crp: {
-    label: 'fm985.com.au',
-    href: AUDIO_PLAYER_URL,
-    description: 'Official web audio player',
-  },
   phone: { label: 'Studio', href: 'tel:+61358313131', description: '(03) 5831 3131' },
 } as const
