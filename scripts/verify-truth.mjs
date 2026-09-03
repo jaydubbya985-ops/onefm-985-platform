@@ -61,6 +61,9 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /Goes to the station pipeline/, why: 'proposal form stores or emails — it is not a pipeline' },
+  { re: /Staff send a tailored PDF/, why: 'this page does not send a PDF — staff write it later in ops' },
+  { re: /We'll be in touch with a tailored proposal/, why: 'do not invent a follow-up after a proposal brief' },
 ]
 
 function walk(dir) {
@@ -324,6 +327,24 @@ for (const label of sponsorPages) {
 const salesProposal = files.find((f) => f.label === 'pages/SalesProposal.tsx')
 if (!salesProposal || !salesProposal.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/SalesProposal.tsx: GVL photo badge hours must come from formatGuideHours / FULL_SCHEDULE')
+}
+if (
+  !salesProposal ||
+  !salesProposal.text.includes('PROPOSAL_REQUEST_HELPER') ||
+  !salesProposal.text.includes('proposalRequestHeadline') ||
+  /Request received/.test(salesProposal.text)
+) {
+  hits.push(
+    'pages/SalesProposal.tsx: proposal request must say stored or emailed — not Request received',
+  )
+}
+const proposalCopy = files.find((f) => f.label === 'lib/proposalRequestCopy.ts')
+if (
+  !proposalCopy ||
+  !proposalCopy.text.includes('PROPOSAL_REQUEST_HELPER') ||
+  !proposalCopy.text.includes('does not send a PDF')
+) {
+  hits.push('lib/proposalRequestCopy.ts: must say this page does not send a PDF')
 }
 
 const leftoverProposalDocs = [
