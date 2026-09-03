@@ -435,6 +435,34 @@ if (
 ) {
   hits.push('lib/coverageCopy.ts: must export formatOgDescription and formatSeoDefault')
 }
+const crashScreen = files.find((f) => f.label === 'components/PublicCrashScreen.tsx')
+if (
+  !crashScreen ||
+  !crashScreen.text.includes('still on air') ||
+  !crashScreen.text.includes('/#/listen') ||
+  crashScreen.text.includes('formatCoverageShort') ||
+  crashScreen.text.includes('useLiveStream') ||
+  crashScreen.text.includes('error.message')
+) {
+  hits.push(
+    'components/PublicCrashScreen.tsx: crash UI must say 98.5 is still on air — no error.message, coverage stamp, or play-in-place',
+  )
+}
+const routeCrash = files.find((f) => f.label === 'components/RouteErrorBoundary.tsx')
+if (
+  routeCrash &&
+  (/error\?\.message/.test(routeCrash.text) || /error\.message/.test(routeCrash.text))
+) {
+  hits.push('components/RouteErrorBoundary.tsx: do not show raw error.message on a public crash screen')
+}
+if (routeCrash && routeCrash.text.includes('formatCoverageShort')) {
+  hits.push('components/RouteErrorBoundary.tsx: crash screens must not stamp coverage')
+}
+const rootCrash = files.find((f) => f.label === 'components/ErrorBoundary.tsx')
+if (rootCrash && rootCrash.text.includes('formatCoverageShort')) {
+  hits.push('components/ErrorBoundary.tsx: crash screens must not stamp coverage')
+}
+
 const presenterAssets = files.find((f) => f.label === 'lib/presenterAssets.ts')
 if (
   !presenterAssets ||
