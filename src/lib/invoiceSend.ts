@@ -56,15 +56,29 @@ function pdfToBase64(pdf: jsPDF): string {
   return pdf.output('datauristring').split(',')[1] ?? ''
 }
 
-/** Dry-run or sent:false must never be treated as a real email. */
-function readSendResult(
-  data: { success?: boolean; messageId?: string; dryRun?: boolean; sent?: boolean } | null,
-): SendResult | null {
+type InvoiceFunctionBody = {
+  success?: boolean
+  messageId?: string
+  dryRun?: boolean
+  sent?: boolean
+  error?: string
+}
+
+/**
+ * Classify send-invoice JSON.
+ * `sent: false` / `dryRun` / `{ error }` means the function ran — never fall
+ * through to the browser stub and toast "not configured".
+ */
+export function readInvoiceFunctionResult(data: InvoiceFunctionBody | null): SendResult | null {
   if (!data) return null
-  if (data.dryRun || data.sent === false) {
-    return { success: false, error: 'Invoice was not emailed (dry-run or send failed).' }
+  if (data.dryRun === true || data.sent === false) {
+    return {
+      success: false,
+      error: data.error?.trim() || 'Invoice was not emailed (dry-run or send failed).',
+    }
   }
-  if (data.success) return { success: true, messageId: data.messageId }
+  if (data.success === true) return { success: true, messageId: data.messageId }
+  if (data.error?.trim()) return { success: false, error: data.error.trim() }
   return null
 }
 
@@ -134,8 +148,9 @@ export async function dispatchInvoiceEmail(
       messageId?: string
       dryRun?: boolean
       sent?: boolean
+      error?: string
     }>(res)
-    const parsed = readSendResult(data)
+    const parsed = readInvoiceFunctionResult(data)
     if (parsed) return parsed
     if (!res.ok) {
       console.warn('[InvoiceSend] Netlify function responded:', res.status)
@@ -197,8 +212,9 @@ export async function dispatchReceiptEmail(
       messageId?: string
       dryRun?: boolean
       sent?: boolean
+      error?: string
     }>(res)
-    const parsed = readSendResult(data)
+    const parsed = readInvoiceFunctionResult(data)
     if (parsed) return parsed
   } catch {
     // fall through to browser fallback
