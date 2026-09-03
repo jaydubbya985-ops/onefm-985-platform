@@ -39,9 +39,15 @@ export function MiniPlayer() {
   const hidden = HIDE_ON.some((p) => location.pathname === p) || dismissed
   const live = liveNowFromMetadata(meta)
   const program = live.program
-  const presenterLine = live.breakfastOnAir
-    ? `with ${live.presenter} · ${live.programTime}`
-    : `with ${live.presenter}`
+  const presenterLine = live.withLine
+    ? live.breakfastOnAir
+      ? `${live.withLine} · ${live.programTime}`
+      : live.remainingLabel
+        ? `${live.withLine} · ${live.remainingLabel}`
+        : live.withLine
+    : live.remainingLabel
+      ? `${live.programTime} · ${live.remainingLabel}`
+      : live.programTime
 
   return (
     <AnimatePresence>

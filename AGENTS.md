@@ -134,12 +134,20 @@ Push to `main` triggers `.github/workflows/deploy.yml` → build → Netlify pro
 
 **Kimi (desktop):** `git pull origin main`, paste `.cursor/CONTINUOUS.md`. Do not treat a Downloads folder as source of truth.
 
-## NEXT RUN (copy `.cursor/CONTINUOUS.md` as the whole prompt)
+## Ultra allocations (from 3 September 2026)
+
+Jay is on **Cursor Ultra**. The bar is **6.3×**. Read `.cursor/ULTRA.md` before you ship.
+
+- **WORLD CLASS** is the only pass mark.
+- **One deep PR** per run. The stamp factory (coverage + breakfast + GVL hours on every chrome component) is **closed**.
+- Would this sit next to ABC Listen without looking like a template? If no, keep working.
+
+## NEXT RUN (copy `.cursor/ULTRA.md` then `.cursor/CONTINUOUS.md`)
 
 Keep shipping. Pull origin main first. Do not merge PRs unless Jay says EXE. Never merge PR #13.
 
 ## Current priorities
 
-1. Public site craft from `programGuide.ts` + `townData.ts` + `/public/brand/` + station photos
-2. Close conflicting stale drafts #1 #3 #4 #11 (do not merge). Never merge #13
+1. Listen / Home craft a listener would feel — `programGuide.ts` + `townData.ts` + `/public/brand/` + station photos
+2. Close conflicting stale drafts #1 #3 #4 #11 (do not merge). Never merge #13. Recommend close on stamp PRs #170–#200
 3. Optional: `VITE_SUPABASE_*` in Cloud secrets must be the full URL + **anon** key (never `sb_secret_`)

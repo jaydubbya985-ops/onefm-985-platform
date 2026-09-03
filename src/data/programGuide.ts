@@ -58,6 +58,12 @@ export interface LiveShowInfo {
   time: string
   category: string
   upNext: string
+  startHour: number
+  endHour: number
+  remainingMinutes: number
+  elapsedMinutes: number
+  slotMinutes: number
+  remainingLabel: string
 }
 
 /** Full weekly schedule — source: fm985.com.au/guide/ */
@@ -165,24 +171,72 @@ const MELBOURNE_DAY_INDEX: Record<string, number> = {
   Sat: 6,
 }
 
-function getMelbourneDayHour(now: Date): { day: number; hour: number } {
+/** Melbourne weekday: 0=Sunday … 6=Saturday. Use this, not `Date#getDay()`. */
+export function getMelbourneWeekday(now: Date = new Date()): number {
+  return getMelbourneClock(now).day
+}
+
+function getMelbourneClock(now: Date): { day: number; hour: number; minute: number } {
   const parts = new Intl.DateTimeFormat('en-AU', {
     timeZone: 'Australia/Melbourne',
     weekday: 'short',
     hour: '2-digit',
+    minute: '2-digit',
     hourCycle: 'h23',
   }).formatToParts(now)
   const weekday = parts.find((p) => p.type === 'weekday')?.value ?? 'Sun'
   const hour = Number(parts.find((p) => p.type === 'hour')?.value ?? '0')
+  const minute = Number(parts.find((p) => p.type === 'minute')?.value ?? '0')
   return {
     day: MELBOURNE_DAY_INDEX[weekday] ?? 0,
     hour,
+    minute,
+  }
+}
+
+function slotLengthMinutes(startHour: number, endHour: number): number {
+  if (endHour > startHour) return (endHour - startHour) * 60
+  return ((24 - startHour) + endHour) * 60
+}
+
+function minutesUntilHour(endHour: number, hour: number, minute: number): number {
+  const endMins = (endHour === 0 ? 24 : endHour) * 60
+  const nowMins = hour * 60 + minute
+  let remaining = endMins - nowMins
+  if (remaining <= 0) remaining += 24 * 60
+  return remaining
+}
+
+function formatRemaining(mins: number): string {
+  if (mins <= 0) return 'ending now'
+  if (mins < 60) return `${mins} min left`
+  const hours = Math.floor(mins / 60)
+  const leftover = mins % 60
+  if (leftover === 0) return hours === 1 ? '1 hr left' : `${hours} hr left`
+  return `${hours} hr ${leftover} min left`
+}
+
+/** Get current on-air show from full schedule */
+function withClock(
+  show: Omit<LiveShowInfo, 'remainingMinutes' | 'elapsedMinutes' | 'slotMinutes' | 'remainingLabel'>,
+  hour: number,
+  minute: number,
+): LiveShowInfo {
+  const slotMinutes = slotLengthMinutes(show.startHour, show.endHour)
+  const remainingMinutes = minutesUntilHour(show.endHour, hour, minute)
+  const elapsedMinutes = Math.max(0, Math.min(slotMinutes, slotMinutes - remainingMinutes))
+  return {
+    ...show,
+    remainingMinutes,
+    elapsedMinutes,
+    slotMinutes,
+    remainingLabel: formatRemaining(remainingMinutes),
   }
 }
 
 /** Get current on-air show from full schedule */
 export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
-  const { day, hour } = getMelbourneDayHour(now)
+  const { day, hour, minute } = getMelbourneClock(now)
 
   const candidates = FULL_SCHEDULE.filter(s => {
     if (s.day !== day) return false
@@ -199,23 +253,27 @@ export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
       .filter(s => s.day === day && s.startHour > hour)
       .sort((a, b) => a.startHour - b.startHour)
     const next = sorted[0]
-    return {
+    return withClock({
       name: live.name,
       host: live.host,
       time: `${formatHour(live.startHour)} — ${formatHour(live.endHour)}`,
       category: live.category,
       upNext: next ? `${next.name} at ${formatHour(next.startHour)}` : 'Overnight Mix',
-    }
+      startHour: live.startHour,
+      endHour: live.endHour,
+    }, hour, minute)
   }
 
   // Default overnight
-  return {
+  return withClock({
     name: 'Overnight Mix',
     host: 'Automated',
     time: '12:00AM — 6:00AM',
     category: 'Music',
     upNext: 'ONE FM Breakfast (Breaky) at 6:00AM',
-  }
+    startHour: 0,
+    endHour: 6,
+  }, hour, minute)
 }
 
 function formatHour(h: number): string {

@@ -7,6 +7,7 @@ import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { STATION_TICKER } from '@/lib/playerMetadata'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
 import { presenterPhotoIsPortrait, presenterVisual } from '@/lib/presenterAssets'
+import { liveNowFromMetadata } from '@/lib/liveNow'
 
 function MetadataBadge({ live, label }: { live: boolean; label: string }) {
   return (
@@ -52,8 +53,9 @@ function Ticker() {
 
 export function LivePlayerWidget({ className = '-mt-12' }: { className?: string }) {
   const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   const { playing, loading, error, toggle } = useLiveStream()
-  const presenterVisualCard = presenterVisual(meta.presenter, meta.category)
+  const presenterVisualCard = presenterVisual(live.presenter, meta.category)
   const presenterImg = presenterVisualCard.src
   const presenterIsPortrait = presenterPhotoIsPortrait(meta.presenter)
 
@@ -92,7 +94,11 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                     {meta.category} · {meta.programTime}
                   </p>
                   <h2 className="font-h2 text-one-white text-xl sm:text-2xl mb-1 truncate">{meta.program}</h2>
-                  <p className="font-body text-one-muted mb-4">with {meta.presenter}</p>
+                  {live.withLine ? (
+                    <p className="font-body text-one-muted mb-4">{live.withLine}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}</p>
+                  ) : (
+                    <p className="font-body text-one-muted mb-4">{live.remainingLabel || meta.programTime}</p>
+                  )}
 
                   {meta.nowPlaying ? (
                     <div className="glass-card rounded-lg px-4 py-3 mb-4 border-one-gold/20">

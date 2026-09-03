@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "truth": "node scripts/verify-truth.mjs",
+    "truth": "node scripts/verify-truth.mjs && npx vite-node scripts/verify-on-air.ts",
     "live": "node scripts/verify-live.mjs && npx vite-node scripts/verify-foott-send.ts",
     "foott": "npx vite-node scripts/verify-foott-send.ts",
     "ops-config": "node --experimental-strip-types scripts/verify-ops-config.ts",
-    "build": "node scripts/verify-truth.mjs && node --experimental-strip-types scripts/verify-ops-config.ts && tsc -b && vite build",
+    "build": "npm run truth && node --experimental-strip-types scripts/verify-ops-config.ts && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "npm run build && npx netlify deploy --prod --dir=dist --site 8df4de74-d9a8-42ce-9316-61bd06475c94",
