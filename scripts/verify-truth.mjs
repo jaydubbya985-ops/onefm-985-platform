@@ -496,8 +496,8 @@ if (!contact) {
   if (/Studio Line Open/i.test(contact.text)) {
     hits.push('Contact: studio line is not a live-now answering claim')
   }
-  if (/townData 2026 est/i.test(contact.text)) {
-    hits.push('Contact: broadcast population is ABS 2021 via townData, not a 2026 estimate label')
+  if (/broadcast area \(ABS 2021/.test(contact.text)) {
+    hits.push('Contact: 189,680 is townData 2026 town estimates, not ABS 2021')
   }
 }
 

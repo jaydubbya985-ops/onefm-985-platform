@@ -618,7 +618,7 @@ function FAQSection() {
     {
       question: 'What area does ONE FM cover?',
       answer:
-        `ONE FM broadcasts to ${formatTowns()} across the Goulburn Valley and surrounding regions. ${formatBroadcastPopulation()} people live in the broadcast area (ABS 2021 via townData) within a ${formatRadius()} radius of Shepparton.`,
+        `ONE FM broadcasts to ${formatTowns()} across the Goulburn Valley and surrounding regions. ${formatBroadcastPopulation()} people live in the broadcast area (townData 2026 town estimates) within a ${formatRadius()} radius of Shepparton.`,
     },
     {
       question: 'How do I submit community news?',
