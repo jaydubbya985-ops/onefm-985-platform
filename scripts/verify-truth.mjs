@@ -141,6 +141,24 @@ const miniPlayer = files.find((f) => f.label === 'components/MiniPlayer.tsx')
 if (!miniPlayer || !miniPlayer.text.includes('liveNowFromMetadata')) {
   hits.push('components/MiniPlayer.tsx: breakfast chrome must use liveNowFromMetadata')
 }
+if (
+  !miniPlayer ||
+  !miniPlayer.text.includes('ON_AIR_LAMP_LIVE_TITLE') ||
+  !miniPlayer.text.includes('meta.isLive')
+) {
+  hits.push(
+    'components/MiniPlayer.tsx: live dot must pulse only when meta.isLive — not during automated slots',
+  )
+}
+
+const onAirLamp = files.find((f) => f.label === 'lib/onAirLamp.ts')
+if (
+  !onAirLamp ||
+  !onAirLamp.text.includes('ON_AIR_LAMP_LIVE_TITLE') ||
+  !onAirLamp.text.includes('ON_AIR_LAMP_AUTOMATED_TITLE')
+) {
+  hits.push('lib/onAirLamp.ts: must export live vs automated lamp titles')
+}
 
 const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
 if (!onAirNav || !onAirNav.text.includes('formatBreakfastChromeLabel')) {

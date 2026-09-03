@@ -6,6 +6,7 @@ import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { ON_AIR_LAMP_AUTOMATED_TITLE, ON_AIR_LAMP_LIVE_TITLE } from '@/lib/onAirLamp'
 
 const HIDE_ON = ['/listen', '/ops']
 
@@ -62,10 +63,20 @@ export function MiniPlayer() {
           <div className="pointer-events-auto mx-auto max-w-3xl px-3 pb-3">
             <div role="region" aria-label="Mini audio player" className="rounded-2xl border border-white/10 bg-[#0A0A0A]/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3">
 
-              {/* Live dot */}
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-one-red" />
+              {/* Live dot — pulse only when a presenter is on the guide */}
+              <span
+                className="relative flex h-2 w-2 shrink-0"
+                title={meta.isLive ? ON_AIR_LAMP_LIVE_TITLE : ON_AIR_LAMP_AUTOMATED_TITLE}
+                aria-label={meta.isLive ? ON_AIR_LAMP_LIVE_TITLE : ON_AIR_LAMP_AUTOMATED_TITLE}
+              >
+                {meta.isLive ? (
+                  <>
+                    <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-one-red" />
+                  </>
+                ) : (
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white/35" />
+                )}
               </span>
 
               {/* Animated bars when playing */}
