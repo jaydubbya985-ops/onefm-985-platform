@@ -51,4 +51,28 @@ assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
 
+// Official Amrap grid 3 Sep 2026 — Thursday night is not Overnight Mix.
+const thuDrive = new Date('2026-09-03T19:10:00+10:00')
+const les = getCurrentLiveShow(thuDrive)
+assert(les.name === 'Rockin with Les Harrison', `Thursday 19:10 should be Les Harrison, got ${les.name}`)
+assert(les.host === "Les 'Harro' Harrison", `Thursday 19:10 host: ${les.host}`)
+assert(les.remainingMinutes === 50, `Les Harrison 19:10 remaining: ${les.remainingMinutes}`)
+
+const thuCountry = new Date('2026-09-03T20:10:00+10:00')
+const gec = getCurrentLiveShow(thuCountry)
+assert(gec.name === 'Good Evening Country', `Thursday 20:10 should be Good Evening Country, got ${gec.name}`)
+assert(gec.host === 'Timmy Ahmet', `Thursday 20:10 host: ${gec.host}`)
+
+const sunSpirit = new Date('2026-09-06T07:00:00+10:00')
+const spirit = getCurrentLiveShow(sunSpirit)
+assert(spirit.name === 'Songs of the Spirit', `Sunday 07:00 should be Songs of the Spirit, got ${spirit.name}`)
+
+const satDawn = new Date('2026-09-05T07:00:00+10:00')
+const satMix = getCurrentLiveShow(satDawn)
+assert(satMix.name === 'Overnight Mix', `Saturday 07:00 is Overnight Mix on the official grid, got ${satMix.name}`)
+
+const friMix = new Date('2026-09-04T23:10:00+10:00')
+const musicMix = getCurrentLiveShow(friMix)
+assert(musicMix.name === 'Music Mix', `Friday 23:10 is Music Mix, not Overnight Mix, got ${musicMix.name}`)
+
 console.log('verify-on-air OK')

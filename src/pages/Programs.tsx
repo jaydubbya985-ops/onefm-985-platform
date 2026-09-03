@@ -166,9 +166,9 @@ const shows = [
   },
   {
     name: "Good Evening Country",
-    time: "Monday, 8pm",
+    time: "Thursday, 8pm–11pm",
     host: "Timmy Ahmet",
-    desc: "Country music showcase Monday evenings. The best country classics and new releases for the Valley.",
+    desc: "Country music showcase Thursday evenings. The best country classics and new releases for the Valley.",
     tag: "Music",
     icon: Music,
   },
