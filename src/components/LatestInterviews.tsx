@@ -9,10 +9,18 @@ import { WordReveal } from '@/components/WordReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { formatBreakfastChromeLabel } from '@/data/programGuide'
+
+const COVERAGE = formatCoverageShort()
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
 
 /** Unused Shepparton landmark — no unnamed portraits. */
 const LOCAL_ARCHIVE_PHOTO = STATION_PHOTOS.landmarkHowNowCow
-const LOCAL_ARCHIVE_ALT = 'How Now cow sculpture, Shepparton — ONE FM station archive'
+const LOCAL_ARCHIVE_ALT = `How Now cow sculpture, Shepparton — ${BRAND.fullName} station archive · ${COVERAGE}`
 
 function InterviewCard({ item, index = 0 }: { item: Fm985Interview; index?: number }) {
   const [expanded, setExpanded] = useState(false)
@@ -118,7 +126,13 @@ export function LatestInterviews() {
               <span className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-3 block">LIVE &amp; LOCAL</span>
               <WordReveal text="Latest Interviews" className="font-h2 text-one-white mt-2 block" as="h2" stagger={0.028} variant="char" />
               <p className="font-body text-muted mt-2 max-w-xl">
-                Fresh from ONE FM 98.5 — synced from fm985.com.au with on-demand audio on SoundCloud.
+                Fresh from ONE FM 98.5 — synced from fm985.com.au with on-demand audio on SoundCloud.{' '}
+                {formatWeeklyListeners()} across {COVERAGE} (ABS 2021 via townData).
+              </p>
+              <p className="font-label text-[10px] tracking-[0.12em] uppercase text-one-muted/80 mt-2 max-w-xl leading-relaxed">
+                Weekday breakfast · {BREAKFAST_CHROME}
+                <br />
+                GVL Match of the Day · {GVL_MATCH_HOURS}
               </p>
             </div>
           </div>
