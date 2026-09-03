@@ -3,16 +3,16 @@
   --onefm-blue: #1B458F;
   --onefm-blue-bright: #0A5EB7;
   --onefm-deep-blue: #0A2A5E;
-  --onefm-navy: #071D3A;
-  --onefm-midnight: #020A18;
+  --onefm-navy: #101010;
+  --onefm-midnight: #070707;
   --onefm-white: #FFFFFF;
   --onefm-red: #E51636;
 
-  /* Premium layer - accent only */
-  --onefm-gold: #D4AF37;
-  --onefm-gold-deep: #B88A24;
-  --onefm-champagne: #F4D27A;
-  --onefm-gold-glow: rgba(212,175,55,.32);
+  /* Direction A — Heritage Gold and Champagne are paper white. Red is the accent. */
+  --onefm-gold: #F2F2F2;
+  --onefm-gold-deep: #F2F2F2;
+  --onefm-champagne: #F2F2F2;
+  --onefm-gold-glow: rgba(242, 242, 242, 0.32);
 
   /* Digital fluorescent layer - 1-4% of layout only */
   --onefm-electric-cyan: #00E5FF;
