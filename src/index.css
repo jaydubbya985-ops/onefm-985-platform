@@ -142,7 +142,7 @@
     --sidebar-border: 0 0% 14%;
     --sidebar-ring: 351 82% 52%;
 
-    --one-navy: #071D3A;
+    --one-navy: #101010; /* Direction A ink — matches tailwind one-navy */
     --one-blue: #1B458F;
     --one-electric: #B6FF00; /* ON AIR: fluoro lime — the one electric */
     --one-electric-dim: rgba(182, 255, 0, 0.65);
@@ -270,7 +270,7 @@
 
   /* Hero-level glass — more opaque, stronger blur */
   .glass-hero {
-    background: rgba(10, 22, 40, 0.88);
+    background: rgba(16, 16, 16, 0.88);
     backdrop-filter: blur(32px) saturate(180%) brightness(0.9);
     -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(0.9);
     border: 1px solid rgba(212, 168, 75, 0.15);
@@ -282,10 +282,10 @@
 
   /* Subtle glass — for secondary panels */
   .glass-subtle {
-    background: rgba(10, 22, 40, 0.45);
+    background: rgba(16, 16, 16, 0.45);
     backdrop-filter: blur(12px) saturate(130%);
     -webkit-backdrop-filter: blur(12px) saturate(130%);
-    border: 1px solid rgba(26, 42, 66, 0.7);
+    border: 1px solid rgba(36, 36, 36, 0.7);
     border-radius: 12px;
   }
 
@@ -456,29 +456,29 @@
   .cinematic-overlay {
     background: linear-gradient(
       to bottom,
-      rgba(10, 22, 40, 0.05) 0%,
-      rgba(10, 22, 40, 0.25) 35%,
-      rgba(10, 22, 40, 0.75) 70%,
-      rgba(10, 22, 40, 0.97) 100%
+      rgba(16, 16, 16, 0.05) 0%,
+      rgba(16, 16, 16, 0.25) 35%,
+      rgba(16, 16, 16, 0.75) 70%,
+      rgba(16, 16, 16, 0.97) 100%
     );
   }
 
   .cinematic-overlay-top {
     background: linear-gradient(
       to bottom,
-      rgba(10, 22, 40, 0.85) 0%,
-      rgba(10, 22, 40, 0.3) 40%,
-      rgba(10, 22, 40, 0) 100%
+      rgba(16, 16, 16, 0.85) 0%,
+      rgba(16, 16, 16, 0.3) 40%,
+      rgba(16, 16, 16, 0) 100%
     );
   }
 
   .cinematic-overlay-sides {
     background: linear-gradient(
       to right,
-      rgba(10, 22, 40, 0.8) 0%,
-      rgba(10, 22, 40, 0.1) 30%,
-      rgba(10, 22, 40, 0.1) 70%,
-      rgba(10, 22, 40, 0.8) 100%
+      rgba(16, 16, 16, 0.8) 0%,
+      rgba(16, 16, 16, 0.1) 30%,
+      rgba(16, 16, 16, 0.1) 70%,
+      rgba(16, 16, 16, 0.8) 100%
     );
   }
 
@@ -497,10 +497,10 @@
   .skeleton {
     background: linear-gradient(
       90deg,
-      rgba(14, 30, 56, 0.9) 0%,
-      rgba(26, 46, 80, 0.9) 40%,
-      rgba(22, 38, 70, 0.9) 60%,
-      rgba(14, 30, 56, 0.9) 100%
+      rgba(16, 16, 16, 0.9) 0%,
+      rgba(36, 36, 36, 0.9) 40%,
+      rgba(28, 28, 28, 0.9) 60%,
+      rgba(16, 16, 16, 0.9) 100%
     );
     background-size: 400% 100%;
     animation: shimmer 2.4s linear infinite;
@@ -534,7 +534,7 @@
 
   /* ── Stat Counter Cards ────────────────────────────────── */
   .stat-card {
-    background: rgba(10, 22, 40, 0.6);
+    background: rgba(16, 16, 16, 0.6);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(212, 168, 75, 0.12);
     border-radius: 16px;
@@ -846,13 +846,13 @@
   .bg-surface-glow {
     background:
       radial-gradient(ellipse 80% 50% at 50% 0%, rgba(var(--one-electric-rgb),0.04) 0%, transparent 60%),
-      #071D3A;
+      #101010;
   }
   /* Gold-warmth variant for premium/sponsor sections */
   .bg-surface-warm {
     background:
       radial-gradient(ellipse 70% 40% at 50% 100%, rgba(229,22,54,0.04) 0%, transparent 60%),
-      #071D3A;
+      #101010;
   }
 
   /* ── Electric glow utilities ──────────────────────────── */
@@ -910,8 +910,8 @@
 
 /* ── Custom Scrollbar ─────────────────────────────────── */
 ::-webkit-scrollbar       { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #080F1C; }
-::-webkit-scrollbar-thumb { background: #1A2A42; border-radius: 3px; }
+::-webkit-scrollbar-track { background: #070707; }
+::-webkit-scrollbar-thumb { background: #242424; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(212,168,75,0.45); }
 
 /* ── Selection ────────────────────────────────────────── */
