@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { installPathToHash } from '@/lib/pathToHash'
+
+// Runs at module load — before HashRouter mounts — so /listen becomes #/listen.
+installPathToHash()
 
 /**
  * Unused Shepparton silo-art still (287×175 — mark size only, not a hero).

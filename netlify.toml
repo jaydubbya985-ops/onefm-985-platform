@@ -35,6 +35,45 @@
   status = 200
   force = true
 
+# Path → HashRouter. Typed /listen must not paint Home (empty hash).
+# Client-side installPathToHash() covers local Vite and unknown paths.
+[[redirects]]
+  from = "/listen"
+  to = "/#/listen"
+  status = 302
+[[redirects]]
+  from = "/programs"
+  to = "/#/programs"
+  status = 302
+[[redirects]]
+  from = "/heritage"
+  to = "/#/heritage"
+  status = 302
+[[redirects]]
+  from = "/contact"
+  to = "/#/contact"
+  status = 302
+[[redirects]]
+  from = "/support"
+  to = "/#/support"
+  status = 302
+[[redirects]]
+  from = "/media-kit"
+  to = "/#/media-kit"
+  status = 302
+[[redirects]]
+  from = "/football"
+  to = "/#/football"
+  status = 302
+[[redirects]]
+  from = "/coverage"
+  to = "/#/coverage"
+  status = 302
+[[redirects]]
+  from = "/ops"
+  to = "/#/ops"
+  status = 302
+
 # HashRouter SPA — serve index.html for all routes (also handles direct /assets/ paths)
 [[redirects]]
   from = "/*"
