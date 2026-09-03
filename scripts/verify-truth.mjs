@@ -435,6 +435,20 @@ if (
 ) {
   hits.push('lib/coverageCopy.ts: must export formatOgDescription and formatSeoDefault')
 }
+const textScramble = files.find((f) => f.label === 'components/TextScramble.tsx')
+if (
+  !textScramble ||
+  !textScramble.text.includes('aria-hidden="true"') ||
+  !textScramble.text.includes('<span className="sr-only">{text}</span>')
+) {
+  hits.push(
+    'components/TextScramble.tsx: screen readers must hear the finished string, not scramble frames',
+  )
+}
+if (textScramble && /aria-live=/.test(textScramble.text)) {
+  hits.push('components/TextScramble.tsx: do not announce scramble frames to assistive tech')
+}
+
 const presenterAssets = files.find((f) => f.label === 'lib/presenterAssets.ts')
 if (
   !presenterAssets ||
