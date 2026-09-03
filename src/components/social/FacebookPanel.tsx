@@ -29,7 +29,7 @@ export function FacebookPanel({ compact, className }: FacebookPanelProps) {
       accent={FACEBOOK_ACCENT}
       icon={<Facebook size={18} />}
     >
-      <div className="space-y-3">
+      <div className="space-y-3 pb-1">
         <p className="font-body-small text-one-muted text-sm leading-relaxed">
           This site does not load a Facebook timeline. The photo above is a station still — not a Facebook post.
         </p>
