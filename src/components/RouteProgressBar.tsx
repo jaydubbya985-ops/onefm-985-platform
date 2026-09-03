@@ -149,6 +149,7 @@ export function RouteProgressBar() {
         data-cursor-label="LISTEN"
         title={label}
         aria-label={`On air: ${label}. Open Listen Live.`}
+        className="hidden min-[420px]:inline-flex"
         style={{
           pointerEvents: 'auto',
           position: 'absolute',
@@ -156,7 +157,6 @@ export function RouteProgressBar() {
           left: '50%',
           transform: 'translateX(-50%)',
           maxWidth: 'min(52vw, 420px)',
-          display: 'inline-flex',
           alignItems: 'center',
           gap: 8,
           padding: '5px 12px',
