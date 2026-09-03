@@ -426,6 +426,7 @@ if (
 if (
   !programs ||
   /\$\{host\.name\} on Facebook/.test(programs.text) ||
+  /social:\s*\{\s*fb:\s*true/.test(programs.text) ||
   !programs.text.includes('Presenter profiles are not listed') ||
   !programs.text.includes('confirmedSocialNote')
 ) {
