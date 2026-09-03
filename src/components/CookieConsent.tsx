@@ -1,9 +1,38 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Cookie } from 'lucide-react'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatBreakfastChromeLabel } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import {
+  FACEBOOK_PAGE_URL,
+  SOUNDCLOUD_PROFILE_URL,
+  confirmedSocialNote,
+} from '@/lib/socialLinks'
 
 const CONSENT_KEY = 'onefm_cookie_consent'
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+
+/**
+ * Unused Murray riverboat still — mark size only, not a hero.
+ * Landmark, not a presenter portrait.
+ */
+function RiverboatArchiveMark() {
+  return (
+    <img
+      src={STATION_PHOTOS.cultureRiverboatMurray}
+      alt=""
+      aria-hidden
+      width={40}
+      height={40}
+      decoding="async"
+      className="hidden sm:block shrink-0 mt-0.5 rounded-full object-cover object-center border border-white/14"
+      style={{ width: 40, height: 40 }}
+    />
+  )
+}
 
 export function CookieConsent() {
   const [visible, setVisible] = useState(() => !localStorage.getItem(CONSENT_KEY))
@@ -29,19 +58,48 @@ export function CookieConsent() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
               <div className="flex items-start gap-3 flex-1 min-w-0">
-                <div className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-one-gold/15 shrink-0 mt-0.5">
-                  <Cookie size={18} className="text-one-gold" />
-                </div>
-                <div className="space-y-1">
-                  <p className="font-body-small text-one-white">
-                    No third-party analytics. A consent preference stays on this device.
+                <RiverboatArchiveMark />
+                <div className="space-y-1.5">
+                  <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/55">
+                    Volunteer-run · {formatCoverageShort()}
                   </p>
-                  <Link
-                    to="/privacy"
-                    className="inline-flex items-center gap-1 text-xs text-one-gold link-hover"
-                  >
-                    Privacy Policy
-                  </Link>
+                  <p className="font-body-small text-one-white">
+                    No third-party analytics. A consent preference stays on this device.{' '}
+                    {formatWeeklyListeners()} across {formatCoverageShort()} (ABS 2021 via
+                    townData).
+                  </p>
+                  <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/50 leading-relaxed">
+                    Weekday breakfast · {BREAKFAST_CHROME}
+                    <br />
+                    GVL Match of the Day · {GVL_MATCH_HOURS}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-0.5">
+                    <Link
+                      to="/privacy"
+                      className="inline-flex items-center text-xs text-one-gold link-hover"
+                    >
+                      Privacy Policy
+                    </Link>
+                    <a
+                      href={FACEBOOK_PAGE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-xs text-one-white/50 hover:text-one-gold transition-colors"
+                    >
+                      Facebook
+                    </a>
+                    <a
+                      href={SOUNDCLOUD_PROFILE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-xs text-one-white/50 hover:text-one-gold transition-colors"
+                    >
+                      SoundCloud
+                    </a>
+                    <span className="font-label text-[10px] tracking-[0.1em] uppercase text-one-white/35">
+                      {confirmedSocialNote()}
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="flex gap-3 shrink-0">
