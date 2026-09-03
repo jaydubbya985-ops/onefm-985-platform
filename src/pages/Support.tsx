@@ -16,13 +16,22 @@ import {
   StrokeFill,
 } from '@/components/onair/kit'
 import { donationTiers } from '@/data/pricing'
-import { BREAKFAST_SHOW, MULTICULTURAL_PROGRAM_COUNT, getBreakfastScheduleLabel } from '@/data/programGuide'
+import {
+  BREAKFAST_SHOW,
+  MULTICULTURAL_PROGRAM_COUNT,
+  formatBreakfastChromeLabel,
+  getBreakfastScheduleLabel,
+} from '@/data/programGuide'
 import { formatTowns, formatCoverageShort, formatWeeklyListeners, formatWeeklyListenersPlain, yearsBroadcastingValue } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { PARTNERSHIP_FROM_WEEKLY } from '@/lib/inventoryCopy'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { BRAND } from '@/lib/brand'
 
 const RED = '#E51636'
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 const BANK = {
   name: BANK_ACCOUNT_NAME,
@@ -44,7 +53,7 @@ const IMPACT = [
   {
     tag: 'Community',
     title: 'Airtime for local NFPs',
-    body: `Community notices, GVL sport and ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide (fm985.com.au/guide) — airtime for groups across the Goulburn Murray.`,
+    body: `Community notices, GVL Match of the Day · ${GVL_MATCH_HOURS}, and ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide (fm985.com.au/guide) — airtime for groups across the Goulburn Murray.`,
   },
   {
     tag: 'Resilience',
@@ -105,9 +114,17 @@ function DonateHero() {
             ]}
           />
         </h1>
+        <p className="mt-4 font-label text-[11px] tracking-[0.12em] uppercase text-white/50 leading-relaxed">
+          {formatWeeklyListeners()} · {formatCoverageShort()}
+          <br />
+          Weekday breakfast · {BREAKFAST_CHROME}
+          <br />
+          GVL Match of the Day · {GVL_MATCH_HOURS}
+        </p>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
           {BRAND.org} is a not-for-profit, volunteer-run station.
-          Donations help keep 98.5 FM live and local for {formatTowns()}.
+          Donations help keep 98.5 FM live and local for {formatWeeklyListeners()} across{' '}
+          {formatCoverageShort()} (ABS 2021 via townData).
         </p>
         <a
           href="#give"
@@ -208,7 +225,7 @@ export default function Support() {
     <Layout>
       <SEO
         title="Donate — Support ONE FM 98.5"
-        description={`Support volunteer-run community radio across ${formatTowns()}. ${formatCoverageShort()} (ABS 2021 via townData). Bank transfer: NAB BSB ${BANK_BSB} · Acct ${BANK_ACCOUNT} · ${BANK_ACCOUNT_NAME}.`}
+        description={`Support volunteer-run community radio across ${formatTowns()}. ${formatWeeklyListeners()} across ${formatCoverageShort()} (ABS 2021 via townData). GVL Match of the Day · ${GVL_MATCH_HOURS}. Breakfast: ${BREAKFAST_ROSTER_LINE}. Bank transfer: NAB BSB ${BANK_BSB} · Acct ${BANK_ACCOUNT} · ${BANK_ACCOUNT_NAME}.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -217,6 +234,8 @@ export default function Support() {
             BRAND.org,
             formatCoverageShort(),
             formatWeeklyListeners(),
+            `Weekday breakfast · ${BREAKFAST_CHROME}`,
+            `GVL Match of the Day · ${GVL_MATCH_HOURS}`,
             `ABN ${BRAND.abn}`,
             'Every dollar stays local',
           ]}
