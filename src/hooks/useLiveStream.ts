@@ -1,5 +1,6 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import { STREAM_URL } from '@/lib/streamConfig'
+import { STREAM_UNAVAILABLE, classifyMediaError, classifyPlayFailure } from '@/lib/streamErrors'
 
 /* ─── Module-level singleton ──────────────────────────────────────────────
    One Audio element is shared across all useLiveStream() callers.
@@ -12,18 +13,53 @@ let audio: HTMLAudioElement | null = null
 let state: StreamState = { playing: false, loading: false, error: null }
 const bus = typeof window !== 'undefined' ? new EventTarget() : null
 
-function getAudio(): HTMLAudioElement {
-  if (!audio) {
-    audio = new Audio(STREAM_URL)
-    audio.preload = 'none'
-
-    audio.addEventListener('play',    () => emit({ playing: true,  loading: false, error: null }))
-    audio.addEventListener('pause',   () => emit({ playing: false, loading: false, error: state.error }))
-    audio.addEventListener('waiting', () => emit({ ...state, loading: true }))
-    audio.addEventListener('playing', () => emit({ ...state, loading: false }))
-    audio.addEventListener('error',   () => emit({ playing: false, loading: false, error: 'Stream unavailable — try fm985.com.au/audio-player/' }))
+function forgetAudio() {
+  if (!audio) return
+  const dying = audio
+  audio = null
+  dying.pause()
+  dying.removeAttribute('src')
+  try {
+    dying.load()
+  } catch {
+    // ignore — element is discarded
   }
-  return audio
+}
+
+function getAudio(): HTMLAudioElement {
+  if (audio) return audio
+
+  const next = new Audio(STREAM_URL)
+  next.preload = 'none'
+  audio = next
+
+  next.addEventListener('play', () => {
+    if (audio !== next) return
+    emit({ playing: true, loading: false, error: null })
+  })
+  next.addEventListener('pause', () => {
+    if (audio !== next) return
+    emit({ playing: false, loading: false, error: state.error })
+  })
+  next.addEventListener('waiting', () => {
+    if (audio !== next) return
+    emit({ ...state, loading: true })
+  })
+  next.addEventListener('playing', () => {
+    if (audio !== next) return
+    emit({ ...state, loading: false })
+  })
+  next.addEventListener('error', () => {
+    if (audio !== next) return
+    emit({
+      playing: false,
+      loading: false,
+      error: classifyMediaError(next.error?.code),
+    })
+    forgetAudio()
+  })
+
+  return next
 }
 
 function emit(next: StreamState) {
@@ -54,8 +90,11 @@ export function useLiveStream() {
     emit({ ...state, loading: true, error: null })
     try {
       await a.play()
-    } catch {
-      emit({ playing: false, loading: false, error: 'Playback blocked — open the web player instead.' })
+    } catch (err) {
+      const message = classifyPlayFailure(err)
+      if (message === null) return
+      emit({ playing: false, loading: false, error: message })
+      if (message === STREAM_UNAVAILABLE) forgetAudio()
     }
   }, [])
 
