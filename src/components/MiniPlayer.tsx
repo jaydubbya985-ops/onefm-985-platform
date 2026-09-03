@@ -6,8 +6,16 @@ import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { formatBreakfastChromeLabel } from '@/data/programGuide'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const HIDE_ON = ['/listen', '/ops']
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const COVERAGE_SHORT = formatCoverageShort()
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const TRUTH_LINE = `${COVERAGE_SHORT} · GVL Match of the Day · ${GVL_MATCH_HOURS}`
 
 const BAR_DELAYS = ['0s', '0.2s', '0.1s', '0.35s', '0.15s']
 
@@ -60,7 +68,12 @@ export function MiniPlayer() {
           className="fixed bottom-0 inset-x-0 z-[200] pointer-events-none"
         >
           <div className="pointer-events-auto mx-auto max-w-3xl px-3 pb-3">
-            <div role="region" aria-label="Mini audio player" className="rounded-2xl border border-white/10 bg-[#0A0A0A]/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3">
+            <div
+              role="region"
+              aria-label={`Mini audio player · ${COVERAGE_SHORT}`}
+              title={`${BREAKFAST_CHROME} · ${TRUTH_LINE}`}
+              className="rounded-2xl border border-white/10 bg-[#0A0A0A]/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3"
+            >
 
               {/* Live dot */}
               <span className="relative flex h-2 w-2 shrink-0">
@@ -71,9 +84,20 @@ export function MiniPlayer() {
               {/* Animated bars when playing */}
               {playing && <NowPlayingBars />}
 
-              {/* Station label */}
-              <span className="font-label text-[10px] tracking-[0.2em] text-[#E51636] font-bold shrink-0 hidden sm:block">
-                98.5 FM
+              {/* Station mark — Mt Major transmitter still, not a live-now count */}
+              <span className="hidden sm:flex items-center gap-2 shrink-0" title={TRUTH_LINE}>
+                <img
+                  src={STATION_PHOTOS.towerMountMajorDay}
+                  alt=""
+                  aria-hidden
+                  width={28}
+                  height={28}
+                  decoding="async"
+                  className="h-7 w-7 rounded object-cover object-center border border-white/15"
+                />
+                <span className="font-label text-[10px] tracking-[0.2em] text-[#E51636] font-bold">
+                  98.5 FM
+                </span>
               </span>
 
               <div className="w-px h-4 bg-one-border/60 shrink-0 hidden sm:block" />
@@ -86,11 +110,18 @@ export function MiniPlayer() {
                 <p className="font-label text-[10px] text-muted truncate">
                   {presenterLine}
                 </p>
-                {live.breakfastOnAir && live.breakfastLabel && (
+                {live.breakfastOnAir && live.breakfastLabel ? (
                   <p className="font-label text-[9px] text-muted/80 truncate hidden md:block">
                     {live.breakfastLabel}
                   </p>
+                ) : (
+                  <p className="font-label text-[9px] text-muted/80 truncate hidden md:block">
+                    {BREAKFAST_CHROME}
+                  </p>
                 )}
+                <p className="font-label text-[9px] text-muted/70 truncate hidden sm:block">
+                  {TRUTH_LINE}
+                </p>
               </div>
 
               {/* Live weather */}
