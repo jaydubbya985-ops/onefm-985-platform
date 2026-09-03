@@ -53,10 +53,35 @@ export function formatAud(n: number): string {
   return `$${n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
-export function addDaysIso(days: number, from = new Date()): string {
-  const d = new Date(from)
-  d.setDate(d.getDate() + days)
-  return d.toISOString().split('T')[0]
+const MELBOURNE_TZ = 'Australia/Melbourne'
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/
+
+/** Shepparton calendar day — not the Cloud agent's UTC date. */
+export function melbourneIsoDate(now: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: MELBOURNE_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(now)
+  const year = parts.find((p) => p.type === 'year')?.value ?? '2026'
+  const month = parts.find((p) => p.type === 'month')?.value ?? '01'
+  const day = parts.find((p) => p.type === 'day')?.value ?? '01'
+  return `${year}-${month}-${day}`
+}
+
+/** Add whole Melbourne calendar days. Date-only ISO is a station day, not UTC midnight. */
+export function addDaysIso(days: number, from: Date | string = new Date()): string {
+  const iso =
+    typeof from === 'string' && DATE_ONLY.test(from.trim())
+      ? from.trim()
+      : melbourneIsoDate(from instanceof Date ? from : new Date(from))
+  const [year, month, day] = iso.split('-').map(Number)
+  const utc = new Date(Date.UTC(year, month - 1, day + days, 12, 0, 0))
+  const y = utc.getUTCFullYear()
+  const m = String(utc.getUTCMonth() + 1).padStart(2, '0')
+  const d = String(utc.getUTCDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
 }
 
 export function nextProposalNumber(existing: (string | undefined)[]): string {
@@ -72,9 +97,17 @@ export function nextProposalNumber(existing: (string | undefined)[]): string {
 }
 
 export function formatAuDate(iso: string): string {
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return iso
-  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+  const trimmed = iso.trim()
+  const date = DATE_ONLY.test(trimmed)
+    ? new Date(`${trimmed}T12:00:00+10:00`)
+    : new Date(trimmed)
+  if (Number.isNaN(date.getTime())) return iso
+  return date.toLocaleDateString('en-AU', {
+    timeZone: MELBOURNE_TZ,
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
 export function computePackageValue(
@@ -154,7 +187,7 @@ export function buildProposalDoc(input: {
     term: termLabel(input.pkg, input.durationWeeks),
     notes: input.notes?.trim() || undefined,
     validUntil: input.validUntil ?? addDaysIso(30),
-    preparedOn: new Date().toISOString().split('T')[0],
+    preparedOn: melbourneIsoDate(),
     deliverables: lines,
     money,
     weeklyPrice: input.pkg.weeklyPrice,
