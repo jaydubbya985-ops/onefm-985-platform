@@ -40,7 +40,7 @@ function Ticker() {
   const meta = usePlayerMetadata()
   const live = liveNowFromMetadata(meta)
   const items = [
-    live.isLive ? `● ON AIR — ${live.program}${live.presenter ? ` with ${live.presenter}` : ''}` : `● ${live.program}`,
+    live.isLive ? `● ON AIR — ${live.program}${live.withLine ? ` ${live.withLine}` : ''}` : `● ${live.program}`,
     meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
     formatWeeklyListeners(),
     formatCoverageShort(),
@@ -134,8 +134,9 @@ function Hero() {
           {live.program}
         </span>
         <span className="block mt-1.5 text-[14px] text-white/50">
-          {live.presenter ? `with ${live.presenter} · ` : ''}
+          {live.withLine ? `${live.withLine} · ` : ''}
           {live.programTime}
+          {live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
         </span>
         {live.breakfastOnAir && live.breakfastLabel ? (
           <span className="block mt-1.5 text-[12px] text-white/40">{live.breakfastLabel}</span>

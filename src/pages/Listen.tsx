@@ -18,6 +18,8 @@ import {
 } from '@/data/programGuide'
 import { BRAND } from '@/lib/brand'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import {
   formatCoverageShort,
   formatRadius,
@@ -33,55 +35,107 @@ const LIME = '#B6FF00'
 /** Same wall as Home — programGuide.ts BREAKFAST_ROSTER. Named portraits: Di Hunter, Sally Nayler. */
 
 function ListenHero() {
-  const { playing, loading, toggle } = useLiveStream()
+  const { playing, loading, error, toggle } = useLiveStream()
   const meta = usePlayerMetadata()
   const live = liveNowFromMetadata(meta)
-  const { program, presenter, programTime } = live
+  const { program, programTime } = live
+  const progressPct = Math.round(live.elapsedRatio * 100)
+
   return (
-    <section className="relative px-6 md:px-12 lg:px-20 pt-24 pb-16 min-h-[80vh] flex flex-col justify-center">
-      <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,160px)]">
-        <PosterReveal lines={[
-          <span key="a" className="poster-hover">Listen</span>,
-          <span key="b"><StrokeFill delay={0.9}>Live</StrokeFill><span style={{ color: RED }}>.</span></span>,
-        ]} />
-      </h1>
+    <section className="relative px-6 md:px-12 lg:px-20 pt-24 pb-16 min-h-[84vh] flex flex-col justify-center overflow-hidden">
+      <img
+        src={STATION_PHOTOS.studioPresenterMic}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: 'brightness(0.28) saturate(0.85)' }}
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.25) 40%, #0A0A0A 100%)' }}
+        aria-hidden
+      />
 
-      <div className="mt-10 flex items-center gap-6 flex-wrap">
-        <button
-          type="button"
-          onClick={() => void toggle()}
-          disabled={loading}
-          aria-pressed={playing}
-          aria-label={playing ? 'Pause the live stream' : 'Play the live stream'}
-          data-cursor-label={playing ? 'PAUSE' : 'PLAY'}
-          className="w-24 h-24 rounded-full flex items-center justify-center text-white bloom-red hover:scale-105 transition-transform disabled:opacity-60"
-          style={{ background: RED }}
-        >
-          {loading ? <Loader2 size={34} className="animate-spin" /> : playing ? <Pause size={34} /> : <Play size={36} className="translate-x-0.5" />}
-        </button>
-        <div>
-          <div className="text-[12px] font-bold tracking-[0.18em] uppercase" style={{ color: RED }}>
-            ● On Air Now
-          </div>
-          <div className="font-poster uppercase text-[28px] text-white leading-tight mt-1">{program}</div>
-          <div className="text-[14px] text-white/50">
-            with {presenter} · {programTime}
-          </div>
-          {live.breakfastOnAir && live.breakfastLabel && (
-            <div className="text-[12px] text-white/40 mt-1.5">
-              {live.breakfastLabel}
+      <div className="relative">
+        <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,160px)]">
+          <PosterReveal lines={[
+            <span key="a" className="poster-hover">Listen</span>,
+            <span key="b"><StrokeFill delay={0.9}>Live</StrokeFill><span style={{ color: RED }}>.</span></span>,
+          ]} />
+        </h1>
+
+        <div className="mt-10 flex items-center gap-6 flex-wrap">
+          <button
+            type="button"
+            onClick={() => void toggle()}
+            disabled={loading}
+            aria-pressed={playing}
+            aria-label={playing ? 'Pause the live stream' : 'Play the live stream'}
+            data-cursor-label={playing ? 'PAUSE' : 'PLAY'}
+            className="w-24 h-24 rounded-full flex items-center justify-center text-white bloom-red hover:scale-105 transition-transform disabled:opacity-60"
+            style={{ background: RED }}
+          >
+            {loading ? <Loader2 size={34} className="animate-spin" /> : playing ? <Pause size={34} /> : <Play size={36} className="translate-x-0.5" />}
+          </button>
+          <div className="min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="text-[12px] font-bold tracking-[0.18em] uppercase" style={{ color: RED }}>
+                {live.isLive ? '● On Air Now' : '● Overnight / automated'}
+              </div>
+              <div className="text-[11px] tracking-[0.14em] uppercase text-white/35">
+                {meta.sourceLabel}
+              </div>
             </div>
-          )}
-          {meta.nowPlaying && (
-            <div className="text-[13px] font-bold mt-1.5" style={{ color: LIME }}>
-              ♪ {meta.nowPlaying}{meta.artist ? ` — ${meta.artist}` : ''}
+            <div className="font-poster uppercase text-[28px] md:text-[36px] text-white leading-tight mt-1">{program}</div>
+            <div className="text-[14px] text-white/50 mt-1">
+              {live.withLine ? `${live.withLine} · ` : ''}
+              {programTime}
+              {live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
             </div>
-          )}
+            {live.breakfastOnAir && live.breakfastLabel && (
+              <div className="text-[12px] text-white/40 mt-1.5">
+                {live.breakfastLabel}
+              </div>
+            )}
+            {meta.nowPlaying && (
+              <div className="text-[13px] font-bold mt-2" style={{ color: LIME }}>
+                ♪ {meta.nowPlaying}{meta.artist && !meta.nowPlaying.includes(meta.artist) ? ` — ${meta.artist}` : ''}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="mt-8 text-[13px] tracking-[0.14em] uppercase text-white/40">
-        Up next: {meta.upNext}
+        <div className="mt-8 max-w-xl" aria-hidden>
+          <div className="h-1 rounded-full bg-white/10 overflow-hidden">
+            <div
+              className="h-full rounded-full"
+              style={{ width: `${progressPct}%`, background: RED }}
+            />
+          </div>
+          <div className="mt-2 flex justify-between text-[11px] tracking-[0.12em] uppercase text-white/35">
+            <span>This show on the guide</span>
+            <span>{live.remainingLabel}</span>
+          </div>
+        </div>
+
+        <div className="mt-6 text-[13px] tracking-[0.14em] uppercase text-white/40">
+          Up next: {meta.upNext}
+        </div>
+
+        {error && (
+          <p className="mt-5 text-[14px] text-white/70 max-w-xl" role="alert">
+            {error}{' '}
+            <a
+              href={AUDIO_PLAYER_URL}
+              className="underline"
+              style={{ color: RED }}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open the fm985.com.au web player
+            </a>
+          </p>
+        )}
       </div>
     </section>
   )
@@ -204,7 +258,7 @@ export default function Listen() {
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            live.isLive ? `● ON AIR — ${live.program}${live.presenter ? ` with ${live.presenter}` : ''}` : `● ${live.program}`,
+            live.isLive ? `● ON AIR — ${live.program}${live.withLine ? ` ${live.withLine}` : ''}` : `● ${live.program}`,
             meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
             formatWeeklyListeners(),
             formatCoverageShort(),

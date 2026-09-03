@@ -19,6 +19,7 @@ import {
   getCurrentLiveShow,
 } from '@/data/programGuide'
 import { formatGuideHours, formatHostHours } from '@/lib/guideHours'
+import { formatWithPresenter } from '@/lib/liveNow'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
@@ -100,6 +101,7 @@ function MiniWaveform({ color, seed }: { color: string; seed: number }) {
 /* ────────────────────────────────────────────────────────── */
 function OnAirNow() {
   const live = getCurrentLiveShow()
+  const withHost = formatWithPresenter(live.host)
 
   return (
     <TiltCard maxTilt={4} className="max-w-md">
@@ -116,7 +118,7 @@ function OnAirNow() {
       <div className="text-left">
         <p className="font-label text-one-red mb-0.5">ON AIR NOW</p>
         <p className="font-h4 text-one-white">{live.name}</p>
-        <p className="font-body-small text-muted">with {live.host} &middot; {live.time}</p>
+        <p className="font-body-small text-muted">{withHost ? `${withHost} · ` : ''}{live.time}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}</p>
       </div>
       <Wifi size={20} className="text-one-gold ml-auto shrink-0" />
     </motion.div>
