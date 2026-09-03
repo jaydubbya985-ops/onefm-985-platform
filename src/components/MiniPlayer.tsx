@@ -9,6 +9,10 @@ import { liveNowFromMetadata } from '@/lib/liveNow'
 
 const HIDE_ON = ['/listen', '/ops']
 
+// Layout remounts on every HashRouter page. Keep dismiss for this JS visit
+// so closing the bar on Home does not bring it back on Programs.
+let dismissedThisVisit = false
+
 const BAR_DELAYS = ['0s', '0.2s', '0.1s', '0.35s', '0.15s']
 
 function NowPlayingBars() {
@@ -32,7 +36,7 @@ function NowPlayingBars() {
 
 export function MiniPlayer() {
   const location = useLocation()
-  const [dismissed, setDismissed] = useState(false)
+  const [dismissed, setDismissed] = useState(dismissedThisVisit)
   const meta = usePlayerMetadata()
   const { playing, loading, toggle } = useLiveStream()
 
@@ -137,7 +141,10 @@ export function MiniPlayer() {
               {/* Dismiss */}
               <button
                 type="button"
-                onClick={() => setDismissed(true)}
+                onClick={() => {
+                  dismissedThisVisit = true
+                  setDismissed(true)
+                }}
                 aria-label="Dismiss player"
                 data-cursor-label="CLOSE"
                 className="w-7 h-7 rounded-full flex items-center justify-center text-muted hover:text-one-white hover:bg-one-border/30 transition-colors shrink-0"

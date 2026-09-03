@@ -141,6 +141,15 @@ const miniPlayer = files.find((f) => f.label === 'components/MiniPlayer.tsx')
 if (!miniPlayer || !miniPlayer.text.includes('liveNowFromMetadata')) {
   hits.push('components/MiniPlayer.tsx: breakfast chrome must use liveNowFromMetadata')
 }
+if (
+  !miniPlayer ||
+  !miniPlayer.text.includes('dismissedThisVisit') ||
+  !miniPlayer.text.includes('useState(dismissedThisVisit)')
+) {
+  hits.push(
+    'components/MiniPlayer.tsx: dismiss must last the visit — Layout remounts on every route',
+  )
+}
 
 const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
 if (!onAirNav || !onAirNav.text.includes('formatBreakfastChromeLabel')) {
