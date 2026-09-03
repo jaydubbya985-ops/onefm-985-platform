@@ -1,4 +1,4 @@
-import { useState, memo, useRef } from 'react'
+import { useState, memo, useRef, useEffect } from 'react'
 import { TiltCard } from '@/components/TiltCard'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
@@ -16,10 +16,10 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
   getBreakfastScheduleLabel,
-  getCurrentLiveShow,
 } from '@/data/programGuide'
 import { formatGuideHours, formatHostHours } from '@/lib/guideHours'
-import { formatWithPresenter } from '@/lib/liveNow'
+import { liveNowFromMetadata } from '@/lib/liveNow'
+import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
@@ -100,8 +100,19 @@ function MiniWaveform({ color, seed }: { color: string; seed: number }) {
 /*  ON AIR NOW indicator                                      */
 /* ────────────────────────────────────────────────────────── */
 function OnAirNow() {
-  const live = getCurrentLiveShow()
-  const withHost = formatWithPresenter(live.host)
+  const meta = usePlayerMetadata()
+  const [, setClock] = useState(0)
+  useEffect(() => {
+    const id = window.setInterval(() => setClock((n) => n + 1), 15_000)
+    return () => window.clearInterval(id)
+  }, [])
+  const live = liveNowFromMetadata(meta)
+  const status = live.isLive ? 'ON AIR NOW' : 'ON THE GUIDE'
+  const detail = [
+    live.withLine,
+    live.programTime,
+    live.remainingLabel,
+  ].filter(Boolean).join(' · ')
 
   return (
     <TiltCard maxTilt={4} className="max-w-md">
@@ -112,13 +123,22 @@ function OnAirNow() {
       className="glass-card px-6 py-4 flex items-center gap-4"
     >
       <span className="relative flex h-3 w-3 shrink-0">
-        <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
-        <span className="relative inline-flex rounded-full h-3 w-3 bg-one-red" />
+        {live.isLive ? (
+          <>
+            <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-one-red" />
+          </>
+        ) : (
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-white/35" />
+        )}
       </span>
-      <div className="text-left">
-        <p className="font-label text-one-red mb-0.5">ON AIR NOW</p>
-        <p className="font-h4 text-one-white">{live.name}</p>
-        <p className="font-body-small text-muted">{withHost ? `${withHost} · ` : ''}{live.time}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}</p>
+      <div className="text-left min-w-0">
+        <p className={`font-label mb-0.5 ${live.isLive ? 'text-one-red' : 'text-one-white/45'}`}>{status}</p>
+        <p className="font-h4 text-one-white">{live.program}</p>
+        <p className="font-body-small text-muted">{detail}</p>
+        {live.breakfastOnAir && live.breakfastLabel ? (
+          <p className="font-label text-[10px] text-muted/80 mt-1">{live.breakfastLabel}</p>
+        ) : null}
       </div>
       <Wifi size={20} className="text-one-gold ml-auto shrink-0" />
     </motion.div>
