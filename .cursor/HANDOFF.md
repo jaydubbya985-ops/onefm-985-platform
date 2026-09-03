@@ -11,19 +11,40 @@
 
 **CONTINUOUS RUN IS ON.** Read `.cursor/CONTINUOUS.md`. Keep shipping.
 
-## Already true on GitHub `main` (`a2a0519`)
+## Already true on GitHub `main` (`1ee8711`)
 
-- PR **#28–#143** batch is on `main` (home/listen craft #51, leftover AI copy #135, invoice Stripe honesty #121, marquee #143).
+`main` tip is **#201** (`cursor/ultra-world-class-273d`). Jay has **not EXE’d** anything after that.
+
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km** — always via `coverageCopy.ts`.
+- **39,375** = ABS 2021 via `townData` (`stationStats.weeklyListeners`).
+- **189,680** = sum of `townData` `population2026` estimates (`stationStats.broadcastPopulation`). Not ABS 2021. Open PRs #249 / #250 split those sources on public copy — not on `main` yet.
 - Standard 30s: **$25 plus GST**. GVL is premium — never “from $25”.
 - Invoice design **A · Broadcast Letter** is locked (`STATION_INVOICE_DESIGN_CHOICE`).
-- Breakfast is ONE FM Breakfast with rotating hosts — not Plemo.
+- Breakfast is ONE FM Breakfast with rotating hosts (Tim Ahemt, The Big G / Craig Stott, Ralph Whitehead, Josh Revens) — not Plemo.
+
+## First human action
+
+**`EXE PR #205`** (Programs guide: one live row a listener can use). Then the listen/programs stack: #211, #214, #218 (or skip if #243), #221, #225, #227 (or skip if #241), #229, #230.
 
 ## Open PRs (do not merge)
 
-The #170–#200 band is mostly **stamp-the-same-copy** (coverage + breakfast + GVL hours on one more page). Recommend **close**, do not stack more of them.
+The #170–#200 band is mostly **stamp-the-same-copy** (coverage + breakfast + GVL hours on one more page). Recommend **close**, do not stack more of them. Close stamp leftovers **#176 #187 #190 #203**.
 
 Stale/conflicting: **#1 #3 #4 #8 #10 #11** — close manually. **#13** never merge (regresses ops).
+
+Do **not** stamp these leftovers onto a second page (factory is closed):
+
+- Coverage source-split (39,375 vs 189,680) — #249 / #250
+- 24/7 removal — #259 did Footer; do not restamp Programs / BroadcastExplorer
+- Enquiry / proposal receipt — #253 SponsorshipKit, #273 `/proposal`
+- Song-request draft — #263 Programs
+- Donate honesty — #261
+- Contact office hours / partnerships desk — #247
+- Heritage 1988 panel archive — #255
+- PlayHQ invented scores — #266
+- Mini-player stream errors — #268
+- Nav lamp live vs automated — #270
+- Melbourne-guide timezone / Overnight Mix — #209 / #212 / #225
 
 ## NEED JAY (one action)
 
@@ -36,6 +57,15 @@ Next human blocker after Supabase: `RESEND_API_KEY` in Netlify for live invoice 
 
 ## Next desks
 
-- Listen / Home craft a listener would feel (remaining time, honest presenter, stream errors).
-- Programs as a usable weekly grid.
-- Do **not** stamp coverage onto another chrome component.
+Pick a leftover that is **not** already an open PR and **not** a stamp above.
+
+1. Listen / Home craft a listener would feel (remaining time, honest presenter) — many play/error PRs already open; do not duplicate.
+2. Programs as a usable weekly grid — wait for #205 EXE, or skip if #241 locks the Amrap grid first.
+3. Invented titles still on `main`: Football success “sponsorship team will be in touch”; Programs / BroadcastExplorer “24/7” (owned by the Footer 24/7 factory — do not restamp).
+4. Keep this file’s `main` SHA matching `git rev-parse --short origin/main` after each EXE.
+
+## Closed factories (do not reopen)
+
+- `formatCoverageShort()` + breakfast roster + GVL hours on another chrome component
+- Empty-commit CI retries
+- Invented listener pulses, portraits, Stripe links, or “sent” email states
