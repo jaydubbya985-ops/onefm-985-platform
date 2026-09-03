@@ -1,4 +1,5 @@
 import type { Handler, HandlerEvent } from '@netlify/functions'
+import { fm985ProxyPayload } from '../../src/lib/fm985ProxyPayload'
 
 /** Server-side proxy to fm985.com.au WordPress API (avoids CORS + SPA redirect issues). */
 export const handler: Handler = async (event: HandlerEvent) => {
@@ -12,15 +13,16 @@ export const handler: Handler = async (event: HandlerEvent) => {
       headers: { Accept: 'application/json', 'User-Agent': 'ONE-FM-Platform/1.0' },
     })
     const body = await res.text()
-    return {
-      statusCode: res.status,
-      headers: {
-        'Content-Type': res.headers.get('content-type') ?? 'application/json',
-        'Cache-Control': 'public, max-age=300',
-      },
+    return fm985ProxyPayload({
+      status: res.status,
+      contentType: res.headers.get('content-type'),
       body,
-    }
+    })
   } catch {
-    return { statusCode: 502, body: JSON.stringify({ error: 'fm985 proxy unavailable' }) }
+    return {
+      statusCode: 502,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      body: JSON.stringify({ error: 'fm985 proxy unavailable' }),
+    }
   }
 }
