@@ -13,6 +13,12 @@ import { OnAirTicker, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, Pos
 import { generalTiers } from '@/data/pricing'
 import { BREAKFAST_SHOW, BREAKFAST_TIME, getBreakfastScheduleLabel } from '@/data/programGuide'
 import { submitEnquiry } from '@/lib/enquiries'
+import {
+  enquiryReceiptDetail,
+  enquiryReceiptHeadline,
+  sponsorEnquiryHelper,
+  type EnquiryReceiptFlags,
+} from '@/lib/enquiryReceipt'
 import { BRAND } from '@/lib/brand'
 import {
   coverageStatsStrip,
@@ -70,6 +76,7 @@ function SponsorHero() {
 function EnquiryForm() {
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
   const [error, setError] = useState('')
+  const [receipt, setReceipt] = useState<EnquiryReceiptFlags | null>(null)
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -86,6 +93,7 @@ function EnquiryForm() {
       priority: 'high',
     })
     if (result.success) {
+      setReceipt({ stored: result.stored, emailed: result.emailed })
       setState('done')
     } else {
       setError(result.error ?? `Something went wrong — email ${BRAND.email} instead.`)
@@ -93,11 +101,14 @@ function EnquiryForm() {
     }
   }
 
-  if (state === 'done') {
+  if (state === 'done' && receipt) {
     return (
       <div className="border-2 rounded-2xl p-10 text-center" style={{ borderColor: RED }}>
-        <div className="font-poster uppercase text-[34px] text-white">You're in the pipeline<span style={{ color: RED }}>.</span></div>
-        <p className="text-white/55 mt-2 text-[15px]">We'll be in touch. — ONE FM 98.5</p>
+        <div className="font-poster uppercase text-[34px] text-white">
+          {enquiryReceiptHeadline(receipt)}
+          <span style={{ color: RED }}>.</span>
+        </div>
+        <p className="text-white/55 mt-2 text-[15px]">{enquiryReceiptDetail(receipt)}</p>
       </div>
     )
   }
@@ -119,7 +130,7 @@ function EnquiryForm() {
         data-cursor-label="SEND"
       >
         {state === 'sending' && <Loader2 size={16} className="animate-spin" />}
-        Send the Enquiry →
+        Submit the Enquiry →
       </button>
     </form>
   )
@@ -193,7 +204,7 @@ export default function SponsorshipKit() {
           </h2>
           <EnquiryForm />
           <p className="text-[13px] text-white/35 mt-4">
-            Goes straight to the station's pipeline — or email{' '}
+            {sponsorEnquiryHelper()} Or email{' '}
             <a href={`mailto:${BRAND.email}`} className="underline hover:text-white">
               {BRAND.email}
             </a>{' '}
