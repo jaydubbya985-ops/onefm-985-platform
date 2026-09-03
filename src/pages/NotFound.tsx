@@ -7,12 +7,21 @@ import { BRAND } from '@/lib/brand'
 import {
   formatCoverageShort,
   formatWeeklyListeners,
-  formatSeoDefault,
 } from '@/lib/coverageCopy'
-import { BREAKFAST_TIME, formatBreakfastChromeLabel } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
+import {
+  BREAKFAST_TIME,
+  formatBreakfastChromeLabel,
+  getBreakfastScheduleLabel,
+} from '@/data/programGuide'
+
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 const WAYS_BACK = [
   { to: '/programs', label: 'Program Guide' },
+  { to: '/football', label: 'GVL Football' },
   { to: '/coverage', label: 'Coverage' },
   { to: '/contact', label: 'Contact' },
 ] as const
@@ -77,7 +86,6 @@ function goldHover(enter: boolean) {
 }
 
 export default function NotFound() {
-  const breakfast = formatBreakfastChromeLabel()
   const coverage = `${formatWeeklyListeners()} · ${formatCoverageShort()}`
 
   return (
@@ -96,7 +104,7 @@ export default function NotFound() {
     >
       <SEO
         title="Page not found"
-        description={`This frequency is off the air. ${formatSeoDefault()}`}
+        description={`This frequency is off the air. ${formatWeeklyListeners()} across ${formatCoverageShort()} (ABS 2021 via townData). GVL Match of the Day · ${GVL_MATCH_HOURS}. Breakfast: ${BREAKFAST_ROSTER_LINE}.`}
         ogImage={STATION_PHOTOS.towerStarsNight}
       />
 
@@ -272,7 +280,9 @@ export default function NotFound() {
         >
           Weekdays {BREAKFAST_TIME}
           <br />
-          {breakfast}
+          {BREAKFAST_CHROME}
+          <br />
+          GVL Match of the Day · {GVL_MATCH_HOURS}
         </p>
 
         <div
