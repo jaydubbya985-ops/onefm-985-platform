@@ -21,6 +21,7 @@ import { formatTowns, formatCoverageShort, formatWeeklyListeners, formatWeeklyLi
 import { PARTNERSHIP_FROM_WEEKLY } from '@/lib/inventoryCopy'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { BRAND } from '@/lib/brand'
+import { DONATE_CARD_STATUS, DONATE_EMAIL_NOTE, DONATE_TICKER_PATH } from '@/lib/donateCopy'
 
 const RED = '#E51636'
 
@@ -30,10 +31,6 @@ const BANK = {
   bsb: BANK_BSB,
   account: BANK_ACCOUNT,
 } as const
-
-const STRIPE_READY =
-  typeof import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY === 'string' &&
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY.startsWith('pk_')
 
 const IMPACT = [
   {
@@ -164,23 +161,14 @@ function BankDetails() {
         </div>
 
         <div className="flex flex-col justify-center gap-4">
-          {STRIPE_READY ? (
-            <p className="text-[15px] text-white/55 leading-relaxed">
-              Online card payments via Stripe are being wired — use bank transfer below or contact
-              the station for other options.
-            </p>
-          ) : (
-            <p className="text-[15px] text-white/55 leading-relaxed">
-              Card payments coming soon. For now, please use direct bank transfer or email the
-              station — a real person will confirm your gift.
-            </p>
-          )}
+          <p className="text-[15px] text-white/55 leading-relaxed">{DONATE_CARD_STATUS}</p>
+          <p className="text-[14px] text-white/40 leading-relaxed">{DONATE_EMAIL_NOTE}</p>
           <a
             href={`mailto:${BRAND.email}?subject=Donation%20to%20ONE%20FM%2098.5&body=${mailBody}`}
             className="inline-flex justify-center rounded-full px-7 py-4 font-bold text-[13px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
             style={{ background: RED }}
           >
-            Email {BRAND.email} →
+            Open email draft →
           </a>
           <a
             href={`tel:+61358313131`}
@@ -218,7 +206,7 @@ export default function Support() {
             formatCoverageShort(),
             formatWeeklyListeners(),
             `ABN ${BRAND.abn}`,
-            'Every dollar stays local',
+            DONATE_TICKER_PATH,
           ]}
           delay={0.4}
         />
