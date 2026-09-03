@@ -66,7 +66,7 @@ export function EmailServiceBanner() {
   return (
     <div className="flex items-center gap-2 rounded-lg border border-[#1E293B] bg-[#161616] px-3 py-2 text-xs text-[#F4F1EA]/50 mb-4">
       <HelpCircle className="w-3.5 h-3.5 shrink-0" />
-      <span>Email service status unknown here (function unreachable — expected in local `npm run dev`). PDF + mailto fallback will be used.</span>
+      <span>Email service status unknown — PDF + mailto fallback will be used. Expected in local `npm run dev` when the email-status function is missing or the body does not say whether Resend is configured.</span>
     </div>
   )
 }
