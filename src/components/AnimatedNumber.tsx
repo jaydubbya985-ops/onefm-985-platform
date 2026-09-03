@@ -29,7 +29,9 @@ export function AnimatedNumber({
   const reduced = prefersReducedMotion()
   const [count, setCount] = useState(reduced ? value : 0)
   const ref = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref as unknown as RefObject<Element>, { once: true, margin: '-50px' })
+  // No negative rootMargin — a -50px inset left the first Football hero
+  // figure (39,375) sitting on an invented 0 on short mobile viewports.
+  const inView = useInView(ref as unknown as RefObject<Element>, { once: true })
   const hasRun = useRef(false)
 
   useEffect(() => {
@@ -47,6 +49,19 @@ export function AnimatedNumber({
       requestAnimationFrame(tick)
     }
   }, [inView, value, duration, reduced])
+
+  // If IntersectionObserver never fires, snap to the sourced figure.
+  // Sighted users must not sit on an invented 0.
+  useEffect(() => {
+    if (reduced) return
+    const id = window.setTimeout(() => {
+      if (!hasRun.current) {
+        hasRun.current = true
+        setCount(value)
+      }
+    }, duration + 250)
+    return () => window.clearTimeout(id)
+  }, [value, duration, reduced])
 
   return (
     <span ref={ref}>

@@ -44,4 +44,12 @@ if (!src.includes('toLocaleString()')) {
   fail('figures must use toLocaleString (39,375 not 39375)')
 }
 
+if (src.includes("margin: '-50px'") || src.includes('margin: "-50px"')) {
+  fail('negative inView inset left Football 39,375 sitting on an invented 0')
+}
+
+if (!src.includes('setCount(value)')) {
+  fail('must snap to the sourced figure if IntersectionObserver never fires')
+}
+
 console.log('verify-animated-number: ok — SR hears the finished figure once; tick is theatre')
