@@ -5,6 +5,7 @@
 import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
+import { formatPageTitle } from '../src/lib/seoTitle'
 
 function assert(cond: unknown, message: string) {
   if (!cond) {
@@ -50,5 +51,11 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+
+assert(formatPageTitle('Listen Live') === 'Listen Live | ONE FM 98.5', `listen tab: ${formatPageTitle('Listen Live')}`)
+assert(formatPageTitle('The Voice of the Goulburn Valley') === 'The Voice of the Goulburn Valley | ONE FM 98.5', 'home tab')
+assert(formatPageTitle('ONE FM 98.5 — The Voice of the Goulburn Valley') === 'ONE FM 98.5 — The Voice of the Goulburn Valley', 'do not double the brand')
+assert(formatPageTitle('Donate — Support ONE FM 98.5') === 'Donate — Support ONE FM 98.5', 'donate already names the brand')
+assert(!formatPageTitle('Listen Live — ONE FM 98.5').includes('| ONE FM 98.5'), 'never Listen Live — ONE FM 98.5 | ONE FM 98.5')
 
 console.log('verify-on-air OK')

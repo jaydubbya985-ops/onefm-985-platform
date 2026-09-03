@@ -252,7 +252,7 @@ export default function Listen() {
   return (
     <Layout>
       <SEO
-        title="Listen Live — ONE FM 98.5"
+        title="Listen Live"
         description={`Stream ONE FM 98.5 live from Shepparton. ${formatCoverageShort()} (ABS 2021 via townData). Full program guide and this week's presenters.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">

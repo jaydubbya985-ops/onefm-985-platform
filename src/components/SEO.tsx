@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async';
 import { formatSeoDefault } from '@/lib/coverageCopy'
+import { formatPageTitle, SITE_BRAND } from '@/lib/seoTitle'
 
 const SITE_URL = 'https://fm985.com.au'
 const DEFAULT_OG_IMAGE = '/assets/images/studio-exterior-rainbow.jpg'
-const DEFAULT_TITLE = 'ONE FM 98.5 — The Voice of the Goulburn Valley'
+const DEFAULT_TITLE = formatPageTitle('The Voice of the Goulburn Valley')
 
 interface SEOProps {
   title: string;
@@ -19,7 +20,7 @@ export function SEO({
   ogImage = DEFAULT_OG_IMAGE,
   ogType = 'website',
 }: SEOProps) {
-  const fullTitle = `${title} | ONE FM 98.5`
+  const fullTitle = formatPageTitle(title)
   const canonicalUrl = `${SITE_URL}/${window.location.hash}`
 
   // React 19 + react-helmet-async v3 creates a <title> element but leaves it empty in
@@ -39,7 +40,7 @@ export function SEO({
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`} />
       <meta property="og:type" content={ogType} />
-      <meta property="og:site_name" content="ONE FM 98.5" />
+      <meta property="og:site_name" content={SITE_BRAND} />
       <meta property="og:url" content={canonicalUrl} />
 
       {/* Twitter Card — no twitter:site. socialLinks.twitter is null until a handle is confirmed. */}
