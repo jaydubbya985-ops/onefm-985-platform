@@ -489,6 +489,7 @@ if (
   !facebookPanel ||
   !facebookPanel.text.includes('does not load a Facebook timeline') ||
   !facebookPanel.text.includes('not a Facebook post') ||
+  !facebookPanel.text.includes('facebook.com/onefmshepparton') ||
   facebookPanel.text.includes('HIGHLIGHTS') ||
   facebookPanel.text.includes('formatGuideHours')
 ) {
