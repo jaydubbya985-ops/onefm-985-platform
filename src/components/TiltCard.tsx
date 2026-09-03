@@ -23,7 +23,13 @@ export function TiltCard({ children, className = '', style, maxTilt = 8, hoverSc
     if (!el) return
     if (window.matchMedia('(pointer: coarse)').matches) return
     // Vestibular leftover — do not invent a 3D swing when the user asked for less motion.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (el.style.transform) {
+        el.style.transform = 'perspective(700px) rotateX(0deg) rotateY(0deg) scale(1)'
+        el.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1)'
+      }
+      return
+    }
     const rect = el.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width  - 0.5  // -0.5 → 0.5
     const y = (e.clientY - rect.top)  / rect.height - 0.5
