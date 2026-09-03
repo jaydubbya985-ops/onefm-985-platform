@@ -34,6 +34,16 @@ export function formatWithPresenter(presenter: string | null | undefined): strin
   return `with ${name}`
 }
 
+/**
+ * On-air vs overnight from the Melbourne guide — never Date#getHours() / getDay()
+ * on the viewer's clock. `playerMetadata.isBroadcastHours` used local Sunday 02:00
+ * and treated every hour as "broadcast" (`h >= 6 || h < 24`), so a UTC Sunday
+ * morning marked Shepparton as overnight while midday shows were on air.
+ */
+export function isGuideLive(now: Date = new Date()): boolean {
+  return getCurrentLiveShow(now).host !== 'Automated'
+}
+
 export function liveNowFromMetadata(meta: PlayerMetadata, now: Date = new Date()): LiveNowDisplay {
   const breakfastHost = getWeekdayBreakfastHost(getMelbourneWeekday(now))
   const breakfastOnAir = Boolean(breakfastHost) && isBreakfastProgram(meta.program)
@@ -46,7 +56,7 @@ export function liveNowFromMetadata(meta: PlayerMetadata, now: Date = new Date()
     programTime: breakfastOnAir ? BREAKFAST_TIME : meta.programTime,
     breakfastOnAir,
     breakfastLabel: breakfastOnAir ? getBreakfastScheduleLabel() : null,
-    isLive: meta.isLive,
+    isLive: isGuideLive(now),
     withLine: formatWithPresenter(presenter),
     remainingLabel: show.remainingLabel,
     remainingMinutes: show.remainingMinutes,
