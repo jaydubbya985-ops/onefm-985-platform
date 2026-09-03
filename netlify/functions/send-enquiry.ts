@@ -1,4 +1,5 @@
 import type { Handler, HandlerEvent } from '@netlify/functions'
+import { enquiryStationReceipt } from '../../src/lib/enquiryStationReceipt'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const STATION_EMAIL = process.env.STATION_EMAIL ?? 'admin@fm985.com.au'
@@ -11,6 +12,14 @@ interface EnquiryBody {
   message: string
   stationHtml: string
   confirmationHtml: string
+}
+
+function json(statusCode: number, payload: Record<string, unknown>) {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    body: JSON.stringify(payload),
+  }
 }
 
 async function sendViaResend(payload: {
@@ -40,55 +49,63 @@ async function sendViaResend(payload: {
 
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
+    return json(405, { error: 'Method not allowed' })
   }
 
   if (!RESEND_API_KEY) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'Email service not configured' }) }
+    return json(500, { error: 'Email service not configured' })
   }
 
   let body: EnquiryBody
   try {
     body = JSON.parse(event.body ?? '{}')
   } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }
+    return json(400, { error: 'Invalid JSON' })
   }
 
   if (!body.name || !body.email || !body.enquiryType || !body.message || !body.stationHtml || !body.confirmationHtml) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Missing required enquiry fields' }) }
+    return json(400, { error: 'Missing required enquiry fields' })
   }
 
+  let stationResult: { id?: string; error?: string }
   try {
-    const stationResult = await sendViaResend({
+    stationResult = await sendViaResend({
       to: STATION_EMAIL,
       subject: `New ${body.enquiryType} Enquiry — ${body.name}`,
       html: body.stationHtml,
       replyTo: body.email,
     })
-    if (stationResult.error) {
-      return { statusCode: 502, body: JSON.stringify({ error: stationResult.error }) }
-    }
+  } catch (err) {
+    console.error('[send-enquiry] Resend unreachable on station send:', err)
+    return json(502, { error: 'Email service unreachable' })
+  }
 
-    const confirmResult = await sendViaResend({
+  if (stationResult.error) {
+    const receipt = enquiryStationReceipt(
+      { ok: false, error: stationResult.error },
+      { ok: false },
+    )
+    return json(receipt.statusCode, receipt.body)
+  }
+
+  let confirmResult: { id?: string; error?: string }
+  try {
+    confirmResult = await sendViaResend({
       to: body.email,
       subject: `We've received your message — ONE FM 98.5`,
       html: body.confirmationHtml,
       replyTo: STATION_EMAIL,
     })
-    if (confirmResult.error) {
-      return { statusCode: 502, body: JSON.stringify({ error: confirmResult.error }) }
-    }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        success: true,
-        stationMessageId: stationResult.id,
-        confirmationMessageId: confirmResult.id,
-      }),
-    }
   } catch (err) {
-    console.error('[send-enquiry] Resend unreachable:', err)
-    return { statusCode: 502, body: JSON.stringify({ error: 'Email service unreachable' }) }
+    console.error('[send-enquiry] Resend unreachable on confirmation:', err)
+    confirmResult = { error: 'Confirmation email unreachable' }
   }
+
+  const receipt = enquiryStationReceipt(
+    { ok: true, id: stationResult.id },
+    confirmResult.error
+      ? { ok: false, error: confirmResult.error }
+      : { ok: true, id: confirmResult.id },
+  )
+  return json(receipt.statusCode, receipt.body)
 }
