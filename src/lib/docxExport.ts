@@ -50,7 +50,7 @@ export interface ProposalDocxData {
 }
 
 export interface MediaKitDocxData {
-  rateCard: { type: string; duration: string; peak: number; offPeak: number; availability: string }[]
+  rateCard: { type: string; duration: string; peak: number }[]
   audienceStats: { label: string; value: string }[]
   platformReach: { platform: string; stat: string; reach: string }[]
   contactEmail: string
@@ -410,14 +410,14 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
             },
           }),
           new Paragraph({
-            children: [new TextRun({ text: 'Effective Q1 2026 — All rates in AUD, GST exclusive', size: 20, color: mutedColor, italics: true })],
+            children: [new TextRun({ text: 'AUD plus GST from the published rate card. Off-peak and other-currency figures are not listed.', size: 20, color: mutedColor, italics: true })],
             spacing: { after: 200 },
           }),
           buildRateCardTable(data.rateCard),
 
           new Paragraph({
             children: [
-              new TextRun({ text: 'Volume discounts available for packages of 10+ spots. Custom packages and annual agreements receive preferential rates.', size: 20, color: mutedColor, italics: true }),
+              new TextRun({ text: 'Custom packages and GVL / breakfast / live-call inventory are quoted in writing. Volume discounts and foreign-currency conversions are not published — those figures are not on the rate card.', size: 20, color: mutedColor, italics: true }),
             ],
             spacing: { before: 200, after: 200 },
           }),
@@ -565,9 +565,7 @@ function buildRateCardTable(rateCard: MediaKitDocxData['rateCard']): Table {
       children: [
         makeCell('Spot Type', true),
         makeCell('Duration', true, AlignmentType.CENTER),
-        makeCell('Peak Rate', true, AlignmentType.RIGHT),
-        makeCell('Off-Peak', true, AlignmentType.RIGHT),
-        makeCell('Availability', true, AlignmentType.CENTER),
+        makeCell('Rate (AUD + GST)', true, AlignmentType.RIGHT),
       ],
       tableHeader: true,
     }),
@@ -580,8 +578,6 @@ function buildRateCardTable(rateCard: MediaKitDocxData['rateCard']): Table {
           makeCell(row.type),
           makeCell(row.duration, false, AlignmentType.CENTER),
           makeCell(fmtCurrency(row.peak), false, AlignmentType.RIGHT),
-          makeCell(fmtCurrency(row.offPeak), false, AlignmentType.RIGHT),
-          makeCell(row.availability, false, AlignmentType.CENTER),
         ],
       }),
     )

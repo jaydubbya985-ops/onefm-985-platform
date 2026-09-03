@@ -61,6 +61,8 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /Volume discounts available for packages of 10\+/, why: 'do not invent media-kit volume discounts' },
+  { re: /USD:\s*0\.65/, why: 'do not invent USD/AUD FX on the public rate card' },
 ]
 
 function walk(dir) {
@@ -403,6 +405,16 @@ if (
 if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
   hits.push('pages/MediaKit.tsx: media-kit DOCX must use BRAND.phone, not a placeholder')
 }
+if (
+  !mediaKit ||
+  /offPeak/.test(mediaKit.text) ||
+  /AvailabilityPill/.test(mediaKit.text) ||
+  /currencyRates/.test(mediaKit.text)
+) {
+  hits.push(
+    'pages/MediaKit.tsx: rate card must publish AUD plus GST only — no invented off-peak, FX, or availability',
+  )
+}
 
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
@@ -478,6 +490,17 @@ if (
   /path=\"\/social\" element=\{<Navigate to=\"\/community\"/.test(app.text)
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
+}
+
+const mediaKitDocx = files.find((f) => f.label === 'lib/docxExport.ts')
+if (
+  !mediaKitDocx ||
+  /makeCell\('Off-Peak'/.test(mediaKitDocx.text) ||
+  /Volume discounts available/.test(mediaKitDocx.text)
+) {
+  hits.push(
+    'lib/docxExport.ts: media kit Word card must not invent off-peak rates or volume discounts',
+  )
 }
 
 if (hits.length) {

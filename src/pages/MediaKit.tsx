@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   Download,
-  ChevronDown,
   Radio,
   Headphones,
   Share2,
@@ -105,15 +104,16 @@ const audienceStats = audienceStatsRows()
 
 const locationData = topTownListeners
 
+/** Published AUD rates from pricing.ts only. No invented off-peak, FX, or availability. */
 const rateCardData = [
-  { type: 'Live Read', duration: 'Host mention', peak: rateCard.liveRead, offPeak: Math.round(rateCard.liveRead * 0.6), availability: 'Limited' },
-  { type: 'Premium Spot', duration: '60s', peak: rateCard.premiumSpot, offPeak: Math.round(rateCard.premiumSpot * 0.5), availability: 'Moderate' },
-  { type: 'Standard Spot', duration: '30s', peak: rateCard.standardSpot30s, offPeak: Math.round(rateCard.standardSpot30s * 0.5), availability: 'High' },
-  { type: 'Standard Spot', duration: '60s', peak: rateCard.standardSpot60s, offPeak: Math.round(rateCard.standardSpot60s * 0.5), availability: 'High' },
-  { type: 'Sponsorship Mention', duration: '10s', peak: rateCard.sponsorshipMention, offPeak: Math.round(rateCard.sponsorshipMention * 0.5), availability: 'High' },
-  { type: 'Website Banner', duration: 'Display', peak: rateCard.websiteBanner, offPeak: Math.round(rateCard.websiteBanner * 0.5), availability: 'High' },
-  { type: 'Newsletter Mention', duration: 'Full', peak: rateCard.newsletterMention, offPeak: Math.round(rateCard.newsletterMention * 0.5), availability: 'Moderate' },
-  { type: 'Social Post', duration: 'Story + Post', peak: rateCard.socialPost, offPeak: Math.round(rateCard.socialPost * 0.5), availability: 'Moderate' },
+  { type: 'Live Read', duration: 'Host mention', peak: rateCard.liveRead },
+  { type: 'Premium Spot', duration: '60s', peak: rateCard.premiumSpot },
+  { type: 'Standard Spot', duration: '30s', peak: rateCard.standardSpot30s },
+  { type: 'Standard Spot', duration: '60s', peak: rateCard.standardSpot60s },
+  { type: 'Sponsorship Mention', duration: '10s', peak: rateCard.sponsorshipMention },
+  { type: 'Website Banner', duration: 'Display', peak: rateCard.websiteBanner },
+  { type: 'Newsletter Mention', duration: 'Full', peak: rateCard.newsletterMention },
+  { type: 'Social Post', duration: 'Story + Post', peak: rateCard.socialPost },
 ]
 
 const platformCards = [
@@ -264,23 +264,6 @@ function SignalBars({ color = '#F2F2F2' }: { color?: string }) {
   )
 }
 
-/* ─────────── availability pill ─────────── */
-function AvailabilityPill({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    High: 'bg-data-teal/20 text-data-teal',
-    Moderate: 'bg-gold/20 text-gold',
-    Limited: 'bg-signal-red/20 text-signal-red',
-  }
-  const isLimited = status === 'Limited'
-  return (
-    <span
-      className={`inline-flex items-center px-3 py-1 rounded-full font-label text-[10px] ${colors[status] || 'bg-muted/20 text-muted'} ${isLimited ? 'animate-pulse' : ''}`}
-    >
-      {status}
-    </span>
-  )
-}
-
 /* ─── Studio Photo Strip ─── */
 const STUDIO_PHOTOS = [
   { src: STATION_PHOTOS.commentaryCallAction,  alt: 'Commentary team live on air',        caption: 'Live on Air' },
@@ -343,17 +326,9 @@ function StudioPhotoStrip() {
    ═══════════════════════════════════ */
 export default function MediaKit() {
   const [demoTab, setDemoTab] = useState<'Overview' | 'Reach' | 'Top Towns'>('Overview')
-  const [currency, setCurrency] = useState('AUD')
   const [docxGenerating, setDocxGenerating] = useState(false)
 
-  const currencyRates: Record<string, number> = { AUD: 1, USD: 0.65, GBP: 0.52, EUR: 0.6 }
-  const rateMultiplier = currencyRates[currency] || 1
-
-  const formatPrice = (val: number) => {
-    const converted = Math.round(val * rateMultiplier)
-    const symbols: Record<string, string> = { AUD: '$', USD: '$', GBP: '£', EUR: '€' }
-    return `${symbols[currency] || '$'}${converted.toLocaleString()}`
-  }
+  const formatPrice = (val: number) => `$${val.toLocaleString('en-AU')}`
 
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -380,9 +355,7 @@ export default function MediaKit() {
       const rateCardRows = rateCardData.map((row) => ({
         type: row.type,
         duration: row.duration,
-        peak: Math.round(row.peak * rateMultiplier),
-        offPeak: Math.round(row.offPeak * rateMultiplier),
-        availability: row.availability,
+        peak: row.peak,
       }))
 
       const blob = await generateMediaKitDocx({
@@ -781,20 +754,7 @@ export default function MediaKit() {
           >
             <div>
               <WordReveal text="ADVERTISING RATES" className="font-h2 text-ivory block" as="h2" stagger={0.05} />
-              <p className="font-micro text-muted mt-2">Effective Q1 2026 — All rates plus GST. {STANDARD_SPOT_PLUS_GST}. GVL and live reads are premium inventory — never sold as the $25 floor.</p>
-            </div>
-            <div className="relative">
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="appearance-none glass-card px-4 py-2.5 pr-10 font-label text-xs text-ivory bg-transparent cursor-pointer focus:outline-none focus:border-one-gold/50"
-              >
-                <option value="AUD">AUD</option>
-                <option value="USD">USD</option>
-                <option value="GBP">GBP</option>
-                <option value="EUR">EUR</option>
-              </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+              <p className="font-micro text-muted mt-2">AUD plus GST from the published rate card. {STANDARD_SPOT_PLUS_GST}. GVL and live reads are premium inventory — never sold as the $25 floor. Off-peak and other-currency figures are not listed — there is no sourced off-peak schedule.</p>
             </div>
           </motion.div>
 
@@ -808,18 +768,16 @@ export default function MediaKit() {
             variants={staggerContainer}
           >
             {/* Table Header */}
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 p-4 border-b border-border-dark bg-one-navy/50 font-label text-xs text-muted uppercase">
+            <div className="grid grid-cols-[2fr_1fr_1fr] gap-4 p-4 border-b border-border-dark bg-one-navy/50 font-label text-xs text-muted uppercase">
               <span>Spot Type</span>
               <span>Duration</span>
-              <span>Peak Rate</span>
-              <span>Off-Peak</span>
-              <span>Availability</span>
+              <span>Rate (AUD + GST)</span>
             </div>
             {/* Table Rows */}
             {rateCardData.map((row, i) => (
               <motion.div
                 key={i}
-                className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 p-4 border-b border-border-dark/50 hover:bg-one-gold/5 transition-colors duration-200 items-center"
+                className="grid grid-cols-[2fr_1fr_1fr] gap-4 p-4 border-b border-border-dark/50 hover:bg-one-gold/5 transition-colors duration-200 items-center"
                 variants={{
                   hidden: { opacity: 0, x: -20 },
                   visible: {
@@ -832,8 +790,6 @@ export default function MediaKit() {
                 <span className="font-body-small text-ivory">{row.type}</span>
                 <span className="font-mono text-sm text-chalk">{row.duration}</span>
                 <span className="font-mono text-sm text-one-gold">{formatPrice(row.peak)}</span>
-                <span className="font-mono text-sm text-chalk">{formatPrice(row.offPeak)}</span>
-                <AvailabilityPill status={row.availability} />
               </motion.div>
             ))}
           </motion.div>
@@ -846,7 +802,7 @@ export default function MediaKit() {
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <p className="font-body-small text-muted max-w-lg">
-              Volume discounts available for packages of 10+ spots. Custom packages and annual agreements receive preferential rates.
+              Custom packages and GVL / breakfast / live-call inventory are quoted in writing. We do not publish volume discounts or foreign-currency conversions — those figures are not on the rate card.
             </p>
             <div className="flex gap-3 shrink-0">
               <MagneticButton strength={10}>
