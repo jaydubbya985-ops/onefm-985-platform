@@ -68,14 +68,15 @@ export const coveragePins: CoveragePin[] = [
       link: '/football',
     }]
   }),
-  // Real local sponsors (invoice partners — town-centroid, not street-precise)
+  // Invoice-book names — town-centroid pins, not street-precise.
+  // Do not invent rank, tenure, measured peak listening, or an unsourced partnership title.
   ...([
-    ['sp-gvl', 'Goulburn Valley Football League', 'Shepparton', 0.018, 0.014, `League naming partner — GVL Match of the Day · ${GVL_MATCH_HOURS} on 98.5 FM`, '/football'],
-    ['sp-peppermill', 'Peppermill Inn', 'Mooroopna', -0.012, -0.01, 'Major GVL sponsor — hospitality landmark', '/football'],
-    ['sp-foott', 'FOOTT Waste Solutions', 'Shepparton', -0.016, 0.012, 'Local business sponsor — community radio partner', '/sponsorship'],
-    ['sp-sam', 'SAM — Shepparton Art Museum', 'Shepparton', 0.02, -0.014, 'Media partner — arts & culture in the Valley', '/sponsorship'],
-    ['sp-mcrae', 'McRae Demolitions', 'Shepparton', -0.02, -0.01, 'Long-term sponsor — backs local radio year-round', '/sponsorship'],
-    ['sp-burkes', "Burkes Bakery", 'Shepparton', 0.015, 0.016, 'Local sponsor — everyday reach across breakfast hours', '/sponsorship'],
+    ['sp-gvl', 'Goulburn Valley Football League', 'Shepparton', 0.018, 0.014, `GVL Match of the Day · ${GVL_MATCH_HOURS} on 98.5 FM`, '/football'],
+    ['sp-peppermill', 'Peppermill Inn', 'Mooroopna', -0.012, -0.01, 'Hospitality sponsor — pin is the Mooroopna town centroid, not a street address', '/football'],
+    ['sp-foott', 'FOOTT Waste Solutions', 'Shepparton', -0.016, 0.012, 'Local business sponsor — pin is the Shepparton town centroid, not a street address', '/sponsorship'],
+    ['sp-sam', 'SAM — Shepparton Art Museum', 'Shepparton', 0.02, -0.014, 'Arts & culture sponsor — pin is the Shepparton town centroid, not a street address', '/sponsorship'],
+    ['sp-mcrae', 'McRae Demolitions', 'Shepparton', -0.02, -0.01, 'Local business sponsor — pin is the Shepparton town centroid, not a street address', '/sponsorship'],
+    ['sp-burkes', "Burkes Bakery", 'Shepparton', 0.015, 0.016, 'Local business sponsor — pin is the Shepparton town centroid, not a street address', '/sponsorship'],
   ] as const).flatMap(([id, name, town, dLat, dLng, blurb, link]) => {
     const pos = atTown(town, dLat, dLng)
     if (!pos) return []
