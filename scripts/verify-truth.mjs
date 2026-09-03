@@ -61,6 +61,7 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /still in the studio/i, why: '1988 mixing panel photo is archive — current on-air desk is data pending' },
 ]
 
 function walk(dir) {
@@ -355,6 +356,18 @@ if (
   !files.find((f) => f.label === 'pages/SponsorshipKit.tsx')?.text.includes('coverageStatsStrip')
 ) {
   hits.push('pages/SponsorshipKit.tsx: stats strip must use coverageStatsStrip()')
+}
+
+const heritage = files.find((f) => f.label === 'pages/Heritage.tsx')
+if (!heritage?.text.includes('PANEL_1988_BADGE')) {
+  hits.push('pages/Heritage.tsx: 1988 panel badge must come from PANEL_1988_BADGE')
+}
+const panelArchive = files.find((f) => f.label === 'data/livingArchive/decades.ts')
+if (
+  !panelArchive?.text.includes('PANEL_1988_BADGE') ||
+  !panelArchive.text.includes('data pending')
+) {
+  hits.push('data/livingArchive/decades.ts: 1988 panel copy must mark current desk as data pending')
 }
 
 function assertCoverageCopy(label, requiredFns) {
