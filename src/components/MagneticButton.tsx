@@ -96,38 +96,30 @@ export function MagneticButton({
     el.style.transition = 'transform 0.55s cubic-bezier(0.16,1,0.3,1)'
   }
 
-  const magnetProps = {
-    ref,
-    className: 'inline-block',
-    onMouseMove: handleMouseMove,
-    onMouseLeave: handleMouseLeave,
-    ...(resolvedLabel ? { 'data-cursor-label': resolvedLabel } : {}),
-    ...(resolvedTitle ? { title: resolvedTitle } : {}),
-  } as const
-
-  if (!live) {
-    return (
-      <Tag className={`inline-block ${className}`} {...magnetProps}>
-        {children}
-      </Tag>
-    )
-  }
-
   return (
-    <Tag className={`inline-flex flex-col items-start ${className}`}>
-      <span {...magnetProps}>
+    <Tag className={`${live ? 'inline-flex flex-col items-start' : 'inline-block'} ${className}`}>
+      <span
+        ref={ref}
+        className="inline-block"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        {...(resolvedLabel ? { 'data-cursor-label': resolvedLabel } : {})}
+        {...(resolvedTitle ? { title: resolvedTitle } : {})}
+      >
         {children}
       </span>
-      <span className="mt-1.5 max-w-[20rem] font-label text-[9px] leading-snug tracking-[0.12em] uppercase text-one-white/50">
-        <span className="text-one-gold/80">{magneticListenEyebrow(live)}</span>
-        {' · '}
-        {magneticListenLabel(live)}
-        {live.breakfastOnAir && live.breakfastLabel ? (
-          <span className="mt-0.5 block normal-case tracking-normal text-[8px] text-one-white/40">
-            Weekday breakfast · {live.breakfastLabel}
-          </span>
-        ) : null}
-      </span>
+      {live ? (
+        <span className="mt-1.5 max-w-[20rem] font-label text-[9px] leading-snug tracking-[0.12em] uppercase text-one-white/50">
+          <span className="text-one-gold/80">{magneticListenEyebrow(live)}</span>
+          {' · '}
+          {magneticListenLabel(live)}
+          {live.breakfastOnAir && live.breakfastLabel ? (
+            <span className="mt-0.5 block normal-case tracking-normal text-[8px] text-one-white/40">
+              Weekday breakfast · {live.breakfastLabel}
+            </span>
+          ) : null}
+        </span>
+      ) : null}
     </Tag>
   )
 }
