@@ -4,11 +4,14 @@
  * generalised with props. Design laws live in the spec, not in options:
  * the kit deliberately exposes few knobs.
  */
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { LabelReveal } from '@/components/motion/PosterReveal'
 import { onAirWallSub } from '@/lib/guideHours'
+import { useLiveStream } from '@/hooks/useLiveStream'
+import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
+import { formatWithPresenter, liveNowFromMetadata, type LiveNowDisplay } from '@/lib/liveNow'
 
 const RED = '#E51636'
 const INK = '#0A0A0A'
@@ -18,23 +21,104 @@ const EXPO = [0.16, 1, 0.3, 1] as const
 export { LabelReveal }
 export { PosterReveal, StrokeFill } from '@/components/motion/PosterReveal'
 
-/** Red marquee band. Pass real facts / live metadata as items. */
+/** Melbourne guide clock — remaining time must not freeze on first paint. */
+function useGuideClock(ms = 30_000) {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), ms)
+    return () => window.clearInterval(id)
+  }, [ms])
+  return now
+}
+
+/** Host / show keys — "The Big G (Craig Stott)" matches Craig Stott or The Big G. */
+function nameKeys(name: string): Set<string> {
+  const keys = new Set<string>()
+  const trimmed = name.trim().toLowerCase()
+  if (!trimmed) return keys
+  keys.add(trimmed)
+  const bare = trimmed.replace(/\s*\([^)]*\)/g, '').trim()
+  if (bare) keys.add(bare)
+  for (const inner of name.matchAll(/\(([^)]+)\)/g)) {
+    const key = inner[1].trim().toLowerCase()
+    if (key) keys.add(key)
+  }
+  return keys
+}
+
+function namesOverlap(a: string, b: string): boolean {
+  const left = nameKeys(a)
+  const right = nameKeys(b)
+  for (const key of left) {
+    if (right.has(key)) return true
+  }
+  return false
+}
+
+/** Only mark a wall row when the guide host or exact show name matches. Towns never match. */
+function wallRowIsOnAir(name: string, live: LiveNowDisplay): boolean {
+  const withHost = formatWithPresenter(live.presenter)
+  if (withHost && namesOverlap(name, live.presenter)) return true
+  return name.trim().toLowerCase() === live.program.trim().toLowerCase()
+}
+
+function isLiveDuplicate(item: string, live: LiveNowDisplay, nowPlaying: string | null): boolean {
+  const text = item.replace(/^●\s*/, '').trim()
+  if (/^ON AIR\b/i.test(text)) return true
+  if (text.startsWith(live.program)) return true
+  if (nowPlaying && /^Now playing:/i.test(text)) return true
+  return false
+}
+
+/** Red marquee band. Live chip stays put — remaining time, honest host, stream errors. */
 export function OnAirTicker({ items, delay = 0.75 }: { items: string[]; delay?: number }) {
-  const line = items.join('   ·   ')
+  const now = useGuideClock()
+  const meta = usePlayerMetadata()
+  const { playing, error } = useLiveStream()
+  const live = liveNowFromMetadata(meta, now)
+  const rest = items.filter((item) => !isLiveDuplicate(item, live, meta.nowPlaying))
+  const line = rest.join('   ·   ')
+  const status = error ? 'STREAM' : playing ? 'LISTENING' : live.isLive ? 'ON AIR' : 'GUIDE'
+  const chip = error
+    ? error
+    : [
+        live.program,
+        live.withLine,
+        live.remainingLabel,
+        !error && meta.nowPlaying
+          ? `♪ ${meta.nowPlaying}${meta.artist && !meta.nowPlaying.includes(meta.artist) ? ` — ${meta.artist}` : ''}`
+          : null,
+      ]
+        .filter(Boolean)
+        .join(' · ')
+
   return (
     <motion.div
-      className="overflow-hidden"
+      className="flex items-stretch overflow-hidden"
       style={{ background: RED }}
-      aria-hidden
       initial={{ y: '-100%' }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, delay, ease: EXPO }}
     >
-      <div className="flex whitespace-nowrap py-2 font-bold text-[13px] tracking-[0.12em] uppercase text-white animate-marquee">
-        {[0, 1].map((i) => (
-          <span key={i} className="pr-12">{line}   ·   </span>
-        ))}
+      <div
+        role="status"
+        aria-live="polite"
+        className="shrink-0 max-w-[min(72vw,34rem)] border-r border-white/25 px-3 py-2 sm:px-4"
+      >
+        <p className="font-bold text-[11px] sm:text-[13px] tracking-[0.12em] uppercase text-white leading-snug">
+          <span className="mr-2">● {status}</span>
+          <span className="font-semibold tracking-[0.08em] normal-case sm:uppercase">{chip}</span>
+        </p>
       </div>
+      {line ? (
+        <div className="min-w-0 flex-1 overflow-hidden" aria-hidden>
+          <div className="flex whitespace-nowrap py-2 font-bold text-[13px] tracking-[0.12em] uppercase text-white/90 animate-marquee">
+            {[0, 1].map((i) => (
+              <span key={i} className="pr-12">{line}   ·   </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </motion.div>
   )
 }
@@ -58,6 +142,10 @@ export function NameWall({
   /** Names whose img is a verified portrait of that person. */
   portraits?: string[]
 }) {
+  const now = useGuideClock()
+  const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta, now)
+
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16">
       <LabelReveal className="mb-8">{label}</LabelReveal>
@@ -65,6 +153,7 @@ export function NameWall({
         {rows.map((p, i) => {
           const isPortrait = portraits.includes(p.name)
           const sub = onAirWallSub(p.name, p.sub)
+          const onAir = wallRowIsOnAir(p.name, live)
           return (
           <motion.div
             key={p.name}
@@ -79,14 +168,27 @@ export function NameWall({
               <span className="block font-body normal-case text-[13px] tracking-[0.14em] text-white/40 mt-1.5">
                 {sub}
               </span>
+              {onAir ? (
+                <span
+                  className="mt-2 inline-block font-body normal-case text-[12px] tracking-[0.14em] uppercase"
+                  style={{ color: RED }}
+                >
+                  ● On air now{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
+                  {live.withLine ? ` ${live.withLine}` : ''}
+                </span>
+              ) : null}
             </div>
             <div
               className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
-              style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
+              style={{
+                backgroundColor: BAR,
+                backgroundImage: `url('${p.img}')`,
+                boxShadow: onAir ? `inset 0 0 0 2px ${RED}` : undefined,
+              }}
               role="img"
               aria-label={
                 isPortrait
-                  ? `${p.name} — ${sub}`
+                  ? `${p.name} — ${sub}${onAir ? ` — on air now${live.remainingLabel ? `, ${live.remainingLabel}` : ''}` : ''}`
                   : `ONE FM station photography beside ${p.name} — not a presenter portrait`
               }
             />
