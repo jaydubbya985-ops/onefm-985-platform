@@ -1,4 +1,5 @@
 import type { Handler, HandlerEvent } from '@netlify/functions'
+import { invoiceDryRunPayload } from '../../src/lib/invoiceDryRun'
 import { INVOICE_FROM, probeResend } from '../lib/resendProbe'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
@@ -15,7 +16,7 @@ type InvoiceSendBody = {
   dryRun?: boolean
 }
 
-function json(statusCode: number, payload: Record<string, unknown>) {
+function json(statusCode: number, payload: object) {
   return {
     statusCode,
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
@@ -45,24 +46,18 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
   const hasPdf = Boolean(body.pdfBase64 && body.filename)
 
-  // Dry-run: prove the pipeline can send, never call Resend /emails.
+  // Dry-run: prove the pipeline can reach Resend, never call /emails.
   if (body.dryRun === true) {
     const probe = await probeResend(RESEND_API_KEY)
-    return json(200, {
-      success: true,
-      dryRun: true,
-      sent: false,
-      resendConfigured: probe.configured,
-      resendReachable: probe.reachable,
-      fromDomainVerified: probe.fromDomainVerified,
-      domainStatus: probe.domainStatus,
-      stationDomains: probe.stationDomains.map((d) => ({ name: d.name, status: d.status })),
-      needJay: probe.needJay,
-      wouldSendTo: body.to,
-      hasPdf,
-      filename: body.filename ?? null,
-      from: FROM,
-    })
+    return json(
+      200,
+      invoiceDryRunPayload(probe, {
+        to: body.to,
+        hasPdf,
+        filename: body.filename ?? null,
+        from: FROM,
+      }),
+    )
   }
 
   const payload: Record<string, unknown> = {
