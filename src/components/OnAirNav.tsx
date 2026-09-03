@@ -8,8 +8,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { X, Menu } from 'lucide-react'
+import { Loader2, Menu, Pause, Play, X } from 'lucide-react'
 import { BrandLogo } from '@/components/BrandLogo'
+import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { formatCoverageShort, formatWeeklyListenersPlain } from '@/lib/coverageCopy'
 import { formatBreakfastChromeLabel } from '@/data/programGuide'
@@ -60,6 +61,7 @@ export function OnAirNav() {
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
   const meta = usePlayerMetadata()
+  const { playing, loading, toggle } = useLiveStream()
   const reduced = useReducedMotion()
 
   const [lastPath, setLastPath] = useState(location.pathname)
@@ -108,14 +110,25 @@ export function OnAirNav() {
           </Link>
 
           <div className="flex items-center gap-3">
-            <Link
-              to="/listen"
-              data-cursor-label="LISTEN"
-              className="hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-bold text-[12px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
+            <button
+              type="button"
+              onClick={() => void toggle()}
+              disabled={loading}
+              aria-pressed={playing}
+              aria-label={playing ? 'Pause the live stream' : 'Play the live stream'}
+              data-cursor-label={playing ? 'PAUSE' : 'PLAY'}
+              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-bold text-[12px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform disabled:opacity-60"
               style={{ background: RED }}
             >
-              ▶ Listen Live
-            </Link>
+              {loading ? (
+                <Loader2 size={14} className="animate-spin" aria-hidden />
+              ) : playing ? (
+                <Pause size={14} aria-hidden />
+              ) : (
+                <Play size={14} className="translate-x-px" aria-hidden />
+              )}
+              {playing ? 'On Air' : 'Listen Live'}
+            </button>
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
