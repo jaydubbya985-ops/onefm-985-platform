@@ -109,8 +109,9 @@ export const FULL_SCHEDULE: ScheduleSlot[] = [
   { day: 3, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'The Big G', category: 'Breakfast' },
   { day: 3, startHour: 9,  endHour: 12, name: 'Wednesday Morning', host: 'The Big G', category: 'Music' },
   { day: 3, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 3, startHour: 15, endHour: 16, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
-  { day: 3, startHour: 16, endHour: 17, name: 'Thursday Afternoon', host: 'The Big G', category: 'Music' },
+  // 3pm cell rowspan=12 on fm985.com.au/guide/ (3 hours). Live widget had
+  // All Things Rock currentlyRunning at 17:20 AEST Thu 3 Sep 2026.
+  { day: 3, startHour: 15, endHour: 18, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
   { day: 3, startHour: 18, endHour: 19, name: 'Rockin with Les Harrison', host: "Les 'Harro' Harrison", category: 'Music' },
   { day: 3, startHour: 21, endHour: 22, name: 'Samoan Music Program', host: 'MK', category: 'Multicultural' },
   { day: 3, startHour: 23, endHour: 24, name: 'Arabic Music Program', host: 'ONE FM', category: 'Multicultural' },
@@ -120,8 +121,7 @@ export const FULL_SCHEDULE: ScheduleSlot[] = [
   { day: 4, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'Ralph Whitehead', category: 'Breakfast' },
   { day: 4, startHour: 9,  endHour: 12, name: 'Thursday Mornings', host: 'Ralph Whitehead', category: 'Music' },
   { day: 4, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 4, startHour: 15, endHour: 16, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
-  { day: 4, startHour: 16, endHour: 17, name: 'Thursday Afternoon', host: 'The Big G', category: 'Music' },
+  { day: 4, startHour: 15, endHour: 18, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
   { day: 4, startHour: 18, endHour: 19, name: 'The Essential Hits', host: 'Tim Symonds', category: 'Music' },
   { day: 4, startHour: 21, endHour: 22, name: "Rock 'n' Roll Fever", host: 'Carlo', category: 'Music' },
   { day: 4, startHour: 23, endHour: 24, name: 'Planet of Sound', host: 'Carlos Rock', category: 'Music' },
@@ -131,7 +131,8 @@ export const FULL_SCHEDULE: ScheduleSlot[] = [
   { day: 5, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'Josh Revens', category: 'Breakfast' },
   { day: 5, startHour: 9,  endHour: 12, name: 'Friday Mornings', host: 'Josh Revens', category: 'Music' },
   { day: 5, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 5, startHour: 15, endHour: 16, name: 'Friday Arvo', host: 'Ralph Whitehead', category: 'Music' },
+  // Friday Arvo rowspan=12 on fm985.com.au/guide/ — 3pm–6pm, then The Show for Everyone.
+  { day: 5, startHour: 15, endHour: 18, name: 'Friday Arvo', host: 'Ralph Whitehead', category: 'Music' },
   { day: 5, startHour: 18, endHour: 19, name: 'The Show for Everyone', host: 'Tym Jeffery', category: 'Community' },
   { day: 5, startHour: 19, endHour: 22, name: 'NIRS AFL Friday Night Footy', host: 'ONE FM', category: 'Sport' },
   { day: 5, startHour: 23, endHour: 24, name: 'Overnight Mix', host: 'Automated', category: 'Music' },
@@ -216,6 +217,58 @@ function formatRemaining(mins: number): string {
   return `${hours} hr ${leftover} min left`
 }
 
+function formatHour(h: number): string {
+  if (h === 0 || h === 24) return '12:00AM'
+  if (h === 12) return '12:00PM'
+  return h < 12 ? `${h}:00AM` : `${h - 12}:00PM`
+}
+
+/** Official guide label for an unfilled hour cell. Not Overnight Mix. */
+export const MUSIC_MIX_SHOW = 'Music Mix'
+
+function isNamedDaySlot(s: ScheduleSlot): boolean {
+  return s.name !== 'Overnight Mix' && s.startHour < s.endHour
+}
+
+function nextNamedSlot(day: number, hour: number): { slot: ScheduleSlot; day: number } | null {
+  const later = FULL_SCHEDULE.filter((s) => s.day === day && isNamedDaySlot(s) && s.startHour > hour).sort(
+    (a, b) => a.startHour - b.startHour,
+  )
+  if (later[0]) return { slot: later[0], day }
+  const nextDay = (day + 1) % 7
+  const tomorrow = FULL_SCHEDULE.filter((s) => s.day === nextDay && isNamedDaySlot(s)).sort(
+    (a, b) => a.startHour - b.startHour,
+  )
+  return tomorrow[0] ? { slot: tomorrow[0], day: nextDay } : null
+}
+
+function previousNamedEnd(day: number, hour: number): number {
+  const earlier = FULL_SCHEDULE.filter((s) => s.day === day && isNamedDaySlot(s) && s.endHour <= hour).sort(
+    (a, b) => b.endHour - a.endHour,
+  )
+  return earlier[0]?.endHour ?? 6
+}
+
+function musicMixFill(day: number, hour: number, minute: number): LiveShowInfo {
+  const next = nextNamedSlot(day, hour)
+  const startHour = previousNamedEnd(day, hour)
+  const endHour = next ? next.slot.startHour : 24
+  const upNext = next ? `${next.slot.name} at ${formatHour(next.slot.startHour)}` : 'Overnight Mix'
+  return withClock(
+    {
+      name: MUSIC_MIX_SHOW,
+      host: 'ONE FM',
+      time: `${formatHour(startHour)} — ${formatHour(endHour)}`,
+      category: 'Music',
+      upNext,
+      startHour,
+      endHour,
+    },
+    hour,
+    minute,
+  )
+}
+
 /** Get current on-air show from full schedule */
 function withClock(
   show: Omit<LiveShowInfo, 'remainingMinutes' | 'elapsedMinutes' | 'slotMinutes' | 'remainingLabel'>,
@@ -264,22 +317,22 @@ export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
     }, hour, minute)
   }
 
-  // Default overnight
-  return withClock({
-    name: 'Overnight Mix',
-    host: 'Automated',
-    time: '12:00AM — 6:00AM',
-    category: 'Music',
-    upNext: 'ONE FM Breakfast (Breaky) at 6:00AM',
-    startHour: 0,
-    endHour: 6,
-  }, hour, minute)
-}
+  // Midnight–6am, or late evening with no named cell: Overnight Mix.
+  // Daytime/drive gaps are Music Mix (fm985.com.au/guide/ named cell) —
+  // never pretend Overnight Mix is on at 5pm.
+  if (hour < 6 || hour >= 22) {
+    return withClock({
+      name: 'Overnight Mix',
+      host: 'Automated',
+      time: '12:00AM — 6:00AM',
+      category: 'Music',
+      upNext: 'ONE FM Breakfast (Breaky) at 6:00AM',
+      startHour: 0,
+      endHour: 6,
+    }, hour, minute)
+  }
 
-function formatHour(h: number): string {
-  if (h === 0 || h === 24) return '12:00AM'
-  if (h === 12) return '12:00PM'
-  return h < 12 ? `${h}:00AM` : `${h - 12}:00PM`
+  return musicMixFill(day, hour, minute)
 }
 
 export const BREAKFAST_ROSTER = [

@@ -2,7 +2,7 @@
  * Fail the build if live-now labels invent a host or drop remaining time.
  * Run: npx vite-node scripts/verify-on-air.ts
  */
-import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
+import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday, MUSIC_MIX_SHOW } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
 
@@ -50,5 +50,25 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+
+// Thursday 17:05 AEST — official All Things Rock is the 3pm 3-hour cell, not Overnight Mix.
+const thuDrive = new Date('2026-09-03T17:05:00+10:00')
+const rock = getCurrentLiveShow(thuDrive)
+assert(rock.name === 'All Things Rock', `Thu 17:05 should be All Things Rock, got ${rock.name}`)
+assert(rock.host === 'Steve Little', `Thu 17:05 host: ${rock.host}`)
+assert(rock.remainingMinutes === 55, `Thu 17:05 remaining: ${rock.remainingMinutes}`)
+assert(rock.upNext.includes('Essential Hits'), `Thu 17:05 up next: ${rock.upNext}`)
+
+const friArvo = getCurrentLiveShow(new Date('2026-09-04T16:30:00+10:00'))
+assert(friArvo.name === 'Friday Arvo', `Fri 16:30 should be Friday Arvo, got ${friArvo.name}`)
+assert(friArvo.host === 'Ralph Whitehead', `Fri 16:30 host: ${friArvo.host}`)
+assert(friArvo.remainingMinutes === 90, `Fri 16:30 remaining: ${friArvo.remainingMinutes}`)
+
+// Tuesday 19:30 — Classic Country ends 7pm, Viva Italia at 9pm. Named guide gap.
+const tueGap = getCurrentLiveShow(new Date('2026-09-01T19:30:00+10:00'))
+assert(tueGap.name === MUSIC_MIX_SHOW, `Tue 19:30 must be Music Mix not Overnight Mix, got ${tueGap.name}`)
+assert(formatWithPresenter(tueGap.host) === null, 'Music Mix host is ONE FM')
+assert(tueGap.remainingMinutes === 90, `Tue 19:30 remaining until Viva Italia: ${tueGap.remainingMinutes}`)
+assert(tueGap.upNext.includes('Viva Italia'), `Tue 19:30 up next: ${tueGap.upNext}`)
 
 console.log('verify-on-air OK')

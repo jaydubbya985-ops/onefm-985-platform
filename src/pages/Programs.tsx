@@ -357,7 +357,7 @@ const shows = [
 /*  Section 3 — Host Roster                                   */
 /* ────────────────────────────────────────────────────────── */
 // Names from fm985.com.au/guide/. Times resolved from FULL_SCHEDULE
-// via formatHostHours — Ralph's Friday Arvo is 3–4pm, not 3–6pm.
+// via formatHostHours — Friday Arvo is 3–6pm on fm985.com.au/guide/ (rowspan 3 hours).
 const hosts = [
   { name: "Tim Ahemt",        show: BREAKFAST_SHOW,             time: "Mon & Tue, 6am–9am",   type: "Breakfast",    social: { fb: true } },
   { name: "The Big G",        show: BREAKFAST_SHOW + " / Wed Mornings", time: "Wed, 6am–12pm", type: "Breakfast",   social: { fb: true } },
