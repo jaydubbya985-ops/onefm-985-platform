@@ -61,6 +61,7 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /Towns We Serve · Top 6/, why: 'town file order is not a ranking — sort by ABS 2021 population' },
 ]
 
 function walk(dir) {
@@ -167,6 +168,13 @@ if (
 const community = files.find((f) => f.label === 'pages/Community.tsx')
 if (community && /stationStats/.test(community.text)) {
   hits.push('pages/Community.tsx: coverage stats must come from coverageCopy, not stationStats')
+}
+if (
+  !community ||
+  !community.text.includes('townsByPopulation2021') ||
+  !community.text.includes('ABS 2021 census')
+) {
+  hits.push('pages/Community.tsx: town wall must rank ABS 2021 population, not file-order Top 6')
 }
 if (!community || !community.text.includes('formatBroadcastPopulation')) {
   hits.push('pages/Community.tsx: broadcast population must use formatBroadcastPopulation()')

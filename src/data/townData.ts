@@ -533,6 +533,11 @@ export const towns: Town[] = [
   },
 ]
 
+/** ABS 2021 usual-resident counts — largest first. Not file order, not listener rank. */
+export function townsByPopulation2021(): Town[] {
+  return [...towns].sort((a, b) => b.population2021 - a.population2021)
+}
+
 export const broadcastArea: BroadcastArea = {
   totalPopulation2026: 189680,
   weeklyListeners: stationStats.weeklyListeners,

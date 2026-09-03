@@ -10,7 +10,7 @@ import { useReducedMotion } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
-import { towns } from '@/data/townData'
+import { towns, townsByPopulation2021 } from '@/data/townData'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { InventoryLadder } from '@/components/InventoryLadder'
@@ -79,9 +79,10 @@ function CommunityHero() {
 
 export default function Community() {
   const [showAllTowns, setShowAllTowns] = useState(false)
-  const wallTowns = (showAllTowns ? towns : towns.slice(0, 6)).map((t, i) => ({
+  const rankedTowns = townsByPopulation2021()
+  const wallTowns = (showAllTowns ? rankedTowns : rankedTowns.slice(0, 6)).map((t, i) => ({
     name: t.name,
-    sub: `${t.lga} · pop. ${t.population2021.toLocaleString()}`,
+    sub: `${t.lga} · pop. ${t.population2021.toLocaleString()} · ABS 2021`,
     img: TOWN_IMGS[i % TOWN_IMGS.length],
   }))
 
@@ -116,7 +117,14 @@ export default function Community() {
           badge={`GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`}
         />
 
-        <NameWall label={`The Towns We Serve${showAllTowns ? '' : ' · Top 6'}`} rows={wallTowns} />
+        <NameWall
+          label={
+            showAllTowns
+              ? `The towns we serve · ${towns.length} · largest first · ABS 2021`
+              : 'Largest towns · ABS 2021 census'
+          }
+          rows={wallTowns}
+        />
         <div className="px-6 md:px-12 lg:px-20 -mt-8 pb-8">
           <button
             type="button"
