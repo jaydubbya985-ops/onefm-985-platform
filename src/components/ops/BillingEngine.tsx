@@ -242,7 +242,7 @@ export default function BillingEngine() {
   const { invoices, updateInvoice } = useOpsStore()
 
   const [tab, setTab] = useState<BillingTab>('dashboard')
-  const [renewals, setRenewals] = useState<RenewalRecord[]>(opsInitial(MOCK_RENEWALS, []))
+  const [renewals] = useState<RenewalRecord[]>(opsInitial(MOCK_RENEWALS, []))
   const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(opsInitial(MOCK_ACQUITTALS, []))
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
