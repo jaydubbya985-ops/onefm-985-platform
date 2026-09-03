@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 import { Loader2, Mail, Lock, User, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { resetPendingCopy, resetRequestedToast, signupRequestedToast } from '@/lib/authCopy'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { BRAND } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
@@ -101,7 +102,7 @@ export function AuthModal({
     setIsSubmitting(true)
     try {
       await signup(email, password, { full_name: name })
-      toast.success('Account created! Please check your email to verify.')
+      toast.success(signupRequestedToast())
       resetForm()
       onOpenChange(false)
     } catch (err) {
@@ -121,7 +122,7 @@ export function AuthModal({
     try {
       await resetPassword(email)
       setResetSent(true)
-      toast.success('Password reset link sent to your email')
+      toast.success(resetRequestedToast())
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to send reset link')
     } finally {
@@ -298,9 +299,9 @@ export function AuthModal({
             {resetSent ? (
               <div className="text-center py-8">
                 <CheckCircle2 size={48} className="text-data-teal mx-auto mb-4" />
-                <h3 className="font-h4 text-ivory mb-2">Check your email</h3>
+                <h3 className="font-h4 text-ivory mb-2">Reset requested</h3>
                 <p className="font-body-small text-chalk mb-6">
-                  If {email} has a staff account, a reset link is on its way.
+                  {resetPendingCopy(email)}
                 </p>
                 <Button
                   variant="outline"
@@ -336,10 +337,10 @@ export function AuthModal({
                   {isSubmitting ? (
                     <>
                       <Loader2 size={14} className="animate-spin mr-1" />
-                      Sending...
+                      Requesting...
                     </>
                   ) : (
-                    'Send Reset Link'
+                    'Request reset link'
                   )}
                 </Button>
               </form>
