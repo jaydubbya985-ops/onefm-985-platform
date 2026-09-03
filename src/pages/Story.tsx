@@ -86,21 +86,24 @@ function getTeamAvatar(name: string) {
   return { ...palette, initials }
 }
 
-/* ─── Team data ─── */
+/**
+ * Guide hosts only. No invented tenure, start year, or named portrait.
+ * Initials stay until a file is added to NAMED_PORTRAITS.
+ */
 const team = [
-  { name: "Tim Ahemt", role: "Breakfast Host (Mon–Tue)", years: "2026", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts ONE FM Breakfast Monday and Tuesday — community interviews and local news." },
-  { name: "The Big G (Craig Stott)", role: "Breakfast (Wed) / Tuesday Mornings", years: "2026", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Wednesday breakfast and Tuesday morning music on ONE FM." },
-  { name: "Ralph Whitehead", role: "Thu Breakfast / Friday Arvo / Friday Morning", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
-  { name: "Josh Revens", role: "Fri Breakfast / Monday Nights / Community Interviews", years: "", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Friday breakfast, Monday night community programming, and community interviews covering local events, sports and initiatives." },
-  { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", years: "4", cat: "On-Air", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Been on air for 4 years. Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
-  { name: "James Manley", role: "Host — The James Manley Show", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Community-focused afternoon programming Mon–Tue with local interviews and advocacy." },
-  { name: "Carlos Rock", role: "Host — Planet of Sound", years: "19-20", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Has been on air for 19-20 years. Hosts the Planet of Sound program featuring rock music from across the decades." },
-  { name: "Timmy Ahmet", role: "Host — Good Evening Country", years: "", cat: "On-Air", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Good Evening Country program featuring country music." },
-  { name: "Les 'Harro' Harrison", role: "Community Host / Various", years: "", cat: "On-Air", img: "/assets/images/commentary-box-action.jpg", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
-  { name: "Fikiri", role: "Host — Africonnect (Swahili)", years: "", cat: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
-  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", years: "", cat: "Multicultural", img: "/assets/images/commentary-box-action.jpg", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
-  { name: "Edith", role: "Host — Filipino Music Program", years: "", cat: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
-  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", years: "", cat: "Multicultural", img: "/assets/images/studio-presenter-mic.jpg", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
+  { name: "Tim Ahemt", role: "Breakfast Host (Mon–Tue)", cat: "On-Air", quote: "Hosts ONE FM Breakfast Monday and Tuesday — community interviews and local news." },
+  { name: "The Big G (Craig Stott)", role: "Breakfast (Wed) / Tuesday Mornings", cat: "On-Air", quote: "Wednesday breakfast and Tuesday morning music on ONE FM." },
+  { name: "Ralph Whitehead", role: "Thu Breakfast / Friday Arvo / Friday Morning", cat: "On-Air", quote: "Married in 1966. Moved to Shepparton during the 1976 Christmas break. Long-time audio enthusiast and community radio presenter." },
+  { name: "Josh Revens", role: "Fri Breakfast / Monday Nights / Community Interviews", cat: "On-Air", quote: "Friday breakfast, Monday night community programming, and community interviews covering local events, sports and initiatives." },
+  { name: "Johnny P (John Painter)", role: "Host — Dancing through the decades", cat: "On-Air", quote: "Married to Eryl, lives in Mooroopna. Has 6 kids between them. Enjoys playing music from across the decades." },
+  { name: "James Manley", role: "Host — The James Manley Show", cat: "On-Air", quote: "Community-focused afternoon programming Mon–Tue with local interviews and advocacy." },
+  { name: "Carlos Rock", role: "Host — Planet of Sound", cat: "On-Air", quote: "Hosts the Planet of Sound program featuring rock music from across the decades." },
+  { name: "Timmy Ahmet", role: "Host — Good Evening Country", cat: "On-Air", quote: "Hosts the Good Evening Country program featuring country music." },
+  { name: "Les 'Harro' Harrison", role: "Community Host / Various", cat: "On-Air", quote: "Spent working life in education, in charge of schools for over 35 years. Interests include cricket, cycling, fishing, golf and being an active member of his local Lions Club." },
+  { name: "Fikiri", role: "Host — Africonnect (Swahili)", cat: "Multicultural", quote: "Hosts the Africonnect program in Swahili, connecting the African community in the Goulburn Valley." },
+  { name: "MK (Muagutauti'a Faletoese Lemamea)", role: "Host — Samoan Program", cat: "Multicultural", quote: "Hosts the Samoan language program connecting the Samoan community in the Goulburn Valley." },
+  { name: "Edith", role: "Host — Filipino Music Program", cat: "Multicultural", quote: "Hosts the Filipino music program celebrating Filipino culture and music." },
+  { name: "Jimmy", role: "Host — Mandarin Program / Her Quiet Strength", cat: "Multicultural", quote: "Hosts the Mandarin language program and 'Her Quiet Strength' segment. Interviews guests in Mandarin with co-host Ivy." },
 ]
 
 const teamCategories = ["All", "On-Air", "Multicultural"]
@@ -149,8 +152,8 @@ const pillars = [
     icon: Layers,
   },
   {
-    title: "Online Streaming",
-    desc: "FM 98.5 plus online streaming via fm985.com.au and Radio.co, so listeners across the Valley and beyond can tune in anywhere.",
+    title: "The stream",
+    desc: "The same licensed 98.5 service is also on fm985.com.au and Radio.co — not a worldwide product, and not a second station.",
     icon: Globe,
   },
   {
@@ -448,11 +451,7 @@ export default function Story() {
                 <div className="flex items-center gap-2 mb-3">
                   <Calendar size={12} className="text-muted" />
                   <span className="font-label text-muted">
-                    {member.years
-                      ? /^\d{4}$/.test(member.years)
-                        ? `On air since ${member.years}`
-                        : `${member.years} years at ONE FM`
-                      : 'Presenter at ONE FM'}
+                    Published guide · fm985.com.au/guide
                   </span>
                 </div>
                 <div className="flex gap-2">
@@ -491,14 +490,14 @@ export default function Story() {
           >
             <img
               src="/assets/images/studio-presenter-mic.jpg"
-              alt="ONE FM presenter on air"
+              alt="ONE FM Shepparton studio microphone — station archive, not a named presenter portrait"
               className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-one-navy/80 via-transparent to-transparent" />
             <div aria-hidden className="explore-tile-scan" />
             <div className="absolute bottom-6 left-6 right-6">
               <h3 className="font-h3 text-one-white mb-1">Live On Air</h3>
-              <p className="font-body-small text-one-white">Where the magic happens, every single day.</p>
+              <p className="font-body-small text-one-white">Shepparton studio — weekday desks and the overnight mix. Not a named presenter portrait.</p>
             </div>
           </motion.div>
 
