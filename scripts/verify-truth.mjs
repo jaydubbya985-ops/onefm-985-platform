@@ -480,6 +480,47 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const exclusive = files.find((f) => f.label === 'lib/exclusivePlayback.ts')
+if (
+  !exclusive ||
+  !exclusive.text.includes('EXCLUSIVE_PLAY_EVENT') ||
+  !exclusive.text.includes('claimExclusivePlayback')
+) {
+  hits.push('lib/exclusivePlayback.ts: interview and live stream must share one exclusive-play bus')
+}
+
+const liveStream = files.find((f) => f.label === 'hooks/useLiveStream.ts')
+if (!liveStream || !liveStream.text.includes('export function pauseLiveStream')) {
+  hits.push('hooks/useLiveStream.ts: interview players must be able to pauseLiveStream()')
+}
+
+const exclusiveHook = files.find((f) => f.label === 'hooks/useExclusivePlayback.ts')
+if (
+  !exclusiveHook ||
+  !exclusiveHook.text.includes('pauseLiveStream()') ||
+  !exclusiveHook.text.includes('claimExclusivePlayback')
+) {
+  hits.push('hooks/useExclusivePlayback.ts: claim must pause the live singleton, not toggle blindly')
+}
+
+const soundCloud = files.find((f) => f.label === 'components/social/SoundCloudPanel.tsx')
+if (
+  !soundCloud ||
+  !soundCloud.text.includes('useExclusivePlayback') ||
+  !soundCloud.text.includes('claim()')
+) {
+  hits.push('components/social/SoundCloudPanel.tsx: archive play must claim exclusive playback')
+}
+
+const latest = files.find((f) => f.label === 'components/LatestInterviews.tsx')
+if (
+  !latest ||
+  !latest.text.includes('useExclusivePlayback') ||
+  !latest.text.includes('onPlay={claim}')
+) {
+  hits.push('components/LatestInterviews.tsx: interview audio must claim exclusive playback')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)

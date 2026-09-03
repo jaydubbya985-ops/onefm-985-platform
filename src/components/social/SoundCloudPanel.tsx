@@ -9,6 +9,7 @@ import {
   type Fm985Interview,
 } from '@/lib/fm985Feed'
 import { SocialPlatformFrame } from '@/components/social/SocialPlatformFrame'
+import { useExclusivePlayback } from '@/hooks/useExclusivePlayback'
 import { cn } from '@/lib/utils'
 
 const SOUNDCLOUD_ACCENT = '#FF5500'
@@ -107,6 +108,11 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
 
   const playable = items.filter((t) => t.audioUrl)
 
+  const claim = useExclusivePlayback(() => {
+    audioRef.current?.pause()
+    setActiveId(null)
+  })
+
   const toggleTrack = (track: Fm985Interview) => {
     if (!track.audioUrl) return
     if (activeId === track.id) {
@@ -114,6 +120,7 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
       setActiveId(null)
       return
     }
+    claim()
     setActiveId(track.id)
     if (audioRef.current) {
       audioRef.current.src = track.audioUrl

@@ -40,6 +40,12 @@ function getSnapshot(): StreamState {
   return state
 }
 
+/** Pause the Radio.co singleton without starting it. Interview players call this. */
+export function pauseLiveStream() {
+  if (!audio || !state.playing) return
+  audio.pause()
+}
+
 export function useLiveStream() {
   const local = useSyncExternalStore(subscribe, getSnapshot)
 
