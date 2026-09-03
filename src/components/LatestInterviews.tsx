@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ExternalLink, Play } from 'lucide-react'
 import { fetchLatestInterviews, formatInterviewDate, type Fm985Interview } from '@/lib/fm985Feed'
@@ -9,6 +9,7 @@ import { WordReveal } from '@/components/WordReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { useExclusivePlayback } from '@/hooks/useExclusivePlayback'
 
 /** Unused Shepparton landmark — no unnamed portraits. */
 const LOCAL_ARCHIVE_PHOTO = STATION_PHOTOS.landmarkHowNowCow
@@ -16,6 +17,10 @@ const LOCAL_ARCHIVE_ALT = 'How Now cow sculpture, Shepparton — ONE FM station 
 
 function InterviewCard({ item, index = 0 }: { item: Fm985Interview; index?: number }) {
   const [expanded, setExpanded] = useState(false)
+  const audioEl = useRef<HTMLAudioElement | null>(null)
+  const claim = useExclusivePlayback(() => {
+    audioEl.current?.pause()
+  })
   const thumbSrc = item.imageUrl || LOCAL_ARCHIVE_PHOTO
   const thumbAlt = item.imageUrl ? '' : LOCAL_ARCHIVE_ALT
 
@@ -58,7 +63,14 @@ function InterviewCard({ item, index = 0 }: { item: Fm985Interview; index?: numb
               <Play size={14} /> Listen
             </button>
           ) : (
-            <audio controls preload="none" className="w-full h-10 accent-one-gold" src={item.audioUrl}>
+            <audio
+              ref={audioEl}
+              controls
+              preload="none"
+              className="w-full h-10 accent-one-gold"
+              src={item.audioUrl}
+              onPlay={claim}
+            >
               <track kind="captions" />
             </audio>
           )}
