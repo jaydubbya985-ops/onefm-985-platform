@@ -615,21 +615,24 @@ export default function CoverageMap() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               >
-                <span className="section-label mb-4 block">Broadcast reach</span>
+                <span className="section-label mb-4 block">Broadcast area</span>
                 <h1 className="font-hero text-one-white mb-4">
                   GOULBURN VALLEY <span className="text-gold-gradient">COVERAGE</span>
                 </h1>
                 <p className="font-body text-one-white/55 leading-relaxed">
-                  See where your brand lands — {formatTowns()}, {formatBroadcastPopulation()} people,
+                  Where we broadcast — {formatTowns()}, {formatBroadcastPopulation()} people,
                   and {formatWeeklyListeners()} across a {formatRadius()} radius from {BRAND.fullName}.
                   Town markers and listener estimates come from townData (ABS 2021). The glow ring is a visual {formatRadius()} guide — not an ACMA coverage contour and not a live listener count.
                 </p>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <MagneticButton strength={6} cursorLabel="MEDIA KIT">
-                    <Link to="/media-kit" className="btn-secondary text-xs">Request media kit</Link>
+                  <MagneticButton strength={6} cursorLabel="LISTEN">
+                    <Link to="/listen" className="btn-primary text-xs">Listen Live</Link>
                   </MagneticButton>
-                  <Link to="/proposal" data-cursor-label="REQUEST" className="font-label text-[10px] text-one-gold hover:text-one-gold transition-colors link-hover">
-                    Request a proposal →
+                  <Link to="/media-kit" data-cursor-label="MEDIA KIT" className="font-label text-[10px] text-one-gold hover:text-one-white transition-colors link-hover">
+                    Sponsors: media kit
+                  </Link>
+                  <Link to="/proposal" data-cursor-label="REQUEST" className="font-label text-[10px] text-one-muted hover:text-one-gold transition-colors link-hover">
+                    Request a proposal
                   </Link>
                 </div>
               </motion.div>
