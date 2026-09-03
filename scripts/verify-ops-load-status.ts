@@ -4,6 +4,9 @@
  */
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { LivePendingNote } from '../src/components/ops/LivePendingNote'
 import {
   getOpsLoadStatus,
   opsLoadChartNote,
@@ -82,4 +85,32 @@ assert(noteSource.includes('getOpsLoadStatus'), 'LivePendingNote must not hard-c
 const self = readFileSync(fileURLToPath(import.meta.url), 'utf8')
 assert(self.includes('not a zero week'), 'keep the FOOTT-facing leftover in this script')
 
+resetOpsLoadStatus()
+const demoHtml = renderToStaticMarkup(
+  createElement(LivePendingNote, { title: 'Monthly revenue trend' }),
+)
+assert(demoHtml.includes('Monthly revenue trend'), `demo chart title missing: ${demoHtml}`)
+assert(
+  /DEMO figures are hidden/i.test(demoHtml),
+  `idle/DEMO empty-state must keep the hidden-figures note: ${demoHtml}`,
+)
+assert(
+  !/did not load/i.test(demoHtml),
+  `DEMO must not claim a failed live load: ${demoHtml}`,
+)
+
+recordOpsLoad(failed)
+const failHtml = renderToStaticMarkup(
+  createElement(LivePendingNote, { title: 'Monthly revenue trend' }),
+)
+assert(/did not load/i.test(failHtml), `failed LIVE chart must say the ledger did not load: ${failHtml}`)
+assert(/not a zero week/i.test(failHtml), `failed LIVE chart must refuse a fake zero week: ${failHtml}`)
+assert(
+  !/DEMO figures are hidden/i.test(failHtml),
+  `do not dress a failed load as hidden DEMO: ${failHtml}`,
+)
+assert(!/JWT|permission denied/i.test(failHtml), 'do not leak the raw Supabase error onto the chart')
+
 console.log('verify-ops-load-status OK')
+console.log('demo empty-state:', demoHtml.replace(/\s+/g, ' ').trim())
+console.log('failed-load empty-state:', failHtml.replace(/\s+/g, ' ').trim())
