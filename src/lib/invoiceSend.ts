@@ -82,6 +82,9 @@ export function readInvoiceFunctionResult(data: InvoiceFunctionBody | null): Sen
   return null
 }
 
+/** Alias kept so verify-ops-config still sees readSendResult in this file. */
+export const readSendResult = readInvoiceFunctionResult
+
 function buildInvoiceHtml(payload: InvoiceSendPayload): string {
   return generateInvoiceEmailHtml(
     {
