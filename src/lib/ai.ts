@@ -60,9 +60,9 @@ const demoProposalPool: Record<string, string[]> = {
     'We are proud of our sponsor relationships. Contact our team at (03) 5831 3131 to speak with current sponsors about their experience with ONE FM.',
   ],
   'Timeline & Next Steps': [
-    'We propose a streamlined timeline: Week 1 for contract and creative briefing, Weeks 2-3 for production and approvals, and Week 4 for launch. Our dedicated account team provides weekly performance reports and mid-campaign optimization recommendations. Ready to move forward? Let\'s schedule a kickoff call.',
-    'Speed matters. Our typical campaign launch cycle is 21 days from signed contract to first air date. Rush production is available for time-sensitive launches. We assign a dedicated account strategist who remains your single point of contact throughout.',
-    'Next steps are simple: review this proposal, ask any questions, and let us know your preferred start date. We\'ll then schedule a creative briefing, produce sample assets for your approval, and confirm the media schedule. Most campaigns are live within three weeks.',
+    'Review this proposal, then call (03) 5831 3131 or email admin@fm985.com.au. We do not advertise a 21-day launch SLA, weekly performance reports, or a dedicated account team.',
+    'Next step is a conversation with the station — admin@fm985.com.au or (03) 5831 3131. Campaign start dates are agreed in writing. There is no rush-production product or account-strategist roster.',
+    'Ask any questions on this proposal, then confirm a start date by email or phone. Creative and air dates are scheduled from the rate card — not a promised three-week go-live.',
   ],
   'Terms & Conditions': [
     'Standard terms: 50% deposit on contract signing, balance due 30 days from campaign start, 14-day cancellation notice. All creative assets must be approved 5 business days before air date. ONE FM retains the right to refuse content that does not meet broadcast standards.',
