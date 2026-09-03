@@ -324,6 +324,13 @@ function ScheduleSection() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [search, setSearch] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const nowLineRef = useRef<HTMLDivElement>(null)
+  const nowPct = ((clock.hour + clock.minute / 60) / 24) * 100
+
+  useEffect(() => {
+    if (activeDay !== todayExplorer) return
+    nowLineRef.current?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' })
+  }, [activeDay, todayExplorer])
 
   const filteredShows = useMemo(() => {
     let shows = SHOWS.filter((s) => s.day === activeDay)
@@ -469,11 +476,15 @@ function ScheduleSection() {
                     {/* Current time indicator (includes minutes for precision) */}
                     {activeDay === todayExplorer ? (
                       <div
-                        className="absolute top-0 bottom-0 w-px bg-one-gold z-20"
-                        style={{ left: `${((clock.hour + clock.minute / 60) / 24) * 100}%` }}
+                        ref={nowLineRef}
+                        className="absolute top-0 bottom-0 w-0.5 bg-one-gold z-20"
+                        style={{ left: `${nowPct}%` }}
                         aria-hidden
                       >
-                        <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-one-gold animate-pulse" />
+                        <span className="absolute top-1 left-1.5 font-label text-[8px] uppercase tracking-[0.14em] text-one-gold whitespace-nowrap">
+                          Now
+                        </span>
+                        <div className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-one-gold animate-pulse" />
                       </div>
                     ) : null}
 
