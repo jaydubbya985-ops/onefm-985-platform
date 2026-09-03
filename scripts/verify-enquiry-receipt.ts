@@ -25,6 +25,8 @@ assert(enquiryReceiptHeadline({ stored: false, emailed: false }) === 'Enquiry no
 const both = enquiryReceiptDetail({ stored: true, emailed: true })
 assert(both.includes('station desk'), `both detail desk: ${both}`)
 assert(both.includes('emailed'), `both detail emailed: ${both}`)
+assert(both.includes(`call ${BRAND.phone}`), `both detail studio line: ${both}`)
+assert(!/now, Call/.test(both), `both detail must not capitalise Call mid-sentence: ${both}`)
 assert(!/pipeline/i.test(both), `both detail must not say pipeline: ${both}`)
 
 const storedOnly = enquiryReceiptDetail({ stored: true, emailed: false })

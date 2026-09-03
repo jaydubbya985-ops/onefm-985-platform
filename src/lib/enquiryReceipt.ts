@@ -2,6 +2,7 @@
  * Honest sponsor/contact receipt copy from submitEnquiry flags.
  * success can mean stored, emailed, or both — never invent a CRM pipeline.
  */
+import { BRAND } from '@/lib/brand'
 import { enquiryFallbackContact } from '@/lib/enquiries'
 
 export type EnquiryReceiptFlags = {
@@ -15,16 +16,19 @@ export function enquiryReceiptHeadline(flags: EnquiryReceiptFlags): string {
   return 'Enquiry not sent'
 }
 
+function needUsNow(): string {
+  return `If you need us now, call ${BRAND.phone} or email ${BRAND.email}.`
+}
+
 export function enquiryReceiptDetail(flags: EnquiryReceiptFlags): string {
-  const now = `If you need us now, ${enquiryFallbackContact()}`
   if (flags.stored && flags.emailed) {
-    return `It's on the station desk and a copy was emailed. ${now}`
+    return `It's on the station desk and a copy was emailed. ${needUsNow()}`
   }
   if (flags.stored) {
-    return `It's on the station desk. A notification email was not sent from this form. ${now}`
+    return `It's on the station desk. A notification email was not sent from this form. ${needUsNow()}`
   }
   if (flags.emailed) {
-    return `A copy was emailed to the station. It is not in the live CRM yet. ${now}`
+    return `A copy was emailed to the station. It is not in the live CRM yet. ${needUsNow()}`
   }
   return `Nothing was stored or emailed. ${enquiryFallbackContact()}`
 }
