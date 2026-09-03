@@ -1,12 +1,18 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Cookie } from 'lucide-react'
+import { isMiniPlayerHidden, MINI_PLAYER_CLEARANCE_CLASS } from '@/lib/bottomChrome'
 
 const CONSENT_KEY = 'onefm_cookie_consent'
 
 export function CookieConsent() {
-  const [visible, setVisible] = useState(() => !localStorage.getItem(CONSENT_KEY))
+  const [visible, setVisible] = useState(() => {
+    if (typeof localStorage === 'undefined') return false
+    return !localStorage.getItem(CONSENT_KEY)
+  })
+  const location = useLocation()
+  const sitAboveMini = !isMiniPlayerHidden(location.pathname)
 
   const accept = () => {
     localStorage.setItem(CONSENT_KEY, 'accepted')
@@ -21,7 +27,9 @@ export function CookieConsent() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 120, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed bottom-0 left-0 right-0 z-50 bg-one-navy/95 backdrop-blur-xl border-t border-one-border"
+          className={`fixed left-0 right-0 z-[180] bg-one-navy/95 backdrop-blur-xl border-t border-one-border ${
+            sitAboveMini ? MINI_PLAYER_CLEARANCE_CLASS : 'bottom-0'
+          }`}
           role="dialog"
           aria-live="polite"
           aria-label="Cookie consent"
