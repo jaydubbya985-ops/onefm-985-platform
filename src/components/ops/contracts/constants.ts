@@ -277,7 +277,7 @@ Please find your invoice attached. If you have any questions, don't hesitate to 
 
 Warm regards,
 Jason Welsh
-Station Manager, ONE FM 98.5`
+Vice Chair, ONE FM 98.5`
 }
 
 // ---------------------------------------------------------------------------
@@ -352,7 +352,7 @@ export function emptyContractForm(): ContractFormState {
     status: 'draft',
     signedDate: '',
     signedBy: '',
-    ourSignatory: 'Jason Welsh, Station Manager',
+    ourSignatory: 'Jason Welsh, Vice Chair',
     internalNotes: '',
     renewalReminderDate: '',
   }
@@ -415,7 +415,7 @@ export function normalizeContract(contract: Contract): RichContract {
       {
         id: `act-${contract.id}-created`,
         action: 'Contract created',
-        performedBy: 'Station Manager',
+        performedBy: 'Vice Chair',
         timestamp: contract.createdAt ?? `${contract.startDate}T09:00:00.000Z`,
         notes: `Contract ${contract.contractNumber} created`,
       },
@@ -449,7 +449,7 @@ export function normalizeContract(contract: Contract): RichContract {
     spotDuration: contract.spotDuration ?? '30s',
     signedDate: contract.signedDate ?? '',
     signedBy: contract.signedBy ?? '',
-    ourSignatory: contract.ourSignatory ?? 'Jason Welsh, Station Manager',
+    ourSignatory: contract.ourSignatory ?? 'Jason Welsh, Vice Chair',
     internalNotes: contract.internalNotes ?? '',
     renewalReminderDate: contract.renewalReminderDate ?? '',
     attachments,
