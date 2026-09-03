@@ -146,6 +146,22 @@ const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
 if (!onAirNav || !onAirNav.text.includes('formatBreakfastChromeLabel')) {
   hits.push('components/OnAirNav.tsx: menu footer must show formatBreakfastChromeLabel from programGuide')
 }
+if (
+  !onAirNav ||
+  !onAirNav.text.includes('ON_AIR_LAMP_LIVE_TITLE') ||
+  !onAirNav.text.includes('ON_AIR_LAMP_AUTOMATED_TITLE') ||
+  !onAirNav.text.includes('meta.isLive')
+) {
+  hits.push('components/OnAirNav.tsx: lamp must pulse only when meta.isLive — not during automated slots')
+}
+const onAirLamp = files.find((f) => f.label === 'lib/onAirLamp.ts')
+if (
+  !onAirLamp ||
+  !onAirLamp.text.includes('ON_AIR_LAMP_LIVE_TITLE') ||
+  !onAirLamp.text.includes('ON_AIR_LAMP_AUTOMATED_TITLE')
+) {
+  hits.push('lib/onAirLamp.ts: must export live vs automated lamp titles')
+}
 
 const guide = files.find((f) => f.label === 'data/programGuide.ts')
 if (
