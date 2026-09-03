@@ -4,8 +4,14 @@ import { CONFIDENCE_LABELS } from '@/types/livingArchive'
 import { ARCHIVE_CARDS, cardsForDecade, DECADES } from '@/data/livingArchive/decades'
 import { LabelReveal } from '@/components/onair/kit'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { getBreakfastScheduleLabel } from '@/data/programGuide'
 
 const RED = '#E51636'
+const COVERAGE = formatCoverageShort()
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 /**
  * Scene stills for archive cards that have no named photo.
@@ -18,30 +24,50 @@ function cardStill(card: ArchiveCard): { src: string; alt: string } | null {
       src: card.image,
       alt:
         card.id === 'panel-1988'
-          ? 'ONE FM original mixing panel, 1988 — station archive'
+          ? `ONE FM original mixing panel, 1988 — station archive · ${COVERAGE}`
           : card.title,
     }
   }
   switch (card.id) {
+    case 'licence-1989':
+      return {
+        src: STATION_PHOTOS.towerMountMajorDay,
+        alt: `Mount Major transmitter — 98.5 FM since the 1989 licence · ${COVERAGE} (ABS 2021 via townData)`,
+      }
     case 'first-football-1989':
       return {
         src: STATION_PHOTOS.gvlSpectacularMark,
-        alt: 'GVL mark in play — station archive, not a named portrait',
+        alt: `GVL mark in play — GVL Match of the Day · ${GVL_MATCH_HOURS} · ${COVERAGE} — station archive, not a named portrait`,
       }
     case 'gvl-return-2024':
       return {
         src: STATION_PHOTOS.gvlStadiumDay,
-        alt: 'GVL ground in daylight — station archive, not a named portrait',
+        alt: `GVL ground in daylight — GVL Match of the Day · ${GVL_MATCH_HOURS} · ${COVERAGE} — station archive, not a named portrait`,
       }
     case 'x-awards-2019':
       return {
         src: STATION_PHOTOS.obTruckBranded,
-        alt: 'ONE FM branded outside-broadcast truck — station archive',
+        alt: `ONE FM branded outside-broadcast truck — station archive · GVL Match of the Day · ${GVL_MATCH_HOURS}`,
       }
     case '30-years-2019':
       return {
         src: STATION_PHOTOS.eventFestivalTents,
-        alt: 'Community festival tents in the Goulburn Valley — station archive',
+        alt: `Community festival tents in the Goulburn Valley — station archive · ${COVERAGE}`,
+      }
+    case '25-years-2014':
+      return {
+        src: STATION_PHOTOS.studioExteriorRainbow,
+        alt: `ONE FM studio exterior — station archive · licensed coverage ${COVERAGE}`,
+      }
+    case 'floods-2022':
+      return {
+        src: STATION_PHOTOS.geoLakeAerial,
+        alt: `Goulburn Valley waterways — station archive, not flood photography · ${COVERAGE}`,
+      }
+    case '35-years-2024':
+      return {
+        src: STATION_PHOTOS.towerTallMast,
+        alt: `ONE FM broadcast mast — station archive · ${COVERAGE} (ABS 2021 via townData)`,
       }
     default:
       return null
@@ -86,9 +112,18 @@ export function DecadeDial() {
   return (
     <section id="timeline" className="px-6 md:px-12 lg:px-20 py-16 border-t border-white/8">
       <LabelReveal className="mb-3">The Decade Dial</LabelReveal>
-      <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-8">
+      <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-2">
         Tune through time
       </h2>
+      <p className="text-[15px] text-white/50 max-w-[720px] mb-3 leading-relaxed">
+        Evidence cards from ACMA, council papers, and the station archive — not a reconstructed
+        timeline. {formatWeeklyListeners()} across {COVERAGE} (ABS 2021 via townData).
+      </p>
+      <p className="text-[12px] font-bold tracking-[0.08em] uppercase text-white/40 max-w-[720px] mb-8 leading-relaxed">
+        Breakfast: {BREAKFAST_ROSTER_LINE}
+        {' · '}
+        GVL Match of the Day · {GVL_MATCH_HOURS}
+      </p>
 
       <div
         className="flex gap-2 overflow-x-auto pb-2 mb-10"
@@ -124,7 +159,10 @@ export function DecadeDial() {
       </div>
 
       <p className="text-[12px] text-white/30 mt-8">
-        {ARCHIVE_CARDS.length} curated cards · Wayback and newspaper archive expanding.
+        {ARCHIVE_CARDS.length} curated cards · Wayback and newspaper archive expanding. Photography:
+        station archive stills — not presenter portraits. Named portraits exist only for Di Hunter
+        and Sally Nayler. {formatWeeklyListeners()} · {COVERAGE} (ABS 2021 via townData). Breakfast:{' '}
+        {BREAKFAST_ROSTER_LINE}. GVL Match of the Day · {GVL_MATCH_HOURS}.
       </p>
     </section>
   )
