@@ -403,6 +403,12 @@ if (
 if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
   hits.push('pages/MediaKit.tsx: media-kit DOCX must use BRAND.phone, not a placeholder')
 }
+if (mediaKit && /reach:\s*'Worldwide'/.test(mediaKit.text)) {
+  hits.push('pages/MediaKit.tsx: live stream reach must not invent leftover worldwide totals')
+}
+if (mediaKit && !mediaKit.text.includes('formatCoverageShort()')) {
+  hits.push('pages/MediaKit.tsx: live stream reach must use formatCoverageShort')
+}
 
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
