@@ -253,6 +253,16 @@ if (
     'components/home/ExploreOneFMGrid.tsx: programs tile from BREAKFAST_SHOW; sport tile hours from formatGuideHours / FULL_SCHEDULE',
   )
 }
+if (
+  !explore ||
+  /desc: 'Get involved'/.test(explore.text) ||
+  !explore.text.includes('BRAND.phone') ||
+  !explore.text.includes('email the studio')
+) {
+  hits.push(
+    'components/home/ExploreOneFMGrid.tsx: Contact tile must name the studio — not leftover Get involved',
+  )
+}
 
 const siteNav = files.find((f) => f.label === 'lib/siteNav.ts')
 if (!siteNav || !siteNav.text.includes('BREAKFAST_SHOW') || !siteNav.text.includes('formatTowns()')) {
