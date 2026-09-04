@@ -9,8 +9,13 @@
  *
  */
 
-import { BRAND } from '@/lib/brand'
+import { BRAND, BRAND_COLORS } from '@/lib/brand'
 import { readFunctionJson } from '@/lib/readFunctionJson'
+
+/** Direction A ink — leftover Heritage navy / gold must not ship in enquiry HTML. */
+const INK = BRAND_COLORS.navy
+const PAPER = BRAND_COLORS.gold
+const SIGNAL = BRAND_COLORS.blue
 
 export interface EmailPayload {
   to: string | string[]
@@ -61,8 +66,8 @@ export function buildEnquiryEmailHtml(data: EnquiryEmailData): string {
     <body style="font-family: 'Inter', Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 24px;">
       <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
         <!-- Header -->
-        <div style="background: #0A1628; padding: 32px 40px;">
-          <div style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 24px; font-weight: 700; color: #D4A84B; letter-spacing: -0.01em;">
+        <div style="background: ${INK}; padding: 32px 40px;">
+          <div style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 24px; font-weight: 700; color: ${PAPER}; letter-spacing: -0.01em;">
             ONE FM 98.5
           </div>
           <div style="color: #8A9199; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px;">
@@ -71,7 +76,7 @@ export function buildEnquiryEmailHtml(data: EnquiryEmailData): string {
         </div>
         <!-- Body -->
         <div style="padding: 32px 40px;">
-          <h2 style="margin: 0 0 24px; font-size: 20px; color: #0A1628;">
+          <h2 style="margin: 0 0 24px; font-size: 20px; color: ${INK};">
             New ${data.enquiryType} Enquiry
           </h2>
           <table style="width: 100%; border-collapse: collapse;">
@@ -94,7 +99,7 @@ export function buildEnquiryEmailHtml(data: EnquiryEmailData): string {
             <div style="font-size: 12px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Message</div>
             <div style="font-size: 14px; color: #111827; line-height: 1.6;">${data.message.replace(/\n/g, '<br>')}</div>
           </div>
-          <div style="margin-top: 32px; padding: 16px 20px; background: #FFF8EE; border-left: 4px solid #D4A84B; border-radius: 4px;">
+          <div style="margin-top: 32px; padding: 16px 20px; background: #FFF8EE; border-left: 4px solid ${SIGNAL}; border-radius: 4px;">
             <p style="margin: 0; font-size: 13px; color: #92400E;">
               Reply directly to this email to respond to ${data.name}.
               Their reply-to address is <strong>${data.email}</strong>.
@@ -121,8 +126,8 @@ export function buildEnquiryConfirmationHtml(data: EnquiryEmailData): string {
     <head><meta charset="UTF-8" /></head>
     <body style="font-family: 'Inter', Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 24px;">
       <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
-        <div style="background: #0A1628; padding: 32px 40px;">
-          <div style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 24px; font-weight: 700; color: #D4A84B;">
+        <div style="background: ${INK}; padding: 32px 40px;">
+          <div style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 24px; font-weight: 700; color: ${PAPER};">
             ONE FM 98.5
           </div>
           <div style="color: #8A9199; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px;">
@@ -130,14 +135,14 @@ export function buildEnquiryConfirmationHtml(data: EnquiryEmailData): string {
           </div>
         </div>
         <div style="padding: 32px 40px;">
-          <h2 style="margin: 0 0 16px; font-size: 22px; color: #0A1628;">
+          <h2 style="margin: 0 0 16px; font-size: 22px; color: ${INK};">
             Thanks, ${data.name}!
           </h2>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 16px;">
             We've received your <strong>${data.enquiryType.toLowerCase()}</strong> enquiry. Call <strong>${BRAND.phone}</strong> or email <strong>${BRAND.email}</strong> if you need us sooner.
           </p>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 32px;">
-            In the meantime, listen to ${BRAND.fullName} on ${BRAND.frequency} FM or stream at <a href="${BRAND.website}" style="color: #D4A84B;">fm985.com.au</a>.
+            In the meantime, listen to ${BRAND.fullName} on ${BRAND.frequency} FM or stream at <a href="${BRAND.website}" style="color: ${SIGNAL};">fm985.com.au</a>.
           </p>
           <div style="background: #F9FAFB; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
             <div style="font-size: 12px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Your message</div>
@@ -163,12 +168,12 @@ export function buildProposalEmailHtml(data: ProposalEmailData): string {
     <head><meta charset="UTF-8" /></head>
     <body style="font-family: 'Inter', Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 24px;">
       <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
-        <div style="background: #0A1628; padding: 32px 40px;">
-          <div style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 24px; font-weight: 700; color: #D4A84B;">ONE FM 98.5</div>
+        <div style="background: ${INK}; padding: 32px 40px;">
+          <div style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 24px; font-weight: 700; color: ${PAPER};">ONE FM 98.5</div>
           <div style="color: #8A9199; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px;">Sponsorship Proposal</div>
         </div>
         <div style="padding: 32px 40px;">
-          <h2 style="margin: 0 0 16px; font-size: 22px; color: #0A1628;">Your Proposal is Ready</h2>
+          <h2 style="margin: 0 0 16px; font-size: 22px; color: ${INK};">Your Proposal is Ready</h2>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 16px;">
             Hi ${data.customerName}, thank you for your interest in partnering with ONE FM 98.5.
             Your custom sponsorship proposal has been prepared and is attached to this email.
