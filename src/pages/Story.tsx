@@ -490,15 +490,17 @@ export default function Story() {
             className="rounded-2xl overflow-hidden border border-one-border aspect-video lg:aspect-auto lg:min-h-[400px] relative group"
           >
             <img
-              src="/assets/images/studio-presenter-mic.jpg"
-              alt="ONE FM presenter on air"
+              src="/studio-control-room.jpg"
+              alt="ONE FM Shepparton studio — Solidyne desk, not a presenter portrait"
               className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-one-navy/80 via-transparent to-transparent" />
             <div aria-hidden className="explore-tile-scan" />
             <div className="absolute bottom-6 left-6 right-6">
-              <h3 className="font-h3 text-one-white mb-1">Live On Air</h3>
-              <p className="font-body-small text-one-white">Where the magic happens, every single day.</p>
+              <h3 className="font-h3 text-one-white mb-1">The Shepparton desk</h3>
+              <p className="font-body-small text-one-white">
+                Volunteer presenters host weekday programmes from this studio. Named archive portraits: Di Hunter and Sally Nayler only.
+              </p>
             </div>
           </motion.div>
 
