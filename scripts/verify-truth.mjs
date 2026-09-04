@@ -379,6 +379,13 @@ assertCoverageCopy('pages/Contact.tsx', [
   'formatRadius()',
   'formatBroadcastPopulation()',
 ])
+const contact = files.find((f) => f.label === 'pages/Contact.tsx')
+if (contact && /mb-1">Studio Line</.test(contact.text)) {
+  hits.push('pages/Contact.tsx: station-info tile must not invent leftover Studio Line')
+}
+if (contact && !contact.text.includes('Station phone')) {
+  hits.push('pages/Contact.tsx: station-info tile must name the station phone')
+}
 assertCoverageCopy('pages/AudienceAnalytics.tsx', [
   'formatTowns()',
   'formatRadius()',
