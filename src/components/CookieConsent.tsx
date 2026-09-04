@@ -24,7 +24,7 @@ export function CookieConsent() {
           className="fixed bottom-0 left-0 right-0 z-50 bg-one-navy/95 backdrop-blur-xl border-t border-one-border"
           role="dialog"
           aria-live="polite"
-          aria-label="Cookie consent"
+          aria-label="Local preference"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
@@ -34,7 +34,7 @@ export function CookieConsent() {
                 </div>
                 <div className="space-y-1">
                   <p className="font-body-small text-one-white">
-                    No third-party analytics. A consent preference stays on this device.
+                    No third-party analytics. This stores a local preference on this device — not a tracking opt-in.
                   </p>
                   <Link
                     to="/privacy"
@@ -47,10 +47,10 @@ export function CookieConsent() {
               <div className="flex gap-3 shrink-0">
                 <button
                   onClick={accept}
-                  data-cursor-label="ACCEPT"
+                  data-cursor-label="GOT IT"
                   className="btn-primary text-xs px-5 py-2.5 whitespace-nowrap"
                 >
-                  Accept
+                  Got it
                 </button>
               </div>
             </div>

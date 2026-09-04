@@ -480,6 +480,19 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const cookieConsent = files.find((f) => f.label === 'components/CookieConsent.tsx')
+if (
+  !cookieConsent ||
+  /data-cursor-label="ACCEPT"/.test(cookieConsent.text) ||
+  />\s*Accept\s*</.test(cookieConsent.text) ||
+  !cookieConsent.text.includes('Got it') ||
+  !cookieConsent.text.includes('not a tracking opt-in')
+) {
+  hits.push(
+    'components/CookieConsent.tsx: leftover Accept invents a tracking opt-in — name a local preference',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
