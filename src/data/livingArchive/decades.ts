@@ -139,16 +139,6 @@ export const ARCHIVE_CARDS: ArchiveCard[] = [
     confidence: 'confirmed-one-fm-document',
     sources: [{ label: 'ONE FM Annual Report 2024', type: 'annual-report' }],
   },
-  {
-    id: 'presenters-page-pending',
-    decade: '2000s',
-    topic: 'origins',
-    cardType: 'memory-pending',
-    title: 'Old presenters page — Wayback target',
-    body: 'fm985.com.au/?page_id=248 — “Our Presenters” WordPress page. Archive hunt in progress.',
-    confidence: 'needs-verification',
-    sources: [{ label: 'fm985.com.au navigation (legacy)', type: 'website-archive' }],
-  },
 ]
 
 export function cardsForDecade(decade: DecadeId): ArchiveCard[] {
