@@ -812,8 +812,8 @@ function MapMini() {
           <div className="glass-card p-5 text-center h-full group relative overflow-hidden">
             <div aria-hidden className="explore-tile-scan" />
             <Radio size={20} className="text-one-gold mx-auto mb-3" />
-            <div className="font-label text-one-muted mb-1">Broadcast Hours</div>
-            <div className="font-body-small text-gold-gradient">24 / 7 / 365</div>
+            <div className="font-label text-one-muted mb-1">Weekly guide</div>
+            <div className="font-body-small text-one-white">{BRAND.frequency} FM · Shepparton</div>
           </div>
           </TiltCard>
           <TiltCard maxTilt={5} className="h-full">
