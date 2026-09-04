@@ -1,11 +1,17 @@
 /**
  * Editorial PDF kit — Qwilr/Canva cover + Workday interior.
- * Brand V3: blue + white + red. Gold is a 1–2mm accent, never the whole page.
+ * Direction A: blue + white + red on ink #101010 / paper #F2F2F2.
+ * Do not inherit leftover Heritage navy/gold from invoiceDesignSystem.
  */
 import type { jsPDF } from 'jspdf'
 import { DS } from '@/lib/invoiceDesignSystem'
 import { LOGO_PDF_DATA_URL } from '@/lib/logoBase64'
 import { PDF_COVER_GRADIENT_PNG } from '@/lib/pdfCoverGradient'
+
+/** Direction A Deep Broadcast Navy — source: brand.ts BRAND_COLORS.navy */
+const INK_RGB: [number, number, number] = [16, 16, 16]
+/** Direction A remapped Heritage Gold (paper) — source: brand.ts BRAND_COLORS.gold */
+const PAPER_RGB: [number, number, number] = [242, 242, 242]
 
 export const PDF_W = 210
 export const PDF_H = 297
@@ -48,9 +54,9 @@ export interface PdfPen {
 }
 
 export function createPdfPen(doc: jsPDF): PdfPen {
-  const [nR, nG, nB] = DS.rgb.navy
+  const [nR, nG, nB] = INK_RGB
   const [bR, bG, bB] = DS.rgb.blue
-  const [gR, gG, gB] = DS.rgb.gold
+  const [gR, gG, gB] = PAPER_RGB
   const [rR, rG, rB] = DS.rgb.red
 
   const kicker: PdfPen['kicker'] = (t, x, y, color = 'red') => {
@@ -174,7 +180,7 @@ export function drawCover(p: PdfPen, spec: CoverSpec): void {
     try {
       doc.addImage(spec.imageDataUrl, fmt, fit.x, fit.y, fit.w, fit.h, undefined, 'FAST')
     } catch {
-      /* keep navy if the image is unreadable */
+      /* keep ink if the image is unreadable */
     }
   }
 
