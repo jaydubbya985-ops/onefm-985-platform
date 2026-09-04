@@ -202,7 +202,7 @@ export default function Heritage() {
         />
 
         <NameWall
-          label="Legends & Voices"
+          label="Named portraits"
           rows={HERITAGE_LEGENDS.map(({ name, sub, img }) => ({ name, sub, img }))}
           photoNote="Named archive portraits: Di Hunter and Sally Nayler only. Other rows use station photography."
           portraits={['Di Hunter', 'Sally Nayler']}
