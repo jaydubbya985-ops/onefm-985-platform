@@ -480,6 +480,18 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const socialHub = files.find((f) => f.label === 'pages/SocialHub.tsx')
+if (
+  !socialHub ||
+  /personality guidelines for all social content/i.test(socialHub.text) ||
+  /The ONE FM Voice/.test(socialHub.text) ||
+  !socialHub.text.includes('does not publish tone or personality guidelines')
+) {
+  hits.push(
+    'pages/SocialHub.tsx: Posting Toolkit must name the media kit — not leftover voice guidelines',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
