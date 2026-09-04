@@ -21,21 +21,26 @@ export { PosterReveal, StrokeFill } from '@/components/motion/PosterReveal'
 /** Red marquee band. Pass real facts / live metadata as items. */
 export function OnAirTicker({ items, delay = 0.75 }: { items: string[]; delay?: number }) {
   const line = items.join('   ·   ')
+  const spoken = items.filter(Boolean).join('. ')
   return (
-    <motion.div
-      className="overflow-hidden"
-      style={{ background: RED }}
-      aria-hidden
-      initial={{ y: '-100%' }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, delay, ease: EXPO }}
-    >
-      <div className="flex whitespace-nowrap py-2 font-bold text-[13px] tracking-[0.12em] uppercase text-white animate-marquee">
-        {[0, 1].map((i) => (
-          <span key={i} className="pr-12">{line}   ·   </span>
-        ))}
-      </div>
-    </motion.div>
+    <div>
+      {/* Marquee is duplicated and animated — speak the facts once. */}
+      <p className="sr-only">{spoken}</p>
+      <motion.div
+        className="overflow-hidden"
+        style={{ background: RED }}
+        aria-hidden
+        initial={{ y: '-100%' }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5, delay, ease: EXPO }}
+      >
+        <div className="flex whitespace-nowrap py-2 font-bold text-[13px] tracking-[0.12em] uppercase text-white animate-marquee">
+          {[0, 1].map((i) => (
+            <span key={i} className="pr-12">{line}   ·   </span>
+          ))}
+        </div>
+      </motion.div>
+    </div>
   )
 }
 
