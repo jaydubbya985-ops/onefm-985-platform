@@ -31,6 +31,7 @@ import { formatCoverageShort, formatRadius } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { formatWithPresenter } from '@/lib/liveNow'
 import { LISTEN_LINKS } from '@/lib/listenLinks'
+import { BRAND } from '@/lib/brand'
 
 const CATEGORY_COLORS: Record<string, string> = {
   Breakfast: '#F2F2F2',
@@ -944,7 +945,7 @@ function BehindTheScenes() {
               transition={{ delay: 0.1, duration: 0.6, ease: easeOutExpo }}
               className="font-body text-one-white mb-8"
             >
-              ONE FM 98.5 — callsign 3ONE, ACMA licence 1385226/1. Volunteer presenters from the Shepparton studio.
+              ONE FM 98.5 — callsign {BRAND.callsign}, licensed {BRAND.licensed}. Volunteer presenters from the Shepparton studio.
               Breakfast is {BREAKFAST_TIME} weekdays ({getBreakfastScheduleLabel()}). {MULTICULTURAL_PROGRAM_COUNT} multicultural
               programs sit Monday–Wednesday evenings on the station guide — not a weekend dial.
             </motion.p>
@@ -1117,7 +1118,7 @@ export default function BroadcastExplorer() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BREAKFAST · MUSIC · SPORT · CULTURE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CALLSIGN 3ONE · SINCE 1989</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL FOOTBALL LIVE COMMENTARY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSE 1385226/1 · COMMUNITY RADIO</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">LICENSED {BRAND.licensed} · COMMUNITY RADIO</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">ETHNIC &amp; MULTICULTURAL PROGRAMS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">REAL VOICES · REAL STORIES</span>,
           ]}
