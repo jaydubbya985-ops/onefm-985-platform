@@ -23,8 +23,8 @@ const SLIDES: Slide[] = [
   {
     img: '/assets/images/ob-van-branded.jpg',
     num: '02', ghost: 'FIELD',
-    title: 'We Come to You',
-    caption: `The ONE FM OB van takes the station wherever the story is — ${formatTowns()}, one broadcast team.`,
+    title: 'The OB van',
+    caption: `The branded OB van is station photography. Field and match-day calls are listed on the weekly guide when they are on — ${formatTowns()}.`,
   },
   {
     img: '/assets/images/commentary-box-action.jpg',
