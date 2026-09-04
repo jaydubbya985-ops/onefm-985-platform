@@ -60,7 +60,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from './Toast'
-import { useOpsStore } from './store'
+import { nextStationInvoiceNumber, useOpsStore } from './store'
 import {
   CONTRACT_STATES,
   INDUSTRIES,
@@ -126,19 +126,6 @@ function useLocalStorage<T>(key: string, initial: T): [T, React.Dispatch<React.S
     }
   }, [key, value])
   return [value, setValue]
-}
-
-/** Replicates the ops store's sequential invoice numbering (INV-2026-XXX). */
-function nextInvoiceNumber(existing: string[]): string {
-  const prefix = 'INV-2026-'
-  let max = 0
-  for (const number of existing) {
-    if (number.startsWith(prefix)) {
-      const num = parseInt(number.slice(prefix.length), 10)
-      if (!Number.isNaN(num) && num > max) max = num
-    }
-  }
-  return `${prefix}${String(max + 1).padStart(3, '0')}`
 }
 
 // ---------------------------------------------------------------------------
@@ -615,7 +602,7 @@ export default function ContractManager() {
         target.amountPerInvoice || target.contractValue / (target.numberOfPeriods || 1)
       const gst = Math.round(amount * 0.1 * 100) / 100
       const total = Math.round((amount + gst) * 100) / 100
-      const number = nextInvoiceNumber(invoices.map((i) => i.number))
+      const number = nextStationInvoiceNumber(invoices.map((i) => i.number))
       const description = target.campaignName || target.description || 'Sponsorship'
       const period = `${formatDate(target.startDate)} → ${formatDate(target.endDate)}`
       const dueDate = isoDate(addDays(new Date(), 14))

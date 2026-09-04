@@ -203,6 +203,13 @@ function nextSequential(existing: string[], prefix: string): string {
   return `${prefix}${String(max + 1).padStart(3, '0')}`
 }
 
+/** Station tax-invoice series. DEMO billing leftovers stay INV-2026-*; do not mint those. */
+export const STATION_INVOICE_PREFIX = 'ONEFM-2026-'
+
+export function nextStationInvoiceNumber(existing: string[]): string {
+  return nextSequential(existing, STATION_INVOICE_PREFIX)
+}
+
 function buildSeedState(): OpsState {
   // Enquiries that already had a proposal out the door get a matching seeded
   // proposal so the Proposals tab starts populated.
@@ -672,10 +679,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         const gst = Math.round(amount * 0.1 * 100) / 100
         const invoice: OpsInvoice = {
           id: `inv-${Date.now()}`,
-          number: nextSequential(
-            state.invoices.map((i) => i.number),
-            'INV-2026-',
-          ),
+          number: nextStationInvoiceNumber(state.invoices.map((i) => i.number)),
           company: contract.companyName,
           contactName: contract.primaryContact,
           email: contract.email,
@@ -705,10 +709,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           id: input.id ?? `inv-${Date.now()}`,
           number:
             input.number ??
-            nextSequential(
-              state.invoices.map((i) => i.number),
-              'INV-2026-',
-            ),
+            nextStationInvoiceNumber(state.invoices.map((i) => i.number)),
           status: input.status ?? 'draft',
           inBatch: input.inBatch ?? false,
         }
