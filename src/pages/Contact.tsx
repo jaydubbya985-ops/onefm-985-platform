@@ -16,6 +16,7 @@ import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { BREAKFAST_SHOW, BREAKFAST_TIME } from '@/data/programGuide'
+import { EMERGENCY_BROADCAST_NARRATIVE } from '@/data/stationHistory'
 import {
   Phone,
   Mail,
@@ -708,10 +709,9 @@ function EmergencyInfo() {
             <div className="flex-1">
               <WordReveal text="Emergency Broadcasting" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
               <p className="font-body text-one-muted mb-6 max-w-xl">
-                During emergencies, ONE FM is your official emergency broadcaster
-                for the Goulburn Valley. We work directly with emergency services to
-                deliver real-time warnings, evacuation orders, and recovery
-                information.
+                {EMERGENCY_BROADCAST_NARRATIVE[0]} Official warnings and evacuation
+                orders come from CFA, SES, and the Bureau of Meteorology — not from
+                this page.
               </p>
               <div className="flex flex-wrap gap-3">
                 <a

@@ -480,6 +480,19 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const contact = files.find((f) => f.label === 'pages/Contact.tsx')
+if (
+  !contact ||
+  /official emergency broadcaster/i.test(contact.text) ||
+  /work directly with emergency services/i.test(contact.text) ||
+  !contact.text.includes('EMERGENCY_BROADCAST_NARRATIVE') ||
+  !contact.text.includes('Official warnings and evacuation')
+) {
+  hits.push(
+    'pages/Contact.tsx: Emergency card must use sourced narrative — not leftover official designation',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
