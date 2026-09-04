@@ -23,6 +23,11 @@ function cardStill(card: ArchiveCard): { src: string; alt: string } | null {
     }
   }
   switch (card.id) {
+    case 'licence-1989':
+      return {
+        src: STATION_PHOTOS.studioExteriorRainbow,
+        alt: 'ONE FM studio exterior — licensed service 3ONE from 1 April 1989',
+      }
     case 'first-football-1989':
       return {
         src: STATION_PHOTOS.gvlSpectacularMark,
