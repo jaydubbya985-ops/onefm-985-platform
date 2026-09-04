@@ -140,7 +140,7 @@ const GUIDES = [
  */
 const FEED_POSTS = [
   { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: `${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Follow the local call on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM` },
-  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton' },
+  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Commentary box — station archive. Listen on 98.5 FM. #OneFM985 #Shepparton' },
   { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley' },
   { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community' },
   { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: `Under the lights at the GVL — ${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Friday night on the guide is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL Friday Night Footy'}. Catch us on 98.5 FM 🔴 #GVL #LocalFooty` },
