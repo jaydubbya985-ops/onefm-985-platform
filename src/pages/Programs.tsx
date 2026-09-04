@@ -136,7 +136,7 @@ const shows = [
     name: BREAKFAST_SHOW,
     time: "Mon–Fri, 6am–9am",
     host: getBreakfastScheduleLabel(),
-    desc: "The Goulburn Valley's essential morning companion — community interviews, local news, weather, and music. Rotating hosts across the week.",
+    desc: "Rotating weekday hosts — community interviews, local news, weather, and music from the weekly guide.",
     tag: "Breakfast",
     icon: Mic2,
   },

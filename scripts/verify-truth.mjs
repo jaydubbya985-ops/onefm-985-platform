@@ -423,6 +423,15 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (
+  !programs ||
+  /essential morning companion/i.test(programs.text) ||
+  !programs.text.includes('from the weekly guide')
+) {
+  hits.push(
+    'pages/Programs.tsx: breakfast card must name rotating hosts from the weekly guide — not leftover essential morning companion',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
