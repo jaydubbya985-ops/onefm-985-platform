@@ -129,7 +129,7 @@ export default function Community() {
           </button>
         </div>
 
-        <EditorialCards label="Weeknight world programs" items={multicultural} columns={3} />
+        <EditorialCards label="Weeknight multicultural programs" items={multicultural} columns={3} />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
           <LabelReveal className="mb-8">Where the Signal Reaches</LabelReveal>
