@@ -480,6 +480,28 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const invoicePdf = files.find((f) => f.label === 'lib/invoiceVariantPdf.ts')
+if (
+  !invoicePdf ||
+  /payment due within 14 days/.test(invoicePdf.text) ||
+  !invoicePdf.text.includes('due ${dueDate}')
+) {
+  hits.push(
+    'lib/invoiceVariantPdf.ts: leftover 14-day payment invents a due SLA — name invoice.dueDate',
+  )
+}
+
+const proposalDoc = files.find((f) => f.label === 'lib/proposalDocument.ts')
+if (
+  !proposalDoc ||
+  /14-day payment/.test(proposalDoc.text) ||
+  !proposalDoc.text.includes('First tax invoice follows the signed term.')
+) {
+  hits.push(
+    'lib/proposalDocument.ts: leftover 14-day payment invents a due SLA — name the signed term',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
