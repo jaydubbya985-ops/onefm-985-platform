@@ -7,6 +7,7 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { BRAND } from '@/lib/brand'
 import { FOOTER_LISTEN, FOOTER_SPONSOR, FOOTER_ABOUT, FOOTER_SUPPORT, FOOTER_RESOURCES } from '@/lib/siteNav'
 import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatLicenceChrome } from '@/lib/licenceCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { MagneticButton } from '@/components/MagneticButton'
 import { WordReveal } from '@/components/WordReveal'
@@ -287,7 +288,7 @@ export function Footer() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-label text-[10px] text-one-muted/85 tracking-wider">
-              {BRAND.callsign} · ACMA {BRAND.acma}
+              {formatLicenceChrome()}
             </span>
             <button
               type="button"
