@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { MediaImage } from '@/components/MediaImage'
 import { getCinegraph, type CinegraphKey } from '@/lib/cinegraphAssets'
 
@@ -16,6 +17,22 @@ interface CinegraphBackgroundProps {
  * - video missing or fails to load
  * - videoActive is false on the slot
  */
+function ArchiveStillCredit() {
+  const [host, setHost] = useState<Element | null>(null)
+  useEffect(() => {
+    setHost(document.querySelector('[data-cursor-label="GAME DAY"]'))
+  }, [])
+  if (!host) return null
+  // Football hero gradients sit on top of the cinegraph layer — portal the
+  // credit onto the section so it is actually readable.
+  return createPortal(
+    <p className="pointer-events-none absolute top-24 left-6 z-[5] rounded-full border border-white/20 bg-black/55 px-3 py-1 font-label text-[10px] tracking-[0.14em] uppercase text-white/90">
+      Station archive still
+    </p>,
+    host,
+  )
+}
+
 export function CinegraphBackground({
   slot,
   className = 'absolute inset-0 w-full h-full object-cover',
@@ -61,7 +78,7 @@ export function CinegraphBackground({
   }
 
   return (
-    <div className="absolute inset-0">
+    <>
       <MediaImage
         src={asset.poster}
         fallbackSrc={asset.fallback}
@@ -71,10 +88,7 @@ export function CinegraphBackground({
         className={`${className} ${imageClassName ?? ''} ${reducedMotion ? '' : 'animate-ken-burns'}`}
         style={{ opacity }}
       />
-      {/* Football Ken-burns the still with top:-28% — sit the credit in the visible band. */}
-      <p className="pointer-events-none absolute left-6 z-[2] rounded-full border border-white/20 bg-black/50 px-3 py-1 font-label text-[10px] tracking-[0.14em] uppercase text-white/90 [top:calc(28%+6rem)]">
-        Station archive still
-      </p>
-    </div>
+      <ArchiveStillCredit />
+    </>
   )
 }
