@@ -59,7 +59,7 @@ const TILES = [
   {
     title: 'Sponsor ONE FM',
     desc: `Partner across ${formatTowns()}`,
-    path: '/sponsorship',
+    path: '/proposal',
     image: STATION_PHOTOS.gvlPlayerHighFive,
     fallback: PHOTO_DEFAULTS.regional,
   },
