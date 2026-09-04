@@ -37,8 +37,13 @@ if (!src.includes(weekly) || !src.includes('ABS 2021 via townData')) {
 if (!src.includes(people) || !src.includes('townData 2026 estimates, not ABS 2021')) {
   fail(`${people} must be labelled townData 2026 estimates, not ABS 2021`)
 }
-if (/189,?680[^\n]*ABS 2021/.test(src) && !/189,?680[^\n]*not ABS 2021/.test(src)) {
-  fail('must not attribute 189,680 to ABS 2021')
+for (const line of src.split(/\r?\n/).filter((row) => /189,?680/.test(row))) {
+  if (/ABS 2021/.test(line) && !/not ABS 2021/.test(line)) {
+    fail(`must not attribute 189,680 to ABS 2021: ${line}`)
+  }
+  if (!/2026/.test(line)) {
+    fail(`189,680 line must say 2026 estimates: ${line}`)
+  }
 }
 if (/\bpub-|\bgoogle\.com\b/i.test(src)) {
   fail('must not invent an AdSense seller record')
