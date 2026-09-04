@@ -51,7 +51,7 @@ const TILES = [
   },
   {
     title: 'Our Story',
-    desc: 'Heritage since 1989',
+    desc: 'Heritage since 1980',
     path: '/heritage',
     image: STATION_PHOTOS.studioExteriorRainbow,
     fallback: PHOTO_DEFAULTS.regional,
