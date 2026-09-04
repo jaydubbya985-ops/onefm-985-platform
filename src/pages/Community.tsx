@@ -137,7 +137,7 @@ export default function Community() {
             <div>
               <h3 className="font-poster uppercase text-[30px] text-white">The Coverage Map</h3>
               <p className="text-[15px] text-white/55 mt-1 max-w-[480px]">
-                {formatRadius()} of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
+                {formatRadius()} of signal from Mt Major — towns, the transmitter, and sourced GVL club pins on the coverage map.
               </p>
             </div>
             <Link
