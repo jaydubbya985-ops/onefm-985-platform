@@ -111,9 +111,6 @@ const rateCardData = [
   { type: 'Standard Spot', duration: '30s', peak: rateCard.standardSpot30s, offPeak: Math.round(rateCard.standardSpot30s * 0.5), availability: 'High' },
   { type: 'Standard Spot', duration: '60s', peak: rateCard.standardSpot60s, offPeak: Math.round(rateCard.standardSpot60s * 0.5), availability: 'High' },
   { type: 'Sponsorship Mention', duration: '10s', peak: rateCard.sponsorshipMention, offPeak: Math.round(rateCard.sponsorshipMention * 0.5), availability: 'High' },
-  { type: 'Website Banner', duration: 'Display', peak: rateCard.websiteBanner, offPeak: Math.round(rateCard.websiteBanner * 0.5), availability: 'High' },
-  { type: 'Newsletter Mention', duration: 'Full', peak: rateCard.newsletterMention, offPeak: Math.round(rateCard.newsletterMention * 0.5), availability: 'Moderate' },
-  { type: 'Social Post', duration: 'Story + Post', peak: rateCard.socialPost, offPeak: Math.round(rateCard.socialPost * 0.5), availability: 'Moderate' },
 ]
 
 const platformCards = [
@@ -837,6 +834,10 @@ export default function MediaKit() {
               </motion.div>
             ))}
           </motion.div>
+
+          <p className="font-body-small text-muted mt-4 max-w-2xl">
+            This kit sells live reads, spots, and sponsorship mentions on 98.5 FM. It does not sell website banners, newsletter mentions, or social posts.
+          </p>
 
           <motion.div
             className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
