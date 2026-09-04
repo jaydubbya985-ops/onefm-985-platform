@@ -256,7 +256,7 @@ const shows = [
     name: "Sunday Night Country",
     time: "Sunday, 7pm",
     host: "Sue",
-    desc: "Sunday evening country music with Sue — the perfect close to the weekend for country music lovers.",
+    desc: "Sunday evening country music with Sue — on the weekly guide.",
     tag: "Music",
     icon: Music,
   },
