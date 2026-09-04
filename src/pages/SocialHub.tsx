@@ -21,6 +21,7 @@ import { toast } from 'sonner'
 import { Marquee } from '@/components/Marquee'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
+import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
@@ -130,7 +131,7 @@ const GUIDES = [
   { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: 'Media kit', path: '/media-kit' },
   { title: 'Who We Reach', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'The broadcast-area population behind every post — and what we do not measure', pages: 'Audience & reach', path: '/audience' },
   { title: 'Hashtag Sets', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'The station hashtags to use across GVL, community and program posts', pages: 'This page', path: '/social' },
-  { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: 'Contact the station', path: '/contact' },
+  { title: 'Call the Station', icon: <Shield size={40} />, color: 'text-one-red', desc: `This page does not publish a crisis protocol. Call ${BRAND.phone} or email ${BRAND.email}.`, pages: 'Contact', path: '/contact' },
 ]
 
 /**
