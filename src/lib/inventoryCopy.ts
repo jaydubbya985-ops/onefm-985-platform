@@ -7,7 +7,8 @@ import { formatGuideHours } from '@/lib/guideHours'
  * - GVL / breakfast / live-call inventory is premium — never “from $25”.
  */
 
-export const STANDARD_SPOT_PLUS_GST = `Standard 30-second spots from $${rateCard.standardSpot30s} plus GST`
+/** Floor of standard inventory — never “from $25” (that reads as GVL from $25). */
+export const STANDARD_SPOT_PLUS_GST = `Standard 30-second spots start at $${rateCard.standardSpot30s} plus GST`
 
 export const PARTNERSHIP_FROM_WEEKLY = `Weekly partnership packages from $${generalTiers.communityPartner.minPrice}/week plus GST`
 
