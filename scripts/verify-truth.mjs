@@ -423,6 +423,15 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (
+  !programs ||
+  /perfect close to the weekend/.test(programs.text) ||
+  !programs.text.includes('Sunday evening country music with Sue — on the weekly guide.')
+) {
+  hits.push(
+    'pages/Programs.tsx: Sunday Night Country must name the weekly guide — not leftover perfect close',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
