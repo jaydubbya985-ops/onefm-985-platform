@@ -119,7 +119,7 @@ export function DecadeDial() {
         {cards.length > 0 ? (
           cards.map((card) => <ArchiveCardArticle key={card.id} card={card} />)
         ) : (
-          <p className="text-white/40 col-span-2">Evidence cards for this decade — archive hunt in progress.</p>
+          <p className="text-white/40 col-span-2">No sourced evidence cards for this decade yet.</p>
         )}
       </div>
 
