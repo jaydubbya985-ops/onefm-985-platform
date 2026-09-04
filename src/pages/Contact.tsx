@@ -243,6 +243,7 @@ const enquiryIcons: Record<string, React.ElementType> = {
 /* ─── Section 2: Multi-Pathway Enquiry Form ─── */
 function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
+  const [submitOutcome, setSubmitOutcome] = useState<'stored' | 'emailed' | null>(null)
   const [loading, setLoading] = useState(false)
 
   const form = useForm<EnquiryForm>({
@@ -278,6 +279,7 @@ function ContactForm() {
         return
       }
 
+      setSubmitOutcome(result.stored ? 'stored' : 'emailed')
       setSubmitted(true)
       toast.success(
         result.stored
@@ -314,7 +316,10 @@ function ContactForm() {
             <CheckCircle2 size={64} className="text-one-gold mx-auto mb-6" />
             <WordReveal text="Thanks for reaching out!" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
             <p className="font-body text-one-muted">
-              We'll be in touch. If you need us now, call {BRAND.phone} or email {BRAND.email}.
+              {submitOutcome === 'stored'
+                ? 'Enquiry received at the station.'
+                : 'Enquiry emailed to the station.'}{' '}
+              If you need us now, call {BRAND.phone} or email {BRAND.email}.
             </p>
           </motion.div>
         </div>
