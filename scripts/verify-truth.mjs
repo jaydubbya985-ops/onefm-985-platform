@@ -480,6 +480,19 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const socialHub = files.find((f) => f.label === 'pages/SocialHub.tsx')
+if (
+  !socialHub ||
+  /Crisis Communication/i.test(socialHub.text) ||
+  /Protocols for sensitive situations/i.test(socialHub.text) ||
+  !socialHub.text.includes('does not publish a crisis protocol') ||
+  !socialHub.text.includes('BRAND.phone')
+) {
+  hits.push(
+    'pages/SocialHub.tsx: Posting Toolkit must name Contact — not leftover crisis protocols',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
