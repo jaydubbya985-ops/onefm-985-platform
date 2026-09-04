@@ -252,7 +252,7 @@ function HeroSection() {
             transition={{ duration: 0.5, ease: easeOutExpo }}
             className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-3"
           >
-            Brand Assets · Content Tools · Campaign Templates
+            Facebook · SoundCloud · station brand
           </motion.span>
 
           <motion.div

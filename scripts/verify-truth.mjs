@@ -479,6 +479,13 @@ if (
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
+const socialHub = files.find((f) => f.label === 'pages/SocialHub.tsx')
+if (socialHub && /Content Tools|Campaign Templates/.test(socialHub.text)) {
+  hits.push('pages/SocialHub.tsx: hero must not invent leftover campaign tools')
+}
+if (socialHub && !socialHub.text.includes('Facebook · SoundCloud · station brand')) {
+  hits.push('pages/SocialHub.tsx: hero must name confirmed Facebook and SoundCloud')
+}
 
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
