@@ -242,9 +242,9 @@ const townNames = towns.map((t) => t.name)
 /* ─── What we can say about ourselves, with nobody else's words in our mouth ─── */
 const communityVoice = {
   statement:
-    'ONE FM 98.5 is licensed to Goulburn Valley Community Radio Inc. under ACMA licence 1385226/1, callsign 3ONE. The station has broadcast from Shepparton since 1989, staffed by volunteers, and carries local sport, community notices and emergency information across the Goulburn Valley.',
-  attribution: 'Goulburn Valley Community Radio Inc.',
-  context: 'Licensed community broadcaster · ACMA 1385226/1',
+    `ONE FM 98.5 is licensed to ${BRAND.org}, callsign ${BRAND.callsign}. The station has broadcast from Shepparton since ${BRAND.licensed}, staffed by volunteers, and carries local sport, community notices and emergency information across the Goulburn Valley.`,
+  attribution: BRAND.org,
+  context: `Licensed community broadcaster · licensed ${BRAND.licensed}`,
 }
 
 /* ─── Enquiry Form Data (from pricing.ts) ─── */
