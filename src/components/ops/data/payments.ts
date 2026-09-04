@@ -26,13 +26,14 @@ export interface PaymentRecord {
 
 // DEMO DATA — payment history shown in the Billing → Payments tab.
 // Real payment records must come from Supabase/accounting exports.
+// Invoice numbers must match BATCH_INVOICES (ONEFM-2026-*), never leftover INV-2026-*.
+// Aussie Ag is not in the June 2026 ONEFM batch — do not invent a number for it.
 export const MOCK_PAYMENTS: PaymentRecord[] = [
-  { id: 'pay_1', invoiceId: 'inv_1', invoiceNumber: 'INV-2026-001', company: 'Peppermill Inn', amount: 1240, date: '2026-01-15', method: 'Bank Transfer', reference: 'REF-PM-001', notes: 'Full payment received', allocated: true },
-  { id: 'pay_2', invoiceId: 'inv_2', invoiceNumber: 'INV-2026-002', company: 'Aussie Ag Supplies Pty Ltd', amount: 669, date: '2026-02-01', method: 'Direct Debit', reference: 'DD-AAG-669', notes: 'Auto debit processed', allocated: true },
-  { id: 'pay_3', invoiceId: 'inv_4', invoiceNumber: 'INV-2026-004', company: 'Gagliardi Scott Real Estate', amount: 600, date: '2026-02-10', method: 'Credit Card', reference: 'CC-GS-600', notes: 'Partial payment - balance to follow', allocated: true },
-  { id: 'pay_4', invoiceId: 'inv_6', invoiceNumber: 'INV-2026-006', company: 'Goulburn Valley Football League', amount: 916, date: '2026-02-18', method: 'Bank Transfer', reference: 'REF-GVFL-2026', notes: 'Full payment', allocated: true },
-  { id: 'pay_5', invoiceId: 'inv_7', invoiceNumber: 'INV-2026-007', company: 'Shepparton Harness Racing Club', amount: 110, date: '2026-02-22', method: 'Direct Debit', reference: 'DD-SHRC-110', notes: 'Gold Cup payment', allocated: true },
-  { id: 'pay_6', invoiceId: 'inv_12', invoiceNumber: 'INV-2026-012', company: 'Primary Care Connect', amount: 200, date: '2026-01-20', method: 'Credit Card', reference: 'CC-PCC-200', notes: 'Partial payment - instalment 1 of 3', allocated: true },
+  { id: 'pay_1', invoiceId: 'inv-005', invoiceNumber: 'ONEFM-2026-015', company: 'Peppermill Inn', amount: 1240, date: '2026-01-15', method: 'Bank Transfer', reference: 'REF-PM-001', notes: 'Full payment received', allocated: true },
+  { id: 'pay_3', invoiceId: 'inv-003', invoiceNumber: 'ONEFM-2026-013', company: 'Gagliardi Scott Real Estate', amount: 600, date: '2026-02-10', method: 'Credit Card', reference: 'CC-GS-600', notes: 'Partial payment - balance to follow', allocated: true },
+  { id: 'pay_4', invoiceId: 'inv-004', invoiceNumber: 'ONEFM-2026-014', company: 'Goulburn Valley Football League', amount: 916, date: '2026-02-18', method: 'Bank Transfer', reference: 'REF-GVFL-2026', notes: 'Full payment', allocated: true },
+  { id: 'pay_5', invoiceId: 'inv-017', invoiceNumber: 'ONEFM-2026-027', company: 'Shepparton Harness Racing Club', amount: 110, date: '2026-02-22', method: 'Direct Debit', reference: 'DD-SHRC-110', notes: 'Gold Cup payment', allocated: true },
+  { id: 'pay_6', invoiceId: 'inv-018', invoiceNumber: 'ONEFM-2026-028', company: 'Primary Care Connect', amount: 200, date: '2026-01-20', method: 'Credit Card', reference: 'CC-PCC-200', notes: 'Partial payment - instalment 1 of 3', allocated: true },
   { id: 'pay_7', invoiceId: '', invoiceNumber: '', company: 'Unknown', amount: 1500, date: '2026-02-15', method: 'Bank Transfer', reference: 'DEPOSIT-1500', notes: 'Unallocated deposit - reference unclear', allocated: false },
   { id: 'pay_8', invoiceId: '', invoiceNumber: '', company: 'MediaCOM', amount: 440, date: '2026-02-20', method: 'Cash', reference: 'CASH-001', notes: 'Cash deposit at reception', allocated: false },
 ]
@@ -390,19 +391,19 @@ export const SEED_OUTSTANDING_INVOICES: OutstandingInvoice[] = [
   { id: 'out-002', number: 'ONEFM-2026-012', client: "Jason's TV Pty Ltd", balance: 8580, dueDate: '2026-06-23' },
   { id: 'out-003', number: 'ONEFM-2026-013', client: 'Gagliardi Scott Real Estate', balance: 7515.2, dueDate: '2026-06-23' },
   { id: 'out-004', number: 'ONEFM-2026-015', client: 'Peppermill Inn', balance: 4957.3, dueDate: '2026-06-23' },
-  { id: 'out-005', number: 'INV-2026-003', client: 'Merritt Funeral Services', balance: 405, dueDate: '2026-02-10' },
+  { id: 'out-005', number: 'ONEFM-2026-024', client: 'Merritt Funeral Services', balance: 405, dueDate: '2026-06-23' },
   { id: 'out-006', number: 'ONEFM-2026-029', client: 'Donuts A Go Go', balance: 109.98, dueDate: '2026-06-23' },
 ]
 
 // DEMO DATA — client payment rows are seed examples, not bank reconciled records.
+// Numbers match BATCH_INVOICES. Leftover INV-2026-* collided with Jason's TV (012).
 export const SEED_CLIENT_PAYMENTS: ClientPayment[] = [
-  { id: 'cp-001', invoiceId: 'inv_1', invoiceNumber: 'INV-2026-001', clientName: 'Peppermill Inn', amount: 1240, method: 'bank_transfer', date: '2026-06-02', reference: 'TRX-PM1240', notes: 'GVL 2026 MAJOR instalment', status: 'completed' },
-  { id: 'cp-002', invoiceId: 'inv_2', invoiceNumber: 'INV-2026-002', clientName: 'Aussie Ag Supplies Pty Ltd', amount: 669, method: 'direct_debit', date: '2026-06-03', reference: 'DD-AAG-669', notes: 'Auto debit processed', status: 'completed' },
-  { id: 'cp-003', invoiceId: 'inv_4', invoiceNumber: 'INV-2026-004', clientName: 'Gagliardi Scott Real Estate', amount: 600, method: 'credit_card', date: '2026-06-05', reference: 'CC-GS-600', notes: 'Partial payment — balance to follow', status: 'completed' },
-  { id: 'cp-004', invoiceId: 'inv_6', invoiceNumber: 'INV-2026-006', clientName: 'Goulburn Valley Football League', amount: 916, method: 'bank_transfer', date: '2026-06-08', reference: 'REF-GVFL-916', notes: 'Broadcast settlement', status: 'completed' },
-  { id: 'cp-005', invoiceId: 'inv_7', invoiceNumber: 'INV-2026-007', clientName: 'Shepparton Harness Racing Club', amount: 110, method: 'paypal', date: '2026-06-09', reference: 'PP-SHRC-110', notes: 'Gold Cup OB payment', status: 'completed' },
-  { id: 'cp-006', invoiceId: 'inv_9', invoiceNumber: 'ONEFM-2026-019', clientName: 'Burkes Bakery', amount: 1540, method: 'cheque', date: '2026-06-10', reference: 'CHQ-000412', notes: 'Part payment by cheque', status: 'pending' },
-  { id: 'cp-007', invoiceId: 'inv_12', invoiceNumber: 'INV-2026-012', clientName: 'Primary Care Connect', amount: 200, method: 'credit_card', date: '2026-05-28', reference: 'CC-PCC-200', notes: 'Instalment 1 of 3', status: 'completed' },
+  { id: 'cp-001', invoiceId: 'inv-005', invoiceNumber: 'ONEFM-2026-015', clientName: 'Peppermill Inn', amount: 1240, method: 'bank_transfer', date: '2026-06-02', reference: 'TRX-PM1240', notes: 'GVL 2026 MAJOR instalment', status: 'completed' },
+  { id: 'cp-003', invoiceId: 'inv-003', invoiceNumber: 'ONEFM-2026-013', clientName: 'Gagliardi Scott Real Estate', amount: 600, method: 'credit_card', date: '2026-06-05', reference: 'CC-GS-600', notes: 'Partial payment — balance to follow', status: 'completed' },
+  { id: 'cp-004', invoiceId: 'inv-004', invoiceNumber: 'ONEFM-2026-014', clientName: 'Goulburn Valley Football League', amount: 916, method: 'bank_transfer', date: '2026-06-08', reference: 'REF-GVFL-916', notes: 'Broadcast settlement', status: 'completed' },
+  { id: 'cp-005', invoiceId: 'inv-017', invoiceNumber: 'ONEFM-2026-027', clientName: 'Shepparton Harness Racing Club', amount: 110, method: 'paypal', date: '2026-06-09', reference: 'PP-SHRC-110', notes: 'Gold Cup OB payment', status: 'completed' },
+  { id: 'cp-006', invoiceId: 'inv-009', invoiceNumber: 'ONEFM-2026-019', clientName: 'Burkes Bakery', amount: 1540, method: 'cheque', date: '2026-06-10', reference: 'CHQ-000412', notes: 'Part payment by cheque', status: 'pending' },
+  { id: 'cp-007', invoiceId: 'inv-018', invoiceNumber: 'ONEFM-2026-028', clientName: 'Primary Care Connect', amount: 200, method: 'credit_card', date: '2026-05-28', reference: 'CC-PCC-200', notes: 'Instalment 1 of 3', status: 'completed' },
   { id: 'cp-008', invoiceId: '', invoiceNumber: 'CASH-RCPT-08', clientName: 'MediaCOM', amount: 440, method: 'cash', date: '2026-05-30', reference: 'CASH-001', notes: 'Cash deposit at reception', status: 'completed' },
 ]
 
