@@ -61,6 +61,7 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /The Voice of the Goulburn Valley/, why: 'slogan is Live and Local (BRAND.tagline) — do not invent Voice of' },
 ]
 
 function walk(dir) {
@@ -120,6 +121,18 @@ if (!home || !home.text.includes('liveNowFromMetadata')) {
 }
 if (!home || !home.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/Home.tsx: GVL photo badge hours must come from formatGuideHours / FULL_SCHEDULE')
+}
+if (!home || !home.text.includes('formatSeoTitle()')) {
+  hits.push('pages/Home.tsx: SEO title must use formatSeoTitle() — Live and Local, not leftover Voice of')
+}
+if (
+  !home ||
+  /The Voice/.test(home.text) ||
+  !home.text.includes('BRAND.tagline') ||
+  !home.text.includes('Live and') ||
+  !home.text.includes('Local')
+) {
+  hits.push('pages/Home.tsx: hero poster must be Live and Local — not leftover The Voice of the Goulburn Valley')
 }
 
 const liveNow = files.find((f) => f.label === 'lib/liveNow.ts')
@@ -241,6 +254,9 @@ const seo = files.find((f) => f.label === 'components/SEO.tsx')
 if (!seo || !seo.text.includes('formatSeoDefault()')) {
   hits.push('components/SEO.tsx: default description must use formatSeoDefault()')
 }
+if (!seo || !seo.text.includes('formatSeoTitle()')) {
+  hits.push('components/SEO.tsx: default title must use formatSeoTitle() — Live and Local, not leftover Voice of')
+}
 
 const explore = files.find((f) => f.label === 'components/home/ExploreOneFMGrid.tsx')
 if (
@@ -286,10 +302,24 @@ if (
 if (indexHtml && /25 towns/.test(indexHtml.text)) {
   hits.push('index.html: do not hardcode 25 towns — inject formatOgDescription at build')
 }
+if (
+  !indexHtml ||
+  !indexHtml.text.includes('ONE FM 98.5 — Live and Local') ||
+  /The Voice of the Goulburn Valley/.test(indexHtml.text)
+) {
+  hits.push('index.html: title / og:title must be Live and Local — not leftover Voice of the Goulburn Valley')
+}
 
 const viteConfig = readFileSync(new URL('../vite.config.ts', import.meta.url).pathname, 'utf8')
 if (!viteConfig.includes('inject-coverage-og') || !viteConfig.includes('stationStats')) {
   hits.push('vite.config.ts: must inject OG description from stationStats')
+}
+if (
+  !viteConfig.includes('readBrandLockup') ||
+  !viteConfig.includes('tagline') ||
+  /The Voice of the Goulburn Valley/.test(viteConfig)
+) {
+  hits.push('vite.config.ts: meta description must source BRAND.tagline — not leftover Voice of')
 }
 
 const football = files.find((f) => f.label === 'pages/Football.tsx')
@@ -431,9 +461,11 @@ if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')
 if (
   !coverageCopy ||
   !coverageCopy.text.includes('formatOgDescription') ||
-  !coverageCopy.text.includes('formatSeoDefault')
+  !coverageCopy.text.includes('formatSeoDefault') ||
+  !coverageCopy.text.includes('formatSeoTitle') ||
+  !coverageCopy.text.includes('BRAND.tagline')
 ) {
-  hits.push('lib/coverageCopy.ts: must export formatOgDescription and formatSeoDefault')
+  hits.push('lib/coverageCopy.ts: must export formatOgDescription, formatSeoDefault, and formatSeoTitle from BRAND.tagline')
 }
 const presenterAssets = files.find((f) => f.label === 'lib/presenterAssets.ts')
 if (

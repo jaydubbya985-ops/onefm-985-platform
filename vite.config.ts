@@ -19,13 +19,23 @@ function readStationStats() {
   }
 }
 
+/** Slogan from brand.ts — same source as formatSeoTitle. Do not invent Voice of. */
+function readBrandLockup() {
+  const src = fs.readFileSync(path.resolve('src/lib/brand.ts'), 'utf8')
+  const fullName = src.match(/fullName:\s*'([^']+)'/)?.[1]
+  const tagline = src.match(/tagline:\s*'([^']+)'/)?.[1]
+  if (!fullName || !tagline) throw new Error('inject-coverage-og: missing BRAND.fullName/tagline')
+  return `${fullName} — ${tagline}`
+}
+
 /** Keep in sync with formatOgDescription / formatSeoDefault in coverageCopy.ts */
 function injectCoverageOg() {
   const stationStats = readStationStats()
+  const lockup = readBrandLockup()
   const towns = `${stationStats.totalTowns} towns`
   const pop = stationStats.broadcastPopulation.toLocaleString('en-AU')
   const og = `Community radio from Shepparton, VIC. ${towns}. ${pop} people in the broadcast area.`
-  const meta = `ONE FM 98.5 — The Voice of the Goulburn Valley. Volunteer-run community radio from Shepparton, Victoria. ${towns} · ${stationStats.broadcastRadiusKm}km radius (ABS 2021 via townData).`
+  const meta = `${lockup}. Volunteer-run community radio from Shepparton, Victoria. ${towns} · ${stationStats.broadcastRadiusKm}km radius (ABS 2021 via townData).`
   return {
     name: 'inject-coverage-og',
     transformIndexHtml(html: string) {
