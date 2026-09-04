@@ -93,15 +93,17 @@ export function SocialPlatformFrame({
               rel="noopener noreferrer"
               aria-label={openLabel}
               data-cursor-label={host ? `OPEN ${host.toUpperCase()}` : hrefLabel.toUpperCase()}
-              className="inline-flex items-center gap-1.5 font-label text-[10px] text-one-white/90 px-3 py-1.5 rounded-full border border-white/15 bg-black/25 hover:border-one-gold/40 hover:text-one-gold transition-colors"
+              className="shrink-0 inline-flex flex-col items-end justify-center gap-0.5 font-label text-[10px] text-one-white/90 px-3 py-1.5 rounded-xl border border-white/15 bg-black/25 hover:border-one-gold/40 hover:text-one-gold transition-colors"
             >
-              <span>{hrefLabel}</span>
+              <span className="inline-flex items-center gap-1">
+                <span>{hrefLabel}</span>
+                <ArrowUpRight size={12} aria-hidden />
+              </span>
               {host ? (
-                <span className="font-body-small normal-case tracking-normal text-one-white/55 text-[10px]">
+                <span className="font-body-small normal-case tracking-normal text-one-white/75 text-[9px] leading-none">
                   {host}
                 </span>
               ) : null}
-              <ArrowUpRight size={12} aria-hidden />
             </a>
           </div>
           <div>
