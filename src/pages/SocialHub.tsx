@@ -129,7 +129,7 @@ const PLATFORM_FILTERS = ['All', 'Instagram', 'Facebook', 'Stories', 'Reels']
 const GUIDES = [
   { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: 'Media kit', path: '/media-kit' },
   { title: 'Who We Reach', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'The broadcast-area population behind every post — and what we do not measure', pages: 'Audience & reach', path: '/audience' },
-  { title: 'Hashtag Sets', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'The station hashtags to use across GVL, community and program posts', pages: 'This page', path: '/social' },
+  { title: 'Hashtag examples', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'Sample tags from the caption starters on this page — not an official station hashtag set.', pages: 'This page', path: '/social' },
   { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: 'Contact the station', path: '/contact' },
 ]
 
@@ -1088,8 +1088,11 @@ function CaptionGenerator() {
                 <p className="font-body text-one-white whitespace-pre-wrap">{result}</p>
               </div>
 
+              <p className="font-label text-[10px] text-muted mb-2">
+                Examples from the captions on this page — not an official station hashtag set.
+              </p>
               <div className="flex flex-wrap gap-2 mb-4">
-                {['#OneFM', '#RadioLife', '#ONEFMBreakfast', '#LiveMusic'].map((tag) => (
+                {['#OneFM', '#GVL', '#Shepparton', '#GoulburnValley'].map((tag) => (
                   <button key={tag} className="px-2 py-1 rounded-full border border-one-border font-label text-[10px] text-muted hover:border-one-gold hover:text-one-gold transition-colors">
                     {tag}
                   </button>
