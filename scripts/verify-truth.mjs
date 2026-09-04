@@ -174,7 +174,7 @@ if (!community || !community.text.includes('formatBroadcastPopulation')) {
 if (
   !community ||
   !community.text.includes('multiculturalWhen') ||
-  !community.text.includes('Weeknight world programs')
+  !community.text.includes('Weeknight multicultural programs')
 ) {
   hits.push(
     'pages/Community.tsx: multicultural cards must show programGuide weeknight hours, not a weekend dial',
