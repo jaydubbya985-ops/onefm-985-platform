@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async';
-import { formatSeoDefault } from '@/lib/coverageCopy'
+import { formatSeoDefault, formatSeoTitle } from '@/lib/coverageCopy'
 
 const SITE_URL = 'https://fm985.com.au'
 const DEFAULT_OG_IMAGE = '/assets/images/studio-exterior-rainbow.jpg'
-const DEFAULT_TITLE = 'ONE FM 98.5 — The Voice of the Goulburn Valley'
+const DEFAULT_TITLE = formatSeoTitle()
 
 interface SEOProps {
   title: string;

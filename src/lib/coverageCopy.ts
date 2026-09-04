@@ -1,3 +1,4 @@
+import { BRAND } from '@/lib/brand'
 import { stationStats } from '@/data/pricing'
 
 /** Single source for coverage / listenership strings. Never hardcode 25 / 100 / 39,375 / 189,680. */
@@ -51,9 +52,14 @@ export function formatOgDescription(): string {
   return `Community radio from Shepparton, VIC. ${formatTowns()}. ${formatBroadcastPopulation()} people in the broadcast area.`
 }
 
+/** Browser tab / OG title. Slogan is BRAND.tagline (Live and Local), not leftover Voice of. */
+export function formatSeoTitle(): string {
+  return `${BRAND.fullName} — ${BRAND.tagline}`
+}
+
 /** Fallback meta description when a page does not pass its own. */
 export function formatSeoDefault(): string {
-  return `ONE FM 98.5 — The Voice of the Goulburn Valley. Volunteer-run community radio from Shepparton, Victoria. ${formatCoverageShort()} (ABS 2021 via townData).`
+  return `${formatSeoTitle()}. Volunteer-run community radio from Shepparton, Victoria. ${formatCoverageShort()} (ABS 2021 via townData).`
 }
 
 /** Numeric strings for stats strips and data tables (en-AU). */

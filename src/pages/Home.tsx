@@ -16,6 +16,7 @@ import { formatGuideHours, onAirWallSub } from '@/lib/guideHours'
 import {
   formatCoverageShort,
   formatRadius,
+  formatSeoTitle,
   formatTowns,
   formatWeeklyListeners,
   formatWeeklyListenersPlain,
@@ -271,7 +272,7 @@ export default function Home() {
   return (
     <Layout>
       <SEO
-        title="ONE FM 98.5 — The Voice of the Goulburn Valley"
+        title={formatSeoTitle()}
         description={`Community radio for the Goulburn Valley. Volunteer-run since 1989. ${formatCoverageShort()} (ABS 2021 via townData). Listen live, program guide, GVL football.`}
       />
       <div style={{ background: INK }} className="min-h-screen">
