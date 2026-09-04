@@ -244,7 +244,7 @@ function EnquiryForm({
         aria-label="Duration in weeks"
         className={input}
       />
-      <p className="text-[13px] text-white/40 self-center">Typical campaigns: 13, 26 or 52 weeks.</p>
+      <p className="text-[13px] text-white/40 self-center">Optional. Campaign length is agreed in the written quote.</p>
       <textarea
         name="message"
         required
