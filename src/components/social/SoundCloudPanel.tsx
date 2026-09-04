@@ -77,6 +77,7 @@ export interface SoundCloudPanelProps {
 export function SoundCloudPanel({ interviews: interviewsProp, compact, className }: SoundCloudPanelProps) {
   const [items, setItems] = useState<Fm985Interview[]>(interviewsProp ?? [])
   const [loading, setLoading] = useState(!interviewsProp?.length)
+  const [feedError, setFeedError] = useState(false)
   const [activeId, setActiveId] = useState<number | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [prevProp, setPrevProp] = useState(interviewsProp)
@@ -86,6 +87,7 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
     setPrevProp(interviewsProp)
     if (interviewsProp?.length) {
       setItems(interviewsProp)
+      setFeedError(false)
       setLoading(false)
     }
   }
@@ -95,7 +97,16 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
     let cancelled = false
     fetchLatestInterviews(8)
       .then((data) => {
-        if (!cancelled) setItems(data)
+        if (!cancelled) {
+          setItems(data)
+          setFeedError(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setItems([])
+          setFeedError(true)
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -168,13 +179,21 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
         </div>
       )}
 
-      {!loading && playable.length === 0 && (
+      {!loading && feedError && (
         <p className="font-body-small text-one-muted text-sm">
-          Latest interviews play on{' '}
+          The interview archive could not be loaded from the station feed.{' '}
           <a href={SOUNDCLOUD_PROFILE_URL} target="_blank" rel="noopener noreferrer" className="text-one-gold link-hover">
-            SoundCloud
-          </a>{' '}
-          and fm985.com.au — check back after the next broadcast.
+            Open SoundCloud
+          </a>
+        </p>
+      )}
+
+      {!loading && !feedError && playable.length === 0 && (
+        <p className="font-body-small text-one-muted text-sm">
+          No playable interviews in this SoundCloud feed.{' '}
+          <a href={SOUNDCLOUD_PROFILE_URL} target="_blank" rel="noopener noreferrer" className="text-one-gold link-hover">
+            Open SoundCloud
+          </a>
         </p>
       )}
     </SocialPlatformFrame>
