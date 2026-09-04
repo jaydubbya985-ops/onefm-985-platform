@@ -1,4 +1,4 @@
-# ads.txt — IAB Tech Lab Authorized Digital Sellers
+# ads.txt - IAB Tech Lab Authorized Digital Sellers
 # Publisher: Goulburn Valley Community Radio Inc. (ONE FM 98.5 / 3ONE)
 # Studio: 47 Parkside Drive, Shepparton VIC 3630
 #
