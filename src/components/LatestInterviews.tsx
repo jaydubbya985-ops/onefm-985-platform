@@ -90,7 +90,7 @@ export function LatestInterviews() {
         if (!cancelled) setItems(data)
       })
       .catch(() => {
-        if (!cancelled) setError('Could not load interviews — try again shortly.')
+        if (!cancelled) setError('Interviews could not be loaded from the station feed.')
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -156,7 +156,7 @@ export function LatestInterviews() {
               ))}
             {error && (
               <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
-                <p className="font-body-small text-one-muted">Interviews could not be loaded from the station feed.</p>
+                <p className="font-body-small text-one-muted">{error}</p>
               </div>
             )}
             {!loading && !error && items.length === 0 && (

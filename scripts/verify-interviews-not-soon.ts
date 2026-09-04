@@ -13,6 +13,7 @@ function assert(cond: boolean, msg: string) {
 const page = readFileSync(resolve('src/components/LatestInterviews.tsx'), 'utf8')
 
 assert(!/check back soon/i.test(page), 'Interviews must not invent leftover check back soon')
+assert(!/try again shortly/i.test(page), 'Interviews must not invent leftover try-again-soon')
 assert(
   !/check back soon or visit fm985\.com\.au/i.test(page),
   'Interview error must not invent leftover WordPress recovery',
