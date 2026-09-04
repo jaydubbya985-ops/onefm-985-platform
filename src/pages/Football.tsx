@@ -704,7 +704,7 @@ export default function Football() {
               <TrendingUp size={18} className="text-one-gold shrink-0 mt-0.5" />
               <p className="font-body-small text-one-white">
                 ONE FM reaches an estimated <strong className="text-one-gold">{weeklyListenersValue()}</strong> listeners
-                weekly across {coverageNumbers.totalTowns} communities. GVL packages sit beside the sport slots on the weekly guide ({SPORT_GUIDE_DAYS}).
+                weekly across {coverageNumbers.totalTowns} communities. Sport on the weekly guide is {SPORT_GUIDE_DAYS}. GVL match-day spots are quoted separately.
               </p>
             </div>
           </motion.div>
