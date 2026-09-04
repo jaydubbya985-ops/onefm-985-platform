@@ -125,7 +125,7 @@ function DonateHero() {
 function BankDetails() {
   const reference = encodeURIComponent('ONE FM donation')
   const mailBody = encodeURIComponent(
-    `Hi ONE FM,\n\nI would like to make a donation to support community radio in the Goulburn Valley.\n\nPlease confirm receipt once received.\n\nThank you.`
+    `Hi ONE FM,\n\nI would like to make a donation to support community radio in the Goulburn Valley.\n\nThank you.`
   )
 
   return (
@@ -172,7 +172,7 @@ function BankDetails() {
           ) : (
             <p className="text-[15px] text-white/55 leading-relaxed">
               Card payments coming soon. For now, please use direct bank transfer or email the
-              station — a real person will confirm your gift.
+              station.
             </p>
           )}
           <a
