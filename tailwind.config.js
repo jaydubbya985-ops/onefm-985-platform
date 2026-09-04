@@ -107,7 +107,8 @@ module.exports = {
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
         glass: "0 8px 32px rgba(0,0,0,0.3)",
-        glow: "0 0 24px rgba(212,168,75,0.25)",
+        // Direction A paper — leftover Heritage Gold remapped (not the old gold rgb)
+        glow: "0 0 24px rgba(242,242,242,0.25)",
       },
       keyframes: {
         "accordion-down": {
@@ -123,12 +124,12 @@ module.exports = {
           "20%,50%": { opacity: "0" },
         },
         "pulse-dot": {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(227,30,36,0.7)" },
-          "50%": { boxShadow: "0 0 0 8px rgba(227,30,36,0)" },
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(229,22,54,0.7)" },
+          "50%": { boxShadow: "0 0 0 8px rgba(229,22,54,0)" },
         },
         "signal-pulse": {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(212,168,75,0.6)" },
-          "50%": { boxShadow: "0 0 0 6px rgba(212,168,75,0)" },
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(242,242,242,0.6)" },
+          "50%": { boxShadow: "0 0 0 6px rgba(242,242,242,0)" },
         },
         "waveform": {
           "0%, 100%": { transform: "scaleY(0.5)" },
@@ -157,8 +158,8 @@ module.exports = {
           "100%": { backgroundPosition: "-200% center" },
         },
         "glow-pulse": {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(212,168,75,0.15), 0 0 40px rgba(212,168,75,0.05)" },
-          "50%": { boxShadow: "0 0 40px rgba(212,168,75,0.35), 0 0 80px rgba(212,168,75,0.12)" },
+          "0%, 100%": { boxShadow: "0 0 20px rgba(242,242,242,0.15), 0 0 40px rgba(242,242,242,0.05)" },
+          "50%": { boxShadow: "0 0 40px rgba(242,242,242,0.35), 0 0 80px rgba(242,242,242,0.12)" },
         },
         "fade-up": {
           from: { opacity: "0", transform: "translateY(16px)" },
@@ -192,8 +193,8 @@ module.exports = {
           "100%": { transform: "translateY(100%)", opacity: "0" },
         },
         "border-glow": {
-          "0%, 100%": { borderColor: "rgba(212,168,75,0.3)" },
-          "50%":      { borderColor: "rgba(212,168,75,0.7)" },
+          "0%, 100%": { borderColor: "rgba(242,242,242,0.3)" },
+          "50%":      { borderColor: "rgba(242,242,242,0.7)" },
         },
       },
       animation: {
