@@ -146,11 +146,11 @@ const platformCards = [
   },
   {
     icon: Mic,
-    title: 'Interviews & Podcasts',
+    title: 'Interview archive',
     stat: 'SoundCloud',
     statLabel: 'interview archive',
-    reach: 'soundcloud.com',
-    coverage: 'Local interviews, community voices',
+    reach: 'soundcloud.com/user-570295409',
+    coverage: 'SoundCloud after broadcast — not a separate podcast feed',
     accent: '#FF6B6B',
   },
 ]

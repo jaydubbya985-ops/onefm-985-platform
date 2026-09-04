@@ -403,6 +403,12 @@ if (
 if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
   hits.push('pages/MediaKit.tsx: media-kit DOCX must use BRAND.phone, not a placeholder')
 }
+if (mediaKit && /Interviews & Podcasts/.test(mediaKit.text)) {
+  hits.push('pages/MediaKit.tsx: SoundCloud is an interview archive, not leftover podcasts')
+}
+if (mediaKit && !mediaKit.text.includes('not a separate podcast feed')) {
+  hits.push('pages/MediaKit.tsx: interview card must say SoundCloud is not a podcast feed')
+}
 
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
