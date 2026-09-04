@@ -383,7 +383,7 @@ export const PROGRAM_PREVIEW_CARDS = [
     presenter: getBreakfastScheduleLabel(),
     schedule: 'Monday–Friday, 6AM–9AM',
     description:
-      "Rotating breakfast hosts — community interviews, local news, and music. The Valley's essential morning companion.",
+      'Rotating breakfast hosts — community interviews, local news, and music from the weekly guide.',
   },
   {
     title: 'Dancing through the decades',
