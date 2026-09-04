@@ -1,0 +1,14 @@
+/* TEAM */
+	Organisation: Goulburn Valley Community Radio Inc.
+	Station: ONE FM 98.5
+	Callsign: 3ONE
+	Location: 47 Parkside Drive, Shepparton VIC 3630
+	Contact: admin@fm985.com.au
+	Phone: +61 3 5831 3131
+
+/* SITE */
+	Last update: 2026-09-04
+	Language: en-AU
+	Standards: HTML5, CSS, TypeScript
+	From: https://fm985.com.au
+	This: https://onefmops.netlify.app
