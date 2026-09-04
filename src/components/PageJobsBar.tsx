@@ -13,19 +13,20 @@ export interface PageJob {
 }
 
 /**
- * Leftover unused station stills — archive photography, not presenter portraits.
- * These files are not used on any other main-branch surface.
+ * Job tiles use a still that matches the job — not leftover festival shots
+ * in file order. Station photography only; not presenter portraits.
  */
-const LEFTOVER_STILLS = [
-  STATION_PHOTOS.eventOutdoorCinema,
-  STATION_PHOTOS.eventFestivalTents,
-  STATION_PHOTOS.eventIlluminateWater,
-  STATION_PHOTOS.gvlSpectacularMark,
-] as const
-
 function leftoverStill(path: string, index: number): string {
   if (path === '/football') return STATION_PHOTOS.gvlSpectacularMark
-  return LEFTOVER_STILLS[index % LEFTOVER_STILLS.length]
+  if (path === '/coverage') return STATION_PHOTOS.towerTallMast
+  if (path === '/listen') return STATION_PHOTOS.commentaryBoxAction
+  if (path === '/broadcast' || path === '/programs') return STATION_PHOTOS.studioExteriorRainbow
+  const fallback = [
+    STATION_PHOTOS.eventOutdoorCinema,
+    STATION_PHOTOS.eventFestivalTents,
+    STATION_PHOTOS.eventIlluminateWater,
+  ] as const
+  return fallback[index % fallback.length]
 }
 
 export function PageJobsBar({ jobs, className = '' }: { jobs: PageJob[]; className?: string }) {
