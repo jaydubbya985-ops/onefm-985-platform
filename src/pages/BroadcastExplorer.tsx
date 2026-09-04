@@ -116,7 +116,7 @@ const BROADCAST_JOBS: PageJob[] = [
   { label: 'Listen Live', path: '/listen', description: BREAKFAST_SHOW, icon: Headphones, accent: '#E51636' },
   { label: 'Program Guide', path: '/programs', description: 'Shows & hosts', icon: Calendar, accent: '#F2F2F2' },
   { label: 'Coverage', path: '/coverage', description: 'Broadcast area', icon: Globe, accent: '#1B458F' },
-  { label: 'GVL Sport', path: '/football', description: 'Saturday coverage', icon: Sparkles, accent: '#B6FF00' },
+  { label: 'GVL Sport', path: '/football', description: formatGuideHours('GVL Match of the Day') ?? 'GVL Match of the Day', icon: Sparkles, accent: '#B6FF00' },
 ]
 
 /* ─── Deterministic gradient avatar ─── */
