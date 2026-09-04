@@ -71,7 +71,8 @@ export function CinegraphBackground({
         className={`${className} ${imageClassName ?? ''} ${reducedMotion ? '' : 'animate-ken-burns'}`}
         style={{ opacity }}
       />
-      <p className="pointer-events-none absolute top-24 left-6 z-[1] rounded-full border border-white/20 bg-black/50 px-3 py-1 font-label text-[10px] tracking-[0.14em] uppercase text-white/90">
+      {/* Football Ken-burns the still with top:-28% — sit the credit in the visible band. */}
+      <p className="pointer-events-none absolute left-6 z-[2] rounded-full border border-white/20 bg-black/50 px-3 py-1 font-label text-[10px] tracking-[0.14em] uppercase text-white/90 [top:calc(28%+6rem)]">
         Station archive still
       </p>
     </div>
