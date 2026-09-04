@@ -480,6 +480,18 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const opsPortal = files.find((f) => f.label === 'pages/OpsPortal.tsx')
+if (
+  !opsPortal ||
+  /world-class/i.test(opsPortal.text) ||
+  /Pick from 3/i.test(opsPortal.text) ||
+  !opsPortal.text.includes('Direction A · Broadcast Letter is locked')
+) {
+  hits.push(
+    'pages/OpsPortal.tsx: Invoice Design tab must name locked Broadcast Letter, not leftover world-class picks',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)

@@ -58,7 +58,7 @@ const TABS: {
   { id: 'schedule', label: 'Schedule', icon: Radio, description: 'Broadcast & ad schedule' },
   { id: 'invoices', label: 'Invoices', icon: Receipt, description: 'Create, send & track invoices' },
   { id: 'batch', label: 'Batch Send', icon: Send, description: 'Send a batch of invoices' },
-  { id: 'design', label: 'Invoice Design', icon: Palette, description: 'Pick from 3 world-class invoice designs' },
+  { id: 'design', label: 'Invoice Design', icon: Palette, description: 'Direction A · Broadcast Letter is locked' },
   { id: 'billing', label: 'Billing', icon: BarChart3, description: 'Payments, aging & reports' },
   { id: 'payments', label: 'Payments', icon: CreditCard, description: 'Donations & memberships' },
 ]
