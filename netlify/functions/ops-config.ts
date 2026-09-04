@@ -9,8 +9,12 @@
  *
  * GET /.netlify/functions/ops-config
  *   { configured: false } | { configured: true, url, anonKey }
+ *
+ * Never returns a service_role / supabase_admin JWT. Those keys start with
+ * eyJ like the public anon key — isBrowserSafeAnonKey holds them here.
  */
 import type { Handler, HandlerEvent } from '@netlify/functions'
+import { isBrowserSafeAnonKey } from '../../src/lib/opsAnonGuard'
 import { resolveOpsConfig } from '../../src/lib/opsConfigResolve'
 
 const jsonHeaders = {
@@ -38,7 +42,9 @@ export const handler: Handler = async (event: HandlerEvent) => {
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
   })
 
-  if (!resolved.configured) {
+  // resolveOpsConfig accepts any eyJ JWT. Classic service_role keys are eyJ
+  // too — never put that payload on the public ops-config response.
+  if (!resolved.configured || !isBrowserSafeAnonKey(resolved.anonKey)) {
     return {
       statusCode: 200,
       headers: jsonHeaders,
