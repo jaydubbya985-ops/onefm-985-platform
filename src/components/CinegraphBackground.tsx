@@ -71,7 +71,7 @@ export function CinegraphBackground({
         className={`${className} ${imageClassName ?? ''} ${reducedMotion ? '' : 'animate-ken-burns'}`}
         style={{ opacity }}
       />
-      <p className="pointer-events-none absolute top-[5.75rem] left-4 z-[1] max-w-[16rem] font-label text-[9px] tracking-[0.16em] uppercase text-white/55">
+      <p className="pointer-events-none absolute top-24 left-6 z-[1] rounded-full border border-white/20 bg-black/50 px-3 py-1 font-label text-[10px] tracking-[0.14em] uppercase text-white/90">
         Station archive still
       </p>
     </div>
