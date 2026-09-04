@@ -325,7 +325,7 @@ export async function generateProposalPdf(data: ProposalDocData): Promise<jsPDF>
   inkNavy()
   tl('1.  Reply to accept, or nominate changes.', M + 6, y + 12)
   tl('2.  We issue a sponsorship agreement for signature.', M + 6, y + 17.5)
-  tl('3.  First tax invoice follows the signed term (14-day payment).', M + 6, y + 23)
+  tl('3.  First tax invoice follows the signed term.', M + 6, y + 23)
   y += 32
 
   norm(8)

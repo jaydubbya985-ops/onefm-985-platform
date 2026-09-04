@@ -213,7 +213,13 @@ function drawSharedBody(p: PdfPen, invoice: PdfInvoiceData, y: number, variant: 
   return y
 }
 
-function drawBankBlock(p: PdfPen, y: number, invoiceNumber: string, variant: InvoiceDesignVariantId): number {
+function drawBankBlock(
+  p: PdfPen,
+  y: number,
+  invoiceNumber: string,
+  variant: InvoiceDesignVariantId,
+  dueDate: string,
+): number {
   const { M, CW, fillLight, fillRed, inkNab, inkNavy, inkDim, bold, norm, tl, box, kicker } = p
 
   if (variant === 'on-air') {
@@ -271,7 +277,7 @@ function drawBankBlock(p: PdfPen, y: number, invoiceNumber: string, variant: Inv
   tl(BANK_ACCOUNT_NAME, M + 118, y + 22)
   norm(8)
   inkDim()
-  tl(`Reference  ${invoiceNumber}  ·  payment due within 14 days`, M + 6, y + 30)
+  tl(`Reference  ${invoiceNumber}  ·  due ${dueDate}`, M + 6, y + 30)
   return y + 42
 }
 
@@ -300,7 +306,7 @@ export async function generateVariantInvoicePdf(
     y += 4
   }
 
-  y = drawBankBlock(p, y, invoice.number, variant)
+  y = drawBankBlock(p, y, invoice.number, variant, dueDate)
 
   // source: townData / coverageCopy — 25 towns · 100km radius (ABS 2021)
   const coverage = formatCoverageShort()
