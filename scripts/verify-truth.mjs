@@ -351,10 +351,23 @@ if (
 ) {
   hits.push('lib/proposalDocument.ts: proposal PDF/email must use weeklyListenersValue()')
 }
-if (
-  !files.find((f) => f.label === 'pages/SponsorshipKit.tsx')?.text.includes('coverageStatsStrip')
-) {
+const sponsorshipKit = files.find((f) => f.label === 'pages/SponsorshipKit.tsx')
+if (!sponsorshipKit?.text.includes('coverageStatsStrip')) {
   hits.push('pages/SponsorshipKit.tsx: stats strip must use coverageStatsStrip()')
+}
+if (sponsorshipKit && /pipeline/i.test(sponsorshipKit.text)) {
+  hits.push(
+    'pages/SponsorshipKit.tsx: leftover pipeline invents a CRM product the public form does not enter',
+  )
+}
+if (
+  !sponsorshipKit ||
+  !sponsorshipKit.text.includes('The station has your enquiry') ||
+  !sponsorshipKit.text.includes('The form stores or emails the station')
+) {
+  hits.push(
+    'pages/SponsorshipKit.tsx: enquiry copy must name the station store/email — not leftover pipeline',
+  )
 }
 
 function assertCoverageCopy(label, requiredFns) {
