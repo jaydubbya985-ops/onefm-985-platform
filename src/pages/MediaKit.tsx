@@ -445,7 +445,7 @@ export default function MediaKit() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2, ease: easeOutExpo }}
           >
-            Advertise with ONE FM · Shepparton
+            Media kit · Shepparton
           </motion.span>
 
           <motion.div
