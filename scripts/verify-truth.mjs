@@ -274,6 +274,17 @@ if (
 ) {
   hits.push('components/HorizontalGallery.tsx: captions must use formatTowns, formatBroadcastPopulation, formatRadius')
 }
+if (
+  !gallery ||
+  /wherever the story is/i.test(gallery.text) ||
+  /one broadcast team/i.test(gallery.text) ||
+  !gallery.text.includes('station photography') ||
+  !gallery.text.includes('weekly guide when they are on')
+) {
+  hits.push(
+    'components/HorizontalGallery.tsx: OB slide must name station photography — not leftover wherever-the-story-is',
+  )
+}
 
 const indexHtml = files.find((f) => f.label === 'index.html')
 if (
