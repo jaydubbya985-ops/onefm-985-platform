@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { LabelReveal } from '@/components/onair/kit'
+import { livingArchiveMailto } from '@/lib/archiveMail'
+import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const RED = '#E51636'
@@ -24,7 +26,8 @@ export function ContributePortal() {
           </h2>
           <p className="text-[17px] text-white/55 max-w-[600px] mb-8 leading-relaxed">
             The Living Archive is an active preservation project — not a finished monument. Photos,
-            program guides, clippings and memories help fill the drawers.
+            program guides, clippings and memories help fill the drawers — email can carry those
+            attachments. The Contact form is text only.
           </p>
 
           <ul className="grid sm:grid-cols-2 gap-3 mb-10 max-w-2xl">
@@ -38,14 +41,26 @@ export function ContributePortal() {
             ))}
           </ul>
 
-          <Link
-            to="/contact?subject=Living%20Archive%20contribution"
-            className="inline-block rounded-full px-8 py-4 font-bold text-[13px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
-            style={{ background: RED }}
-            data-cursor-label="CONTRIBUTE"
-          >
-            Add Your Memory →
-          </Link>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <a
+              href={livingArchiveMailto()}
+              className="inline-block rounded-full px-8 py-4 font-bold text-[13px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
+              style={{ background: RED }}
+              data-cursor-label="CONTRIBUTE"
+            >
+              Email {BRAND.email} →
+            </a>
+            <Link
+              to="/contact"
+              className="text-[13px] tracking-[0.08em] uppercase text-white/45 hover:text-white/70 transition-colors"
+            >
+              Or send a short text enquiry
+            </Link>
+          </div>
+          <p className="text-[13px] text-white/40 mt-4 max-w-[520px] leading-relaxed">
+            Opens an email draft to {BRAND.email}. Attach photos or clippings before you send.
+            Nothing reaches the station until you hit send.
+          </p>
         </div>
 
         <figure className="relative overflow-hidden rounded-xl border border-white/12 aspect-[4/3] bg-[#111]">
