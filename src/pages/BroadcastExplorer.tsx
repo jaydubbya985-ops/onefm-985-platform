@@ -600,7 +600,7 @@ function ShowSpotlight() {
               </div>
               <div className="font-label text-one-gold mb-4">{getBreakfastScheduleLabel()}</div>
               <p className="font-body text-one-white mb-6 line-clamp-3">
-                Community interviews, local news, and music across the Goulburn Valley. The essential morning companion for the Valley.
+                Community interviews, local news, and music across the Goulburn Valley — rotating weekday hosts from the weekly guide.
               </p>
               <div className="flex flex-wrap gap-2 mb-6">
                 {['NEWS', 'MUSIC', 'TALK', 'LIVE CALLS'].map((tag) => (
