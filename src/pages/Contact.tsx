@@ -607,7 +607,7 @@ function FAQSection() {
     {
       question: 'Can I volunteer at the station?',
       answer:
-        'Absolutely. We welcome volunteers for programming, events, technical support, and administration. Select "Volunteering" in the form above, or drop by the studio during office hours. Training is provided.',
+        `We welcome volunteers for programming, events, technical support, and administration. Select "Volunteering" in the form above, or email ${BRAND.email}. The station confirms training and studio times with you.`,
     },
     {
       question: 'How do I request a song?',
