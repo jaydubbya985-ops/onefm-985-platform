@@ -44,7 +44,6 @@ export default function Privacy() {
             <ul className="list-disc pl-5 space-y-2">
               <li>To respond to your enquiries and requests</li>
               <li>To acknowledge donations sent by bank transfer and issue receipts where required</li>
-              <li>To send station updates and newsletters (only where you have opted in)</li>
               <li>To keep the website working (stream, coverage map, and your consent preference)</li>
               <li>To meet our obligations as an ACMA-licensed broadcaster</li>
             </ul>
@@ -115,8 +114,8 @@ export default function Privacy() {
           <section>
             <h2 className="font-h3 text-one-white mb-3">8. Contact</h2>
             <p>
-              For privacy enquiries, requests to access or correct your data, or to unsubscribe from
-              communications, please contact us:
+              For privacy enquiries, or to access or correct your data, contact us.
+              This site does not run a public newsletter signup.
             </p>
             <div className="mt-3 glass-card p-5 inline-block">
               <p className="font-label text-[10px] tracking-[0.2em] text-one-electric/85 mb-2">PRIVACY OFFICER</p>
