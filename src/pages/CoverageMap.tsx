@@ -1159,10 +1159,20 @@ export default function CoverageMap() {
                       {selectedPin.link && (
                         <Link
                           to={selectedPin.link}
-                          data-cursor-label={selectedPin.type === 'football' ? 'GVL' : 'ADVERTISE'}
+                          data-cursor-label={
+                            selectedPin.type === 'football'
+                              ? 'GVL'
+                              : selectedPin.type === 'station'
+                                ? 'LISTEN'
+                                : 'PROPOSAL'
+                          }
                           className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-one-gold hover:text-one-white"
                         >
-                          {selectedPin.type === 'football' ? 'View GVL packages' : 'Advertise with ONE FM'}
+                          {selectedPin.type === 'football'
+                            ? 'View GVL packages'
+                            : selectedPin.type === 'station'
+                              ? 'Listen live'
+                              : 'Request a proposal'}
                           <ChevronDown size={12} className="-rotate-90" />
                         </Link>
                       )}
