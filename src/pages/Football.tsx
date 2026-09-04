@@ -230,7 +230,7 @@ const roiData = [
     medium: 'ONE FM Football',
     reach: `${weeklyListenersValue()} est./wk`,
     frequency: 'Sat matchday + drive-time',
-    notes: 'GVL live coverage — local trust, loyal audience',
+    notes: `GVL Match of the Day — ${SPORT_GUIDE_DAYS} on the weekly guide`,
   },
 ]
 
@@ -636,18 +636,18 @@ export default function Football() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          SECTION 3 — ROI COMPARISON
+          SECTION 3 — SOURCED REACH
           ═══════════════════════════════════════════ */}
-      <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="ROI COMPARISON">
+      <section className="bg-surface-deep section-bleed-top section-padding" data-cursor-label="SOURCED REACH">
         <div className="max-w-[1200px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
               <BarChart3 size={18} className="text-data-teal" />
-              <span className="font-label text-data-teal">WHY RADIO WINS</span>
+              <span className="font-label text-data-teal">GVL MATCH-DAY REACH</span>
             </div>
-            <WordReveal text="BETTER VALUE THAN THE ALTERNATIVES" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.04} />
+            <WordReveal text="SOURCED WEEKLY LISTENERS" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.04} />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              See how ONE FM football sponsorship stacks up against other local advertising options.
+              Estimated weekly listeners from townData (ABS 2021). Newspaper, print, and TV comparisons are data pending.
             </p>
           </ScrollReveal>
 
