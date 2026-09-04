@@ -1519,7 +1519,10 @@ export default function BillingEngine() {
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                              toast('Allocation workflow coming soon', 'info')
+                              toast(
+                                `Nothing was allocated for ${payment.reference}. Open Invoices to match this deposit.`,
+                                'info',
+                              )
                             }
                             className="h-7 px-2 text-one-gold hover:text-one-gold/80 hover:bg-one-gold/10 text-xs"
                           >
