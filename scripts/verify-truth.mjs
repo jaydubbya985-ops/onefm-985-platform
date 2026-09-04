@@ -275,6 +275,18 @@ if (
   hits.push('components/HorizontalGallery.tsx: captions must use formatTowns, formatBroadcastPopulation, formatRadius')
 }
 
+const weeklySchedule = files.find((f) => f.label === 'components/WeeklySchedule.tsx')
+if (
+  !weeklySchedule ||
+  /s\.name !== 'Overnight Mix'/.test(weeklySchedule.text) ||
+  !weeklySchedule.text.includes("slot.host === 'Automated'") ||
+  !weeklySchedule.text.includes('Automated overnight')
+) {
+  hits.push(
+    'components/WeeklySchedule.tsx: weekly grid must list Overnight Mix from FULL_SCHEDULE — not leftover off-air',
+  )
+}
+
 const indexHtml = files.find((f) => f.label === 'index.html')
 if (
   !indexHtml ||

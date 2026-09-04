@@ -47,9 +47,11 @@ function formatSlotTime(slot: ScheduleSlot): string {
 }
 
 function slotsForDay(day: number): ScheduleSlot[] {
-  return FULL_SCHEDULE.filter((s) => s.day === day && s.name !== 'Overnight Mix').sort(
-    (a, b) => a.startHour - b.startHour,
-  )
+  return FULL_SCHEDULE.filter((s) => s.day === day).sort((a, b) => a.startHour - b.startHour)
+}
+
+function hostLine(slot: ScheduleSlot): string {
+  return slot.host === 'Automated' ? 'Automated overnight' : `with ${slot.host}`
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -141,7 +143,7 @@ export function WeeklySchedule() {
                         </span>
                       )}
                     </div>
-                    <p className="font-body-small text-muted text-xs truncate">with {slot.host}</p>
+                    <p className="font-body-small text-muted text-xs truncate">{hostLine(slot)}</p>
                   </div>
                   <span
                     className="font-label text-[10px] px-2 py-0.5 rounded-full shrink-0 self-start sm:self-center"
