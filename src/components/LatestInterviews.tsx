@@ -156,12 +156,12 @@ export function LatestInterviews() {
               ))}
             {error && (
               <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
-                <p className="font-body-small text-one-muted">Interviews temporarily unavailable — check back soon or visit fm985.com.au</p>
+                <p className="font-body-small text-one-muted">Interviews could not be loaded from the station feed.</p>
               </div>
             )}
             {!loading && !error && items.length === 0 && (
               <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
-                <p className="font-body-small text-one-muted">No recent interviews — check back soon.</p>
+                <p className="font-body-small text-one-muted">No sourced interviews in this feed yet.</p>
               </div>
             )}
             {!loading && !error && items.map((item, i) => <InterviewCard key={item.id} item={item} index={i} />)}
