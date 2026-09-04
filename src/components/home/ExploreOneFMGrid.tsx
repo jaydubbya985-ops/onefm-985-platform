@@ -5,6 +5,7 @@ import { MediaImage } from '@/components/MediaImage'
 import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
 import { BREAKFAST_SHOW } from '@/data/programGuide'
 import { formatGuideHours } from '@/lib/guideHours'
+import { BRAND } from '@/lib/brand'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
 import { WordReveal } from '@/components/WordReveal'
 import { TiltCard } from '@/components/TiltCard'
@@ -65,7 +66,7 @@ const TILES = [
   },
   {
     title: 'Contact',
-    desc: 'Get involved',
+    desc: `Call ${BRAND.phone} or email the studio`,
     path: '/contact',
     // cultureSiloArtFaces is only 287x175px (thumbnail-res). No higher-res
     // original exists.
