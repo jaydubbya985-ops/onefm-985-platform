@@ -7,6 +7,9 @@
  *
  * Read-only: do not restart Resend domain verification from this probe. Resend
  * marks the domain pending on every restart, which is why status was stuck.
+ *
+ * A Cloudflare DNS-over-HTTPS miss is not a SiteGround miss. Failed lookups
+ * stay `dnsOk: false` and never ask Jay to paste records.
  */
 
 export const INVOICE_FROM = 'ONE FM 98.5 <accounts@fm985.com.au>'
@@ -20,6 +23,8 @@ export type StationDomainRecord = {
   expected: string
   dns: string
   matches: boolean
+  /** False when Cloudflare DNS-over-HTTPS did not finish — not a SiteGround miss. */
+  dnsOk: boolean
   priority?: number
 }
 
@@ -41,6 +46,12 @@ export type ResendProbe = {
 
 const APEX_DNS_FIX =
   'NEED JAY: SiteGround DNS for fm985.com.au — paste the expected values from email-status stationDomains[0].records (TXT resend._domainkey, MX send, TXT send). Do not change the apex Outlook MX.'
+
+const DNS_LOOKUP_FIX =
+  'NEED JAY: DNS check did not finish (Cloudflare DNS lookup failed). Do not change SiteGround or Outlook MX — retry email-status.'
+
+const RESEND_UNREACHABLE =
+  'NEED JAY: Resend API did not answer. Do not change SiteGround DNS — retry email-status.'
 
 function isStationDomain(name: string | undefined): boolean {
   if (!name) return false
@@ -66,42 +77,53 @@ function normalizeExpected(value: string, type: string): string {
   return raw.replace(/\.$/, '').toLowerCase()
 }
 
-async function lookupDns(name: string, type: 'TXT' | 'MX'): Promise<string[]> {
+type DnsLookup = { ok: boolean; answers: string[] }
+
+async function lookupDns(name: string, type: 'TXT' | 'MX'): Promise<DnsLookup> {
   const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`
   try {
     const res = await fetch(url, { headers: { Accept: 'application/dns-json' } })
-    if (!res.ok) return []
-    const data = (await res.json()) as { Answer?: Array<{ data?: string }> }
-    return (data.Answer ?? [])
-      .map((a) => (a.data ?? '').trim())
-      .filter(Boolean)
+    if (!res.ok) return { ok: false, answers: [] }
+    const data = (await res.json()) as { Answer?: Array<{ data?: string }>; Status?: number }
+    // 0 NOERROR · 3 NXDOMAIN — lookup finished. Other RCODEs are a failed check.
+    if (typeof data.Status === 'number' && data.Status !== 0 && data.Status !== 3) {
+      return { ok: false, answers: [] }
+    }
+    return {
+      ok: true,
+      answers: (data.Answer ?? []).map((a) => (a.data ?? '').trim()).filter(Boolean),
+    }
   } catch {
-    return []
+    return { ok: false, answers: [] }
   }
 }
 
 async function dnsForRecord(
   domain: string,
   rec: { name?: string; type?: string; value?: string; priority?: number },
-): Promise<{ dns: string; matches: boolean }> {
+): Promise<{ dns: string; matches: boolean; dnsOk: boolean }> {
   const host = fqdn(rec.name ?? '', domain)
   const type = rec.type === 'MX' ? 'MX' : 'TXT'
-  const answers = await lookupDns(host, type)
+  const seen = await lookupDns(host, type)
+  if (!seen.ok) {
+    return { dns: '(lookup failed)', matches: false, dnsOk: false }
+  }
+
   const expected = rec.value ?? ''
   const expectedNorm = normalizeExpected(expected, type)
 
   if (type === 'MX') {
-    const hosts = answers.map((a) => {
+    const hosts = seen.answers.map((a) => {
       const parts = a.split(/\s+/)
       return (parts[parts.length - 1] ?? '').replace(/\.$/, '').toLowerCase()
     })
     const match = hosts.includes(expectedNorm)
-    return { dns: hosts.join(' | ') || '(none)', matches: match }
+    return { dns: hosts.join(' | ') || '(none)', matches: match, dnsOk: true }
   }
 
-  const txts = answers.map(stripDnsTxt)
+  const txts = seen.answers.map(stripDnsTxt)
   const match = txts.some((t) => t === expectedNorm || t.includes(expectedNorm) || expectedNorm.includes(t))
-  return { dns: answers.join(' | ') || '(none)', matches: match }
+  return { dns: seen.answers.join(' | ') || '(none)', matches: match, dnsOk: true }
 }
 
 async function fetchDomainDetail(
@@ -130,6 +152,7 @@ async function fetchDomainDetail(
 
 function needJayFrom(apex: StationDomain | undefined): string {
   if (!apex) return APEX_DNS_FIX
+  if (apex.records.some((r) => r.dnsOk === false)) return DNS_LOOKUP_FIX
   const failed = apex.records.filter((r) => !r.matches)
   if (failed.length === 0) {
     return 'NEED JAY: DNS matches Resend — wait. Do not click Verify again (that restarts pending). Do not change Outlook MX.'
@@ -174,7 +197,7 @@ export async function probeResend(apiKey: string | undefined): Promise<ResendPro
         fromDomainVerified: false,
         domainStatus: `http_${res.status}`,
         stationDomains: [],
-        needJay: APEX_DNS_FIX,
+        needJay: RESEND_UNREACHABLE,
       }
     }
 
@@ -199,6 +222,7 @@ export async function probeResend(apiKey: string | undefined): Promise<ResendPro
           expected: (r.value ?? '').replace(/^"|"$/g, ''),
           dns: seen.dns,
           matches: seen.matches,
+          dnsOk: seen.dnsOk,
           priority: r.priority,
         })
       }
@@ -229,7 +253,7 @@ export async function probeResend(apiKey: string | undefined): Promise<ResendPro
       fromDomainVerified: false,
       domainStatus: 'unreachable',
       stationDomains: [],
-      needJay: APEX_DNS_FIX,
+      needJay: RESEND_UNREACHABLE,
     }
   }
 }
