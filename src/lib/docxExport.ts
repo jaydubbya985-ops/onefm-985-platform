@@ -417,7 +417,7 @@ export async function generateMediaKitDocx(data: MediaKitDocxData): Promise<Blob
 
           new Paragraph({
             children: [
-              new TextRun({ text: 'Volume discounts available for packages of 10+ spots. Custom packages and annual agreements receive preferential rates.', size: 20, color: mutedColor, italics: true }),
+              new TextRun({ text: 'Rates are the published card plus GST. This kit does not publish a 10+ volume-discount ladder — ask the station for a written quote.', size: 20, color: mutedColor, italics: true }),
             ],
             spacing: { before: 200, after: 200 },
           }),

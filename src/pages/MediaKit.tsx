@@ -846,7 +846,7 @@ export default function MediaKit() {
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <p className="font-body-small text-muted max-w-lg">
-              Volume discounts available for packages of 10+ spots. Custom packages and annual agreements receive preferential rates.
+              Rates are the published card plus GST. This kit does not publish a 10+ volume-discount ladder — ask the station for a written quote.
             </p>
             <div className="flex gap-3 shrink-0">
               <MagneticButton strength={10}>
