@@ -76,7 +76,7 @@ function ContactHero() {
     { text: `Email: ${BRAND.email}`, cls: 'text-one-white/40' },
     { text: BRAND.address, cls: 'text-one-gold/60' },
     { text: 'Sponsorship · Volunteering · Programming', cls: 'text-one-white/40' },
-    { text: `On air 24 hours · ${BREAKFAST_SHOW} ${BREAKFAST_TIME} weekdays`, cls: 'text-one-gold/60' },
+    { text: `Weekly guide · ${BREAKFAST_SHOW} ${BREAKFAST_TIME} weekdays`, cls: 'text-one-gold/60' },
   ]
 
   const heroRef = useRef<HTMLElement>(null)
