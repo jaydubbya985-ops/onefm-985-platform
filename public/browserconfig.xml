@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  browserconfig.xml — Microsoft pinned-site tile
+  Publisher: Goulburn Valley Community Radio Inc. (ONE FM 98.5 / 3ONE)
+  TileColor is Direction A ink. Do not invent a leftover navy or gold tile.
+-->
+<browserconfig>
+  <msapplication>
+    <tile>
+      <TileColor>#101010</TileColor>
+    </tile>
+  </msapplication>
+</browserconfig>
