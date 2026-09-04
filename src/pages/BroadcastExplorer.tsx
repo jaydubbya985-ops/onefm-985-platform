@@ -977,7 +977,7 @@ function BehindTheScenes() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Link to="/contact" data-cursor-label="CONTACT" className="btn-secondary text-xs">Tour the Studio</Link>
+              <Link to="/contact" data-cursor-label="CONTACT" className="btn-secondary text-xs">Contact the station</Link>
               <Link to="/heritage" data-cursor-label="HERITAGE" className="inline-flex items-center gap-1 font-label text-one-gold text-xs hover:text-one-gold transition-colors pt-3 link-hover">
                 View Station Heritage →
               </Link>
