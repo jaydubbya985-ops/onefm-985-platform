@@ -79,6 +79,10 @@ import {
 import { FULL_SCHEDULE } from '@/data/programGuide'
 import { opsInitial, opsStorageKey } from '@/lib/opsMode'
 
+// Direction A ink: leftover navy / slate chrome remapped to brand navy.
+// Missing-campaign fallback is station red, not leftover Heritage Gold.
+// Seeded campaign colours stay in schedule.ts until that desk EXE.
+
 // ----------------------------- shared helpers ------------------------------
 
 const DAYPART_ICONS: Record<DaypartCode, React.ReactNode> = {
@@ -173,9 +177,9 @@ const INITIAL_SPOTS = buildSeedSpots()
 
 function SpotTooltip({ spot, campaign }: { spot: AdSpot; campaign: ScheduleCampaign | undefined }) {
   return (
-    <div className="bg-[#1E293B] border border-[#2A2A2A] rounded-lg p-3 shadow-xl min-w-[220px]">
+    <div className="bg-[#101010] border border-[#2A2A2A] rounded-lg p-3 shadow-xl min-w-[220px]">
       <div className="flex items-center gap-2 mb-1.5">
-        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: campaign?.color || '#D4A853' }} />
+        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: campaign?.color || '#E51636' }} />
         <span className="text-one-white font-semibold text-sm">{spot.sponsorName}</span>
       </div>
       <p className="text-one-white/60 text-xs mb-1.5">{spot.campaignName}</p>
@@ -224,7 +228,7 @@ function WeekStats({
     weekSpots.forEach((s) => {
       if (!map[s.campaignId]) {
         const campaign = campaigns.find((c) => c.id === s.campaignId)
-        map[s.campaignId] = { count: 0, color: campaign?.color || '#D4A853', name: s.campaignName }
+        map[s.campaignId] = { count: 0, color: campaign?.color || '#E51636', name: s.campaignName }
       }
       map[s.campaignId].count++
     })
@@ -267,7 +271,7 @@ function WeekStats({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.08, duration: 0.35 }}
         >
-          <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+          <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
                 <div>
@@ -275,7 +279,7 @@ function WeekStats({
                   <p className="text-one-white text-2xl font-bold">{stat.value}</p>
                   <p className="text-one-white/40 text-xs mt-1">{stat.sub}</p>
                 </div>
-                <div className="p-2 rounded-lg bg-[#1E293B]">{stat.icon}</div>
+                <div className="p-2 rounded-lg bg-[#101010]">{stat.icon}</div>
               </div>
             </CardContent>
           </Card>
@@ -304,7 +308,7 @@ function WeekGrid({
   const todayIso = toIsoDate(new Date())
 
   return (
-    <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40 overflow-hidden">
+    <Card className="bg-[#101010]/80 border-[#2A2A2A]/40 overflow-hidden">
       <CardContent className="p-0">
         <div className="grid grid-cols-8 border-b border-[#2A2A2A]/40">
           <div className="p-3 border-r border-[#2A2A2A]/40 bg-[#101010]/60">
@@ -359,14 +363,14 @@ function WeekGrid({
                           }}
                           className="group relative mb-1 p-1.5 rounded border text-[10px] cursor-pointer transition-all hover:brightness-110"
                           style={{
-                            backgroundColor: `${campaign?.color || '#D4A853'}15`,
-                            borderColor: `${campaign?.color || '#D4A853'}40`,
+                            backgroundColor: `${campaign?.color || '#E51636'}15`,
+                            borderColor: `${campaign?.color || '#E51636'}40`,
                           }}
                         >
                           <div className="flex items-center gap-1">
                             <div
                               className="w-1.5 h-1.5 rounded-full shrink-0"
-                              style={{ backgroundColor: campaign?.color || '#D4A853' }}
+                              style={{ backgroundColor: campaign?.color || '#E51636' }}
                             />
                             <span className="text-one-white truncate font-medium">{spot.sponsorName}</span>
                           </div>
@@ -498,7 +502,7 @@ function BookSpotDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="bg-[#111d32] border-[#2A2A2A]/50 text-one-white max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="bg-[#101010] border-[#2A2A2A]/50 text-one-white max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-one-white flex items-center gap-2">
             <Plus className="w-5 h-5 text-one-gold" />
@@ -518,7 +522,7 @@ function BookSpotDialog({
               <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                 <SelectValue placeholder="Select sponsor" />
               </SelectTrigger>
-              <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+              <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                 {sponsors.map((s) => (
                   <SelectItem key={s.id} value={s.id} className="text-one-white hover:bg-[#2A2A2A]">
                     {s.name}
@@ -533,7 +537,7 @@ function BookSpotDialog({
               <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                 <SelectValue placeholder={sponsorId ? 'Select campaign' : 'Choose sponsor first'} />
               </SelectTrigger>
-              <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+              <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                 {sponsorCampaigns.map((c) => (
                   <SelectItem key={c.id} value={c.id} className="text-one-white hover:bg-[#2A2A2A]">
                     {c.name}
@@ -548,7 +552,7 @@ function BookSpotDialog({
               <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+              <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                 {DAYPARTS.map((d) => (
                   <SelectItem key={d.code} value={d.code} className="text-one-white hover:bg-[#2A2A2A]">
                     {d.code} — {d.label} ({d.timeRange})
@@ -582,7 +586,7 @@ function BookSpotDialog({
                 <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+                <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                   {[15, 30, 60].map((d) => (
                     <SelectItem key={d} value={String(d)} className="text-one-white hover:bg-[#2A2A2A]">
                       {d} seconds
@@ -645,7 +649,7 @@ function BookSpotDialog({
         <DialogFooter className="gap-2 mt-2">
           <Button
             onClick={onClose}
-            className="bg-[#1E293B] text-one-white/70 hover:bg-[#1E293B]/80 border border-[#2A2A2A]/40"
+            className="bg-[#101010] text-one-white/70 hover:bg-[#101010]/80 border border-[#2A2A2A]/40"
           >
             <X className="w-4 h-4 mr-1" />
             Cancel
@@ -697,7 +701,7 @@ function EditSpotDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="bg-[#111d32] border-[#2A2A2A]/50 text-one-white max-w-md max-h-[85vh] overflow-y-auto">
+      <DialogContent className="bg-[#101010] border-[#2A2A2A]/50 text-one-white max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-one-white flex items-center gap-2">
             <Pencil className="w-5 h-5 text-one-gold" />
@@ -739,7 +743,7 @@ function EditSpotDialog({
               <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+              <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                 <SelectItem value="scheduled" className="text-one-white hover:bg-[#2A2A2A]">
                   Scheduled
                 </SelectItem>
@@ -771,7 +775,7 @@ function EditSpotDialog({
           </Button>
           <Button
             onClick={onClose}
-            className="bg-[#1E293B] text-one-white/70 hover:bg-[#1E293B]/80 border border-[#2A2A2A]/40"
+            className="bg-[#101010] text-one-white/70 hover:bg-[#101010]/80 border border-[#2A2A2A]/40"
           >
             Cancel
           </Button>
@@ -825,7 +829,7 @@ function CampaignsList({
             className="pl-9 bg-[#101010] border-[#2A2A2A]/50 text-one-white placeholder:text-one-white/20"
           />
         </div>
-        <Badge className="bg-[#1E293B] text-one-white/60 border-[#2A2A2A]/40">{filtered.length} campaigns</Badge>
+        <Badge className="bg-[#101010] text-one-white/60 border-[#2A2A2A]/40">{filtered.length} campaigns</Badge>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filtered.map((campaign, i) => {
@@ -836,7 +840,7 @@ function CampaignsList({
           return (
             <motion.div key={campaign.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
               <Card
-                className="bg-[#111d32]/80 border-[#2A2A2A]/40 cursor-pointer hover:border-[#2A2A2A]/70 transition-all"
+                className="bg-[#101010]/80 border-[#2A2A2A]/40 cursor-pointer hover:border-[#2A2A2A]/70 transition-all"
                 onClick={() => onViewCampaign(campaign)}
               >
                 <CardContent className="p-4">
@@ -941,7 +945,7 @@ function CampaignDetail({
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button onClick={onBack} className="bg-[#1E293B] text-one-white/70 hover:bg-[#1E293B]/80 border border-[#2A2A2A]/40">
+        <Button onClick={onBack} className="bg-[#101010] text-one-white/70 hover:bg-[#101010]/80 border border-[#2A2A2A]/40">
           <ChevronLeft className="w-4 h-4 mr-1" />
           Back
         </Button>
@@ -956,7 +960,7 @@ function CampaignDetail({
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {statCards.map((stat) => (
-          <Card key={stat.label} className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+          <Card key={stat.label} className="bg-[#101010]/80 border-[#2A2A2A]/40">
             <CardContent className="p-3">
               <div className="flex items-center gap-2 mb-1">
                 {stat.icon}
@@ -968,7 +972,7 @@ function CampaignDetail({
         ))}
       </div>
 
-      <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+      <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
         <CardHeader className="pb-2">
           <CardTitle className="text-one-white text-sm">Delivery Progress</CardTitle>
         </CardHeader>
@@ -992,7 +996,7 @@ function CampaignDetail({
         </CardContent>
       </Card>
 
-      <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+      <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
         <CardHeader className="pb-2">
           <CardTitle className="text-one-white text-sm">Daypart Breakdown</CardTitle>
         </CardHeader>
@@ -1022,7 +1026,7 @@ function CampaignDetail({
         </CardContent>
       </Card>
 
-      <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+      <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
         <CardHeader className="pb-2">
           <CardTitle className="text-one-white text-sm">Recent Spots</CardTitle>
         </CardHeader>
@@ -1139,7 +1143,7 @@ function AllSpots({
           <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white w-[160px]">
             <SelectValue placeholder="All Sponsors" />
           </SelectTrigger>
-          <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+          <SelectContent className="bg-[#101010] border-[#2A2A2A]">
             <SelectItem value="all" className="text-one-white hover:bg-[#2A2A2A]">
               All Sponsors
             </SelectItem>
@@ -1154,7 +1158,7 @@ function AllSpots({
           <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white w-[160px]">
             <SelectValue placeholder="All Campaigns" />
           </SelectTrigger>
-          <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+          <SelectContent className="bg-[#101010] border-[#2A2A2A]">
             <SelectItem value="all" className="text-one-white hover:bg-[#2A2A2A]">
               All Campaigns
             </SelectItem>
@@ -1169,7 +1173,7 @@ function AllSpots({
           <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white w-[120px]">
             <SelectValue placeholder="Daypart" />
           </SelectTrigger>
-          <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+          <SelectContent className="bg-[#101010] border-[#2A2A2A]">
             <SelectItem value="all" className="text-one-white hover:bg-[#2A2A2A]">
               All Dayparts
             </SelectItem>
@@ -1184,7 +1188,7 @@ function AllSpots({
           <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white w-[120px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+          <SelectContent className="bg-[#101010] border-[#2A2A2A]">
             <SelectItem value="all" className="text-one-white hover:bg-[#2A2A2A]">
               All Status
             </SelectItem>
@@ -1244,7 +1248,7 @@ function AllSpots({
         </motion.div>
       )}
 
-      <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40 overflow-hidden">
+      <Card className="bg-[#101010]/80 border-[#2A2A2A]/40 overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -1289,7 +1293,7 @@ function AllSpots({
                           <div className="flex items-center gap-1.5">
                             <div
                               className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: campaign?.color || '#D4A853' }}
+                              style={{ backgroundColor: campaign?.color || '#E51636' }}
                             />
                             <span className="text-one-white/80 text-xs">{spot.campaignName}</span>
                           </div>
@@ -1363,7 +1367,7 @@ function DeliveryReports({ spots, campaigns }: { spots: AdSpot[]; campaigns: Sch
 
   return (
     <div className="space-y-6">
-      <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+      <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
         <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1.5">
@@ -1372,7 +1376,7 @@ function DeliveryReports({ spots, campaigns }: { spots: AdSpot[]; campaigns: Sch
                 <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                   <SelectValue placeholder="Select campaign" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+                <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                   {campaigns.map((c) => (
                     <SelectItem key={c.id} value={c.id} className="text-one-white hover:bg-[#2A2A2A]">
                       {c.name} — {c.sponsorName}
@@ -1417,7 +1421,7 @@ function DeliveryReports({ spots, campaigns }: { spots: AdSpot[]; campaigns: Sch
             </div>
             <Button
               onClick={() => window.print()}
-              className="bg-[#1E293B] text-one-white/70 hover:bg-[#1E293B]/80 border border-[#2A2A2A]/40"
+              className="bg-[#101010] text-one-white/70 hover:bg-[#101010]/80 border border-[#2A2A2A]/40"
             >
               <Printer className="w-4 h-4 mr-1" />
               Print / PDF
@@ -1435,7 +1439,7 @@ function DeliveryReports({ spots, campaigns }: { spots: AdSpot[]; campaigns: Sch
                 color: 'text-one-gold',
               },
             ].map((stat) => (
-              <Card key={stat.label} className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+              <Card key={stat.label} className="bg-[#101010]/80 border-[#2A2A2A]/40">
                 <CardContent className="p-3 text-center">
                   <p className="text-one-white/40 text-[10px] font-label uppercase">{stat.label}</p>
                   <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
@@ -1444,7 +1448,7 @@ function DeliveryReports({ spots, campaigns }: { spots: AdSpot[]; campaigns: Sch
             ))}
           </div>
 
-          <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+          <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
             <CardHeader className="pb-2">
               <CardTitle className="text-one-white text-sm flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-one-gold" />
@@ -1483,7 +1487,7 @@ function DeliveryReports({ spots, campaigns }: { spots: AdSpot[]; campaigns: Sch
             </CardContent>
           </Card>
 
-          <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+          <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
             <CardHeader className="pb-2">
               <CardTitle className="text-one-white text-sm flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-one-gold" />
@@ -1518,7 +1522,7 @@ function DeliveryReports({ spots, campaigns }: { spots: AdSpot[]; campaigns: Sch
             </CardContent>
           </Card>
 
-          <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40 overflow-hidden">
+          <Card className="bg-[#101010]/80 border-[#2A2A2A]/40 overflow-hidden">
             <CardHeader className="pb-2">
               <CardTitle className="text-one-white text-sm flex items-center gap-2">
                 <ClipboardList className="w-4 h-4 text-one-gold" />
@@ -1561,7 +1565,7 @@ function DeliveryReports({ spots, campaigns }: { spots: AdSpot[]; campaigns: Sch
             </CardContent>
           </Card>
 
-          <Card className="bg-[#111d32]/80 border-one-gold/30">
+          <Card className="bg-[#101010]/80 border-one-gold/30">
             <CardHeader className="pb-2">
               <CardTitle className="text-one-gold text-sm flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" />
@@ -1684,7 +1688,7 @@ function AutoSchedule({
 
   return (
     <div className="space-y-6">
-      <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+      <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
         <CardHeader className="pb-2">
           <CardTitle className="text-one-white text-sm flex items-center gap-2">
             <Zap className="w-4 h-4 text-one-gold" />
@@ -1709,7 +1713,7 @@ function AutoSchedule({
                 <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                   <SelectValue placeholder="Select sponsor" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+                <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                   {sponsors.map((s) => (
                     <SelectItem key={s.id} value={s.id} className="text-one-white hover:bg-[#2A2A2A]">
                       {s.name}
@@ -1724,7 +1728,7 @@ function AutoSchedule({
                 <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                   <SelectValue placeholder="Select campaign" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+                <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                   {sponsorCampaigns.map((c) => (
                     <SelectItem key={c.id} value={c.id} className="text-one-white hover:bg-[#2A2A2A]">
                       {c.name}
@@ -1741,7 +1745,7 @@ function AutoSchedule({
                 <SelectTrigger className="bg-[#101010] border-[#2A2A2A]/50 text-one-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1E293B] border-[#2A2A2A]">
+                <SelectContent className="bg-[#101010] border-[#2A2A2A]">
                   {[15, 30, 60].map((d) => (
                     <SelectItem key={d} value={String(d)} className="text-one-white hover:bg-[#2A2A2A]">
                       {d}s
@@ -1808,7 +1812,7 @@ function AutoSchedule({
 
       {preview && (
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-          <Card className="bg-[#111d32]/80 border-one-gold/40">
+          <Card className="bg-[#101010]/80 border-one-gold/40">
             <CardHeader className="pb-2">
               <CardTitle className="text-one-gold text-sm flex items-center gap-2">
                 <Eye className="w-4 h-4" />
@@ -1897,7 +1901,7 @@ function ProgrammeGuide({ spots }: { spots: AdSpot[] }) {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+      <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">
             <span className="text-one-white/40 text-[10px] font-label uppercase tracking-wider">Categories</span>
@@ -1920,7 +1924,7 @@ function ProgrammeGuide({ spots }: { spots: AdSpot[] }) {
           )
           return (
             <motion.div key={day} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-              <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40 h-full">
+              <Card className="bg-[#101010]/80 border-[#2A2A2A]/40 h-full">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-one-white text-sm flex items-center gap-2">
                     <Radio className="w-4 h-4 text-one-gold" />
@@ -1975,7 +1979,7 @@ function ProgrammeGuide({ spots }: { spots: AdSpot[] }) {
         })}
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-          <Card className="bg-[#111d32]/80 border-one-gold/30 h-full">
+          <Card className="bg-[#101010]/80 border-one-gold/30 h-full">
             <CardHeader className="pb-2">
               <CardTitle className="text-one-gold text-sm flex items-center gap-2">
                 <Music className="w-4 h-4" />
@@ -1999,7 +2003,7 @@ function ProgrammeGuide({ spots }: { spots: AdSpot[] }) {
         </motion.div>
       </div>
 
-      <Card className="bg-[#111d32]/80 border-[#2A2A2A]/40">
+      <Card className="bg-[#101010]/80 border-[#2A2A2A]/40">
         <CardHeader className="pb-2">
           <CardTitle className="text-one-white text-sm flex items-center gap-2">
             <Clock className="w-4 h-4 text-one-gold" />
@@ -2108,13 +2112,13 @@ export default function BroadcastSchedule() {
           <div className="flex items-center gap-2">
             <Button
               onClick={() => setWeekOffset((o) => o - 1)}
-              className="bg-[#1E293B] text-one-white/70 hover:bg-[#1E293B]/80 border border-[#2A2A2A]/40 h-9"
+              className="bg-[#101010] text-one-white/70 hover:bg-[#101010]/80 border border-[#2A2A2A]/40 h-9"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <Button
               onClick={() => setWeekOffset(0)}
-              className="bg-[#1E293B] text-one-white/70 hover:bg-[#1E293B]/80 border border-[#2A2A2A]/40 h-9 text-xs"
+              className="bg-[#101010] text-one-white/70 hover:bg-[#101010]/80 border border-[#2A2A2A]/40 h-9 text-xs"
             >
               Today
             </Button>
@@ -2123,7 +2127,7 @@ export default function BroadcastSchedule() {
             </div>
             <Button
               onClick={() => setWeekOffset((o) => o + 1)}
-              className="bg-[#1E293B] text-one-white/70 hover:bg-[#1E293B]/80 border border-[#2A2A2A]/40 h-9"
+              className="bg-[#101010] text-one-white/70 hover:bg-[#101010]/80 border border-[#2A2A2A]/40 h-9"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
@@ -2147,7 +2151,7 @@ export default function BroadcastSchedule() {
           setSelectedCampaign(null)
         }}
       >
-        <TabsList className="bg-[#111d32] border border-[#2A2A2A]/40 p-1 gap-1">
+        <TabsList className="bg-[#101010] border border-[#2A2A2A]/40 p-1 gap-1">
           {tabs.map((t) => (
             <TabsTrigger
               key={t.id}
