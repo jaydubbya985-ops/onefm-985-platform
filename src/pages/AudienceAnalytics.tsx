@@ -23,6 +23,7 @@ import {
   Pie,
   Cell,
 } from 'recharts'
+import { BRAND } from '@/lib/brand'
 import { Layout } from '@/components/Layout'
 import { WordReveal } from '@/components/WordReveal'
 import { TiltCard } from '@/components/TiltCard'
@@ -109,8 +110,8 @@ const platformCards = [
     stat: '98.5 FM',
     label: `${formatRadius()} radius`,
     share: `${formatTowns()} · Goulburn Murray`,
-    status: 'On air',
-    statusColor: '#B6FF00',
+    status: `Licensed ${BRAND.licensed}`,
+    statusColor: '#F0C75E',
     accent: '#D4963A',
   },
   {

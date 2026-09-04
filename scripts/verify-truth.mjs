@@ -222,6 +222,15 @@ for (const label of ['pages/Story.tsx', 'pages/AudienceAnalytics.tsx']) {
   }
 }
 
+const audience = files.find((f) => f.label === 'pages/AudienceAnalytics.tsx')
+if (
+  !audience ||
+  /status: 'On air'/.test(audience.text) ||
+  !audience.text.includes('BRAND.licensed')
+) {
+  hits.push('pages/AudienceAnalytics.tsx: FM card must name licensed year — not leftover On air')
+}
+
 const footer = files.find((f) => f.label === 'components/Footer.tsx')
 if (
   !footer ||
