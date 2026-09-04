@@ -13,7 +13,7 @@ export default function PaymentSuccess() {
     <Layout>
       <SEO
         title="Thank you"
-        description={`Thank you for supporting ${BRAND.org} — volunteer-run community radio across ${formatTowns()}. Payments are confirmed against our NAB account.`}
+        description={`Online checkout is not live. ${BRAND.org} invoices and donations for ${formatTowns()} are paid to our NAB account — this page is not a card receipt.`}
       />
       <section className="relative min-h-[70dvh] flex items-center justify-center overflow-hidden bg-[#101010]">
         <img
@@ -50,9 +50,9 @@ export default function PaymentSuccess() {
           </motion.div>
           <h1 className="font-hero text-gold-gradient mb-4">THANK YOU</h1>
           <p className="font-body text-one-white/70 mb-6 leading-relaxed">
-            Your support keeps {BRAND.fullName} live and local across {formatTowns()}.{' '}
-            {BRAND.org} is volunteer-run. Invoice and donation payments are matched
-            to our NAB account — this page does not send a receipt automatically.
+            Online checkout is not live. If you paid {BRAND.org} by NAB transfer,
+            thank you — that is what keeps {BRAND.fullName} on 98.5 across {formatTowns()}.
+            This screen is not a card receipt and does not send one.
           </p>
           <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/50 mb-8">
             {BANK_ACCOUNT_NAME} · NAB BSB {BANK_BSB} · {BANK_ACCOUNT}
@@ -72,8 +72,8 @@ export default function PaymentSuccess() {
               Support ONE FM
             </Link>
             <a
-              href={`mailto:${BRAND.accountsEmail}?subject=${encodeURIComponent('Receipt for ONE FM 98.5')}`}
-              data-cursor-label="RECEIPT"
+              href={`mailto:${BRAND.accountsEmail}?subject=${encodeURIComponent('NAB payment for ONE FM 98.5')}`}
+              data-cursor-label="EMAIL"
               className="inline-flex items-center gap-2 font-label text-[11px] text-one-white/50 hover:text-one-gold transition-colors"
             >
               <Mail size={14} />
