@@ -472,6 +472,11 @@ if (
 ) {
   hits.push('App.tsx: /broadcast must mount BroadcastExplorer, not redirect to /listen')
 }
+
+const explorer = files.find((f) => f.label === 'pages/BroadcastExplorer.tsx')
+if (!explorer || /LIVE CALLS/.test(explorer.text)) {
+  hits.push('pages/BroadcastExplorer.tsx: breakfast tags must not invent leftover LIVE CALLS')
+}
 if (
   !app ||
   !app.text.includes('SocialHub') ||

@@ -603,7 +603,7 @@ function ShowSpotlight() {
                 Community interviews, local news, and music across the Goulburn Valley. The essential morning companion for the Valley.
               </p>
               <div className="flex flex-wrap gap-2 mb-6">
-                {['NEWS', 'MUSIC', 'TALK', 'LIVE CALLS'].map((tag) => (
+                {['NEWS', 'MUSIC', 'TALK'].map((tag) => (
                   <span key={tag} className="px-3 py-1 rounded-full border border-one-border font-label text-muted text-[10px]">
                     {tag}
                   </span>
