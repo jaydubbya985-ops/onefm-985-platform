@@ -21,6 +21,7 @@ import {
   formatWeeklyListeners,
   formatWeeklyListenersPlain,
 } from '@/lib/coverageCopy'
+import { BRAND } from '@/lib/brand'
 import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 import { liveNowFromMetadata } from '@/lib/liveNow'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
@@ -143,13 +144,15 @@ function Hero() {
           <span className="block mt-1.5 text-[12px] text-white/40">{live.breakfastLabel}</span>
         ) : null}
       </p>
-      <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]">
+      <h1
+        className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]"
+        aria-label={BRAND.tagline}
+      >
         <PosterReveal
           lines={[
-            <span className="poster-hover">The Voice</span>,
-            <>of the <StrokeFill delay={1.0}>Goulburn</StrokeFill></>,
+            <span className="poster-hover">Live and</span>,
             <>
-              <StrokeFill delay={1.15}>Valley</StrokeFill>
+              <StrokeFill delay={1.0}>Local</StrokeFill>
               <span style={{ color: RED }}>.</span>
             </>,
           ]}

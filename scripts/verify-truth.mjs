@@ -125,6 +125,15 @@ if (!home || !home.text.includes("formatGuideHours('GVL Match of the Day')")) {
 if (!home || !home.text.includes('formatSeoTitle()')) {
   hits.push('pages/Home.tsx: SEO title must use formatSeoTitle() — Live and Local, not leftover Voice of')
 }
+if (
+  !home ||
+  /The Voice/.test(home.text) ||
+  !home.text.includes('BRAND.tagline') ||
+  !home.text.includes('Live and') ||
+  !home.text.includes('Local')
+) {
+  hits.push('pages/Home.tsx: hero poster must be Live and Local — not leftover The Voice of the Goulburn Valley')
+}
 
 const liveNow = files.find((f) => f.label === 'lib/liveNow.ts')
 if (

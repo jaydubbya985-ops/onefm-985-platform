@@ -39,6 +39,9 @@ if (!seo.includes('formatSeoTitle()')) {
 if (!home.includes('formatSeoTitle()')) {
   throw new Error('Home.tsx: SEO title must use formatSeoTitle()')
 }
+if (/The Voice/.test(home) || !home.includes('BRAND.tagline') || !home.includes('Live and')) {
+  throw new Error('Home.tsx: hero poster must be Live and Local — not leftover The Voice')
+}
 if (!html.includes(lockup)) {
   throw new Error(`index.html: title / og:title must be ${lockup}`)
 }
