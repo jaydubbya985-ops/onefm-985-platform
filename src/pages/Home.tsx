@@ -126,7 +126,7 @@ function Hero() {
         style={{ background: RED }}
         data-cursor="LISTEN"
       >
-        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+        <span className={`w-2 h-2 rounded-full bg-white${live.isLive ? ' animate-pulse' : ''}`} />
         {live.isLive ? 'On Air Now · Listen Live' : 'Listen Live · 98.5 FM'}
       </Link>
       <p className="mb-9 max-w-[560px]">
