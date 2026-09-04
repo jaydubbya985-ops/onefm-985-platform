@@ -13,7 +13,6 @@ import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, Editorial
 import { towns } from '@/data/townData'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
-import { InventoryLadder } from '@/components/InventoryLadder'
 import {
   MULTICULTURAL_PROGRAMS,
   MULTICULTURAL_PROGRAM_COUNT,
@@ -149,10 +148,6 @@ export default function Community() {
               Open the Map →
             </Link>
           </div>
-        </section>
-
-        <section className="px-6 md:px-12 lg:px-20 pb-10">
-          <InventoryLadder />
         </section>
 
         <StatsStrip
