@@ -1,4 +1,4 @@
-import { Facebook, Radio, Calendar, Users } from 'lucide-react'
+import { BookOpen, Facebook, Mic, Radio } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
@@ -13,21 +13,24 @@ const GVL_GAME_DAY_CAPTION = `GVL Match of the Day · ${formatGuideHours('GVL Ma
 const HIGHLIGHTS = [
   {
     image: STATION_PHOTOS.gvlNightPanorama,
-    label: 'GVL game day',
+    label: 'On the weekly guide',
     caption: GVL_GAME_DAY_CAPTION,
+    alt: 'GVL night panorama — station archive',
     icon: Radio,
   },
   {
     image: STATION_PHOTOS.communityOutdoorMarket,
-    label: 'Community events',
-    caption: 'Festivals, markets, and Valley happenings.',
-    icon: Calendar,
+    label: 'Station archive',
+    caption: 'Community book stall — station archive.',
+    alt: 'Community book stall — station archive',
+    icon: BookOpen,
   },
   {
     image: STATION_PHOTOS.studioPresenterMic,
-    label: 'Behind the mic',
-    caption: 'Studio moments and multicultural programming.',
-    icon: Users,
+    label: 'Station archive',
+    caption: 'Studio microphone — station archive.',
+    alt: 'Studio microphone — station archive',
+    icon: Mic,
   },
 ] as const
 
@@ -47,7 +50,7 @@ export function FacebookPanel({ compact, className }: FacebookPanelProps) {
       href={FACEBOOK_PAGE_URL}
       hrefLabel="Follow"
       image={STATION_PHOTOS.communityOutdoorMarket}
-      imageFallback={STATION_PHOTOS.eventFoodTrucks}
+      imageFallback={STATION_PHOTOS.studioPresenterMic}
       accent={FACEBOOK_ACCENT}
       icon={<Facebook size={18} />}
     >
@@ -56,7 +59,7 @@ export function FacebookPanel({ compact, className }: FacebookPanelProps) {
           const Icon = item.icon
           return (
             <a
-              key={item.label}
+              key={item.caption}
               href={FACEBOOK_PAGE_URL}
               target="_blank"
               rel="noopener noreferrer"
@@ -65,7 +68,7 @@ export function FacebookPanel({ compact, className }: FacebookPanelProps) {
               <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-one-border/50">
                 <MediaImage
                   src={item.image}
-                  alt=""
+                  alt={item.alt}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-one-navy/20 group-hover:bg-one-navy/10 transition-colors" />
