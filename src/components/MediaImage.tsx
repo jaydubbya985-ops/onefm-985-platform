@@ -67,28 +67,35 @@ export function MediaImage({
   if (errored) {
     return (
       <div
+        role="img"
         className={`relative overflow-hidden flex items-center justify-center ${className}`}
         style={{
-          background: 'linear-gradient(135deg, #101010 0%, #0E1E38 50%, #101010 100%)',
+          background: '#101010',
           ...style,
         }}
         aria-label={alt}
         onClick={onClick}
       >
-        {/* Subtle grid texture */}
+        {/* Paper-dot texture — Direction A ink, never leftover navy/gold */}
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage:
-              'radial-gradient(circle at 2px 2px, rgba(212,168,75,0.8) 1px, transparent 0)',
+              'radial-gradient(circle at 2px 2px, rgba(242,242,242,0.9) 1px, transparent 0)',
             backgroundSize: '24px 24px',
           }}
         />
         <div className="relative text-center select-none pointer-events-none">
-          <div className="text-one-gold/20 font-bold text-5xl leading-none tracking-tight">
+          <div
+            className="font-bold text-5xl leading-none tracking-tight"
+            style={{ color: '#E51636' }}
+          >
             98.5
           </div>
-          <div className="text-one-gold/10 font-mono text-xs tracking-widest mt-1">
+          <div
+            className="font-mono text-xs tracking-widest mt-1"
+            style={{ color: '#F2F2F2', opacity: 0.45 }}
+          >
             ONE FM
           </div>
         </div>
