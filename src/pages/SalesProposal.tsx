@@ -42,10 +42,8 @@ const GENERAL_PACKAGES = Object.entries(generalTiers).map(([id, t]) => ({
   id,
   name: t.name,
   weekly: t.weeklyPrice,
-  range: `$${t.minPrice}–$${t.maxPrice}/week`,
-  spots: t.spots,
-  social: t.socialPosts,
-  extra: 'exclusivity' in t && t.exclusivity ? 'Category exclusivity' : null,
+  range: `$${t.minPrice}–$${t.maxPrice}/week plus GST`,
+  extra: 'exclusivity' in t && t.exclusivity ? 'Category exclusivity quoted with the station' : null,
   group: 'general' as const,
 }))
 
@@ -56,8 +54,6 @@ const FOOTBALL_PACKAGES = footballTiers.map((t) => ({
   range: t.id === 1
     ? `$${t.price}/week · name-read (not a GVL commercial)`
     : `$${t.price}/week · GVL premium`,
-  spots: null as number | null,
-  social: null as number | null,
   extra: t.id === 1
     ? 'Match-day name-read and logo — not a GVL commercial spot'
     : 'GVL premium inventory — quoted above the $25 standard spot',
@@ -348,7 +344,7 @@ export default function SalesProposal() {
                     </span>
                   </div>
                   <p className="text-[15px] text-white/55 mt-2">
-                    {p.spots} announcements a week · {p.social} social posts a month. Range {p.range}.
+                    {p.range}. Spots and Facebook mentions are quoted with the station — Instagram and podcast inventory are not sold.
                     {p.extra ? ` ${p.extra}.` : ''}
                   </p>
                   <span className="inline-flex items-center gap-1.5 mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white">
