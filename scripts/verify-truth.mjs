@@ -385,6 +385,16 @@ assertCoverageCopy('pages/AudienceAnalytics.tsx', [
   'formatWeeklyListenersPlain()',
   'formatBroadcastPopulation()',
 ])
+const audiencePage = files.find((f) => f.label === 'pages/AudienceAnalytics.tsx')
+if (
+  !audiencePage ||
+  /Goulburn Murray/.test(audiencePage.text) ||
+  !audiencePage.text.includes('share: formatCoverageShort()')
+) {
+  hits.push(
+    'pages/AudienceAnalytics.tsx: FM card share must be formatCoverageShort(), not leftover Goulburn Murray',
+  )
+}
 assertCoverageCopy('pages/Heritage.tsx', ['formatTowns()', 'yearsBroadcastingValue()'])
 assertCoverageCopy('pages/Story.tsx', [
   'formatTowns()',
