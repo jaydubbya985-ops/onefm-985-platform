@@ -96,8 +96,10 @@ function EnquiryForm() {
   if (state === 'done') {
     return (
       <div className="border-2 rounded-2xl p-10 text-center" style={{ borderColor: RED }}>
-        <div className="font-poster uppercase text-[34px] text-white">You're in the pipeline<span style={{ color: RED }}>.</span></div>
-        <p className="text-white/55 mt-2 text-[15px]">We'll be in touch. — ONE FM 98.5</p>
+        <div className="font-poster uppercase text-[34px] text-white">The station has your enquiry<span style={{ color: RED }}>.</span></div>
+        <p className="text-white/55 mt-2 text-[15px]">
+          Staff will reply from {BRAND.email}.
+        </p>
       </div>
     )
   }
@@ -193,7 +195,7 @@ export default function SponsorshipKit() {
           </h2>
           <EnquiryForm />
           <p className="text-[13px] text-white/35 mt-4">
-            Goes straight to the station's pipeline — or email{' '}
+            The form stores or emails the station — or email{' '}
             <a href={`mailto:${BRAND.email}`} className="underline hover:text-white">
               {BRAND.email}
             </a>{' '}
