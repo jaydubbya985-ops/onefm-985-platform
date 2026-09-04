@@ -3,6 +3,8 @@
  * Run: npx vite-node scripts/verify-ops-anon-guard.ts
  */
 import { readFileSync } from 'node:fs'
+import type { HandlerEvent } from '@netlify/functions'
+import { handler } from '../netlify/functions/ops-config.ts'
 import { isBrowserSafeAnonKey } from '../src/lib/opsAnonGuard.ts'
 import { isValidSupabaseKey, resolveOpsConfig } from '../src/lib/opsConfigResolve.ts'
 
@@ -57,6 +59,60 @@ assert(
   'ops-config must not mention service_role without the guard',
 )
 
+const ENV_KEYS = [
+  'VITE_SUPABASE_URL',
+  'VITE_SUPABASE_ANON_KEY',
+  'SUPABASE_URL',
+  'SUPABASE_ANON_KEY',
+] as const
+
+async function invokeOpsConfig(env: Record<string, string>): Promise<{ configured?: boolean; anonKey?: string }> {
+  const prior: Record<string, string | undefined> = {}
+  for (const key of ENV_KEYS) {
+    prior[key] = process.env[key]
+    delete process.env[key]
+  }
+  Object.assign(process.env, env)
+  try {
+    const res = await handler({ httpMethod: 'GET' } as HandlerEvent, {} as never)
+    return JSON.parse(res.body ?? '{}') as { configured?: boolean; anonKey?: string }
+  } finally {
+    for (const key of ENV_KEYS) {
+      if (prior[key] === undefined) delete process.env[key]
+      else process.env[key] = prior[key]
+    }
+  }
+}
+
+const serviceBody = await invokeOpsConfig({
+  SUPABASE_URL: 'https://example.supabase.co',
+  SUPABASE_ANON_KEY: serviceJwt,
+})
+assert(serviceBody.configured === false, 'handler must stay DEMO for a service_role JWT')
+assert(!serviceBody.anonKey, 'handler must not return the service_role JWT')
+assert(!JSON.stringify(serviceBody).includes(serviceJwt), 'handler body must not contain the service_role JWT')
+
+const adminBody = await invokeOpsConfig({
+  SUPABASE_URL: 'https://example.supabase.co',
+  SUPABASE_ANON_KEY: adminJwt,
+})
+assert(adminBody.configured === false, 'handler must stay DEMO for a supabase_admin JWT')
+assert(!adminBody.anonKey, 'handler must not return the supabase_admin JWT')
+
+const anonBody = await invokeOpsConfig({
+  SUPABASE_URL: 'https://example.supabase.co',
+  SUPABASE_ANON_KEY: anonJwt,
+})
+assert(anonBody.configured === true, 'handler must stay LIVE for a real anon JWT')
+assert(anonBody.anonKey === anonJwt, 'handler may publish the anon JWT')
+
+const publishableBody = await invokeOpsConfig({
+  VITE_SUPABASE_URL: 'https://example.supabase.co',
+  VITE_SUPABASE_ANON_KEY: 'sb_publishable_testkey_not_real',
+})
+assert(publishableBody.configured === true, 'handler must stay LIVE for sb_publishable_')
+assert(publishableBody.anonKey === 'sb_publishable_testkey_not_real', 'handler may publish sb_publishable_')
+
 if (fail.length) {
   console.error('verify-ops-anon-guard FAILED')
   for (const msg of fail) console.error(' -', msg)
@@ -68,3 +124,6 @@ console.log('  anon JWT publishable')
 console.log('  service_role JWT held at the function')
 console.log('  supabase_admin JWT held at the function')
 console.log('  sb_publishable_ still LIVE')
+console.log('  GET handler DEMO for service_role (no key in body)')
+console.log('  GET handler LIVE for anon JWT')
+console.log('  GET handler LIVE for sb_publishable_')
