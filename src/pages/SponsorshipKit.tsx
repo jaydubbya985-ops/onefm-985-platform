@@ -70,6 +70,8 @@ function SponsorHero() {
 function EnquiryForm() {
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
   const [error, setError] = useState('')
+  const [stored, setStored] = useState(false)
+  const [emailed, setEmailed] = useState(false)
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -86,6 +88,8 @@ function EnquiryForm() {
       priority: 'high',
     })
     if (result.success) {
+      setStored(!!result.stored)
+      setEmailed(!!result.emailed)
       setState('done')
     } else {
       setError(result.error ?? `Something went wrong — email ${BRAND.email} instead.`)
@@ -94,10 +98,20 @@ function EnquiryForm() {
   }
 
   if (state === 'done') {
+    const title = emailed
+      ? 'Emailed to the station'
+      : stored
+        ? 'Stored for the station'
+        : 'Nothing was sent'
+    const body = emailed
+      ? `The station has this enquiry. Call ${BRAND.phone} or write ${BRAND.email} if you want to follow up.`
+      : stored
+        ? `Stored on the station desk. Nothing else was emailed. Call ${BRAND.phone} or write ${BRAND.email}.`
+        : `Call ${BRAND.phone} or email ${BRAND.email}.`
     return (
       <div className="border-2 rounded-2xl p-10 text-center" style={{ borderColor: RED }}>
-        <div className="font-poster uppercase text-[34px] text-white">You're in the pipeline<span style={{ color: RED }}>.</span></div>
-        <p className="text-white/55 mt-2 text-[15px]">We'll be in touch. — ONE FM 98.5</p>
+        <div className="font-poster uppercase text-[34px] text-white">{title}<span style={{ color: RED }}>.</span></div>
+        <p className="text-white/55 mt-2 text-[15px]">{body}</p>
       </div>
     )
   }
@@ -193,11 +207,11 @@ export default function SponsorshipKit() {
           </h2>
           <EnquiryForm />
           <p className="text-[13px] text-white/35 mt-4">
-            Goes straight to the station's pipeline — or email{' '}
+            Or email{' '}
             <a href={`mailto:${BRAND.email}`} className="underline hover:text-white">
               {BRAND.email}
             </a>{' '}
-            / call {BRAND.phone}.
+            / call {BRAND.phone}. Stored or emailed only when that path is live — nothing else is promised.
           </p>
         </section>
 
