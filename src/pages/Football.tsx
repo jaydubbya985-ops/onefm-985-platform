@@ -945,7 +945,7 @@ export default function Football() {
             </div>
             <WordReveal text="ENQUIRE NOW" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">
-              Tell us about your business and we'll recommend the perfect sponsorship tier.
+              Tell us about your business and what you want on air. GVL and live-call inventory is quoted separately.
             </p>
           </ScrollReveal>
 
