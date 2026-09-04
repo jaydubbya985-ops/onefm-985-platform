@@ -127,7 +127,7 @@ const PLATFORM_FILTERS = ['All', 'Instagram', 'Facebook', 'Stories', 'Reels']
 // Page counts were invented, so the cards link to the live page instead of
 // claiming a document length we cannot produce.
 const GUIDES = [
-  { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: 'Media kit', path: '/media-kit' },
+  { title: 'Brand tokens', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Logos and colour tokens live in the media kit. This page does not publish tone or personality guidelines.', pages: 'Media kit', path: '/media-kit' },
   { title: 'Who We Reach', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'The broadcast-area population behind every post — and what we do not measure', pages: 'Audience & reach', path: '/audience' },
   { title: 'Hashtag Sets', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'The station hashtags to use across GVL, community and program posts', pages: 'This page', path: '/social' },
   { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: 'Contact the station', path: '/contact' },
