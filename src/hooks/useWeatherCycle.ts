@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { useReducedMotion } from 'framer-motion'
 import { fetchWeather, type WeatherNow } from '@/lib/weather'
 import type { WeatherLocation } from '@/data/weatherLocations'
 
@@ -25,8 +24,25 @@ export function shouldCycleWeather(
 
 // Cycles through a list of locations, fetching (cached) real weather for
 // whichever one is currently showing. Always starts at index 0.
+function usePrefersReducedMotion(): boolean | null {
+  const [reduced, setReduced] = useState<boolean | null>(() => {
+    if (typeof window === 'undefined') return null
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  })
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const onChange = () => setReduced(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  return reduced
+}
+
 export function useWeatherCycle(locations: WeatherLocation[], intervalMs = 7000): WeatherCycleResult {
-  const reducedMotion = useReducedMotion()
+  const reducedMotion = usePrefersReducedMotion()
   const [index, setIndex] = useState(0)
   const [weather, setWeather] = useState<WeatherNow | null>(null)
   const [loading, setLoading] = useState(true)

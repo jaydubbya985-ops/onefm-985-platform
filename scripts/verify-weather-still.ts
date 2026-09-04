@@ -22,7 +22,8 @@ assert(shouldCycleWeather(0, false) === false, 'empty list never cycles')
 
 const here = dirname(fileURLToPath(import.meta.url))
 const src = readFileSync(join(here, '../src/hooks/useWeatherCycle.ts'), 'utf8')
-assert(src.includes('useReducedMotion'), 'hook must read prefers-reduced-motion')
+assert(src.includes("matchMedia('(prefers-reduced-motion: reduce)')"), 'hook must read prefers-reduced-motion')
 assert(src.includes('shouldCycleWeather(locations.length, reducedMotion)'), 'interval must go through shouldCycleWeather')
+assert(!src.includes('useReducedMotion'), 'use native matchMedia — do not depend on framer-motion for this gate')
 
 console.log('verify-weather-still OK')
