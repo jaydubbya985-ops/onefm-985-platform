@@ -480,6 +480,19 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const socialHub = files.find((f) => f.label === 'pages/SocialHub.tsx')
+if (
+  !socialHub ||
+  /The station hashtags to use/i.test(socialHub.text) ||
+  /#RadioLife/.test(socialHub.text) ||
+  /#LiveMusic/.test(socialHub.text) ||
+  !socialHub.text.includes('not an official station hashtag set')
+) {
+  hits.push(
+    'pages/SocialHub.tsx: hashtag chips must be caption examples — not leftover official sets',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
