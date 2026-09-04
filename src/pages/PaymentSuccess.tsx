@@ -25,7 +25,7 @@ export default function PaymentSuccess() {
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div aria-hidden className="grain-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/88 via-one-navy/78 to-[#101010]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/92 via-[#101010]/88 to-[#101010]" />
 
         <div className="relative z-10 max-w-lg mx-auto px-6 py-24 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-one-gold/15 border border-one-gold/40 mb-8">
