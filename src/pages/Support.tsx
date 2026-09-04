@@ -246,7 +246,7 @@ export default function Support() {
               </span>
             </Link>
             <Link
-              to="/sponsorship"
+              to="/proposal"
               className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636] block"
             >
               <h3 className="font-poster uppercase text-[22px] text-white">Sponsor</h3>
@@ -254,7 +254,7 @@ export default function Support() {
                 Partner with the Valley on air — {PARTNERSHIP_FROM_WEEKLY} across {formatTowns()}.
               </p>
               <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>
-                View packages →
+                Request a proposal →
               </span>
             </Link>
           </div>
