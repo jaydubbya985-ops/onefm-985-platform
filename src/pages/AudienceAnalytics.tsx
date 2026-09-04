@@ -108,7 +108,7 @@ const platformCards = [
     title: 'FM Radio',
     stat: '98.5 FM',
     label: `${formatRadius()} radius`,
-    share: `${formatTowns()} · Goulburn Murray`,
+    share: formatCoverageShort(),
     status: 'On air',
     statusColor: '#B6FF00',
     accent: '#D4963A',
