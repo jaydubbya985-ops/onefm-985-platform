@@ -6,6 +6,7 @@ import type {
   EnquiryStatus,
 } from '@/components/ops/data/enquiries'
 import { resolveOpsConfig } from '@/lib/opsConfigResolve'
+import { isOpsHash } from '@/lib/opsRoute'
 import { readFunctionJson } from '@/lib/readFunctionJson'
 
 export { isValidSupabaseKey } from '@/lib/opsConfigResolve'
@@ -90,23 +91,13 @@ function readWindowOpsConfig(): ReturnType<typeof resolveOpsConfig> {
  * Load LIVE credentials when Vite did not bake them:
  * 1. window.__ONEFM_OPS__ (Netlify snippet injection — works with drag-drop deploys)
  * 2. /.netlify/functions/ops-config (Netlify site env at request time)
+ *
+ * Home / Listen must paint now. Only `#/ops` waits on the function so the
+ * LIVE vs DEMO gate is correct. A later navigate to `#/ops` reloads once
+ * if the function flipped DEMO → LIVE in the background.
  */
-export async function initSupabaseFromRuntime(): Promise<void> {
-  if (isSupabaseConfigured()) {
-    credentialSource = 'vite'
-    initSupabaseAuthRefresh()
-    return
-  }
-
-  const fromWindow = readWindowOpsConfig()
-  if (fromWindow.configured) {
-    applyRuntimeConfig(fromWindow.url, fromWindow.anonKey)
-    credentialSource = 'snippet'
-    initSupabaseAuthRefresh()
-    return
-  }
-
-  if (typeof fetch === 'undefined') return
+async function fetchOpsConfigFromFunction(): Promise<boolean> {
+  if (typeof fetch === 'undefined') return false
 
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), 4000)
@@ -129,12 +120,42 @@ export async function initSupabaseFromRuntime(): Promise<void> {
       applyRuntimeConfig(resolved.url, resolved.anonKey)
       credentialSource = 'function'
       initSupabaseAuthRefresh()
+      return true
     }
   } catch {
     // Stay DEMO until Netlify env, snippet, or the function exists.
   } finally {
     clearTimeout(timer)
   }
+  return false
+}
+
+export async function initSupabaseFromRuntime(): Promise<void> {
+  if (isSupabaseConfigured()) {
+    credentialSource = 'vite'
+    initSupabaseAuthRefresh()
+    return
+  }
+
+  const fromWindow = readWindowOpsConfig()
+  if (fromWindow.configured) {
+    applyRuntimeConfig(fromWindow.url, fromWindow.anonKey)
+    credentialSource = 'snippet'
+    initSupabaseAuthRefresh()
+    return
+  }
+
+  const hash = typeof window !== 'undefined' ? window.location.hash : ''
+  if (!isOpsHash(hash)) {
+    void fetchOpsConfigFromFunction().then((live) => {
+      if (live && typeof window !== 'undefined' && isOpsHash(window.location.hash)) {
+        window.location.reload()
+      }
+    })
+    return
+  }
+
+  await fetchOpsConfigFromFunction()
 }
 
 let authRefreshInitialized = false
