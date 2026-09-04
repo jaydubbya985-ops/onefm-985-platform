@@ -878,12 +878,18 @@ function SegmentDeepDive() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <button data-cursor-label="PREVIEW" className="w-8 h-8 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform">
-                          <Play size={14} />
-                        </button>
-                        <span className="font-label text-muted text-[10px]">PREVIEW</span>
-                        <Link to="/broadcast" data-cursor-label="SCHEDULE" className="ml-4 font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">
-                          See Full Schedule →
+                        <Link
+                          to="/listen"
+                          data-cursor-label="LISTEN"
+                          className="inline-flex items-center gap-2"
+                        >
+                          <span className="w-8 h-8 rounded-full bg-one-gold flex items-center justify-center text-one-navy hover:scale-105 transition-transform">
+                            <Play size={14} />
+                          </span>
+                          <span className="font-label text-muted text-[10px]">LISTEN LIVE</span>
+                        </Link>
+                        <Link to="/programs" data-cursor-label="GUIDE" className="ml-4 font-label text-one-gold text-[10px] hover:text-one-gold transition-colors link-hover">
+                          Weekly guide →
                         </Link>
                       </div>
                     </div>
