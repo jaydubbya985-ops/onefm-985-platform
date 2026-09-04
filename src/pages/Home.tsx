@@ -167,10 +167,10 @@ function Hero() {
           Full Program Guide →
         </Link>
         <Link
-          to="/sponsorship"
+          to="/proposal"
           className="font-bold text-[13px] tracking-[0.12em] uppercase text-white/50 hover:text-white border-b-2 border-white/20 pb-1 transition-colors"
         >
-          Advertise With Us
+          Request a proposal
         </Link>
       </div>
       </div>
