@@ -1,11 +1,8 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 /**
- * Hero background — GVL regional photo + CSS mist veils + canvas signal rings.
- * Signal rings: concentric gold pulses from bottom-center (broadcast origin),
- * creating the "transmitting" generative quality.
- * Mouse parallax: photo and mist layers shift at different rates on mousemove,
- * creating a genuine 3D depth effect.
+ * Hero atmosphere — station photo + mist + canvas signal rings.
+ * Rings use 98.5 Red, not leftover old gold.
  */
 
 function SignalCanvas() {
@@ -56,7 +53,6 @@ function SignalCanvas() {
       const H = canvas.offsetHeight
       ctx.clearRect(0, 0, W, H)
 
-      // Auto-spawn from transmitter origin
       if (now - lastBorn > 1800) {
         spawnRing(W * 0.5, H * 0.82, true)
         lastBorn = now
@@ -73,7 +69,7 @@ function SignalCanvas() {
         ctx.beginPath()
         ctx.arc(ring.ox, ring.oy, r, 0, Math.PI * 2)
         ctx.strokeStyle = ring.gold
-          ? `rgba(212,175,55,${alpha.toFixed(3)})`
+          ? `rgba(229,22,54,${alpha.toFixed(3)})`
           : `rgba(${electricRgb.current},${(alpha * 0.7).toFixed(3)})`
         ctx.lineWidth = ring.gold ? 1.5 : 1
         ctx.stroke()
@@ -84,7 +80,6 @@ function SignalCanvas() {
 
     animId = requestAnimationFrame(animate)
 
-    // Click anywhere on the hero spawns a ring at click position — themed electric color
     const onClick = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
       spawnRing(e.clientX - rect.left, e.clientY - rect.top, false)
@@ -93,7 +88,6 @@ function SignalCanvas() {
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
 
-    // Canvas is pointer-events-none so we listen on the parent section instead
     const section = canvas.closest('section') ?? document.body
     section.addEventListener('click', onClick)
 
@@ -114,13 +108,19 @@ function SignalCanvas() {
   )
 }
 
-export function HeroAtmosphere() {
+export function HeroAtmosphere({ mode = 'full' }: { mode?: 'full' | 'rings' }) {
   const imgWrapRef = useRef<HTMLDivElement>(null)
   const mistWrapRef = useRef<HTMLDivElement>(null)
   const mousePos = useRef({ nx: 0, ny: 0 })
   const lerped = useRef({ nx: 0, ny: 0 })
+  const [reduced, setReduced] = useState(false)
 
   useEffect(() => {
+    setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  }, [])
+
+  useEffect(() => {
+    if (mode === 'rings') return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const onMove = (e: MouseEvent) => {
@@ -149,27 +149,29 @@ export function HeroAtmosphere() {
     rafId = requestAnimationFrame(tick)
     document.addEventListener('mousemove', onMove, { passive: true })
     return () => { cancelAnimationFrame(rafId); document.removeEventListener('mousemove', onMove) }
-  }, [])
+  }, [mode])
+
+  if (mode === 'rings') {
+    return (
+      <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none" aria-hidden>
+        <SignalCanvas />
+      </div>
+    )
+  }
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
-      {/* Layer 0: photo — slightly oversized so parallax has room to travel */}
       <div ref={imgWrapRef} className="absolute" style={{ inset: '-3%', zIndex: 0, willChange: 'transform' }}>
         <img
           src="/assets/images/event-lasers-crowd.jpg"
           alt=""
           aria-hidden
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover scale-[1.06] animate-ken-burns"
-          style={{ animationDuration: '32s' }}
+          className={`absolute inset-0 w-full h-full object-cover scale-[1.06]${reduced ? '' : ' animate-ken-burns'}`}
+          style={reduced ? undefined : { animationDuration: '32s' }}
         />
       </div>
 
-      {/* Layer 1: cinematic dark overlays — stay fixed.
-          These two gradients stack (combined opacity), so the previous
-          values (0.72/0.80 at the darkest corner) left the photo almost
-          entirely obscured. Reduced so the real photo is actually visible
-          while keeping enough contrast for the white hero text. */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -187,10 +189,8 @@ export function HeroAtmosphere() {
         }}
       />
 
-      {/* Layer 2: broadcast signal rings */}
       <SignalCanvas />
 
-      {/* Layer 3: mist veils — move in opposite direction for depth */}
       <div
         ref={mistWrapRef}
         aria-hidden
@@ -202,15 +202,14 @@ export function HeroAtmosphere() {
         <span className="hero-mist__veil hero-mist__veil--c" />
       </div>
 
-      {/* Layer 4: warm amber pulse from bottom */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           zIndex: 4,
           background:
-            'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(212,175,55,0.11) 0%, transparent 60%)',
-          animation: 'hero-mist-drift-c 14s ease-in-out infinite',
+            'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(229,22,54,0.11) 0%, transparent 60%)',
+          animation: reduced ? 'none' : 'hero-mist-drift-c 14s ease-in-out infinite',
         }}
       />
     </div>
