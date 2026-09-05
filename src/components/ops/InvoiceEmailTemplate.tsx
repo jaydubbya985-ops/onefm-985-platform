@@ -193,7 +193,7 @@ export function generateReceiptEmailHtml(data: ReceiptEmailData): string {
             <strong style="color:#1A1A1A;">$${amountFmt}</strong>
             for invoice <strong>${ref}</strong> from
             <strong>${esc(company)}</strong>.
-            Your support keeps community radio alive in the Goulburn Valley.
+            This receipt records that payment against invoice ${ref} — matched to ${BANK_ACCOUNT_NAME}, NAB BSB ${BANK_BSB}.
           </p>
         </td>
       </tr>
