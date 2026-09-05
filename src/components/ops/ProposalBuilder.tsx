@@ -52,6 +52,7 @@ import {
   proposalEmailSubject,
   type ProposalDocData,
 } from '@/lib/proposalDocument'
+import { proposalMailLabel, proposalMailTone } from '@/lib/proposalMail'
 import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort } from '@/lib/coverageCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
@@ -274,15 +275,23 @@ export default function ProposalBuilder() {
       // clipboard optional
     }
     setBusy(true)
+    let pdfDownloaded = false
     try {
       await downloadDoc(saved.doc)
+      pdfDownloaded = true
     } catch {
-      // still open mailto
-    } finally {
-      setBusy(false)
+      // mailto can still open
     }
-    window.location.assign(buildMailtoProposalUrl(saved.doc))
-    toast('PDF downloaded and email client opened. Not marked sent — confirm the email went, then Mark sent.', 'success')
+    let mailtoOpened = false
+    try {
+      window.location.assign(buildMailtoProposalUrl(saved.doc))
+      mailtoOpened = true
+    } catch {
+      mailtoOpened = false
+    }
+    const outcome = { pdfDownloaded, mailtoOpened }
+    toast(proposalMailLabel(outcome), proposalMailTone(outcome))
+    setBusy(false)
   }
 
   const handleMarkSent = () => {
@@ -648,17 +657,24 @@ export default function ProposalBuilder() {
                             return
                           }
                           setBusy(true)
+                          const doc = docFromSaved(p)
+                          let pdfDownloaded = false
                           try {
-                            const doc = docFromSaved(p)
                             await downloadDoc(doc)
-                            window.location.assign(buildMailtoProposalUrl(doc))
-                            toast('PDF downloaded and email client opened. Not marked sent.', 'success')
+                            pdfDownloaded = true
                           } catch (err) {
                             console.error(err)
-                            toast('PDF failed — try again', 'error')
-                          } finally {
-                            setBusy(false)
                           }
+                          let mailtoOpened = false
+                          try {
+                            window.location.assign(buildMailtoProposalUrl(doc))
+                            mailtoOpened = true
+                          } catch {
+                            mailtoOpened = false
+                          }
+                          const outcome = { pdfDownloaded, mailtoOpened }
+                          toast(proposalMailLabel(outcome), proposalMailTone(outcome))
+                          setBusy(false)
                         })()
                       }}
                     >
