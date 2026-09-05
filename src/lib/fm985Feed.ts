@@ -107,8 +107,30 @@ export async function fetchLatestInterviews(limit = 6): Promise<Fm985Interview[]
   return scrapedFallback(limit)
 }
 
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/
+const NAIVE_LOCAL = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/
+
+/**
+ * WordPress / scraped interview stamps are Shepparton time.
+ * Date-only ISO is a Melbourne calendar day, not UTC midnight.
+ * Naive `2026-09-03T16:00:00` is 4pm in the studio, not the viewer's 4pm.
+ */
+export function parseStationPostedAt(iso: string): Date {
+  const trimmed = iso.trim()
+  if (DATE_ONLY.test(trimmed)) {
+    return new Date(`${trimmed}T12:00:00+10:00`)
+  }
+  if (NAIVE_LOCAL.test(trimmed)) {
+    return new Date(`${trimmed}+10:00`)
+  }
+  return new Date(trimmed)
+}
+
 export function formatInterviewDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-AU', {
+  const date = parseStationPostedAt(iso)
+  if (Number.isNaN(date.getTime())) return iso
+  return date.toLocaleDateString('en-AU', {
+    timeZone: 'Australia/Melbourne',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
