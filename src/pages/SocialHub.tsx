@@ -146,7 +146,7 @@ const FEED_POSTS = [
   { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: `Under the lights at the GVL — ${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Friday night on the guide is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL Friday Night Footy'}. Catch us on 98.5 FM 🔴 #GVL #LocalFooty` },
   { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM' },
   { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: `Live and local — ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide keeping every corner of the Goulburn Valley connected. #OneFM985 #Community` },
-  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️' },
+  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: `The Murray River — station archive still. Listen on 98.5 FM or stream at fm985.com.au — ${formatTowns()}. 🎙️` },
 ]
 
 // Cadence reminders, not a fixture list. Sport labels match programGuide.ts.
