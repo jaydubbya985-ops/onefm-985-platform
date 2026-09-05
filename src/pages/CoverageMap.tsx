@@ -731,7 +731,7 @@ export default function CoverageMap() {
         </section>
 
         <SponsorCommercialCta
-          headline="Pin your brand on the map"
+          headline="Ask for a proposal"
           subline={`${STANDARD_SPOT_PLUS_GST}. ${GVL_PREMIUM_BADGE} is quoted separately — never sold as the $25 floor.`}
           className="shrink-0"
         />
