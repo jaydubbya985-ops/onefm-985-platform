@@ -11,6 +11,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
+import { SignalDivider } from '@/components/SignalDivider'
 import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
 import { formatGuideHours, onAirWallSub } from '@/lib/guideHours'
 import {
@@ -283,6 +284,7 @@ export default function Home() {
         <section className="px-6 md:px-12 lg:px-20 pb-10">
           <LatestInterviews />
         </section>
+        <SignalDivider />
         <section className="px-6 md:px-12 lg:px-20 pb-32">
           <LabelReveal className="mb-8">Explore ONE FM</LabelReveal>
           <ExploreOneFMGrid />
