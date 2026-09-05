@@ -466,6 +466,17 @@ for (const required of [
   }
 }
 
+const peopleWall = files.find((f) => f.label === 'components/archive/PeopleWall.tsx')
+if (
+  !peopleWall ||
+  !peopleWall.text.includes('scrollToId') ||
+  /href=["']#contribute["']/.test(peopleWall.text)
+) {
+  hits.push(
+    'components/archive/PeopleWall.tsx: Add your memory must scroll in-page — href="#contribute" wipes HashRouter to 404',
+  )
+}
+
 const app = files.find((f) => f.label === 'App.tsx')
 if (
   !app ||
