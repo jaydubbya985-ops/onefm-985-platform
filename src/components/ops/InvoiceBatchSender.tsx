@@ -89,7 +89,6 @@ import {
   dispatchReceiptEmail,
   type InvoiceSendPayload,
 } from '@/lib/invoiceSend'
-import { formatCoverageShort } from '@/lib/coverageCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
@@ -252,12 +251,12 @@ function StatCard({
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-[#D4A853]/70 mb-1">
+            <p className="text-xs font-medium uppercase tracking-wider text-[#E51636]/70 mb-1">
               {label}
             </p>
             <p className="text-2xl font-bold text-[#F4F1EA]">{amount}</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-[#1E293B]/60 text-[#D4A853]">{icon}</div>
+          <div className="p-2.5 rounded-lg bg-[#1E293B]/60 text-[#E51636]">{icon}</div>
         </div>
       </CardContent>
     </Card>
@@ -673,10 +672,10 @@ export default function InvoiceBatchSender() {
       open: true,
       title: testMode
         ? `TEST-send ${selected.length} invoices?`
-        : `Send ${selected.length} Invoices?`,
+        : `Send ${selected.length} invoices?`,
       description: testMode
         ? `TEST MODE: all ${selected.length} emails go to ${testInbox} only — no sponsors. Total value (for reference): ${formatCurrency(totalValue)}.`
-        : `LIVE: this will email ${selected.length} sponsors via Resend with PDF attachments. Total value: ${formatCurrency(totalValue)}.`,
+        : `This addresses ${selected.length} sponsor inboxes. Live email only sends if Resend is on — otherwise PDF + mailto. Mailto does not mark sent. Total: ${formatCurrency(totalValue)}.`,
       confirmLabel: sending
         ? 'Sending…'
         : testMode
@@ -793,18 +792,18 @@ export default function InvoiceBatchSender() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#D4A853] to-[#D4A853]/60 flex items-center justify-center">
-                    <Receipt className="w-5 h-5 text-[#101010]" />
+                  <div className="w-10 h-10 rounded-lg bg-[#E51636] flex items-center justify-center">
+                    <Receipt className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice Batch — June 2026</h1>
+                    <h1 className="text-2xl font-bold text-[#F4F1EA]">Batch Send</h1>
                     <p className="text-sm text-[#F4F1EA]/50">
                       ONE FM 98.5 • {rows.length} invoice{rows.length === 1 ? '' : 's'} • {formatCurrency(stats.total)} inc GST
                       {rows.length > 0 ? ` • Due ${formatDate(BATCH_DUE_DATE)}` : ''}
                     </p>
                     <p className="text-xs text-[#F4F1EA]/50 mt-2">
-                      Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
-                      {BANK_BSB} · {BANK_ACCOUNT_NAME}. Mailto does not mark sent.
+                      Invoice payments: NAB BSB {BANK_BSB} · {BANK_ACCOUNT_NAME}. Mailto does not mark
+                      sent.
                     </p>
                   </div>
                 </div>
@@ -820,11 +819,11 @@ export default function InvoiceBatchSender() {
                 >
                   {testMode ? (
                     <span className="flex items-center gap-1">
-                      <FlaskConical className="w-3 h-3" /> Test Mode Active
+                      <FlaskConical className="w-3 h-3" /> Test inbox
                     </span>
                   ) : (
                     <span className="flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> Live Mode
+                      <CheckCircle2 className="w-3 h-3" /> Sponsor addresses
                     </span>
                   )}
                 </Badge>
@@ -834,7 +833,7 @@ export default function InvoiceBatchSender() {
                   onClick={() => setTestMode(!testMode)}
                   className="border-[#1E293B] text-[#F4F1EA] hover:bg-[#1E293B]"
                 >
-                  {testMode ? 'Switch to Live' : 'Test Mode'}
+                  {testMode ? 'Sponsor addresses' : 'Test inbox'}
                 </Button>
               </div>
             </div>
@@ -850,7 +849,7 @@ export default function InvoiceBatchSender() {
               label="Total Value"
               amount={formatCurrency(stats.total)}
               icon={<DollarSign className="w-5 h-5" />}
-              accent="bg-gradient-to-r from-[#D4A853] to-[#D4A853]/60"
+              accent="bg-gradient-to-r from-[#E51636] to-[#E51636]/60"
             />
             <StatCard
               label="Selected"
@@ -876,14 +875,14 @@ export default function InvoiceBatchSender() {
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[#D4A853]" />
+                <TrendingUp className="w-4 h-4 text-[#E51636]" />
                 <span className="text-sm font-medium text-[#F4F1EA]/80">Batch Progress</span>
               </div>
-              <span className="text-sm font-bold text-[#D4A853]">{progress}%</span>
+              <span className="text-sm font-bold text-[#E51636]">{progress}%</span>
             </div>
             <div className="w-full h-2.5 bg-[#1E293B] rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-[#D4A853] via-amber-400 to-emerald-400 rounded-full"
+                className="h-full bg-gradient-to-r from-[#E51636] via-[#E51636]/70 to-emerald-400 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -922,7 +921,7 @@ export default function InvoiceBatchSender() {
               <Button
                 size="sm"
                 onClick={handleSendSelected}
-                className="bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold gap-1.5"
+                className="bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold gap-1.5"
               >
                 <Send className="w-3.5 h-3.5" />
                 Send Selected
@@ -984,7 +983,7 @@ export default function InvoiceBatchSender() {
                   placeholder="Search invoices..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-8 w-64 bg-[#161616] border-[#1E293B] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 focus-visible:ring-[#D4A853]"
+                  className="pl-8 w-64 bg-[#161616] border-[#1E293B] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 focus-visible:ring-[#E51636]"
                 />
               </div>
             </div>
@@ -997,7 +996,7 @@ export default function InvoiceBatchSender() {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg font-bold text-[#F4F1EA] flex items-center gap-2">
-                      <Receipt className="w-5 h-5 text-[#D4A853]" />
+                      <Receipt className="w-5 h-5 text-[#E51636]" />
                       Invoices
                       <Badge
                         variant="outline"
@@ -1017,7 +1016,7 @@ export default function InvoiceBatchSender() {
                             <Checkbox
                               checked={allSelected ? true : someSelected ? 'indeterminate' : false}
                               onCheckedChange={toggleSelectAll}
-                              className="border-[#1E293B] data-[state=checked]:bg-[#D4A853] data-[state=checked]:border-[#D4A853]"
+                              className="border-[#1E293B] data-[state=checked]:bg-[#E51636] data-[state=checked]:border-[#E51636]"
                             />
                           </TableHead>
                           <TableHead className="text-[#F4F1EA]/50 text-xs uppercase tracking-wider">
@@ -1058,7 +1057,7 @@ export default function InvoiceBatchSender() {
                               onClick={() => toggleDetail(row.id)}
                               className={`border-[#1E293B]/60 cursor-pointer transition-colors ${
                                 isActive
-                                  ? 'bg-[#D4A853]/5'
+                                  ? 'bg-[#E51636]/5'
                                   : selectedIds.has(row.id)
                                     ? 'bg-blue-900/10'
                                     : 'hover:bg-[#1E293B]/40'
@@ -1068,11 +1067,11 @@ export default function InvoiceBatchSender() {
                                 <Checkbox
                                   checked={selectedIds.has(row.id)}
                                   onCheckedChange={() => toggleSelect(row.id)}
-                                  className="border-[#1E293B] data-[state=checked]:bg-[#D4A853] data-[state=checked]:border-[#D4A853]"
+                                  className="border-[#1E293B] data-[state=checked]:bg-[#E51636] data-[state=checked]:border-[#E51636]"
                                 />
                               </TableCell>
                               <TableCell
-                                className="font-mono text-sm text-[#D4A853]"
+                                className="font-mono text-sm text-[#E51636]"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <button
@@ -1142,7 +1141,7 @@ export default function InvoiceBatchSender() {
                                 </div>
                               </TableCell>
                               <TableCell className="text-right">
-                                <span className="text-sm font-bold text-[#D4A853]">
+                                <span className="text-sm font-bold text-[#E51636]">
                                   {formatCurrency(row.total)}
                                 </span>
                               </TableCell>
@@ -1206,7 +1205,7 @@ export default function InvoiceBatchSender() {
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-7 w-7 text-[#D4A853] hover:text-[#D4A853]/80 hover:bg-[#D4A853]/10"
+                                        className="h-7 w-7 text-[#E51636] hover:text-[#E51636]/80 hover:bg-[#E51636]/10"
                                         onClick={() => handleSendRequest(row.id)}
                                       >
                                         <Send className="w-3.5 h-3.5" />
@@ -1243,7 +1242,7 @@ export default function InvoiceBatchSender() {
                                         <Button
                                           variant="ghost"
                                           size="icon"
-                                          className="h-7 w-7 text-[#D4A853] hover:text-[#D4A853]/80 hover:bg-[#D4A853]/10"
+                                          className="h-7 w-7 text-[#E51636] hover:text-[#E51636]/80 hover:bg-[#E51636]/10"
                                           onClick={() => handleSendReceipt(row)}
                                         >
                                           <Receipt className="w-3.5 h-3.5" />
@@ -1284,7 +1283,7 @@ export default function InvoiceBatchSender() {
                     Total Invoices: <strong className="text-[#F4F1EA]">{rows.length}</strong>
                   </span>
                   <span>
-                    Selected: <strong className="text-[#D4A853]">{stats.selected}</strong>{' '}
+                    Selected: <strong className="text-[#E51636]">{stats.selected}</strong>{' '}
                     ({formatCurrency(stats.selectedAmount)})
                   </span>
                 </div>
@@ -1314,7 +1313,7 @@ export default function InvoiceBatchSender() {
                       <div className="flex items-center justify-between">
                         <div>
                           <CardTitle className="text-base font-bold text-[#F4F1EA] flex items-center gap-2">
-                            <span className="font-mono text-[#D4A853]">{active.number}</span>
+                            <span className="font-mono text-[#E51636]">{active.number}</span>
                             <Badge
                               variant="outline"
                               className={`${STATUS_CONFIG[active.status].bg} ${STATUS_CONFIG[active.status].color} ${STATUS_CONFIG[active.status].border} text-xs gap-1`}
@@ -1343,21 +1342,21 @@ export default function InvoiceBatchSender() {
                         <TabsList className="bg-[#1E293B]/50 border border-[#1E293B] w-full mb-4">
                           <TabsTrigger
                             value="invoice"
-                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#101010]"
+                            className="flex-1 text-xs data-[state=active]:bg-[#E51636] data-[state=active]:text-white"
                           >
                             <Receipt className="w-3.5 h-3.5 mr-1" />
                             Invoice
                           </TabsTrigger>
                           <TabsTrigger
                             value="email"
-                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#101010]"
+                            className="flex-1 text-xs data-[state=active]:bg-[#E51636] data-[state=active]:text-white"
                           >
                             <Mail className="w-3.5 h-3.5 mr-1" />
                             Email
                           </TabsTrigger>
                           <TabsTrigger
                             value="edit"
-                            className="flex-1 text-xs data-[state=active]:bg-[#D4A853] data-[state=active]:text-[#101010]"
+                            className="flex-1 text-xs data-[state=active]:bg-[#E51636] data-[state=active]:text-white"
                           >
                             <Pencil className="w-3.5 h-3.5 mr-1" />
                             Edit
@@ -1383,7 +1382,7 @@ export default function InvoiceBatchSender() {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold gap-1.5"
+                              className="flex-1 bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold gap-1.5"
                               onClick={async () => {
                                 try {
                                   const pdf = await generateInvoicePdf({ ...active, issueDate: active.createdAt })
@@ -1399,7 +1398,7 @@ export default function InvoiceBatchSender() {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold gap-1.5"
+                              className="flex-1 bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold gap-1.5"
                               onClick={() => handleSendRequest(active.id)}
                             >
                               <Send className="w-3.5 h-3.5" />
@@ -1417,7 +1416,7 @@ export default function InvoiceBatchSender() {
                               value={testAddress}
                               onChange={(e) => setTestAddress(e.target.value)}
                               placeholder="jasonstv1@bigpond.com"
-                              className="h-7 text-xs bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853]"
+                              className="h-7 text-xs bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#E51636]"
                             />
                           </div>
                           <ScrollArea className="h-[calc(100vh-592px)] min-h-[130px]">
@@ -1463,7 +1462,7 @@ export default function InvoiceBatchSender() {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1 bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold gap-1.5"
+                              className="flex-1 bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold gap-1.5"
                               onClick={() => handleSendRequest(active.id)}
                             >
                               <Send className="w-3.5 h-3.5" />
@@ -1481,7 +1480,7 @@ export default function InvoiceBatchSender() {
                               <Input
                                 value={editSubject}
                                 onChange={(e) => setEditSubject(e.target.value)}
-                                className="bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853]"
+                                className="bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#E51636]"
                               />
                             </div>
                             <div>
@@ -1491,12 +1490,12 @@ export default function InvoiceBatchSender() {
                               <Textarea
                                 value={editBody}
                                 onChange={(e) => setEditBody(e.target.value)}
-                                className="bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#D4A853] min-h-[300px] font-mono text-sm leading-relaxed"
+                                className="bg-[#101010] border-[#1E293B] text-[#F4F1EA] focus-visible:ring-[#E51636] min-h-[300px] font-mono text-sm leading-relaxed"
                               />
                             </div>
                             <div className="bg-[#1E293B]/40 rounded-lg p-3 text-xs text-[#F4F1EA]/40 space-y-1">
                               <p className="flex items-center gap-1.5">
-                                <Sparkles className="w-3 h-3 text-[#D4A853]" />
+                                <Sparkles className="w-3 h-3 text-[#E51636]" />
                                 Changes auto-save when you click Save
                               </p>
                               <p>Amounts are locked for verification. Only email text is editable.</p>
@@ -1505,7 +1504,7 @@ export default function InvoiceBatchSender() {
                               <Button
                                 size="sm"
                                 onClick={handleSaveEmail}
-                                className="bg-[#D4A853] hover:bg-[#D4A853]/90 text-[#101010] font-semibold"
+                                className="bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold"
                               >
                                 <Save className="w-3.5 h-3.5 mr-1.5" />
                                 Save
@@ -1563,7 +1562,7 @@ export default function InvoiceBatchSender() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#5B8DB8]">Amount:</span>
-                      <span className="text-[#D4A853] font-bold">
+                      <span className="text-[#E51636] font-bold">
                         {formatCurrency(sendTarget.total)}
                       </span>
                     </div>
@@ -1582,7 +1581,7 @@ export default function InvoiceBatchSender() {
                     Cancel
                   </Button>
                   <Button
-                    className="flex-1 bg-[#D4A853] text-[#101010] hover:bg-[#F4F1EA] font-bold"
+                    className="flex-1 bg-[#E51636] text-white hover:bg-[#c4122f] font-bold"
                     onClick={() => handleConfirmSend(sendTarget)}
                   >
                     <Send className="w-4 h-4 mr-2" /> Send Invoice
@@ -1625,7 +1624,7 @@ export default function InvoiceBatchSender() {
                     className={`flex-1 font-bold ${
                       confirm.variant === 'danger'
                         ? 'bg-red-600 hover:bg-red-500 text-white'
-                        : 'bg-[#D4A853] text-[#101010] hover:bg-[#F4F1EA]'
+                        : 'bg-[#E51636] text-white hover:bg-[#c4122f]'
                     }`}
                     onClick={confirm.onConfirm}
                   >
