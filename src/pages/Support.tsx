@@ -218,7 +218,7 @@ export default function Support() {
             formatCoverageShort(),
             formatWeeklyListeners(),
             `ABN ${BRAND.abn}`,
-            'Every dollar stays local',
+            `Licensed ${BRAND.licensed} · callsign ${BRAND.callsign}`,
           ]}
           delay={0.4}
         />
