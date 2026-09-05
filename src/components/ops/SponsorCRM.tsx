@@ -79,6 +79,7 @@ import { opsInitial, opsStorageKey } from '@/lib/opsMode'
 import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort } from '@/lib/coverageCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { isSupabaseConfigured } from '@/lib/supabase'
 
 // ---------------------------------------------------------------------------
 // Module helpers (extracted from the deployed bundle)
@@ -372,7 +373,7 @@ export default function SponsorCRM() {
   const stats = useMemo(() => {
     const total = merged.length
     const active = merged.filter((s) => s.status === 'active').length
-    const pipelineValue = merged
+    const openQuoted = merged
       .filter((s) => ['proposal_sent', 'negotiating', 'contracted'].includes(s.status))
       .reduce((sum, s) => sum + s.annualValue, 0)
     const proposalsSent = merged.reduce(
@@ -383,7 +384,7 @@ export default function SponsorCRM() {
     const renewalsDue = merged.filter(
       (s) => s.endDate && daysUntil(s.endDate) <= 90 && s.status === 'active',
     ).length
-    return { total, active, pipelineValue, proposalsSent, renewalsDue }
+    return { total, active, openQuoted, proposalsSent, renewalsDue }
   }, [merged])
 
   const grouped = useMemo(() => {
@@ -929,9 +930,11 @@ export default function SponsorCRM() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">Pipeline Value</p>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider">
+                    {isSupabaseConfigured() ? 'Open quoted total' : 'DEMO open total'}
+                  </p>
                   <p className="text-2xl font-bold text-[#D4A84B] mt-1">
-                    {formatCurrency(stats.pipelineValue)}
+                    {formatCurrency(stats.openQuoted)}
                   </p>
                 </div>
                 <div className="h-10 w-10 rounded-lg bg-[#D4A84B]/10 flex items-center justify-center">
