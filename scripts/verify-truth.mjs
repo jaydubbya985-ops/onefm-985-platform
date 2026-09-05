@@ -489,6 +489,18 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const enquiryDash = files.find((f) => f.label === 'components/ops/EnquiryDashboard.tsx')
+if (
+  !enquiryDash ||
+  /Pipeline Value/.test(enquiryDash.text) ||
+  !enquiryDash.text.includes('DEMO open total') ||
+  !enquiryDash.text.includes('Open enquiry total')
+) {
+  hits.push(
+    'components/ops/EnquiryDashboard.tsx: open enquiry sum must be DEMO/LIVE labelled — not leftover Pipeline Value',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
