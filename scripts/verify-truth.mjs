@@ -444,6 +444,18 @@ if (
   hits.push('lib/presenterAssets.ts: only Di Hunter and Sally Nayler may be named portraits')
 }
 
+const leftoverSponsors = files.find((f) => f.label === 'components/ops/data/sponsors.ts')
+if (
+  !leftoverSponsors ||
+  /match-day announcements, digital signage/i.test(leftoverSponsors.text) ||
+  /player of the match awards, digital signage/i.test(leftoverSponsors.text) ||
+  !leftoverSponsors.text.includes('Digital signage is not a quoted inventory line')
+) {
+  hits.push(
+    'components/ops/data/sponsors.ts: mock contracts must name quoted inventory — not leftover digital signage',
+  )
+}
+
 const opsPayments = files.find((f) => f.label === 'components/ops/data/payments.ts')
 for (const required of [
   'DEMO DATA — payment history',

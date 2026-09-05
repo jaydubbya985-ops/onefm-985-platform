@@ -8,6 +8,7 @@
 // the deployed Kimi build at full fidelity.
 // ---------------------------------------------------------------------------
 
+import { BRAND } from '@/lib/brand'
 import { generalTiers, rateCard } from '@/data/pricing'
 
 // ---------------------------------------------------------------------------
@@ -317,7 +318,7 @@ export const MOCK_CONTRACTS: Contract[] = [
     email: 'peter@foott.com.au',
     campaignName: 'Community Partnership 2026',
     description:
-      '6-month community partnership package — match-day announcements, digital signage, Facebook mentions, website logo placement and premium on-air spots.',
+      `6-month community partnership package — match-day announcements, Facebook mentions, website logo placement and premium on-air spots. Digital signage is not a quoted inventory line — ask ${BRAND.email} if a venue board is part of a written agreement.`,
     contractValue: 30000,
     startDate: '2026-06-01',
     endDate: '2026-11-30',
@@ -387,7 +388,7 @@ export const MOCK_CONTRACTS: Contract[] = [
     email: 'manager@peppermillinn.com.au',
     campaignName: 'GVL 2026 Major Sponsorship',
     description:
-      'Major GVL football sponsorship — 4 x 30sec spots across all dayparts, player of the match awards, digital signage and Facebook mentions.',
+      `Major GVL football sponsorship — 4 x 30sec spots across all dayparts, player of the match awards and Facebook mentions. Digital signage is not a quoted inventory line — ask ${BRAND.email} if a venue board is part of a written agreement.`,
     contractValue: 18000,
     startDate: '2026-01-01',
     endDate: '2026-12-31',
