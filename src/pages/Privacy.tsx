@@ -85,9 +85,8 @@ export default function Privacy() {
           <section>
             <h2 className="font-h3 text-one-white mb-3">5. Data Retention</h2>
             <p>
-              We retain enquiry and contact records for a maximum of 3 years for operational and legal
-              purposes, after which they are securely deleted. Donation records may be retained longer
-              as required by Australian taxation law.
+              Enquiry and contact records are kept only as long as needed to reply. Donation records
+              may be kept longer as required by Australian taxation law. A fixed year count is data pending.
             </p>
           </section>
 
