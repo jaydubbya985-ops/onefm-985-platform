@@ -489,6 +489,27 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const contact = files.find((f) => f.label === 'pages/Contact.tsx')
+if (!contact) {
+  hits.push('pages/Contact.tsx: missing')
+} else {
+  if (/partnerships team|sales team/i.test(contact.text)) {
+    hits.push('Contact: do not invent a partnerships or sales desk')
+  }
+  if (/office hours/i.test(contact.text)) {
+    hits.push('Contact: do not invent walk-in office hours')
+  }
+  if (/throughout the day/i.test(contact.text)) {
+    hits.push('Contact: do not invent a community-bulletin clock')
+  }
+  if (/Studio Line Open/i.test(contact.text)) {
+    hits.push('Contact: studio line is not a live-now answering claim')
+  }
+  if (/broadcast area \(ABS 2021/.test(contact.text)) {
+    hits.push('Contact: 189,680 is townData 2026 town estimates, not ABS 2021')
+  }
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
