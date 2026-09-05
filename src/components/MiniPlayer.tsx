@@ -6,6 +6,7 @@ import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
 
 const HIDE_ON = ['/listen', '/ops']
 
@@ -34,7 +35,7 @@ export function MiniPlayer() {
   const location = useLocation()
   const [dismissed, setDismissed] = useState(false)
   const meta = usePlayerMetadata()
-  const { playing, loading, toggle } = useLiveStream()
+  const { playing, loading, error, toggle } = useLiveStream()
 
   const hidden = HIDE_ON.some((p) => location.pathname === p) || dismissed
   const live = liveNowFromMetadata(meta)
@@ -91,6 +92,11 @@ export function MiniPlayer() {
                     {live.breakfastLabel}
                   </p>
                 )}
+                {error && (
+                  <p className="font-label text-[10px] text-[#E51636] truncate" role="alert">
+                    {error}
+                  </p>
+                )}
               </div>
 
               {/* Live weather */}
@@ -98,13 +104,26 @@ export function MiniPlayer() {
                 <WeatherMini />
               </div>
 
-              {/* Now playing pill */}
-              {meta.nowPlaying && (
+              {/* Now playing — or stream error */}
+              {error ? (
+                <a
+                  href={AUDIO_PLAYER_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-cursor-label="WEB PLAYER"
+                  className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black border border-[#E51636]/60 min-w-0 max-w-[200px]"
+                >
+                  <Radio size={10} className="shrink-0" style={{ color: '#E51636' }} />
+                  <span className="font-label text-[10px] truncate" style={{ color: '#E51636' }}>
+                    fm985.com.au player
+                  </span>
+                </a>
+              ) : meta.nowPlaying ? (
                 <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black border border-[#B6FF00]/60 bloom-lime min-w-0 max-w-[200px]">
                   <Radio size={10} className="shrink-0" style={{ color: '#B6FF00' }} />
                   <span className="font-label text-[10px] truncate" style={{ color: '#B6FF00' }}>{meta.nowPlaying}</span>
                 </div>
-              )}
+              ) : null}
 
               {/* Play/Pause */}
               <button

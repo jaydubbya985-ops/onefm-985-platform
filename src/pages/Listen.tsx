@@ -1,13 +1,12 @@
 /**
- * LISTEN — rebuilt per REBUILD-SPEC.md (page 2 of 6).
- * Absorbs Programs + Broadcast Explorer. Assembled from the ON AIR kit.
- * Old 604-line page retired; real content and hooks preserved.
+ * LISTEN — the stream. Play, remaining time, honest presenter, stream errors.
+ * Weekly guide lives on /programs. Broadcast grid lives on /broadcast.
  */
 import { useState, type FormEvent } from 'react'
-import { Loader2, Pause, Play, Phone, Radio, Wifi } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { CalendarDays, Loader2, Pause, Play, Phone, Radio, Wifi } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
-import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { useLiveStream } from '@/hooks/useLiveStream'
@@ -27,7 +26,6 @@ import {
   formatWeeklyListeners,
   formatWeeklyListenersPlain,
 } from '@/lib/coverageCopy'
-import { InventoryLadder } from '@/components/InventoryLadder'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
@@ -145,7 +143,7 @@ function WaysToListen() {
   const ways = [
     { icon: Radio, title: '98.5 FM', body: `On the dial across Shepparton and ${formatTowns()} of the Goulburn Valley — ${formatCoverageShort()} from Mt Major.` },
     { icon: Wifi, title: 'Stream anywhere', body: 'The live stream follows you — this site, any browser, anywhere in the world. Press play above.' },
-    { icon: Phone, title: 'Studio line', body: 'Requests, shout-outs, community notices: (03) 5831 3131 — the studio answers when we’re live.' },
+    { icon: Phone, title: 'Studio line', body: `Requests, shout-outs, community notices: ${BRAND.phone}. Call while we are live — this page does not claim the studio is answered 24 hours.` },
   ]
   return (
     <section className="px-6 md:px-12 lg:px-20 pb-6">
@@ -158,6 +156,48 @@ function WaysToListen() {
             <p className="text-[15px] leading-relaxed text-white/55">{w.body}</p>
           </div>
         ))}
+      </div>
+    </section>
+  )
+}
+
+function GuideCta() {
+  return (
+    <section className="px-6 md:px-12 lg:px-20 pb-6" id="guide">
+      <LabelReveal className="mb-8">The weekly guide</LabelReveal>
+      <div className="grid md:grid-cols-2 gap-5">
+        <Link
+          to="/programs"
+          data-cursor-label="GUIDE"
+          className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636]"
+        >
+          <CalendarDays size={22} style={{ color: RED }} />
+          <h3 className="font-poster uppercase text-[26px] text-white mt-4 mb-2">
+            Programs<span style={{ color: RED }}>.</span>
+          </h3>
+          <p className="text-[15px] leading-relaxed text-white/55">
+            The weekly grid from fm985.com.au/guide lives on Programs — not on this stream page.
+          </p>
+          <span className="mt-4 inline-block text-[13px] font-bold tracking-[0.12em] uppercase" style={{ color: RED }}>
+            Open the guide →
+          </span>
+        </Link>
+        <Link
+          to="/broadcast"
+          data-cursor-label="GRID"
+          className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636]"
+        >
+          <Radio size={22} style={{ color: RED }} />
+          <h3 className="font-poster uppercase text-[26px] text-white mt-4 mb-2">
+            Broadcast grid<span style={{ color: RED }}>.</span>
+          </h3>
+          <p className="text-[15px] leading-relaxed text-white/55">
+            Visual schedule of the same weekly guide. Press play here; read the week there.
+          </p>
+          <span className="mt-4 inline-block text-[13px] font-bold tracking-[0.12em] uppercase" style={{ color: RED }}>
+            Open the grid →
+          </span>
+        </Link>
       </div>
     </section>
   )
@@ -253,7 +293,7 @@ export default function Listen() {
     <Layout>
       <SEO
         title="Listen Live — ONE FM 98.5"
-        description={`Stream ONE FM 98.5 live from Shepparton. ${formatCoverageShort()} (ABS 2021 via townData). Full program guide and this week's presenters.`}
+        description={`Stream ONE FM 98.5 live from Shepparton. ${formatCoverageShort()} (ABS 2021 via townData). This week's presenters. Weekly guide on Programs.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
@@ -273,24 +313,18 @@ export default function Listen() {
           photoNote={ON_AIR_WALL_PHOTO_NOTE}
           portraits={['Di Hunter', 'Sally Nayler']}
         />
-        <section className="px-6 md:px-12 lg:px-20 pb-6" id="guide">
-          <LabelReveal className="mb-8">Full Program Guide</LabelReveal>
-          <WeeklySchedule />
-        </section>
+        <GuideCta />
         <section className="px-6 md:px-12 lg:px-20 pb-6">
           <LatestInterviews />
         </section>
         <WaysToListen />
-        <section className="px-6 md:px-12 lg:px-20 pb-10">
-          <InventoryLadder />
-        </section>
         <SongRequest />
         <StatsStrip
           stats={[
             { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners' },
             { n: '98.5', t: 'FM · Callsign 3ONE', red: true },
             { n: formatTowns(), t: `Within a ${formatRadius()} radius` },
-            { n: '1989', t: 'Broadcasting ever since' },
+            { n: String(BRAND.licensed), t: 'Community licence' },
           ]}
         />
         <div className="pb-32" />
