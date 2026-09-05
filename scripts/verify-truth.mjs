@@ -488,6 +488,14 @@ if (
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
+if (
+  !app ||
+  !app.text.includes('guideDaypart') ||
+  /return 'drive'/.test(app.text) ||
+  /return 'midday'/.test(app.text)
+) {
+  hits.push('App.tsx: TimeOfDayTheme must use guideDaypart() — not leftover drive or midday hour buckets')
+}
 
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))

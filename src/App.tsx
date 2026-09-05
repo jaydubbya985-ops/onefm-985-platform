@@ -10,6 +10,7 @@ import { OpsRouteGuard } from '@/components/OpsRouteGuard'
 import { InitialPageLoader } from '@/components/PageLoader'
 import { RouteGuard } from '@/components/RouteErrorBoundary'
 import { SkeletonLoader } from '@/components/SkeletonLoader'
+import { guideDaypart } from '@/lib/guideDaypart'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -38,27 +39,11 @@ const PaymentCancel = lazy(() => import('./pages/PaymentCancel'))
 const OpsPortal = lazy(() => import('./pages/OpsPortal'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
-function getSheppartonPeriod(): string {
-  const h = parseInt(
-    new Intl.DateTimeFormat('en-AU', {
-      timeZone: 'Australia/Melbourne',
-      hour: 'numeric',
-      hour12: false,
-    }).format(new Date()),
-    10
-  )
-  if (h >= 22 || h < 5) return 'night'
-  if (h < 9) return 'breakfast'
-  if (h < 12) return 'default'
-  if (h < 15) return 'midday'
-  if (h < 18) return 'default'
-  return 'drive'
-}
-
+/** html[data-time] follows FULL_SCHEDULE (breakfast / overnight), not leftover drive 6–10pm. */
 function TimeOfDayTheme() {
   useEffect(() => {
     const apply = () => {
-      const period = getSheppartonPeriod()
+      const period = guideDaypart()
       if (period === 'default') {
         delete document.documentElement.dataset.time
       } else {
