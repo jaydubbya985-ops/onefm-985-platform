@@ -457,6 +457,29 @@ for (const required of [
   }
 }
 
+const coverageMapVisuals = files.find((f) => f.label === 'lib/coverageMapVisuals.ts')
+if (
+  coverageMapVisuals &&
+  (/your brand radiates/i.test(coverageMapVisuals.text) ||
+    /already on air/i.test(coverageMapVisuals.text) ||
+    /trusted Valley businesses/i.test(coverageMapVisuals.text) ||
+    /broadcast heartland/i.test(coverageMapVisuals.text) ||
+    /Ready to reach the Valley/i.test(coverageMapVisuals.text))
+) {
+  hits.push(
+    'lib/coverageMapVisuals.ts: leftover advertiser tour puffery — studio/sponsor/GVL captions name sourced facts',
+  )
+}
+if (
+  !coverageMapVisuals ||
+  !coverageMapVisuals.text.includes('not a live on-air roster') ||
+  !coverageMapVisuals.text.includes('clubs on the coverage map')
+) {
+  hits.push(
+    'lib/coverageMapVisuals.ts: tour must name invoice pins and coverage-map clubs, not leftover radiates / already on air',
+  )
+}
+
 const app = files.find((f) => f.label === 'App.tsx')
 if (
   !app ||
