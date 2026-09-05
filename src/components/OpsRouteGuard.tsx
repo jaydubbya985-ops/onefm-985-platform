@@ -32,12 +32,13 @@ function OpsGatePhoto() {
 export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   const useAuthGate = isSupabaseConfigured()
   const { authLoading, submitPassword, submitLogin } = useOpsAccess()
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, loading, resetPassword } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [resetNote, setResetNote] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const unlocked = useAuthGate ? isAuthenticated : sessionStorage.getItem('ops_unlocked') === 'true'
@@ -141,6 +142,11 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
               />
             </div>
             {error && <p className="text-xs text-red-400">{error}</p>}
+            {resetNote && (
+              <p className="text-xs text-one-gold" role="status">
+                {resetNote}
+              </p>
+            )}
             <button
               type="submit"
               disabled={submitting}
@@ -148,6 +154,28 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
             >
               {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
               Sign In
+            </button>
+            <button
+              type="button"
+              disabled={submitting || !email.trim()}
+              onClick={async () => {
+                setSubmitting(true)
+                setError('')
+                setResetNote('')
+                try {
+                  await resetPassword(email.trim())
+                  setResetNote(
+                    'If that email has a staff account, check for a reset link. This screen cannot confirm the mail was sent.',
+                  )
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : 'Reset request failed.')
+                } finally {
+                  setSubmitting(false)
+                }
+              }}
+              className="w-full text-xs text-one-muted hover:text-one-white transition-colors disabled:opacity-40"
+            >
+              Request a reset link
             </button>
             <p className="text-center text-xs text-one-muted">
               Staff logins are created in Supabase Authentication. This is not the DEMO password gate.
