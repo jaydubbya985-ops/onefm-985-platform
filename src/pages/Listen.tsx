@@ -3,7 +3,7 @@
  * Absorbs Programs + Broadcast Explorer. Assembled from the ON AIR kit.
  * Old 604-line page retired; real content and hooks preserved.
  */
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Loader2, Pause, Play, Phone, Radio, Wifi } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
@@ -34,12 +34,28 @@ const LIME = '#B6FF00'
 
 /** Same wall as Home — programGuide.ts BREAKFAST_ROSTER. Named portraits: Di Hunter, Sally Nayler. */
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  const tag = target.tagName.toLowerCase()
+  return tag === 'input' || tag === 'textarea' || tag === 'select' || target.isContentEditable
+}
+
 function ListenHero() {
   const { playing, loading, error, toggle } = useLiveStream()
   const meta = usePlayerMetadata()
   const live = liveNowFromMetadata(meta)
   const { program, programTime } = live
   const progressPct = Math.round(live.elapsedRatio * 100)
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.code !== 'Space' || event.repeat || isTypingTarget(event.target)) return
+      event.preventDefault()
+      void toggle()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [toggle])
 
   return (
     <section className="relative px-6 md:px-12 lg:px-20 pt-24 pb-16 min-h-[84vh] flex flex-col justify-center overflow-hidden">
@@ -121,6 +137,10 @@ function ListenHero() {
         <div className="mt-6 text-[13px] tracking-[0.14em] uppercase text-white/40">
           Up next: {meta.upNext}
         </div>
+
+        <p className="mt-2 font-mono text-[10px] text-white/35 select-none">
+          Press <kbd className="border border-white/20 rounded px-1 py-px bg-black/20">Space</kbd> to play / pause
+        </p>
 
         {error && (
           <p className="mt-5 text-[14px] text-white/70 max-w-xl" role="alert">

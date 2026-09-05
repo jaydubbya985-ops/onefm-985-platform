@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ExternalLink, Loader2, Pause, Play, Radio, Signal } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
@@ -51,6 +52,12 @@ function Ticker() {
   )
 }
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  const tag = target.tagName.toLowerCase()
+  return tag === 'input' || tag === 'textarea' || tag === 'select' || target.isContentEditable
+}
+
 export function LivePlayerWidget({ className = '-mt-12' }: { className?: string }) {
   const meta = usePlayerMetadata()
   const live = liveNowFromMetadata(meta)
@@ -58,6 +65,16 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
   const presenterVisualCard = presenterVisual(live.presenter, meta.category)
   const presenterImg = presenterVisualCard.src
   const presenterIsPortrait = presenterPhotoIsPortrait(meta.presenter)
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.code !== 'Space' || event.repeat || isTypingTarget(event.target)) return
+      event.preventDefault()
+      void toggle()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [toggle])
 
   return (
     <section className={`relative z-20 px-4 sm:px-6 ${className}`}>
