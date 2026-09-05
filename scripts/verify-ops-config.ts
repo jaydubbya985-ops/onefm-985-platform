@@ -65,6 +65,12 @@ assert(
   'service_role JWT must stay DEMO — never bake the service-role key',
 )
 assert(
+  !isValidSupabaseKey(
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUifQ.testhash',
+  ),
+  'isValidSupabaseKey must reject service_role JWTs',
+)
+assert(
   isValidSupabaseKey(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIn0.testhash',
   ),
