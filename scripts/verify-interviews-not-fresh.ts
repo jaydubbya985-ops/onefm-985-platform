@@ -4,6 +4,7 @@
  */
 import { readFileSync } from 'node:fs'
 import {
+  fetchInterviewFeed,
   interviewFeedEyebrow,
   interviewFeedIntro,
   type InterviewFeedSource,
@@ -36,4 +37,10 @@ const feed = readFileSync(new URL('../src/lib/fm985Feed.ts', import.meta.url), '
 assert(feed.includes('export async function fetchLatestInterviews'), 'SoundCloudPanel still needs the array wrapper')
 assert(feed.includes("source: 'station-archive'"), 'WP miss must label station-archive, not pretend it synced')
 
-console.log('verify-interviews-not-fresh: interview strip names WordPress or the archive, not leftover fresh.')
+const runtime = await fetchInterviewFeed(3)
+assert(runtime.source === 'station-archive', `this session has no WP proxy; got ${runtime.source}`)
+assert(runtime.items.length > 0, 'archive JSON must still list station interviews')
+assert(!/fresh/i.test(interviewFeedIntro(runtime.source)), 'archive intro must not say fresh')
+console.log(
+  `verify-interviews-not-fresh: source=${runtime.source} first=${runtime.items[0]?.title}`,
+)
