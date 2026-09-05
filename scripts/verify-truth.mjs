@@ -489,6 +489,16 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const listenLinks = files.find((f) => f.label === 'lib/listenLinks.ts')
+if (
+  !listenLinks ||
+  listenLinks.text.includes('AUDIO_PLAYER_URL') ||
+  listenLinks.text.includes('fm985.com.au/audio-player') ||
+  !listenLinks.text.includes('/#/listen')
+) {
+  hits.push('lib/listenLinks.ts: web/crp must open /#/listen — not leftover WordPress audio-player')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
