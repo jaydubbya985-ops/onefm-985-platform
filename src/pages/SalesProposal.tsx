@@ -434,7 +434,7 @@ export default function SalesProposal() {
           </h2>
           <EnquiryForm packageId={packageId} onPackageChange={setPackageId} />
           <p className="text-[13px] text-white/35 mt-4">
-            Goes to the station pipeline — or email{' '}
+            The form stores or emails the station — or email{' '}
             <a href={`mailto:${BRAND.email}`} className="underline hover:text-white">
               {BRAND.email}
             </a>{' '}
