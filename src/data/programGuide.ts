@@ -234,6 +234,13 @@ function withClock(
   }
 }
 
+/** When two listed shows overlap, keep the one that started most recently (guide order if tied). */
+function pickCurrentSlot(candidates: ScheduleSlot[]): ScheduleSlot {
+  const presented = candidates.filter((s) => s.host !== 'Automated')
+  const pool = presented.length > 0 ? presented : candidates
+  return [...pool].sort((a, b) => b.startHour - a.startHour)[0]
+}
+
 /** Get current on-air show from full schedule */
 export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
   const { day, hour, minute } = getMelbourneClock(now)
@@ -246,8 +253,7 @@ export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
   })
 
   if (candidates.length > 0) {
-    // Prefer non-automated
-    const live = candidates.find(s => s.host !== 'Automated') ?? candidates[0]
+    const live = pickCurrentSlot(candidates)
     // Find next show
     const sorted = FULL_SCHEDULE
       .filter(s => s.day === day && s.startHour > hour)

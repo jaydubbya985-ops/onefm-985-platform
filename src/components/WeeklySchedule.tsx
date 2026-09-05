@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Clock } from 'lucide-react'
-import { FULL_SCHEDULE, type ScheduleSlot } from '@/data/programGuide'
+import { FULL_SCHEDULE, getCurrentLiveShow, type ScheduleSlot } from '@/data/programGuide'
 
 const DAY_TABS = [
   { index: 1, label: 'Mon' },
@@ -62,13 +62,17 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 export function WeeklySchedule() {
-  const { day: today, hour: currentHour } = melbourneDayAndHour()
+  const { day: today } = melbourneDayAndHour()
+  const liveNow = getCurrentLiveShow()
   const defaultDay = DAY_TABS.find((d) => d.index === today)?.index ?? 1
   const [activeDay, setActiveDay] = useState(defaultDay)
   const slots = slotsForDay(activeDay)
 
   const isLiveSlot = (slot: ScheduleSlot) =>
-    activeDay === today && slot.startHour <= currentHour && currentHour < slot.endHour
+    activeDay === today &&
+    liveNow.host !== 'Automated' &&
+    slot.name === liveNow.name &&
+    slot.startHour === liveNow.startHour
 
   return (
     <div>
