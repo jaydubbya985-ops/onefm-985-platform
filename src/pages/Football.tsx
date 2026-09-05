@@ -24,6 +24,11 @@ import {
   weeklyListenersValue,
 } from '@/lib/coverageCopy'
 import { GVL_PREMIUM_INTRO, GVL_PREMIUM_SEO, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import {
+  PLAYHQ_SCORES_BODY,
+  PLAYHQ_SCORES_HEADLINE,
+  PLAYHQ_SCORES_SOURCE,
+} from '@/lib/playhqCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
@@ -527,6 +532,31 @@ export default function Football() {
           <p className="mt-6 font-body-small text-muted">
             <Link to="/programs" className="text-one-gold hover:underline" data-cursor-label="GUIDE">
               Full program guide
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      <section
+        className="bg-one-navy border-b border-one-gold/15 py-10 px-4 sm:px-6"
+        data-cursor-label="SCORES PENDING"
+        aria-labelledby="gvl-scores-pending"
+      >
+        <div className="max-w-[1200px] mx-auto glass-card p-6 sm:p-8 border border-one-gold/15">
+          <span className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-2">
+            {PLAYHQ_SCORES_SOURCE}
+          </span>
+          <h2 id="gvl-scores-pending" className="font-h3 text-one-white mb-2">
+            {PLAYHQ_SCORES_HEADLINE}
+          </h2>
+          <p className="font-body-small text-muted max-w-[640px]">
+            {PLAYHQ_SCORES_BODY}{' '}
+            <Link to="/listen" className="text-one-gold hover:underline" data-cursor-label="LISTEN">
+              Listen live
+            </Link>
+            {' · '}
+            <Link to="/programs" className="text-one-gold hover:underline" data-cursor-label="GUIDE">
+              Weekly guide
             </Link>
           </p>
         </div>

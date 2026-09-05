@@ -61,6 +61,9 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /MOCK_GVL_GAMES/, why: 'do not ship invented PlayHQ fixtures as live scores' },
+  { re: /Real Round 4 ladder from scraped/, why: 'GVL ladder is data pending — do not claim scraped Facebook scores' },
+  { re: /gvl-2026-r4-/, why: 'do not ship invented Round 4 PlayHQ game ids' },
 ]
 
 function walk(dir) {
@@ -311,6 +314,13 @@ if (
     'pages/Football.tsx: GVL Match of the Day hours must come from GVL_MATCH_SLOT / FULL_SCHEDULE, not “Saturday afternoon”',
   )
 }
+if (
+  !football ||
+  !football.text.includes('PLAYHQ_SCORES_HEADLINE') ||
+  !football.text.includes('PLAYHQ_SCORES_BODY')
+) {
+  hits.push('pages/Football.tsx: GVL page must show PlayHQ scores as data pending')
+}
 
 const sponsorPages = [
   'pages/SponsorshipKit.tsx',
@@ -433,6 +443,29 @@ if (
   )
 }
 
+const playhqCopy = files.find((f) => f.label === 'lib/playhqCopy.ts')
+if (
+  !playhqCopy ||
+  !playhqCopy.text.includes('PLAYHQ_SCORES_HEADLINE') ||
+  !playhqCopy.text.includes('data pending')
+) {
+  hits.push('lib/playhqCopy.ts: must name scores/ladder as data pending')
+}
+const playhqLib = files.find((f) => f.label === 'lib/playhq.ts')
+if (!playhqLib || /MOCK_GVL_GAMES/.test(playhqLib.text) || /scoreTotal:\s*97/.test(playhqLib.text)) {
+  hits.push('lib/playhq.ts: must not ship invented PlayHQ scores or MOCK_GVL_GAMES')
+}
+if (!playhqLib || !playhqLib.text.includes('export const GVL_LADDER: GVLLadderTeam[] = []')) {
+  hits.push('lib/playhq.ts: GVL_LADDER must stay empty until a live feed exists')
+}
+const playhqHook = files.find((f) => f.label === 'hooks/usePlayHQ.ts')
+if (
+  !playhqHook ||
+  !playhqHook.text.includes('PLAYHQ_HOOK_ERROR') ||
+  /MOCK_GVL_GAMES/.test(playhqHook.text)
+) {
+  hits.push('hooks/usePlayHQ.ts: must return PLAYHQ_HOOK_ERROR, not invented games')
+}
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
   hits.push('lib/coverageCopy.ts: coverage strings must read stationStats')
