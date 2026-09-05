@@ -7,7 +7,6 @@ import type { Enquiry } from '@/components/ops/data/enquiries'
 import { buildEnquiryEmailHtml, type EnquiryEmailData } from '@/lib/email'
 import { BRAND } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
-import { formatBreakfastChromeLabel } from '@/data/programGuide'
 
 export interface MailchimpLeadRow {
   email: string
@@ -81,19 +80,9 @@ export function downloadMailchimpLeadsCsv(enquiries: Enquiry[], filename = 'one-
   URL.revokeObjectURL(url)
 }
 
-/** Static sample row format for manual ops export. */
+/** Headers only — never invent a sample sponsor person. */
 export function sampleMailchimpCsv(): string {
-  const sample: MailchimpLeadRow = {
-    email: 'sponsor@example.com.au',
-    firstName: 'Alex',
-    lastName: 'Taylor',
-    company: 'Example Pty Ltd',
-    phone: '0400 000 000',
-    source: 'sponsorship',
-    tags: 'enquiry,sponsorship,new',
-    notes: `Weekday breakfast (${formatBreakfastChromeLabel()}) — not a Saturday breakfast slot`,
-  }
-  return [CSV_HEADERS.join(','), CSV_HEADERS.map((h) => escapeCsv(sample[h])).join(',')].join('\n')
+  return CSV_HEADERS.join(',')
 }
 
 /** Generate Mailchimp-ready HTML from existing enquiry email template. */
