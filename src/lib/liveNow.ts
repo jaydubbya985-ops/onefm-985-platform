@@ -27,6 +27,11 @@ export interface LiveNowDisplay {
   elapsedRatio: number
 }
 
+/** Pulse the mini-player live dot only when schedule/stream metadata is live. */
+export function miniPlayerLiveDot(isLive: boolean): { pulse: boolean; tone: 'live' | 'schedule' } {
+  return isLive ? { pulse: true, tone: 'live' } : { pulse: false, tone: 'schedule' }
+}
+
 /** Never print "with ONE FM" or "with Automated" — those are schedule fillers. */
 export function formatWithPresenter(presenter: string | null | undefined): string | null {
   const name = presenter?.trim() ?? ''
