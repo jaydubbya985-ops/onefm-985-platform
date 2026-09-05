@@ -1,6 +1,6 @@
 /**
  * Public proposal request — not a DIY PDF generator.
- * Station staff send a tailored PDF from the ops portal.
+ * This page stores or emails a brief. Staff write the PDF in ops later.
  *
  * Stats on this page: coverageCopy.ts (ABS 2021 via townData).
  * Do not add age-band % or invented demographics.
@@ -31,6 +31,12 @@ import {
 } from '@/lib/coverageCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { formatGuideHours } from '@/lib/guideHours'
+import {
+  PROPOSAL_REQUEST_HELPER,
+  PROPOSAL_REQUEST_SUBMIT,
+  proposalRequestDetail,
+  proposalRequestHeadline,
+} from '@/lib/proposalRequestCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
@@ -155,6 +161,7 @@ function EnquiryForm({
 }) {
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
   const [error, setError] = useState('')
+  const [receipt, setReceipt] = useState({ stored: false, emailed: false })
 
   const selected = ALL_PACKAGES.find((p) => p.id === packageId)
 
@@ -181,6 +188,7 @@ function EnquiryForm({
       priority: 'high',
     })
     if (result.success) {
+      setReceipt({ stored: !!result.stored, emailed: !!result.emailed })
       setState('done')
     } else {
       setError(result.error ?? `Something went wrong — email ${BRAND.email} instead.`)
@@ -192,10 +200,11 @@ function EnquiryForm({
     return (
       <div className="border-2 rounded-2xl p-10 text-center" style={{ borderColor: RED }}>
         <div className="font-poster uppercase text-[34px] text-white">
-          Request received<span style={{ color: RED }}>.</span>
+          {proposalRequestHeadline(receipt.stored, receipt.emailed)}
+          <span style={{ color: RED }}>.</span>
         </div>
         <p className="text-white/55 mt-2 text-[15px]">
-          We&apos;ll be in touch with a tailored proposal. — {BRAND.fullName}
+          {proposalRequestDetail(receipt.stored, receipt.emailed)} — {BRAND.fullName}
         </p>
       </div>
     )
@@ -263,10 +272,10 @@ function EnquiryForm({
         disabled={state === 'sending'}
         className="md:col-span-2 rounded-full px-7 py-4 font-bold text-[13px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.02] transition-transform disabled:opacity-60 flex items-center justify-center gap-2"
         style={{ background: RED }}
-        data-cursor-label="SEND"
+        data-cursor-label="SUBMIT"
       >
         {state === 'sending' && <Loader2 size={16} className="animate-spin" />}
-        Send proposal request →
+        {PROPOSAL_REQUEST_SUBMIT} →
       </button>
     </form>
   )
@@ -434,7 +443,7 @@ export default function SalesProposal() {
           </h2>
           <EnquiryForm packageId={packageId} onPackageChange={setPackageId} />
           <p className="text-[13px] text-white/35 mt-4">
-            Goes to the station pipeline — or email{' '}
+            {PROPOSAL_REQUEST_HELPER} Email{' '}
             <a href={`mailto:${BRAND.email}`} className="underline hover:text-white">
               {BRAND.email}
             </a>{' '}
