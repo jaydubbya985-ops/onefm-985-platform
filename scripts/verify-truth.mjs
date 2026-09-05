@@ -423,6 +423,15 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (
+  !programs ||
+  /defined a generation/i.test(programs.text) ||
+  !programs.text.includes("Rock 'n' Roll classics Thursday nights with Carlo.")
+) {
+  hits.push(
+    "pages/Programs.tsx: Rock 'n' Roll Fever must name Carlo and the weekly guide — not leftover defined a generation",
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
