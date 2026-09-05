@@ -843,7 +843,7 @@ function MapMini() {
             </div>
             <div className="flex items-center gap-2">
               <ExternalLink size={16} className="text-one-gold" />
-              <span className="font-label text-xs">ACMA License: {BRAND.acma}</span>
+              <span className="font-label text-xs">Licensed {BRAND.licensed}</span>
             </div>
             <div className="flex items-center gap-2">
               <Heart size={16} className="text-one-gold" />
