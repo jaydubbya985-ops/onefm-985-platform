@@ -118,6 +118,13 @@ const home = files.find((f) => f.label === 'pages/Home.tsx')
 if (!home || !home.text.includes('liveNowFromMetadata')) {
   hits.push('pages/Home.tsx: hero must show liveNowFromMetadata (programGuide + BREAKFAST_ROSTER)')
 }
+if (
+  !home ||
+  !home.text.includes('useLiveStream') ||
+  !home.text.includes('aria-pressed={playing}')
+) {
+  hits.push('pages/Home.tsx: hero must play the live stream via useLiveStream, not only link to /listen')
+}
 if (!home || !home.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/Home.tsx: GVL photo badge hours must come from formatGuideHours / FULL_SCHEDULE')
 }
