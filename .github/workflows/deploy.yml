@@ -49,11 +49,18 @@ jobs:
       - name: Truth grep
         run: npm run truth
 
+      # Leftover Cloud shapes (project-ref-only URL, sb_secret_) must never
+      # become VITE_* — Vite inlines them into the public SPA. Empty / leftover
+      # keeps #/ops in DEMO and the listener site still deploys.
+      - name: Keep leftover Cloud secrets out of the Vite bundle
+        env:
+          CANDIDATE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          CANDIDATE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: node scripts/sanitize-vite-supabase-env.mjs >> "$GITHUB_ENV"
+
       - name: Build
         run: npm run build
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_STATION_NAME: ONE FM 98.5
           VITE_STATION_EMAIL: admin@fm985.com.au
           VITE_RADIO_CO_STATION_ID: sae3372059
