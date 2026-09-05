@@ -423,6 +423,15 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (
+  !programs ||
+  /international community program/i.test(programs.text) ||
+  !programs.text.includes('Dutch-language community program with Margaret and Josh')
+) {
+  hits.push(
+    'pages/Programs.tsx: Radio Netherlands must name the weekly-guide Dutch community slot — not leftover international',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
