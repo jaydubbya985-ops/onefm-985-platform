@@ -309,7 +309,7 @@ export default function AudienceAnalytics() {
                 <Sparkles size={18} className="text-one-gold shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="font-body-small text-one-white">
-                    <span className="text-one-gold font-medium">Data source:</span> Figures on this page use ABS 2021 regional demographics and fm985.com.au programme data. Live Radio.co stream analytics will auto-populate when connected.
+                    <span className="text-one-gold font-medium">Data source:</span> Figures on this page use ABS 2021 regional demographics and fm985.com.au programme data. Live Radio.co stream analytics: data pending.
                   </p>
                 </div>
                 <button onClick={() => setDismissInsight(true)} data-cursor-label="DISMISS" className="text-muted hover:text-one-white transition-colors">
