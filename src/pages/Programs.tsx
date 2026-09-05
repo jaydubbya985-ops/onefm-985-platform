@@ -9,6 +9,7 @@ import { Marquee } from '@/components/Marquee'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
 import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { BRAND } from '@/lib/brand'
+import { SONG_REQUEST_CTA, SONG_REQUEST_INTRO, SONG_REQUEST_OPENED } from '@/lib/songRequestCopy'
 import { formatTowns } from '@/lib/coverageCopy'
 import { HOST_PHOTOS } from '@/lib/stationPhotos'
 import { presenterVisual, programScene } from '@/lib/presenterAssets'
@@ -1151,7 +1152,7 @@ export default function Programs() {
         >
           <WordReveal text="Request a Song / Shoutout" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white">
-            Want to hear your favourite track? Send a dedication to someone special? Drop your request below.
+            {SONG_REQUEST_INTRO}
           </p>
         </motion.div>
 
@@ -1173,9 +1174,9 @@ export default function Programs() {
                 className="flex flex-col items-center text-center py-12"
               >
                 <CheckCircle2 size={56} className="text-data-teal mb-4" />
-                <h3 className="font-h3 text-one-white mb-2">Email Draft Opened</h3>
+                <h3 className="font-h3 text-one-white mb-2">Email draft opened</h3>
                 <p className="font-body text-muted max-w-md">
-                  Complete the send in your email app so the request reaches {BRAND.email}. You can also call the studio on {BRAND.phone}.
+                  {SONG_REQUEST_OPENED}
                 </p>
               </motion.div>
             ) : (
@@ -1221,9 +1222,9 @@ export default function Programs() {
                     className="w-full bg-one-navy/60 border border-one-border rounded-lg px-4 py-3 font-body text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold focus:ring-2 focus:ring-one-gold/15 transition-all resize-none"
                   />
                 </div>
-                <button type="submit" data-cursor-label="SEND" className="btn-primary w-full justify-center">
+                <button type="submit" data-cursor-label="DRAFT" className="btn-primary w-full justify-center">
                   <Send size={16} />
-                  Send Request
+                  {SONG_REQUEST_CTA}
                 </button>
               </motion.form>
             )}
