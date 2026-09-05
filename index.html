@@ -35,10 +35,9 @@
     <!-- ON AIR poster type (Direction A) — swap, not optional: this font defines the design -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
 
-    <!-- LCP element — Home hero photo (HeroAtmosphere.tsx). Not discoverable until
-         React mounts in this SPA, so preload it from static HTML. If the hero photo
-         ever changes, update this href to match. -->
-    <link rel="preload" as="image" href="/assets/images/event-lasers-crowd.jpg" fetchpriority="high" />
+    <!-- LCP — Home hero reel poster (HeroReel in Home.tsx). HeroAtmosphere is unused.
+         Not discoverable until React mounts, so preload from static HTML. -->
+    <link rel="preload" as="image" href="/videos/heroes/hero-poster.jpg" fetchpriority="high" />
 
     <!-- Critical styles: prevent flash of unstyled background -->
     <style>html,body{background:#0A0A0A;color:#fff;margin:0}</style>
