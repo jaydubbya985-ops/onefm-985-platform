@@ -491,14 +491,14 @@ export default function Story() {
           >
             <img
               src="/assets/images/studio-presenter-mic.jpg"
-              alt="ONE FM presenter on air"
+              alt="ONE FM Shepparton studio presenter microphone — station archive still"
               className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-one-navy/80 via-transparent to-transparent" />
             <div aria-hidden className="explore-tile-scan" />
             <div className="absolute bottom-6 left-6 right-6">
-              <h3 className="font-h3 text-one-white mb-1">Live On Air</h3>
-              <p className="font-body-small text-one-white">Where the magic happens, every single day.</p>
+              <h3 className="font-h3 text-one-white mb-1">Shepparton studio</h3>
+              <p className="font-body-small text-one-white">Archive still of the presenter desk — volunteer-hosted, not a live camera.</p>
             </div>
           </motion.div>
 

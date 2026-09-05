@@ -222,6 +222,17 @@ for (const label of ['pages/Story.tsx', 'pages/AudienceAnalytics.tsx']) {
   }
 }
 
+const story = files.find((f) => f.label === 'pages/Story.tsx')
+if (story && /Where the magic happens/i.test(story.text)) {
+  hits.push('pages/Story.tsx: leftover magic-happens invents live theatre over an archive still')
+}
+if (story && /Live On Air/.test(story.text)) {
+  hits.push('pages/Story.tsx: leftover Live On Air heading invents a live camera on an archive still')
+}
+if (!story || !story.text.includes('Archive still of the presenter desk')) {
+  hits.push('pages/Story.tsx: studio still must name the archive desk — not leftover magic')
+}
+
 const footer = files.find((f) => f.label === 'components/Footer.tsx')
 if (
   !footer ||
