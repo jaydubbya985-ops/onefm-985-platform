@@ -5,6 +5,15 @@ import { BRAND } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
 import { cn } from '@/lib/utils'
 
+/** Visible destination — “Follow” alone looks like an in-site action. */
+export function externalDestinationHost(href: string): string {
+  try {
+    return new URL(href).hostname.replace(/^www\./, '')
+  } catch {
+    return ''
+  }
+}
+
 export interface SocialPlatformFrameProps {
   eyebrow: string
   title: string
@@ -37,6 +46,8 @@ export function SocialPlatformFrame({
 }: SocialPlatformFrameProps) {
   const coverage = formatCoverageShort()
   const lockup = `${title} — ${BRAND.fullName} · ${coverage}`
+  const host = externalDestinationHost(href)
+  const openLabel = host ? `${hrefLabel} — opens ${host} in a new tab` : hrefLabel
 
   return (
     <article
@@ -80,10 +91,19 @@ export function SocialPlatformFrame({
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 font-label text-[10px] text-one-white/90 px-3 py-1.5 rounded-full border border-white/15 bg-black/25 hover:border-one-gold/40 hover:text-one-gold transition-colors"
+              aria-label={openLabel}
+              data-cursor-label={host ? `OPEN ${host.toUpperCase()}` : hrefLabel.toUpperCase()}
+              className="shrink-0 inline-flex flex-col items-end justify-center gap-0.5 font-label text-[10px] text-one-white/90 px-3 py-1.5 rounded-xl border border-white/15 bg-black/25 hover:border-one-gold/40 hover:text-one-gold transition-colors"
             >
-              {hrefLabel}
-              <ArrowUpRight size={12} />
+              <span className="inline-flex items-center gap-1">
+                <span>{hrefLabel}</span>
+                <ArrowUpRight size={12} aria-hidden />
+              </span>
+              {host ? (
+                <span className="font-body-small normal-case tracking-normal text-one-white/75 text-[9px] leading-none">
+                  {host}
+                </span>
+              ) : null}
             </a>
           </div>
           <div>
