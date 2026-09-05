@@ -171,7 +171,7 @@ export const INSTITUTION_FACTS = [
   {
     tag: 'Archive',
     title: 'Recording the Valley',
-    body: 'Interviews and outside broadcasts from Shepparton Festival, SAM, Carols by Candlelight, GVL finals, multicultural festivals and local institutions — ONE FM has functioned as an oral history of the district, not only a music outlet.',
+    body: 'Interviews and outside broadcasts from Shepparton Festival, SAM, Carols by Candlelight, GVL finals, multicultural festivals and local institutions.',
   },
 ] as const
 
