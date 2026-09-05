@@ -311,6 +311,17 @@ if (
     'pages/Football.tsx: GVL Match of the Day hours must come from GVL_MATCH_SLOT / FULL_SCHEDULE, not “Saturday afternoon”',
   )
 }
+if (
+  !football ||
+  /every match day/i.test(football.text) ||
+  !football.text.includes(
+    'Station archive OB — ${GVL_MATCH_SLOT.name} · ${GVL_MATCH_SLOT.days} ${GVL_MATCH_SLOT.time}',
+  )
+) {
+  hits.push(
+    'pages/Football.tsx: leftover every match day — match-day OB still must name GVL_MATCH_SLOT from the weekly guide',
+  )
+}
 
 const sponsorPages = [
   'pages/SponsorshipKit.tsx',

@@ -867,7 +867,7 @@ export default function Football() {
           <div className="grid grid-cols-3 gap-3">
             {[
               { src: STATION_PHOTOS.commentaryBoxView,    caption: 'Ready for kick-off — the broadcaster\'s view' },
-              { src: STATION_PHOTOS.obSetupFull,          caption: 'ONE FM 98.5 on location — every match day' },
+              { src: STATION_PHOTOS.obSetupFull,          caption: `Station archive OB — ${GVL_MATCH_SLOT.name} · ${GVL_MATCH_SLOT.days} ${GVL_MATCH_SLOT.time}` },
               { src: STATION_PHOTOS.commentaryTeamSelfie, caption: 'The broadcast team — live from the box' },
             ].map((photo, i) => (
               <motion.div
