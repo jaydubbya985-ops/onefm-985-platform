@@ -55,6 +55,22 @@ const secretKey = resolveOpsConfig({
 })
 assert(secretKey.configured === false, 'sb_secret_ must stay DEMO — never bake the secret key')
 
+const serviceRoleJwt = resolveOpsConfig({
+  VITE_SUPABASE_URL: 'https://example.supabase.co',
+  VITE_SUPABASE_ANON_KEY:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUifQ.testhash',
+})
+assert(
+  serviceRoleJwt.configured === false,
+  'service_role JWT must stay DEMO — never bake the service-role key',
+)
+assert(
+  isValidSupabaseKey(
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIn0.testhash',
+  ),
+  'isValidSupabaseKey must still accept anon JWTs',
+)
+
 const liveVite = resolveOpsConfig({
   VITE_SUPABASE_URL: 'https://example.supabase.co',
   VITE_SUPABASE_ANON_KEY:
