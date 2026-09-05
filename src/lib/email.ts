@@ -134,7 +134,7 @@ export function buildEnquiryConfirmationHtml(data: EnquiryEmailData): string {
             Thanks, ${data.name}!
           </h2>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 16px;">
-            We've received your <strong>${data.enquiryType.toLowerCase()}</strong> enquiry. Call <strong>${BRAND.phone}</strong> or email <strong>${BRAND.email}</strong> if you need us sooner.
+            We've received your <strong>${data.enquiryType.toLowerCase()}</strong> enquiry. Call <strong>${BRAND.phone}</strong> or email <strong>${BRAND.email}</strong> to follow up — this confirmation does not promise a reply time.
           </p>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 32px;">
             In the meantime, listen to ${BRAND.fullName} on ${BRAND.frequency} FM or stream at <a href="${BRAND.website}" style="color: #D4A84B;">fm985.com.au</a>.
