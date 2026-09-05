@@ -1,4 +1,4 @@
-import { FULL_SCHEDULE, type ScheduleSlot } from '@/data/programGuide'
+import { BREAKFAST_SHOW, FULL_SCHEDULE, type ScheduleSlot } from '@/data/programGuide'
 
 const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
 
@@ -116,8 +116,21 @@ const WALL_SHOW_BY_NAME: Record<string, string> = {
   'James Manley': 'The James Manley Show',
 }
 
+function formatBreakfastHostHours(hostName: string): string | null {
+  return formatHoursFromSlots(
+    FULL_SCHEDULE.filter(
+      (s) => s.category === 'Breakfast' && hostOverlaps(s.host, hostName),
+    ),
+  )
+}
+
 /** On-air wall subtitle: hours come from FULL_SCHEDULE, not a Mon–Fri 9AM shorthand. */
 export function onAirWallSub(name: string, fallback: string): string {
+  if (fallback.includes(BREAKFAST_SHOW) || /breakfast|breaky/i.test(fallback)) {
+    const hours = formatBreakfastHostHours(name)
+    if (hours) return `${BREAKFAST_SHOW} · ${hours}`
+  }
+
   const show = WALL_SHOW_BY_NAME[name]
   if (show) {
     const hours = formatGuideHours(show)
