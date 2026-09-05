@@ -101,7 +101,7 @@ export const FOOTER_SUPPORT = NAV_GROUPS[3].items
 export const FOOTER_RESOURCES: NavItem[] = [
   { label: 'Privacy Policy', path: '/privacy' },
   { label: 'Media Kit', path: '/media-kit' },
-  { label: 'Rate Card', path: '/sponsorship' },
+  { label: 'Rate Card', path: '/media-kit' },
   { label: 'Program Guide', path: '/programs' },
 ]
 
