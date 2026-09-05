@@ -1,0 +1,10 @@
+# ads.txt - IAB Tech Lab Authorized Digital Sellers
+# Publisher: Goulburn Valley Community Radio Inc. (ONE FM 98.5 / 3ONE)
+# Studio: 47 Parkside Drive, Shepparton VIC 3630
+#
+# This station sells radio sponsorship direct.
+# There are no authorised programmatic sellers for this domain.
+# Do not invent AdSense or exchange account IDs.
+#
+OWNERDOMAIN=fm985.com.au
+CONTACT=admin@fm985.com.au
