@@ -432,6 +432,16 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (programs && /From dawn till dark/.test(programs.text)) {
+  hits.push('pages/Programs.tsx: leftover From dawn till dark invents 24h live presenters — name Breakfast through Overnight Mix')
+}
+if (
+  !programs ||
+  !programs.text.includes('BREAKFAST_SHOW') ||
+  !programs.text.includes('Overnight Mix')
+) {
+  hits.push('pages/Programs.tsx: featured intro must name BREAKFAST_SHOW through Overnight Mix')
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {

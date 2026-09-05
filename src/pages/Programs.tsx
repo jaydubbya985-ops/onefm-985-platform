@@ -682,7 +682,7 @@ export default function Programs() {
             <div>
               <WordReveal text="Featured Shows" className="font-h2 text-one-white mb-3 block" as="h2" />
               <p className="font-body text-one-white max-w-xl">
-                From dawn till dark, our presenters keep the Valley informed, entertained and connected.
+                {BREAKFAST_SHOW} through Overnight Mix — every featured card is a show on the weekly guide (fm985.com.au/guide).
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
