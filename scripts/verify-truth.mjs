@@ -432,6 +432,15 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (programs && /behind the mic/i.test(programs.text)) {
+  hits.push('pages/Programs.tsx: leftover behind the mic — Host Roster must name presenters from the weekly guide')
+}
+if (
+  !programs ||
+  !programs.text.includes('presenters named on the weekly guide')
+) {
+  hits.push('pages/Programs.tsx: Host Roster intro must name presenters from the weekly guide')
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {

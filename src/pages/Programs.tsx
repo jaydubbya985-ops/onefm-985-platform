@@ -811,7 +811,7 @@ export default function Programs() {
           <div>
             <WordReveal text="Host Roster" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white max-w-xl">
-              Meet the voices behind the mic. {hosts.length} presenters from the fm985.com.au program guide.
+              {hosts.length} presenters named on the weekly guide (fm985.com.au/guide).
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
