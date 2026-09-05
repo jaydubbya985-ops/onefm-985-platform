@@ -466,6 +466,17 @@ for (const required of [
   }
 }
 
+const explorer = files.find((f) => f.label === 'pages/BroadcastExplorer.tsx')
+if (
+  !explorer ||
+  /TUNE IN ANYWHERE/.test(explorer.text) ||
+  !explorer.text.includes('LISTEN ON ${LISTEN_LINKS.fm.label}')
+) {
+  hits.push(
+    'pages/BroadcastExplorer.tsx: leftover TUNE IN ANYWHERE — listen CTA must name LISTEN_LINKS.fm',
+  )
+}
+
 const app = files.find((f) => f.label === 'App.tsx')
 if (
   !app ||
