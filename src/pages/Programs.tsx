@@ -606,7 +606,7 @@ export default function Programs() {
             transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             className="font-body text-one-white/50 max-w-xl mb-8 italic"
           >
-            Local voices, local stories, local music — 24/7.
+            Local voices, local stories, local music — on 98.5 FM.
           </motion.p>
 
           <OnAirNow />
@@ -641,7 +641,7 @@ export default function Programs() {
             <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-white/35">Dancing Through the Decades</span>,
             <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-gold/60">GVL Football Coverage</span>,
             <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-white/35">Multicultural Broadcasting</span>,
-            <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-gold/60">24/7 · 98.5 FM · Shepparton</span>,
+            <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-gold/60">98.5 FM · Shepparton · 3ONE</span>,
             <span className="mx-12 font-label text-[10px] tracking-[0.25em] uppercase text-one-white/35">The James Manley Show</span>,
           ]}
         />
