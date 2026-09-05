@@ -1,6 +1,6 @@
 /**
  * ONE FM 98.5 — canonical programme data.
- * Source: fm985.com.au/guide/ (scraped June 2026 via WP REST API).
+ * Source: fm985.com.au/guide/ Amrap #station-grid (fetched 3 Sep 2026).
  * Day index: 0=Sunday, 1=Monday … 6=Saturday.
  */
 import { presenterBackdrop } from '@/lib/presenterAssets'
@@ -78,79 +78,80 @@ export interface ScheduleSlot {
 
 export const FULL_SCHEDULE: ScheduleSlot[] = [
   // ── MONDAY ──────────────────────────────────────────────────
+  { day: 1, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
   { day: 1, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'Tim Ahemt', category: 'Breakfast' },
   { day: 1, startHour: 9,  endHour: 12, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 1, startHour: 12, endHour: 15, name: 'Monday Afternoon', host: 'Di Hunter', category: 'Music' },
-  { day: 1, startHour: 15, endHour: 16, name: 'Winding Back', host: 'Ken & Jill Gaffney', category: 'Music' },
-  { day: 1, startHour: 16, endHour: 17, name: 'The James Manley Show', host: 'James Manley', category: 'Community' },
-  { day: 1, startHour: 17, endHour: 18, name: 'The Final Siren (Football & Netball Scoreboard)', host: 'ONE FM', category: 'Sport' },
-  { day: 1, startHour: 18, endHour: 19, name: 'Monday Nights', host: 'Josh Revens', category: 'Community' },
-  { day: 1, startHour: 19, endHour: 20, name: 'Radio Netherlands', host: 'Margaret & Josh', category: 'Multicultural' },
-  { day: 1, startHour: 20, endHour: 21, name: 'Good Evening Country', host: 'Timmy Ahmet', category: 'Country' },
+  { day: 1, startHour: 12, endHour: 13, name: 'The Regional Voice', host: 'ONE FM', category: 'Community' },
+  { day: 1, startHour: 13, endHour: 15, name: 'Monday Afternoon', host: 'Di Hunter', category: 'Music' },
+  { day: 1, startHour: 15, endHour: 18, name: 'Winding Back', host: 'Ken & Jill Gaffney', category: 'Music' },
+  { day: 1, startHour: 18, endHour: 21, name: 'Monday Nights', host: 'Josh Revens', category: 'Community' },
   { day: 1, startHour: 21, endHour: 22, name: 'The Afri-Connect Program', host: 'Fikiri', category: 'Multicultural' },
   { day: 1, startHour: 22, endHour: 23, name: 'Mandarin Program', host: 'Jimmy & Rainy', category: 'Multicultural' },
   { day: 1, startHour: 23, endHour: 24, name: 'Punjabi Music Program', host: 'ONE FM', category: 'Multicultural' },
-  { day: 1, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 
   // ── TUESDAY ─────────────────────────────────────────────────
+  { day: 2, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
   { day: 2, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'Tim Ahemt', category: 'Breakfast' },
   { day: 2, startHour: 9,  endHour: 12, name: 'Tuesday Mornings', host: 'Craig Stott', category: 'Music' },
-  { day: 2, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 2, startHour: 15, endHour: 16, name: 'Butterfly Favorites', host: 'Judy', category: 'Music' },
-  { day: 2, startHour: 16, endHour: 17, name: 'The James Manley Show', host: 'James Manley', category: 'Community' },
-  { day: 2, startHour: 17, endHour: 18, name: 'The Final Siren', host: 'ONE FM', category: 'Sport' },
-  { day: 2, startHour: 18, endHour: 19, name: 'Classic Country', host: 'Sue', category: 'Country' },
-  { day: 2, startHour: 21, endHour: 22, name: 'Viva Italia (Italian Show)', host: 'Carlo', category: 'Multicultural' },
-  { day: 2, startHour: 22, endHour: 23, name: 'Filipino Music Program', host: 'Edith', category: 'Multicultural' },
+  { day: 2, startHour: 12, endHour: 13, name: 'The Regional Voice', host: 'ONE FM', category: 'Community' },
+  { day: 2, startHour: 13, endHour: 16, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
+  { day: 2, startHour: 16, endHour: 18, name: 'Butterfly Favorites', host: 'Judy', category: 'Music' },
+  { day: 2, startHour: 18, endHour: 21, name: 'Classic Country', host: 'Sue', category: 'Country' },
+  { day: 2, startHour: 21, endHour: 23, name: 'Viva Italia (Italian Show)', host: 'Carlo', category: 'Multicultural' },
   { day: 2, startHour: 23, endHour: 24, name: 'Overnight Mix', host: 'Automated', category: 'Music' },
-  { day: 2, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 
   // ── WEDNESDAY ───────────────────────────────────────────────
+  { day: 3, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
   { day: 3, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'The Big G', category: 'Breakfast' },
   { day: 3, startHour: 9,  endHour: 12, name: 'Wednesday Morning', host: 'The Big G', category: 'Music' },
-  { day: 3, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 3, startHour: 15, endHour: 16, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
-  { day: 3, startHour: 16, endHour: 17, name: 'Thursday Afternoon', host: 'The Big G', category: 'Music' },
-  { day: 3, startHour: 18, endHour: 19, name: 'Rockin with Les Harrison', host: "Les 'Harro' Harrison", category: 'Music' },
+  { day: 3, startHour: 12, endHour: 13, name: 'The Regional Voice', host: 'ONE FM', category: 'Community' },
+  { day: 3, startHour: 13, endHour: 16, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
+  { day: 3, startHour: 16, endHour: 19, name: 'The James Manley Show', host: 'James Manley', category: 'Community' },
+  { day: 3, startHour: 19, endHour: 21, name: 'Radio Netherlands', host: 'Margaret & Josh', category: 'Multicultural' },
   { day: 3, startHour: 21, endHour: 22, name: 'Samoan Music Program', host: 'MK', category: 'Multicultural' },
+  { day: 3, startHour: 22, endHour: 23, name: 'Filipino Music Program', host: 'Edith', category: 'Multicultural' },
   { day: 3, startHour: 23, endHour: 24, name: 'Arabic Music Program', host: 'ONE FM', category: 'Multicultural' },
-  { day: 3, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 
   // ── THURSDAY ────────────────────────────────────────────────
+  { day: 4, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
   { day: 4, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'Ralph Whitehead', category: 'Breakfast' },
   { day: 4, startHour: 9,  endHour: 12, name: 'Thursday Mornings', host: 'Ralph Whitehead', category: 'Music' },
-  { day: 4, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 4, startHour: 15, endHour: 16, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
-  { day: 4, startHour: 16, endHour: 17, name: 'Thursday Afternoon', host: 'The Big G', category: 'Music' },
-  { day: 4, startHour: 18, endHour: 19, name: 'The Essential Hits', host: 'Tim Symonds', category: 'Music' },
-  { day: 4, startHour: 21, endHour: 22, name: "Rock 'n' Roll Fever", host: 'Carlo', category: 'Music' },
+  { day: 4, startHour: 12, endHour: 13, name: 'The Regional Voice', host: 'ONE FM', category: 'Community' },
+  { day: 4, startHour: 13, endHour: 15, name: 'Thursday Afternoon', host: 'The Big G', category: 'Music' },
+  { day: 4, startHour: 15, endHour: 18, name: 'All Things Rock', host: 'Steve Little', category: 'Music' },
+  { day: 4, startHour: 18, endHour: 20, name: 'Rockin with Les Harrison', host: "Les 'Harro' Harrison", category: 'Music' },
+  { day: 4, startHour: 20, endHour: 23, name: 'Good Evening Country', host: 'Timmy Ahmet', category: 'Country' },
   { day: 4, startHour: 23, endHour: 24, name: 'Planet of Sound', host: 'Carlos Rock', category: 'Music' },
-  { day: 4, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 
   // ── FRIDAY ──────────────────────────────────────────────────
+  { day: 5, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
   { day: 5, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast (Breaky)', host: 'Josh Revens', category: 'Breakfast' },
   { day: 5, startHour: 9,  endHour: 12, name: 'Friday Mornings', host: 'Josh Revens', category: 'Music' },
-  { day: 5, startHour: 12, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
-  { day: 5, startHour: 15, endHour: 16, name: 'Friday Arvo', host: 'Ralph Whitehead', category: 'Music' },
-  { day: 5, startHour: 18, endHour: 19, name: 'The Show for Everyone', host: 'Tym Jeffery', category: 'Community' },
-  { day: 5, startHour: 19, endHour: 22, name: 'NIRS AFL Friday Night Footy', host: 'ONE FM', category: 'Sport' },
-  { day: 5, startHour: 23, endHour: 24, name: 'Overnight Mix', host: 'Automated', category: 'Music' },
-  { day: 5, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
+  { day: 5, startHour: 12, endHour: 13, name: 'The Regional Voice', host: 'ONE FM', category: 'Community' },
+  { day: 5, startHour: 13, endHour: 15, name: 'Dancing through the decades', host: 'Johnny P (John Painter)', category: 'Music' },
+  { day: 5, startHour: 15, endHour: 18, name: 'Friday Arvo', host: 'Ralph Whitehead', category: 'Music' },
+  { day: 5, startHour: 18, endHour: 19, name: 'The Essential Hits', host: 'Tim Symonds', category: 'Music' },
+  { day: 5, startHour: 19, endHour: 23, name: 'NIRS AFL Friday Night Footy', host: 'ONE FM', category: 'Sport' },
+  { day: 5, startHour: 23, endHour: 24, name: 'Music Mix', host: 'ONE FM', category: 'Music' },
 
   // ── SATURDAY ────────────────────────────────────────────────
-  { day: 6, startHour: 6,  endHour: 9,  name: 'Songs of the Spirit', host: 'ONE FM', category: 'Community' },
+  { day: 6, startHour: 0,  endHour: 8,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
   { day: 6, startHour: 8,  endHour: 12, name: 'Saturday Sport', host: 'The Stats Man', category: 'Sport' },
-  { day: 6, startHour: 8,  endHour: 12, name: 'Country Requests & Open Spaces', host: 'KT or Ralph', category: 'Country' },
-  { day: 6, startHour: 13, endHour: 15, name: 'GVL Match of the Day', host: 'ONE FM', category: 'Sport' },
-  { day: 6, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
+  { day: 6, startHour: 12, endHour: 14, name: 'The Essential Hits', host: 'Tim Symonds', category: 'Music' },
+  { day: 6, startHour: 14, endHour: 17, name: 'GVL Match of the Day', host: 'ONE FM', category: 'Sport' },
+  { day: 6, startHour: 17, endHour: 18, name: 'The Final Siren', host: 'ONE FM', category: 'Sport' },
+  { day: 6, startHour: 18, endHour: 21, name: 'The Show for Everyone', host: 'Tym Jeffery', category: 'Community' },
+  { day: 6, startHour: 21, endHour: 23, name: "Rock 'n' Roll Fever", host: 'Carlo', category: 'Music' },
+  { day: 6, startHour: 23, endHour: 24, name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 
   // ── SUNDAY ──────────────────────────────────────────────────
-  { day: 0, startHour: 6,  endHour: 9,  name: 'ONE FM Breakfast', host: 'ONE FM', category: 'Breakfast' },
-  { day: 0, startHour: 12, endHour: 15, name: 'The Essential Hits', host: 'Tim Symonds', category: 'Music' },
-  { day: 0, startHour: 13, endHour: 15, name: 'NIRS Sunday Afternoon AFL - Match of the Day', host: 'ONE FM', category: 'Sport' },
-  { day: 0, startHour: 15, endHour: 17, name: 'Sunday Afternoon', host: 'John Painter', category: 'Music' },
-  { day: 0, startHour: 19, endHour: 21, name: 'Sunday Night Country', host: 'Sue', category: 'Country' },
   { day: 0, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
+  { day: 0, startHour: 6,  endHour: 8,  name: 'Songs of the Spirit', host: 'ONE FM', category: 'Community' },
+  { day: 0, startHour: 8,  endHour: 13, name: 'Country Requests & Open Spaces', host: 'KT or Ralph', category: 'Country' },
+  { day: 0, startHour: 13, endHour: 17, name: 'NIRS Sunday Afternoon AFL - Match of the Day', host: 'ONE FM', category: 'Sport' },
+  { day: 0, startHour: 17, endHour: 19, name: 'Sunday Afternoon', host: 'John Painter', category: 'Music' },
+  { day: 0, startHour: 19, endHour: 22, name: 'Sunday Night Country', host: 'Sue', category: 'Country' },
+  { day: 0, startHour: 22, endHour: 24, name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 ]
 
 /** Distinct multicultural shows on the weekly guide (source: fm985.com.au/guide/). */
@@ -264,15 +265,16 @@ export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
     }, hour, minute)
   }
 
-  // Default overnight
+  // Named Music Mix for a daytime hole — Overnight Mix is midnight–6am only.
+  const overnight = hour < 6
   return withClock({
-    name: 'Overnight Mix',
-    host: 'Automated',
-    time: '12:00AM — 6:00AM',
+    name: overnight ? 'Overnight Mix' : 'Music Mix',
+    host: overnight ? 'Automated' : 'ONE FM',
+    time: overnight ? '12:00AM — 6:00AM' : `${formatHour(hour)} — ${formatHour(hour + 1)}`,
     category: 'Music',
-    upNext: 'ONE FM Breakfast (Breaky) at 6:00AM',
-    startHour: 0,
-    endHour: 6,
+    upNext: overnight ? 'ONE FM Breakfast (Breaky) at 6:00AM' : 'Next named show on the guide',
+    startHour: overnight ? 0 : hour,
+    endHour: overnight ? 6 : hour + 1,
   }, hour, minute)
 }
 
@@ -415,7 +417,7 @@ export const PROGRAM_PREVIEW_CARDS = [
   {
     title: 'Good Evening Country',
     presenter: 'Timmy Ahmet',
-    schedule: 'Monday, 8PM–9PM',
+    schedule: 'Thursday, 8PM–11PM',
     description: 'Country music showcase — the best country classics and new releases.',
   },
 ] as const

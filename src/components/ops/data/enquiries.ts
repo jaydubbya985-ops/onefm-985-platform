@@ -36,7 +36,7 @@ export interface Enquiry {
 
 /**
  * Weekday breakfast — source: BREAKFAST_SHOW / BREAKFAST_TIME in programGuide.ts.
- * Saturday 6–9am on the guide is Songs of the Spirit, not breakfast.
+ * Sunday 6–8am on the guide is Songs of the Spirit, not breakfast.
  */
 const WEEKDAY_BREAKFAST = 'ONE FM Breakfast (Breaky) · Mon–Fri 6:00am–9:00am'
 
