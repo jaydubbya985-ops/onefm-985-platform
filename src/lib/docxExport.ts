@@ -601,7 +601,7 @@ function buildTermsParagraphs(): Paragraph[] {
     'Content Approval: All creative assets must be submitted for approval 5 business days before the scheduled air date. ONE FM retains the right to refuse content that does not meet broadcast standards or community guidelines.',
     'Rate Validity: All quoted rates are valid for 30 days from the date of this proposal. Rates are subject to change for campaigns booked after this period.',
     'Exclusivity: Category exclusivity is available for Signature and Naming Rights tier partners, subject to availability and additional fees.',
-    'Performance Reporting: Weekly performance summaries provided during active campaigns. Full campaign report delivered within 10 business days of campaign conclusion.',
+    `Reporting: the station does not publish a weekly campaign-report SLA. Ask ${BRAND.email} what can be quoted for a specific booking.`,
     'Governing Law: This agreement shall be governed by the laws of the jurisdiction in which ONE FM operates.',
   ]
 
