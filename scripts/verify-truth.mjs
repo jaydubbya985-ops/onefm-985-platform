@@ -141,6 +141,21 @@ const miniPlayer = files.find((f) => f.label === 'components/MiniPlayer.tsx')
 if (!miniPlayer || !miniPlayer.text.includes('liveNowFromMetadata')) {
   hits.push('components/MiniPlayer.tsx: breakfast chrome must use liveNowFromMetadata')
 }
+if (
+  !miniPlayer ||
+  !miniPlayer.text.includes('error') ||
+  !miniPlayer.text.includes('AUDIO_PLAYER_URL') ||
+  !miniPlayer.text.includes('MINI_PLAYER_WEB_PLAYER_LABEL') ||
+  !miniPlayer.text.includes('role="alert"')
+) {
+  hits.push(
+    'components/MiniPlayer.tsx: must surface useLiveStream error with the fm985.com.au web player link',
+  )
+}
+const miniPlayerError = files.find((f) => f.label === 'lib/miniPlayerError.ts')
+if (!miniPlayerError || !miniPlayerError.text.includes('MINI_PLAYER_WEB_PLAYER_LABEL')) {
+  hits.push('lib/miniPlayerError.ts: must export the mini-player web-player label')
+}
 
 const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
 if (!onAirNav || !onAirNav.text.includes('formatBreakfastChromeLabel')) {

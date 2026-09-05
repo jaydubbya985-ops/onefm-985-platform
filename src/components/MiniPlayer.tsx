@@ -6,6 +6,8 @@ import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
+import { MINI_PLAYER_WEB_PLAYER_LABEL } from '@/lib/miniPlayerError'
 
 const HIDE_ON = ['/listen', '/ops']
 
@@ -34,7 +36,7 @@ export function MiniPlayer() {
   const location = useLocation()
   const [dismissed, setDismissed] = useState(false)
   const meta = usePlayerMetadata()
-  const { playing, loading, toggle } = useLiveStream()
+  const { playing, loading, error, toggle } = useLiveStream()
 
   const hidden = HIDE_ON.some((p) => location.pathname === p) || dismissed
   const live = liveNowFromMetadata(meta)
@@ -60,7 +62,11 @@ export function MiniPlayer() {
           className="fixed bottom-0 inset-x-0 z-[200] pointer-events-none"
         >
           <div className="pointer-events-auto mx-auto max-w-3xl px-3 pb-3">
-            <div role="region" aria-label="Mini audio player" className="rounded-2xl border border-white/10 bg-[#0A0A0A]/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3">
+            <div
+              role="region"
+              aria-label={error ? `Mini audio player. ${error}` : 'Mini audio player'}
+              className="rounded-2xl border border-white/10 bg-[#0A0A0A]/95 backdrop-blur-xl shadow-[0_-4px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 px-4 py-3"
+            >
 
               {/* Live dot */}
               <span className="relative flex h-2 w-2 shrink-0">
@@ -83,9 +89,23 @@ export function MiniPlayer() {
                 <p className="font-body text-sm text-one-white truncate leading-tight">
                   {program}
                 </p>
-                <p className="font-label text-[10px] text-muted truncate">
-                  {presenterLine}
-                </p>
+                {error ? (
+                  <p className="font-label text-[10px] text-[#E51636] truncate" role="alert">
+                    {error}{' '}
+                    <a
+                      href={AUDIO_PLAYER_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline text-white/80 hover:text-white"
+                    >
+                      {MINI_PLAYER_WEB_PLAYER_LABEL}
+                    </a>
+                  </p>
+                ) : (
+                  <p className="font-label text-[10px] text-muted truncate">
+                    {presenterLine}
+                  </p>
+                )}
                 {live.breakfastOnAir && live.breakfastLabel && (
                   <p className="font-label text-[9px] text-muted/80 truncate hidden md:block">
                     {live.breakfastLabel}
