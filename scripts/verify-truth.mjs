@@ -183,6 +183,15 @@ if (
 if (!community || !community.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/Community.tsx: GVL badge/ticker hours must come from formatGuideHours / FULL_SCHEDULE')
 }
+if (community && /one signal/.test(community.text)) {
+  hits.push('pages/Community.tsx: leftover one signal is invented extra — use formatCoverageShort()')
+}
+if (!community || !community.text.includes('formatCoverageShort')) {
+  hits.push('pages/Community.tsx: hero coverage must use formatCoverageShort()')
+}
+if (!community || !community.text.includes('From the GVL grand final')) {
+  hits.push('pages/Community.tsx: leftover GVL grand final must stay (sourced 2024 GVL grand finals)')
+}
 
 const stationHistory = files.find((f) => f.label === 'data/stationHistory.ts')
 if (
