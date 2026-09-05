@@ -38,7 +38,7 @@ const STRIPE_READY =
 const IMPACT = [
   {
     tag: 'Programming',
-    title: 'Keep the Valley on air',
+    title: 'Transmission, studio and programming',
     body: `Volunteer-run community radio from Shepparton — overnight mix plus live local shifts on the weekly guide. Donations help cover transmission, studio and programming costs.`,
   },
   {
