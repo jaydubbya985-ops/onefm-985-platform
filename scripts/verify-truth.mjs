@@ -214,6 +214,12 @@ if (
 ) {
   hits.push('pages/Support.tsx: leftover coverage must use formatCoverageShort and formatWeeklyListenersPlain')
 }
+if (support && /Go behind the mic/.test(support.text)) {
+  hits.push('pages/Support.tsx: leftover Go behind the mic is invented volunteer theatre')
+}
+if (!support || !support.text.includes('Ask the station about volunteering')) {
+  hits.push('pages/Support.tsx: volunteer card must name asking the station')
+}
 
 for (const label of ['pages/Story.tsx', 'pages/AudienceAnalytics.tsx']) {
   const page = files.find((f) => f.label === label)
