@@ -107,7 +107,7 @@ export function WeeklySchedule() {
                   <span className="font-label text-[8px] uppercase tracking-wider text-one-red">today</span>
                 )}
               </div>
-              <ul className="space-y-1.5 max-h-[14.5rem] overflow-y-auto">
+              <ul className="space-y-1 max-h-[18rem] overflow-y-auto">
                 {daySlots.map((slot, i) => {
                   const live = slotIsLive(day.index, slot)
                   return (
