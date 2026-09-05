@@ -214,6 +214,9 @@ if (
 ) {
   hits.push('pages/Support.tsx: leftover coverage must use formatCoverageShort and formatWeeklyListenersPlain')
 }
+if (!support || /Goulburn Murray/.test(support.text) || !support.text.includes('across the Goulburn Valley')) {
+  hits.push('pages/Support.tsx: leftover Goulburn Murray must name Goulburn Valley')
+}
 
 for (const label of ['pages/Story.tsx', 'pages/AudienceAnalytics.tsx']) {
   const page = files.find((f) => f.label === label)

@@ -44,7 +44,7 @@ const IMPACT = [
   {
     tag: 'Community',
     title: 'Airtime for local NFPs',
-    body: `Community notices, GVL sport and ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide (fm985.com.au/guide) — airtime for groups across the Goulburn Murray.`,
+    body: `Community notices, GVL sport and ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide (fm985.com.au/guide) — airtime for groups across the Goulburn Valley.`,
   },
   {
     tag: 'Resilience',
