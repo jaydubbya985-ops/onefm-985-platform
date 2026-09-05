@@ -489,6 +489,16 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+{
+  const privacy = files.find((f) => f.label === 'pages/Privacy.tsx')
+  if (privacy && /maximum of 3 years/.test(privacy.text)) {
+    hits.push('pages/Privacy.tsx: leftover maximum of 3 years is an invented retention clock')
+  }
+  if (!privacy || !privacy.text.includes('A fixed year count is data pending')) {
+    hits.push('pages/Privacy.tsx: retention must say a fixed year count is data pending')
+  }
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
