@@ -1,4 +1,4 @@
-import { coverageNumbers, formatBroadcastPopulation, formatRadius } from '@/lib/coverageCopy'
+import { BROADCAST_POPULATION_SOURCE, coverageNumbers, formatBroadcastPopulation, formatRadius } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { BRAND_COLORS } from '@/lib/brand'
 import type { CoveragePin, CoveragePinType } from '@/data/coverageMapPins'
@@ -226,7 +226,7 @@ export function buildAdvertiserTour(towns: Town[], pins: CoveragePin[]): TourSto
       lat: SHEPPARTON.lat,
       lng: SHEPPARTON.lng,
       zoom: 8,
-      caption: `${formatRadius()} broadcast footprint — ${formatBroadcastPopulation()} people across the Goulburn Valley (ABS 2021 via townData)`,
+      caption: `${formatRadius()} broadcast footprint — ${formatBroadcastPopulation()} people across the Goulburn Valley (${BROADCAST_POPULATION_SOURCE})`,
       dwellMs: 4500,
     },
     {

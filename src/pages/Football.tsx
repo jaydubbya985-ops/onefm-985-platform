@@ -703,8 +703,8 @@ export default function Football() {
             <div className="flex items-start gap-3">
               <TrendingUp size={18} className="text-one-gold shrink-0 mt-0.5" />
               <p className="font-body-small text-one-white">
-                ONE FM reaches an estimated <strong className="text-one-gold">{weeklyListenersValue()}</strong> listeners
-                weekly across {coverageNumbers.totalTowns} communities. GVL packages sit beside the sport slots on the weekly guide ({SPORT_GUIDE_DAYS}).
+                Modelled weekly listenership is <strong className="text-one-gold">{weeklyListenersValue()}</strong>
+                {' '}(ABS 2021 via townData) across {coverageNumbers.totalTowns} communities — a broadcast-area estimate, not a measured reach count. GVL packages sit beside the sport slots on the weekly guide ({SPORT_GUIDE_DAYS}).
               </p>
             </div>
           </motion.div>
