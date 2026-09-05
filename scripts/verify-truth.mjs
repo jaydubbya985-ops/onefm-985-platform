@@ -400,6 +400,17 @@ assertCoverageCopy('pages/Story.tsx', [
   'formatRadius()',
   'formatBroadcastPopulation()',
 ])
+const story = files.find((f) => f.label === 'pages/Story.tsx')
+if (
+  !story ||
+  /Looking Forward/.test(story.text) ||
+  /tomorrow's technology/.test(story.text) ||
+  !story.text.includes('Live, the stream, and the licence')
+) {
+  hits.push(
+    'pages/Story.tsx: heading must name live, the stream, and the licence — not leftover Looking Forward',
+  )
+}
 
 const mediaKit = files.find((f) => f.label === 'pages/MediaKit.tsx')
 if (

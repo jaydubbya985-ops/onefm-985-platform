@@ -605,8 +605,8 @@ export default function Story() {
         </div>
       </section>
 
-      {/* ═══════ Section 6 — Looking Forward ═══════ */}
-      <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto pb-32 bg-surface-glow" data-cursor-label="LOOKING AHEAD">
+      {/* ═══════ Section 6 — Licensed commitments ═══════ */}
+      <section className="section-padding section-bleed-top px-4 sm:px-6 max-w-7xl mx-auto pb-32 bg-surface-glow" data-cursor-label="THE LICENCE">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -614,9 +614,9 @@ export default function Story() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="text-center mb-16"
         >
-          <WordReveal text="Looking Forward" className="font-h2 text-one-white mb-3 block" as="h2" />
+          <WordReveal text="Live, the stream, and the licence" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white max-w-2xl mx-auto">
-            The next chapter of ONE FM blends our heritage values with tomorrow's technology.
+            Community broadcasting from Shepparton — 98.5 FM, fm985.com.au, and the weekly guide.
           </p>
         </motion.div>
 
