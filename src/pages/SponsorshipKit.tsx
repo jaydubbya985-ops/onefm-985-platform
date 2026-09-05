@@ -189,7 +189,7 @@ export default function SponsorshipKit() {
         <section className="px-6 md:px-12 lg:px-20 pb-16">
           <LabelReveal className="mb-3">Start Here</LabelReveal>
           <h2 className="font-poster uppercase text-[clamp(30px,4.5vw,52px)] text-white mb-8">
-            Talk to the station, not a call centre<span style={{ color: RED }}>.</span>
+            Talk to the station<span style={{ color: RED }}>.</span>
           </h2>
           <EnquiryForm />
           <p className="text-[13px] text-white/35 mt-4">
