@@ -288,12 +288,16 @@ const indexHtml = files.find((f) => f.label === 'index.html')
 if (
   !indexHtml ||
   !indexHtml.text.includes('__ONEFM_OG_DESCRIPTION__') ||
-  !indexHtml.text.includes('__ONEFM_META_DESCRIPTION__')
+  !indexHtml.text.includes('__ONEFM_META_DESCRIPTION__') ||
+  !indexHtml.text.includes('__ONEFM_SITE_ORIGIN__')
 ) {
-  hits.push('index.html: OG/meta must use Vite coverage placeholders, not hardcoded 25 / 189,680')
+  hits.push('index.html: OG/meta must use Vite coverage placeholders and SPA origin, not hardcoded 25 / 189,680 or WordPress assets')
 }
 if (indexHtml && /25 towns/.test(indexHtml.text)) {
   hits.push('index.html: do not hardcode 25 towns — inject formatOgDescription at build')
+}
+if (indexHtml && /fm985\.com\.au\/assets\//.test(indexHtml.text)) {
+  hits.push('index.html: OG images must use this SPA origin, not leftover WordPress /assets paths')
 }
 
 const viteConfig = readFileSync(new URL('../vite.config.ts', import.meta.url).pathname, 'utf8')
