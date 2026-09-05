@@ -365,6 +365,16 @@ if (
 ) {
   hits.push('pages/SponsorshipKit.tsx: stats strip must use coverageStatsStrip()')
 }
+const sponsorKit = files.find((f) => f.label === 'pages/SponsorshipKit.tsx')
+if (
+  !sponsorKit ||
+  /Start a Conversation/.test(sponsorKit.text) ||
+  !sponsorKit.text.includes('Send the Enquiry →')
+) {
+  hits.push(
+    'pages/SponsorshipKit.tsx: hero CTA must name Send the Enquiry — not leftover Start a Conversation',
+  )
+}
 
 function assertCoverageCopy(label, requiredFns) {
   const file = files.find((f) => f.label === label)
