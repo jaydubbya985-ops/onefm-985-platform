@@ -85,7 +85,7 @@ export function WeeklySchedule() {
             <div
               key={`glance-${day.index}`}
               onClick={() => setActiveDay(day.index)}
-              className={`snap-start shrink-0 w-[9.75rem] text-left rounded-lg border px-3 py-2.5 transition-all cursor-pointer ${}
+              className={`snap-start shrink-0 w-[9.75rem] text-left rounded-lg border px-3 py-2.5 transition-all cursor-pointer ${
                 selected
                   ? 'bg-one-gold/10 border-one-gold'
                   : 'border-one-border hover:border-one-gold/40'
