@@ -311,6 +311,15 @@ if (
     'pages/Football.tsx: GVL Match of the Day hours must come from GVL_MATCH_SLOT / FULL_SCHEDULE, not “Saturday afternoon”',
   )
 }
+if (
+  !football ||
+  /READY TO SPONSOR LOCAL FOOTBALL\?/.test(football.text) ||
+  !football.text.includes('Request a GVL sponsorship proposal')
+) {
+  hits.push(
+    'pages/Football.tsx: closer heading must name a GVL proposal — not leftover READY TO SPONSOR',
+  )
+}
 
 const sponsorPages = [
   'pages/SponsorshipKit.tsx',
