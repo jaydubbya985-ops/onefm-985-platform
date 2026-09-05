@@ -846,7 +846,7 @@ export default function MediaKit() {
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <p className="font-body-small text-muted max-w-lg">
-              Volume discounts available for packages of 10+ spots. Custom packages and annual agreements receive preferential rates.
+              Ask {BRAND.email} for a written quote. This card does not invent volume discounts or exclusive-category bonuses.
             </p>
             <div className="flex gap-3 shrink-0">
               <MagneticButton strength={10}>
