@@ -24,6 +24,7 @@ import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
 import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { MEDIA_KIT_PUBLIC_URL } from '@/lib/mediaKitUrl'
 import { SOCIAL_LINKS } from '@/lib/socialLinks'
 
 /** Confirmed public profiles only — twitter, instagram, tiktok, youtube stay null. */
@@ -1218,7 +1219,7 @@ function MailchimpExportSection() {
       headline: 'Your brand across the Goulburn Valley',
       body: `ONE FM 98.5: ${formatWeeklyListeners()} across ${formatTowns()} (ABS 2021 via townData). ${STANDARD_SPOT_PLUS_GST}. GVL match-day and live reads are premium inventory — never sold as the $25 floor.`,
       ctaLabel: 'View Media Kit',
-      ctaUrl: 'https://fm985.com.au/#/media-kit',
+      ctaUrl: MEDIA_KIT_PUBLIC_URL,
     })
     const ok = await copyMailchimpSnippetToClipboard(snippet)
     toast[ok ? 'success' : 'error'](ok ? 'HTML snippet copied — paste into Mailchimp' : 'Copy failed — check browser permissions')
@@ -1258,7 +1259,10 @@ function MailchimpExportSection() {
             <div aria-hidden className="explore-tile-scan" />
             <Copy size={24} className="text-one-gold mb-3 group-hover:scale-110 transition-transform" />
             <h4 className="font-h4 text-one-white mb-1">Copy HTML snippet</h4>
-            <p className="font-body-small text-muted text-sm">Brand V3 newsletter block — paste into Mailchimp drag-and-drop editor.</p>
+            <p className="font-body-small text-muted text-sm">
+              Newsletter block for Mailchimp. The button opens the media kit on this site
+              ({MEDIA_KIT_PUBLIC_URL}) — WordPress has no HashRouter.
+            </p>
           </button>
           </TiltCard>
         </div>
