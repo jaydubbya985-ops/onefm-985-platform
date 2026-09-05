@@ -466,6 +466,17 @@ for (const required of [
   }
 }
 
+const socialHub = files.find((f) => f.label === 'pages/SocialHub.tsx')
+if (
+  !socialHub ||
+  /anywhere in the world/.test(socialHub.text) ||
+  !socialHub.text.includes('Listen on 98.5 FM or stream at fm985.com.au — ${formatTowns()}')
+) {
+  hits.push(
+    'pages/SocialHub.tsx: leftover anywhere in the world — Murray River caption must name 98.5 FM and formatTowns()',
+  )
+}
+
 const app = files.find((f) => f.label === 'App.tsx')
 if (
   !app ||
