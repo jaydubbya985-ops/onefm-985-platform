@@ -1,6 +1,6 @@
 import { coverageNumbers, formatBroadcastPopulation, formatRadius } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
-import { BRAND_COLORS } from '@/lib/brand'
+import { BRAND, BRAND_COLORS } from '@/lib/brand'
 import type { CoveragePin, CoveragePinType } from '@/data/coverageMapPins'
 import type { Town } from '@/data/townData'
 import {
@@ -234,7 +234,7 @@ export function buildAdvertiserTour(towns: Town[], pins: CoveragePin[]): TourSto
       lat: station.lat,
       lng: station.lng,
       zoom: 13,
-      caption: '98.5 FM from Shepparton — your brand radiates from here',
+      caption: `98.5 FM from Shepparton — ${BRAND.org} studio at ${BRAND.address}`,
       dwellMs: 4000,
       pulseStation: true,
     },
@@ -247,14 +247,14 @@ export function buildAdvertiserTour(towns: Town[], pins: CoveragePin[]): TourSto
     {
       kind: 'fit',
       pins: football,
-      caption: `GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} — ${football.length} clubs in our broadcast heartland`,
+      caption: `GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} — ${football.length} clubs on the coverage map`,
       dwellMs: 5000,
       maxZoom: 10,
     },
     {
       kind: 'fit',
       pins: sponsors,
-      caption: 'Local sponsors already on air — your brand alongside trusted Valley businesses',
+      caption: 'Named sponsor pins from invoice partners — town-centroid placement, not a live on-air roster',
       dwellMs: 5000,
       maxZoom: 11,
     },
@@ -263,7 +263,7 @@ export function buildAdvertiserTour(towns: Town[], pins: CoveragePin[]): TourSto
       lat: SHEPPARTON.lat,
       lng: SHEPPARTON.lng,
       zoom: 8,
-      caption: 'Ready to reach the Valley? Explore towns or enquire about sponsorship.',
+      caption: 'Explore towns on the map, or enquire via Contact.',
       dwellMs: 3500,
     },
   ]
