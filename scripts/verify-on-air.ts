@@ -50,5 +50,16 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+const nightLive = liveNowFromMetadata(getScheduleMetadata(overnight), overnight)
+assert(nightLive.isLive === false, 'Melbourne 02:00 Sunday is overnight — not On Air Now')
+
+// Sunday 02:00 UTC = Sunday 12:00 Melbourne (AEST). Local getDay/getHours say
+// "Sunday 2am → overnight". The guide says The Essential Hits with Tim Symonds.
+const utcSunday0200 = new Date('2026-09-06T02:00:00Z')
+const utcMeta = getScheduleMetadata(utcSunday0200)
+const utcLive = liveNowFromMetadata(utcMeta, utcSunday0200)
+assert(utcLive.isLive === true, `UTC Sunday 02:00 is midday Melbourne — must be live, got isLive=${utcLive.isLive} program=${utcLive.program}`)
+assert(/Essential Hits/i.test(utcLive.program), `expected Essential Hits at Sunday 12:00 Melbourne, got ${utcLive.program}`)
+assert(utcLive.withLine === 'with Tim Symonds', `Sunday midday with-line: ${utcLive.withLine}`)
 
 console.log('verify-on-air OK')
