@@ -49,6 +49,7 @@ import {
   MULTICULTURAL_PROGRAMS,
   getBreakfastScheduleLabel,
 } from '@/data/programGuide'
+import { confirmedSocialNote } from '@/lib/socialLinks'
 
 /* ─────────── easing ─────────── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -614,7 +615,7 @@ export default function AudienceAnalytics() {
         </div>
       </section>
 
-      {/* ═══════ PLATFORM PERFORMANCE ═══════ */}
+      {/* ═══════ FM, STREAM, FACEBOOK, SOUNDCLOUD ═══════ */}
       <section className="bg-surface-peak section-bleed-top section-padding" data-cursor-label="PLATFORM STATS">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
           <motion.div
@@ -624,8 +625,10 @@ export default function AudienceAnalytics() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="PLATFORM PERFORMANCE" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted mt-1">Where your audience connects</p>
+            <WordReveal text="FM, STREAM, FACEBOOK, SOUNDCLOUD" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <p className="font-body-small text-muted mt-1">
+              {confirmedSocialNote()}. Radio.co stream counts: data pending.
+            </p>
           </motion.div>
 
           <motion.div
