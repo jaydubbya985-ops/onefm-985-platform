@@ -489,6 +489,17 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const cursor = files.find((f) => f.label === 'components/CustomCursor.tsx')
+if (
+  !cursor ||
+  /212\s*,\s*175\s*,\s*55/.test(cursor.text) ||
+  !cursor.text.includes("SIGNAL_RED_RGB = '229, 22, 54'")
+) {
+  hits.push(
+    'components/CustomCursor.tsx: hover ring must use signal red #E51636 — not leftover gold 212,175,55',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)

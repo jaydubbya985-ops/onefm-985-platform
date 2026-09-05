@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 
+/** Direction A signal red #E51636 — leftover hover used brand-gold. */
+const SIGNAL_RED_RGB = '229, 22, 54'
+
 export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
@@ -289,6 +292,7 @@ export function CustomCursor() {
       {/* Lagging ring */}
       <div
         ref={ringRef}
+        data-cursor-ring
         aria-hidden
         style={{
           position: 'fixed',
@@ -297,8 +301,8 @@ export function CustomCursor() {
           width: label ? 56 : hovering ? 48 : pressed ? 28 : 36,
           height: label ? 56 : hovering ? 48 : pressed ? 28 : 36,
           borderRadius: '50%',
-          border: `1.5px solid ${label || hovering ? 'rgba(212,175,55,0.7)' : 'rgba(var(--one-electric-rgb),0.35)'}`,
-          background: label || hovering ? 'rgba(212,175,55,0.06)' : 'transparent',
+          border: `1.5px solid ${label || hovering ? `rgba(${SIGNAL_RED_RGB},0.7)` : 'rgba(var(--one-electric-rgb),0.35)'}`,
+          background: label || hovering ? `rgba(${SIGNAL_RED_RGB},0.06)` : 'transparent',
           pointerEvents: 'none',
           zIndex: 99998,
           transform: 'translate(-100px, -100px)',
