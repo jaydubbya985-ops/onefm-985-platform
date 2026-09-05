@@ -8,6 +8,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { LabelReveal } from '@/components/motion/PosterReveal'
+import { onAirWallSub } from '@/lib/guideHours'
 
 const RED = '#E51636'
 const INK = '#0A0A0A'
@@ -45,12 +46,26 @@ export interface WallRow {
 }
 
 /** Alternating giant-name rows with photo bars. Real things only. */
-export function NameWall({ label, rows }: { label: string; rows: WallRow[] }) {
+export function NameWall({
+  label,
+  rows,
+  photoNote,
+  portraits = [],
+}: {
+  label: string
+  rows: WallRow[]
+  photoNote?: string
+  /** Names whose img is a verified portrait of that person. */
+  portraits?: string[]
+}) {
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16">
       <LabelReveal className="mb-8">{label}</LabelReveal>
       <div>
-        {rows.map((p, i) => (
+        {rows.map((p, i) => {
+          const isPortrait = portraits.includes(p.name)
+          const sub = onAirWallSub(p.name, p.sub)
+          return (
           <motion.div
             key={p.name}
             initial={{ opacity: 0, x: i % 2 === 1 ? 48 : -48 }}
@@ -62,18 +77,26 @@ export function NameWall({ label, rows }: { label: string; rows: WallRow[] }) {
             <div className="font-poster uppercase leading-none whitespace-nowrap text-white text-[clamp(40px,7vw,104px)] poster-hover">
               {p.name}
               <span className="block font-body normal-case text-[13px] tracking-[0.14em] text-white/40 mt-1.5">
-                {p.sub}
+                {sub}
               </span>
             </div>
             <div
               className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
               style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
               role="img"
-              aria-label={`${p.name} — ${p.sub}`}
+              aria-label={
+                isPortrait
+                  ? `${p.name} — ${sub}`
+                  : `ONE FM station photography beside ${p.name} — not a presenter portrait`
+              }
             />
           </motion.div>
-        ))}
+          )
+        })}
       </div>
+      {photoNote ? (
+        <p className="mt-6 font-body text-[12px] tracking-[0.08em] text-white/35">{photoNote}</p>
+      ) : null}
     </section>
   )
 }

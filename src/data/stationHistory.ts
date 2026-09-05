@@ -2,6 +2,8 @@
  * ONE FM station history — public record + station sources.
  * Master research integrated 2026-07-06. No fabricated stats or awards.
  */
+import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
+import { formatRadius, formatTowns } from '@/lib/coverageCopy'
 
 export type HistorySource =
   | 'ACMA community licence register'
@@ -159,12 +161,12 @@ export const INSTITUTION_FACTS = [
   {
     tag: 'Signal',
     title: '10 kW from Shepparton',
-    body: 'ACMA lists 3ONE as a 10 kW community FM service. The station says coverage extends roughly 30 km from Shepparton city centre — Euroa, Nagambie, Benalla and surrounding towns.',
+    body: `ACMA lists 3ONE as a 10 kW community FM service. Reach on this site is modelled as ${formatTowns()} within a ${formatRadius()} radius of Shepparton (ABS 2021 via townData) — Euroa, Nagambie, Benalla and surrounding towns.`,
   },
   {
     tag: 'Multicultural',
-    title: 'Eight languages on the weekend dial',
-    body: 'Program pages and AGM reports document Africonnect, Arabic, Filipino, Mandarin, Persian, Punjabi, Samoan, Swahili/Congolese strands and ONE Youth — structural to the station, not incidental.',
+    title: `${MULTICULTURAL_PROGRAM_COUNT} multicultural programs on weeknights`,
+    body: `The weekly guide (fm985.com.au/guide via programGuide.ts) lists ${MULTICULTURAL_PROGRAM_COUNT} multicultural slots Monday–Wednesday evenings: Radio Netherlands, Afri-Connect (Swahili), Mandarin, Punjabi, Viva Italia, Filipino, Samoan and Arabic — structural to the station, not incidental.`,
   },
   {
     tag: 'Archive',

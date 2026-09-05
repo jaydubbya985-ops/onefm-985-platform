@@ -1,3 +1,4 @@
+// DEMO DATA — mock sponsor/package rows for the ops portal. Labelled DEMO, not live CRM.
 // ---------------------------------------------------------------------------
 // Sponsor & contract domain data for the Operations Portal.
 //
@@ -36,6 +37,8 @@ export interface ProposalPackage {
   deliverables: ProposalDeliverable[]
 }
 
+// Social inventory is Facebook (facebook.com/onefmshepparton) only.
+// Instagram, TikTok, and podcast pre-roll are not sold.
 function partnershipDeliverables(spots: number, socialPosts: number): ProposalDeliverable[] {
   return [
     {
@@ -48,7 +51,7 @@ function partnershipDeliverables(spots: number, socialPosts: number): ProposalDe
     },
     {
       id: 'social',
-      name: `${socialPosts} social posts / week`,
+      name: `${socialPosts} Facebook posts / week`,
       unitPrice: rateCard.socialPost,
       unit: 'per week',
       included: true,
@@ -82,7 +85,7 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     weeklyPrice: generalTiers.communityPartner.weeklyPrice,
     basePrice: generalTiers.communityPartner.weeklyPrice * 52,
     pricingMode: 'weekly',
-    description: `${generalTiers.communityPartner.spots} spots/week + ${generalTiers.communityPartner.socialPosts} social posts. Rate: src/data/pricing.ts`,
+    description: `${generalTiers.communityPartner.spots} spots/week + ${generalTiers.communityPartner.socialPosts} Facebook posts. Rate: src/data/pricing.ts`,
     deliverables: partnershipDeliverables(
       generalTiers.communityPartner.spots,
       generalTiers.communityPartner.socialPosts,
@@ -96,7 +99,7 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     weeklyPrice: generalTiers.championPartner.weeklyPrice,
     basePrice: generalTiers.championPartner.weeklyPrice * 52,
     pricingMode: 'weekly',
-    description: `${generalTiers.championPartner.spots} spots/week + ${generalTiers.championPartner.socialPosts} social posts. Rate: src/data/pricing.ts`,
+    description: `${generalTiers.championPartner.spots} spots/week + ${generalTiers.championPartner.socialPosts} Facebook posts. Rate: src/data/pricing.ts`,
     deliverables: partnershipDeliverables(
       generalTiers.championPartner.spots,
       generalTiers.championPartner.socialPosts,
@@ -110,7 +113,7 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     weeklyPrice: generalTiers.premierPartner.weeklyPrice,
     basePrice: generalTiers.premierPartner.weeklyPrice * 52,
     pricingMode: 'weekly',
-    description: `${generalTiers.premierPartner.spots} spots/week + ${generalTiers.premierPartner.socialPosts} social posts. Rate: src/data/pricing.ts`,
+    description: `${generalTiers.premierPartner.spots} spots/week + ${generalTiers.premierPartner.socialPosts} Facebook posts. Rate: src/data/pricing.ts`,
     deliverables: partnershipDeliverables(
       generalTiers.premierPartner.spots,
       generalTiers.premierPartner.socialPosts,
@@ -124,7 +127,7 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     weeklyPrice: generalTiers.signaturePartner.weeklyPrice,
     basePrice: generalTiers.signaturePartner.weeklyPrice * 52,
     pricingMode: 'weekly',
-    description: `${generalTiers.signaturePartner.spots} spots/week + ${generalTiers.signaturePartner.socialPosts} social posts, category exclusivity. Rate: src/data/pricing.ts`,
+    description: `${generalTiers.signaturePartner.spots} spots/week + ${generalTiers.signaturePartner.socialPosts} Facebook posts, category exclusivity. Rate: src/data/pricing.ts`,
     deliverables: [
       ...partnershipDeliverables(
         generalTiers.signaturePartner.spots,
@@ -147,10 +150,10 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     tier: 'Bronze',
     basePrice: 5000,
     pricingMode: 'fixed',
-    description: 'Match mentions and social media',
+    description: 'Match mentions and Facebook',
     deliverables: [
       { id: 'd1', name: 'Match Day Mentions', unitPrice: 800, unit: 'per match', included: true, qty: 2 },
-      { id: 'd2', name: 'Social Media Post', unitPrice: 300, unit: 'per post', included: true, qty: 1 },
+      { id: 'd2', name: 'Facebook post', unitPrice: 300, unit: 'per post', included: true, qty: 1 },
       { id: 'd3', name: 'Website Listing', unitPrice: 200, unit: 'per month', included: true, qty: 6 },
       { id: 'd4', name: '30-sec Spot', unitPrice: 150, unit: 'per spot', included: false, qty: 0 },
     ],
@@ -165,7 +168,7 @@ export const PROPOSAL_PACKAGES: ProposalPackage[] = [
     description: 'Enhanced match coverage',
     deliverables: [
       { id: 'd1', name: 'Match Day Mentions', unitPrice: 800, unit: 'per match', included: true, qty: 4 },
-      { id: 'd2', name: 'Social Media Posts', unitPrice: 300, unit: 'per post', included: true, qty: 2 },
+      { id: 'd2', name: 'Facebook posts', unitPrice: 300, unit: 'per post', included: true, qty: 2 },
       { id: 'd3', name: 'Player Interview', unitPrice: 500, unit: 'per interview', included: true, qty: 1 },
       { id: 'd4', name: 'Website Feature', unitPrice: 400, unit: 'per month', included: true, qty: 6 },
       { id: 'd5', name: '30-sec Spot', unitPrice: 150, unit: 'per spot', included: true, qty: 4 },
@@ -314,7 +317,7 @@ export const MOCK_CONTRACTS: Contract[] = [
     email: 'peter@foott.com.au',
     campaignName: 'Community Partnership 2026',
     description:
-      '6-month community partnership package — match-day announcements, digital signage, social media mentions, website logo placement and premium on-air spots.',
+      '6-month community partnership package — match-day announcements, digital signage, Facebook mentions, website logo placement and premium on-air spots.',
     contractValue: 30000,
     startDate: '2026-06-01',
     endDate: '2026-11-30',
@@ -384,7 +387,7 @@ export const MOCK_CONTRACTS: Contract[] = [
     email: 'manager@peppermillinn.com.au',
     campaignName: 'GVL 2026 Major Sponsorship',
     description:
-      'Major GVL football sponsorship — 4 x 30sec spots across all dayparts, player of the match awards, digital signage and social media mentions.',
+      'Major GVL football sponsorship — 4 x 30sec spots across all dayparts, player of the match awards, digital signage and Facebook mentions.',
     contractValue: 18000,
     startDate: '2026-01-01',
     endDate: '2026-12-31',

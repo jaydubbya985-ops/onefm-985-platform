@@ -1,3 +1,5 @@
+import { coverageNumbers, formatBroadcastPopulation, formatRadius } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { BRAND_COLORS } from '@/lib/brand'
 import type { CoveragePin, CoveragePinType } from '@/data/coverageMapPins'
 import type { Town } from '@/data/townData'
@@ -19,7 +21,7 @@ export function mountCoverageGlow(
 ): CoverageGlowHandle & { circles: google.maps.Circle[]; stopPulse: () => void } {
   const handle = mountCanvasCoverageGlow(map, {
     center,
-    radiusMeters: 100_000,
+    radiusMeters: coverageNumbers.broadcastRadiusKm * 1000,
     station: ONE_FM_STUDIO,
   })
   return {
@@ -224,7 +226,7 @@ export function buildAdvertiserTour(towns: Town[], pins: CoveragePin[]): TourSto
       lat: SHEPPARTON.lat,
       lng: SHEPPARTON.lng,
       zoom: 8,
-      caption: '100 km broadcast footprint — ~190k people across the Goulburn Valley',
+      caption: `${formatRadius()} broadcast footprint — ${formatBroadcastPopulation()} people across the Goulburn Valley (ABS 2021 via townData)`,
       dwellMs: 4500,
     },
     {
@@ -245,7 +247,7 @@ export function buildAdvertiserTour(towns: Town[], pins: CoveragePin[]): TourSto
     {
       kind: 'fit',
       pins: football,
-      caption: `GVL Saturday coverage — ${football.length} clubs in our broadcast heartland`,
+      caption: `GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} — ${football.length} clubs in our broadcast heartland`,
       dwellMs: 5000,
       maxZoom: 10,
     },

@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { MediaImage } from '@/components/MediaImage'
+import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
+import { BREAKFAST_SHOW } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
 import { WordReveal } from '@/components/WordReveal'
 import { TiltCard } from '@/components/TiltCard'
@@ -17,14 +20,14 @@ const TILES = [
   },
   {
     title: 'Programs',
-    desc: 'Full program guide',
+    desc: BREAKFAST_SHOW,
     path: '/programs',
     image: STATION_PHOTOS.studioPresenterMic,
     fallback: PHOTO_DEFAULTS.regional,
   },
   {
     title: 'Local Sport',
-    desc: 'GVL & community sport',
+    desc: `GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} · ${formatTowns()}`,
     path: '/football',
     image: STATION_PHOTOS.gvlNightPanorama,
     fallback: PHOTO_DEFAULTS.regional,
@@ -41,7 +44,7 @@ const TILES = [
   },
   {
     title: 'Coverage Map',
-    desc: '25 towns · 100km radius',
+    desc: formatCoverageShort(),
     path: '/coverage',
     image: STATION_PHOTOS.geoTownAerial,
     fallback: PHOTO_DEFAULTS.regional,
@@ -55,7 +58,7 @@ const TILES = [
   },
   {
     title: 'Sponsor ONE FM',
-    desc: 'Partner with the Valley',
+    desc: `Partner across ${formatTowns()}`,
     path: '/sponsorship',
     image: STATION_PHOTOS.gvlPlayerHighFive,
     fallback: PHOTO_DEFAULTS.regional,
@@ -77,7 +80,7 @@ export function ExploreOneFMGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10">
           <p className="font-label text-one-electric text-[10px] tracking-widest uppercase mb-2">Explore ONE FM</p>
-          <WordReveal text="Everything the station offers" className="font-h2 text-one-white block" as="h2" stagger={0.022} variant="char" />
+          <WordReveal text="Listen, the guide, and the Valley" className="font-h2 text-one-white block" as="h2" stagger={0.022} variant="char" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

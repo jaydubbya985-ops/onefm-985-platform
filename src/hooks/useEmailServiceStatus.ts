@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
+import { readFunctionJson } from '@/lib/readFunctionJson'
 
-export type EmailServiceStatus = 'checking' | 'live' | 'off' | 'unknown'
+export type EmailServiceStatus = 'checking' | 'live' | 'pending' | 'unverified' | 'off' | 'unknown'
 
 /**
  * Checks whether the invoice email pipeline (Resend, via the Netlify
- * `send-invoice` function) is actually live in this environment.
+ * `send-invoice` function) can actually deliver mail.
  *
- * - 'live'    → RESEND_API_KEY is set on Netlify, real sends will go out.
- * - 'off'     → function reachable but RESEND_API_KEY missing — dev/PDF+mailto fallback only.
- * - 'unknown' → function unreachable (e.g. `npm run dev` without `netlify dev`) — cannot tell.
+ * - 'live'       → key is set, Resend accepts it, fm985.com.au is verified.
+ * - 'pending'    → DNS matches; Resend has not finished verifying yet.
+ * - 'unverified' → key is set but fm985.com.au DNS does not match Resend.
+ * - 'off'        → function reachable but RESEND_API_KEY missing — PDF+mailto fallback only.
+ * - 'unknown'    → function unreachable (SPA HTML fallback or local `npm run dev`).
  *
- * Never guesses or invents a key — this only reports presence/absence.
+ * Never guesses or invents a key.
  */
 export function useEmailServiceStatus(): EmailServiceStatus {
   const [status, setStatus] = useState<EmailServiceStatus>('checking')
@@ -18,14 +21,34 @@ export function useEmailServiceStatus(): EmailServiceStatus {
   useEffect(() => {
     let cancelled = false
 
-    fetch('/.netlify/functions/email-status')
-      .then((res) => {
-        if (!res.ok) throw new Error(`status ${res.status}`)
-        return res.json() as Promise<{ resendConfigured?: boolean }>
-      })
+    fetch('/.netlify/functions/email-status', { headers: { Accept: 'application/json' } })
+      .then((res) =>
+        readFunctionJson<{
+          resendConfigured?: boolean
+          resendReachable?: boolean
+          fromDomainVerified?: boolean
+          domainStatus?: string
+        }>(res),
+      )
       .then((data) => {
         if (cancelled) return
-        setStatus(data.resendConfigured ? 'live' : 'off')
+        if (!data) {
+          setStatus('unknown')
+          return
+        }
+        if (!data.resendConfigured) {
+          setStatus('off')
+          return
+        }
+        if (data.fromDomainVerified === true && data.resendReachable !== false) {
+          setStatus('live')
+          return
+        }
+        if (data.domainStatus === 'pending') {
+          setStatus('pending')
+          return
+        }
+        setStatus('unverified')
       })
       .catch(() => {
         if (!cancelled) setStatus('unknown')

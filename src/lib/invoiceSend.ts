@@ -7,6 +7,7 @@
  */
 import type { jsPDF } from 'jspdf'
 import { sendEmail } from '@/lib/email'
+import { readFunctionJson } from '@/lib/readFunctionJson'
 import {
   BANK_ACCOUNT,
   BANK_ACCOUNT_NAME,
@@ -53,6 +54,18 @@ export interface SendResult {
 
 function pdfToBase64(pdf: jsPDF): string {
   return pdf.output('datauristring').split(',')[1] ?? ''
+}
+
+/** Dry-run or sent:false must never be treated as a real email. */
+function readSendResult(
+  data: { success?: boolean; messageId?: string; dryRun?: boolean; sent?: boolean } | null,
+): SendResult | null {
+  if (!data) return null
+  if (data.dryRun || data.sent === false) {
+    return { success: false, error: 'Invoice was not emailed (dry-run or send failed).' }
+  }
+  if (data.success) return { success: true, messageId: data.messageId }
+  return null
 }
 
 function buildInvoiceHtml(payload: InvoiceSendPayload): string {
@@ -116,18 +129,23 @@ export async function dispatchInvoiceEmail(
       }),
     })
 
-    if (res.ok) {
-      const data = await res.json() as { success?: boolean; messageId?: string }
-      if (data.success) return { success: true, messageId: data.messageId }
-    } else {
+    const data = await readFunctionJson<{
+      success?: boolean
+      messageId?: string
+      dryRun?: boolean
+      sent?: boolean
+    }>(res)
+    const parsed = readSendResult(data)
+    if (parsed) return parsed
+    if (!res.ok) {
       console.warn('[InvoiceSend] Netlify function responded:', res.status)
     }
   } catch (err) {
     console.warn('[InvoiceSend] Netlify function unavailable (dev mode?):', err)
   }
 
-  // 2. Direct Resend (local dev with VITE_RESEND_API_KEY in .env.local)
-  const directResult = await sendEmail({
+  // 2. Browser fallback reports unsent; real email requires the Netlify function.
+  const fallbackResult = await sendEmail({
     to: recipient,
     subject,
     html,
@@ -137,18 +155,18 @@ export async function dispatchInvoiceEmail(
       : undefined,
   })
 
-  if (directResult.success && directResult.messageId) {
-    return { success: true, messageId: directResult.messageId }
+  if (fallbackResult.success && fallbackResult.messageId) {
+    return { success: true, messageId: fallbackResult.messageId }
   }
 
-  if (directResult.success && directResult.devMode) {
-    return { success: true, devMode: true }
+  if (fallbackResult.devMode) {
+    return { success: false, devMode: true }
   }
 
   return {
     success: false,
     usedMailtoFallback: true,
-    error: directResult.error ?? 'Email service unavailable',
+    error: fallbackResult.error ?? 'Email service unavailable',
   }
 }
 
@@ -174,12 +192,16 @@ export async function dispatchReceiptEmail(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ to: payload.to, subject, html, replyTo: 'accounts@fm985.com.au' }),
     })
-    if (res.ok) {
-      const data = await res.json() as { success?: boolean; messageId?: string }
-      if (data.success) return { success: true, messageId: data.messageId }
-    }
+    const data = await readFunctionJson<{
+      success?: boolean
+      messageId?: string
+      dryRun?: boolean
+      sent?: boolean
+    }>(res)
+    const parsed = readSendResult(data)
+    if (parsed) return parsed
   } catch {
-    // fall through to direct send
+    // fall through to browser fallback
   }
 
   const result = await sendEmail({
@@ -189,7 +211,8 @@ export async function dispatchReceiptEmail(
     replyTo: 'accounts@fm985.com.au',
   })
 
-  if (result.success) return { success: true, messageId: result.messageId, devMode: result.devMode }
+  if (result.devMode) return { success: false, devMode: true }
+  if (result.success) return { success: true, messageId: result.messageId }
   return { success: false, usedMailtoFallback: true, error: result.error }
 }
 

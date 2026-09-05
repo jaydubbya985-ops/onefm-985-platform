@@ -1,5 +1,15 @@
 import type { ArchivePerson } from '@/types/livingArchive'
 import { BOARD_2024, LIFE_MEMBERS } from '@/data/stationHistory'
+import { BREAKFAST_ROSTER } from '@/data/programGuide'
+
+/** Weekday breakfast hosts from programGuide.ts — not historical or board labels. */
+const CURRENT_BREAKFAST_HOSTS: ReadonlySet<string> = new Set(
+  BREAKFAST_ROSTER.flatMap((slot) => {
+    const host = slot.host
+    const aka = host.match(/^(.+?)\s*\((.+)\)$/)
+    return aka ? [host, aka[1].trim(), aka[2].trim()] : [host]
+  }),
+)
 
 const AGM_2024: ArchivePerson['sources'] = [
   { label: 'ONE FM Annual Report 2024', type: 'annual-report', url: 'https://fm985.com.au/about/' },
@@ -13,7 +23,6 @@ const FEATURED: ArchivePerson[] = [
     categories: ['sport-caller', 'volunteer', 'presenter'],
     roles: ['GVL historian', 'Early volunteer'],
     programs: ['Match Day Live', 'Saturday sport'],
-    photo: '/assets/images/commentary-box-action.jpg',
     confidence: 'confirmed-newspaper',
     sources: [
       { label: 'Shepparton News retrospective', type: 'newspaper', date: '2022' },
@@ -24,9 +33,10 @@ const FEATURED: ArchivePerson[] = [
   {
     id: 'di-hunter',
     name: 'Di Hunter',
-    categories: ['presenter', 'breakfast-host', 'volunteer'],
+    categories: ['presenter', 'volunteer'],
     years: '15 years on air',
-    roles: ['Breakfast host (Fri)', 'Trainer — 103 presenters'],
+    roles: ['Monday Afternoon', 'Trainer — 103 presenters'],
+    programs: ['Monday Afternoon'],
     photo: '/assets/images/heritage-di-hunter-carols-2014.jpg',
     confidence: 'confirmed-newspaper',
     sources: [{ label: 'Shepparton News profile', type: 'newspaper', date: '2023' }],
@@ -86,32 +96,51 @@ const FEATURED: ArchivePerson[] = [
   },
 ]
 
-function buildArchivePeople(): ArchivePerson[] {
-  const featuredNames = new Set(FEATURED.map((f) => f.name))
+const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
-  const boardPeople: ArchivePerson[] = BOARD_2024.filter((b) => !featuredNames.has(b.name)).map(
-    ({ role, name }) => ({
-      id: `board-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+/**
+ * Deduplicates on id rather than on name. The lists spell some people
+ * differently — the featured record is "Kevin Francis Ryan" while the life
+ * member roll says "Kevin Ryan" — so matching on name listed the same person on
+ * the public archive wall twice.
+ */
+function buildArchivePeople(): ArchivePerson[] {
+  const seen = new Set<string>(FEATURED.map((f) => f.id))
+  const out: ArchivePerson[] = [...FEATURED]
+
+  const add = (person: ArchivePerson) => {
+    if (seen.has(person.id)) return
+    seen.add(person.id)
+    out.push(person)
+  }
+
+  for (const { role, name } of BOARD_2024) {
+    add({
+      id: slug(name),
       name,
-      categories: name === 'John Painter' ? ['board', 'presenter', 'breakfast-host'] : ['board'],
+      categories:
+        name === 'John Painter'
+          ? ['board', 'presenter']
+          : CURRENT_BREAKFAST_HOSTS.has(name)
+            ? ['board', 'breakfast-host']
+            : ['board'],
       roles: [role],
       confidence: 'confirmed-one-fm-document',
       sources: AGM_2024,
     })
-  )
+  }
 
-  const boardNames = new Set<string>(BOARD_2024.map((b) => b.name))
-  const lifeOnly: ArchivePerson[] = LIFE_MEMBERS.filter(
-    (name) => !featuredNames.has(name) && !boardNames.has(name)
-  ).map((name) => ({
-    id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-    name,
-    categories: ['life-member', 'volunteer'],
-    confidence: 'confirmed-one-fm-document',
-    sources: AGM_2024,
-  }))
+  for (const name of LIFE_MEMBERS) {
+    add({
+      id: slug(name),
+      name,
+      categories: ['life-member', 'volunteer'],
+      confidence: 'confirmed-one-fm-document',
+      sources: AGM_2024,
+    })
+  }
 
-  return [...FEATURED, ...boardPeople, ...lifeOnly]
+  return out
 }
 
 export const ARCHIVE_PEOPLE = buildArchivePeople()

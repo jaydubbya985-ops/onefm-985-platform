@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { TextScramble } from '@/components/TextScramble'
 
 const FACTS = [
@@ -7,7 +8,7 @@ const FACTS = [
   { label: 'Callsign',     value: BRAND.callsign,           scramble: true  },
   { label: 'Frequency',   value: `${BRAND.frequency} FM`,  scramble: true  },
   { label: 'Licensed',    value: String(BRAND.licensed),   scramble: true  },
-  { label: 'Region',      value: 'Goulburn Murray',         scramble: false },
+  { label: 'Coverage',    value: formatCoverageShort(),     scramble: false },
   { label: 'Contact',     value: BRAND.email,               scramble: false },
 ] as const
 

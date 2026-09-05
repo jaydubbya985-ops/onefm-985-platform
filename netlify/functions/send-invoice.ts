@@ -1,35 +1,68 @@
 import type { Handler, HandlerEvent } from '@netlify/functions'
+import { INVOICE_FROM, probeResend } from '../lib/resendProbe'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM = 'ONE FM 98.5 <accounts@fm985.com.au>'
+const FROM = INVOICE_FROM
 const REPLY_TO = 'accounts@fm985.com.au'
+
+type InvoiceSendBody = {
+  to: string
+  subject: string
+  html: string
+  pdfBase64?: string
+  filename?: string
+  replyTo?: string
+  dryRun?: boolean
+}
+
+function json(statusCode: number, payload: Record<string, unknown>) {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    body: JSON.stringify(payload),
+  }
+}
 
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
+    return json(405, { error: 'Method not allowed' })
   }
 
   if (!RESEND_API_KEY) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'Email service not configured' }) }
+    return json(500, { error: 'Email service not configured' })
   }
 
-  let body: {
-    to: string
-    subject: string
-    html: string
-    pdfBase64?: string
-    filename?: string
-    replyTo?: string
-  }
-
+  let body: InvoiceSendBody
   try {
-    body = JSON.parse(event.body ?? '{}')
+    body = JSON.parse(event.body ?? '{}') as InvoiceSendBody
   } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }
+    return json(400, { error: 'Invalid JSON' })
   }
 
   if (!body.to || !body.subject || !body.html) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields: to, subject, html' }) }
+    return json(400, { error: 'Missing required fields: to, subject, html' })
+  }
+
+  const hasPdf = Boolean(body.pdfBase64 && body.filename)
+
+  // Dry-run: prove the pipeline can send, never call Resend /emails.
+  if (body.dryRun === true) {
+    const probe = await probeResend(RESEND_API_KEY)
+    return json(200, {
+      success: true,
+      dryRun: true,
+      sent: false,
+      resendConfigured: probe.configured,
+      resendReachable: probe.reachable,
+      fromDomainVerified: probe.fromDomainVerified,
+      domainStatus: probe.domainStatus,
+      stationDomains: probe.stationDomains.map((d) => ({ name: d.name, status: d.status })),
+      needJay: probe.needJay,
+      wouldSendTo: body.to,
+      hasPdf,
+      filename: body.filename ?? null,
+      from: FROM,
+    })
   }
 
   const payload: Record<string, unknown> = {
@@ -40,7 +73,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
     reply_to: body.replyTo ?? REPLY_TO,
   }
 
-  if (body.pdfBase64 && body.filename) {
+  if (hasPdf) {
     payload.attachments = [{ filename: body.filename, content: body.pdfBase64 }]
   }
 
@@ -54,19 +87,16 @@ export const handler: Handler = async (event: HandlerEvent) => {
       body: JSON.stringify(payload),
     })
 
-    const data = await res.json() as { id?: string; message?: string }
+    const data = (await res.json()) as { id?: string; message?: string }
 
     if (!res.ok) {
       console.error('[send-invoice] Resend error:', data)
-      return { statusCode: res.status, body: JSON.stringify({ error: data.message ?? 'Send failed' }) }
+      return json(res.status, { error: data.message ?? 'Send failed', sent: false })
     }
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true, messageId: data.id }),
-    }
+    return json(200, { success: true, sent: true, messageId: data.id })
   } catch (err) {
     console.error('[send-invoice] Fetch error:', err)
-    return { statusCode: 502, body: JSON.stringify({ error: 'Email service unreachable' }) }
+    return json(502, { error: 'Email service unreachable', sent: false })
   }
 }

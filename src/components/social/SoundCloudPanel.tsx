@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Headphones, Pause, Play } from 'lucide-react'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
+import { SOUNDCLOUD_PROFILE_URL, confirmedSocialNote } from '@/lib/socialLinks'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import {
   fetchLatestInterviews,
   formatInterviewDate,
@@ -134,7 +135,7 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
       className={className}
       eyebrow="ON DEMAND"
       title="Interview Archive"
-      description="Community voices and sport replays — streamed from fm985.com.au via SoundCloud."
+      description={`${confirmedSocialNote()}. Interviews from fm985.com.au · ${formatCoverageShort()}.`}
       href={SOUNDCLOUD_PROFILE_URL}
       hrefLabel="Open SoundCloud"
       image={STATION_PHOTOS.commentaryBoxAction}

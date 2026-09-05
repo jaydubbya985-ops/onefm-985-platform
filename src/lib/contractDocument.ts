@@ -17,7 +17,8 @@ import {
   PDF_COVER_STUDIO_JPEG,
   PDF_COVER_STUDIO_PX,
 } from '@/lib/pdfCoverImages'
-import { stationStats } from '@/data/pricing'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort, formatRadius, formatTowns, weeklyListenersValue } from '@/lib/coverageCopy'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import type { Contract } from '@/components/ops/data/sponsors'
 import {
@@ -46,9 +47,9 @@ export async function generateContractPdf(contract: Contract): Promise<jsPDF> {
     title: c.companyName,
     subtitle: `${c.campaignName}  ·  ${c.tier}`,
     number: c.contractNumber,
-    statValue: stationStats.weeklyListeners.toLocaleString('en-AU'),
+    statValue: weeklyListenersValue(),
     statLabel: 'Est. weekly listeners  ·  ABS 2021 via townData',
-    statAside: `${stationStats.totalTowns} towns  ·  ${stationStats.broadcastRadiusKm}km`,
+    statAside: `${formatTowns()}  ·  ${formatRadius()}`,
   })
 
   doc.addPage()
@@ -65,12 +66,12 @@ export async function generateContractPdf(contract: Contract): Promise<jsPDF> {
   norm(9)
   inkGrey()
   tl(c.companyName, M, y)
-  tl('Goulburn Valley Community Radio Inc.', W / 2 + 4, y)
+  tl(BRAND.org, W / 2 + 4, y)
   y += 5
   if (c.email) tl(c.email, M, y)
   tl(`${DS.station.address}`, W / 2 + 4, y)
   y += 5
-  tl(`${DS.station.phone}  ·  admin@fm985.com.au`, W / 2 + 4, y)
+  tl(`${DS.station.phone}  ·  ${BRAND.email}`, W / 2 + 4, y)
   y += 8
 
   y = drawStatCards(p, y, [
@@ -149,7 +150,7 @@ export async function generateContractPdf(contract: Contract): Promise<jsPDF> {
     doc.setPage(i)
     drawSlimFooter(
       p,
-      `Goulburn Valley Community Radio Inc.  ·  ABN ${DS.station.abn}  ·  ${DS.station.phone}`,
+      `${BRAND.org}  ·  ABN ${DS.station.abn}  ·  ${formatCoverageShort()}`,
       String(i),
     )
   }

@@ -3,8 +3,27 @@ import { Search } from 'lucide-react'
 import type { ArchivePerson, PersonCategory, SourceConfidence } from '@/types/livingArchive'
 import { CATEGORY_LABELS, CONFIDENCE_LABELS } from '@/types/livingArchive'
 import { LabelReveal } from '@/components/onair/kit'
+import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const RED = '#E51636'
+
+/**
+ * Leftover unused station stills — archive photography, not presenter portraits.
+ * studio-sbs-visit and gvl-stadium-day are not used on any other live surface
+ * (/story is unmounted; media.ts ovalGround is an unused catalogue alias).
+ */
+const LEFTOVER_STILLS = [
+  STATION_PHOTOS.studioSbsVisit,
+  STATION_PHOTOS.gvlStadiumDay,
+] as const
+
+function leftoverStill(person: ArchivePerson, index: number): string {
+  if (person.categories.includes('sport-caller') || person.categories.includes('ob-crew')) {
+    return STATION_PHOTOS.gvlStadiumDay
+  }
+  return LEFTOVER_STILLS[index % LEFTOVER_STILLS.length]
+}
 
 const FILTER_ORDER: PersonCategory[] = [
   'life-member',
@@ -31,28 +50,48 @@ function ConfidenceBadge({ level }: { level: SourceConfidence }) {
   )
 }
 
-function PersonCard({ person }: { person: ArchivePerson }) {
+function PersonCard({ person, index }: { person: ArchivePerson; index: number }) {
+  const namedPortrait = person.photo && presenterPhotoIsPortrait(person.name) ? person.photo : null
+  const still = leftoverStill(person, index)
   return (
-    <article className="border border-white/12 rounded-xl p-5 hover:border-[#E51636] transition-colors">
-      <div className="flex gap-4">
-        {person.photo ? (
+    <article className="relative overflow-hidden border border-white/12 rounded-xl p-5 hover:border-[#E51636] transition-colors">
+      {!namedPortrait && (
+        <>
+          <img
+            src={still}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 w-full h-full object-cover opacity-25"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(180deg, rgba(7,29,58,0.82) 0%, rgba(7,29,58,0.92) 100%)' }}
+          />
+        </>
+      )}
+      <div className="relative z-10 flex gap-4">
+        {namedPortrait ? (
           <div
             className="shrink-0 w-14 h-14 rounded-lg bg-cover bg-center grayscale-[30%]"
-            style={{ backgroundImage: `url('${person.photo}')` }}
+            style={{ backgroundImage: `url('${namedPortrait}')` }}
             role="img"
             aria-label={person.name}
           />
         ) : (
           <div
-            className="shrink-0 w-14 h-14 rounded-lg flex items-center justify-center font-poster text-[18px] text-white/80"
-            style={{ background: '#161616' }}
-            aria-hidden
+            className="shrink-0 w-14 h-14 rounded-lg bg-cover bg-center flex items-center justify-center font-poster text-[18px] text-white/90"
+            style={{ backgroundImage: `url('${still}')` }}
+            role="img"
+            aria-label={`ONE FM station photography beside ${person.name} — not a presenter portrait`}
           >
-            {person.name
-              .split(' ')
-              .map((w) => w[0])
-              .slice(0, 2)
-              .join('')}
+            <span className="w-full h-full rounded-lg flex items-center justify-center bg-black/45">
+              {person.name
+                .split(' ')
+                .map((w) => w[0])
+                .slice(0, 2)
+                .join('')}
+            </span>
           </div>
         )}
         <div className="min-w-0 flex-1">
@@ -63,14 +102,14 @@ function PersonCard({ person }: { person: ArchivePerson }) {
           {person.years && <p className="text-[12px] text-white/35 mt-0.5">{person.years}</p>}
         </div>
       </div>
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className="relative z-10 mt-3 flex flex-wrap gap-1.5">
         {person.categories.slice(0, 3).map((cat) => (
           <span key={cat} className="text-[10px] tracking-[0.08em] uppercase text-white/40">
             {CATEGORY_LABELS[cat]}
           </span>
         ))}
       </div>
-      <div className="mt-3">
+      <div className="relative z-10 mt-3">
         <ConfidenceBadge level={person.confidence} />
       </div>
     </article>
@@ -153,16 +192,17 @@ export function PeopleWall({ people }: { people: ArchivePerson[] }) {
       </p>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((person) => (
-          <PersonCard key={person.id} person={person} />
+        {filtered.map((person, index) => (
+          <PersonCard key={person.id} person={person} index={index} />
         ))}
       </div>
 
       <p className="text-[12px] text-white/30 mt-8">
+        Photography: ONE FM studio visit and GVL ground archive — not presenter portraits. Named
+        portraits exist only for Di Hunter and Sally Nayler.{' '}
         <a href="#contribute" className="underline hover:text-white/60">
           Add your memory →
-        </a>{' '}
-        — archive grows with community contribution.
+        </a>
       </p>
     </section>
   )

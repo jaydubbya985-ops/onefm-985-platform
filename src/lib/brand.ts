@@ -72,18 +72,18 @@ export const LOGO = {
   /** Favicon / compact mark */
   favicon:     '/brand/favicon.svg',
   goldMark:    '/brand/favicon.svg',
-  /** Fallback legacy SVGs */
-  fallbackMaster:  '/one-fm-logo-master.svg',
-  fallbackDefault: '/one-fm-logo.svg',
-  fallbackWhite:   '/one-fm-logo-white.svg',
+  /** Official files only — never the old gold-98.5 text lockup */
+  fallbackMaster:  '/brand/one-fm-logo-source.svg',
+  fallbackDefault: '/brand/one-fm-logo-primary.png',
+  fallbackWhite:   '/brand/one-fm-logo-reversed.svg',
 } as const
 
 export type LogoVariant = 'primary' | 'white' | 'mark'
 
 const VARIANT_PATHS: Record<LogoVariant, string[]> = {
-  primary: [LOGO.invoice, LOGO.primarySvg, LOGO.primary, LOGO.transparent, LOGO.fallbackMaster],
-  white:   [LOGO.reversed, LOGO.transparent, LOGO.fallbackWhite, LOGO.fallbackMaster],
-  mark:    [LOGO.favicon, LOGO.goldMark, LOGO.primarySvg],
+  primary: [LOGO.primarySvg, LOGO.primary, LOGO.transparent],
+  white:   [LOGO.reversed, LOGO.transparent],
+  mark:    [LOGO.favicon, LOGO.primarySvg],
 }
 
 export function logoCandidates(variant: LogoVariant = 'primary'): readonly string[] {

@@ -1,9 +1,9 @@
 ﻿import { useState, useEffect, useRef, memo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
-  Search, ChevronDown, Download, Copy, Check, Instagram, Twitter, Facebook,
-  Smartphone, Globe, Image, Palette, Type, Grid, Music, ArrowRight,
-  Sparkles, X, Heart, MessageCircle, Eye, Hash, Shield,
+  Search, ChevronDown, Download, Copy, Check, Instagram, Facebook,
+  Smartphone, Globe, Image, Palette, Type, Grid, ArrowRight,
+  Sparkles, X, Eye, Hash, Shield,
   Mic, Clock, Plus, Wand2, Radio
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -11,7 +11,6 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { WordReveal } from '@/components/WordReveal'
 import { FacebookPageEmbed } from '@/components/FacebookPageEmbed'
-import { MOCK_ENQUIRIES } from '@/components/ops/data/enquiries'
 import {
   downloadMailchimpLeadsCsv,
   buildMailchimpNewsletterSnippet,
@@ -23,7 +22,47 @@ import { Marquee } from '@/components/Marquee'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { stationStats } from '@/data/pricing'
+import { formatTowns, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { SOCIAL_LINKS } from '@/lib/socialLinks'
+
+/** Confirmed public profiles only — twitter, instagram, tiktok, youtube stay null. */
+const LIVE_PROFILE_LABELS = (Object.entries(SOCIAL_LINKS) as [string, string | null][])
+  .filter(([, href]) => Boolean(href))
+  .map(([name]) => (name === 'facebook' ? 'Facebook' : name === 'soundcloud' ? 'SoundCloud' : name))
+import { InventoryLadder } from '@/components/InventoryLadder'
+import {
+  BREAKFAST_SHOW,
+  BREAKFAST_TIME,
+  FULL_SCHEDULE,
+  MULTICULTURAL_PROGRAM_COUNT,
+} from '@/data/programGuide'
+
+/** programGuide day 0=Sunday … 6=Saturday */
+const GUIDE_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
+
+function formatGuideHour(h: number): string {
+  if (h === 0 || h === 24) return '12:00am'
+  if (h === 12) return '12:00pm'
+  return h < 12 ? `${h}:00am` : `${h - 12}:00pm`
+}
+
+function guideSlot(name: string) {
+  const slot = FULL_SCHEDULE.find((s) => s.name === name)
+  if (!slot) return null
+  return {
+    name: slot.name,
+    dayName: GUIDE_DAYS[slot.day],
+    time: `${formatGuideHour(slot.startHour)}–${formatGuideHour(slot.endHour)}`,
+  }
+}
+
+const GVL_MATCH = guideSlot('GVL Match of the Day')
+const NIRS_AFL_FRIDAY = guideSlot('NIRS AFL Friday Night Footy')
+const GVL_WHEN = GVL_MATCH ? `${GVL_MATCH.dayName} ${GVL_MATCH.time}` : 'Saturday'
+const NIRS_WHEN = NIRS_AFL_FRIDAY
+  ? `${NIRS_AFL_FRIDAY.dayName} ${NIRS_AFL_FRIDAY.time}`
+  : 'Friday night'
 
 /* ─── Easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -42,7 +81,7 @@ const ASSETS = [
   { name: 'Space Grotesk Specimen', format: 'OTF, WOFF', category: 'Typography', preview: 'bg-one-navy' },
   { name: 'Waveform Pattern', format: 'SVG, PNG', category: 'Patterns', preview: 'bg-one-navy' },
   { name: 'Studio Photos Pack', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
-  { name: 'Host Portraits', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
+  { name: 'Station photography (no presenter portraits pack)', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
   { name: 'Event Coverage', format: 'JPG', category: 'Photography', preview: 'bg-one-navy' },
   { name: 'Social Media Kit', format: 'PSD, Canva', category: 'Patterns', preview: 'bg-data-violet' },
 ]
@@ -50,7 +89,7 @@ const ASSETS = [
 // V3 Brand System colours — source: ONE_FM_brand_system_v3
 const BRAND_COLORS = [
   { name: 'ONE FM Blue', hex: '#1B458F', usage: 'Core identity — wordmark, headers' },
-  { name: 'Deep Navy', hex: '#101010', usage: 'Backgrounds, email header band' },
+  { name: 'Deep Navy', hex: '#071D3A', usage: 'Backgrounds, email header band' },
   { name: '98.5 Red', hex: '#E51636', usage: 'Core identity — frequency, accents' },
   { name: 'Broadcast White', hex: '#FFFFFF', usage: 'Core identity — reversed lockup' },
   { name: 'Heritage Gold', hex: '#F2F2F2', usage: 'Premium accent — totals, highlights' },
@@ -71,52 +110,59 @@ const TEMPLATES = [
   { name: 'Live Stream Now Playing', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Live', 'Stream', 'NowPlaying'], image: '/assets/images/studio-exterior-rainbow.jpg' },
   { name: 'Sponsor Thank You', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Sponsor', 'Community', 'Thank You'], image: '/assets/images/gvl-player-high-five.jpg' },
   { name: 'Laser & Festival Nights', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Events', 'Festival', 'Night'], image: '/assets/images/event-lasers-crowd.jpg' },
-  { name: 'First Nations Program', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Multicultural', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
+  { name: 'First Nations in the Valley', platform: 'Facebook', dimensions: '1200×630', format: 'Canva (Landscape)', tags: ['Community', 'First Nations', 'Culture'], image: '/assets/images/culture-first-nations-dancer.png' },
   { name: 'Deni Ute Muster Country', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Square)', tags: ['Country', 'Event', 'Music'], image: '/assets/images/event-deni-ute-muster.jpg' },
   { name: 'Goulburn River Region', platform: 'Instagram', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Regional', 'Landscape', 'Community'], image: '/assets/images/culture-riverboat-murray.jpg' },
-  { name: 'TikTok Vertical — Now Playing', platform: 'TikTok', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
-  { name: 'LinkedIn Community Partner', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
-  { name: 'Threads Quote Card', platform: 'Twitter/X', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
+  { name: 'Vertical Now Playing', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Video', 'Live', 'Stream'], image: '/assets/images/studio-exterior-rainbow.jpg' },
+  { name: 'Community Partner Landscape', platform: 'Facebook', dimensions: '1200×627', format: 'Canva (Landscape)', tags: ['Partner', 'Sponsor', 'B2B'], image: '/assets/images/gvl-player-high-five.jpg' },
+  { name: 'Quote Card', platform: 'Facebook', dimensions: '1080×1350', format: 'Canva (Portrait)', tags: ['Quote', 'Community', 'Story'], image: '/assets/images/geo-pink-orchard.jpg' },
   { name: 'Carousel Slide 1 — Breakfast', platform: 'Instagram', dimensions: '1080×1080', format: 'Canva (Carousel)', tags: ['Carousel', 'Breakfast', 'Daily'], image: '/assets/images/commentary-box-action.jpg' },
   { name: 'GVL Scoreboard Story', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Story)', tags: ['Sport', 'GVL', 'Scoreboard'], image: '/assets/images/gvl-night-panorama.jpg' },
   { name: 'Presenter Spotlight Reel', platform: 'Instagram', dimensions: '1080×1920', format: 'Canva (Reel)', tags: ['Reel', 'Presenter', 'BTS'], image: '/assets/images/studio-commentary-selfie.jpg' },
 ]
 
-const PLATFORM_FILTERS = ['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'Stories', 'Reels']
+/** Canva size buckets — not a claim we post on Twitter/TikTok (those URLs are null). */
+const PLATFORM_FILTERS = ['All', 'Instagram', 'Facebook', 'Stories', 'Reels']
 
+// Page counts were invented, so the cards link to the live page instead of
+// claiming a document length we cannot produce.
 const GUIDES = [
-  { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: '12 pages', path: '/media-kit' },
-  { title: 'Optimal Posting Times', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'Platform-specific timing recommendations based on audience data', pages: '8 pages', path: '/audience' },
-  { title: 'Hashtag Strategy', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'Curated hashtag sets for maximum reach and engagement', pages: '6 pages', path: '/social' },
-  { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: '10 pages', path: '/contact' },
+  { title: 'The ONE FM Voice', icon: <Mic size={40} />, color: 'text-one-gold', desc: 'Tone, language, and personality guidelines for all social content', pages: 'Media kit', path: '/media-kit' },
+  { title: 'Who We Reach', icon: <Clock size={40} />, color: 'text-data-teal', desc: 'The broadcast-area population behind every post — and what we do not measure', pages: 'Audience & reach', path: '/audience' },
+  { title: 'Hashtag Sets', icon: <Hash size={40} />, color: 'text-data-violet', desc: 'The station hashtags to use across GVL, community and program posts', pages: 'This page', path: '/social' },
+  { title: 'Crisis Communication', icon: <Shield size={40} />, color: 'text-one-red', desc: 'Protocols for sensitive situations and rapid response', pages: 'Contact the station', path: '/contact' },
 ]
 
-// Real ONE FM Facebook/social post examples — localised Goulburn Murray content
+/**
+ * Caption examples for the station's own feed. Like and comment counts were
+ * invented and used to sit on each card; ONE FM does not export platform
+ * metrics into this repo, so the cards show the copy and the artwork only.
+ */
 const FEED_POSTS = [
-  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: 'GVL coverage is LIVE on ONE FM 98.5! Follow every bounce on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM', likes: '87', comments: '14', time: '2d' },
-  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton', likes: '42', comments: '6', time: '4d' },
-  { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley', likes: '63', comments: '9', time: '1w' },
-  { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community', likes: '58', comments: '7', time: '1w' },
-  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: 'Under the lights at the GVL — nothing beats local footy on a Friday night. Catch us on 98.5 FM 🔴 #GVL #LocalFooty', likes: '91', comments: '11', time: '2w' },
-  { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM', likes: '74', comments: '8', time: '2w' },
-  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: 'Live and local — 25 multicultural programs weekly keeping every corner of the Goulburn Valley connected. #OneFM985 #Community', likes: '39', comments: '5', time: '3w' },
-  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️', likes: '66', comments: '7', time: '3w' },
+  { platform: 'Facebook', image: '/assets/images/commentary-box-action.jpg', caption: `${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Follow the local call on 98.5 FM or stream at fm985.com.au 📻 #GVL #OneFM` },
+  { platform: 'Facebook', image: '/assets/images/studio-commentary-selfie.jpg', caption: 'Great morning with the crew in the box. Thanks for tuning in — catch the replay on SoundCloud. #OneFM985 #Shepparton' },
+  { platform: 'Facebook', image: '/assets/images/event-food-trucks.jpg', caption: 'Shepparton\'s food festival is on! ONE FM is live on site — come say g\'day. 🌮 #Shepparton #GoulburnValley' },
+  { platform: 'Facebook', image: '/assets/images/culture-first-nations-dancer.png', caption: 'Celebrating culture and community in the Goulburn Valley. Thank you to all who joined us. #OneFM985 #Community' },
+  { platform: 'Facebook', image: '/assets/images/gvl-night-panorama.jpg', caption: `Under the lights at the GVL — ${GVL_MATCH?.name ?? 'GVL Match of the Day'} is ${GVL_WHEN} on ONE FM 98.5. Friday night on the guide is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL Friday Night Footy'}. Catch us on 98.5 FM 🔴 #GVL #LocalFooty` },
+  { platform: 'Facebook', image: '/assets/images/geo-pink-orchard.jpg', caption: 'The orchards are in bloom across the Goulburn Valley — this is why we call it home 🌸 #GoulburnValley #OneFM' },
+  { platform: 'Facebook', image: '/assets/images/studio-presenter-mic.jpg', caption: `Live and local — ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the weekly guide keeping every corner of the Goulburn Valley connected. #OneFM985 #Community` },
+  { platform: 'Facebook', image: '/assets/images/culture-riverboat-murray.jpg', caption: 'The Murray River — heart of our region. Stream ONE FM anywhere in the world at fm985.com.au 🎙️' },
 ]
 
-// Content calendar — GVL events & ONE FM programming (update monthly)
+// Cadence reminders, not a fixture list. Sport labels match programGuide.ts.
 const CALENDAR_EVENTS = [
-  { day: 1,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
-  { day: 5,  type: 'Content', color: '#9B5DE5', name: 'Multicultural Program Spotlight' },
-  { day: 8,  type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 1,  type: 'Live',    color: '#E51636', name: `Saturday · ${GVL_MATCH?.name ?? 'GVL Match of the Day'}` },
+  { day: 5,  type: 'Live',    color: '#E51636', name: `Friday · ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL Friday Night Footy'}` },
+  { day: 8,  type: 'Live',    color: '#E51636', name: `Saturday · ${GVL_MATCH?.name ?? 'GVL Match of the Day'}` },
   { day: 10, type: 'Partner', color: '#B6FF00', name: 'Sponsor Shoutout' },
-  { day: 12, type: 'Content', color: '#9B5DE5', name: 'Breakfast Behind the Scenes' },
-  { day: 15, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 12, type: 'Content', color: '#9B5DE5', name: `${BREAKFAST_SHOW} behind the scenes` },
+  { day: 15, type: 'Live',    color: '#E51636', name: `Saturday · ${GVL_MATCH?.name ?? 'GVL Match of the Day'}` },
   { day: 18, type: 'Content', color: '#1B458F', name: 'Goulburn Valley Heritage Post' },
   { day: 20, type: 'Partner', color: '#B6FF00', name: 'Community Org Feature' },
-  { day: 22, type: 'Live',    color: '#E51636', name: 'GVL Round Broadcast' },
+  { day: 22, type: 'Live',    color: '#E51636', name: `Saturday · ${GVL_MATCH?.name ?? 'GVL Match of the Day'}` },
   { day: 25, type: 'Content', color: '#9B5DE5', name: 'Regional Feature — Town of the Week' },
   { day: 27, type: 'Partner', color: '#B6FF00', name: 'Sponsor Spotlight' },
-  { day: 29, type: 'Live',    color: '#E51636', name: 'GVL Final / Major Event' },
+  { day: 29, type: 'Content', color: '#9B5DE5', name: 'Multicultural Program Spotlight' },
 ]
 
 /* ─── Animated Grid Pattern Background ─── */
@@ -184,7 +230,7 @@ function HeroSection() {
 
   return (
     <>
-      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="SOCIAL HUB">
+      <section ref={heroRef} className="relative min-h-[78vh] flex items-end overflow-hidden bg-[#071D3A]" data-cursor-label="SOCIAL HUB">
         <motion.img
           src={STATION_PHOTOS.eventLasersBuilding}
           alt=""
@@ -194,8 +240,8 @@ function HeroSection() {
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: 0.50, y: heroImgY, top: '-28%', height: '156%', willChange: 'transform' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/45 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#071D3A] via-[#071D3A]/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#071D3A]/60 via-transparent to-transparent" />
         <GridPattern />
         <div aria-hidden className="grain-overlay" />
 
@@ -280,7 +326,7 @@ function HeroSection() {
       </section>
 
       {/* ── Social Hub Marquee ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#04101F] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={28}
           items={[
@@ -288,7 +334,7 @@ function HeroSection() {
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24 CONTENT TEMPLATES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">120+ BRAND IMAGES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">AI CAPTION GENERATOR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">CAPTION TEMPLATES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">CAMPAIGN CALENDAR TOOLS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BRAND KIT DOWNLOAD</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">GOULBURN VALLEY · COMMUNITY RADIO</span>,
@@ -524,7 +570,10 @@ function TemplatesSection() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <WordReveal text="CONTENT TEMPLATES" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted">Ready-made designs for every platform</p>
+            <p className="font-body-small text-muted">
+              Canva-sized layouts for story/reel formats. Live station profiles:{' '}
+              {LIVE_PROFILE_LABELS.join(' and ')}.
+            </p>
           </div>
 
           <div className="flex gap-1 flex-wrap">
@@ -706,7 +755,9 @@ function CampaignCalendar() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <WordReveal text="CAMPAIGN CALENDAR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted">Plan and coordinate social campaigns</p>
+            <p className="font-body-small text-muted">
+              Posting cadence reminders — sport labels from the station guide (GVL Saturday, NIRS AFL Friday), not a fixture list.
+            </p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -817,7 +868,7 @@ function CampaignCalendar() {
           >
             {CALENDAR_EVENTS.map((event, i) => (
               <motion.div
-                key={event.name}
+                key={`${event.day}-${event.name}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05, duration: 0.3 }}
@@ -838,7 +889,7 @@ function CampaignCalendar() {
           </motion.div>
         )}
 
-        {/* AI Suggestion Bar */}
+        {/* Planning note */}
         <TiltCard maxTilt={3} className="mt-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -851,12 +902,9 @@ function CampaignCalendar() {
             <Wand2 size={20} className="text-one-gold shrink-0" />
             <div className="flex-1">
               <div className="font-body-small text-one-white text-sm">
-                AI suggests: Schedule a <span className="text-one-gold">"Weekend Warmup"</span> series for Fridays based on engagement data.
+                Planning note: this calendar is a posting plan, not a performance report. ONE FM does
+                not measure social engagement, so nothing here is ranked by reach.
               </div>
-            </div>
-            <div className="flex gap-2">
-              <button data-cursor-label="ACCEPT" className="btn-primary text-xs">Accept</button>
-              <button data-cursor-label="DISMISS" className="btn-secondary text-xs">Dismiss</button>
             </div>
           </div>
         </motion.div>
@@ -907,55 +955,43 @@ function PostingToolkit() {
           ))}
         </div>
 
-        <div className="flex flex-wrap justify-center gap-3">
-          {['Caption Generator', 'Hashtag Picker', 'Image Resizer', 'Best Time Checker'].map((tool) => (
-            <button key={tool} data-cursor-label={tool.split(' ')[0].toUpperCase()} className="btn-secondary text-xs">{tool}</button>
-          ))}
-        </div>
+        <p className="text-center font-body-small text-muted">
+          Caption starters are below. A hashtag picker, image resizer and posting-time tool are not
+          built yet, so they are not listed here.
+        </p>
       </div>
     </section>
   )
 }
 
-/* ─── Section 6: AI Caption Generator ─── */
+/**
+ * Section 6: caption starter templates.
+ *
+ * A fixed library, not a model. It was previously badged as AI-powered behind a
+ * two-second fake spinner, with tone/topic/length controls that never touched
+ * the output. A licensed broadcaster cannot advertise a capability it does not
+ * have, so it now says what it is and every control shown does something.
+ */
+const CAPTION_TEMPLATES: Record<string, string[]> = {
+  Facebook: [
+    `${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays — news, music, and community from your local station. 🎙️`,
+    `Catch ${GVL_MATCH?.name ?? 'GVL Match of the Day'} ${GVL_WHEN} on ONE FM 98.5, or stream anywhere at fm985.com.au. Friday night is ${NIRS_AFL_FRIDAY?.name ?? 'NIRS AFL'}. 🎉`,
+  ],
+  SoundCloud: [
+    'Catch the latest interviews and replays on the ONE FM SoundCloud. Search the station from the Listen page.',
+    `${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays on ONE FM 98.5 — then find the conversation again on SoundCloud.`,
+  ],
+}
+
 function CaptionGenerator() {
-  const [platform, setPlatform] = useState('Instagram')
-  const [topic, setTopic] = useState('')
-  const [tone, setTone] = useState('Energetic')
-  const [length, setLength] = useState(2)
-  const [generating, setGenerating] = useState(false)
+  const [platform, setPlatform] = useState('Facebook')
+  const [variant, setVariant] = useState(0)
   const [result, setResult] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const generate = () => {
-    setGenerating(true)
-    setTimeout(() => {
-      const captions: Record<string, string[]> = {
-        Instagram: [
-          '🔥 The beats are dropping and the vibes are rising! Tune into ONE FM now for your daily dose of energy. #ONEFMBreakfast #LiveRadio #OneFM',
-          '🎙️ Your favorite hosts are LIVE and ready to make your morning unforgettable. Join the conversation! 📻✨ #OneFM #RadioLife',
-        ],
-        TikTok: [
-          'POV: you just found the best radio station ever 🔥 #OneFM #RadioTok #Viral',
-          'When the DJ drops THAT track and the whole studio loses it 🎧💥 #OneFM #MusicTok',
-        ],
-        'Twitter/X': [
-          '🎵 LIVE NOW: ONE FM Breakfast on ONE FM 98.5. News, music, and your calls. Tune in → ONE FM 98.5 #ONEFMBreakfast',
-          'The Night Shift is about to get started. Indie, electronica, and zero sleep required 🌙 #TheNightShift #OneFM',
-        ],
-        Facebook: [
-          'Join thousands of listeners who start their day with ONE FM. ONE FM Breakfast is live from 6AM — news, music, and community. 🎙️',
-          'Weekend Warmup is here! Two hours of feel-good anthems to kick off your Saturday right. Tune in now! 🎉',
-        ],
-        LinkedIn: [
-          'ONE FM continues to lead regional broadcasting with cutting-edge programming and community-focused content. Learn more about our latest initiatives.',
-        ],
-      }
-      const options = captions[platform] || captions.Instagram
-      setResult(options[Math.floor(Math.random() * options.length)])
-      setGenerating(false)
-    }, 2000)
-  }
+  const options = CAPTION_TEMPLATES[platform] ?? CAPTION_TEMPLATES.Facebook
+
+  const generate = () => setResult(options[variant % options.length])
 
   const copyResult = () => {
     if (!result) return
@@ -965,7 +1001,7 @@ function CaptionGenerator() {
   }
 
   return (
-    <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="AI CAPTION">
+    <section className="bg-surface-glow section-bleed-top section-padding" data-cursor-label="CAPTION TEMPLATES">
       <div className="max-w-[800px] mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -975,10 +1011,13 @@ function CaptionGenerator() {
           className="text-center mb-10"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-one-gold/20 text-one-gold font-label text-[10px] mb-4">
-            <Sparkles size={12} /> AI POWERED
+            <Sparkles size={12} /> TEMPLATE LIBRARY
           </div>
-          <WordReveal text="AI CAPTION GENERATOR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-          <p className="font-body-small text-muted">Generate platform-optimized captions in seconds</p>
+          <WordReveal text="CAPTION TEMPLATES" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+          <p className="font-body-small text-muted">
+            Starter captions for {LIVE_PROFILE_LABELS.join(' and ')}. Written by the station — no
+            generated copy.
+          </p>
         </motion.div>
 
         <motion.div
@@ -997,85 +1036,40 @@ function CaptionGenerator() {
                 onChange={(e) => setPlatform(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white focus:outline-none focus:border-one-gold text-sm"
               >
-                {['Instagram', 'TikTok', 'Twitter/X', 'Facebook', 'LinkedIn'].map((p) => (
+                {Object.keys(CAPTION_TEMPLATES).map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
               </select>
             </div>
 
-            {/* Topic */}
+            {/* Variant */}
             <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">TOPIC</label>
-              <input
-                type="text"
-                placeholder="What is this post about?"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold text-sm"
-              />
-            </div>
-
-            {/* Tone */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">TONE</label>
-              <select
-                value={tone}
-                onChange={(e) => setTone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-one-navy border border-one-border font-body-small text-one-white focus:outline-none focus:border-one-gold text-sm"
-              >
-                {['Energetic', 'Professional', 'Casual', 'Humorous', 'Inspirational'].map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Include pills */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-2 block">INCLUDE</label>
+              <label className="font-label text-muted text-[10px] mb-2 block">TEMPLATE</label>
               <div className="flex gap-2 flex-wrap">
-                {['Hashtags', 'CTA', 'Emoji', 'Mentions'].map((opt) => (
-                  <label key={opt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-one-border font-label text-[10px] text-muted cursor-pointer hover:border-one-gold/50 transition-colors">
-                    <input type="checkbox" defaultChecked className="accent-[#F2F2F2] w-3 h-3" />
-                    {opt}
-                  </label>
+                {options.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setVariant(i)}
+                    className={`px-3 py-1.5 rounded-full border font-label text-[10px] transition-colors ${
+                      variant % options.length === i
+                        ? 'border-one-gold text-one-gold'
+                        : 'border-one-border text-muted hover:border-one-gold/50'
+                    }`}
+                  >
+                    Option {i + 1}
+                  </button>
                 ))}
-              </div>
-            </div>
-
-            {/* Length slider */}
-            <div>
-              <label className="font-label text-muted text-[10px] mb-1 block">LENGTH</label>
-              <input
-                type="range"
-                min={1}
-                max={5}
-                value={length}
-                onChange={(e) => setLength(Number(e.target.value))}
-                className="w-full accent-[#F2F2F2]"
-              />
-              <div className="flex justify-between font-label text-[10px] text-muted mt-1">
-                <span>Short</span>
-                <span>Long</span>
               </div>
             </div>
           </div>
 
           <button
             onClick={generate}
-            disabled={generating}
-            data-cursor-label={generating ? 'GENERATING' : 'GENERATE'}
-            className="btn-primary text-xs w-full justify-center disabled:opacity-50"
+            data-cursor-label="COPY TEMPLATE"
+            className="btn-primary text-xs w-full justify-center"
           >
-            {generating ? (
-              <>
-                <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Sparkles size={14} /> Generate Caption
-              </>
-            )}
+            <Sparkles size={14} /> Show Caption
           </button>
         </motion.div>
 
@@ -1089,7 +1083,7 @@ function CaptionGenerator() {
               transition={{ duration: 0.5, ease: easeOutExpo }}
               className="mt-6 glass-card p-6"
             >
-              <h4 className="font-h4 text-one-white mb-3">Generated Caption</h4>
+              <h4 className="font-h4 text-one-white mb-3">Starter Caption</h4>
               <div className="bg-one-navy rounded-lg p-4 mb-4">
                 <p className="font-body text-one-white whitespace-pre-wrap">{result}</p>
               </div>
@@ -1104,7 +1098,7 @@ function CaptionGenerator() {
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="font-label text-[10px] text-data-teal">
-                  Character count: {result.length} / {platform === 'Twitter/X' ? 280 : 2200}
+                  Character count: {result.length} / 2200
                 </div>
                 <div className="flex gap-2">
                   <button onClick={copyResult} data-cursor-label={copied ? 'COPIED' : 'COPY'} className="btn-secondary text-xs">
@@ -1137,8 +1131,6 @@ function SocialFeedPreview() {
   const platformIcon = (platform: string) => {
     switch (platform) {
       case 'Instagram': return <Instagram size={14} />
-      case 'TikTok': return <Music size={14} />
-      case 'Twitter/X': return <Twitter size={14} />
       case 'Facebook': return <Facebook size={14} />
       default: return <Globe size={14} />
     }
@@ -1150,11 +1142,13 @@ function SocialFeedPreview() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <WordReveal text="LATEST FROM THE FEED" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
-            <p className="font-body-small text-muted">Recent posts across all platforms</p>
+            <p className="font-body-small text-muted">
+              Recent posts from the Facebook page.
+            </p>
           </div>
 
           <div className="flex gap-1 flex-wrap">
-            {['All', 'Instagram', 'TikTok', 'Twitter/X', 'Facebook'].map((f) => (
+            {['All', 'Facebook'].map((f) => (
               <button
                 key={f}
                 onClick={() => { setFeedFilter(f); setVisibleCount(4) }}
@@ -1189,18 +1183,7 @@ function SocialFeedPreview() {
                   </div>
                 </div>
                 <div className="p-3">
-                  <p className="font-body-small text-one-white text-xs line-clamp-2 mb-3">{post.caption}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 group-hover:text-one-gold transition-colors">
-                      <span className="flex items-center gap-1 font-micro text-muted group-hover:text-one-gold">
-                        <Heart size={10} /> {post.likes}
-                      </span>
-                      <span className="flex items-center gap-1 font-micro text-muted group-hover:text-one-gold">
-                        <MessageCircle size={10} /> {post.comments}
-                      </span>
-                    </div>
-                    <span className="font-micro text-muted">{post.time}</span>
-                  </div>
+                  <p className="font-body-small text-one-white text-xs line-clamp-2">{post.caption}</p>
                 </div>
               </motion.div>
             ))}
@@ -1226,14 +1209,14 @@ function SocialFeedPreview() {
 /* ─── Section: Mailchimp Export ─── */
 function MailchimpExportSection() {
   const handleExport = () => {
-    downloadMailchimpLeadsCsv(MOCK_ENQUIRIES)
-    toast.success('Mailchimp CSV downloaded — import to One FM Sales audience')
+    downloadMailchimpLeadsCsv([], 'one-fm-sales-leads-template.csv')
+    toast.success('Template CSV downloaded — headers only. Real leads live in #/ops, not this public page.')
   }
 
   const handleCopySnippet = async () => {
     const snippet = buildMailchimpNewsletterSnippet({
       headline: 'Your brand across the Goulburn Valley',
-      body: `ONE FM 98.5 reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} communities. Explore sponsorship packages tailored to regional businesses.`,
+      body: `ONE FM 98.5: ${formatWeeklyListeners()} across ${formatTowns()} (ABS 2021 via townData). ${STANDARD_SPOT_PLUS_GST}. GVL match-day and live reads are premium inventory — never sold as the $25 floor.`,
       ctaLabel: 'View Media Kit',
       ctaUrl: 'https://fm985.com.au/#/media-kit',
     })
@@ -1253,6 +1236,7 @@ function MailchimpExportSection() {
         >
           <span className="section-label mb-4 block">Marketing workflow</span>
           <WordReveal text="EXPORT FOR MAILCHIMP" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+          <InventoryLadder className="mb-10" />
           <p className="font-body-small text-muted max-w-2xl">
             Resend handles transactional invoice and enquiry emails. Use these tools to export sponsor
             leads and copy branded HTML into Mailchimp campaigns (audience: <strong className="text-one-white">One FM Sales</strong>).
@@ -1265,8 +1249,8 @@ function MailchimpExportSection() {
           <button type="button" onClick={handleExport} data-cursor-label="EXPORT" className="glass-card p-6 text-left hover:border-one-gold/30 transition-colors group w-full h-full relative overflow-hidden">
             <div aria-hidden className="explore-tile-scan" />
             <Download size={24} className="text-one-gold mb-3 group-hover:scale-110 transition-transform" />
-            <h4 className="font-h4 text-one-white mb-1">Export leads CSV</h4>
-            <p className="font-body-small text-muted text-sm">Download ops enquiries formatted for Mailchimp import.</p>
+            <h4 className="font-h4 text-one-white mb-1">Export CSV template</h4>
+            <p className="font-body-small text-muted text-sm">Headers only — real sponsor leads are in the operations portal, not this public page.</p>
           </button>
           </TiltCard>
           <TiltCard maxTilt={5} className="h-full">
@@ -1292,7 +1276,7 @@ function MailchimpExportSection() {
 export default function SocialHub() {
   return (
     <Layout>
-      <SEO title="Social Media Hub" description="ONE FM 98.5 brand assets, content templates, AI caption generator, and campaign calendar." />
+      <SEO title="Social Media Hub" description={`ONE FM 98.5 brand assets and caption starters from the station guide: ${BREAKFAST_SHOW} weekdays, GVL Match of the Day ${GVL_WHEN}, NIRS AFL ${NIRS_WHEN}.`} />
       <HeroSection />
       <LiveFacebookSection />
       <AssetLibrary />

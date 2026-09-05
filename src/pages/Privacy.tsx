@@ -1,23 +1,26 @@
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { BRAND } from '@/lib/brand'
+import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 
 export default function Privacy() {
   return (
     <Layout>
       <SEO
         title="Privacy Policy"
-        description="ONE FM 98.5 privacy policy — how we collect, use, and protect your information."
+        description={`${BRAND.org} privacy policy. Licensed community radio · ${formatCoverageShort()} (ABS 2021 via townData).`}
       />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 md:py-24">
         <p className="font-label text-[10px] tracking-[0.22em] text-one-electric/85 uppercase mb-4">
-          Last updated: June 2026
+          Last updated: September 2026
         </p>
         <h1 className="font-h1 text-one-white mb-4">Privacy Policy</h1>
         <p className="font-body text-one-white/60 mb-12">
           {BRAND.org} (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) respects your privacy. This policy
-          explains how we collect, use, and protect information when you visit <strong className="text-one-white/80">fm985.com.au</strong> or
-          interact with our services.
+          explains how we collect, use, and protect information when you visit this site or{' '}
+          <strong className="text-one-white/80">{BRAND.website.replace('https://', '')}</strong>, or
+          interact with our services across {formatCoverageShort()} (ABS 2021 via townData).
         </p>
 
         <div className="space-y-10 text-one-white/75 font-body-small leading-relaxed">
@@ -30,8 +33,9 @@ export default function Privacy() {
               phone number, and message content.
             </p>
             <p>
-              We also collect non-personal usage data automatically, including pages visited, time on page,
-              browser type, and referring URLs via analytics tools (see Section 3).
+              The browser also stores small preference values on your device (for example cookie-consent
+              choice). We do not run a third-party analytics suite on this site, so we do not collect
+              a visitor dashboard of pages viewed or referring URLs.
             </p>
           </section>
 
@@ -39,9 +43,9 @@ export default function Privacy() {
             <h2 className="font-h3 text-one-white mb-3">2. How We Use Information</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>To respond to your enquiries and requests</li>
-              <li>To process donations and send receipts</li>
+              <li>To acknowledge donations sent by bank transfer and issue receipts where required</li>
               <li>To send station updates and newsletters (only where you have opted in)</li>
-              <li>To improve the website based on aggregated usage patterns</li>
+              <li>To keep the website working (stream, coverage map, and your consent preference)</li>
               <li>To meet our obligations as an ACMA-licensed broadcaster</li>
             </ul>
             <p className="mt-3">
@@ -51,28 +55,30 @@ export default function Privacy() {
           </section>
 
           <section>
-            <h2 className="font-h3 text-one-white mb-3">3. Cookies &amp; Analytics</h2>
+            <h2 className="font-h3 text-one-white mb-3">3. Cookies &amp; local storage</h2>
             <p className="mb-3">
-              We use cookies and analytics to understand how visitors use our website. You can accept or
-              decline non-essential cookies via the banner shown on first visit. Essential cookies required
-              for the site to function cannot be disabled.
+              The first-visit banner records an accept choice in local storage so we do not keep
+              asking. That preference is stored on your device, not sent to an analytics vendor.
+              Clearing site data for this domain removes it. There is no separate decline control
+              because we are not setting non-essential tracking cookies.
             </p>
             <p>
-              Our website may embed content from third-party platforms including Facebook, SoundCloud, and
-              Google Maps. These services have their own privacy policies and may set their own cookies.
+              Embedded Facebook, SoundCloud, Radio.co, and (when a key is configured) Google Maps
+              content may set their own cookies under those services&apos; policies.
             </p>
           </section>
 
           <section>
             <h2 className="font-h3 text-one-white mb-3">4. Third-Party Services</h2>
             <p className="mb-3">
-              Our website uses the following third-party services:
+              This website uses the following third-party services:
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li><strong className="text-one-white/90">Facebook</strong> — page embeds and social sharing. Governed by Meta&apos;s Privacy Policy.</li>
-              <li><strong className="text-one-white/90">SoundCloud</strong> — embedded audio players for interview replays.</li>
-              <li><strong className="text-one-white/90">Google Maps</strong> — interactive coverage map on fm985.com.au/coverage.</li>
-              <li><strong className="text-one-white/90">Stripe</strong> — secure payment processing for donations. Card data is never stored on our servers.</li>
+              <li><strong className="text-one-white/90">SoundCloud</strong> — interview audio from the station SoundCloud profile.</li>
+              <li><strong className="text-one-white/90">Radio.co</strong> — live stream audio (same source as fm985.com.au/audio-player/).</li>
+              <li><strong className="text-one-white/90">Google Maps</strong> — the coverage map on this site may load Maps when a Maps key is configured; otherwise the town list still works.</li>
+              <li><strong className="text-one-white/90">NAB bank transfer</strong> — public donations are not taken by card on this site. Pay {BANK_ACCOUNT_NAME} ({BRAND.org}), BSB {BANK_BSB}, account {BANK_ACCOUNT}. Card checkout is data pending until a Stripe key is wired.</li>
             </ul>
           </section>
 
@@ -102,7 +108,7 @@ export default function Privacy() {
             <p>
               By using this website you agree to use it for lawful purposes only. Content on this site
               is provided for general information about ONE FM 98.5 community radio in the Goulburn
-              Valley and may not be reproduced without written permission.
+              Valley ({formatCoverageShort()}) and may not be reproduced without written permission.
             </p>
           </section>
 

@@ -91,6 +91,7 @@ import {
   formatElapsed,
   todayISO,
 } from '@/lib/opsClock'
+import { isSupabaseConfigured } from '@/lib/supabase'
 import { downloadXeroCsv, summariseXeroExport } from './invoices/xeroExport'
 import {
   buildMailtoInvoiceUrl,
@@ -100,6 +101,8 @@ import {
   dispatchReceiptEmail,
   type InvoiceSendPayload,
 } from '@/lib/invoiceSend'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
 // Types + status config (bundle `jt`, `ip`)
@@ -332,8 +335,12 @@ export default function InvoiceBatchSender() {
 
   const rows = useMemo<BatchRow[]>(() => {
     const inBatch = invoices.filter((i) => i.inBatch)
+    if (isSupabaseConfigured()) {
+      const live = inBatch.length > 0 ? inBatch : invoices
+      return live.map(toBatchRow)
+    }
     if (inBatch.length > 0) return inBatch.map(toBatchRow)
-    // Mirror the deployed fallback: an empty store still shows the June batch.
+    // DEMO empty store still shows the June+August send guide for local practice.
     return ALL_BATCH_INVOICES.map((b) =>
       toBatchRow({
         id: b.id,
@@ -512,15 +519,13 @@ export default function InvoiceBatchSender() {
       }
       const result = await dispatchInvoiceEmail(payload)
       if (result.devMode) {
-        updateStatus(id, 'tested')
         toast(`Not actually sent — no email service configured (dev mode)`, 'warning')
       } else if (result.success) {
         updateStatus(id, 'tested')
         toast(`Test invoice sent to ${recipient}`, 'success')
       } else if (result.usedMailtoFallback) {
         window.location.href = buildMailtoInvoiceUrl(payload)
-        updateStatus(id, 'tested')
-        toast(`Resend unavailable — test email opened for ${recipient}`, 'warning')
+        toast(`Resend unavailable — test email opened for ${recipient}. Status stays untested until a real send succeeds.`, 'warning')
       } else {
         notify(result.error ?? 'Test send failed', 'error')
       }
@@ -570,10 +575,8 @@ export default function InvoiceBatchSender() {
           notify('Failed to generate PDF', 'error')
         }
         window.location.href = buildMailtoInvoiceUrl(payload)
-        if (!testMode) sendBatch([row.id])
-        else updateStatus(row.id, 'tested')
         notify(
-          `PDF downloaded. Email client opened for ${deliveryTo} — attach ${row.number}.pdf before sending.`,
+          `PDF downloaded. Email client opened for ${deliveryTo} — attach ${row.number}.pdf before sending. Status stays unsent until a real send succeeds.`,
           'warning',
         )
       }
@@ -661,7 +664,7 @@ export default function InvoiceBatchSender() {
         })
         if (result.devMode) {
           devMode++
-        } else if (result.success || result.usedMailtoFallback) {
+        } else if (result.success) {
           updateStatus(r.id, 'tested')
           sent++
         }
@@ -717,8 +720,6 @@ export default function InvoiceBatchSender() {
             (index, _total, itemResult) => {
               if (itemResult.success && !itemResult.devMode) {
                 actuallySentIds.push(selected[index - 1].id)
-              } else if (itemResult.usedMailtoFallback) {
-                actuallySentIds.push(selected[index - 1].id)
               }
             },
             testMode ? { testMode: true, testRecipient: testInbox } : undefined,
@@ -738,9 +739,9 @@ export default function InvoiceBatchSender() {
           } else {
             notify(
               testMode
-                ? `Test batch: ${result.sent} sent to ${testInbox}${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''}`
-                : `Batch complete: ${result.sent} sent${result.mailtoFallback ? `, ${result.mailtoFallback} via email client` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
-              result.failed > 0 ? 'warning' : 'success',
+                ? `Test batch: ${result.sent} emailed to ${testInbox}${result.mailtoFallback ? `, ${result.mailtoFallback} opened in email client (not marked sent)` : ''}${result.failed ? `, ${result.failed} failed` : ''}`
+                : `Batch complete: ${result.sent} emailed${result.mailtoFallback ? `, ${result.mailtoFallback} opened in email client (not marked sent)` : ''}${result.failed ? `, ${result.failed} failed` : ''} (${formatCurrency(totalValue)})`,
+              result.failed > 0 || result.mailtoFallback > 0 ? 'warning' : 'success',
             )
           }
         } finally {
@@ -800,57 +801,76 @@ export default function InvoiceBatchSender() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-[#101010] text-[#F4F1EA] p-6">
-        <div className="max-w-[1600px] mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#D4A853] to-[#D4A853]/60 flex items-center justify-center">
-                  <Receipt className="w-5 h-5 text-[#101010]" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice batches</h1>
-                  <p className="text-sm text-[#F4F1EA]/50">
-                    {rows.length} invoices ·{' '}
-                    {rows
-                      .reduce((s, r) => s + r.total, 0)
-                      .toLocaleString('en-AU', { style: 'currency', currency: 'AUD' })}{' '}
-                    inc GST
-                  </p>
+      <div className="min-h-screen bg-[#101010] text-[#F4F1EA]">
+        <div className="relative overflow-hidden border-b border-[#2A2A2A]">
+          {/* Unused Shepparton Illuminate water still — station archive, not a presenter portrait. */}
+          <img
+            src={STATION_PHOTOS.eventIlluminateWater}
+            alt=""
+            aria-hidden
+            loading="eager"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+          />
+          <div className="relative z-10 p-6 max-w-[1600px] mx-auto">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#D4A853] to-[#D4A853]/60 flex items-center justify-center">
+                    <Receipt className="w-5 h-5 text-[#101010]" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice batches</h1>
+                    <p className="text-sm text-[#F4F1EA]/50">
+                      {rows.length} invoice{rows.length === 1 ? '' : 's'} ·{' '}
+                      {rows
+                        .reduce((s, r) => s + r.total, 0)
+                        .toLocaleString('en-AU', { style: 'currency', currency: 'AUD' })}{' '}
+                      inc GST
+                    </p>
+                    <p className="text-xs text-[#F4F1EA]/50 mt-2">
+                      Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
+                      {BANK_BSB} · {BANK_ACCOUNT_NAME}. Mailto does not mark sent.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className={`border-[#1E293B] ${
-                  testMode
-                    ? 'bg-purple-900/30 text-purple-400 border-purple-700'
-                    : 'text-[#F4F1EA]/50'
-                }`}
-              >
-                {testMode ? (
-                  <span className="flex items-center gap-1">
-                    <FlaskConical className="w-3 h-3" /> Test Mode Active
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> Live Mode
-                  </span>
-                )}
-              </Badge>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTestMode(!testMode)}
-                className="border-[#1E293B] text-[#F4F1EA] hover:bg-[#1E293B]"
-              >
-                {testMode ? 'Switch to Live' : 'Test Mode'}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant="outline"
+                  className={`border-[#1E293B] ${
+                    testMode
+                      ? 'bg-purple-900/30 text-purple-400 border-purple-700'
+                      : 'text-[#F4F1EA]/50'
+                  }`}
+                >
+                  {testMode ? (
+                    <span className="flex items-center gap-1">
+                      <FlaskConical className="w-3 h-3" /> Test Mode Active
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> Live Mode
+                    </span>
+                  )}
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTestMode(!testMode)}
+                  className="border-[#1E293B] text-[#F4F1EA] hover:bg-[#1E293B]"
+                >
+                  {testMode ? 'Switch to Live' : 'Test Mode'}
+                </Button>
+              </div>
             </div>
           </div>
+        </div>
 
+        <div className="p-6 max-w-[1600px] mx-auto">
           <EmailServiceBanner />
 
           <div className="mb-4 rounded-lg border border-amber-700/40 bg-amber-950/25 px-4 py-3 text-sm text-amber-200/90">
@@ -1315,6 +1335,15 @@ export default function InvoiceBatchSender() {
                             </motion.tr>
                           )
                         })}
+                        {filtered.length === 0 && (
+                          <TableRow className="border-[#1E293B] hover:bg-transparent">
+                            <TableCell colSpan={9} className="text-center py-12 text-sm text-[#F4F1EA]/50">
+                              {isSupabaseConfigured()
+                                ? 'No live invoices in this ledger yet. FOOTT ONEFM-2026-011 appears here after it is saved to Supabase.'
+                                : 'No invoices match this filter.'}
+                            </TableCell>
+                          </TableRow>
+                        )}
                       </TableBody>
                     </Table>
                   </div>

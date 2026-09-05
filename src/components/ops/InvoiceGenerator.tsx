@@ -82,6 +82,10 @@ import { TaxInvoiceLetterhead, TaxInvoicePayTo } from '@/components/ops/TaxInvoi
 import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
 import { ageInvoice } from '@/lib/invoiceAging'
 import { addDaysISO, calendarDaysBetween, currentMonthKey, formatAuDate, todayISO } from '@/lib/opsClock'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -179,15 +183,9 @@ const FREQUENCY_LABELS: Record<BillingFrequency, string> = {
   annually: 'Annually',
 }
 
-/** Resolves a stored payment method (key or label) to its display label. */
 /** Module scope: impure ID generation is allowed outside component render. */
 function newInvoiceId(suffix?: number): string {
   return `inv_${Date.now()}${suffix !== undefined ? `_${suffix}` : ''}`
-}
-
-function paymentMethodLabel(value?: string): string {
-  if (!value) return ''
-  return PAYMENT_METHOD_LABELS[value as PaymentMethodKey] ?? value
 }
 
 // ---------------------------------------------------------------------------
@@ -350,9 +348,35 @@ export default function InvoiceGenerator() {
   const [payMethod, setPayMethod] = useState<PaymentMethodKey>('bank_transfer')
   const [payNotes, setPayNotes] = useState('')
 
-  const sponsor = SPONSOR_DIRECTORY.find((s) => s.company === sponsorCompany)
-  const contract = ACTIVE_CONTRACTS.find((c) => c.id === contractId)
-  const contractSponsorContact = SPONSOR_DIRECTORY.find((s) => s.company === contractSponsor)
+  const liveOps = isSupabaseConfigured()
+  const sponsorDirectory = useMemo(() => {
+    if (!liveOps) return SPONSOR_DIRECTORY
+    const real = SPONSOR_DIRECTORY.filter(
+      (s) =>
+        s.company === 'FOOTT Waste Solutions' || s.company.startsWith("Jason's TV"),
+    )
+    const extra = storeInvoices
+      .filter((i) => !real.some((s) => s.company === i.company))
+      .map((i) => ({
+        name: i.contactName,
+        company: i.company,
+        email: i.email,
+        address: '',
+        abn: '',
+        phone: '',
+      }))
+    const seen = new Set<string>()
+    return [...real, ...extra].filter((s) => {
+      if (!s.company || seen.has(s.company)) return false
+      seen.add(s.company)
+      return true
+    })
+  }, [liveOps, storeInvoices])
+  const activeContracts = liveOps ? [] : ACTIVE_CONTRACTS
+
+  const sponsor = sponsorDirectory.find((s) => s.company === sponsorCompany)
+  const contract = activeContracts.find((c) => c.id === contractId)
+  const contractSponsorContact = sponsorDirectory.find((s) => s.company === contractSponsor)
 
   const filtered = useMemo(() => {
     const list = invoices.filter((inv) => {
@@ -671,8 +695,15 @@ export default function InvoiceGenerator() {
   }
 
   async function handleSendInvoice(id: string) {
-    const inv = localInvoices.find((i) => i.id === id)
-    if (!inv?.billTo.email) return
+    const inv = invoices.find((i) => i.id === id)
+    if (!inv) {
+      window.alert('Invoice not found.')
+      return
+    }
+    if (!inv.billTo.email) {
+      window.alert(`Invoice ${inv.invoiceNumber} has no email address.`)
+      return
+    }
 
     const description =
       inv.items.map((item) => item.description).join('; ') || 'Sponsorship'
@@ -695,6 +726,11 @@ export default function InvoiceGenerator() {
       invoiceId: inv.id,
     }
 
+    const confirmed = window.confirm(
+      `This will email ${inv.billTo.email} with ${inv.invoiceNumber}.pdf attached.\n\nContinue only if that is what you mean to do.`,
+    )
+    if (!confirmed) return
+
     const result = await dispatchInvoiceEmail(payload)
 
     if (result.devMode) {
@@ -709,6 +745,7 @@ export default function InvoiceGenerator() {
         list.map((i) => (i.id === id ? { ...i, status: 'sent' } : i)),
       )
       updateInvoice(id, { status: 'sent' })
+      window.alert(`Emailed ${inv.billTo.email} with ${inv.invoiceNumber}.pdf.`)
       return
     }
 
@@ -820,7 +857,31 @@ export default function InvoiceGenerator() {
   }
 
   return (
-    <div className="min-h-screen bg-[#101010] text-white p-6">
+    <div className="min-h-screen bg-[#101010] text-white">
+      <div className="relative overflow-hidden border-b border-[#2A2A2A]">
+        {/* Unused match-day OB banner — station archive, not a presenter portrait. */}
+        <img
+          src={STATION_PHOTOS.obMatchDayBanner}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-6 pt-6 pb-4">
+          <p className="font-label text-[10px] tracking-[0.22em] uppercase text-white/40">
+            Station archive · match-day outside-broadcast banner
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
+            {BANK_BSB} · {BANK_ACCOUNT_NAME}. This screen is not a Stripe receipt.
+          </p>
+        </div>
+      </div>
+      <div className="p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -880,7 +941,7 @@ export default function InvoiceGenerator() {
                       <SelectValue placeholder="Choose a sponsor..." />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
-                      {SPONSOR_DIRECTORY.map((s, idx) => (
+                      {sponsorDirectory.map((s, idx) => (
                         <SelectItem
                           key={`${s.company}-${idx}`}
                           value={s.company}
@@ -1455,7 +1516,7 @@ export default function InvoiceGenerator() {
                   value={contractId}
                   onValueChange={(v) => {
                     setContractId(v)
-                    const c = ACTIVE_CONTRACTS.find((x) => x.id === v)
+                    const c = activeContracts.find((x) => x.id === v)
                     if (c) prefillFromContract(c)
                   }}
                 >
@@ -1463,7 +1524,7 @@ export default function InvoiceGenerator() {
                     <SelectValue placeholder="Choose a contract or select sponsor below..." />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
-                    {ACTIVE_CONTRACTS.map((c) => (
+                    {activeContracts.map((c) => (
                       <SelectItem key={c.id} value={c.id} className="text-white hover:bg-[#2A2A2A]">
                         {c.companyName} — {c.campaign} ({fmt(c.contractValue)})
                       </SelectItem>
@@ -1486,7 +1547,7 @@ export default function InvoiceGenerator() {
                     <SelectValue placeholder="Choose a sponsor..." />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]">
-                    {SPONSOR_DIRECTORY.map((s, idx) => (
+                    {sponsorDirectory.map((s, idx) => (
                       <SelectItem
                         key={`${s.company}-${idx}`}
                         value={s.company}
@@ -1795,7 +1856,7 @@ export default function InvoiceGenerator() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {ACTIVE_CONTRACTS.map((c) => (
+                  {activeContracts.map((c) => (
                     <TableRow
                       key={c.id}
                       className="border-[#2A2A2A]/30 hover:bg-[#101010]/50 cursor-pointer"
@@ -1821,7 +1882,7 @@ export default function InvoiceGenerator() {
                       </TableCell>
                     </TableRow>
                   ))}
-                  {ACTIVE_CONTRACTS.length === 0 && (
+                  {activeContracts.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={8} className="text-center text-[#5B8DB8] py-8">
                         No contracts loaded.
@@ -1938,7 +1999,7 @@ export default function InvoiceGenerator() {
                   {viewInvoice.paidAmount !== undefined && viewInvoice.paidAmount > 0 && (
                     <>
                       <div className="flex justify-between text-sm text-emerald-600 border-t border-gray-200 pt-1">
-                        <span>Paid ({paymentMethodLabel(viewInvoice.paymentMethod)})</span>
+                        <span>Paid ({viewInvoice.paymentMethod || 'Bank Transfer'})</span>
                         <span className="font-medium">-{fmt(viewInvoice.paidAmount)}</span>
                       </div>
                       <div className="flex justify-between text-sm font-semibold">
@@ -2230,6 +2291,7 @@ export default function InvoiceGenerator() {
           .print-area .grid { display: grid !important; }
         }
       `}</style>
+      </div>
     </div>
   )
 }

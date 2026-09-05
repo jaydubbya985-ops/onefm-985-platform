@@ -9,13 +9,17 @@ import { Marquee } from '@/components/Marquee'
 import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
 import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { BRAND } from '@/lib/brand'
+import { formatTowns } from '@/lib/coverageCopy'
 import { HOST_PHOTOS } from '@/lib/stationPhotos'
+import { presenterVisual, programScene } from '@/lib/presenterAssets'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
   getBreakfastScheduleLabel,
   getCurrentLiveShow,
 } from '@/data/programGuide'
+import { formatGuideHours, formatHostHours } from '@/lib/guideHours'
+import { formatWithPresenter } from '@/lib/liveNow'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
@@ -37,9 +41,9 @@ import {
 } from 'lucide-react'
 
 const PAGE_JOBS: PageJob[] = [
-  { label: 'Listen Live', path: '/listen', description: 'Stream now', icon: Headphones, accent: '#E51636' },
+  { label: 'Listen Live', path: '/listen', description: BREAKFAST_SHOW, icon: Headphones, accent: '#E51636' },
   { label: 'Broadcast Grid', path: '/broadcast', description: 'Visual schedule', icon: Radio, accent: '#F2F2F2' },
-  { label: 'Coverage Map', path: '/coverage', description: '25 towns', icon: MapPin, accent: '#1B458F' },
+  { label: 'Coverage Map', path: '/coverage', description: formatTowns(), icon: MapPin, accent: '#1B458F' },
   { label: 'GVL Football', path: '/football', description: 'Season sponsorship', icon: Trophy, accent: '#B6FF00' },
 ]
 
@@ -97,6 +101,7 @@ function MiniWaveform({ color, seed }: { color: string; seed: number }) {
 /* ────────────────────────────────────────────────────────── */
 function OnAirNow() {
   const live = getCurrentLiveShow()
+  const withHost = formatWithPresenter(live.host)
 
   return (
     <TiltCard maxTilt={4} className="max-w-md">
@@ -113,7 +118,7 @@ function OnAirNow() {
       <div className="text-left">
         <p className="font-label text-one-red mb-0.5">ON AIR NOW</p>
         <p className="font-h4 text-one-white">{live.name}</p>
-        <p className="font-body-small text-muted">with {live.host} &middot; {live.time}</p>
+        <p className="font-body-small text-muted">{withHost ? `${withHost} · ` : ''}{live.time}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}</p>
       </div>
       <Wifi size={20} className="text-one-gold ml-auto shrink-0" />
     </motion.div>
@@ -124,7 +129,8 @@ function OnAirNow() {
 /* ────────────────────────────────────────────────────────── */
 /*  Section 2 — Featured Shows                                */
 /* ────────────────────────────────────────────────────────── */
-// Source: fm985.com.au/guide/ (scraped June 2026)
+// Copy from fm985.com.au/guide/. Times resolved from FULL_SCHEDULE
+// via formatGuideHours — do not keep a second handwritten hours list.
 const shows = [
   {
     name: BREAKFAST_SHOW,
@@ -342,46 +348,54 @@ const shows = [
     tag: "Music",
     icon: Music,
   },
-]
+].map((show) => ({
+  ...show,
+  time: formatGuideHours(show.name) ?? show.time,
+}))
 
 /* ────────────────────────────────────────────────────────── */
 /*  Section 3 — Host Roster                                   */
 /* ────────────────────────────────────────────────────────── */
-// Source: fm985.com.au/guide/ (scraped June 2026)
+// Names from fm985.com.au/guide/. Times resolved from FULL_SCHEDULE
+// via formatHostHours — Ralph's Friday Arvo is 3–4pm, not 3–6pm.
 const hosts = [
-  { name: "Tim Ahemt",        show: BREAKFAST_SHOW,             time: "Mon & Tue, 6am–9am",   type: "Breakfast",    img: "/assets/images/commentary-box-action.jpg",  social: { fb: true } },
-  { name: "The Big G",        show: BREAKFAST_SHOW + " / Wed Mornings", time: "Wed, 6am–12pm", type: "Breakfast",   img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Ralph Whitehead",  show: "Thu Mornings / Friday Arvo", time: "Thu 9am–12pm · Fri 3pm–6pm", type: "Breakfast", img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Josh Revens",      show: "Fri Mornings / Mon Nights",  time: "Fri 9am–12pm · Mon 6pm", type: "Breakfast", img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "John Painter (Johnny P)", show: "Dancing through the decades", time: "Mon–Fri, 9am–12pm", type: "Music",  img: "/assets/images/commentary-box-action.jpg",  social: { fb: true } },
-  { name: "Di Hunter",        show: "Monday Afternoon",          time: "Monday, 12pm–3pm",      type: "Music",       img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Craig Stott",      show: "Tuesday Mornings",          time: "Tuesday, 9am–12pm",     type: "Music",       img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-  { name: "James Manley",     show: "The James Manley Show",     time: "Mon–Tue, 4pm–5pm",      type: "Community",   img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-  { name: "Tim Symonds",      show: "The Essential Hits",        time: "Thu 6pm / Sun 12pm",    type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Tym Jeffery",      show: "The Show for Everyone",     time: "Friday, 6pm–7pm",       type: "Community",   img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Carlos Rock",      show: "Planet of Sound",           time: "Thu & Fri, 11pm",       type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Timmy Ahmet",      show: "Good Evening Country",      time: "Monday, 8pm",           type: "Music",       img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Sue",              show: "Classic Country / Sunday Night Country", time: "Tue 6pm / Sun 7pm", type: "Music", img: "/assets/images/commentary-box-action.jpg", social: { fb: true } },
-  { name: "Carlo",            show: "Viva Italia / Rock 'n' Roll Fever", time: "Tue 9pm / Thu 9pm", type: "Music",   img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Ken & Jill Gaffney", show: "Winding Back",           time: "Monday, 3pm–4pm",        type: "Music",       img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-  { name: "Judy",             show: "Butterfly Favorites",       time: "Tuesday, 3pm",          type: "Music",       img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Steve Little",     show: "All Things Rock",           time: "Wed–Thu, 3pm",          type: "Music",       img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "KT or Ralph",      show: "Country Requests & Open Spaces", time: "Saturday, 8am",    type: "Music",       img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-  { name: "Les 'Harro' Harrison", show: "Rockin with Les Harrison", time: "Wednesday, 6pm",     type: "Community",   img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Margaret & Josh",  show: "Radio Netherlands",        time: "Monday, 7pm",            type: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Fikiri",           show: "The Afri-Connect Program (Swahili)", time: "Monday, 9pm–10pm", type: "Multicultural", img: "/assets/images/commentary-box-action.jpg", social: { fb: true } },
-  { name: "MK",               show: "Samoan Music Program",      time: "Wednesday, 9pm–10pm",   type: "Multicultural", img: "/assets/images/studio-commentary-selfie.jpg", social: { fb: true } },
-  { name: "Edith",            show: "Filipino Music Program",    time: "Tuesday, 10pm–11pm",    type: "Multicultural", img: "/assets/images/studio-sbs-diversity.jpg",    social: { fb: true } },
-  { name: "Jimmy & Rainy",    show: "Mandarin Program",          time: "Monday, 10pm",          type: "Multicultural", img: "/assets/images/commentary-box-action.jpg",   social: { fb: true } },
-]
+  { name: "Tim Ahemt",        show: BREAKFAST_SHOW,             time: "Mon & Tue, 6am–9am",   type: "Breakfast",    social: { fb: true } },
+  { name: "The Big G",        show: BREAKFAST_SHOW + " / Wed Mornings", time: "Wed, 6am–12pm", type: "Breakfast",   social: { fb: true } },
+  { name: "Ralph Whitehead",  show: "Thu Mornings / Friday Arvo", time: "Thu 9am–12pm · Fri 3pm–6pm", type: "Breakfast", social: { fb: true } },
+  { name: "Josh Revens",      show: "Fri Mornings / Mon Nights",  time: "Fri 9am–12pm · Mon 6pm", type: "Breakfast", social: { fb: true } },
+  { name: "John Painter (Johnny P)", show: "Dancing through the decades", time: "Mon–Fri, 9am–12pm", type: "Music",  social: { fb: true } },
+  { name: "Di Hunter",        show: "Monday Afternoon",          time: "Monday, 12pm–3pm",      type: "Music",       social: { fb: true } },
+  { name: "Craig Stott",      show: "Tuesday Mornings",          time: "Tuesday, 9am–12pm",     type: "Music",       social: { fb: true } },
+  { name: "James Manley",     show: "The James Manley Show",     time: "Mon–Tue, 4pm–5pm",      type: "Community",   social: { fb: true } },
+  { name: "Tim Symonds",      show: "The Essential Hits",        time: "Thu 6pm / Sun 12pm",    type: "Music",       social: { fb: true } },
+  { name: "Tym Jeffery",      show: "The Show for Everyone",     time: "Friday, 6pm–7pm",       type: "Community",   social: { fb: true } },
+  { name: "Carlos Rock",      show: "Planet of Sound",           time: "Thu & Fri, 11pm",       type: "Music",       social: { fb: true } },
+  { name: "Timmy Ahmet",      show: "Good Evening Country",      time: "Monday, 8pm",           type: "Country",     social: { fb: true } },
+  { name: "Sue",              show: "Classic Country / Sunday Night Country", time: "Tue 6pm / Sun 7pm", type: "Country", social: { fb: true } },
+  { name: "Carlo",            show: "Viva Italia / Rock 'n' Roll Fever", time: "Tue 9pm / Thu 9pm", type: "Music",   social: { fb: true } },
+  { name: "Ken & Jill Gaffney", show: "Winding Back",           time: "Monday, 3pm–4pm",        type: "Music",       social: { fb: true } },
+  { name: "Judy",             show: "Butterfly Favorites",       time: "Tuesday, 3pm",          type: "Music",       social: { fb: true } },
+  { name: "Steve Little",     show: "All Things Rock",           time: "Wed–Thu, 3pm",          type: "Music",       social: { fb: true } },
+  { name: "KT or Ralph",      show: "Country Requests & Open Spaces", time: "Saturday, 8am",    type: "Country",     social: { fb: true } },
+  { name: "Les 'Harro' Harrison", show: "Rockin with Les Harrison", time: "Wednesday, 6pm",     type: "Community",   social: { fb: true } },
+  { name: "Margaret & Josh",  show: "Radio Netherlands",        time: "Monday, 7pm",            type: "Multicultural", social: { fb: true } },
+  { name: "Fikiri",           show: "The Afri-Connect Program (Swahili)", time: "Monday, 9pm–10pm", type: "Multicultural", social: { fb: true } },
+  { name: "MK",               show: "Samoan Music Program",      time: "Wednesday, 9pm–10pm",   type: "Multicultural", social: { fb: true } },
+  { name: "Edith",            show: "Filipino Music Program",    time: "Tuesday, 10pm–11pm",    type: "Multicultural", social: { fb: true } },
+  { name: "Jimmy & Rainy",    show: "Mandarin Program",          time: "Monday, 10pm",          type: "Multicultural", social: { fb: true } },
+].map((host) => ({
+  ...host,
+  time: formatHostHours(host.name) ?? host.time,
+}))
 
-const showFilters = ['All', 'Breakfast', 'Music', 'Sport', 'Community', 'Multicultural']
+const showFilters = ['All', 'Breakfast', 'Music', 'Country', 'Sport', 'Community', 'Multicultural']
 
-const hostFilters = ["All", "Breakfast", "Sport", "Music", "Community", "Multicultural"]
+const hostFilters = ["All", "Breakfast", "Sport", "Music", "Country", "Community", "Multicultural"]
 
 const CATEGORY_COLORS: Record<string, string> = {
   Breakfast: '#F2F2F2',
   Music: '#9B5DE5',
+  Country: '#F2F2F2',
   Community: '#B6FF00',
   Sport: '#E51636',
   Multicultural: '#FF6B6B',
@@ -426,7 +440,10 @@ const gvlSportBlocks = [
     time: 'Fri 7pm–10pm',
     desc: 'AFL coverage via the National Indigenous Radio Service network.',
   },
-]
+].map((block) => ({
+  ...block,
+  time: formatGuideHours(block.title) ?? block.time,
+}))
 
 /* ────────────────────────────────────────────────────────── */
 /*  Section 5 — Podcasts                                      */
@@ -486,7 +503,7 @@ export default function Programs() {
   const [requestName, setRequestName] = useState("")
   const [requestSong, setRequestSong] = useState("")
   const [requestMsg, setRequestMsg] = useState("")
-  const [requestSent, setRequestSent] = useState(false)
+  const [requestDraftOpened, setRequestDraftOpened] = useState(false)
 
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -511,12 +528,9 @@ export default function Programs() {
       `Song request from ${requestName}\n\nSong: ${requestSong}\n\nMessage: ${requestMsg || '(none)'}`,
     )
     window.location.href = `mailto:${BRAND.email}?subject=${encodeURIComponent('ONE FM Song Request')}&body=${body}`
-    setRequestSent(true)
+    setRequestDraftOpened(true)
     setTimeout(() => {
-      setRequestSent(false)
-      setRequestName('')
-      setRequestSong('')
-      setRequestMsg('')
+      setRequestDraftOpened(false)
     }, 4000)
   }
 
@@ -712,6 +726,16 @@ export default function Programs() {
                   className="absolute left-0 top-0 bottom-0 rounded-l"
                   style={{ width: '3px', backgroundColor: CATEGORY_COLORS[show.tag] ?? '#B6FF00' }}
                 />
+                <div className="relative -mx-6 -mt-6 aspect-[16/9] overflow-hidden">
+                  <img
+                    src={programScene(show.name)}
+                    alt={`ONE FM ${show.tag.toLowerCase()} photography — ${show.name}`}
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-transparent to-transparent" />
+                </div>
                 <div aria-hidden className="explore-tile-scan" />
                 <div className="flex items-start justify-between">
                   <div
@@ -831,28 +855,40 @@ export default function Programs() {
               <div className="glass-card p-5 group h-full" data-cursor-label="PRESENTER">
                 {(() => {
                   const avatar = getHostAvatar(host.name)
+                  const visual = presenterVisual(host.name, host.type, hi)
                   return (
                     <div className="relative mb-4 overflow-hidden rounded-lg aspect-[4/5] group-hover:scale-[1.02] transition-transform duration-500">
+                      <img
+                        src={visual.src}
+                        alt={visual.alt}
+                        className={`absolute inset-0 w-full h-full object-cover ${visual.isPortrait ? '' : 'grayscale-[25%]'}`}
+                        loading="lazy"
+                        decoding="async"
+                      />
                       <div
                         className="absolute inset-0"
-                        style={{ background: `linear-gradient(135deg, ${avatar.from} 0%, ${avatar.to} 100%)` }}
+                        style={{ background: visual.isPortrait
+                          ? 'linear-gradient(to top, rgba(7,7,7,0.72), transparent 45%)'
+                          : `linear-gradient(135deg, ${avatar.from}88 0%, ${avatar.to}99 100%)` }}
                       />
-                      <div className="absolute inset-0 opacity-[0.06]"
-                        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span
-                          className="font-heading font-black select-none"
-                          style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: avatar.accent, opacity: 0.9, letterSpacing: '-0.04em' }}
-                        >
-                          {avatar.initials}
-                        </span>
-                      </div>
+                      {!visual.isPortrait && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span
+                            className="font-heading font-black select-none"
+                            style={{ fontSize: 'clamp(3rem, 8vw, 4.5rem)', color: avatar.accent, opacity: 0.85, letterSpacing: '-0.04em' }}
+                          >
+                            {avatar.initials}
+                          </span>
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-one-navy/75 via-transparent to-transparent" />
                       <div aria-hidden className="explore-tile-scan" />
-                      <div className="absolute bottom-3 left-3 right-3">
+                      <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
                         <span className="font-label text-[10px] px-2 py-0.5 rounded bg-one-gold text-one-navy">
                           {host.type}
+                        </span>
+                        <span className="font-label text-[9px] tracking-[0.08em] uppercase text-white/70">
+                          {visual.isPortrait ? 'Archive portrait' : 'Station photography'}
                         </span>
                       </div>
                     </div>
@@ -1126,19 +1162,20 @@ export default function Programs() {
           transition={{ duration: 0.5 }}
           className="glass-card p-6 md:p-10"
         >
-          <AnimatePresence mode="wait">
-            {requestSent ? (
+          <AnimatePresence mode="wait" initial={false}>
+            {requestDraftOpened ? (
               <motion.div
                 key="success"
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 1, scale: 1 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
                 className="flex flex-col items-center text-center py-12"
               >
                 <CheckCircle2 size={56} className="text-data-teal mb-4" />
-                <h3 className="font-h3 text-one-white mb-2">Request Received!</h3>
+                <h3 className="font-h3 text-one-white mb-2">Email Draft Opened</h3>
                 <p className="font-body text-muted max-w-md">
-                  Your email client should open with the request addressed to {BRAND.email}. You can also call the studio on {BRAND.phone}.
+                  Complete the send in your email app so the request reaches {BRAND.email}. You can also call the studio on {BRAND.phone}.
                 </p>
               </motion.div>
             ) : (

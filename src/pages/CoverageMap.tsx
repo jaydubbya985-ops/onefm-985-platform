@@ -55,7 +55,8 @@ import { Link } from 'react-router-dom'
 import { WeatherWidget } from '@/components/WeatherWidget'
 import { SponsorCommercialCta } from '@/components/SponsorCommercialCta'
 import { MagneticButton } from '@/components/MagneticButton'
-import { towns, broadcastArea, type Town, type SizeCategory } from '@/data/townData'
+import { towns, type Town, type SizeCategory } from '@/data/townData'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { coveragePins, coveragePinCounts, type CoveragePin } from '@/data/coverageMapPins'
 import {
   mountCoverageGlow,
@@ -70,23 +71,46 @@ import type { CoverageGlowHandle } from '@/lib/coverageGlowCanvas'
 import { BRAND, BRAND_COLORS } from '@/lib/brand'
 import { WordReveal } from '@/components/WordReveal'
 import { TiltCard } from '@/components/TiltCard'
+import {
+  formatBroadcastPopulation,
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+  formatWeeklyListenersPlain,
+  townCountValue,
+} from '@/lib/coverageCopy'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 
 /* ─────────────────────── helpers ─────────────────────── */
 
-function getMarkerConfig(size: SizeCategory) {
+const MAX_TOWN_LISTENERS = Math.max(...towns.map((t) => t.listenersEstimate))
+
+function markerColor(size: SizeCategory) {
   const { gold, blue, muted } = BRAND_COLORS
   switch (size) {
     case 'hub':
-      return { fillColor: gold, scale: 14, strokeColor: BRAND_COLORS.white, strokeWeight: 2 }
+      return { fillColor: gold, strokeColor: BRAND_COLORS.white, strokeWeight: 2 }
     case 'major':
-      return { fillColor: gold, scale: 10, strokeColor: gold, strokeWeight: 1 }
+      return { fillColor: gold, strokeColor: gold, strokeWeight: 1 }
     case 'medium':
-      return { fillColor: blue, scale: 8, strokeColor: blue, strokeWeight: 1 }
+      return { fillColor: blue, strokeColor: blue, strokeWeight: 1 }
     case 'small':
-      return { fillColor: '#0066CC', scale: 6, strokeColor: '#0066CC', strokeWeight: 1 }
+      return { fillColor: '#0066CC', strokeColor: '#0066CC', strokeWeight: 1 }
     case 'village':
-      return { fillColor: muted, scale: 6, strokeColor: muted, strokeWeight: 1 }
+      return { fillColor: muted, strokeColor: muted, strokeWeight: 1 }
   }
+}
+
+/** Marker size follows modelled listeners (townData), not invented reach. */
+function getMarkerConfig(town: Town | SizeCategory) {
+  const size = typeof town === 'string' ? town : town.sizeCategory
+  const listeners = typeof town === 'string' ? 0 : town.listenersEstimate
+  const color = markerColor(size)
+  const scale = typeof town === 'string'
+    ? 8
+    : 6 + 10 * (listeners / MAX_TOWN_LISTENERS)
+  return { ...color, scale }
 }
 
 function exportCSV() {
@@ -138,10 +162,9 @@ function exportCSV() {
   URL.revokeObjectURL(url)
 }
 
-type SortKey = 'name' | 'population' | 'distance'
+type SortKey = 'name' | 'population' | 'distance' | 'listeners'
 
-const GOOGLE_MAPS_API_KEY =
-  import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? 'AIzaSyDCWBY7YnPmk75dXdNKFoJKU-rUzbQe344'
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? ''
 const SHEPPARTON = { lat: -36.38, lng: 145.4 }
 
 // Hides Google's own default point-of-interest icons/labels (real businesses,
@@ -193,7 +216,7 @@ export default function CoverageMap() {
   const [mapReady, setMapReady] = useState(false)
   const [mapError, setMapError] = useState(false)
   const [search, setSearch] = useState('')
-  const [sortKey, setSortKey] = useState<SortKey>('name')
+  const [sortKey, setSortKey] = useState<SortKey>('listeners')
   const [selectedTown, setSelectedTown] = useState<Town | null>(null)
   const [selectedPin, setSelectedPin] = useState<CoveragePin | null>(null)
   const [touring, setTouring] = useState(false)
@@ -203,6 +226,7 @@ export default function CoverageMap() {
   const [mobileListOpen, setMobileListOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [mapTypeId, setMapTypeIdState] = useState<'satellite' | 'terrain' | 'roadmap'>('satellite')
+  const [heartlandOnly, setHeartlandOnly] = useState(false)
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)')
@@ -213,11 +237,17 @@ export default function CoverageMap() {
   }, [])
 
   /* ── filtered / sorted towns ── */
+  const heartlandCutoff = useMemo(() => {
+    const ranked = [...towns].sort((a, b) => b.listenersEstimate - a.listenersEstimate)
+    return ranked[9]?.listenersEstimate ?? 0
+  }, [])
+
   const filteredTowns = useMemo(() => {
     let list = towns.filter(
       (t) =>
-        t.name.toLowerCase().includes(search.toLowerCase()) ||
-        t.lga.toLowerCase().includes(search.toLowerCase())
+        (t.name.toLowerCase().includes(search.toLowerCase()) ||
+        t.lga.toLowerCase().includes(search.toLowerCase())) &&
+        (!heartlandOnly || t.listenersEstimate >= heartlandCutoff)
     )
     switch (sortKey) {
       case 'name':
@@ -229,9 +259,21 @@ export default function CoverageMap() {
       case 'distance':
         list = list.sort((a, b) => a.distanceFromSheppartonKm - b.distanceFromSheppartonKm)
         break
+      case 'listeners':
+        list = list.sort((a, b) => b.listenersEstimate - a.listenersEstimate)
+        break
     }
     return list
-  }, [search, sortKey])
+  }, [search, sortKey, heartlandOnly, heartlandCutoff])
+
+  useEffect(() => {
+    markersRef.current.forEach((marker) => {
+      const name = marker.getTitle()?.split(' — ')[0]
+      const town = towns.find((t) => t.name === name)
+      const dim = heartlandOnly && town && town.listenersEstimate < heartlandCutoff
+      marker.setOpacity(dim ? 0.28 : 1)
+    })
+  }, [heartlandOnly, heartlandCutoff])
 
   /* ── chart data ── */
   const lgaChartData = useMemo(() => {
@@ -258,9 +300,9 @@ export default function CoverageMap() {
 
   const top10Data = useMemo(() => {
     return [...towns]
-      .sort((a, b) => b.population2026 - a.population2026)
+      .sort((a, b) => b.listenersEstimate - a.listenersEstimate)
       .slice(0, 10)
-      .map((t) => ({ name: t.name, population: t.population2026 }))
+      .map((t) => ({ name: t.name, listeners: t.listenersEstimate }))
       .reverse()
   }, [])
 
@@ -299,7 +341,7 @@ export default function CoverageMap() {
       glowHandleRef.current = glow
 
       towns.forEach((town) => {
-        const config = getMarkerConfig(town.sizeCategory)
+        const config = getMarkerConfig(town)
         // A few towns sit only 2-5km apart in reality (Echuca/Moama,
         // Tocumwal/Picola, Shepparton/Mooroopna) \u2014 close enough to stack
         // directly on top of each other at this map's default zoom. Leave
@@ -315,7 +357,7 @@ export default function CoverageMap() {
             strokeWeight: config.strokeWeight,
             scale: config.scale,
           },
-          title: `${town.name} \u2014 ${town.population2026.toLocaleString()} (2026 est.)`,
+          title: `${town.name} — ${town.listenersEstimate.toLocaleString()} est. weekly listeners (townData)`,
           zIndex: town.sizeCategory === 'hub' ? 200 : 100,
           animation: town.sizeCategory === 'hub' ? google.maps.Animation.DROP : undefined,
         })
@@ -378,7 +420,7 @@ export default function CoverageMap() {
         // zoom combinations. 60px was the smallest radius that measured
         // zero overlap across the full combined town+pin marker set at
         // 1280/1366/1920px viewports — kept low (vs. the 110 the pin-only
-        // layer once used) so 25 towns don't collapse into a handful of
+        // layer once used) so the town set doesn't collapse into a handful of
         // badges once merged with the larger pin set.
         algorithm: new SuperClusterAlgorithm({ radius: 60 }),
         renderer: combinedClusterRenderer(stationMarkerRef.current, hubTownMarkerRef.current, townMarkerSet),
@@ -551,7 +593,7 @@ export default function CoverageMap() {
     <Layout>
       <SEO
         title="Coverage Map"
-        description={`Interactive coverage map showing ${BRAND.fullName}'s ${broadcastArea.broadcastRadiusKm}km broadcast radius across ${broadcastArea.totalTowns} Goulburn Valley communities.`}
+        description={`Interactive coverage map: ${formatCoverageShort()} — ${formatWeeklyListeners()} in a ${formatBroadcastPopulation()}-person broadcast area (ABS 2021 via townData).`}
       />
 
       <div className="flex flex-col min-h-[calc(100dvh-72px)] bg-one-navy">
@@ -578,10 +620,9 @@ export default function CoverageMap() {
                   GOULBURN VALLEY <span className="text-gold-gradient">COVERAGE</span>
                 </h1>
                 <p className="font-body text-one-white/55 leading-relaxed">
-                  See where your brand lands — {broadcastArea.totalTowns} communities,{' '}
-                  {broadcastArea.totalPopulation2026.toLocaleString()} people, and an estimated{' '}
-                  {broadcastArea.weeklyListeners.toLocaleString()} weekly listeners across{' '}
-                  {broadcastArea.broadcastRadiusKm}&nbsp;km from {BRAND.fullName}.
+                  See where your brand lands — {formatTowns()}, {formatBroadcastPopulation()} people,
+                  and {formatWeeklyListeners()} across a {formatRadius()} radius from {BRAND.fullName}.
+                  Town markers and listener estimates come from townData (ABS 2021). The glow ring is a visual {formatRadius()} guide — not an ACMA coverage contour and not a live listener count.
                 </p>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
                   <MagneticButton strength={6} cursorLabel="MEDIA KIT">
@@ -600,10 +641,10 @@ export default function CoverageMap() {
                 transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
               >
                 {[
-                  { icon: Users, label: 'Population', value: broadcastArea.totalPopulation2026.toLocaleString() },
-                  { icon: Radio, label: 'Listeners/wk', value: broadcastArea.weeklyListeners.toLocaleString() },
-                  { icon: MapPin, label: 'Communities', value: String(broadcastArea.totalTowns) },
-                  { icon: Signal, label: 'Radius', value: `${broadcastArea.broadcastRadiusKm} km` },
+                  { icon: Users, label: 'Population', value: formatBroadcastPopulation() },
+                  { icon: Radio, label: 'Listeners/wk', value: formatWeeklyListenersPlain() },
+                  { icon: MapPin, label: 'Communities', value: townCountValue() },
+                  { icon: Signal, label: 'Radius', value: formatRadius() },
                 ].map(({ icon: Icon, label, value }) => (
                   <div
                     key={label}
@@ -644,14 +685,54 @@ export default function CoverageMap() {
             </motion.div>
 
             <p className="relative mt-4 text-[10px] text-one-muted/80">
-              Population: ABS Census 2021 with local projections · Listener estimates: regional reach model
+              Population: ABS Census 2021 with local projections · Listener estimates: regional reach model in townData — same {formatWeeklyListenersPlain()} figure used site-wide. {STANDARD_SPOT_PLUS_GST}. {GVL_PREMIUM_BADGE}.
+            </p>
+
+            <div className="relative mt-5 grid gap-3 sm:grid-cols-3">
+              {[
+                {
+                  title: 'What the numbers are',
+                  body: `${formatCoverageShort()} from Shepparton. ${formatWeeklyListeners()} modelled from ABS 2021 via townData — not Radio.co stream counts.`,
+                },
+                {
+                  title: 'What the glow is not',
+                  body: `The gold ring is a visual ${formatRadius()} guide. It is not an ACMA coverage contour, a live listener pulse, or a guarantee of reception.`,
+                },
+                {
+                  title: 'What you can buy',
+                  body: `${STANDARD_SPOT_PLUS_GST} for valley-wide spots. GVL match-day and live reads sit above that floor and are quoted separately.`,
+                },
+              ].map((card) => (
+                <div key={card.title} className="rounded-lg border border-one-border/70 bg-one-midnight/40 px-3 py-3">
+                  <p className="font-label text-[9px] tracking-[0.16em] uppercase text-one-gold mb-1">{card.title}</p>
+                  <p className="text-[11px] leading-relaxed text-one-white/55">{card.body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="relative mt-5 grid grid-cols-3 gap-2 sm:grid-cols-6">
+              {[
+                { src: STATION_PHOTOS.geoTownAerial, alt: 'Goulburn Valley town aerial — station archive' },
+                { src: STATION_PHOTOS.towerMountMajorDay, alt: 'Mt Major transmitter — station archive' },
+                { src: STATION_PHOTOS.heritageObMall1989, alt: 'ONE FM outside broadcast, 1989 mall' },
+                { src: STATION_PHOTOS.gvlNightPanorama, alt: 'GVL ground at night — called on 98.5' },
+                { src: STATION_PHOTOS.heritageTruck2005, alt: 'ONE FM broadcast truck, 2005' },
+                { src: STATION_PHOTOS.ecoTractorSunrise, alt: `Valley paddock at sunrise — station archive in the ${formatRadius()} broadcast area` },
+              ].map((shot) => (
+                <div key={shot.src} className="relative aspect-[4/3] overflow-hidden rounded-md border border-one-border/60">
+                  <img src={shot.src} alt={shot.alt} className="h-full w-full object-cover" loading="lazy" />
+                </div>
+              ))}
+            </div>
+            <p className="relative mt-2 text-[10px] text-one-muted/70">
+              Station photography of the valley and transmitter — not a coverage contour.
             </p>
           </div>
         </section>
 
         <SponsorCommercialCta
           headline="Pin your brand on the map"
-          subline="Sponsor pins highlight partners across the valley. Explore tiers or request the full media kit."
+          subline={`${STANDARD_SPOT_PLUS_GST}. ${GVL_PREMIUM_BADGE} is quoted separately — never sold as the $25 floor.`}
           className="shrink-0"
         />
 
@@ -665,7 +746,7 @@ export default function CoverageMap() {
               className="flex shrink-0 items-center gap-1.5 rounded-md border border-one-border px-3 py-1.5 text-xs font-medium text-one-white transition-colors hover:border-one-gold/50 md:hidden"
             >
               <MapPin size={14} className="text-one-gold" />
-              {mobileListOpen ? 'Hide list' : `${broadcastArea.totalTowns} towns`}
+              {mobileListOpen ? 'Hide list' : formatTowns()}
             </button>
 
             <div className="hidden items-center gap-3 text-[11px] font-label md:flex">
@@ -711,6 +792,21 @@ export default function CoverageMap() {
               >
                 <Sparkles size={12} className="text-one-gold" />
                 Sponsors ({coveragePinCounts.sponsor})
+              </button>
+              <button
+                type="button"
+                onClick={() => setHeartlandOnly((v) => !v)}
+                data-cursor-label={heartlandOnly ? 'ALL TOWNS' : 'HEARTLAND'}
+                title={`Top 10 towns by modelled weekly listeners (townData). Glow stays a visual ${formatRadius()} guide — not an ACMA contour.`}
+                className={cn(
+                  'flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium transition-colors',
+                  heartlandOnly
+                    ? 'border-one-gold/50 bg-one-gold/10 text-one-white'
+                    : 'border-one-border text-one-muted hover:text-one-white',
+                )}
+              >
+                <Users size={12} className="text-one-gold" />
+                Heartland
               </button>
             </div>
 
@@ -786,7 +882,9 @@ export default function CoverageMap() {
 
             {/* Sort */}
             <div className="flex items-center justify-between border-b border-one-border px-3 py-2">
-              <span className="text-xs text-one-muted">{filteredTowns.length} communities</span>
+              <span className="text-xs text-one-muted">
+                {filteredTowns.length} {heartlandOnly ? 'heartland towns (top 10 by modelled listeners)' : 'communities'}
+              </span>
               <div className="flex items-center gap-1">
                 <ChevronDown size={12} className="text-one-muted" />
                 <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
@@ -794,6 +892,7 @@ export default function CoverageMap() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="border-one-border bg-one-midnight">
+                    <SelectItem value="listeners" className="text-xs text-one-white">Listeners</SelectItem>
                     <SelectItem value="name" className="text-xs text-one-white">Name</SelectItem>
                     <SelectItem value="population" className="text-xs text-one-white">Population</SelectItem>
                     <SelectItem value="distance" className="text-xs text-one-white">Distance</SelectItem>
@@ -806,7 +905,7 @@ export default function CoverageMap() {
             <ScrollArea className="flex-1">
               <div className="p-2 space-y-1">
                 {filteredTowns.map((town) => {
-                  const config = getMarkerConfig(town.sizeCategory)
+                  const config = getMarkerConfig(town)
                   return (
                     <button
                       key={town.name}
@@ -832,7 +931,13 @@ export default function CoverageMap() {
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-medium text-white truncate">{town.name}</div>
                         <div className="text-[10px] text-one-muted truncate">
-                          {town.population2026.toLocaleString()} &middot; {town.distanceFromSheppartonKm} km &middot; {town.lga}
+                          {town.listenersEstimate.toLocaleString()} listeners/wk &middot; {town.population2026.toLocaleString()} pop &middot; {town.distanceFromSheppartonKm} km
+                        </div>
+                        <div className="mt-1 h-1 rounded-full bg-one-border/60 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-one-gold/80"
+                            style={{ width: `${Math.max(6, (town.listenersEstimate / MAX_TOWN_LISTENERS) * 100)}%` }}
+                          />
                         </div>
                       </div>
                     </button>
@@ -868,7 +973,7 @@ export default function CoverageMap() {
                     onClick={() => setMobileListOpen(true)}
                     className="mt-4 rounded-md bg-one-gold px-4 py-2 text-xs font-medium text-one-navy md:hidden"
                   >
-                    Browse {broadcastArea.totalTowns} towns
+                    Browse {formatTowns()}
                   </button>
                 </div>
               </div>
@@ -902,8 +1007,9 @@ export default function CoverageMap() {
                 <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-one-gold" /> Local sponsor</div>
               </div>
               <div className="mt-1.5 space-y-0.5 border-t border-one-border/50 pt-1.5">
-                <div className="text-one-gold/90">Gradient glow = broadcast reach</div>
-                <div className="text-one-electric/80">Cyan ripples = live signal</div>
+                <div className="text-one-gold/90">Gold glow = visual {formatRadius()} guide</div>
+                <div className="text-one-electric/80">Dot size = modelled listeners (townData)</div>
+                <div className="text-one-electric/80">Not an ACMA contour or live count</div>
               </div>
             </div>
 
@@ -1098,7 +1204,7 @@ export default function CoverageMap() {
                     <div
                       className="relative h-24 sm:h-28"
                       style={{
-                        background: `linear-gradient(135deg, ${getMarkerConfig(selectedTown.sizeCategory).fillColor}33, ${BRAND_COLORS.navy})`,
+                        background: `linear-gradient(135deg, ${getMarkerConfig(selectedTown).fillColor}33, ${BRAND_COLORS.navy})`,
                       }}
                     >
                       <button
@@ -1126,7 +1232,7 @@ export default function CoverageMap() {
                         <div className="flex items-center justify-between">
                           <span className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-one-muted">
                             <Radio size={12} className="text-one-gold" />
-                            Est. weekly listeners
+                            Est. weekly listeners (townData)
                           </span>
                           <span className="font-heading text-lg text-one-gold">
                             {selectedTown.listenersEstimate.toLocaleString()}
@@ -1192,7 +1298,7 @@ export default function CoverageMap() {
       <div className="shrink-0 border-t border-one-border bg-one-midnight/40 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 text-center">
-            <p className="mb-2 font-label text-[11px] uppercase tracking-[0.2em] text-one-gold">Area analytics</p>
+            <p className="mb-2 font-label text-[11px] uppercase tracking-[0.2em] text-one-gold">ABS 2021 via townData</p>
             <WordReveal text="Coverage by the numbers" as="h2" className="font-heading text-2xl text-one-white sm:text-3xl block" stagger={0.04} />
           </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
@@ -1274,7 +1380,7 @@ export default function CoverageMap() {
             <TiltCard maxTilt={4} className="h-full">
             <div className="glass-card p-5 h-full group relative overflow-hidden">
               <div aria-hidden className="explore-tile-scan" />
-              <h3 className="font-heading text-sm text-one-white mb-4">Top 10 Towns by Population (2026)</h3>
+              <h3 className="font-heading text-sm text-one-white mb-4">Top 10 towns by estimated weekly listeners</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={top10Data} layout="vertical" margin={{ left: 10, right: 10 }}>
@@ -1297,7 +1403,7 @@ export default function CoverageMap() {
                       }}
                       formatter={(value: number) => value.toLocaleString()}
                     />
-                    <Bar dataKey="population" fill="#F2F2F2" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="listeners" fill="#F2F2F2" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

@@ -1,4 +1,31 @@
 import { useEffect, useState } from 'react'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
+/**
+ * Unused Shepparton silo-art still (287×175 — mark size only, not a hero).
+ * Landmark mural, not a presenter portrait.
+ */
+function SiloArchiveMark() {
+  return (
+    <img
+      src={STATION_PHOTOS.cultureSiloArtFaces}
+      alt=""
+      aria-hidden
+      width={72}
+      height={44}
+      decoding="async"
+      style={{
+        width: 72,
+        height: 44,
+        objectFit: 'cover',
+        objectPosition: 'center',
+        borderRadius: 4,
+        border: '1px solid rgba(255,255,255,0.14)',
+        opacity: 0.82,
+      }}
+    />
+  )
+}
 
 /**
  * Fixed right-side vertical progress line + numeric % indicator.
@@ -41,6 +68,7 @@ export function ScrollProgress() {
       }}
       className="hidden lg:flex"
     >
+      <SiloArchiveMark />
       {/* Track */}
       <div style={{ width: 1, height: 80, background: 'rgba(255,255,255,0.08)', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
         {/* Fill */}

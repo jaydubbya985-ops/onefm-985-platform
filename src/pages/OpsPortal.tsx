@@ -6,6 +6,7 @@ import {
   FileText,
   Inbox,
   LogOut,
+  Palette,
   Radio,
   Receipt,
   RotateCcw,
@@ -21,7 +22,10 @@ import { useToast } from '@/components/ops/Toast'
 import { useOpsStore, type OpsTab } from '@/components/ops/store'
 import { OpsCommandCentre } from '@/components/ops/OpsCommandCentre'
 import { useAuth } from '@/hooks/useAuth'
-import { isSupabaseConfigured } from '@/lib/supabase'
+import { BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { isSupabaseConfigured, getOpsCredentialSource, opsCredentialSourceLabel } from '@/lib/supabase'
 
 const EnquiryDashboard = lazy(() => import('@/components/ops/EnquiryDashboard'))
 const ProposalBuilder = lazy(() => import('@/components/ops/ProposalBuilder'))
@@ -31,6 +35,7 @@ const BroadcastSchedule = lazy(() => import('@/components/ops/BroadcastSchedule'
 const InvoiceGenerator = lazy(() => import('@/components/ops/InvoiceGenerator'))
 const InvoiceBatchSender = lazy(() => import('@/components/ops/InvoiceBatchSender'))
 const BillingEngine = lazy(() => import('@/components/ops/BillingEngine'))
+const InvoiceDesignLab = lazy(() => import('@/components/ops/InvoiceDesignLab'))
 const PaymentsModule = lazy(() => import('@/components/ops/PaymentsModule'))
 
 function OpsTabPanel({ children }: { children: React.ReactNode }) {
@@ -54,6 +59,7 @@ const TABS: {
   { id: 'schedule', label: 'Schedule', icon: Radio, description: 'Broadcast & ad schedule' },
   { id: 'invoices', label: 'Invoices', icon: Receipt, description: 'Create, send & track invoices' },
   { id: 'batch', label: 'Batch Send', icon: Send, description: 'Send a batch of invoices' },
+  { id: 'design', label: 'Invoice Design', icon: Palette, description: 'Pick from 3 world-class invoice designs' },
   { id: 'billing', label: 'Billing', icon: BarChart3, description: 'Payments, aging & reports' },
   { id: 'payments', label: 'Payments', icon: CreditCard, description: 'Donations & memberships' },
 ]
@@ -146,7 +152,19 @@ function OpsPortalContent() {
 
   return (
     <div className="min-h-screen bg-[#101010]">
-      <div className="px-6 md:px-12 lg:px-20 pt-24 pb-6 border-b border-[#2A2A2A]/30">
+      <div className="relative overflow-hidden border-b border-[#2A2A2A]/30">
+        <img
+          src={STATION_PHOTOS.studioChristmasBroadcast}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-24 pb-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -154,8 +172,8 @@ function OpsPortalContent() {
               <h1 className="font-h1 text-one-white text-3xl md:text-4xl">Operations Portal</h1>
             </div>
             <p className="text-one-white/50 text-sm max-w-2xl">
-              Manage enquiries, sponsors, invoices, and revenue — all in one place. This portal
-              replaces spreadsheets and Word docs with a professional system.
+              Station ops for {formatTowns()} — {formatCoverageShort()} (ABS 2021 via townData).
+              Invoice payments: NAB BSB {BANK_BSB}. This screen is not a Stripe receipt.
             </p>
             {isSupabaseConfigured() && user && (
               <p className="text-one-muted text-xs mt-1">Signed in as {user.email}</p>
@@ -164,7 +182,10 @@ function OpsPortalContent() {
               <div className="mt-4 rounded-lg border border-emerald-700/40 bg-emerald-900/15 px-4 py-3 max-w-2xl">
                 <p className="text-sm text-emerald-400 font-semibold">LIVE — enquiries, proposals, contracts and invoices persist to Supabase</p>
                 <p className="text-xs text-one-muted mt-0.5">
-                  Sponsors, schedule and payments still save in this browser only — they are not yet on the shared database.
+                  Sponsors, schedule, billing charts and payments start empty in live mode. DEMO seeds stay in DEMO mode only.
+                  {getOpsCredentialSource() !== 'none' && (
+                    <> Credentials: {opsCredentialSourceLabel()}.</>
+                  )}
                 </p>
               </div>
             ) : (
@@ -211,6 +232,7 @@ function OpsPortalContent() {
         </div>
         <OpsResumeCard />
         <PipelineIndicator />
+        </div>
       </div>
 
       <div className="px-6 md:px-12 lg:px-20 pt-6">
@@ -262,6 +284,9 @@ function OpsPortalContent() {
         )}
         {activeTab === 'batch' && (
           <OpsTabPanel><InvoiceBatchSender /></OpsTabPanel>
+        )}
+        {activeTab === 'design' && (
+          <OpsTabPanel><InvoiceDesignLab /></OpsTabPanel>
         )}
         {activeTab === 'billing' && (
           <OpsTabPanel><BillingEngine /></OpsTabPanel>

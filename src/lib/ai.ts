@@ -1,15 +1,18 @@
-import OpenAI from 'openai';
-import { stationStats } from '@/data/pricing';
-
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
-
-export const openai = new OpenAI({
-  apiKey,
-  dangerouslyAllowBrowser: true, // For demo only — use backend proxy in production
-});
+import { BREAKFAST_SHOW, BREAKFAST_TIME } from '@/data/programGuide';
+import {
+  formatBroadcastPopulation,
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  weeklyListenersValue,
+} from '@/lib/coverageCopy';
+import { STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy';
+import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks';
 
 export function hasApiKey(): boolean {
-  return !!apiKey && apiKey.startsWith('sk-');
+  // Browser bundles must never carry provider secret keys. Use a server proxy
+  // before enabling live generation.
+  return false;
 }
 
 export interface GenerateOptions {
@@ -22,34 +25,34 @@ export interface GenerateOptions {
 /* ── Proposal content pools ── */
 const demoProposalPool: Record<string, string[]> = {
   'Executive Summary': [
-    `ONE FM 98.5 is excited to partner with you to achieve your campaign goals. As the Goulburn Murray's community broadcaster (callsign 3ONE, operated by Goulburn Valley Community Radio Inc.), we reach an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns within our ${stationStats.broadcastRadiusKm}km broadcast area. This proposal outlines a genuine regional partnership.`,
+    `ONE FM 98.5 is excited to partner with you to achieve your campaign goals. As the Goulburn Murray's community broadcaster (callsign 3ONE, operated by Goulburn Valley Community Radio Inc.), we reach an estimated ${weeklyListenersValue()} weekly listeners across ${formatTowns()} within our ${formatRadius()} broadcast area. This proposal outlines a genuine regional partnership.`,
     'We are proud to present this sponsorship opportunity. ONE FM 98.5 has served the Goulburn Murray since 1980 — a trusted community voice across Shepparton, Mooroopna, Cobram, Echuca, Kyabram and surrounding communities.',
     'This proposal introduces a partnership between your brand and ONE FM 98.5. As a licensed community broadcaster since 1989, we combine deep local trust with a genuine connection to the Goulburn Murray community.',
   ],
   'About ONE FM': [
     'ONE FM 98.5 has been broadcasting across the Goulburn Murray since 1980. Licensed as a community broadcaster since 1989, we are operated by Goulburn Valley Community Radio Inc. — a not-for-profit organisation dedicated to live, local content.',
-    'ONE FM 98.5 (callsign 3ONE) is the Goulburn Murray\'s community radio station. We broadcast from Shepparton across 25 towns, delivering local news, community announcements, sport, multicultural programming, and music.',
+    `ONE FM 98.5 (callsign 3ONE) is the Goulburn Murray's community radio station. We broadcast from Shepparton across ${formatTowns()}, delivering local news, community announcements, sport, multicultural programming, and music.`,
     'Our mission is to inform, entertain, and connect the Goulburn Murray community. ONE FM is volunteer-supported and community-owned, making your sponsorship a genuine investment in local broadcasting.',
   ],
   'Audience Overview': [
-    `ONE FM reaches an estimated ${stationStats.weeklyListeners.toLocaleString()} weekly listeners across ${stationStats.totalTowns} towns in the Goulburn Murray region (source: population-based estimate from ABS 2021 census data). Our audience is local, community-focused, and connected to the station that reflects their region.`,
-    'Our listeners are the Goulburn Murray community — families, farmers, business owners, workers, and volunteers across 25 towns. They trust ONE FM because we are genuinely local and community-owned.',
-    'The Goulburn Murray is home to approximately 189,000 people across 25 communities within our broadcast area. ONE FM is their community radio station — the one that covers their local sport, their local news, and their local events.',
+    `ONE FM reaches an estimated ${weeklyListenersValue()} weekly listeners across ${formatTowns()} in the Goulburn Murray region (source: population-based estimate from ABS 2021 census data). Our audience is local, community-focused, and connected to the station that reflects their region.`,
+    `Our listeners are the Goulburn Murray community — families, farmers, business owners, workers, and volunteers across ${formatTowns()}. They trust ONE FM because we are genuinely local and community-owned.`,
+    `The Goulburn Murray broadcast area is home to ${formatBroadcastPopulation()} people across ${formatTowns()} (ABS 2021 via townData). ONE FM is their community radio station — the one that covers their local sport, their local news, and their local events.`,
   ],
   'Platform Reach': [
-    'ONE FM 98.5 delivers reach through FM broadcast (98.5 FM, ~100km radius), live streaming via fm985.com.au and the Community Radio Plus app, community Facebook (facebook.com/onefmshepparton), and SoundCloud interview content.',
-    'Your message reaches the Goulburn Murray community through our FM broadcast signal, online stream, and community social channels. ONE FM is genuinely local — no national aggregates, no metro assumptions.',
-    'We broadcast on 98.5 FM across the Goulburn Murray, stream live at fm985.com.au, and publish local interviews on SoundCloud. Our Facebook community page keeps the region connected.',
+    `ONE FM 98.5 delivers reach through FM broadcast (98.5 FM, ${formatCoverageShort()}), live streaming at fm985.com.au, community Facebook (${FACEBOOK_PAGE_URL.replace('https://www.', '')}), and SoundCloud interviews (${SOUNDCLOUD_PROFILE_URL.replace('https://', '')}). Confirmed social: Facebook and SoundCloud only.`,
+    'Your message reaches the Goulburn Murray community through our FM broadcast signal, the fm985.com.au stream, and the confirmed Facebook page. ONE FM is genuinely local — no national Community Radio Plus aggregates, no metro assumptions.',
+    'We broadcast on 98.5 FM across the Goulburn Murray, stream live at fm985.com.au, and publish local interviews on SoundCloud. Instagram, Twitter, and TikTok handles are not confirmed.',
   ],
   'Proposed Package': [
-    'We recommend a comprehensive package aligning with your objectives. This includes prime on-air placement during high-engagement dayparts, digital companion assets for streaming and web, and social media amplification. Optional add-ons include podcast integration, event activation, and regional coverage mapping.',
-    'This tailored proposal combines broadcast prominence with digital depth. Core deliverables include sponsored segments, host endorsements, banner and audio ads on streaming, plus coordinated social posts. Every element is designed to reinforce your message across the customer journey.',
-    'Our package architecture is flexible by design. Start with foundational on-air presence, then layer digital streaming ads, social amplification, and podcast sponsorships. Each module is independently priced so you build exactly the right mix for your goals and budget.',
+    `We recommend on-air placement drawn from the published rate card (${STANDARD_SPOT_PLUS_GST}). Companion options are the fm985.com.au stream and Facebook community posts. GVL match-day inventory is premium — never priced from the standard $25 spot.`,
+    'This proposal combines broadcast spots with Facebook mentions and SoundCloud interview adjacency where it fits the brief. There is no separate podcast inventory, app store listing, or unconfirmed social channel in the package.',
+    'Start with foundational on-air presence, then add Facebook posts and SoundCloud interview mentions if useful. Each line is quoted from the rate card — we do not sell podcast host reads or invented digital modules.',
   ],
   'Pricing & Rates': [
-    'Our pricing is transparent and value-driven. The base investment includes all core deliverables with volume discounts for extended campaigns. Additional sections such as ROI projections, competitive analysis, and social strategy can be added à la carte. Payment terms: 50% deposit, balance due 30 days from campaign start.',
-    'We structure pricing to reward commitment. Monthly campaigns receive standard rates; quarterly bookings unlock 10% savings; annual partnerships include exclusive category protection and bonus digital inventory. All rates exclude applicable taxes.',
-    'Investment levels scale with ambition. Entry packages start with targeted on-air mentions and social posts. Mid-tier adds streaming pre-roll and podcast host reads. Premium tiers include full editorial integration, event presence, and dedicated account management.',
+    `${STANDARD_SPOT_PLUS_GST}. GVL / breakfast / live-call inventory is premium and quoted separately. Ask admin@fm985.com.au for a written quote — demo pools do not invent volume discounts or deposit terms.`,
+    'Monthly, quarterly, and annual bookings are quoted from the published rate card. We do not advertise unsourced percentage savings or exclusive-category bonuses in this demo copy.',
+    `Entry packages start with ${STANDARD_SPOT_PLUS_GST} and optional Facebook mentions. Mid and premium tiers add live reads and GVL season inventory — not podcast host reads or streaming pre-roll products we do not sell.`,
   ],
   'Case Studies': [
     'Contact us at admin@fm985.com.au for case studies and references from current and past sponsors in the Goulburn Murray region.',
@@ -66,13 +69,13 @@ const demoProposalPool: Record<string, string[]> = {
     'Our terms are designed to protect both parties and ensure campaign quality. Deposits secure inventory in competitive dayparts. Cancellation windows allow us to reallocate slots while giving clients flexibility. Creative deadlines ensure proper review and technical compliance.',
   ],
   'Regional Map & Coverage': [
-    'ONE FM 98.5 covers the Goulburn Murray region from Shepparton, reaching 25 towns within approximately 100km. Key communities include Shepparton, Mooroopna, Cobram, Echuca, Kyabram, Benalla, and surrounds. Our live stream extends reach globally via fm985.com.au.',
+    `ONE FM 98.5 covers the Goulburn Murray region from Shepparton — ${formatCoverageShort()}. Key communities include Shepparton, Mooroopna, Cobram, Echuca, Kyabram, Benalla, and surrounds. Listen on 98.5 FM or stream at fm985.com.au — stream totals are not claimed as extra reach.`,
   ],
   'Social Media Strategy': [
-    'ONE FM maintains an active community Facebook page at facebook.com/onefmshepparton. Social mentions and community posts can be included as part of your sponsorship package. Contact us to discuss current social opportunities.',
+    `Confirmed channels are Facebook (${FACEBOOK_PAGE_URL.replace('https://www.', '')}) and SoundCloud (${SOUNDCLOUD_PROFILE_URL.replace('https://', '')}). Instagram, Twitter, and TikTok are not confirmed — do not book those platforms.`,
   ],
   'Podcast Integration': [
-    'ONE FM produces local interviews and community content available on SoundCloud (soundcloud.com/user-570295409). Sponsorship of interview segments is available — contact admin@fm985.com.au for current options.',
+    `ONE FM does not sell a podcast product. Local interviews live on SoundCloud (${SOUNDCLOUD_PROFILE_URL.replace('https://', '')}). Contact admin@fm985.com.au if an interview adjacency is relevant — there are no podcast download counts or host-read inventory.`,
   ],
   'Event Activation Plan': [
     'ONE FM regularly broadcasts live from community events across the Goulburn Murray including GVL football, local festivals, and community days. Contact us to discuss outside broadcast and event sponsorship packages.',
@@ -85,31 +88,27 @@ const demoProposalPool: Record<string, string[]> = {
   ],
 };
 
-// Real ONE FM social captions — Goulburn Murray localised, no invented stats
+// Confirmed-channel captions only. Instagram / TikTok / Twitter handles are not confirmed.
 const demoCaptionPool: Record<string, string[]> = {
+  Facebook: [
+    `${BREAKFAST_SHOW} is ${BREAKFAST_TIME} weekdays on ONE FM 98.5. Tune in on 98.5 FM or stream at fm985.com.au.`,
+    'GVL Match of the Day is Saturday 1pm–3pm on ONE FM 98.5 (source: fm985.com.au/guide/). Listen on 98.5 FM or stream at fm985.com.au.',
+    'Multicultural programs sit on the weeknight guide — check times at fm985.com.au/guide/. Facebook and SoundCloud are the confirmed station channels.',
+  ],
+  SoundCloud: [
+    `Local interviews live on SoundCloud (${SOUNDCLOUD_PROFILE_URL.replace('https://', '')}) — not a separate podcast product and not download-count inventory.`,
+  ],
   Instagram: [
-    'ONE FM Breakfast is LIVE across the Goulburn Murray 📻 Tune in on 98.5 FM or stream at fm985.com.au #OneFM985 #Shepparton #GoulburnValley',
-    'Live and local since 1980 — this is community radio from the heart of the Goulburn Valley 🎙️ #OneFM985 #3ONE #CommunityRadio',
-    'The valley is beautiful and we\'re proud to call it home. Streaming live at fm985.com.au 🌿 #GoulburnValley #OneFM985 #LocalRadio',
+    'ONE FM does not have a confirmed Instagram handle. Use Facebook (facebook.com/onefmshepparton) or SoundCloud interviews.',
   ],
   TikTok: [
-    'Live from Shepparton — this is ONE FM 98.5 📻 #OneFM985 #Shepparton #CommunityRadio #GoulburnValley',
-    'Community radio that actually sounds like your town 🙌 #OneFM985 #LocalRadio #3ONE',
-    'GVL footy + ONE FM = the perfect Saturday 🏈 #GVL #OneFM985 #LocalFooty',
+    'ONE FM does not have a confirmed TikTok handle. Confirmed channels: Facebook and SoundCloud only.',
   ],
   'Twitter/X': [
-    '🔴 LIVE NOW on ONE FM 98.5 — tune in on FM or stream at fm985.com.au #OneFM985 #Shepparton',
-    'GVL coverage is underway on ONE FM 98.5 📻 Listen live: fm985.com.au #GVL #OneFM985',
-    'Community radio, live and local from the Goulburn Valley 🎙️ #OneFM985 #CommunityRadio',
-  ],
-  Facebook: [
-    'ONE FM Breakfast is on air this morning — tune in on 98.5 FM or stream live at fm985.com.au 📻 #OneFM985 #Shepparton',
-    'Thanks to everyone who came out to support ONE FM at the weekend. Your community radio — live and local. ❤️ #GoulburnValley',
-    'GVL coverage this Saturday on ONE FM 98.5. Full match commentary — listen on FM or online. #GVL #OneFM985 #LocalFooty',
-    'Celebrating the diversity of our community on ONE FM 98.5. Multicultural programs every week — check the guide at fm985.com.au/guide/ 🌍',
+    'ONE FM does not have a confirmed Twitter/X handle. Do not use @onefm985 or live-now counts.',
   ],
   LinkedIn: [
-    'Goulburn Valley Community Radio Inc. has been serving the Goulburn Murray region since 1980. ONE FM 98.5 (callsign 3ONE) delivers live local content across 25 communities within our broadcast area.',
+    `Goulburn Valley Community Radio Inc. has been serving the Goulburn Murray region since 1980. ONE FM 98.5 (callsign 3ONE) delivers live local content across ${formatTowns()} within our broadcast area.`,
     'ONE FM 98.5 is a licensed community broadcaster under Goulburn Valley Community Radio Inc. We are a not-for-profit organisation committed to live, local content for the Goulburn Murray region.',
   ],
 };
@@ -117,7 +116,7 @@ const demoCaptionPool: Record<string, string[]> = {
 // Forecast reasoning — real streaming analytics not yet connected; placeholder note
 const demoForecastReasonings = [
   'Real-time streaming analytics require Radio.co API connection. Once connected, this will show live listening trends for ONE FM 98.5.',
-  `Historical listenership data will display here when Radio.co analytics are integrated. Current estimate: ~${stationStats.weeklyListeners.toLocaleString()} weekly listeners (ABS 2021 population base).`,
+  `Historical listenership data will display here when Radio.co analytics are integrated. Current estimate: ~${weeklyListenersValue()} weekly listeners (ABS 2021 population base).`,
   'Connect Radio.co analytics (station: sae3372059) to enable real forecast modelling for the Goulburn Murray broadcast area.',
 ];
 
@@ -153,31 +152,12 @@ export function estimateCost(tokens: number, model = 'gpt-4o-mini'): string {
 
 /* ────────────────────────────────────────────── */
 export async function generateContent(options: GenerateOptions): Promise<string> {
-  const { prompt, maxTokens = 800, temperature = 0.7, onChunk } = options;
-
-  if (!hasApiKey()) {
-    const fallback = 'AI features require an OpenAI API key. Add VITE_OPENAI_API_KEY to your .env file.';
-    if (onChunk) {
-      await simulateStreaming(fallback, onChunk);
-    }
-    return fallback;
+  const { onChunk } = options;
+  const fallback = 'AI generation is disabled in the browser until a server-side proxy is connected.';
+  if (onChunk) {
+    await simulateStreaming(fallback, onChunk);
   }
-
-  const stream = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    max_tokens: maxTokens,
-    temperature,
-    stream: true,
-  });
-
-  let fullText = '';
-  for await (const chunk of stream) {
-    const content = chunk.choices[0]?.delta?.content || '';
-    fullText += content;
-    if (onChunk) onChunk(content);
-  }
-  return fullText;
+  return fallback;
 }
 
 let captionCycleIndex = 0;
@@ -188,7 +168,7 @@ export async function generateCaption(
   onChunk?: (chunk: string) => void
 ): Promise<string> {
   if (!hasApiKey()) {
-    const pool = demoCaptionPool[platform] || demoCaptionPool.Instagram;
+    const pool = demoCaptionPool[platform] || demoCaptionPool.Facebook;
     const text = pool[captionCycleIndex % pool.length];
     captionCycleIndex++;
     if (onChunk) await simulateStreaming(text, onChunk);

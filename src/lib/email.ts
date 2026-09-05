@@ -1,13 +1,16 @@
 /**
- * Email Service — payload builder
- * Sends via Netlify Function (production) or Resend API direct (dev).
+ * Email Service — payload builder.
+ * Browser code may build payloads, but real sends must go through Netlify
+ * functions so provider API keys stay server-side.
  *
  * Production setup:
  *   1. Netlify functions send-enquiry + send-invoice deploy with the site
  *   2. Set RESEND_API_KEY (no VITE_ prefix) in Netlify env — stays server-side
  *
- * Dev fallback: VITE_RESEND_API_KEY in .env.local (never set this in production)
  */
+
+import { BRAND } from '@/lib/brand'
+import { readFunctionJson } from '@/lib/readFunctionJson'
 
 export interface EmailPayload {
   to: string | string[]
@@ -47,7 +50,6 @@ export interface InvoiceEmailData {
 }
 
 const STATION_EMAIL = import.meta.env.VITE_STATION_EMAIL || 'admin@fm985.com.au'
-const STATION_NAME  = import.meta.env.VITE_STATION_NAME  || 'ONE FM 98.5'
 
 /* ── Template builders ──────────────────────────────────── */
 
@@ -129,13 +131,13 @@ export function buildEnquiryConfirmationHtml(data: EnquiryEmailData): string {
         </div>
         <div style="padding: 32px 40px;">
           <h2 style="margin: 0 0 16px; font-size: 22px; color: #0A1628;">
-            Thanks, ${data.name}! 👋
+            Thanks, ${data.name}!
           </h2>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 16px;">
-            We've received your <strong>${data.enquiryType.toLowerCase()}</strong> enquiry and we'll be in touch within <strong>24 hours</strong>.
+            We've received your <strong>${data.enquiryType.toLowerCase()}</strong> enquiry. Call <strong>${BRAND.phone}</strong> or email <strong>${BRAND.email}</strong> if you need us sooner.
           </p>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 32px;">
-            In the meantime, you can tune into ONE FM 98.5 live on FM, online at <a href="https://www.fm985.com.au" style="color: #D4A84B;">fm985.com.au</a>, or via our app.
+            In the meantime, listen to ${BRAND.fullName} on ${BRAND.frequency} FM or stream at <a href="${BRAND.website}" style="color: #D4A84B;">fm985.com.au</a>.
           </p>
           <div style="background: #F9FAFB; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
             <div style="font-size: 12px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Your message</div>
@@ -180,7 +182,7 @@ export function buildProposalEmailHtml(data: ProposalEmailData): string {
             </div>
           </div>
           <p style="color: #4B5563; line-height: 1.6; margin: 0 0 24px;">
-            Our partnerships team will follow up within 24 hours to answer any questions and discuss next steps.
+            Reply to this email, call ${BRAND.phone}, or write to ${BRAND.email} if you have questions.
           </p>
         </div>
         <div style="background: #F9FAFB; padding: 20px 40px; border-top: 1px solid #E5E7EB;">
@@ -197,58 +199,23 @@ export function buildProposalEmailHtml(data: ProposalEmailData): string {
 /* ── Send function ───────────────────────────────────────── */
 
 /**
- * Send an email via Resend API.
- * In dev mode (no API key) logs the payload to console.
- *
- * For production: proxy this through a Supabase Edge Function
- * so RESEND_API_KEY never touches the browser.
+ * Browser fallback. It never sends directly because RESEND_API_KEY must stay
+ * server-side in Netlify functions.
  */
 export async function sendEmail(payload: EmailPayload): Promise<{ success: boolean; error?: string; messageId?: string; devMode?: boolean }> {
-  const apiKey = import.meta.env.VITE_RESEND_API_KEY
-
-  if (!apiKey) {
-    // Dev mode — no email service configured, nothing actually sent.
-    // Caller MUST surface devMode honestly — do not present this as a real send.
-    console.warn('[EmailService] DEV MODE — email NOT sent (no VITE_RESEND_API_KEY):', {
-      to: payload.to,
-      subject: payload.subject,
-      attachments: payload.attachments?.length ?? 0,
-    })
-    return { success: true, devMode: true }
-  }
-
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: payload.from || `${STATION_NAME} <accounts@fm985.com.au>`,
-        to: Array.isArray(payload.to) ? payload.to : [payload.to],
-        subject: payload.subject,
-        html: payload.html,
-        reply_to: payload.replyTo,
-        attachments: payload.attachments?.length ? payload.attachments : undefined,
-      }),
-    })
-
-    if (!res.ok) {
-      const err = await res.text()
-      return { success: false, error: err }
-    }
-
-    const data = (await res.json()) as { id?: string }
-    return { success: true, messageId: data.id }
-  } catch (err) {
-    return { success: false, error: err instanceof Error ? err.message : 'Unknown error' }
-  }
+  console.warn('[EmailService] Email NOT sent from browser; use Netlify function path.', {
+    to: payload.to,
+    subject: payload.subject,
+    attachments: payload.attachments?.length ?? 0,
+  })
+  return { success: false, devMode: true }
 }
 
 /* ── Convenience wrappers ───────────────────────────────── */
 
-export async function sendEnquiryNotification(data: EnquiryEmailData) {
+export async function sendEnquiryNotification(
+  data: EnquiryEmailData,
+): Promise<{ success: boolean; devMode?: boolean; error?: string }> {
   const stationHtml = buildEnquiryEmailHtml(data)
   const confirmationHtml = buildEnquiryConfirmationHtml(data)
 
@@ -266,27 +233,29 @@ export async function sendEnquiryNotification(data: EnquiryEmailData) {
         confirmationHtml,
       }),
     })
-    if (res.ok) {
-      const result = (await res.json()) as { success?: boolean }
-      if (result.success) return
-    }
+    const result = await readFunctionJson<{ success?: boolean }>(res)
+    if (result?.success) return { success: true }
     console.warn('[Email] send-enquiry function responded:', res.status)
   } catch (err) {
     console.warn('[Email] send-enquiry function unavailable (dev mode?), falling back:', err)
   }
 
-  // Fallback: direct Resend or dev log mode
-  await sendEmail({
+  const station = await sendEmail({
     to: STATION_EMAIL,
     subject: `New ${data.enquiryType} Enquiry — ${data.name}`,
     html: stationHtml,
     replyTo: data.email,
   })
+  if (!station.success) {
+    return { success: false, devMode: station.devMode, error: station.error }
+  }
+
   await sendEmail({
     to: data.email,
     subject: `We've received your message — ONE FM 98.5`,
     html: confirmationHtml,
   })
+  return { success: true }
 }
 
 export async function sendProposalEmail(data: ProposalEmailData) {

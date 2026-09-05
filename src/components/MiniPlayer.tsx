@@ -5,6 +5,7 @@ import { Loader2, Pause, Play, Radio, X } from 'lucide-react'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
+import { liveNowFromMetadata } from '@/lib/liveNow'
 
 const HIDE_ON = ['/listen', '/ops']
 
@@ -36,6 +37,17 @@ export function MiniPlayer() {
   const { playing, loading, toggle } = useLiveStream()
 
   const hidden = HIDE_ON.some((p) => location.pathname === p) || dismissed
+  const live = liveNowFromMetadata(meta)
+  const program = live.program
+  const presenterLine = live.withLine
+    ? live.breakfastOnAir
+      ? `${live.withLine} · ${live.programTime}`
+      : live.remainingLabel
+        ? `${live.withLine} · ${live.remainingLabel}`
+        : live.withLine
+    : live.remainingLabel
+      ? `${live.programTime} · ${live.remainingLabel}`
+      : live.programTime
 
   return (
     <AnimatePresence>
@@ -66,14 +78,19 @@ export function MiniPlayer() {
 
               <div className="w-px h-4 bg-one-border/60 shrink-0 hidden sm:block" />
 
-              {/* Program info */}
+              {/* Program info — breakfast uses BREAKFAST_ROSTER, not a second host list */}
               <div className="flex-1 min-w-0">
                 <p className="font-body text-sm text-one-white truncate leading-tight">
-                  {meta.program}
+                  {program}
                 </p>
                 <p className="font-label text-[10px] text-muted truncate">
-                  with {meta.presenter}
+                  {presenterLine}
                 </p>
+                {live.breakfastOnAir && live.breakfastLabel && (
+                  <p className="font-label text-[9px] text-muted/80 truncate hidden md:block">
+                    {live.breakfastLabel}
+                  </p>
+                )}
               </div>
 
               {/* Live weather */}

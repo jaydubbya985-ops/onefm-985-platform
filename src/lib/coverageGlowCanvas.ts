@@ -1,11 +1,12 @@
 /// <reference types="google.maps" />
+import { coverageNumbers } from '@/lib/coverageCopy'
 import { BRAND_COLORS } from '@/lib/brand'
 
 const { gold, champagne, blue, navy, cyan } = BRAND_COLORS
 
 export interface CoverageGlowOptions {
   center: google.maps.LatLngLiteral
-  /** Broadcast radius in metres (default 100 km). */
+  /** Broadcast radius in metres (default: coverageNumbers.broadcastRadiusKm). */
   radiusMeters?: number
   /** ONE FM studio — draws a local beacon halo. */
   station?: google.maps.LatLngLiteral
@@ -32,7 +33,7 @@ function createGlowOverlayClass() {
   constructor(options: CoverageGlowOptions) {
     super()
     this.center = options.center
-    this.radiusMeters = options.radiusMeters ?? 100_000
+    this.radiusMeters = options.radiusMeters ?? coverageNumbers.broadcastRadiusKm * 1000
     this.station = options.station
   }
 
@@ -82,11 +83,11 @@ function createGlowOverlayClass() {
     const centerPx = projection.fromLatLngToDivPixel(centerLatLng)
     if (!centerPx) return
 
-    // True geographic radius (100km from Shepparton) only looks right at one
-    // specific zoom level — at every other zoom it's either a tiny dot or a
-    // circle far bigger than the viewport, which renders as a giant arc
-    // slicing across the screen with no visible center. Cap it so the whole
-    // glow/ring effect always draws as a complete, contained circle instead.
+    // True geographic radius (coverageNumbers.broadcastRadiusKm from Shepparton)
+    // only looks right at one specific zoom level — at every other zoom it's
+    // either a tiny dot or a circle far bigger than the viewport, which renders
+    // as a giant arc slicing across the screen with no visible center. Cap it
+    // so the whole glow/ring effect always draws as a complete, contained circle.
     const radiusPx = Math.min(
       this.radiusInPixels(projection, centerLatLng, centerPx),
       Math.min(w, h) * 0.46,
@@ -178,7 +179,7 @@ function createGlowOverlayClass() {
     }
   }
 
-  /** 50 km + 100 km reference rings. */
+  /** Half-radius + full-radius reference rings (sourced broadcastRadiusKm). */
   private drawRangeRings(cx: number, cy: number, maxR: number): void {
     const ctx = this.ctx!
     const rings = [

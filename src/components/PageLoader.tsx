@@ -1,9 +1,29 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BrandLogo } from '@/components/BrandLogo'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const FIRST_VISIT_KEY = 'one-fm-session-intro'
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
+
+/** Unused station archive still — transmitter tower at night. Not a live listener count. */
+function TowerNightBackdrop() {
+  return (
+    <>
+      <img
+        src={STATION_PHOTOS.towerStarsNight}
+        alt=""
+        aria-hidden
+        fetchPriority="high"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A]/72 via-[#0A0A0A]/50 to-[#0A0A0A]/88"
+      />
+    </>
+  )
+}
 
 interface PageLoaderProps {
   isReady?: boolean
@@ -58,6 +78,7 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
           className="fixed inset-0 z-[9999] bg-[#0A0A0A] flex items-center justify-center overflow-hidden"
           aria-hidden
         >
+          <TowerNightBackdrop />
           <div className="relative flex flex-col items-center select-none">
             <motion.div
               initial={{ opacity: 0, y: 14 }}
@@ -91,12 +112,16 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
 
 export function RouteFallback() {
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
+    <div className="relative min-h-screen bg-[#0A0A0A] flex items-center justify-center overflow-hidden">
+      <TowerNightBackdrop />
+      <div className="relative flex flex-col items-center gap-4">
         <BrandLogo variant="white" className="h-14 w-auto animate-pulse" />
         <div className="h-1 w-32 bg-white/10 rounded-full overflow-hidden">
           <div className="h-full bg-[#E51636] animate-[shimmer_1.5s_infinite]" />
         </div>
+        <p className="font-label text-[10px] tracking-[0.22em] text-white/40 uppercase">
+          Station archive · transmitter at night
+        </p>
       </div>
     </div>
   )

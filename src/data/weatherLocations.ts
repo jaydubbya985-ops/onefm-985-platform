@@ -6,8 +6,8 @@ export interface WeatherLocation {
   lng: number
 }
 
-// Shepparton first (station home base), then the other GV major towns —
-// reuses the existing coverage-area town list rather than a separate one.
+// Shepparton first (station home base), then hub/major towns from townData —
+// not a second invented list, and not all 25 coverage towns (villages stay off the cycle).
 export const gvWeatherTowns: WeatherLocation[] = [
   ...towns.filter((t) => t.name === 'Shepparton'),
   ...towns.filter((t) => t.name !== 'Shepparton' && (t.sizeCategory === 'hub' || t.sizeCategory === 'major')),

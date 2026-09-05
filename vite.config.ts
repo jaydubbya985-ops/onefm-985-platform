@@ -1,13 +1,67 @@
+import fs from 'node:fs'
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { inspectAttr } from 'plugin-inspect-react-code'
+
+/** Read stationStats from pricing.ts so crawler OG stays on the same source as coverageCopy. */
+function readStationStats() {
+  const src = fs.readFileSync(path.resolve('src/data/pricing.ts'), 'utf8')
+  const num = (key: string) => {
+    const match = src.match(new RegExp(`${key}:\\s*(\\d+)`))
+    if (!match) throw new Error(`inject-coverage-og: missing ${key} in stationStats`)
+    return Number(match[1])
+  }
+  return {
+    totalTowns: num('totalTowns'),
+    broadcastPopulation: num('broadcastPopulation'),
+    broadcastRadiusKm: num('broadcastRadiusKm'),
+  }
+}
+
+/** Keep in sync with formatOgDescription / formatSeoDefault in coverageCopy.ts */
+function injectCoverageOg() {
+  const stationStats = readStationStats()
+  const towns = `${stationStats.totalTowns} towns`
+  const pop = stationStats.broadcastPopulation.toLocaleString('en-AU')
+  const og = `Community radio from Shepparton, VIC. ${towns}. ${pop} people in the broadcast area.`
+  const meta = `ONE FM 98.5 — The Voice of the Goulburn Valley. Volunteer-run community radio from Shepparton, Victoria. ${towns} · ${stationStats.broadcastRadiusKm}km radius (ABS 2021 via townData).`
+  return {
+    name: 'inject-coverage-og',
+    transformIndexHtml(html: string) {
+      if (!html.includes('__ONEFM_OG_DESCRIPTION__') || !html.includes('__ONEFM_META_DESCRIPTION__')) {
+        throw new Error('inject-coverage-og: index.html is missing coverage placeholders')
+      }
+      const out = html
+        .replaceAll('__ONEFM_META_DESCRIPTION__', meta)
+        .replaceAll('__ONEFM_OG_DESCRIPTION__', og)
+      if (out.includes('__ONEFM_')) {
+        throw new Error('inject-coverage-og: placeholders remained after inject')
+      }
+      return out
+    },
+  }
+}
+
+/** Club logo dumps are not referenced by the app. Drop them so a phone deploy zip is small enough to upload. */
+function omitUnusedClubLogos() {
+  return {
+    name: 'omit-unused-club-logos',
+    closeBundle() {
+      for (const dir of ['kdl', 'gvl']) {
+        fs.rmSync(path.resolve('dist/assets/logos', dir), { recursive: true, force: true })
+      }
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   base: './',
   plugins: [
     react(),
+    injectCoverageOg(),
+    omitUnusedClubLogos(),
     // Dev-only — strips from production bundle
     ...(mode === 'development' ? [inspectAttr()] : []),
   ],

@@ -12,21 +12,34 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
-import {
-  Loader2,
-  Mail,
-  Lock,
-  User,
-  ArrowLeft,
-  CheckCircle2,
-  Chrome,
-  Facebook,
-} from 'lucide-react'
+import { Loader2, Mail, Lock, User, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { BRAND } from '@/lib/brand'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 interface AuthModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   defaultTab?: 'login' | 'signup' | 'reset'
+}
+
+/** Unused GVL archive still — celebration, not a named presenter portrait. */
+function AuthModalStill() {
+  return (
+    <div className="relative mb-1 h-28 overflow-hidden rounded-md">
+      <img
+        src={STATION_PHOTOS.gvlTownersWin}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/40 to-transparent"
+      />
+    </div>
+  )
 }
 
 export function AuthModal({
@@ -37,7 +50,6 @@ export function AuthModal({
   const { login, signup, resetPassword, loading } = useAuth()
   const [tab, setTab] = useState<'login' | 'signup' | 'reset'>(defaultTab)
 
-  // Form states
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -120,16 +132,20 @@ export function AuthModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-one-navy border-border-dark text-ivory max-w-md">
+        <AuthModalStill />
         <DialogHeader>
           <DialogTitle className="font-h3 text-gold-gradient text-center">
-            {tab === 'login' && 'Welcome Back'}
-            {tab === 'signup' && 'Create Account'}
-            {tab === 'reset' && 'Reset Password'}
+            {tab === 'login' && 'Staff sign-in'}
+            {tab === 'signup' && 'Staff account'}
+            {tab === 'reset' && 'Reset password'}
           </DialogTitle>
           <DialogDescription className="font-body-small text-muted text-center">
-            {tab === 'login' && 'Sign in to access your proposals and donations'}
-            {tab === 'signup' && 'Join ONE FM to save proposals and track donations'}
-            {tab === 'reset' && "We'll send you a link to reset your password"}
+            {tab === 'login' &&
+              'Station staff only — email and password. This is not a public donations or proposals login.'}
+            {tab === 'signup' &&
+              'Accounts are issued by the station. Listeners support ONE FM by NAB transfer, not a member dashboard.'}
+            {tab === 'reset' &&
+              'If this email has a staff account, we will send a reset link.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -162,7 +178,6 @@ export function AuthModal({
             </TabsTrigger>
           </TabsList>
 
-          {/* Login Tab */}
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-4 mt-4">
               <div>
@@ -173,7 +188,7 @@ export function AuthModal({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder="you@fm985.com.au"
                   className="bg-onyx border-border-dark text-ivory mt-1"
                   required
                 />
@@ -206,41 +221,8 @@ export function AuthModal({
                 )}
               </Button>
             </form>
-
-            {/* Social login placeholders */}
-            <div className="mt-4">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border-dark" />
-                </div>
-                <div className="relative flex justify-center text-xs">
-                  <span className="bg-one-navy px-2 font-label text-muted">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="font-label text-xs border-border-dark text-ivory hover:bg-onyx"
-                  onClick={() => toast.info('Google OAuth integration coming soon')}
-                >
-                  <Chrome size={14} className="mr-1" /> Google
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="font-label text-xs border-border-dark text-ivory hover:bg-onyx"
-                  onClick={() => toast.info('Facebook OAuth integration coming soon')}
-                >
-                  <Facebook size={14} className="mr-1" /> Facebook
-                </Button>
-              </div>
-            </div>
           </TabsContent>
 
-          {/* Signup Tab */}
           <TabsContent value="signup">
             <form onSubmit={handleSignup} className="space-y-4 mt-4">
               <div>
@@ -264,7 +246,7 @@ export function AuthModal({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder="you@fm985.com.au"
                   className="bg-onyx border-border-dark text-ivory mt-1"
                   required
                 />
@@ -306,20 +288,19 @@ export function AuthModal({
                     Creating account...
                   </>
                 ) : (
-                  'Create Account'
+                  'Create staff account'
                 )}
               </Button>
             </form>
           </TabsContent>
 
-          {/* Reset Tab */}
           <TabsContent value="reset">
             {resetSent ? (
               <div className="text-center py-8">
                 <CheckCircle2 size={48} className="text-data-teal mx-auto mb-4" />
                 <h3 className="font-h4 text-ivory mb-2">Check your email</h3>
                 <p className="font-body-small text-chalk mb-6">
-                  We've sent a password reset link to {email}
+                  If {email} has a staff account, a reset link is on its way.
                 </p>
                 <Button
                   variant="outline"
@@ -342,7 +323,7 @@ export function AuthModal({
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
+                    placeholder="you@fm985.com.au"
                     className="bg-onyx border-border-dark text-ivory mt-1"
                     required
                   />
@@ -365,6 +346,18 @@ export function AuthModal({
             )}
           </TabsContent>
         </Tabs>
+
+        <p className="mt-5 text-center font-body-small text-[11px] text-muted leading-relaxed">
+          Public support is NAB transfer to {BANK_ACCOUNT_NAME}, BSB {BANK_BSB},
+          account {BANK_ACCOUNT} — see Support. Not Stripe, not a logged-in
+          donations account.{' '}
+          <a href={`mailto:${BRAND.email}`} className="text-one-gold hover:underline">
+            {BRAND.email}
+          </a>
+        </p>
+        <p className="mt-2 text-center text-[11px] text-one-muted/80">
+          {formatCoverageShort()} — ABS 2021 via townData
+        </p>
       </DialogContent>
     </Dialog>
   )

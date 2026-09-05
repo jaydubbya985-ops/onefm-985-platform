@@ -3,11 +3,25 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { WordReveal } from '@/components/WordReveal'
-import { stationStats } from '@/data/pricing'
+import {
+  coverageNumbers,
+  formatBroadcastPopulation,
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  townsCount,
+  yearsBroadcastingValue,
+} from '@/lib/coverageCopy'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { Marquee } from '@/components/Marquee'
 import { LatestInterviews } from '@/components/LatestInterviews'
+import {
+  ACMA_FACTS,
+  EMERGENCY_BROADCAST_NARRATIVE,
+  HISTORY_MILESTONES,
+  LIFE_MEMBER_NOTE,
+} from '@/data/stationHistory'
 import {
   Radio,
   Mic,
@@ -15,82 +29,44 @@ import {
   MapPin,
   Users,
   Heart,
-  Zap,
   Globe,
   Award,
-  TrendingUp,
+  Languages,
   ChevronRight,
   Quote,
   Wifi,
-  Speaker,
-  Monitor,
+  Antenna,
   Building2,
   Layers,
 } from 'lucide-react'
 
-/* ─── Timeline data ─── */
-const milestones = [
-  {
-    year: "1989",
-    title: "ONE FM Founded",
-    desc: "A small group of passionate volunteers launched 98.5 FM in Shepparton, giving the Goulburn Valley its first true community voice. Broadcasting from studios in Shepparton as 3ONE.",
-    img: "/assets/images/studio-exterior-rainbow.jpg",
-    icon: Radio,
-  },
-  {
-    year: "1995",
-    title: "First GVL Broadcast Partnership",
-    desc: "Signed a landmark agreement with the Goulburn Valley League to broadcast live football and netball matches. The partnership continues strong three decades later, making ONE FM the trusted voice of local sport.",
-    img: "/assets/images/gvl-championship-mcg.jpg",
-    icon: Mic,
-  },
-  {
-    year: "2005",
-    title: "Online Streaming Launched",
-    desc: "ONE FM began streaming live at fm985.com.au — allowing listeners across Australia and the world to tune in to their Goulburn Murray station from any device, anywhere.",
-    img: "/assets/images/studio-presenter-mic.jpg",
-    icon: Wifi,
-  },
-  {
-    year: "2008",
-    title: "Moved to New Studios",
-    desc: "Relocated to purpose-built studios with digital mixing desks, soundproofed broadcast booths and a dedicated production suite. The new home set the standard for regional radio infrastructure.",
-    img: "/assets/images/studio-commentary-selfie.jpg",
-    icon: Building2,
-  },
-  {
-    year: "2014",
-    title: "25th Anniversary — 25 Towns",
-    desc: "Celebrated a quarter-century by visiting 25 towns across the Goulburn Valley in 25 days. A convoy of broadcast gear, live music and giveaways brought the party to every corner of the listening area.",
-    img: "/assets/images/geo-lake-aerial.jpg",
-    icon: MapPin,
-  },
-  {
-    year: "2019",
-    title: "30th Anniversary Special Broadcast",
-    desc: "A 30-hour non-stop broadcast marathon featuring every host in the station's history, live music from 30 local acts, and a fundraising drive that raised over $120,000 for regional mental health services.",
-    img: "/assets/images/event-lasers-crowd.jpg",
-    icon: Award,
-  },
-  {
-    year: "2020",
-    title: "Emergency Broadcasting",
-    desc: "When bushfires raged and COVID-19 swept the nation, ONE FM became a critical information lifeline. Provided 24/7 emergency updates, relief coordination messages and community support hotlines.",
-    img: "/assets/images/geo-rolling-green-hills.jpg",
-    icon: Zap,
-  },
-  {
-    year: "2026",
-    title: `${stationStats.yearsBroadcasting}th Year — Live Local & Connected`,
-    desc: `${stationStats.yearsBroadcasting}th year on air — expanded multicultural programming, a refreshed digital presence at fm985.com.au, growing GVL sports coverage, and a stronger volunteer community than ever.`,
-    img: "/assets/images/studio-sbs-visit.jpg",
-    icon: TrendingUp,
-  },
-]
+/**
+ * Timeline rows come straight from HISTORY_MILESTONES in stationHistory.ts — the
+ * ACMA register, the 2024 Annual Report, council grant papers and the Shepparton
+ * News retrospective. This page only supplies an icon and an archive photo per
+ * row; it must never add a claim the source record does not carry.
+ */
+const MILESTONE_ART: Record<string, { img: string; icon: typeof Radio }> = {
+  '1970s':   { img: '/assets/images/geo-town-aerial.jpg',                 icon: MapPin },
+  '1980':    { img: '/assets/images/heritage-original-panel-1988.jpg',    icon: Radio },
+  'Apr 1989':{ img: '/assets/images/heritage-ob-mall-1989.jpg',           icon: Antenna },
+  'May 1989':{ img: '/assets/images/commentary-box-action.jpg',           icon: Mic },
+  '2014':    { img: '/assets/images/heritage-di-hunter-carols-2014.jpg',  icon: Award },
+  '2019':    { img: '/assets/images/event-lasers-crowd.jpg',              icon: Award },
+  '2022':    { img: '/assets/images/geo-lake-aerial.jpg',                 icon: Heart },
+  '2024':    { img: '/assets/images/studio-sbs-visit.jpg',                icon: Building2 },
+}
+
+const milestones = HISTORY_MILESTONES.map((m) => ({
+  year: m.year,
+  title: m.title,
+  desc: m.body,
+  ...MILESTONE_ART[m.year],
+}))
 
 /* ─── Deterministic gradient avatars (same palette as Programs page) ─── */
 const TEAM_PALETTES = [
-  { from: '#1B458F', to: '#101010', accent: '#F2F2F2' },
+  { from: '#1B458F', to: '#071D3A', accent: '#F2F2F2' },
   { from: '#F2F2F2', to: '#1B3A6F', accent: '#FFF8DC' },
   { from: '#E51636', to: '#1A0A20', accent: '#FF9BAA' },
   { from: '#B6FF00', to: '#0A2030', accent: '#7FFFD4' },
@@ -129,31 +105,39 @@ const team = [
 
 const teamCategories = ["All", "On-Air", "Multicultural"]
 
-/* ─── Studio cards ─── */
+/**
+ * Facilities cards. Equipment inventories are not on the public record, so these
+ * describe the licence and the programming we can evidence rather than listing
+ * desks, software or room capacities.
+ */
 const studios = [
   {
-    title: "Main Studio",
-    desc: "Flagship broadcast suite with digital mixing console, multi-channel routing and live-to-air monitoring.",
-    icon: Speaker,
-    specs: ["24ch digital mixer", "ON-AIR / MIC LIVE switch", "Program & preview bus"],
+    title: "The licence",
+    desc: `Permanent community broadcasting service ${ACMA_FACTS.callsign}, licensed to ${ACMA_FACTS.licensee}.`,
+    icon: Antenna,
+    specs: [
+      `${ACMA_FACTS.frequency} · ${ACMA_FACTS.power}`,
+      `Commenced ${ACMA_FACTS.licenceCommenced}`,
+      `Current to ${ACMA_FACTS.licenceExpiry}`,
+    ],
   },
   {
-    title: "Production Suite",
-    desc: "Dedicated editing and pre-production room for commercials, podcasts and promotional content.",
-    icon: Monitor,
-    specs: ["Adobe Audition + Pro Tools", "Acoustic treatment", "ISDN & remote link"],
+    title: "Live from Shepparton",
+    desc: "Volunteer presenters host the weekday desk from the station's Shepparton studios, with an automated overnight mix between shifts.",
+    icon: Mic,
+    specs: ["Breakfast 6AM–9AM weekdays", "Rotating volunteer roster", "Source: fm985.com.au/guide"],
   },
   {
-    title: "Broadcast Equipment",
-    desc: "100km broadcast radius covering the entire Goulburn Valley and beyond into northern Victoria.",
+    title: "Outside broadcast",
+    desc: "Match Day Live takes the desk to the ground for GVL football and netball, alongside cricket, bowls and harness racing coverage.",
     icon: Wifi,
-    specs: ["100km radius", "Digital streaming", "HD simulcast ready"],
+    specs: ["GVL match broadcasts", "NIRS AFL rebroadcasts", "2019 SCMA X-Awards finalist"],
   },
   {
-    title: "Community Space",
-    desc: "Open-plan area for live performances, interview panels and community group recordings.",
-    icon: Users,
-    specs: ["40 person capacity", "Live band setup", "Video capture"],
+    title: "Eight language strands",
+    desc: "Africonnect, Arabic, Filipino, Mandarin, Persian, Punjabi, Samoan and Swahili/Congolese programs run alongside ONE Youth.",
+    icon: Languages,
+    specs: ["Weekend and evening slots", "Volunteer-presented", "Source: Annual Report 2024"],
   },
 ]
 
@@ -161,7 +145,7 @@ const studios = [
 const pillars = [
   {
     title: "Live & Local",
-    desc: "Continuing 24/7 community broadcasting from Shepparton, with local presenters, local news, and local music across the Goulburn Murray.",
+    desc: "Continuing community broadcasting from Shepparton, with local presenters, local news, and local music across the Goulburn Murray.",
     icon: Layers,
   },
   {
@@ -171,7 +155,7 @@ const pillars = [
   },
   {
     title: "Community Partnership",
-    desc: "Supporting 100+ local NFPs on-air, GVL sports coverage, and emergency broadcasting for the 25 towns in our 100km broadcast area.",
+    desc: `GVL sports coverage, community notices and emergency broadcasting for ${formatTowns()} inside the ${formatRadius()} broadcast area.`,
     icon: Heart,
   },
 ]
@@ -191,7 +175,7 @@ export default function Story() {
     <Layout>
       <SEO title="Our Story" description="The story of ONE FM 98.5 — from 1989 to today. Callsign 3ONE, ACMA License 1385226/1. Meet the real presenters behind the mic." />
       {/* ═══════ Section 1 — Hero ═══════ */}
-      <section ref={heroRef} className="relative min-h-[85dvh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="THE STORY">
+      <section ref={heroRef} className="relative min-h-[85dvh] flex items-end overflow-hidden bg-[#071D3A]" data-cursor-label="THE STORY">
         <div aria-hidden className="grain-overlay" />
         <div className="absolute inset-0 z-0">
           <motion.div
@@ -207,8 +191,8 @@ export default function Story() {
               style={{ opacity: 0.60 }}
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/35 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/55 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071D3A] via-[#071D3A]/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#071D3A]/55 via-transparent to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 pt-36 pb-40 w-full">
@@ -255,7 +239,7 @@ export default function Story() {
             transition={{ duration: 0.5, delay: 0.65, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             className="font-body text-one-white/65 max-w-[520px] mb-10 italic leading-relaxed"
           >
-            {stationStats.yearsBroadcasting} years of keeping the Valley connected — through flood, fire, footy finals and everything in between.
+            {yearsBroadcastingValue()} years of keeping the Valley connected — through flood, storm, footy finals and everything in between.
           </motion.p>
 
           <motion.div
@@ -274,16 +258,16 @@ export default function Story() {
       </section>
 
       {/* ── Story Marquee Strip ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-[#04101F] border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={25}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">BORN 1989 · CALLSIGN: 3ONE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">SHEPPARTON · GOULBURN VALLEY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.yearsBroadcasting} YEARS ON AIR</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD · FIRE · FOOTY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.broadcastPopulation.toLocaleString()} PEOPLE CONNECTED</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · {stationStats.broadcastRadiusKm}KM RADIUS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{yearsBroadcastingValue()} YEARS ON AIR</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">THROUGH FLOOD · STORM · FOOTY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{formatBroadcastPopulation()} PEOPLE IN THE BROADCAST AREA</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{formatCoverageShort().toUpperCase()}</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">COMMUNITY RADIO · NON-PROFIT</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ACMA LICENSED · 98.5 FM</span>,
           ]}
@@ -332,7 +316,11 @@ export default function Story() {
         >
           <WordReveal text="Our Heritage" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white max-w-2xl mx-auto">
-            From a single studio above a shop to the region's most trusted broadcaster — the journey of ONE FM 98.5.
+            Late-1970s organising, a 1980 association, and a licensed service on air from April 1989.
+          </p>
+          <p className="font-body-small text-muted max-w-2xl mx-auto mt-3">
+            Every entry below is drawn from the ACMA community licence register, ONE FM's Annual
+            Report 2024, Greater Shepparton council records, and the Shepparton News retrospective.
           </p>
         </motion.div>
 
@@ -489,7 +477,7 @@ export default function Story() {
         >
           <WordReveal text="Behind the Scenes" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white max-w-xl">
-            Our facilities combine heritage warmth with modern broadcast technology.
+            What the licence covers, where the desk sits, and what goes out over it.
           </p>
         </motion.div>
 
@@ -560,35 +548,40 @@ export default function Story() {
             <WordReveal text="Community Impact" className="font-h2 text-one-white mb-6 block" as="h2" />
             <div className="grid grid-cols-2 gap-6 mb-8">
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.yearsBroadcasting} suffix="" /></p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={coverageNumbers.yearsBroadcasting} suffix="" /></p>
                 <p className="font-label text-muted mt-1">Years On Air</p>
               </div>
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={100} suffix="+" /></p>
-                <p className="font-label text-muted mt-1">NFPs Supported On-Air</p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={29} suffix="" /></p>
+                <p className="font-label text-muted mt-1">Life Members</p>
               </div>
               <div>
-                <p className="font-stat text-gold-gradient">24/7</p>
-                <p className="font-label text-muted mt-1">Emergency Alerts</p>
+                <p className="font-stat text-gold-gradient">{ACMA_FACTS.power}</p>
+                <p className="font-label text-muted mt-1">Licensed Signal Power</p>
               </div>
               <div>
-                <p className="font-stat text-gold-gradient"><AnimatedNumber value={stationStats.totalTowns} suffix="" /></p>
+                <p className="font-stat text-gold-gradient"><AnimatedNumber value={townsCount()} suffix="" /></p>
                 <p className="font-label text-muted mt-1">Towns Across the Valley</p>
               </div>
             </div>
+            <p className="font-body-small text-muted mb-8">
+              {LIFE_MEMBER_NOTE} Signal power and licence details from the ACMA community licence register.
+            </p>
             <TiltCard maxTilt={4}>
             <div className="glass-card p-6 border-l-4 border-l-one-gold">
               <Quote size={24} className="text-one-gold/40 mb-3" />
               <p className="font-body text-one-white italic mb-4">
-                "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that."
+                {EMERGENCY_BROADCAST_NARRATIVE[3]}
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-one-gold/20 flex items-center justify-center">
                   <Users size={16} className="text-one-gold" />
                 </div>
               <div>
-                <p className="font-body-small text-one-white font-medium">Rochester Community Member</p>
-                <p className="font-body-small text-muted">2022 Goulburn Valley Floods</p>
+                <p className="font-body-small text-one-white font-medium">ONE FM emergency broadcast record</p>
+                <p className="font-body-small text-muted">
+                  Verified station account — we publish listener quotes only once they are on the record.
+                </p>
               </div>
               </div>
             </div>

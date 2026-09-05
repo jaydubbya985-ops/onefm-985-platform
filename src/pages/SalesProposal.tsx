@@ -2,7 +2,7 @@
  * Public proposal request — not a DIY PDF generator.
  * Station staff send a tailored PDF from the ops portal.
  *
- * Stats on this page: stationStats only (ABS 2021 via townData).
+ * Stats on this page: coverageCopy.ts (ABS 2021 via townData).
  * Do not add age-band % or invented demographics.
  */
 import { useEffect, useState } from 'react'
@@ -19,12 +19,24 @@ import {
   PosterReveal,
   StrokeFill,
 } from '@/components/onair/kit'
-import { generalTiers, footballTiers, stationStats } from '@/data/pricing'
+import { generalTiers, footballTiers } from '@/data/pricing'
 import { submitEnquiry } from '@/lib/enquiries'
+import {
+  coverageStatsStrip,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+  tickerWeeklyListenersItem,
+  weeklyListenersValue,
+} from '@/lib/coverageCopy'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { InventoryLadder } from '@/components/InventoryLadder'
 import { BRAND } from '@/lib/brand'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const RED = '#E51636'
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
 
 const GENERAL_PACKAGES = Object.entries(generalTiers).map(([id, t]) => ({
   id,
@@ -39,12 +51,16 @@ const GENERAL_PACKAGES = Object.entries(generalTiers).map(([id, t]) => ({
 
 const FOOTBALL_PACKAGES = footballTiers.map((t) => ({
   id: `fb-${t.id}`,
-  name: `GVL ${t.name}`,
+  name: t.id === 1 ? t.name : `GVL ${t.name}`,
   weekly: t.price,
-  range: `$${t.price}/week · football season`,
+  range: t.id === 1
+    ? `$${t.price}/week · name-read (not a GVL commercial)`
+    : `$${t.price}/week · GVL premium`,
   spots: null as number | null,
   social: null as number | null,
-  extra: t.features[0] ?? null,
+  extra: t.id === 1
+    ? 'Match-day name-read and logo — not a GVL commercial spot'
+    : 'GVL premium inventory — quoted above the $25 standard spot',
   group: 'football' as const,
 }))
 
@@ -179,7 +195,7 @@ function EnquiryForm({
           Request received<span style={{ color: RED }}>.</span>
         </div>
         <p className="text-white/55 mt-2 text-[15px]">
-          We&apos;ll send a tailored proposal within one business day. — {BRAND.fullName}
+          We&apos;ll be in touch with a tailored proposal. — {BRAND.fullName}
         </p>
       </div>
     )
@@ -276,14 +292,17 @@ export default function SalesProposal() {
     <Layout>
       <SEO
         title="Request a Sponsorship Proposal"
-        description="Request a tailored ONE FM 98.5 sponsorship proposal. Est. 39,375 weekly listeners across 25 towns (ABS 2021). Station staff send the PDF."
+        description={`Request a tailored ONE FM 98.5 sponsorship proposal. ${formatWeeklyListeners()} across ${formatTowns()} (ABS 2021). ${STANDARD_SPOT_PLUS_GST}. Station staff send the PDF.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            `● Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
-            `${stationStats.totalTowns} towns · ~${stationStats.broadcastRadiusKm}km radius`,
+            tickerWeeklyListenersItem(),
+            `${formatTowns()} · ${formatRadius()} radius`,
             'Packages from $50/week',
+            STANDARD_SPOT_PLUS_GST,
+            GVL_PREMIUM_BADGE,
+            `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`,
             'Staff-written PDF — not a public generator',
           ]}
           delay={0.4}
@@ -292,13 +311,14 @@ export default function SalesProposal() {
 
         <StatsStrip
           stats={[
-            // source: ABS 2021 via townData / stationStats
-            { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (ABS 2021)' },
-            { n: String(stationStats.totalTowns), t: 'Towns across the Valley' },
-            { n: `${stationStats.broadcastRadiusKm}km`, t: 'Broadcast radius' },
+            ...coverageStatsStrip(),
+            { n: formatRadius(), t: 'Broadcast radius' },
           ]}
         />
+
+        <section className="px-6 md:px-12 lg:px-20 pb-10">
+          <InventoryLadder />
+        </section>
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
           <LabelReveal className="mb-3">Station packages</LabelReveal>
@@ -345,7 +365,7 @@ export default function SalesProposal() {
           to="/football"
           img={STATION_PHOTOS.gvlActionSprint}
           alt="GVL football — sponsor the live call on ONE FM 98.5"
-          badge="GVL Footy · From $25/week · 9 tiers"
+          badge={GVL_PREMIUM_BADGE}
         />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
@@ -390,7 +410,7 @@ export default function SalesProposal() {
             >
               <h3 className="font-poster uppercase text-[22px] text-white">Coverage map</h3>
               <p className="text-[15px] text-white/55 mt-2">
-                {stationStats.totalTowns} towns within ~{stationStats.broadcastRadiusKm}km of Shepparton.
+                {formatTowns()} within a {formatRadius()} radius of Shepparton. {GVL_PREMIUM_BADGE}.
               </p>
               <span
                 className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5"
@@ -401,7 +421,7 @@ export default function SalesProposal() {
             </Link>
           </div>
           <p className="text-[13px] text-white/35 mt-6 max-w-2xl">
-            Weekly listeners {stationStats.weeklyListeners.toLocaleString()} is an estimate from ABS 2021
+            Weekly listeners {weeklyListenersValue()} is an estimate from ABS 2021
             census populations in the broadcast area (source: townData). We do not publish a 25–34 age
             split — that figure is not in our research.
           </p>

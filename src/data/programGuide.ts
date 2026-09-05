@@ -3,6 +3,9 @@
  * Source: fm985.com.au/guide/ (scraped June 2026 via WP REST API).
  * Day index: 0=Sunday, 1=Monday … 6=Saturday.
  */
+import { presenterBackdrop } from '@/lib/presenterAssets'
+
+export { ON_AIR_WALL_BACKDROPS, ON_AIR_WALL_PHOTO_NOTE } from '@/lib/presenterAssets'
 
 export const BREAKFAST_SHOW = 'ONE FM Breakfast (Breaky)'
 export const BREAKFAST_TIME = '6:00am – 9:00am'
@@ -20,8 +23,33 @@ export function getBreakfastHost(day: number): string {
   return BREAKFAST_HOSTS[day] ?? 'ONE FM'
 }
 
+export function isBreakfastProgram(name: string): boolean {
+  return /breakfast|breaky/i.test(name)
+}
+
+/** Weekday breakfast host from BREAKFAST_ROSTER (Mon=1 … Fri=5). Sunday/Saturday: null. */
+export function getWeekdayBreakfastHost(day: number): string | null {
+  if (day < 1 || day > 5) return null
+  return BREAKFAST_ROSTER[day - 1]?.host ?? null
+}
+
+/**
+ * Compact weekday breakfast line for chrome (mini player, nav, listen hero).
+ * Built from BREAKFAST_ROSTER — never a second handwritten host list.
+ */
 export function getBreakfastScheduleLabel(): string {
-  return 'Mon–Tue: Tim Ahemt · Wed: Craig Stott (The Big G) · Thu: Ralph Whitehead · Fri: Josh Revens'
+  return mergedBreakfastRoster()
+    .map((row) => {
+      const first = row.days[0].slice(0, 3)
+      const last = row.days[row.days.length - 1].slice(0, 3)
+      const days = row.days.length === 1 ? first : `${first}–${last}`
+      return `${days}: ${row.host}`
+    })
+    .join(' · ')
+}
+
+export function formatBreakfastChromeLabel(): string {
+  return `${BREAKFAST_SHOW} · ${getBreakfastScheduleLabel()}`
 }
 
 export interface LiveShowInfo {
@@ -30,6 +58,12 @@ export interface LiveShowInfo {
   time: string
   category: string
   upNext: string
+  startHour: number
+  endHour: number
+  remainingMinutes: number
+  elapsedMinutes: number
+  slotMinutes: number
+  remainingLabel: string
 }
 
 /** Full weekly schedule — source: fm985.com.au/guide/ */
@@ -119,10 +153,90 @@ export const FULL_SCHEDULE: ScheduleSlot[] = [
   { day: 0, startHour: 0,  endHour: 6,  name: 'Overnight Mix', host: 'Automated', category: 'Music' },
 ]
 
+/** Distinct multicultural shows on the weekly guide (source: fm985.com.au/guide/). */
+export const MULTICULTURAL_PROGRAMS = Array.from(
+  new Map(
+    FULL_SCHEDULE.filter((s) => s.category === 'Multicultural').map((s) => [s.name, s]),
+  ).values(),
+)
+export const MULTICULTURAL_PROGRAM_COUNT = MULTICULTURAL_PROGRAMS.length
+
+const MELBOURNE_DAY_INDEX: Record<string, number> = {
+  Sun: 0,
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6,
+}
+
+/** Melbourne weekday: 0=Sunday … 6=Saturday. Use this, not `Date#getDay()`. */
+export function getMelbourneWeekday(now: Date = new Date()): number {
+  return getMelbourneClock(now).day
+}
+
+function getMelbourneClock(now: Date): { day: number; hour: number; minute: number } {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Melbourne',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(now)
+  const weekday = parts.find((p) => p.type === 'weekday')?.value ?? 'Sun'
+  const hour = Number(parts.find((p) => p.type === 'hour')?.value ?? '0')
+  const minute = Number(parts.find((p) => p.type === 'minute')?.value ?? '0')
+  return {
+    day: MELBOURNE_DAY_INDEX[weekday] ?? 0,
+    hour,
+    minute,
+  }
+}
+
+function slotLengthMinutes(startHour: number, endHour: number): number {
+  if (endHour > startHour) return (endHour - startHour) * 60
+  return ((24 - startHour) + endHour) * 60
+}
+
+function minutesUntilHour(endHour: number, hour: number, minute: number): number {
+  const endMins = (endHour === 0 ? 24 : endHour) * 60
+  const nowMins = hour * 60 + minute
+  let remaining = endMins - nowMins
+  if (remaining <= 0) remaining += 24 * 60
+  return remaining
+}
+
+function formatRemaining(mins: number): string {
+  if (mins <= 0) return 'ending now'
+  if (mins < 60) return `${mins} min left`
+  const hours = Math.floor(mins / 60)
+  const leftover = mins % 60
+  if (leftover === 0) return hours === 1 ? '1 hr left' : `${hours} hr left`
+  return `${hours} hr ${leftover} min left`
+}
+
+/** Get current on-air show from full schedule */
+function withClock(
+  show: Omit<LiveShowInfo, 'remainingMinutes' | 'elapsedMinutes' | 'slotMinutes' | 'remainingLabel'>,
+  hour: number,
+  minute: number,
+): LiveShowInfo {
+  const slotMinutes = slotLengthMinutes(show.startHour, show.endHour)
+  const remainingMinutes = minutesUntilHour(show.endHour, hour, minute)
+  const elapsedMinutes = Math.max(0, Math.min(slotMinutes, slotMinutes - remainingMinutes))
+  return {
+    ...show,
+    remainingMinutes,
+    elapsedMinutes,
+    slotMinutes,
+    remainingLabel: formatRemaining(remainingMinutes),
+  }
+}
+
 /** Get current on-air show from full schedule */
 export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
-  const day = now.getDay()
-  const hour = now.getHours()
+  const { day, hour, minute } = getMelbourneClock(now)
 
   const candidates = FULL_SCHEDULE.filter(s => {
     if (s.day !== day) return false
@@ -139,23 +253,27 @@ export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
       .filter(s => s.day === day && s.startHour > hour)
       .sort((a, b) => a.startHour - b.startHour)
     const next = sorted[0]
-    return {
+    return withClock({
       name: live.name,
       host: live.host,
       time: `${formatHour(live.startHour)} — ${formatHour(live.endHour)}`,
       category: live.category,
       upNext: next ? `${next.name} at ${formatHour(next.startHour)}` : 'Overnight Mix',
-    }
+      startHour: live.startHour,
+      endHour: live.endHour,
+    }, hour, minute)
   }
 
   // Default overnight
-  return {
+  return withClock({
     name: 'Overnight Mix',
     host: 'Automated',
     time: '12:00AM — 6:00AM',
     category: 'Music',
     upNext: 'ONE FM Breakfast (Breaky) at 6:00AM',
-  }
+    startHour: 0,
+    endHour: 6,
+  }, hour, minute)
 }
 
 function formatHour(h: number): string {
@@ -171,6 +289,34 @@ export const BREAKFAST_ROSTER = [
   { day: 'Thursday',  host: 'Ralph Whitehead' },
   { day: 'Friday',    host: 'Josh Revens' },
 ] as const
+
+/** Consecutive breakfast days merged into one row per host. */
+function mergedBreakfastRoster(): { host: string; days: string[] }[] {
+  const rows: { host: string; days: string[] }[] = []
+  for (const slot of BREAKFAST_ROSTER) {
+    const last = rows[rows.length - 1]
+    if (last && last.host === slot.host) last.days.push(slot.day)
+    else rows.push({ host: slot.host, days: [slot.day] })
+  }
+  return rows
+}
+
+/**
+ * "On Air This Week" wall for Home and Listen.
+ * Every row resolves to a slot in FULL_SCHEDULE above — no invented presenters.
+ * Images come from presenterAssets: named portraits only when we have them.
+ */
+export const ON_AIR_WEEK: { name: string; sub: string; img: string }[] = [
+  ...mergedBreakfastRoster().map((row) => ({
+    name: row.host,
+    sub: `${BREAKFAST_SHOW} · ${row.days.map((d) => d.slice(0, 3)).join(' & ')}`,
+  })),
+  { name: 'Johnny P', sub: 'Dancing through the decades · Mon–Fri 9AM' },
+  { name: 'James Manley', sub: 'The James Manley Show · Mon & Tue 4PM' },
+].map((row, i) => ({
+  ...row,
+  img: presenterBackdrop(row.name, i),
+}))
 
 /** All unique presenters from the guide */
 export const ALL_PRESENTERS = [
@@ -224,7 +370,7 @@ export const HOMEPAGE_FEATURED_SHOWS = [
   },
   {
     name: 'Planet of Sound',
-    time: 'Thu & Fri 11:00PM',
+    time: 'Thu 11:00PM–12:00AM',
     hostLabel: 'Carlos Rock',
     scheduleKey: 'planet' as const,
   },
@@ -262,7 +408,7 @@ export const PROGRAM_PREVIEW_CARDS = [
   {
     title: 'Planet of Sound',
     presenter: 'Carlos Rock',
-    schedule: 'Thursday & Friday, 11PM',
+    schedule: 'Thursday, 11PM–12AM',
     description:
       'Rock music program spanning 19–20 years on air with Carlos Rock. A Valley institution for rock fans.',
   },

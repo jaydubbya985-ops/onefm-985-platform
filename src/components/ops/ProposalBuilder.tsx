@@ -32,12 +32,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
-import { stationStats } from '@/data/pricing'
 import { PROPOSAL_PACKAGES } from './data/sponsors'
 import { formatDate } from './data/enquiries'
 import { useOpsStore, type Proposal, type ProposalStatus } from './store'
 import { useToast } from './Toast'
 import { generateContractPdf } from '@/lib/contractDocument'
+import { OpsProposalSheet } from '@/components/ops/OpsProposalSheet'
 import {
   addDaysIso,
   buildMailtoProposalUrl,
@@ -52,6 +52,10 @@ import {
   proposalEmailSubject,
   type ProposalDocData,
 } from '@/lib/proposalDocument'
+import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const PROPOSAL_STATUS_STYLES: Record<ProposalStatus, string> = {
   draft: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
@@ -68,75 +72,8 @@ const CATEGORY_LABEL: Record<string, string> = {
 
 function ProposalPreviewSheet({ data }: { data: ProposalDocData }) {
   return (
-    <div className="bg-white text-[#1A1A1A] rounded-lg overflow-hidden shadow-xl">
-      <div className="bg-[#071D3A] px-5 py-4 flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]">ONE FM 98.5</p>
-          <p className="text-xs text-white/70 mt-1">Goulburn Valley Community Radio</p>
-        </div>
-        <div className="text-right">
-          <p className="text-xs font-semibold text-white">SPONSORSHIP PROPOSAL</p>
-          <p className="text-sm text-[#D4AF37] font-mono mt-0.5">{data.number}</p>
-        </div>
-      </div>
-      <div className="h-1 bg-[#D4AF37]" />
-      <div className="p-5 space-y-4 text-sm">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-neutral-500">Prepared for</p>
-            <p className="font-semibold">{data.clientName}</p>
-            <p className="text-neutral-600">{data.company}</p>
-            {data.email && <p className="text-neutral-500 text-xs">{data.email}</p>}
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-neutral-500">Term / valid</p>
-            <p className="font-semibold">{data.term}</p>
-            <p className="text-neutral-600 text-xs">Valid until {data.validUntil}</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-2 rounded-md bg-[#F5F7FA] p-3">
-          <div>
-            <p className="text-lg font-bold text-[#071D3A]">
-              {stationStats.weeklyListeners.toLocaleString('en-AU')}
-            </p>
-            <p className="text-[10px] text-neutral-500">est. weekly listeners</p>
-          </div>
-          <div>
-            <p className="text-lg font-bold text-[#071D3A]">{stationStats.totalTowns}</p>
-            <p className="text-[10px] text-neutral-500">towns</p>
-          </div>
-          <div>
-            <p className="text-lg font-bold text-[#071D3A]">{stationStats.broadcastRadiusKm}km</p>
-            <p className="text-[10px] text-neutral-500">radius</p>
-          </div>
-        </div>
-        <p className="text-[10px] text-neutral-400">
-          Source: ABS 2021 via townData — Goulburn Valley coverage, not national stream totals
-        </p>
-        <div>
-          <p className="font-semibold text-[#071D3A]">{data.packageName}</p>
-          <p className="text-xs text-neutral-500">{data.tier}</p>
-        </div>
-        <ul className="space-y-1.5">
-          {data.deliverables.map((d) => (
-            <li key={d.name} className="flex justify-between gap-3 border-b border-neutral-100 pb-1.5">
-              <span>{d.name}</span>
-              <span className="text-neutral-500 text-xs shrink-0">{d.detail}</span>
-            </li>
-          ))}
-        </ul>
-        {data.notes && (
-          <p className="text-xs text-neutral-600 bg-neutral-50 rounded p-3">{data.notes}</p>
-        )}
-        <div className="text-right space-y-1">
-          <p className="text-xs text-neutral-500">
-            Ex GST {formatAud(data.money.exGst)} + GST {formatAud(data.money.gst)}
-          </p>
-          <p className="text-xl font-bold text-[#071D3A]">
-            {formatAud(data.money.total)} <span className="text-sm font-normal">incl. GST</span>
-          </p>
-        </div>
-      </div>
+    <div className="rounded-lg overflow-hidden shadow-xl">
+      <OpsProposalSheet data={data} />
     </div>
   )
 }
@@ -309,18 +246,13 @@ export default function ProposalBuilder() {
     if (saved) toast(`Draft ${saved.doc.number} saved`, 'success')
   }
 
-  const handlePdf = async (markSent = false) => {
+  const handlePdf = async () => {
     const saved = persist()
     if (!saved) return
     setBusy(true)
     try {
       await downloadDoc(saved.doc)
-      if (markSent) {
-        sendProposal(saved.id)
-        toast(`PDF downloaded — marked sent to ${saved.doc.company}`, 'success')
-      } else {
-        toast(`Downloaded ${saved.doc.number}.pdf`, 'success')
-      }
+      toast(`Downloaded ${saved.doc.number}.pdf`, 'success')
     } catch (err) {
       console.error(err)
       toast('PDF failed — try again', 'error')
@@ -350,8 +282,14 @@ export default function ProposalBuilder() {
       setBusy(false)
     }
     window.location.assign(buildMailtoProposalUrl(saved.doc))
+    toast('PDF downloaded and email client opened. Not marked sent — confirm the email went, then Mark sent.', 'success')
+  }
+
+  const handleMarkSent = () => {
+    const saved = persist()
+    if (!saved) return
     sendProposal(saved.id)
-    toast('PDF downloaded. Attach it in the email that just opened.', 'success')
+    toast(`Marked sent to ${saved.doc.company}`, 'success')
   }
 
   const handleCopyEmail = async () => {
@@ -371,14 +309,39 @@ export default function ProposalBuilder() {
   }
 
   return (
-    <div className="space-y-6">
+    <div>
+      <div className="relative overflow-hidden border-b border-one-border rounded-xl mb-6">
+        {/* Unused Goulburn Valley silo-art still — station archive, not a presenter portrait. */}
+        <img
+          src={STATION_PHOTOS.cultureSiloArtBirds}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-5 pt-5 pb-4">
+          <p className="font-label text-[10px] tracking-[0.22em] uppercase text-white/40">
+            Station archive · Goulburn Valley silo art
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            Coverage: {formatCoverageShort()} (ABS 2021 via townData). {STANDARD_SPOT_PLUS_GST}.{' '}
+            {GVL_PREMIUM_BADGE} — never sold as the $25 floor. Invoice payments: NAB BSB {BANK_BSB} ·{' '}
+            {BANK_ACCOUNT_NAME}. Mailto opens a draft — it does not mark the proposal sent.
+          </p>
+        </div>
+      </div>
+      <div className="space-y-6">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
           <FileText className="w-6 h-6 text-one-gold" />
           <div>
             <h2 className="text-xl font-bold text-one-white">Proposal Builder</h2>
             <p className="text-sm text-one-muted">
-              Pick a package, save a draft, download a PDF you can send tonight.
+              Pick a package, save a draft, download a PDF. Opening mail does not mark the proposal sent.
             </p>
           </div>
         </div>
@@ -562,7 +525,7 @@ export default function ProposalBuilder() {
                   Preview
                 </Button>
                 <Button
-                  onClick={() => void handlePdf(false)}
+                  onClick={() => void handlePdf()}
                   disabled={busy}
                   className="bg-one-gold text-one-navy hover:bg-one-gold/90 min-h-11"
                 >
@@ -581,6 +544,15 @@ export default function ProposalBuilder() {
               >
                 <Mail className="w-4 h-4 mr-2" />
                 Email (PDF + mailto)
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleMarkSent}
+                disabled={busy}
+                className="border-one-border min-h-11"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Mark sent
               </Button>
               <Button
                 variant="outline"
@@ -686,31 +658,50 @@ export default function ProposalBuilder() {
                   PDF
                 </Button>
                 {p.status === 'draft' && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-9 px-3 text-xs border-one-border"
-                    disabled={busy}
-                    onClick={() => {
-                      void (async () => {
-                        setBusy(true)
-                        try {
-                          const doc = docFromSaved(p)
-                          await downloadDoc(doc)
-                          sendProposal(p.id)
-                          toast(`PDF downloaded — marked sent to ${doc.company}`, 'success')
-                        } catch (err) {
-                          console.error(err)
-                          toast('PDF failed — try again', 'error')
-                        } finally {
-                          setBusy(false)
-                        }
-                      })()
-                    }}
-                  >
-                    <Send className="w-3 h-3 mr-1" />
-                    Send
-                  </Button>
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-9 px-3 text-xs border-one-gold/40 text-one-gold"
+                      disabled={busy}
+                      onClick={() => {
+                        void (async () => {
+                          if (!p.email) {
+                            toast('Add an email on the draft first', 'warning')
+                            return
+                          }
+                          setBusy(true)
+                          try {
+                            const doc = docFromSaved(p)
+                            await downloadDoc(doc)
+                            window.location.assign(buildMailtoProposalUrl(doc))
+                            toast('PDF downloaded and email client opened. Not marked sent.', 'success')
+                          } catch (err) {
+                            console.error(err)
+                            toast('PDF failed — try again', 'error')
+                          } finally {
+                            setBusy(false)
+                          }
+                        })()
+                      }}
+                    >
+                      <Mail className="w-3 h-3 mr-1" />
+                      Email
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-9 px-3 text-xs border-one-border"
+                      disabled={busy}
+                      onClick={() => {
+                        sendProposal(p.id)
+                        toast(`Marked sent to ${p.company}`, 'success')
+                      }}
+                    >
+                      <Send className="w-3 h-3 mr-1" />
+                      Mark sent
+                    </Button>
+                  </>
                 )}
                 {(p.status === 'draft' || p.status === 'sent') && (
                   <>
@@ -769,6 +760,7 @@ export default function ProposalBuilder() {
           <ProposalPreviewSheet data={draft} />
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }

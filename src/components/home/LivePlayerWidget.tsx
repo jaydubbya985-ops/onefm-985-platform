@@ -6,7 +6,8 @@ import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { STATION_TICKER } from '@/lib/playerMetadata'
 import { PHOTO_DEFAULTS, STATION_PHOTOS } from '@/lib/stationPhotos'
-import { presenterPhotoPath } from '@/lib/presenterAssets'
+import { presenterPhotoIsPortrait, presenterVisual } from '@/lib/presenterAssets'
+import { liveNowFromMetadata } from '@/lib/liveNow'
 
 function MetadataBadge({ live, label }: { live: boolean; label: string }) {
   return (
@@ -52,8 +53,11 @@ function Ticker() {
 
 export function LivePlayerWidget({ className = '-mt-12' }: { className?: string }) {
   const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   const { playing, loading, error, toggle } = useLiveStream()
-  const presenterImg = presenterPhotoPath(meta.presenter)
+  const presenterVisualCard = presenterVisual(live.presenter, meta.category)
+  const presenterImg = presenterVisualCard.src
+  const presenterIsPortrait = presenterPhotoIsPortrait(meta.presenter)
 
   return (
     <section className={`relative z-20 px-4 sm:px-6 ${className}`}>
@@ -72,9 +76,14 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                 <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-one-border shrink-0">
                   <MediaImage
                     src={presenterImg}
-                    alt={meta.presenter}
+                    alt={presenterVisualCard.alt}
                     className="absolute inset-0 w-full h-full"
                   />
+                  {!presenterIsPortrait && (
+                    <span className="absolute top-1.5 left-1.5 font-label text-[8px] uppercase tracking-wider text-white/80 bg-black/50 px-1.5 py-0.5 rounded">
+                      Station photo
+                    </span>
+                  )}
                   {meta.isLive && (
                     <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-one-gold to-one-red" />
                   )}
@@ -85,7 +94,11 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                     {meta.category} · {meta.programTime}
                   </p>
                   <h2 className="font-h2 text-one-white text-xl sm:text-2xl mb-1 truncate">{meta.program}</h2>
-                  <p className="font-body text-one-muted mb-4">with {meta.presenter}</p>
+                  {live.withLine ? (
+                    <p className="font-body text-one-muted mb-4">{live.withLine}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}</p>
+                  ) : (
+                    <p className="font-body text-one-muted mb-4">{live.remainingLabel || meta.programTime}</p>
+                  )}
 
                   {meta.nowPlaying ? (
                     <div className="glass-card rounded-lg px-4 py-3 mb-4 border-one-gold/20">
@@ -147,8 +160,8 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
               <div className="mt-6 flex flex-wrap gap-4 font-label text-[10px] text-muted">
                 <span>{LISTEN_LINKS.fm.label}</span>
                 <span className="text-one-border">|</span>
-                <a href={LISTEN_LINKS.crp.href} target="_blank" rel="noopener noreferrer" className="hover:text-one-gold transition-colors inline-flex items-center gap-1">
-                  {LISTEN_LINKS.crp.label} <ExternalLink size={10} />
+                <a href={LISTEN_LINKS.web.href!} target="_blank" rel="noopener noreferrer" className="hover:text-one-gold transition-colors inline-flex items-center gap-1">
+                  {LISTEN_LINKS.web.label} <ExternalLink size={10} />
                 </a>
                 <span className="text-one-border">|</span>
                 <a href={LISTEN_LINKS.phone.href!} className="hover:text-one-gold transition-colors">

@@ -1,17 +1,24 @@
 // ---------------------------------------------------------------------------
-// ONE FM invoice data — extracted verbatim from the deployed OpsPortal bundle
+// ONE FM invoice data — extracted from the deployed OpsPortal bundle
 // (deployed-reference/assets/OpsPortal-dIeH6Okr.js).
 //
 // Contains:
 //   • The June 2026 batch (19 invoices, ONEFM-2026-011 … ONEFM-2026-029)
-//   • Per-invoice "thank you" email messages (Gi map in the bundle)
-//   • Per-invoice operational email bodies (Ye/We map in the bundle)
+//   • August 2026 catch-up (Peppermill, Aussie Ag)
+//   • Per-invoice "thank you" / operational email bodies
 //   • The billing ledger (15 invoices, INV-2026-001 … INV-2026-015)
-//   • Recorded payments and the aging-bucket configuration
 //
 // Source of truth: Xero is the books. This last ops batch is a SEND GUIDE only.
-// Some payments are in and will come off later — do not invent allocations here.
+// LIVE upserts only REAL_INVOICE_NUMBERS (FOOTT, Jason's TV). Do not invent allocations.
+// DEMO local store may still show the rest of the June+August send guide.
 // ---------------------------------------------------------------------------
+
+/**
+ * GVL Match of the Day hours — source: FULL_SCHEDULE in programGuide.ts
+ * (Saturday 13:00–15:00). Same shape as formatGuideHours(). This file is
+ * imported by Node’s verify-ops-config, so it cannot use `@/` aliases.
+ */
+const GVL_MATCH_HOURS = 'Sat 1PM–3PM'
 
 export type BatchInvoiceStatus = 'draft' | 'previewed' | 'tested' | 'sent' | 'paid'
 
@@ -59,7 +66,7 @@ export const INVOICE_THANK_YOU_MESSAGES: Record<string, string> = {
   'inv-003':
     "Rocky, Gagliardi Scott's backing of local sport and community radio is what makes this region special. Your full GVL 2026 sponsorship helps us bring the footy to every home and keep local stories alive. Thanks for being such a massive part of the Goulburn Valley, Rocky.",
   'inv-004':
-    "Josephine, the Goulburn Valley Football League and ONE FM go together like pie and sauce at the footy. Broadcasting the league is at the heart of everything we do, and your partnership makes it possible for families right across the region to tune in every weekend. Here's to another cracking season together!",
+    `Josephine, the Goulburn Valley Football League and ONE FM go together like pie and sauce at the footy. Broadcasting the league is at the heart of everything we do, and your partnership makes it possible for families right across the region to tune in for GVL Match of the Day (${GVL_MATCH_HOURS}). Here's to another cracking season together!`,
   'inv-005':
     "Todd, having the Peppermill Inn as a major GVL sponsor is an absolute ripper for us! The Peppermill's been a community landmark for years, and now you're helping keep local radio thriving too. Cheers for stepping up — our listeners love hearing your name on air.",
   'inv-006':
@@ -777,8 +784,20 @@ export const RENEWAL_PROPOSALS: RenewalProposalDraft[] = [
   },
 ]
 
+/** LIVE upserts only FOOTT and Jason's TV. June+August remainder stays in the DEMO send guide. */
+export const REAL_INVOICE_NUMBERS = ['ONEFM-2026-011', 'ONEFM-2026-012'] as const
+
+export function isRealSponsorInvoiceNumber(number: string): boolean {
+  return (REAL_INVOICE_NUMBERS as readonly string[]).includes(number)
+}
+
+export function realBatchInvoices(): BatchInvoice[] {
+  return BATCH_INVOICES.filter((i) => isRealSponsorInvoiceNumber(i.number))
+}
+
 // ---------------------------------------------------------------------------
 // Billing ledger — the bundle's `El` array (15 invoices)
+// DEMO DATA — illustrative aging ledger, not the live FOOTT tax invoice.
 // ---------------------------------------------------------------------------
 
 export type BillingInvoiceStatus = 'paid' | 'sent' | 'overdue' | 'partially_paid' | 'draft'

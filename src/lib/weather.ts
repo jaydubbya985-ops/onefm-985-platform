@@ -3,6 +3,9 @@
 // (BOM.gov.au blocks automated/scraping access outright — confirmed 403 — so this
 // is the practical free source for real AU weather data in the browser.)
 
+/** Public attribution. Do not label this as BOM. */
+export const WEATHER_SOURCE_LABEL = 'Open-Meteo'
+
 export interface WeatherNow {
   tempC: number
   feelsLikeC: number

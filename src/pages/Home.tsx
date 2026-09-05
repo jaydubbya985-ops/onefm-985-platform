@@ -11,23 +11,23 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { ExploreOneFMGrid } from '@/components/home/ExploreOneFMGrid'
-import { stationStats } from '@/data/pricing'
+import { ON_AIR_WEEK, ON_AIR_WALL_PHOTO_NOTE } from '@/data/programGuide'
+import { formatGuideHours, onAirWallSub } from '@/lib/guideHours'
+import {
+  formatCoverageShort,
+  formatRadius,
+  formatTowns,
+  formatWeeklyListeners,
+  formatWeeklyListenersPlain,
+} from '@/lib/coverageCopy'
+import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
+import { liveNowFromMetadata } from '@/lib/liveNow'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
 
 const RED = '#E51636'
-const INK = '#0A0A0A'
-const BAR = '#161616'
-
-/** Real weekly presenters — source: programGuide.ts (fm985.com.au/guide). */
-const ON_AIR_WALL: { name: string; show: string; img: string }[] = [
-  { name: 'Tim Ahemt', show: 'ONE FM Breakfast · Mon & Tue', img: '/on-air-host-1.jpg' },
-  { name: 'The Big G', show: 'Craig Stott · Wednesday Breakfast', img: '/studio-control-room.jpg' },
-  { name: 'Ralph Whitehead', show: 'Thursday Breakfast', img: '/assets/images/studio-presenter-mic.jpg' },
-  { name: 'Josh Revens', show: 'Friday Breakfast · Live Music', img: '/assets/images/ob-van-branded.jpg' },
-  { name: 'Tim Symonds', show: 'The Essential Hits', img: '/assets/images/heritage-truck-2005.jpg' },
-  { name: 'Di Hunter', show: 'On Air Since the Early Days', img: '/assets/images/heritage-di-hunter-carols-2014.jpg' },
-]
+const INK = '#071D3A'
+const BAR = '#0B2A52'
 
 const reveal = {
   initial: { opacity: 0, y: 24 },
@@ -38,10 +38,12 @@ const reveal = {
 
 function Ticker() {
   const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   const items = [
-    meta.isLive ? `● ON AIR — ${meta.program}${meta.presenter ? ` with ${meta.presenter}` : ''}` : `● ${meta.program}`,
+    live.isLive ? `● ON AIR — ${live.program}${live.withLine ? ` ${live.withLine}` : ''}` : `● ${live.program}`,
     meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
-    `Est. ${stationStats.weeklyListeners.toLocaleString()} weekly listeners`,
+    formatWeeklyListeners(),
+    formatCoverageShort(),
     'Community radio since 1989 · Callsign 3ONE',
   ]
   const line = items.join('   ·   ')
@@ -104,7 +106,7 @@ function HeroReel() {
       />
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.15) 45%, #0A0A0A 100%)' }}
+        style={{ background: 'linear-gradient(180deg, rgba(7,29,58,.55) 0%, rgba(7,29,58,.15) 45%, #071D3A 100%)' }}
         aria-hidden
       />
     </>
@@ -113,19 +115,33 @@ function HeroReel() {
 
 function Hero() {
   const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   return (
     <section className="relative overflow-hidden px-6 md:px-12 lg:px-20 pt-24 pb-20 min-h-[88vh] flex flex-col justify-center">
       <HeroReel />
       <div className="relative">
       <Link
         to="/listen"
-        className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 mb-9 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03] bloom-red"
+        className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 mb-4 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03] bloom-red"
         style={{ background: RED }}
         data-cursor="LISTEN"
       >
         <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-        {meta.isLive ? 'On Air Now · Listen Live' : 'Listen Live · 98.5 FM'}
+        {live.isLive ? 'On Air Now · Listen Live' : 'Listen Live · 98.5 FM'}
       </Link>
+      <p className="mb-9 max-w-[560px]">
+        <span className="block font-poster uppercase text-[clamp(22px,3.2vw,36px)] text-white leading-tight">
+          {live.program}
+        </span>
+        <span className="block mt-1.5 text-[14px] text-white/50">
+          {live.withLine ? `${live.withLine} · ` : ''}
+          {live.programTime}
+          {live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
+        </span>
+        {live.breakfastOnAir && live.breakfastLabel ? (
+          <span className="block mt-1.5 text-[12px] text-white/40">{live.breakfastLabel}</span>
+        ) : null}
+      </p>
       <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]">
         <PosterReveal
           lines={[
@@ -167,7 +183,7 @@ function NameWall() {
     <section className="px-6 md:px-12 lg:px-20 py-16">
       <LabelReveal className="mb-8">On Air This Week</LabelReveal>
       <div>
-        {ON_AIR_WALL.map((p, i) => (
+        {ON_AIR_WEEK.map((p, i) => (
           <motion.div
             key={p.name}
             initial={{ opacity: 0, x: i % 2 === 1 ? 48 : -48 }}
@@ -179,18 +195,23 @@ function NameWall() {
             <div className="font-poster uppercase leading-none whitespace-nowrap text-white text-[clamp(40px,7vw,104px)]">
               {p.name}
               <span className="block font-body normal-case text-[13px] tracking-[0.14em] text-white/40 mt-1.5">
-                {p.show}
+                {onAirWallSub(p.name, p.sub)}
               </span>
             </div>
             <div
               className="flex-1 min-w-[60px] rounded bg-cover bg-center grayscale-[35%] hover:grayscale-0 transition-[filter] duration-300"
               style={{ backgroundColor: BAR, backgroundImage: `url('${p.img}')` }}
               role="img"
-              aria-label={`${p.name} — ${p.show}`}
+              aria-label={
+                presenterPhotoIsPortrait(p.name)
+                  ? `${p.name} — ${p.sub}`
+                  : `ONE FM station photography beside ${p.name} — not a presenter portrait`
+              }
             />
           </motion.div>
         ))}
       </div>
+      <p className="mt-6 text-[12px] tracking-[0.08em] text-white/35">{ON_AIR_WALL_PHOTO_NOTE}</p>
     </section>
   )
 }
@@ -215,7 +236,7 @@ function FeatureFrame() {
           className="absolute bottom-6 left-6 px-5 py-2.5 rounded font-bold text-[13px] tracking-[0.13em] uppercase text-white"
           style={{ background: RED }}
         >
-          GVL Footy · Called Live on 98.5
+          GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
         </div>
       </Link>
     </motion.div>
@@ -224,13 +245,13 @@ function FeatureFrame() {
 
 function StatsStrip() {
   const stats = [
-    { n: stationStats.weeklyListeners.toLocaleString(), t: 'Est. weekly listeners', red: false },
+    { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners', red: false },
     { n: '98.5', t: 'FM · Callsign 3ONE', red: true },
-    { n: String(stationStats.totalTowns), t: 'Towns across the Valley', red: false },
+    { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: false },
     { n: '1989', t: 'On air ever since', red: false },
   ]
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-px my-20" style={{ background: '#222' }}>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-px my-20" style={{ background: '#12325C' }}>
       {stats.map((s) => (
         <div key={s.t} className="px-8 py-11" style={{ background: INK }}>
           <div
@@ -251,7 +272,7 @@ export default function Home() {
     <Layout>
       <SEO
         title="ONE FM 98.5 — The Voice of the Goulburn Valley"
-        description="Community radio for the Goulburn Valley. Volunteer-run since 1989. Listen live, program guide, GVL football, and local voices from Shepparton."
+        description={`Community radio for the Goulburn Valley. Volunteer-run since 1989. ${formatCoverageShort()} (ABS 2021 via townData). Listen live, program guide, GVL football.`}
       />
       <div style={{ background: INK }} className="min-h-screen">
         <Ticker />

@@ -1,28 +1,26 @@
-# ONE FM RUN PLAN — Non-stop to launch
+# ONE FM RUN PLAN — Ultra, world class, continuous
 
-**Current score: ~55% of 80% gov-ready bar.** Public `/proposal` is a request form. Invoice/proposal/contract PDFs share `src/lib/pdfLetterhead.ts`. Remaining: live ops (Supabase env), Stripe if `pk_` present.
+**Current score:** public site craft is on `main` through #143. Live deploys via GitHub Actions. Ops `#/ops` is DEMO until `VITE_SUPABASE_*` secrets are the real URL + anon key.
 
-Target **80%**: FOOTT can be sent a PDF; ops is not DEMO on live; no invented stats on public pages; invoice email does not lie about send.
+**Target:** a site a 2026 community station would be proud to show ACMA, FOOTT, and a listener on the Fold. Truth first. World class second. Volume last.
 
-## Live verification (2026-08-26)
+**Paste for every desk:** `.cursor/ULTRA.md` then `.cursor/HANDOFF.md`
 
-| Check | Status |
-|-------|--------|
-| Deploy pipeline (push → Netlify) | Working if `NETLIFY_AUTH_TOKEN` is valid |
-| Plemo removed | Live shows ONE FM Breakfast hosts |
-| Public /proposal (no fake 38%) | This branch — request form, staff send PDF |
-| Shared PDF letterhead | This branch — `src/lib/pdfLetterhead.ts` |
-| Ops portal live (invoices, Stripe) | Needs env vars |
-| Supabase auth | NEED JAY: `VITE_SUPABASE_*` on Netlify |
-| Stripe payments | NEED JAY: `VITE_STRIPE_PUBLISHABLE_KEY` |
+## Ultra allocations (3 September 2026)
 
-## Agent continuity
+Jay is on Cursor Ultra. **6.3×** the old bar. One deep ship per PR. The stamp factory (#170–#200) is closed.
 
-Paste `.cursor/NEXT-AGENT.md` into a new Cloud Agent at https://cursor.com/agents when a session ends. Do not wait for a mobile workflow.
+## Agent continuity (no stop-start)
+
+| Desk | How to ship work |
+|------|------------------|
+| Cursor Cloud | https://cursor.com/agents — paste `ULTRA.md` + `HANDOFF.md` |
+| This run | Keep coding. Do not end with “start the next agent”. |
+| Kimi desktop | `git pull origin main` then paste `ULTRA.md` + `HANDOFF.md` |
+| Overnight loop | https://cursor.com/automations — prompt = `CONTINUOUS.md`, model Opus |
 
 ## NEED JAY (only if blocked)
 
-1. Netlify env: `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`
-2. Optional: Cursor Automation on a schedule using NEXT-AGENT.md so work continues overnight
-3. Run `supabase-schema-all.sql` (or the new `ops_proposals` columns) in Supabase SQL Editor for live proposal extras
-
+1. Cursor Cloud secrets: full `VITE_SUPABASE_URL` + anon `VITE_SUPABASE_ANON_KEY` (never `sb_secret_`).
+2. `RESEND_API_KEY` in Netlify — Test Mode invoice to `jasonstv1@bigpond.com` first.
+3. **EXE PR #__** when a world-class PR is ready to go live.

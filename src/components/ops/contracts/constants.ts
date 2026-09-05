@@ -180,7 +180,7 @@ export const CONTRACT_TEMPLATES: ContractTemplate[] = [
     packageType: 'digital_premium',
     campaignName: 'DIGITAL PREMIUM 2026',
     descriptionText:
-      'Digital-first sponsorship package including website banner placement, social media posts/stories, EDM newsletter features, podcast pre-roll, and digital event promotion.',
+      'Digital-first sponsorship including website banner placement, Facebook posts (facebook.com/onefmshepparton), and newsletter mentions. Instagram stories and podcast pre-roll are not inventory we sell.',
     defaultValue: 3500,
     defaultFrequency: 'annually',
     defaultPeriods: 1,

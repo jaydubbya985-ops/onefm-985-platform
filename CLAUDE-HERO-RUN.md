@@ -1,7 +1,7 @@
 # CLAUDE CONSOLE RUN — Home Hero · Element 1 · Design 6→8.5
 
-**Repo:** `C:\Users\jaydu\Downloads\Kimi_Agent_ONE FM Project Consolidation\app`  
-**Branch:** `main` (do not commit unless Jay asks)  
+**Repo:** GitHub `jaydubbya985-ops/onefm-985-platform` (`git pull origin main` first). Do not treat a Downloads folder as source of truth. Full station brief: `.cursor/HANDOFF.md`.  
+**Branch:** new feature branch unless Jay says EXE to `main`  
 **Scope:** Home hero ONLY — not Coverage map, not Listen, not site-wide  
 **Live:** https://onefmops.netlify.app/#/
 

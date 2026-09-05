@@ -149,23 +149,32 @@ Push to `main` triggers `.github/workflows/deploy.yml` → build → Netlify pro
 - `VITE_SUPABASE_URL` — optional for build, required for ops portal
 - `VITE_SUPABASE_ANON_KEY` — optional for build, required for ops portal
 
-## NEXT RUN (copy this prompt to cloud agent or desktop)
+## Non-stop loop (Cloud / Claude / Kimi)
 
-```
-Pull latest main (or the open ops-proposals PR if not merged). Do not wait.
+**Continuous run is on.** After EXE, keep coding the next desk. Do not end a run with “start the next agent” as the only action.
 
-1. Verify ops #/ops password onefm2026 → Proposals: Community Partner PDF downloads with 39,375 listeners, GST, and no invented demographics.
-2. If that PR is open, merge-ready fixes only — then continue ops.
-3. Next ops slice: accepted proposal → contract PDF (same letterhead as invoices/proposals). Then invoice send path with BSB 083-894.
-4. Truth grep src/ for Plemo, unsplash, fake millions, AI-Enhanced.
-5. Commit, push, update PR. Build must pass.
+**This conversation:** Cloud Agents with `subscribe_timer` must arm a **20-minute** continue timer named `onefm-continuous` (prompt in `.cursor/CONTINUOUS.md`).
 
-If blocked: NEED JAY: one specific action. Do not stall. Do not invent stats.
-```
+**Mobile control:** `.cursor/MOBILE.md` is Jay's phone-first runbook. Use it when Jay needs one concrete action from the Fold instead of a long handoff.
+
+**Overnight (Jay, one click this agent cannot do):** https://cursor.com/automations → new automation → repo `onefm-985-platform` → model **Claude Opus** → prompt = contents of `.cursor/CONTINUOUS.md` → every 2 hours.
+
+**Kimi (desktop):** `git pull origin main`, paste `.cursor/CONTINUOUS.md`. Do not treat a Downloads folder as source of truth.
+
+## Ultra allocations (from 3 September 2026)
+
+Jay is on **Cursor Ultra**. The bar is **6.3×**. Read `.cursor/ULTRA.md` before you ship.
+
+- **WORLD CLASS** is the only pass mark.
+- **One deep PR** per run. The stamp factory (coverage + breakfast + GVL hours on every chrome component) is **closed**.
+- Would this sit next to ABC Listen without looking like a template? If no, keep working.
+
+## NEXT RUN (copy `.cursor/ULTRA.md` then `.cursor/CONTINUOUS.md`)
+
+Keep shipping. Pull origin main first. Do not merge PRs unless Jay says EXE. Never merge PR #13.
 
 ## Current priorities
 
-1. Ship sendable sponsorship proposals from Ops (PDF + email) — in progress this branch
-2. Keep a cloud agent on the NEXT RUN prompt so work continues between Jay's sessions
-3. Wire Netlify + Supabase env vars for live ops (NEED JAY if missing)
-4. Real invoices + Stripe test payment live
+1. Listen / Home craft a listener would feel — `programGuide.ts` + `townData.ts` + `/public/brand/` + station photos
+2. Close conflicting stale drafts #1 #3 #4 #11 (do not merge). Never merge #13. Recommend close on stamp PRs #170–#200
+3. Optional: `VITE_SUPABASE_*` in Cloud secrets must be the full URL + **anon** key (never `sb_secret_`)

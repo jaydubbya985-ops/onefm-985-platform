@@ -11,9 +11,29 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
-import { stationStats } from '@/data/pricing'
-import { FULL_SCHEDULE } from '@/data/programGuide'
+import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { InventoryLadder } from '@/components/InventoryLadder'
+import {
+  MULTICULTURAL_PROGRAMS,
+  MULTICULTURAL_PROGRAM_COUNT,
+  type ScheduleSlot,
+} from '@/data/programGuide'
 
+const WEEKDAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
+
+/** Guide hours as spoken labels — source: programGuide FULL_SCHEDULE (fm985.com.au/guide). */
+function guideHour(h: number): string {
+  if (h === 0 || h === 24) return '12am'
+  if (h === 12) return '12pm'
+  return h < 12 ? `${h}am` : `${h - 12}pm`
+}
+
+function multiculturalWhen(slot: ScheduleSlot): string {
+  return `${WEEKDAY[slot.day]} ${guideHour(slot.startHour)}–${guideHour(slot.endHour)}`
+}
+
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
 const RED = '#E51636'
 
 /** Town wall photos — real station/valley imagery (not per-town photos yet). */
@@ -49,8 +69,8 @@ function CommunityHero() {
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Twenty-five towns, one signal. From the GVL grand final to eight languages on
-          the weekend dial — this is the Valley, on air.
+          {formatTowns()}, one signal. From the GVL grand final to {MULTICULTURAL_PROGRAM_COUNT} multicultural
+          programs on the weekly guide — this is the Valley, on air.
         </p>
       </div>
     </section>
@@ -65,28 +85,24 @@ export default function Community() {
     img: TOWN_IMGS[i % TOWN_IMGS.length],
   }))
 
-  const multicultural = Array.from(
-    new Map(
-      FULL_SCHEDULE.filter((s) => s.category === 'Multicultural').map((s) => [s.name, s])
-    ).values()
-  ).map((s) => ({
-    tag: 'Multicultural',
+  const multicultural = MULTICULTURAL_PROGRAMS.map((s) => ({
+    tag: multiculturalWhen(s),
     title: s.name,
-    body: `With ${s.host} — part of the weekend world programming that keeps every corner of the Valley tuned in, in their own language.`,
+    body: `With ${s.host}. From the weekly guide (fm985.com.au/guide).`,
   }))
 
   return (
     <Layout>
       <SEO
         title="Our Community — ONE FM 98.5"
-        description="25 towns across the Goulburn Valley: GVL footy called live, multicultural programming in 8+ languages, and the communities ONE FM serves."
+        description={`${formatTowns()} across the Goulburn Valley: GVL footy called live, ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the station guide, and the communities ONE FM serves.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            `● ${stationStats.totalTowns} towns across the Goulburn Valley`,
-            'GVL footy called live every season',
-            'Multicultural programming in 8+ languages',
+            `● ${formatTowns()} across the Goulburn Valley`,
+            `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`,
+            `Multicultural programming — ${MULTICULTURAL_PROGRAM_COUNT} programs on the weekly guide`,
             'Community radio since 1989',
           ]}
           delay={0.4}
@@ -97,7 +113,7 @@ export default function Community() {
           to="/football"
           img="/assets/images/gvl-action-sprint.jpg"
           alt="GVL football under lights — called live on ONE FM 98.5"
-          badge="GVL Footy · Called Live on 98.5"
+          badge={`GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`}
         />
 
         <NameWall label={`The Towns We Serve${showAllTowns ? '' : ' · Top 6'}`} rows={wallTowns} />
@@ -113,7 +129,7 @@ export default function Community() {
           </button>
         </div>
 
-        <EditorialCards label="The World, On the Weekend Dial" items={multicultural} columns={3} />
+        <EditorialCards label="Weeknight world programs" items={multicultural} columns={3} />
 
         <section className="px-6 md:px-12 lg:px-20 pb-16">
           <LabelReveal className="mb-8">Where the Signal Reaches</LabelReveal>
@@ -121,7 +137,7 @@ export default function Community() {
             <div>
               <h3 className="font-poster uppercase text-[30px] text-white">The Coverage Map</h3>
               <p className="text-[15px] text-white/55 mt-1 max-w-[480px]">
-                100km of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
+                {formatRadius()} of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
               </p>
             </div>
             <Link
@@ -135,12 +151,16 @@ export default function Community() {
           </div>
         </section>
 
+        <section className="px-6 md:px-12 lg:px-20 pb-10">
+          <InventoryLadder />
+        </section>
+
         <StatsStrip
           stats={[
-            { n: String(stationStats.totalTowns), t: 'Towns across the Valley', red: true },
-            { n: stationStats.broadcastPopulation.toLocaleString(), t: 'People in reach (ABS 2021)' },
-            { n: '8+', t: 'Languages on air weekly' },
-            { n: `${stationStats.broadcastRadiusKm}km`, t: 'Signal radius from Mt Major' },
+            { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: true },
+            { n: formatBroadcastPopulation(), t: 'People in broadcast area (ABS 2021 via townData)' },
+            { n: String(MULTICULTURAL_PROGRAM_COUNT), t: 'Multicultural programs (station guide)' },
+            { n: formatRadius(), t: 'Signal radius from Mt Major' },
           ]}
         />
         <div className="pb-32" />

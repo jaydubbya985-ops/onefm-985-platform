@@ -1,24 +1,23 @@
-# NEXT CLOUD AGENT — paste this as the whole prompt
+# NEXT CLOUD AGENT — paste `.cursor/ULTRA.md` then `.cursor/HANDOFF.md`
 
-You are continuing ONE FM 98.5. Benchmark: **80% = gov-ready / send-to-FOOTT without DEMO or invented stats**. Public `/proposal` is a request form. PDFs share `src/lib/pdfLetterhead.ts`. Do not wait. Pull latest. Prefer PR #9 branch if unmerged.
+**This file is a pointer.** Ultra allocations: `.cursor/ULTRA.md`. Full brief: `.cursor/HANDOFF.md`. Loop: `.cursor/CONTINUOUS.md`.
+
+You are continuing ONE FM 98.5. Benchmark: **world class** — a listener or FOOTT would feel the ship. Gov-ready means no DEMO lies and no invented stats.
+
+## Model
+
+Prefer thorough (Claude Opus / Grok high). Fast-and-shallow is a fail on Ultra.
 
 ## Single next action (do this first)
 
-**Live ops only if env present.** Check Netlify / this VM for `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`. If missing: `NEED JAY: VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY on Netlify` and stop — do not fake live mode.
+`git pull origin main`. Read `.cursor/ULTRA.md`. New branch `cursor/<desk>-273d` (or the suffix this run requires). Do not merge without **EXE**.
 
-If present: confirm `#/ops` is LIVE (not DEMO password gate), enquiries/proposals persist.
+Do **not** stamp coverage / breakfast / GVL hours onto another page. That desk is closed.
 
-Then `npm run build`, commit, push, update the PR.
+## After that
 
-## After that, in order (toward 80%)
+1. `npm run build` must pass. Never bake `sb_secret_` into the client.
+2. Do not POST `send-invoice` to `peter@foott.com.au` unless Jay asks.
+3. One PR. Then keep coding a *different* desk.
 
-1. Stripe test on live URL only if `VITE_STRIPE_PUBLISHABLE_KEY` starts with `pk_`. Else NEED JAY one line.
-2. Merge-ready PR #9: ops PDFs + truthful public `/proposal` + shared letterhead. BSB `083-894` stays in `src/lib/bankDetails.ts`.
-3. Truth grep `src/` for Plemo, unsplash, AI-Enhanced, invented age %.
-
-## Rules
-
-- Never fabricate stats, sponsors, or people photos
-- DEMO CRM stays labelled DEMO
-- Desktop — skip Galaxy Fold work
-- Leave the next slice started, not a planning doc
+If Jay is on the Fold, one next action only — see `.cursor/MOBILE.md`.

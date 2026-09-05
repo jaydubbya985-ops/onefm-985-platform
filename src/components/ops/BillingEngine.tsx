@@ -97,7 +97,14 @@ import {
 } from './data/payments'
 import { useOpsStore, type OpsInvoice } from './store'
 import { calendarDaysBetween, todayISO } from '@/lib/opsClock'
+import { opsInitial } from '@/lib/opsMode'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { LivePendingNote } from './LivePendingNote'
 import { downloadXeroCsv, type XeroExportableInvoice } from './invoices/xeroExport'
+import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -233,16 +240,19 @@ const TABS: Array<{ id: BillingTab; label: string; icon: typeof BarChart3 }> = [
 
 export default function BillingEngine() {
   const { toast } = useToast()
-  const { invoices, updateInvoice, sendBatch } = useOpsStore()
+  const { invoices, updateInvoice } = useOpsStore()
 
   const [tab, setTab] = useState<BillingTab>('dashboard')
   const [renewals, setRenewals] = useState<RenewalRecord[]>(() =>
-    MOCK_RENEWALS.map((r) => ({
-      ...r,
-      daysRemaining: calendarDaysBetween(todayISO(), r.endDate),
-    })),
+    opsInitial(
+      MOCK_RENEWALS.map((r) => ({
+        ...r,
+        daysRemaining: calendarDaysBetween(todayISO(), r.endDate),
+      })),
+      [],
+    ),
   )
-  const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(MOCK_ACQUITTALS)
+  const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(opsInitial(MOCK_ACQUITTALS, []))
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
 
@@ -264,7 +274,8 @@ export default function BillingEngine() {
 
   // Billing cycle
   const [cycleComplete, setCycleComplete] = useState(false)
-  const [cycleProgress, setCycleProgress] = useState(45)
+  const [cycleProgress, setCycleProgress] = useState(0)
+  const liveOps = isSupabaseConfigured()
 
   const now = new Date()
   const currentMonthKey = isoToday().slice(0, 7)
@@ -480,23 +491,38 @@ export default function BillingEngine() {
 
   function sendReminder() {
     if (!reminderInvoice) return
-    toast(`Payment reminder sent to ${reminderInvoice.company}`, 'success')
+    const to = reminderInvoice.email?.trim()
+    if (!to) {
+      toast('No email on this invoice — reminder was NOT sent.', 'error')
+      return
+    }
+    const due = formatCurrency(
+      reminderInvoice.total - (reminderInvoice.paidAmount ?? 0),
+    )
+    const subject = encodeURIComponent(
+      `Payment reminder — ${reminderInvoice.number} | ONE FM 98.5`,
+    )
+    const body = encodeURIComponent(
+      `Hi ${reminderInvoice.contactName},\n\nThis is a payment reminder for invoice ${reminderInvoice.number} (${reminderInvoice.company}).\nAmount due: ${due}.\nDue date: ${reminderInvoice.dueDate}.\n\nPlease see the invoice PDF for bank details.\n\nONE FM 98.5 accounts`,
+    )
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`
+    toast(
+      `Email client opened for ${reminderInvoice.company}. Reminder is NOT marked sent until you send it.`,
+      'warning',
+    )
     setReminderDialogOpen(false)
     setReminderInvoice(null)
   }
 
   function runBillingCycle() {
-    const draftIds = monthInvoices
-      .filter((i) => displayStatus(i) === 'draft')
-      .map((i) => i.id)
-    if (draftIds.length > 0) sendBatch(draftIds)
+    const draftCount = monthInvoices.filter((i) => displayStatus(i) === 'draft').length
     setCycleComplete(true)
     setCycleProgress(100)
     toast(
-      draftIds.length > 0
-        ? `Billing cycle run — ${draftIds.length} invoice${draftIds.length === 1 ? '' : 's'} sent`
-        : 'Billing cycle run — no draft invoices to send',
-      'success',
+      draftCount > 0
+        ? `Cycle checklist marked complete. ${draftCount} draft invoice${draftCount === 1 ? '' : 's'} were NOT emailed — use Batch Send.`
+        : 'Cycle checklist marked complete — no draft invoices to email.',
+      draftCount > 0 ? 'warning' : 'success',
     )
   }
 
@@ -521,7 +547,10 @@ export default function BillingEngine() {
     setRenewals((prev) =>
       prev.map((r) => (r.id === record.id ? { ...r, status: 'proposal_sent' } : r)),
     )
-    toast(`Renewal proposal generated for ${record.sponsorName}`, 'success')
+    toast(
+      `Renewal proposal draft created for ${record.sponsorName}. It is not emailed. Mailto does not mark it sent.`,
+      'success',
+    )
   }
 
   function exportXero() {
@@ -604,7 +633,32 @@ export default function BillingEngine() {
   // ----- Render ---------------------------------------------------------------
 
   return (
-    <div className="space-y-6">
+    <div>
+      <div className="relative overflow-hidden border-b border-[#2A2A2A]/30 rounded-xl mb-6">
+        {/* Unused GVL team-celebration still — station archive, not a presenter portrait. */}
+        <img
+          src={STATION_PHOTOS.gvlTeamCelebration}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-5 pt-5 pb-4">
+          <p className="font-label text-[10px] tracking-[0.22em] uppercase text-white/40">
+            Station archive · GVL team celebration
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            Coverage: {formatCoverageShort()} (ABS 2021 via townData). {STANDARD_SPOT_PLUS_GST}.{' '}
+            {GVL_PREMIUM_BADGE} — never sold as the $25 floor. Invoice payments: NAB BSB {BANK_BSB} ·{' '}
+            {BANK_ACCOUNT_NAME}. Mailto opens a draft — it does not mark an invoice or reminder sent.
+          </p>
+        </div>
+      </div>
+      <div className="space-y-6">
       <div className="rounded-lg border border-amber-700/40 bg-amber-950/20 px-4 py-3 text-sm text-amber-200/90">
         Aging on this tab is for invoices that have been sent. The June 2026 batch is still unsent —
         that gap is on the command centre and Batch Send tab, not in these AR buckets.
@@ -855,6 +909,9 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Monthly revenue trend" />
+                  ) : (
                   <ResponsiveContainer width="100%" height={220}>
                     <AreaChart data={MONTHLY_REVENUE}>
                       <defs>
@@ -896,6 +953,7 @@ export default function BillingEngine() {
                       />
                     </AreaChart>
                   </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -1156,18 +1214,18 @@ export default function BillingEngine() {
             {[
               {
                 step: cycleSteps[1],
-                title: 'Week 1: Send Invoices',
-                detail: `Send all invoices for ${currentMonthLabel}. ${monthInvoices.filter((i) => displayStatus(i) === 'draft').length} invoices ready to send.`,
-                action: 'Send All',
+                title: 'Week 1: Invoice drafts',
+                detail: `Draft invoices for ${currentMonthLabel} stay in Batch Send. ${monthInvoices.filter((i) => displayStatus(i) === 'draft').length} drafts — mailto does not mark an invoice sent.`,
+                action: 'Open batch',
                 color: 'text-blue-400',
                 bg: 'bg-blue-500/10',
                 border: 'border-blue-500/20',
               },
               {
                 step: cycleSteps[2],
-                title: 'Week 2: Payment Reminders',
-                detail: `Send reminders for overdue invoices. ${invoices.filter((i) => displayStatus(i) === 'overdue').length} invoices currently overdue.`,
-                action: 'Send Reminders',
+                title: 'Week 2: Payment reminders',
+                detail: `Overdue reminders open a mailto draft. ${invoices.filter((i) => displayStatus(i) === 'overdue').length} invoices currently overdue — mailto does not mark a reminder sent.`,
+                action: 'Open draft',
                 color: 'text-amber-400',
                 bg: 'bg-amber-500/10',
                 border: 'border-amber-500/20',
@@ -1310,6 +1368,9 @@ export default function BillingEngine() {
             </div>
           </motion.div>
 
+          {liveOps ? (
+            <LivePendingNote title="Payment method totals" />
+          ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {PAYMENT_METHOD_ANALYSIS.map((method, idx) => (
               <motion.div key={idx} variants={fadeUp}>
@@ -1333,6 +1394,7 @@ export default function BillingEngine() {
               </motion.div>
             ))}
           </div>
+          )}
 
           <motion.div variants={fadeUp}>
             <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
@@ -1358,7 +1420,7 @@ export default function BillingEngine() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {MOCK_PAYMENTS.filter((p) => p.allocated).map((payment) => (
+                    {(isSupabaseConfigured() ? [] : MOCK_PAYMENTS).filter((p) => p.allocated).map((payment) => (
                       <TableRow
                         key={payment.id}
                         className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
@@ -1396,6 +1458,13 @@ export default function BillingEngine() {
                         </TableCell>
                       </TableRow>
                     ))}
+                    {liveOps && (
+                      <TableRow className="border-[#2A2A2A]/15 hover:bg-transparent">
+                        <TableCell colSpan={7} className="text-one-white/40 text-xs text-center py-6">
+                          No payments recorded in live mode. DEMO payment history stays in DEMO mode.
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -1430,7 +1499,7 @@ export default function BillingEngine() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {MOCK_PAYMENTS.filter((p) => !p.allocated).map((payment) => (
+                    {(isSupabaseConfigured() ? [] : MOCK_PAYMENTS).filter((p) => !p.allocated).map((payment) => (
                       <TableRow
                         key={payment.id}
                         className="border-[#2A2A2A]/15 hover:bg-one-gold/5"
@@ -1470,6 +1539,13 @@ export default function BillingEngine() {
                         </TableCell>
                       </TableRow>
                     ))}
+                    {liveOps && (
+                      <TableRow className="border-[#2A2A2A]/15 hover:bg-transparent">
+                        <TableCell colSpan={6} className="text-one-white/40 text-xs text-center py-6">
+                          No unallocated deposits in live mode.
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -1748,7 +1824,7 @@ export default function BillingEngine() {
                             : 'bg-one-gold hover:bg-one-gold/90 text-one-navy'
                         }`}
                       >
-                        {renewal.status === 'proposal_sent' ? 'Sent' : 'Generate Proposal'}
+                        {renewal.status === 'proposal_sent' ? 'Draft ready' : 'Generate Proposal'}
                       </Button>
                     </div>
                   ))}
@@ -1833,6 +1909,9 @@ export default function BillingEngine() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                {liveOps ? (
+                  <LivePendingNote title="Monthly revenue report" />
+                ) : (
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={MONTHLY_REVENUE}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
@@ -1875,6 +1954,7 @@ export default function BillingEngine() {
                     />
                   </BarChart>
                 </ResponsiveContainer>
+                )}
               </CardContent>
             </Card>
           </motion.div>
@@ -1889,6 +1969,10 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Revenue by source" />
+                  ) : (
+                  <>
                   <ResponsiveContainer width="100%" height={240}>
                     <RePieChart>
                       <Pie
@@ -1927,6 +2011,8 @@ export default function BillingEngine() {
                       </div>
                     ))}
                   </div>
+                  </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -1940,6 +2026,10 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Sponsor tier analysis" />
+                  ) : (
+                  <>
                   <ResponsiveContainer width="100%" height={240}>
                     <RePieChart>
                       <Pie
@@ -1978,6 +2068,8 @@ export default function BillingEngine() {
                       </div>
                     ))}
                   </div>
+                  </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -1993,6 +2085,9 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Payment method analysis" />
+                  ) : (
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={PAYMENT_METHOD_ANALYSIS} layout="vertical">
                       <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
@@ -2024,6 +2119,7 @@ export default function BillingEngine() {
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -2037,6 +2133,9 @@ export default function BillingEngine() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {liveOps ? (
+                    <LivePendingNote title="Collection rate trends" />
+                  ) : (
                   <ResponsiveContainer width="100%" height={220}>
                     <LineChart data={COLLECTION_TRENDS}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A/30" />
@@ -2064,6 +2163,7 @@ export default function BillingEngine() {
                       />
                     </LineChart>
                   </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -2078,6 +2178,9 @@ export default function BillingEngine() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                {liveOps ? (
+                  <LivePendingNote title="GST summary" detail="ATO-filed GST figures are not loaded in live mode." />
+                ) : (
                 <Table>
                   <TableHeader>
                     <TableRow className="border-[#2A2A2A]/20 hover:bg-transparent">
@@ -2125,6 +2228,7 @@ export default function BillingEngine() {
                     ))}
                   </TableBody>
                 </Table>
+                )}
               </CardContent>
             </Card>
           </motion.div>
@@ -2150,6 +2254,13 @@ export default function BillingEngine() {
             </div>
           </motion.div>
 
+          {liveOps ? (
+            <LivePendingNote
+              title="Revenue forecast"
+              detail="DEMO conservative/optimistic series are hidden. Forecast factors below use actual renewal rows only."
+            />
+          ) : (
+          <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <motion.div variants={fadeUp}>
               <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
@@ -2251,6 +2362,8 @@ export default function BillingEngine() {
               </CardContent>
             </Card>
           </motion.div>
+          </>
+          )}
 
           <motion.div variants={fadeUp}>
             <Card className="bg-[#1E293B] border-[#2A2A2A]/30">
@@ -2441,13 +2554,19 @@ export default function BillingEngine() {
               </div>
               <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
                 <p className="text-xs text-one-white/60">
-                  A payment reminder will be sent to{' '}
-                  <strong className="text-one-white">{reminderInvoice.contactName}</strong>{' '}
+                  Opens your email client to{' '}
+                  <strong className="text-one-white">{reminderInvoice.contactName}</strong>
+                  {reminderInvoice.email ? (
+                    <>
+                      {' '}
+                      &lt;<strong className="text-one-white">{reminderInvoice.email}</strong>&gt;
+                    </>
+                  ) : null}{' '}
                   at <strong className="text-one-white">{reminderInvoice.company}</strong>.
+                  Nothing is emailed until you send that message.
                 </p>
                 <p className="text-xs text-one-white/40 mt-2">
-                  The reminder will include the invoice details, amount due, and payment
-                  instructions.
+                  Draft includes invoice number, amount due, and a request to pay from the PDF.
                 </p>
               </div>
             </div>
@@ -2465,7 +2584,7 @@ export default function BillingEngine() {
               className="bg-amber-500 hover:bg-amber-600 text-one-navy"
             >
               <Send className="w-4 h-4 mr-1" />
-              Send Reminder
+              Open email client
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2506,8 +2625,8 @@ export default function BillingEngine() {
                 </div>
               </div>
               <p className="text-xs text-one-white/50">
-                This will mark the acquittal as complete. All deliverables have been
-                verified and payment confirmed.
+                This marks the row complete in ops. It does not email the sponsor or
+                confirm a NAB receipt.
               </p>
             </div>
           )}
@@ -2529,6 +2648,7 @@ export default function BillingEngine() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }

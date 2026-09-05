@@ -12,7 +12,19 @@ import { SEO } from '@/components/SEO'
 import { CinegraphBackground } from '@/components/CinegraphBackground'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { footballTiers, stationStats } from '@/data/pricing'
+import { towns } from '@/data/townData'
+import { FULL_SCHEDULE } from '@/data/programGuide'
+import { footballTiers } from '@/data/pricing'
+import {
+  broadcastPopulationValue,
+  coverageNumbers,
+  formatTownsGvl,
+  reachFactsRows,
+  townCountValue,
+  weeklyListenersValue,
+} from '@/lib/coverageCopy'
+import { GVL_PREMIUM_INTRO, GVL_PREMIUM_SEO, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { InventoryLadder } from '@/components/InventoryLadder'
 import { submitEnquiry } from '@/lib/enquiries'
 import { BRAND } from '@/lib/brand'
 import { toast } from 'sonner'
@@ -27,6 +39,79 @@ import { AnimatedNumber } from '@/components/AnimatedNumber'
 
 /* ─── easing helpers ─── */
 const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
+
+const DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+
+function formatGuideHour(h: number): string {
+  if (h === 0 || h === 24) return '12am'
+  if (h === 12) return '12pm'
+  return h < 12 ? `${h}am` : `${h - 12}pm`
+}
+
+type SportGuideRow = {
+  name: string
+  host: string
+  days: string
+  time: string
+}
+
+/** Sport shows exactly as listed in programGuide.ts FULL_SCHEDULE — no invented peak hours. */
+function sportShowsFromGuide(): SportGuideRow[] {
+  const sport = FULL_SCHEDULE.filter((s) => s.category === 'Sport').slice().sort((a, b) => {
+    const dayA = a.day === 0 ? 7 : a.day
+    const dayB = b.day === 0 ? 7 : b.day
+    return dayA - dayB || a.startHour - b.startHour
+  })
+
+  const groups: {
+    name: string
+    host: string
+    startHour: number
+    endHour: number
+    days: number[]
+  }[] = []
+
+  for (const slot of sport) {
+    const last = groups[groups.length - 1]
+    if (
+      last &&
+      last.name === slot.name &&
+      last.host === slot.host &&
+      last.startHour === slot.startHour &&
+      last.endHour === slot.endHour
+    ) {
+      last.days.push(slot.day)
+    } else {
+      groups.push({
+        name: slot.name,
+        host: slot.host,
+        startHour: slot.startHour,
+        endHour: slot.endHour,
+        days: [slot.day],
+      })
+    }
+  }
+
+  return groups.map((g) => ({
+    name: g.name,
+    host: g.host,
+    days: g.days.map((d) => DAY_SHORT[d]).join(' · '),
+    time: `${formatGuideHour(g.startHour)} – ${formatGuideHour(g.endHour)}`,
+  }))
+}
+
+function sportGuideDaysLabel(rows: SportGuideRow[]): string {
+  const order = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  const seen = new Set<string>()
+  for (const row of rows) {
+    for (const d of row.days.split(' · ')) seen.add(d)
+  }
+  return order.filter((d) => seen.has(d)).join(' · ')
+}
+
+const SPORT_GUIDE = sportShowsFromGuide()
+const GVL_MATCH_SLOT = SPORT_GUIDE.find((s) => /gvl match of the day/i.test(s.name)) ?? SPORT_GUIDE[0]
+const SPORT_GUIDE_DAYS = sportGuideDaysLabel(SPORT_GUIDE)
 
 /* ─── Particle Canvas (football field themed) ─── */
 const ParticleField = memo(function ParticleField() {
@@ -139,38 +224,27 @@ const tiers = footballTiers.map((t) => {
   }
 })
 
-/* ─── ONE FM reach row (sourced from stationStats) ─── */
+/* ─── ONE FM reach row (sourced via coverageCopy) ─── */
 const roiData = [
   {
     medium: 'ONE FM Football',
-    reach: `${stationStats.weeklyListeners.toLocaleString()} est./wk`,
+    reach: `${weeklyListenersValue()} est./wk`,
     frequency: 'Sat matchday + drive-time',
     notes: 'GVL live coverage — local trust, loyal audience',
   },
 ]
 
 /* ─── Regional reach facts (no unsourced age breakdown) ─── */
-const reachFacts = [
-  { label: 'Est. weekly listeners', value: stationStats.weeklyListeners.toLocaleString() },
-  { label: 'Towns in broadcast area', value: String(stationStats.totalTowns) },
-  { label: 'Broadcast radius', value: `${stationStats.broadcastRadiusKm} km` },
-  { label: 'Area population (2026 est.)', value: stationStats.broadcastPopulation.toLocaleString() },
-]
+const reachFacts = reachFactsRows()
 
-const townData = [
-  'Shepparton', 'Mooroopna', 'Tatura', 'Kyabram', 'Numurkah',
-  'Nathalia', 'Rushworth', 'Murchison', 'Violet Town', 'Euroa',
-  'Seymour', 'Benalla', 'Shepparton East', 'Congupna', 'Undera',
-  'Stanhope', 'Girgarre', ' Merrigum', 'Toolamba', 'Dookie',
-  'Barmah', 'Picola', 'Wunghnu', 'Katandra', 'Tallygaroopna',
-]
+const townNames = towns.map((t) => t.name)
 
-/* ─── Community voice ─── */
+/* ─── What we can say about ourselves, with nobody else's words in our mouth ─── */
 const communityVoice = {
-  quote:
-    "When the 2022 floods cut our town off, ONE FM was the only way we knew what was happening. They saved lives, simple as that.",
-  name: 'Rochester Community Member',
-  role: '2022 Goulburn Valley Floods',
+  statement:
+    'ONE FM 98.5 is licensed to Goulburn Valley Community Radio Inc. under ACMA licence 1385226/1, callsign 3ONE. The station has broadcast from Shepparton since 1989, staffed by volunteers, and carries local sport, community notices and emergency information across the Goulburn Valley.',
+  attribution: 'Goulburn Valley Community Radio Inc.',
+  context: 'Licensed community broadcaster · ACMA 1385226/1',
 }
 
 /* ─── Enquiry Form Data (from pricing.ts) ─── */
@@ -191,7 +265,7 @@ const GVL_GALLERY = [
 
 function GVLGalleryStrip() {
   return (
-    <section className="py-20 bg-[#070707]" data-cursor-label="GVL SPORT">
+    <section className="py-20 bg-one-deep-blue" data-cursor-label="GVL SPORT">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -261,7 +335,7 @@ export default function Football() {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await submitEnquiry({
+      const result = await submitEnquiry({
         name: formData.contactName,
         email: formData.email,
         phone: formData.phone,
@@ -272,8 +346,16 @@ export default function Football() {
         enquiryType: 'GVL Football Sponsorship',
         priority: 'high',
       })
+      if (!result.success) {
+        toast.error(result.error ?? 'Something went wrong. Please call us on (03) 5831 3131.')
+        return
+      }
       setSubmitted(true)
-      toast.success('Enquiry sent! Our partnerships team will be in touch within 24 hours.')
+      toast.success(
+        result.stored
+          ? 'Enquiry received at the station.'
+          : 'Enquiry emailed to the station.',
+      )
       setTimeout(() => setSubmitted(false), 5000)
     } catch {
       toast.error('Something went wrong. Please call us on (03) 5831 3131.')
@@ -288,19 +370,19 @@ export default function Football() {
 
   return (
     <Layout>
-      <SEO title="GVL Football Sponsorship" description="Partner with ONE FM 98.5 for Goulburn Valley Football & Netball. 9 sponsorship tiers from $25/week." />
+      <SEO title="GVL Football Sponsorship" description={GVL_PREMIUM_SEO} />
       {/* ═══════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="GAME DAY">
+      <section ref={heroRef} className="relative min-h-[82vh] flex items-end overflow-hidden bg-one-navy" data-cursor-label="GAME DAY">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
           >
             <CinegraphBackground slot="gvlGameDay" opacity={0.6} />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101010] via-[#101010]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/55 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-one-navy via-one-navy/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-one-navy/55 via-transparent to-transparent" />
         </div>
         <div aria-hidden className="grain-overlay" />
         <ParticleField />
@@ -349,8 +431,8 @@ export default function Football() {
             transition={{ duration: 0.5, delay: 0.65, ease: easeOutExpo }}
             className="font-body text-one-white/70 max-w-[520px] mb-10"
           >
-            Put your business in front of {stationStats.weeklyListeners.toLocaleString()} weekly listeners across {stationStats.totalTowns} communities
-            in the Goulburn Valley. From $25/week to full naming rights — there's a tier for every budget.
+            Put your business in front of {weeklyListenersValue()} weekly listeners across {coverageNumbers.totalTowns} communities
+            in the Goulburn Valley. {GVL_PREMIUM_INTRO} {STANDARD_SPOT_PLUS_GST}.
           </motion.p>
 
           <motion.div
@@ -360,9 +442,9 @@ export default function Football() {
             className="flex flex-wrap gap-8 mb-10"
           >
             {[
-              { num: stationStats.weeklyListeners, label: 'Weekly Listeners', suffix: '' },
-              { num: stationStats.totalTowns, label: 'Communities', suffix: '' },
-              { num: stationStats.broadcastRadiusKm, label: 'km Radius', suffix: 'km' },
+              { num: coverageNumbers.weeklyListeners, label: 'Weekly Listeners', suffix: '' },
+              { num: coverageNumbers.totalTowns, label: 'Communities', suffix: '' },
+              { num: coverageNumbers.broadcastRadiusKm, label: 'km Radius', suffix: 'km' },
             ].map((s, i) => (
               <div key={s.label} className="flex items-center gap-8">
                 <div>
@@ -397,24 +479,67 @@ export default function Football() {
       </section>
 
       {/* ── Football Marquee Strip ── */}
-      <div className="bg-[#070707] border-y border-one-gold/15 py-3 overflow-hidden">
+      <div className="bg-one-deep-blue border-y border-one-gold/15 py-3 overflow-hidden">
         <Marquee
           speed={30}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL FOOTBALL LEAGUE COVERAGE</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">LIVE MATCH COMMENTARY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{stationStats.totalTowns} COMMUNITIES · GOULBURN VALLEY</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FROM $25/WEEK · NAMING RIGHTS AVAILABLE</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">
+              {`${GVL_MATCH_SLOT.name} · ${GVL_MATCH_SLOT.days} ${GVL_MATCH_SLOT.time}`.toUpperCase()}
+            </span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{townCountValue()} COMMUNITIES · GOULBURN VALLEY</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">GVL MATCH-DAY · PREMIUM INVENTORY</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">ROUND-BY-ROUND BROADCAST</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{stationStats.weeklyListeners.toLocaleString()} WEEKLY LISTENERS</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">{weeklyListenersValue()} WEEKLY LISTENERS</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">COMMENTARY TEAM · MATCHDAY PRESENCE</span>,
           ]}
         />
       </div>
 
+      {/* ─── Sport on the weekly guide (programGuide.ts / fm985.com.au/guide) ─── */}
+      <section className="bg-one-navy border-b border-one-gold/15 py-12 px-4 sm:px-6" data-cursor-label="STATION GUIDE">
+        <div className="max-w-[1200px] mx-auto">
+          <ScrollReveal className="mb-8">
+            <span className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-2">
+              Source: fm985.com.au/guide
+            </span>
+            <h2 className="font-h3 text-one-white mb-2">Sport on the weekly guide</h2>
+            <p className="font-body-small text-muted max-w-[640px]">
+              Show names and times from the station guide — {GVL_MATCH_SLOT.name} is{' '}
+              {GVL_MATCH_SLOT.days} {GVL_MATCH_SLOT.time}, not the only sports broadcast.
+            </p>
+          </ScrollReveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {SPORT_GUIDE.map((show) => (
+              <div
+                key={`${show.name}-${show.days}-${show.time}`}
+                className="glass-card p-5 border border-one-gold/15"
+              >
+                <p className="font-label text-[10px] tracking-[0.2em] text-one-gold uppercase mb-2">
+                  {show.days} · {show.time}
+                </p>
+                <h3 className="font-h4 text-one-white mb-1">{show.name}</h3>
+                <p className="font-body-small text-muted">{show.host}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 font-body-small text-muted">
+            <Link to="/programs" className="text-one-gold hover:underline" data-cursor-label="GUIDE">
+              Full program guide
+            </Link>
+          </p>
+        </div>
+      </section>
+
       {/* ─── GVL Sports Photo Strip ─── */}
       <GVLGalleryStrip />
+
+      <section className="bg-surface-mid px-4 sm:px-6 py-10">
+        <div className="max-w-[800px] mx-auto">
+          <InventoryLadder />
+        </div>
+      </section>
 
       {/* ═══════════════════════════════════════════
           SECTION 2 — THE 9 TIERS
@@ -428,8 +553,8 @@ export default function Football() {
             </div>
             <WordReveal text="CHOOSE YOUR IMPACT" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              From community supporters to naming rights partners — every dollar goes toward
-              supporting local football and getting your brand heard.
+              Community Supporter is a match-day name-read and logo listing — not a GVL commercial spot.
+              {STANDARD_SPOT_PLUS_GST}. GVL match-day commercials and live calls are quoted separately.
             </p>
           </ScrollReveal>
 
@@ -578,8 +703,8 @@ export default function Football() {
             <div className="flex items-start gap-3">
               <TrendingUp size={18} className="text-one-gold shrink-0 mt-0.5" />
               <p className="font-body-small text-one-white">
-                ONE FM reaches an estimated <strong className="text-one-gold">{stationStats.weeklyListeners.toLocaleString()}</strong> listeners
-                weekly across {stationStats.totalTowns} communities. GVL packages put your brand alongside live match commentary every Saturday.
+                ONE FM reaches an estimated <strong className="text-one-gold">{weeklyListenersValue()}</strong> listeners
+                weekly across {coverageNumbers.totalTowns} communities. GVL packages sit beside the sport slots on the weekly guide ({SPORT_GUIDE_DAYS}).
               </p>
             </div>
           </motion.div>
@@ -599,7 +724,7 @@ export default function Football() {
             </div>
             <WordReveal text="YOUR AUDIENCE, YOUR COMMUNITY" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
-              ONE FM broadcasts to {stationStats.totalTowns} towns across the Goulburn Valley, covering a projected population of {stationStats.broadcastPopulation.toLocaleString()}.
+              ONE FM broadcasts to {formatTownsGvl()}. {broadcastPopulationValue()} people live in that broadcast area (townData 2026 est.).
             </p>
           </ScrollReveal>
 
@@ -636,9 +761,9 @@ export default function Football() {
               className="glass-card p-6 h-full group relative overflow-hidden"
             >
               <div aria-hidden className="explore-tile-scan" />
-              <h4 className="font-h4 text-one-white mb-4">{stationStats.totalTowns} Communities Covered</h4>
+              <h4 className="font-h4 text-one-white mb-4">{townCountValue()} Communities Covered</h4>
               <div className="flex flex-wrap gap-1.5 mb-4">
-                {townData.map((town, i) => (
+                {townNames.map((town, i) => (
                   <motion.span
                     key={town}
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -653,7 +778,7 @@ export default function Football() {
               </div>
               <div className="flex items-center gap-2 mt-4">
                 <MapPin size={14} className="text-one-electric" />
-                <span className="font-label text-xs text-one-electric">{stationStats.broadcastRadiusKm}km broadcast radius from Shepparton</span>
+                <span className="font-label text-xs text-one-electric">{coverageNumbers.broadcastRadiusKm}km broadcast radius from Shepparton</span>
               </div>
             </motion.div>
             </TiltCard>
@@ -671,10 +796,15 @@ export default function Football() {
               <h4 className="font-h4 text-one-white mb-5">Listener Habits</h4>
               <div className="space-y-5">
                 {[
-                  { icon: Clock, label: 'Peak Footy Hours', value: 'Sat 1pm — 6pm', color: '#F2F2F2' },
-                  { icon: Target, label: 'Live Match Coverage', value: 'Every weekend', color: '#B6FF00' },
+                  {
+                    icon: Clock,
+                    label: GVL_MATCH_SLOT.name,
+                    value: `${GVL_MATCH_SLOT.days} ${GVL_MATCH_SLOT.time}`,
+                    color: '#F2F2F2',
+                  },
+                  { icon: Target, label: 'Sport on the guide', value: SPORT_GUIDE_DAYS, color: '#B6FF00' },
                   { icon: Radio, label: 'GVL Commentary', value: 'FM 98.5 + stream', color: '#F2F2F2' },
-                  { icon: Users, label: 'Est. Weekly Listeners', value: stationStats.weeklyListeners.toLocaleString(), color: '#9B5DE5' },
+                  { icon: Users, label: 'Est. Weekly Listeners', value: weeklyListenersValue(), color: '#9B5DE5' },
                 ].map((item) => {
                   const Icon = item.icon
                   return (
@@ -764,38 +894,38 @@ export default function Football() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          SECTION 5 — TESTIMONIALS
+          SECTION 5 — WHO WE ARE
           ═══════════════════════════════════════════ */}
-      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="TESTIMONIALS">
+      <section className="bg-surface-warm section-bleed-top section-padding" data-cursor-label="WHO WE ARE">
         <div className="max-w-[1000px] mx-auto px-4">
           <ScrollReveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Star size={18} className="text-one-electric" />
-              <span className="font-label text-one-electric">LOCAL PROOF</span>
+              <span className="font-label text-one-electric">ON THE RECORD</span>
             </div>
-            <WordReveal text="COMMUNITY VOICE" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
+            <WordReveal text="WHO YOU'RE SPONSORING" className="font-h2 text-one-white mb-3 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">
-              Why the Goulburn Valley trusts ONE FM.
+              The licence, the region, and the people behind the microphone.
             </p>
           </ScrollReveal>
 
           <div className="max-w-3xl mx-auto">
             <TiltCard maxTilt={3}>
             <div className="glass-card p-8 text-center">
-              <p className="font-body text-one-white italic mb-6 text-lg leading-relaxed">
-                "{communityVoice.quote}"
+              <p className="font-body text-one-white mb-6 text-lg leading-relaxed">
+                {communityVoice.statement}
               </p>
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-one-white/10 flex items-center justify-center">
                   <User size={18} className="text-one-muted" />
                 </div>
                 <div className="text-left">
-                  <p className="font-h4 text-one-white">{communityVoice.name}</p>
-                  <p className="font-label text-muted text-xs">{communityVoice.role}</p>
+                  <p className="font-h4 text-one-white">{communityVoice.attribution}</p>
+                  <p className="font-label text-muted text-xs">{communityVoice.context}</p>
                 </div>
               </div>
               <p className="font-body-small text-muted text-xs mt-6">
-                GVL sponsor testimonials available on request — {BRAND.email}
+                GVL sponsor references available on request — {BRAND.email}
               </p>
             </div>
             </TiltCard>
@@ -937,9 +1067,9 @@ export default function Football() {
                 <div className="w-16 h-16 rounded-full bg-data-teal/20 flex items-center justify-center mx-auto mb-4">
                   <Check size={32} className="text-data-teal" />
                 </div>
-                <h3 className="font-h3 text-one-white mb-2">Enquiry Sent!</h3>
+                <h3 className="font-h3 text-one-white mb-2">Enquiry received</h3>
                 <p className="font-body-small text-one-white">
-                  Thanks {formData.contactName || 'there'}! Our sponsorship team will be in touch within 24 hours.
+                  Thanks {formData.contactName || 'there'}! Our sponsorship team will be in touch.
                 </p>
               </motion.div>
             )}

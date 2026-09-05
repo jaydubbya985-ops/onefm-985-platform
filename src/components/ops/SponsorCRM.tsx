@@ -75,6 +75,10 @@ import {
   type SponsorProposalStatus,
   type SponsorTier,
 } from './data/sponsors'
+import { opsInitial, opsStorageKey } from '@/lib/opsMode'
+import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
 // Module helpers (extracted from the deployed bundle)
@@ -320,7 +324,10 @@ function sponsorFromContract(contract: Contract): CrmSponsor {
 
 export default function SponsorCRM() {
   const { contracts } = useOpsStore()
-  const [sponsors, setSponsors] = useLocalStorage<CrmSponsor[]>(SPONSORS_STORAGE_KEY, CRM_SPONSORS)
+  const [sponsors, setSponsors] = useLocalStorage<CrmSponsor[]>(
+    opsStorageKey(SPONSORS_STORAGE_KEY),
+    opsInitial(CRM_SPONSORS, []),
+  )
   const [view, setView] = useState('pipeline')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -555,9 +562,34 @@ export default function SponsorCRM() {
 
   return (
     <div
-      className="min-h-screen bg-[#101010] text-white p-6"
+      className="min-h-screen bg-[#101010] text-white"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
+      <div className="relative overflow-hidden border-b border-[#2A2A2A]">
+        {/* Unused community Christmas broadcast still — station archive, not a presenter portrait. */}
+        <img
+          src={STATION_PHOTOS.studioChristmasBroadcast}
+          alt=""
+          aria-hidden
+          loading="eager"
+          className="absolute inset-0 h-full w-full object-cover object-[center_20%]"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
+        />
+        <div className="relative z-10 px-6 pt-6 pb-4">
+          <p className="font-label text-[10px] tracking-[0.22em] uppercase text-white/40">
+            Station archive · community Christmas broadcast
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
+            {BANK_BSB} · {BANK_ACCOUNT_NAME}. This screen is not a Stripe receipt. Photography is
+            not a named presenter portrait.
+          </p>
+        </div>
+      </div>
+      <div className="p-6">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
@@ -655,7 +687,7 @@ export default function SponsorCRM() {
                       <Label className="text-slate-300">ABN</Label>
                       <Input
                         className="bg-[#101010] border-[#2A2A2A]/50 text-white placeholder:text-slate-500"
-                        placeholder="12 345 678 901"
+                        placeholder="ABN (11 digits)"
                         value={form.abn}
                         onChange={(e) => setForm({ ...form, abn: e.target.value })}
                       />
@@ -1580,6 +1612,7 @@ export default function SponsorCRM() {
           )}
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }

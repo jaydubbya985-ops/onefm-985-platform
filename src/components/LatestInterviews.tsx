@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ExternalLink, Mic2, Play } from 'lucide-react'
+import { ExternalLink, Play } from 'lucide-react'
 import { fetchLatestInterviews, formatInterviewDate, type Fm985Interview } from '@/lib/fm985Feed'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
@@ -8,9 +8,16 @@ import { FacebookPanel } from '@/components/social/FacebookPanel'
 import { WordReveal } from '@/components/WordReveal'
 import { MagneticButton } from '@/components/MagneticButton'
 import { TiltCard } from '@/components/TiltCard'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
+/** Unused Shepparton landmark — no unnamed portraits. */
+const LOCAL_ARCHIVE_PHOTO = STATION_PHOTOS.landmarkHowNowCow
+const LOCAL_ARCHIVE_ALT = 'How Now cow sculpture, Shepparton — ONE FM station archive'
 
 function InterviewCard({ item, index = 0 }: { item: Fm985Interview; index?: number }) {
   const [expanded, setExpanded] = useState(false)
+  const thumbSrc = item.imageUrl || LOCAL_ARCHIVE_PHOTO
+  const thumbAlt = item.imageUrl ? '' : LOCAL_ARCHIVE_ALT
 
   return (
     <TiltCard maxTilt={4}>
@@ -22,23 +29,16 @@ function InterviewCard({ item, index = 0 }: { item: Fm985Interview; index?: numb
       transition={{ delay: index * 0.07, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="glass-card p-5 group">
       <div className="flex gap-4">
-        {item.imageUrl ? (
-          <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-one-border">
-            <img
-              src={item.imageUrl}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div aria-hidden className="explore-tile-scan" />
-          </div>
-        ) : (
-          <div className="relative w-16 h-16 rounded-lg bg-one-navy border border-one-border flex items-center justify-center shrink-0 overflow-hidden">
-            <Mic2 className="text-one-gold relative z-10" size={24} />
-            <div aria-hidden className="explore-tile-scan" />
-          </div>
-        )}
+        <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-one-border">
+          <img
+            src={thumbSrc}
+            alt={thumbAlt}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div aria-hidden className="explore-tile-scan" />
+        </div>
         <div className="flex-1 min-w-0">
           <time className="font-label text-[10px] text-one-gold">{formatInterviewDate(item.date)}</time>
           <h3 className="font-h4 text-one-white mt-1 line-clamp-2">{item.title}</h3>
@@ -104,12 +104,23 @@ export function LatestInterviews() {
     <section className="section-padding bg-surface-lift section-bleed-top relative" data-cursor-label="LATEST INTERVIEWS">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-10">
-          <div>
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-3 block">LIVE &amp; LOCAL</span>
-            <WordReveal text="Latest Interviews" className="font-h2 text-one-white mt-2 block" as="h2" stagger={0.028} variant="char" />
-            <p className="font-body text-muted mt-2 max-w-xl">
-              Fresh from ONE FM 98.5 — synced from fm985.com.au with on-demand audio on SoundCloud.
-            </p>
+          <div className="flex flex-col sm:flex-row gap-5 sm:items-start min-w-0">
+            <div className="relative w-full sm:w-48 h-32 sm:h-36 rounded-xl overflow-hidden shrink-0 border border-one-border">
+              <img
+                src={LOCAL_ARCHIVE_PHOTO}
+                alt={LOCAL_ARCHIVE_ALT}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="min-w-0">
+              <span className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-3 block">LIVE &amp; LOCAL</span>
+              <WordReveal text="Latest Interviews" className="font-h2 text-one-white mt-2 block" as="h2" stagger={0.028} variant="char" />
+              <p className="font-body text-muted mt-2 max-w-xl">
+                Fresh from ONE FM 98.5 — synced from fm985.com.au with on-demand audio on SoundCloud.
+              </p>
+            </div>
           </div>
           <div className="flex flex-wrap gap-3 shrink-0">
             <MagneticButton strength={6}>
@@ -145,13 +156,11 @@ export function LatestInterviews() {
               ))}
             {error && (
               <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
-                <Mic2 className="mx-auto mb-3 text-one-muted" size={28} />
                 <p className="font-body-small text-one-muted">Interviews temporarily unavailable — check back soon or visit fm985.com.au</p>
               </div>
             )}
             {!loading && !error && items.length === 0 && (
               <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
-                <Mic2 className="mx-auto mb-3 text-one-muted" size={28} />
                 <p className="font-body-small text-one-muted">No recent interviews — check back soon.</p>
               </div>
             )}
