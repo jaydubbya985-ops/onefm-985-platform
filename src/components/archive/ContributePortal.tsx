@@ -23,8 +23,8 @@ export function ContributePortal() {
             Were you part of ONE FM history?
           </h2>
           <p className="text-[17px] text-white/55 max-w-[600px] mb-8 leading-relaxed">
-            The Living Archive is an active preservation project — not a finished monument. Photos,
-            program guides, clippings and memories help fill the drawers.
+            The Living Archive names sourced station history. Photos, program guides, clippings
+            and memories help fill the drawers — send them via Contact.
           </p>
 
           <ul className="grid sm:grid-cols-2 gap-3 mb-10 max-w-2xl">
