@@ -2,6 +2,7 @@ import { useRef, useState, useLayoutEffect } from 'react'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { MULTICULTURAL_PROGRAM_COUNT } from '@/data/programGuide'
+import { BRAND } from '@/lib/brand'
 
 const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
 
@@ -60,7 +61,7 @@ const SLIDES: Slide[] = [
     img: '/assets/images/studio-exterior-rainbow.jpg',
     num: '08', ghost: 'BORN HERE',
     title: 'Born Here.',
-    caption: 'Built here. Belongs here. Goulburn Valley Community Radio — Est. 1989.',
+    caption: `Built here. Belongs here. ${BRAND.org} — established ${BRAND.established}, licensed ${BRAND.licensed}.`,
   },
 ]
 
