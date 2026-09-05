@@ -11,6 +11,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
+import { BRAND } from '@/lib/brand'
 import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { InventoryLadder } from '@/components/InventoryLadder'
@@ -103,7 +104,7 @@ export default function Community() {
             `● ${formatTowns()} across the Goulburn Valley`,
             `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`,
             `Multicultural programming — ${MULTICULTURAL_PROGRAM_COUNT} programs on the weekly guide`,
-            'Community radio since 1989',
+            `Licensed ${BRAND.licensed} · established ${BRAND.established} · callsign ${BRAND.callsign}`,
           ]}
           delay={0.4}
         />
