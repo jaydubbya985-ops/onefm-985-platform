@@ -66,8 +66,18 @@ function fmtCurrency(n: number): string {
   return '$' + n.toLocaleString()
 }
 
+/** Cover / generated-on line for Word kits — Melbourne calendar day, not leftover US month-first. */
+export function docxGeneratedOn(now = new Date()): string {
+  return now.toLocaleDateString('en-AU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Australia/Melbourne',
+  })
+}
+
 function todayStr(): string {
-  return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  return docxGeneratedOn()
 }
 
 const brandColor = 'D4963A'
