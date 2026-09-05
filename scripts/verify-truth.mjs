@@ -466,6 +466,21 @@ for (const required of [
   }
 }
 
+const coveragePins = files.find((f) => f.label === 'data/coverageMapPins.ts')
+if (
+  coveragePins &&
+  (/Major GVL sponsor/i.test(coveragePins.text) ||
+    /Long-term sponsor/i.test(coveragePins.text) ||
+    /breakfast hours/i.test(coveragePins.text) ||
+    /Media partner/i.test(coveragePins.text) ||
+    /year-round/i.test(coveragePins.text) ||
+    /League naming partner/i.test(coveragePins.text))
+) {
+  hits.push(
+    'data/coverageMapPins.ts: public pin blurbs must not invent rank, tenure, peak hours, or media-partner status',
+  )
+}
+
 const app = files.find((f) => f.label === 'App.tsx')
 if (
   !app ||
