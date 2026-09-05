@@ -83,6 +83,7 @@ import { OpsInvoiceSheet } from '@/components/ops/OpsInvoiceSheet'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { addMelbourneCalendarDays, formatMelbourneDate } from '@/lib/melbourneDate'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
@@ -205,17 +206,11 @@ function fmt(value: number): string {
 }
 
 function fmtDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  return formatMelbourneDate(value, 'short')
 }
 
 function addDays(date: string, days: number): string {
-  const d = new Date(date)
-  d.setDate(d.getDate() + days)
-  return d.toISOString().split('T')[0]
+  return addMelbourneCalendarDays(date, days)
 }
 
 function nextInvoiceNumber(invoices: GeneratedInvoice[]): string {

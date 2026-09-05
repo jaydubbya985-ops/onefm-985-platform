@@ -90,6 +90,7 @@ import {
   type InvoiceSendPayload,
 } from '@/lib/invoiceSend'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatMelbourneDate } from '@/lib/melbourneDate'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
@@ -200,8 +201,7 @@ const verifyGst = (amountExclGst: number, gst: number): boolean =>
 const formatCurrency = (value: number): string =>
   value.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' })
 
-const formatDate = (value: string): string =>
-  new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+const formatDate = (value: string): string => formatMelbourneDate(value, 'short')
 
 /** Store statuses outside the batch flow are shown at their nearest stage. */
 function toBatchStatus(status: OpsInvoice['status']): BatchStatus {
@@ -569,11 +569,7 @@ export default function InvoiceBatchSender() {
   }
 
   const handleSendReceipt = async (row: BatchRow) => {
-    const paymentDate = new Date().toLocaleDateString('en-AU', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
+    const paymentDate = formatMelbourneDate()
     const result = await dispatchReceiptEmail({
       to: row.email,
       contactName: row.contactName,

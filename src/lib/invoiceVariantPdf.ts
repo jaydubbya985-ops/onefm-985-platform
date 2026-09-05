@@ -16,6 +16,7 @@ import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import type { InvoiceDesignVariantId } from '@/lib/invoiceDesignVariants'
 import { INVOICE_STATION } from '@/lib/invoiceDesignVariants'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatMelbourneDate } from '@/lib/melbourneDate'
 
 const aud = (n: number) =>
   `$${n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -126,16 +127,8 @@ function drawVariantAmount(
 
 function drawSharedBody(p: PdfPen, invoice: PdfInvoiceData, y: number, variant: InvoiceDesignVariantId): number {
   const { W, M, CW, bold, norm, tl, tr, kicker, doc } = p
-  const issueDate = (invoice.issueDate ? new Date(invoice.issueDate) : new Date()).toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-  const dueDate = new Date(invoice.dueDate).toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  const issueDate = formatMelbourneDate(invoice.issueDate ?? new Date(), 'short')
+  const dueDate = formatMelbourneDate(invoice.dueDate, 'short')
 
   kicker('Bill to', M, y)
   kicker('From', W / 2 + 4, y)
@@ -281,12 +274,7 @@ export async function generateVariantInvoicePdf(
 ): Promise<jsPDF> {
   const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
   const p = createPdfPen(doc)
-  const today = new Date()
-  const dueDate = new Date(invoice.dueDate).toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  const dueDate = formatMelbourneDate(invoice.dueDate, 'short')
 
   let y = drawVariantHeader(p, variant, invoice.number)
   y = drawVariantAmount(p, variant, y, invoice.total, dueDate, invoice.gst)
@@ -311,7 +299,7 @@ export async function generateVariantInvoicePdf(
         ? `${INVOICE_STATION.org}  ·  ABN ${DS.station.abn}  ·  ${coverage}`
         : `${INVOICE_STATION.org}  ·  ABN ${DS.station.abn}  ·  ${DS.station.phone}  ·  ${coverage}`
 
-  drawSlimFooter(p, footerLine, `Generated ${today.toLocaleDateString('en-AU')}`)
+  drawSlimFooter(p, footerLine, `Generated ${formatMelbourneDate(undefined, 'short')}`)
 
   return doc
 }

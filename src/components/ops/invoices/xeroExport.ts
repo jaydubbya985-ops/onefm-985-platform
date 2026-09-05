@@ -4,6 +4,7 @@
 // validation and UTF-8 BOM for Excel compatibility.
 // ---------------------------------------------------------------------------
 
+import { formatMelbourneDate } from '@/lib/melbourneDate'
 import type { Contract } from '../data/sponsors'
 
 export interface XeroExportableInvoice {
@@ -224,13 +225,7 @@ export const summarizeXeroExport = summariseXeroExport
 
 /** Format date for contract period labels. */
 function formatPeriodDate(iso: string): string {
-  const d = new Date(iso)
-  if (isNaN(d.getTime())) return iso
-  return d.toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  return formatMelbourneDate(iso, 'short')
 }
 
 /**
