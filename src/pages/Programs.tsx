@@ -312,7 +312,7 @@ const shows = [
     name: "Rock 'n' Roll Fever",
     time: "Thursday, 9pm",
     host: "Carlo",
-    desc: "Rock 'n' Roll classics Thursday nights with Carlo — the sounds that defined a generation.",
+    desc: "Rock 'n' Roll classics Thursday nights with Carlo.",
     tag: "Music",
     icon: Music,
   },
