@@ -113,6 +113,24 @@ if (
 ) {
   hits.push('pages/Listen.tsx: live hero from liveNowFromMetadata; on-air wall from ON_AIR_WEEK')
 }
+if (listen && /WeeklySchedule/.test(listen.text)) {
+  hits.push('pages/Listen.tsx: weekly grid belongs on /programs, not the stream page')
+}
+if (listen && /InventoryLadder/.test(listen.text)) {
+  hits.push('pages/Listen.tsx: sponsor inventory is not the listen desk')
+}
+if (
+  listen &&
+  (!listen.text.includes('to="/programs"') || !listen.text.includes('to="/broadcast"'))
+) {
+  hits.push('pages/Listen.tsx: must send listeners to /programs and /broadcast for the guide')
+}
+if (listen && /the studio answers when/i.test(listen.text)) {
+  hits.push('pages/Listen.tsx: leftover studio-answers copy')
+}
+if (listen && /Broadcasting ever since/.test(listen.text)) {
+  hits.push('pages/Listen.tsx: 1989 stat must name the community licence')
+}
 
 const home = files.find((f) => f.label === 'pages/Home.tsx')
 if (!home || !home.text.includes('liveNowFromMetadata')) {
@@ -140,6 +158,13 @@ if (!onAirKit || !onAirKit.text.includes('onAirWallSub')) {
 const miniPlayer = files.find((f) => f.label === 'components/MiniPlayer.tsx')
 if (!miniPlayer || !miniPlayer.text.includes('liveNowFromMetadata')) {
   hits.push('components/MiniPlayer.tsx: breakfast chrome must use liveNowFromMetadata')
+}
+if (
+  !miniPlayer ||
+  !miniPlayer.text.includes('error') ||
+  !miniPlayer.text.includes('AUDIO_PLAYER_URL')
+) {
+  hits.push('components/MiniPlayer.tsx: stream errors must surface and link the fm985.com.au web player')
 }
 
 const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
