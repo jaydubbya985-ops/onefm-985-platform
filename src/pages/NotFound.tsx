@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { Loader2, Pause, Play } from 'lucide-react'
 import { SEO } from '@/components/SEO'
 import { BrandLogo } from '@/components/BrandLogo'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
@@ -9,7 +10,10 @@ import {
   formatWeeklyListeners,
   formatSeoDefault,
 } from '@/lib/coverageCopy'
-import { BREAKFAST_TIME, formatBreakfastChromeLabel } from '@/data/programGuide'
+import { useLiveStream } from '@/hooks/useLiveStream'
+import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
+import { liveNowFromMetadata } from '@/lib/liveNow'
+import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
 
 const WAYS_BACK = [
   { to: '/programs', label: 'Program Guide' },
@@ -77,8 +81,15 @@ function goldHover(enter: boolean) {
 }
 
 export default function NotFound() {
-  const breakfast = formatBreakfastChromeLabel()
   const coverage = `${formatWeeklyListeners()} · ${formatCoverageShort()}`
+  const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
+  const { playing, loading, error, toggle } = useLiveStream()
+  const onAirLine = [
+    live.withLine,
+    live.programTime,
+    live.remainingLabel,
+  ].filter(Boolean).join(' · ')
 
   return (
     <div
@@ -96,7 +107,7 @@ export default function NotFound() {
     >
       <SEO
         title="Page not found"
-        description={`This frequency is off the air. ${formatSeoDefault()}`}
+        description={`This page isn't on the site. ONE FM 98.5 is still on air. ${formatSeoDefault()}`}
         ogImage={STATION_PHOTOS.towerStarsNight}
       />
 
@@ -184,7 +195,7 @@ export default function NotFound() {
               animation: 'dot-pulse 1.4s ease-in-out infinite',
             }}
           />
-          NO SIGNAL
+          WRONG PAGE
         </div>
 
         <div style={{ position: 'relative', marginBottom: 8, lineHeight: 1 }}>
@@ -242,7 +253,7 @@ export default function NotFound() {
             marginBottom: 28,
           }}
         >
-          DEAD AIR
+          PAGE NOT FOUND
         </div>
 
         <p
@@ -254,26 +265,76 @@ export default function NotFound() {
             marginBottom: 16,
           }}
         >
-          This frequency is off the air.
-          <br />
-          Tune back to {BRAND.frequency} FM — {coverage}.
+          This page isn&apos;t on the site. {BRAND.frequency} is still on air.
         </p>
 
         <p
           style={{
             fontFamily: 'JetBrains Mono, monospace',
-            fontSize: '0.62rem',
+            fontSize: '0.72rem',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.42)',
+            color: 'rgba(255,255,255,0.72)',
             lineHeight: 1.6,
-            marginBottom: 36,
+            marginBottom: 8,
           }}
         >
-          Weekdays {BREAKFAST_TIME}
+          {live.isLive ? 'On air now' : 'Overnight / automated'}
           <br />
-          {breakfast}
+          {live.program}
         </p>
+        {onAirLine ? (
+          <p
+            style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '0.62rem',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.42)',
+              lineHeight: 1.6,
+              marginBottom: 12,
+            }}
+          >
+            {onAirLine}
+          </p>
+        ) : null}
+        {live.breakfastOnAir && live.breakfastLabel ? (
+          <p
+            style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '0.58rem',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.42)',
+              marginBottom: 16,
+            }}
+          >
+            {live.breakfastLabel}
+          </p>
+        ) : (
+          <div style={{ marginBottom: 16 }} />
+        )}
+        {error ? (
+          <p
+            role="alert"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '0.85rem',
+              color: 'rgba(255,255,255,0.65)',
+              marginBottom: 20,
+            }}
+          >
+            {error}{' '}
+            <a
+              href={AUDIO_PLAYER_URL}
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: '#E51636' }}
+            >
+              Open the fm985.com.au web player
+            </a>
+          </p>
+        ) : null}
 
         <div
           style={{
@@ -284,6 +345,29 @@ export default function NotFound() {
             gap: 12,
           }}
         >
+          <button
+            type="button"
+            onClick={() => void toggle()}
+            disabled={loading}
+            aria-pressed={playing}
+            aria-label={playing ? 'Pause the live stream' : 'Play the live stream'}
+            data-cursor-label={playing ? 'PAUSE' : 'PLAY'}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 48,
+              height: 48,
+              borderRadius: 999,
+              border: 'none',
+              background: '#E51636',
+              color: '#fff',
+              cursor: loading ? 'wait' : 'pointer',
+              opacity: loading ? 0.6 : 1,
+            }}
+          >
+            {loading ? <Loader2 size={20} className="animate-spin" /> : playing ? <Pause size={20} /> : <Play size={20} className="translate-x-0.5" />}
+          </button>
           <Link
             to="/listen"
             data-cursor-label="LISTEN"
@@ -304,7 +388,7 @@ export default function NotFound() {
               background: '#E51636',
             }}
           >
-            ▶ Listen Live
+            Full player
           </Link>
           <Link
             to="/"
