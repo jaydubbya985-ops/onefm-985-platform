@@ -16,10 +16,10 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
   getBreakfastScheduleLabel,
-  getCurrentLiveShow,
 } from '@/data/programGuide'
 import { formatGuideHours, formatHostHours } from '@/lib/guideHours'
-import { formatWithPresenter } from '@/lib/liveNow'
+import { liveNowFromMetadata } from '@/lib/liveNow'
+import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
@@ -100,8 +100,11 @@ function MiniWaveform({ color, seed }: { color: string; seed: number }) {
 /*  ON AIR NOW indicator                                      */
 /* ────────────────────────────────────────────────────────── */
 function OnAirNow() {
-  const live = getCurrentLiveShow()
-  const withHost = formatWithPresenter(live.host)
+  const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
+  const withHost = live.withLine
+  const status = live.isLive ? 'ON AIR NOW' : 'OVERNIGHT / AUTOMATED'
+  const lamp = live.isLive ? 'bg-one-red' : 'bg-white/35'
 
   return (
     <TiltCard maxTilt={4} className="max-w-md">
@@ -111,16 +114,18 @@ function OnAirNow() {
       transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
       className="glass-card px-6 py-4 flex items-center gap-4"
     >
-      <span className="relative flex h-3 w-3 shrink-0">
-        <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
-        <span className="relative inline-flex rounded-full h-3 w-3 bg-one-red" />
+      <span className="relative flex h-3 w-3 shrink-0" title={live.isLive ? 'On air' : 'Automated'}>
+        {live.isLive ? (
+          <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
+        ) : null}
+        <span className={`relative inline-flex rounded-full h-3 w-3 ${lamp}`} />
       </span>
       <div className="text-left">
-        <p className="font-label text-one-red mb-0.5">ON AIR NOW</p>
-        <p className="font-h4 text-one-white">{live.name}</p>
-        <p className="font-body-small text-muted">{withHost ? `${withHost} · ` : ''}{live.time}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}</p>
+        <p className={`font-label mb-0.5 ${live.isLive ? 'text-one-red' : 'text-muted'}`}>{status}</p>
+        <p className="font-h4 text-one-white">{live.program}</p>
+        <p className="font-body-small text-muted">{withHost ? `${withHost} · ` : ''}{live.programTime}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}</p>
       </div>
-      <Wifi size={20} className="text-one-gold ml-auto shrink-0" />
+      <Wifi size={20} className={`ml-auto shrink-0 ${live.isLive ? 'text-one-gold' : 'text-muted'}`} />
     </motion.div>
     </TiltCard>
   )
@@ -538,7 +543,7 @@ export default function Programs() {
     <Layout>
       <SEO title="Programs & Shows" description="ONE FM Breakfast, Dancing through the decades, The James Manley Show, GVL sport, multicultural programs, and more. Full guide from fm985.com.au." />
       {/* ═══════ Section 1 — Hero ═══════ */}
-      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="ON AIR NOW">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-end overflow-hidden bg-[#101010]" data-cursor-label="PROGRAMS">
         <div className="absolute inset-0 z-0">
           <motion.div
             style={{ y: heroImgY, position: 'absolute', top: '-28%', bottom: 0, left: 0, right: 0, willChange: 'transform' }}
