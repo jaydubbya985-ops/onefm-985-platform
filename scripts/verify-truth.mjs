@@ -489,6 +489,20 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const proposals = files.find((f) => f.label === 'components/ops/ProposalBuilder.tsx')
+if (
+  !proposals ||
+  /Proposal Builder/.test(proposals.text) ||
+  /formatCoverageShort/.test(proposals.text)
+) {
+  hits.push(
+    'components/ops/ProposalBuilder.tsx: heading must be Proposals — not leftover Proposal Builder or leftover coverage stamp',
+  )
+}
+if (!proposals?.text.includes('never sold as the $25 floor')) {
+  hits.push('components/ops/ProposalBuilder.tsx: must still say GVL is never the $25 floor')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)

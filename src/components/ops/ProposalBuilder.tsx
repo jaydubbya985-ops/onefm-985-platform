@@ -53,7 +53,6 @@ import {
   type ProposalDocData,
 } from '@/lib/proposalDocument'
 import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
-import { formatCoverageShort } from '@/lib/coverageCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
@@ -328,9 +327,9 @@ export default function ProposalBuilder() {
             Station archive · Goulburn Valley silo art
           </p>
           <p className="mt-1 text-xs text-white/35">
-            Coverage: {formatCoverageShort()} (ABS 2021 via townData). {STANDARD_SPOT_PLUS_GST}.{' '}
-            {GVL_PREMIUM_BADGE} — never sold as the $25 floor. Invoice payments: NAB BSB {BANK_BSB} ·{' '}
-            {BANK_ACCOUNT_NAME}. Mailto opens a draft — it does not mark the proposal sent.
+            {STANDARD_SPOT_PLUS_GST}. {GVL_PREMIUM_BADGE} — never sold as the $25 floor. Invoice
+            payments: NAB BSB {BANK_BSB} · {BANK_ACCOUNT_NAME}. Mailto opens a draft — it does not mark
+            the proposal sent.
           </p>
         </div>
       </div>
@@ -339,7 +338,7 @@ export default function ProposalBuilder() {
         <div className="flex items-center gap-3">
           <FileText className="w-6 h-6 text-one-gold" />
           <div>
-            <h2 className="text-xl font-bold text-one-white">Proposal Builder</h2>
+            <h2 className="text-xl font-bold text-one-white">Proposals</h2>
             <p className="text-sm text-one-muted">
               Pick a package, save a draft, download a PDF. Opening mail does not mark the proposal sent.
             </p>
