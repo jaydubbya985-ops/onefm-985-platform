@@ -320,7 +320,7 @@ const shows = [
     name: "The Essential Hits",
     time: "Thu 6pm / Sun 12pm",
     host: "Tim Symonds",
-    desc: "The essential hits from across the decades — Thursday evenings and Sunday afternoons with Tim Symonds.",
+    desc: `Tim Symonds on the weekly guide — ${formatGuideHours('The Essential Hits') ?? 'Thursday and Sunday'}.`,
     tag: "Music",
     icon: Music,
   },

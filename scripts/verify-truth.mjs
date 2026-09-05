@@ -432,6 +432,21 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (!programs || /essential hits from across the decades/i.test(programs.text)) {
+  hits.push(
+    'pages/Programs.tsx: leftover essential hits from across the decades is back',
+  )
+}
+if (!programs || !programs.text.includes("essential morning companion")) {
+  hits.push(
+    'pages/Programs.tsx: leftover essential morning companion must stay for #440',
+  )
+}
+if (!programs || !programs.text.includes('defined a generation')) {
+  hits.push(
+    "pages/Programs.tsx: leftover defined a generation must stay for #492",
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
