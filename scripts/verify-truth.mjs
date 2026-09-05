@@ -142,6 +142,17 @@ if (!miniPlayer || !miniPlayer.text.includes('liveNowFromMetadata')) {
   hits.push('components/MiniPlayer.tsx: breakfast chrome must use liveNowFromMetadata')
 }
 
+const liveWidget = files.find((f) => f.label === 'components/home/LivePlayerWidget.tsx')
+if (
+  !liveWidget ||
+  /LIVE ON AIR/.test(liveWidget.text) ||
+  !liveWidget.text.includes('no stream track listed')
+) {
+  hits.push(
+    'components/home/LivePlayerWidget.tsx: empty now-playing must name that no stream track is listed — not leftover LIVE ON AIR',
+  )
+}
+
 const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
 if (!onAirNav || !onAirNav.text.includes('formatBreakfastChromeLabel')) {
   hits.push('components/OnAirNav.tsx: menu footer must show formatBreakfastChromeLabel from programGuide')

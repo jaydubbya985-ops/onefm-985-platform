@@ -107,8 +107,8 @@ export function LivePlayerWidget({ className = '-mt-12' }: { className?: string 
                     </div>
                   ) : (
                     <div className="glass-card rounded-lg px-4 py-3 mb-4 border-one-gold/10">
-                      <p className="font-label text-[10px] text-one-gold/60 mb-1">LIVE ON AIR</p>
-                      <p className="font-body text-one-muted text-sm">Tune in live on 98.5 FM</p>
+                      <p className="font-label text-[10px] text-one-gold/60 mb-1">NO STREAM TRACK</p>
+                      <p className="font-body text-one-muted text-sm">Tune 98.5 FM — no stream track listed</p>
                     </div>
                   )}
 
