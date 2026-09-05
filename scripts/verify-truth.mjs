@@ -428,6 +428,16 @@ const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
   hits.push('lib/coverageCopy.ts: coverage strings must read stationStats')
 }
+const townData = files.find((f) => f.label === 'data/townData.ts')
+if (
+  !townData ||
+  /iconic Australian song/i.test(townData.text) ||
+  !townData.text.includes('Mitchell Shire village — 748 people (ABS 2021), 84.5 km from Shepparton.')
+) {
+  hits.push(
+    'data/townData.ts: Tallarook must name sourced ABS/LGA facts — not leftover iconic song',
+  )
+}
 if (
   !coverageCopy ||
   !coverageCopy.text.includes('formatOgDescription') ||
