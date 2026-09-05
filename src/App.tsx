@@ -35,6 +35,7 @@ const MediaKit = lazy(() => import('./pages/MediaKit'))
 const Privacy = lazy(() => import('./pages/Privacy'))
 const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'))
 const PaymentCancel = lazy(() => import('./pages/PaymentCancel'))
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const OpsPortal = lazy(() => import('./pages/OpsPortal'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
@@ -312,6 +313,14 @@ export default function App() {
           element={
             <LazyRoute variant="card" routeName="Payment Cancelled">
               <PaymentCancel />
+            </LazyRoute>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <LazyRoute variant="form" routeName="Reset password">
+              <ResetPassword />
             </LazyRoute>
           }
         />

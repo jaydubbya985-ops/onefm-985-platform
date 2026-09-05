@@ -121,7 +121,9 @@ export function AuthModal({
     try {
       await resetPassword(email)
       setResetSent(true)
-      toast.success('Password reset link sent to your email')
+      toast.success(
+        'If that email has a staff account, check for a reset link. This screen cannot confirm the mail was sent.',
+      )
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to send reset link')
     } finally {
