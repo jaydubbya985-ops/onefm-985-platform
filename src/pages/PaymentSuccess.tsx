@@ -13,7 +13,7 @@ export default function PaymentSuccess() {
     <Layout>
       <SEO
         title="Thank you"
-        description={`Thank you for supporting ${BRAND.org} — volunteer-run community radio across ${formatTowns()}. Payments are confirmed against our NAB account.`}
+        description={`Online checkout is not live. ${BRAND.org} invoices and donations for ${formatTowns()} are paid to our NAB account — this page is not a card receipt.`}
       />
       <section className="relative min-h-[70dvh] flex items-center justify-center overflow-hidden bg-[#101010]">
         <img
@@ -25,7 +25,7 @@ export default function PaymentSuccess() {
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div aria-hidden className="grain-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/88 via-one-navy/78 to-[#101010]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/92 via-[#101010]/88 to-[#101010]" />
 
         <div className="relative z-10 max-w-lg mx-auto px-6 py-24 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-one-gold/15 border border-one-gold/40 mb-8">
@@ -50,9 +50,9 @@ export default function PaymentSuccess() {
           </motion.div>
           <h1 className="font-hero text-gold-gradient mb-4">THANK YOU</h1>
           <p className="font-body text-one-white/70 mb-6 leading-relaxed">
-            Your support keeps {BRAND.fullName} live and local across {formatTowns()}.{' '}
-            {BRAND.org} is volunteer-run. Invoice and donation payments are matched
-            to our NAB account — this page does not send a receipt automatically.
+            Online checkout is not live. If you paid {BRAND.org} by NAB transfer,
+            thank you — that is what keeps {BRAND.fullName} on 98.5 across {formatTowns()}.
+            This screen is not a card receipt and does not send one.
           </p>
           <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/50 mb-8">
             {BANK_ACCOUNT_NAME} · NAB BSB {BANK_BSB} · {BANK_ACCOUNT}
@@ -72,8 +72,8 @@ export default function PaymentSuccess() {
               Support ONE FM
             </Link>
             <a
-              href={`mailto:${BRAND.accountsEmail}?subject=${encodeURIComponent('Receipt for ONE FM 98.5')}`}
-              data-cursor-label="RECEIPT"
+              href={`mailto:${BRAND.accountsEmail}?subject=${encodeURIComponent('NAB payment for ONE FM 98.5')}`}
+              data-cursor-label="EMAIL"
               className="inline-flex items-center gap-2 font-label text-[11px] text-one-white/50 hover:text-one-gold transition-colors"
             >
               <Mail size={14} />
