@@ -2,12 +2,11 @@
 // ---------------------------------------------------------------------------
 // Broadcast schedule data — dayparts, programme guide, campaigns & ad spots
 //
-// Dayparts and day-name constants are verbatim from the deployed OpsPortal
-// bundle (deployed-reference/assets/OpsPortal-dIeH6Okr.js, BroadcastSchedule
-// region). The programme guide is cross-referenced between the bundle and
-// src/data/oneFmScrapedData.json (the station's real published grid).
+// Daypart codes (EM/B/M/L/D/LN) stay from the deployed OpsPortal bundle.
+// Hours follow src/data/programGuide.ts (fm985.com.au/guide) — leftover
+// 7:00–10:00 "The ONE FM Breakfast Show" was the old bundle, not the guide.
 // Weekday breakfast presenters are NOT hardcoded — they resolve from
-// src/data/programGuide.ts BREAKFAST_ROSTER / getBreakfastScheduleLabel().
+// BREAKFAST_ROSTER / getBreakfastScheduleLabel().
 // Campaign/spot seeds exist because the deployed build initialised its
 // localStorage stores empty — these provide the populated state the deployed
 // UI was designed around, aligned with the sponsor records in data/sponsors.ts.
@@ -30,11 +29,11 @@ export interface DaypartInfo {
   description: string
 }
 
-/** Sales dayparts (verbatim from bundle). */
+/** Sales dayparts. Breakfast is 6:00am–9:00am from programGuide — not leftover 7–10am. */
 export const DAYPARTS: DaypartInfo[] = [
-  { code: 'EM', label: 'Early Morning', timeRange: '5:00 AM – 7:00 AM', description: 'Drive time, breakfast prep' },
-  { code: 'B', label: 'Breakfast', timeRange: '7:00 AM – 10:00 AM', description: 'Peak morning, The ONE FM Breakfast Show' },
-  { code: 'M', label: 'Morning', timeRange: '10:00 AM – 1:00 PM', description: 'Mid-morning programming' },
+  { code: 'EM', label: 'Early Morning', timeRange: '5:00 AM – 6:00 AM', description: 'Overnight tail before breakfast' },
+  { code: 'B', label: 'Breakfast', timeRange: '6:00 AM – 9:00 AM', description: 'Peak morning, ONE FM Breakfast' },
+  { code: 'M', label: 'Morning', timeRange: '9:00 AM – 1:00 PM', description: 'Mid-morning programming' },
   { code: 'L', label: 'Lunch', timeRange: '1:00 PM – 4:00 PM', description: 'Afternoon programming' },
   { code: 'D', label: 'Drive', timeRange: '4:00 PM – 8:00 PM', description: 'Peak afternoon, drive home' },
   { code: 'LN', label: 'Late Night', timeRange: '8:00 PM – 12:00 AM', description: 'Evening programming, Planet of Sound' },
@@ -101,15 +100,16 @@ const CATEGORY_FROM_GUIDE: Record<string, ProgrammeCategory> = {
 }
 
 const DAYPART_HOURS: Array<{ code: DaypartCode; start: number; end: number }> = [
-  { code: 'EM', start: 5, end: 7 },
-  { code: 'B', start: 7, end: 10 },
-  { code: 'M', start: 10, end: 13 },
+  { code: 'EM', start: 5, end: 6 },
+  { code: 'B', start: 6, end: 9 },
+  { code: 'M', start: 9, end: 13 },
   { code: 'L', start: 13, end: 16 },
   { code: 'D', start: 16, end: 20 },
   { code: 'LN', start: 20, end: 24 },
 ]
 
-function daypartsForHours(startHour: number, endHour: number): DaypartCode[] {
+/** Map a guide slot onto sales dayparts. Breakfast is 6–9; 9am mornings are not B. */
+export function daypartsForHours(startHour: number, endHour: number): DaypartCode[] {
   const hit = DAYPART_HOURS.filter((p) => startHour < p.end && endHour > p.start).map((p) => p.code)
   return hit.length ? hit : ['LN']
 }
@@ -147,7 +147,7 @@ function weekdayBreakfastGuide(): ProgrammeEntry[] {
         show: 'ONE FM Breakfast',
         presenter: slot.host,
         category: 'breakfast' as const,
-        dayparts: ['EM', 'B'] as DaypartCode[],
+        dayparts: daypartsForHours(6, 9),
       },
     ]
   })
