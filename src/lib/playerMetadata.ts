@@ -48,17 +48,23 @@ const SOURCE_LABELS: Record<MetadataSource, string> = {
   unavailable: 'Metadata unavailable',
 }
 
-function isBroadcastHours(now: Date): boolean {
-  const h = now.getHours()
-  const d = now.getDay()
-  if (d === 0 && h < 6) return false
-  return h >= 6 || h < 24
+/**
+ * On-air from the Melbourne guide, not the viewer's clock.
+ *
+ * The old helper used `Date#getDay()` / `getHours()` plus
+ * `h >= 6 || h < 24` (always true). A UTC Sunday 02:00 viewer
+ * (Melbourne Sunday noon — The Essential Hits with Tim Symonds)
+ * was marked off-air because local Sunday-before-6 matched
+ * overnight. `getCurrentLiveShow` already uses Australia/Melbourne.
+ */
+export function isScheduleLive(now: Date = new Date()): boolean {
+  return getCurrentLiveShow(now).host !== 'Automated'
 }
 
 /** Schedule-based metadata (always available). */
 export function getScheduleMetadata(now: Date = new Date()): PlayerMetadata {
   const show: LiveShowInfo = getCurrentLiveShow(now)
-  const live = isBroadcastHours(now) && show.host !== 'Automated'
+  const live = show.host !== 'Automated'
 
   return {
     isLive: live,
