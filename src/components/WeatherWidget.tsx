@@ -31,9 +31,9 @@ const iconMapSmall: Record<WeatherIconKey, React.ReactNode> = {
   snowflake: <Snowflake className="h-3.5 w-3.5 text-one-electric" />,
 }
 
-const coverageCaption = `${WEATHER_SOURCE_LABEL} · hub & major towns · ${formatCoverageShort()}`
+const coverageCaption = `${WEATHER_SOURCE_LABEL} · named towns from townData · ${formatCoverageShort()}`
 
-// Full version — cycles hub/major towns from townData (Open-Meteo, Melbourne TZ)
+// Full version — cycles named towns from townData (Open-Meteo, Melbourne TZ)
 export function WeatherWidget() {
   const { location, weather, loading } = useWeatherCycle(gvWeatherTowns)
 
