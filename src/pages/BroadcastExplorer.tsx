@@ -23,13 +23,13 @@ import {
   BREAKFAST_SHOW,
   BREAKFAST_TIME,
   MULTICULTURAL_PROGRAM_COUNT,
-  getCurrentLiveShow,
   getBreakfastScheduleLabel,
 } from '@/data/programGuide'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { formatCoverageShort, formatRadius } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
-import { formatWithPresenter } from '@/lib/liveNow'
+import { liveNowFromMetadata } from '@/lib/liveNow'
+import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { LISTEN_LINKS } from '@/lib/listenLinks'
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -224,11 +224,13 @@ const LiveWaveform = memo(function LiveWaveform() {
 
 /* ─── Section 1: Hero — Live Status ─── */
 function HeroSection() {
-  const live = getCurrentLiveShow()
+  const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   const stream = useLiveStream()
+  const status = live.isLive ? 'ON AIR NOW' : 'OVERNIGHT / AUTOMATED'
 
   return (
-    <section className="relative overflow-hidden bg-[#101010]" style={{ height: '50vh', minHeight: 480 }} data-cursor-label="ON AIR NOW">
+    <section className="relative overflow-hidden bg-[#101010]" style={{ height: '50vh', minHeight: 480 }} data-cursor-label={status}>
       <div aria-hidden className="grain-overlay" />
       <LiveWaveform />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 pb-20" style={{ maxWidth: 900, margin: '0 auto' }}>
@@ -236,13 +238,17 @@ function HeroSection() {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, ease: easeOutBack }}
-          className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-one-red/90 text-one-white font-label mb-6"
+          className={`inline-flex items-center gap-2 px-6 py-2 rounded-full font-label mb-6 ${
+            live.isLive ? 'bg-one-red/90 text-one-white' : 'bg-white/10 text-ivory/80'
+          }`}
         >
           <span className="relative flex h-2 w-2">
-            <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-ivory opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-ivory" />
+            {live.isLive ? (
+              <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-ivory opacity-75" />
+            ) : null}
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${live.isLive ? 'bg-ivory' : 'bg-ivory/40'}`} />
           </span>
-          ON AIR NOW
+          {status}
         </motion.div>
 
         <motion.h1
@@ -252,7 +258,7 @@ function HeroSection() {
           className="font-h1 text-one-white mb-3 text-center"
           style={{ textShadow: '0 0 40px rgba(212,150,58,0.3)', fontSize: 'clamp(1.75rem, 5vw, 3.5rem)' }}
         >
-          {live.name}
+          {live.program}
         </motion.h1>
 
         <motion.p
@@ -261,7 +267,7 @@ function HeroSection() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="font-h3 text-one-white mb-2 text-center"
         >
-          {formatWithPresenter(live.host) || live.category}
+          {live.withLine || meta.category}
         </motion.p>
 
         <motion.div
@@ -270,7 +276,7 @@ function HeroSection() {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="font-label text-one-electric mb-4"
         >
-          {live.time}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
+          {live.programTime}{live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
         </motion.div>
 
         <motion.div
@@ -302,7 +308,7 @@ function HeroSection() {
         >
           <div className="font-micro text-muted">UP NEXT</div>
           <div className="flex-1">
-            <div className="font-body-small text-one-white">{live.upNext}</div>
+            <div className="font-body-small text-one-white">{meta.upNext}</div>
           </div>
           <ArrowRight size={16} className="text-one-gold" />
         </motion.div>
@@ -992,6 +998,8 @@ function BehindTheScenes() {
 /* ─── Section 7: Listen Live / CTA ─── */
 function ListenLiveCTA() {
   const stream = useLiveStream()
+  const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   const platforms = [
     { name: '98.5 FM', hint: LISTEN_LINKS.fm.description, href: '/listen', external: false, icon: <Radio size={24} /> },
     { name: 'Web', hint: LISTEN_LINKS.web.description, href: LISTEN_LINKS.web.href, external: true, icon: <Globe size={24} /> },
@@ -1072,7 +1080,9 @@ function ListenLiveCTA() {
           className="flex flex-col items-center gap-3"
         >
           <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-one-gold animate-ping opacity-30" />
+            {live.isLive || stream.playing ? (
+              <div className="absolute inset-0 rounded-full bg-one-gold animate-ping opacity-30" />
+            ) : null}
             <button
               type="button"
               onClick={() => void stream.toggle()}
@@ -1086,10 +1096,14 @@ function ListenLiveCTA() {
           </div>
           <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
-              <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-one-red" />
+              {live.isLive || stream.playing ? (
+                <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-one-red opacity-75" />
+              ) : null}
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${live.isLive || stream.playing ? 'bg-one-red' : 'bg-one-red/40'}`} />
             </span>
-            <span className="font-label text-one-red text-xs">{stream.playing ? 'PLAYING' : 'LIVE'}</span>
+            <span className="font-label text-one-red text-xs">
+              {stream.playing ? 'PLAYING' : live.isLive ? 'ON AIR' : '98.5 FM'}
+            </span>
           </div>
         </motion.div>
       </div>

@@ -50,5 +50,11 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+assert(getScheduleMetadata(overnight).isLive === false, 'overnight Automated is not a live presenter lamp')
+assert(getScheduleMetadata(thuBreakfast).isLive === true, 'weekday breakfast is a live presenter lamp')
+
+// Saturday 19:00 Melbourne — no listed slot on main → Overnight Mix / Automated (until guide-gap EXE)
+const satEvening = new Date('2026-09-05T19:00:00+10:00')
+assert(getScheduleMetadata(satEvening).isLive === false, 'Saturday evening gap is not ON AIR NOW')
 
 console.log('verify-on-air OK')
