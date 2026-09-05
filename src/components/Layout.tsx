@@ -6,7 +6,8 @@ import { Pause, Play } from 'lucide-react'
 import { OnAirNav } from './OnAirNav'
 import { Footer } from './Footer'
 import { MiniPlayer } from './MiniPlayer'
-import { useLiveStream } from '@/hooks/useLiveStream'
+import { useLiveStream, type StreamToggleResult } from '@/hooks/useLiveStream'
+import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
 import { scrollToTop } from '@/lib/scrollTop'
 
 interface LayoutProps {
@@ -15,8 +16,8 @@ interface LayoutProps {
 }
 
 export function Layout({ children, hideFooter = false }: LayoutProps) {
-  const { toggle, playing } = useLiveStream()
-  const [toast, setToast] = useState<'playing' | 'paused' | null>(null)
+  const { toggle } = useLiveStream()
+  const [toast, setToast] = useState<StreamToggleResult | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -30,15 +31,16 @@ export function Layout({ children, hideFooter = false }: LayoutProps) {
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
       if ((e.target as HTMLElement).isContentEditable) return
       e.preventDefault()
-      toggle()
-      const next = playing ? 'paused' : 'playing'
-      if (toastTimer.current) clearTimeout(toastTimer.current)
-      setToast(next)
-      toastTimer.current = setTimeout(() => setToast(null), 1600)
+      void (async () => {
+        const next = await toggle()
+        if (toastTimer.current) clearTimeout(toastTimer.current)
+        setToast(next)
+        toastTimer.current = setTimeout(() => setToast(null), next === 'blocked' ? 4200 : 1600)
+      })()
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [toggle, playing])
+  }, [toggle])
 
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current) }, [])
 
@@ -48,8 +50,9 @@ export function Layout({ children, hideFooter = false }: LayoutProps) {
     <AnimatePresence>
       {toast && (
         <div
-          aria-live="polite"
+          aria-live={toast === 'blocked' ? 'assertive' : 'polite'}
           aria-atomic="true"
+          role={toast === 'blocked' ? 'alert' : undefined}
           style={{
             position: 'fixed',
             bottom: 80,
@@ -58,27 +61,43 @@ export function Layout({ children, hideFooter = false }: LayoutProps) {
             display: 'flex',
             justifyContent: 'center',
             zIndex: 9999,
-            pointerEvents: 'none',
+            pointerEvents: toast === 'blocked' ? 'auto' : 'none',
           }}
         >
           <motion.div
-            key="kbd-toast"
+            key={toast}
             initial={{ opacity: 0, y: 10, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6, scale: 0.97 }}
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="flex items-center gap-2 bg-one-navy/95 border border-one-gold/25 backdrop-blur-md rounded-full pl-3 pr-3.5 py-2 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
-              {toast === 'playing'
-                ? <Play size={11} fill="currentColor" className="text-one-gold shrink-0" />
-                : <Pause size={11} fill="currentColor" className="text-one-gold/70 shrink-0" />}
-              <span className="font-label text-[11px] text-one-white">
-                {toast === 'playing' ? 'Playing' : 'Paused'}
-              </span>
-              <span className="font-mono text-[9px] text-one-muted border border-one-border/50 px-1.5 py-0.5 rounded bg-black/30 leading-none">
-                Space
-              </span>
-            </div>
+            {toast === 'blocked' ? (
+              <div className="flex items-center gap-2 bg-one-navy/95 border border-[#E51636]/50 backdrop-blur-md rounded-full pl-3 pr-3.5 py-2 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+                <span className="font-label text-[11px] text-one-white">
+                  Playback blocked
+                </span>
+                <a
+                  href={AUDIO_PLAYER_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-label text-[11px] underline text-[#E51636]"
+                >
+                  Open the fm985.com.au web player
+                </a>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 bg-one-navy/95 border border-one-gold/25 backdrop-blur-md rounded-full pl-3 pr-3.5 py-2 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+                {toast === 'playing'
+                  ? <Play size={11} fill="currentColor" className="text-one-gold shrink-0" />
+                  : <Pause size={11} fill="currentColor" className="text-one-gold/70 shrink-0" />}
+                <span className="font-label text-[11px] text-one-white">
+                  {toast === 'playing' ? 'Playing' : 'Paused'}
+                </span>
+                <span className="font-mono text-[9px] text-one-muted border border-one-border/50 px-1.5 py-0.5 rounded bg-black/30 leading-none">
+                  Space
+                </span>
+              </div>
+            )}
           </motion.div>
         </div>
       )}

@@ -142,6 +142,14 @@ if (!miniPlayer || !miniPlayer.text.includes('liveNowFromMetadata')) {
   hits.push('components/MiniPlayer.tsx: breakfast chrome must use liveNowFromMetadata')
 }
 
+const layout = files.find((f) => f.label === 'components/Layout.tsx')
+if (layout && /playing \? 'paused' : 'playing'/.test(layout.text)) {
+  hits.push('components/Layout.tsx: leftover Space toast guessed Playing before play() — await toggle()')
+}
+if (!layout || !layout.text.includes("next === 'blocked'") || !layout.text.includes('AUDIO_PLAYER_URL')) {
+  hits.push('components/Layout.tsx: Space toast must name a blocked stream and link AUDIO_PLAYER_URL')
+}
+
 const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
 if (!onAirNav || !onAirNav.text.includes('formatBreakfastChromeLabel')) {
   hits.push('components/OnAirNav.tsx: menu footer must show formatBreakfastChromeLabel from programGuide')
