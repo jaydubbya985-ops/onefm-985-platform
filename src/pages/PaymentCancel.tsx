@@ -4,15 +4,21 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { BRAND } from '@/lib/brand'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
-import { formatTowns } from '@/lib/coverageCopy'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatBreakfastChromeLabel, getBreakfastScheduleLabel } from '@/data/programGuide'
+import { formatGuideHours } from '@/lib/guideHours'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_CHROME = formatBreakfastChromeLabel()
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 export default function PaymentCancel() {
   return (
     <Layout>
       <SEO
         title="Payment not completed"
-        description={`No online charge was taken. ${BRAND.org} invoices and donations are paid to our NAB account — this page is not a Stripe receipt.`}
+        description={`No online charge was taken. ${BRAND.org} invoices and donations are paid to our NAB account — this page is not a Stripe receipt. ${formatWeeklyListeners()} across ${formatCoverageShort()} (ABS 2021 via townData). GVL Match of the Day · ${GVL_MATCH_HOURS}. Breakfast: ${BREAKFAST_ROSTER_LINE}.`}
       />
       <section className="relative min-h-[70dvh] flex items-center justify-center overflow-hidden bg-[#101010]">
         <img
@@ -31,11 +37,19 @@ export default function PaymentCancel() {
             <XCircle size={32} className="text-one-red" />
           </div>
 
-          <span className="section-label justify-center mb-6 block">Volunteer-run · Shepparton</span>
+          <span className="section-label justify-center mb-3 block">
+            Volunteer-run · {formatCoverageShort()}
+          </span>
+          <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/55 mb-6 leading-relaxed">
+            Weekday breakfast · {BREAKFAST_CHROME}
+            <br />
+            GVL Match of the Day · {GVL_MATCH_HOURS}
+          </p>
           <h1 className="font-hero text-one-white mb-4">NO CHARGE</h1>
           <p className="font-body text-one-white/60 mb-6 leading-relaxed">
             Nothing was taken on this page. Online checkout is not live — {BRAND.fullName}{' '}
-            invoices and donations for {formatTowns()} are paid to our NAB account.
+            invoices and donations for {formatWeeklyListeners()} across {formatCoverageShort()}{' '}
+            (ABS 2021 via townData) are paid to our NAB account.
             This screen is not a Stripe receipt.
           </p>
           <p className="font-label text-[11px] tracking-[0.12em] uppercase text-one-white/50 mb-8">
