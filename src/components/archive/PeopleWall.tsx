@@ -5,8 +5,14 @@ import { CATEGORY_LABELS, CONFIDENCE_LABELS } from '@/types/livingArchive'
 import { LabelReveal } from '@/components/onair/kit'
 import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
+import { getBreakfastScheduleLabel } from '@/data/programGuide'
 
 const RED = '#E51636'
+const COVERAGE = formatCoverageShort()
+const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day') ?? 'Saturday'
+const BREAKFAST_ROSTER_LINE = getBreakfastScheduleLabel()
 
 /**
  * Leftover unused station stills — archive photography, not presenter portraits.
@@ -18,11 +24,24 @@ const LEFTOVER_STILLS = [
   STATION_PHOTOS.gvlStadiumDay,
 ] as const
 
-function leftoverStill(person: ArchivePerson, index: number): string {
+function leftoverStill(person: ArchivePerson, index: number): { src: string; alt: string } {
   if (person.categories.includes('sport-caller') || person.categories.includes('ob-crew')) {
-    return STATION_PHOTOS.gvlStadiumDay
+    return {
+      src: STATION_PHOTOS.gvlStadiumDay,
+      alt: `GVL ground archive — GVL Match of the Day · ${GVL_MATCH_HOURS} · ${COVERAGE}`,
+    }
   }
-  return LEFTOVER_STILLS[index % LEFTOVER_STILLS.length]
+  const src = LEFTOVER_STILLS[index % LEFTOVER_STILLS.length]
+  if (src === STATION_PHOTOS.gvlStadiumDay) {
+    return {
+      src,
+      alt: `GVL ground archive — GVL Match of the Day · ${GVL_MATCH_HOURS} · ${COVERAGE}`,
+    }
+  }
+  return {
+    src,
+    alt: `ONE FM studio visit — licensed coverage ${COVERAGE} (ABS 2021 via townData)`,
+  }
 }
 
 const FILTER_ORDER: PersonCategory[] = [
@@ -58,9 +77,8 @@ function PersonCard({ person, index }: { person: ArchivePerson; index: number })
       {!namedPortrait && (
         <>
           <img
-            src={still}
-            alt=""
-            aria-hidden
+            src={still.src}
+            alt={still.alt}
             className="absolute inset-0 w-full h-full object-cover opacity-25"
           />
           <div
@@ -81,9 +99,9 @@ function PersonCard({ person, index }: { person: ArchivePerson; index: number })
         ) : (
           <div
             className="shrink-0 w-14 h-14 rounded-lg bg-cover bg-center flex items-center justify-center font-poster text-[18px] text-white/90"
-            style={{ backgroundImage: `url('${still}')` }}
+            style={{ backgroundImage: `url('${still.src}')` }}
             role="img"
-            aria-label={`ONE FM station photography beside ${person.name} — not a presenter portrait`}
+            aria-label={`${still.alt} — beside ${person.name}, not a presenter portrait`}
           >
             <span className="w-full h-full rounded-lg flex items-center justify-center bg-black/45">
               {person.name
@@ -139,9 +157,14 @@ export function PeopleWall({ people }: { people: ArchivePerson[] }) {
       <h2 className="font-poster uppercase text-[clamp(28px,4.5vw,48px)] text-white leading-[0.95] mb-2">
         People of ONE FM
       </h2>
-      <p className="text-[15px] text-white/50 max-w-[640px] mb-8 leading-relaxed">
+      <p className="text-[15px] text-white/50 max-w-[720px] mb-3 leading-relaxed">
         No volunteer disappears into a paragraph. Search and filter — each name carries a source
-        confidence level.
+        confidence level. {formatWeeklyListeners()} across {COVERAGE} (ABS 2021 via townData).
+      </p>
+      <p className="text-[12px] font-bold tracking-[0.08em] uppercase text-white/40 max-w-[720px] mb-8 leading-relaxed">
+        Breakfast: {BREAKFAST_ROSTER_LINE}
+        {' · '}
+        GVL Match of the Day · {GVL_MATCH_HOURS}
       </p>
 
       <div className="flex flex-col lg:flex-row gap-4 mb-8">
@@ -199,7 +222,9 @@ export function PeopleWall({ people }: { people: ArchivePerson[] }) {
 
       <p className="text-[12px] text-white/30 mt-8">
         Photography: ONE FM studio visit and GVL ground archive — not presenter portraits. Named
-        portraits exist only for Di Hunter and Sally Nayler.{' '}
+        portraits exist only for Di Hunter and Sally Nayler. {formatWeeklyListeners()} · {COVERAGE}{' '}
+        (ABS 2021 via townData). Breakfast: {BREAKFAST_ROSTER_LINE}. GVL Match of the Day ·{' '}
+        {GVL_MATCH_HOURS}.{' '}
         <a href="#contribute" className="underline hover:text-white/60">
           Add your memory →
         </a>
