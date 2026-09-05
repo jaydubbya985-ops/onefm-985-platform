@@ -28,7 +28,6 @@ import {
   Flame,
   ExternalLink,
   Radio,
-  Headphones,
   Mic2,
   Megaphone,
   Wrench,
@@ -819,8 +818,8 @@ function MapMini() {
           <TiltCard maxTilt={5} className="h-full">
           <div className="glass-card p-5 text-center h-full group relative overflow-hidden">
             <div aria-hidden className="explore-tile-scan" />
-            <Headphones size={20} className="text-one-gold mx-auto mb-3" />
-            <div className="font-label text-one-muted mb-1">Studio Line</div>
+            <Phone size={20} className="text-one-gold mx-auto mb-3" />
+            <div className="font-label text-one-muted mb-1">Station phone</div>
             <div className="font-body-small text-one-white">
               <a href={studioTelHref()} className="hover:text-one-gold transition-colors">{BRAND.phone}</a>
             </div>
