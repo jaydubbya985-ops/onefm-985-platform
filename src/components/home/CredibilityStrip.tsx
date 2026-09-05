@@ -1,14 +1,18 @@
 import { motion } from 'framer-motion'
 import { BRAND } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { TextScramble } from '@/components/TextScramble'
 
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
+
 const FACTS = [
-  { label: 'Organisation', value: 'GV Community Radio Inc.', scramble: false },
+  { label: 'Organisation', value: BRAND.org, scramble: false },
   { label: 'Callsign',     value: BRAND.callsign,           scramble: true  },
   { label: 'Frequency',   value: `${BRAND.frequency} FM`,  scramble: true  },
   { label: 'Licensed',    value: String(BRAND.licensed),   scramble: true  },
   { label: 'Coverage',    value: formatCoverageShort(),     scramble: false },
+  { label: 'GVL',         value: GVL_HOURS ? `Match of the Day · ${GVL_HOURS}` : 'Match of the Day', scramble: false },
   { label: 'Contact',     value: BRAND.email,               scramble: false },
 ] as const
 
@@ -18,7 +22,7 @@ export function CredibilityStrip() {
   return (
     <section className="border-y border-one-border/30 bg-surface-deep section-bleed-top">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6">
           {FACTS.map((f, i) => (
             <motion.div
               key={f.label}
