@@ -1025,7 +1025,7 @@ export default function MediaKit() {
         </div>
       </section>
       <SponsorCommercialCta
-        headline="From stats to signed campaign"
+        headline="Explore coverage or request a proposal"
         subline="Download the kit, explore coverage by town, or request a tailored proposal."
       />
     </Layout>

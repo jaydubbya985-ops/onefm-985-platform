@@ -412,6 +412,15 @@ if (
 if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
   hits.push('pages/MediaKit.tsx: media-kit DOCX must use BRAND.phone, not a placeholder')
 }
+if (
+  !mediaKit ||
+  /From stats to signed campaign/i.test(mediaKit.text) ||
+  !mediaKit.text.includes('headline="Explore coverage or request a proposal"')
+) {
+  hits.push(
+    'pages/MediaKit.tsx: commercial CTA must name coverage or a proposal — not leftover signed campaign',
+  )
+}
 
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
