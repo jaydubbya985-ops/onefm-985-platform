@@ -548,13 +548,19 @@ export function isRealSponsorInvoiceNumber(number: string): boolean {
   return (REAL_INVOICE_NUMBERS as readonly string[]).includes(number)
 }
 
+/** FOOTT and Jason's TV are live tax invoices — never invent a second DEMO row. */
+export function isRealSponsorCompany(company: string): boolean {
+  const n = company.trim().toLowerCase()
+  return n.includes('foott') || n.includes("jason's tv") || n.includes('jasonstv')
+}
+
 export function realBatchInvoices(): BatchInvoice[] {
   return BATCH_INVOICES.filter((i) => isRealSponsorInvoiceNumber(i.number))
 }
 
 // ---------------------------------------------------------------------------
-// Billing ledger — the bundle's `El` array (15 invoices)
-// DEMO DATA — illustrative aging ledger, not the live FOOTT tax invoice.
+// Billing ledger — DEMO aging rows only. Never re-add FOOTT / Jason's TV here;
+// their live tax invoices are ONEFM-2026-011 / 012 on BATCH_INVOICES.
 // ---------------------------------------------------------------------------
 
 export type BillingInvoiceStatus = 'paid' | 'sent' | 'overdue' | 'partially_paid' | 'draft'
@@ -578,9 +584,9 @@ export interface BillingInvoice {
 }
 
 /**
- * All 15 billing records extracted verbatim from the bundle. The deployed
- * data used the status literal `"partial"` for INV-2026-004; it is normalised
- * here to `"partially_paid"` to match the store's status union.
+ * DEMO aging records from the bundle, minus the invented FOOTT INV-2026-014
+ * row (status sent, $638) that was not the live ONEFM-2026-011 tax invoice.
+ * INV-2026-004 `"partial"` is normalised to `"partially_paid"`.
  */
 export const BILLING_INVOICES: BillingInvoice[] = [
   {
@@ -789,21 +795,6 @@ export const BILLING_INVOICES: BillingInvoice[] = [
     paidAmount: 0,
     campaign: 'Antiques Roadshow',
     description: 'Antiques and collectibles promotion',
-  },
-  {
-    id: 'inv_14',
-    number: 'INV-2026-014',
-    company: 'FOOTT Waste Solutions',
-    contactName: 'Peter Foott',
-    amount: 580,
-    gst: 58,
-    total: 638,
-    status: 'sent',
-    issueDate: '2026-02-01',
-    dueDate: '2026-02-28',
-    paidAmount: 0,
-    campaign: 'Waste Management',
-    description: 'Environmental services package',
   },
   {
     id: 'inv_15',
