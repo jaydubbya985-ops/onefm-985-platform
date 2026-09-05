@@ -489,6 +489,23 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const decadeDial = files.find((f) => f.label === 'components/archive/DecadeDial.tsx')
+if (decadeDial && (/curated cards/i.test(decadeDial.text) || /archive expanding/i.test(decadeDial.text))) {
+  hits.push('components/archive/DecadeDial.tsx: leftover curated/expanding copy must stay gone')
+}
+if (
+  !decadeDial ||
+  !decadeDial.text.includes('ARCHIVE_CARDS.length') ||
+  !decadeDial.text.includes('ACMA') ||
+  !decadeDial.text.includes('Shepparton News') ||
+  !decadeDial.text.includes('Annual Report 2024')
+) {
+  hits.push('components/archive/DecadeDial.tsx: footer must name sourced archive cards')
+}
+if (!decadeDial || !decadeDial.text.includes('archive hunt in progress')) {
+  hits.push('components/archive/DecadeDial.tsx: do not steal #426 leftover empty-decade hunt')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
