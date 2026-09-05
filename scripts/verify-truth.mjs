@@ -325,6 +325,16 @@ const salesProposal = files.find((f) => f.label === 'pages/SalesProposal.tsx')
 if (!salesProposal || !salesProposal.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/SalesProposal.tsx: GVL photo badge hours must come from formatGuideHours / FULL_SCHEDULE')
 }
+if (salesProposal && /pipeline/i.test(salesProposal.text)) {
+  hits.push(
+    'pages/SalesProposal.tsx: leftover pipeline invents a CRM product the public form does not enter',
+  )
+}
+if (!salesProposal || !salesProposal.text.includes('The form stores or emails the station')) {
+  hits.push(
+    'pages/SalesProposal.tsx: enquiry copy must name the station store/email — not leftover pipeline',
+  )
+}
 
 const leftoverProposalDocs = [
   'lib/ai.ts',
