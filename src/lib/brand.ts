@@ -26,7 +26,10 @@ export const BRAND = {
   phone: '(03) 5831 3131',
   email: 'admin@fm985.com.au',
   accountsEmail: 'accounts@fm985.com.au',
-  address: '47 Parkside Drive, Shepparton VIC 3630',
+  /** Studio street. Source: fm985.com.au/contact/ */
+  address: '47 Parkside Drive, Shepparton VIC 3630 · PO Box 4034',
+  /** Licensed postal address. Source: fm985.com.au/contact/ */
+  postal: 'PO Box 4034, Shepparton VIC 3630',
   website: 'https://fm985.com.au',
   stream: 'https://s2.radio.co/sae3372059/listen',
   facebook: 'https://www.facebook.com/onefmshepparton',
