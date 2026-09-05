@@ -86,8 +86,7 @@ export default function Privacy() {
             <h2 className="font-h3 text-one-white mb-3">5. Data Retention</h2>
             <p>
               Enquiry and contact records are kept only as long as needed to reply. Donation records
-              may be kept longer as required by Australian taxation law. A fixed year count is data
-              pending.
+              may be kept longer as required by Australian taxation law. A fixed year count is data pending.
             </p>
           </section>
 
