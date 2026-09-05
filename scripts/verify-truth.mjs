@@ -302,6 +302,15 @@ if (
     'pages/Football.tsx: GVL Match of the Day hours must come from GVL_MATCH_SLOT / FULL_SCHEDULE, not “Saturday afternoon”',
   )
 }
+if (
+  !football ||
+  /means everything/i.test(football.text) ||
+  !football.text.includes('GVL celebration — ${GVL_MATCH_SLOT.name} on the weekly guide.')
+) {
+  hits.push(
+    'pages/Football.tsx: GVL action still must name Match of the Day on the weekly guide — not leftover everything',
+  )
+}
 
 const sponsorPages = [
   'pages/SponsorshipKit.tsx',

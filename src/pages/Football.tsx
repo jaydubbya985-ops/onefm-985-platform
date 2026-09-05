@@ -833,7 +833,7 @@ export default function Football() {
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-2 gap-3">
             {[
-              { src: STATION_PHOTOS.gvlGoalCelebration,     caption: 'GVL — where footy means everything' },
+              { src: STATION_PHOTOS.gvlGoalCelebration,     caption: `GVL celebration — ${GVL_MATCH_SLOT.name} on the weekly guide.` },
               { src: STATION_PHOTOS.gvlTownersCelebration,  caption: 'ONE FM celebrates every premiership moment' },
             ].map((photo, i) => (
               <motion.div
