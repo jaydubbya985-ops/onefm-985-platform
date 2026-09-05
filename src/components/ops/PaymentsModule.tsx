@@ -108,6 +108,7 @@ import {
   type OutstandingInvoice,
 } from './data/payments'
 import { opsInitial, opsStorageKey } from '@/lib/opsMode'
+import { opsIncomeCopy } from '@/lib/opsIncomeLabel'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB, bankPayLine } from '@/lib/bankDetails'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
@@ -394,6 +395,7 @@ function PaymentsTab() {
   const bankLine = selectedInvoice
     ? bankPayLine(selectedInvoice.number)
     : bankPayLine()
+  const paidMonth = opsIncomeCopy('paid-month', isSupabaseConfigured())
 
   return (
     <motion.div
@@ -404,9 +406,9 @@ function PaymentsTab() {
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title="Total Paid This Month"
+          title={paidMonth.label}
           value={`$${totalPaid.toLocaleString('en-AU', { minimumFractionDigits: 0 })}`}
-          subtitle="Completed payments"
+          subtitle={paidMonth.hint}
           icon={DollarSign}
           color={ACCENT.gold}
           delay={0}
@@ -991,6 +993,7 @@ function DonationsTab() {
   )
   const averageDonation = donations.length > 0 ? donationsYtd / donations.length : 0
   const goalProgress = Math.min((donationsThisMonth / MONTHLY_DONATION_GOAL) * 100, 100)
+  const donationsCopy = opsIncomeCopy('donations', isSupabaseConfigured())
 
   const donors = useMemo<DonorSummary[]>(() => {
     const map = new Map<
@@ -1114,9 +1117,9 @@ function DonationsTab() {
           delay={0}
         />
         <StatCard
-          title="Donations YTD"
+          title={donationsCopy.label}
           value={`$${donationsYtd.toLocaleString()}`}
-          subtitle="All donations"
+          subtitle={donationsCopy.hint}
           icon={TrendingUp}
           color={ACCENT.gold}
           delay={0.05}
@@ -1155,7 +1158,7 @@ function DonationsTab() {
               <div className="flex items-center gap-2">
                 <Target className="h-4 w-4 text-[#D4A853]" />
                 <span className="text-sm font-medium text-[#F4F1EA]">
-                  Monthly Donation Goal
+                  DEMO monthly goal
                 </span>
               </div>
               <span className="text-xs text-slate-400">
@@ -1909,6 +1912,7 @@ function MembershipsTab() {
   const monthStart = monthStartIso()
   const expiryWindowEnd = isoDaysFromNow(30)
   const today = isoToday()
+  const membershipCopy = opsIncomeCopy('membership', isSupabaseConfigured())
 
   const activeMembers = useMemo(
     () => members.filter((m) => m.status === 'active').length,
@@ -2020,9 +2024,9 @@ function MembershipsTab() {
           delay={0.05}
         />
         <StatCard
-          title="Monthly Revenue"
+          title={membershipCopy.label}
           value={`$${monthlyRevenue.toFixed(0)}`}
-          subtitle="Est. from active"
+          subtitle={membershipCopy.hint}
           icon={DollarSign}
           color={ACCENT.gold}
           delay={0.1}
@@ -2637,7 +2641,7 @@ export default function PaymentsModule() {
     opsInitial(SEED_MEMBERS, []),
   )
 
-  const totalIncomeYtd =
+  const totalIncomeRecorded =
     payments.filter((p) => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0) +
     donations.reduce((sum, d) => sum + d.amount, 0) +
     members
@@ -2647,6 +2651,7 @@ export default function PaymentsModule() {
         0,
       ) /
       12
+  const headerIncome = opsIncomeCopy('header', isSupabaseConfigured())
 
   const tabTriggerClass =
     'text-xs font-medium text-slate-400 data-[state=active]:text-[#101010] data-[state=active]:bg-[#D4A853] data-[state=active]:font-semibold px-4 py-2 rounded-md transition-all'
@@ -2678,12 +2683,17 @@ export default function PaymentsModule() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 rounded-lg bg-[#0F1D2F] border border-slate-800 px-3 py-2">
-          <DollarSign className="h-4 w-4 text-[#D4A853]" />
-          <span className="text-xs text-slate-400">Total Income YTD:</span>
-          <span className="text-sm font-bold text-[#D4A853]">
-            ${Math.round(totalIncomeYtd).toLocaleString()}
-          </span>
+        <div className="flex flex-col items-start sm:items-end gap-0.5 rounded-lg bg-[#0F1D2F] border border-slate-800 px-3 py-2">
+          <div className="flex items-center gap-2">
+            <DollarSign className="h-4 w-4 text-[#D4A853]" />
+            <span className="text-xs text-slate-400">{headerIncome.label}:</span>
+            <span className="text-sm font-bold text-[#D4A853]">
+              ${Math.round(totalIncomeRecorded).toLocaleString()}
+            </span>
+          </div>
+          <p className="text-[10px] text-slate-500 max-w-[280px] sm:text-right leading-snug">
+            {headerIncome.hint}
+          </p>
         </div>
       </div>
 
