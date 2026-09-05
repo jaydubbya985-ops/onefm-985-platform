@@ -214,6 +214,18 @@ if (
 ) {
   hits.push('pages/Support.tsx: leftover coverage must use formatCoverageShort and formatWeeklyListenersPlain')
 }
+if (!support || /Every dollar stays local/.test(support.text)) {
+  hits.push(
+    'pages/Support.tsx: leftover Every dollar stays local — ticker must name licensed 1989 and callsign 3ONE',
+  )
+}
+if (
+  !support ||
+  !support.text.includes('BRAND.licensed') ||
+  !support.text.includes('BRAND.callsign')
+) {
+  hits.push('pages/Support.tsx: ticker years must come from BRAND.licensed / BRAND.callsign')
+}
 
 for (const label of ['pages/Story.tsx', 'pages/AudienceAnalytics.tsx']) {
   const page = files.find((f) => f.label === label)
