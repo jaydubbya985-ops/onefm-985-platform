@@ -61,6 +61,8 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /Every dollar stays local/i, why: 'do not invent that donations stay local' },
+  { re: /a real person will confirm your gift/i, why: 'mailto donation draft does not confirm a gift' },
 ]
 
 function walk(dir) {
@@ -213,6 +215,17 @@ if (
   !support.text.includes('formatWeeklyListenersPlain()')
 ) {
   hits.push('pages/Support.tsx: leftover coverage must use formatCoverageShort and formatWeeklyListenersPlain')
+}
+if (
+  !support ||
+  /Every dollar stays local/i.test(support.text) ||
+  /confirm your gift/i.test(support.text) ||
+  /coming soon/i.test(support.text) ||
+  !support.text.includes('DONATE_CARD_STATUS')
+) {
+  hits.push(
+    'pages/Support.tsx: donate copy must use donateCopy — no invented card path or confirmed gift',
+  )
 }
 
 for (const label of ['pages/Story.tsx', 'pages/AudienceAnalytics.tsx']) {
