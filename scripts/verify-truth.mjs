@@ -466,6 +466,18 @@ for (const required of [
   }
 }
 
+const livePending = files.find((f) => f.label === 'components/ops/LivePendingNote.tsx')
+if (!livePending || /formatCoverageShort/.test(livePending.text) || /Licensed coverage is/.test(livePending.text)) {
+  hits.push('components/ops/LivePendingNote.tsx: LIVE empty notes must not stamp leftover coverage')
+}
+if (
+  !livePending ||
+  !livePending.text.includes('DEMO figures are hidden in live mode') ||
+  !livePending.text.includes('Revenue charts wait on station-audited data')
+) {
+  hits.push('components/ops/LivePendingNote.tsx: must still hide DEMO figures and wait on station-audited data')
+}
+
 const app = files.find((f) => f.label === 'App.tsx')
 if (
   !app ||
