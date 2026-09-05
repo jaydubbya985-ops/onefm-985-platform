@@ -444,6 +444,18 @@ if (
 ) {
   hits.push('lib/coverageCopy.ts: must export formatOgDescription and formatSeoDefault')
 }
+const layout = files.find((f) => f.label === 'components/Layout.tsx')
+if (
+  !layout ||
+  !layout.text.includes('id="main-content"') ||
+  !layout.text.includes('skipToMain') ||
+  !layout.text.includes('preventDefault')
+) {
+  hits.push(
+    'components/Layout.tsx: Skip to content must stay on the current HashRouter route',
+  )
+}
+
 const presenterAssets = files.find((f) => f.label === 'lib/presenterAssets.ts')
 if (
   !presenterAssets ||
