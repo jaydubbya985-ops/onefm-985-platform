@@ -432,6 +432,11 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (!programs || !programs.text.includes('featuredShowsFromGuide')) {
+  hits.push(
+    'pages/Programs.tsx: featured cards must come from featuredShowsFromGuide / FULL_SCHEDULE',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {

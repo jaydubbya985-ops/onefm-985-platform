@@ -15,6 +15,7 @@ import { presenterVisual, programScene } from '@/lib/presenterAssets'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
+  featuredShowsFromGuide,
   getBreakfastScheduleLabel,
   getCurrentLiveShow,
 } from '@/data/programGuide'
@@ -129,228 +130,34 @@ function OnAirNow() {
 /* ────────────────────────────────────────────────────────── */
 /*  Section 2 — Featured Shows                                */
 /* ────────────────────────────────────────────────────────── */
-// Copy from fm985.com.au/guide/. Times resolved from FULL_SCHEDULE
-// via formatGuideHours — do not keep a second handwritten hours list.
-const shows = [
-  {
-    name: BREAKFAST_SHOW,
-    time: "Mon–Fri, 6am–9am",
-    host: getBreakfastScheduleLabel(),
-    desc: "The Goulburn Valley's essential morning companion — community interviews, local news, weather, and music. Rotating hosts across the week.",
-    tag: "Breakfast",
-    icon: Mic2,
-  },
-  {
-    name: "Dancing through the decades",
-    time: "Mon–Fri, 9am–12pm",
-    host: "Johnny P (John Painter)",
-    desc: "Music from across the decades with Johnny P. Four years on air, playing the hits that span generations from Shepparton.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "The James Manley Show",
-    time: "Mon–Tue, 4pm–5pm",
-    host: "James Manley",
-    desc: "Community-focused afternoon programming. Local interviews and the issues that matter to the Goulburn Murray.",
-    tag: "Community",
-    icon: Headphones,
-  },
-  {
-    name: "The Afri-Connect Program",
-    time: "Monday, 9pm–10pm",
-    host: "Fikiri",
-    desc: "Swahili language program connecting the African community across the Goulburn Valley. Music, news and culture.",
-    tag: "Multicultural",
-    icon: Headset,
-  },
-  {
-    name: "Good Evening Country",
-    time: "Monday, 8pm",
-    host: "Timmy Ahmet",
-    desc: "Country music showcase Monday evenings. The best country classics and new releases for the Valley.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "Classic Country",
-    time: "Tuesday, 6pm",
-    host: "Sue",
-    desc: "Classic country music Tuesday evenings with Sue. The timeless sounds of country from across the decades.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "Viva Italia",
-    time: "Tuesday, 9pm–10pm",
-    host: "Carlo",
-    desc: "Italian language program celebrating Italian culture, music and community life in the Goulburn Valley.",
-    tag: "Multicultural",
-    icon: Headset,
-  },
-  {
-    name: "Winding Back",
-    time: "Monday, 3pm–4pm",
-    host: "Ken & Jill Gaffney",
-    desc: "Nostalgic music and community memories with Ken and Jill Gaffney — a journey through the musical decades.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "NIRS AFL Friday Night Footy",
-    time: "Friday, 7pm",
-    host: "ONE FM",
-    desc: "Live AFL coverage on Friday nights via NIRS — the national Indigenous radio sport network.",
-    tag: "Sport",
-    icon: Trophy,
-  },
-  {
-    name: "Saturday Sport",
-    time: "Saturday, 8am–12pm",
-    host: "The Stats Man",
-    desc: "Comprehensive local sports coverage — GVL Football & Netball, cricket, harness racing and community sport.",
-    tag: "Sport",
-    icon: Trophy,
-  },
-  {
-    name: "GVL Match of the Day",
-    time: "Saturday, 1pm–3pm",
-    host: "ONE FM",
-    desc: "Live GVL Football & Netball match of the day — full commentary from grounds across the Goulburn Valley.",
-    tag: "Sport",
-    icon: Trophy,
-  },
-  {
-    name: "Planet of Sound",
-    time: "Thursday, 11pm",
-    host: "Carlos Rock",
-    desc: "Rock music program — 19–20 years on air and still the definitive rock show for the Goulburn Valley.",
-    tag: "Music",
-    icon: Headset,
-  },
-  {
-    name: "Samoan Music Program",
-    time: "Wednesday, 9pm–10pm",
-    host: "MK",
-    desc: "Samoan language music and culture program connecting the Samoan community of the Goulburn Valley.",
-    tag: "Multicultural",
-    icon: Headset,
-  },
-  {
-    name: "Filipino Music Program",
-    time: "Tuesday, 10pm–11pm",
-    host: "Edith",
-    desc: "Filipino music and culture celebrating the Filipino community across the Goulburn Murray.",
-    tag: "Multicultural",
-    icon: Headset,
-  },
-  {
-    name: "Mandarin Program",
-    time: "Monday, 10pm",
-    host: "Jimmy & Rainy",
-    desc: "Mandarin language program and Her Quiet Strength segment — connecting the Chinese community of the Valley.",
-    tag: "Multicultural",
-    icon: Headset,
-  },
-  {
-    name: "Sunday Night Country",
-    time: "Sunday, 7pm",
-    host: "Sue",
-    desc: "Sunday evening country music with Sue — the perfect close to the weekend for country music lovers.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "NIRS Sunday Afternoon AFL",
-    time: "Sunday, 1pm–3pm",
-    host: "ONE FM",
-    desc: "AFL Match of the Day via NIRS — live Sunday afternoon football coverage for the region.",
-    tag: "Sport",
-    icon: Trophy,
-  },
-  {
-    name: "Songs of the Spirit",
-    time: "Saturday, 6am–8am",
-    host: "ONE FM",
-    desc: "Uplifting Christian and inspirational music Saturday mornings — for community and reflection.",
-    tag: "Community",
-    icon: Headset,
-  },
-  {
-    name: "Radio Netherlands",
-    time: "Monday, 7pm–8pm",
-    host: "Margaret & Josh",
-    desc: "Dutch-language international community program with Margaret and Josh.",
-    tag: "Multicultural",
-    icon: Headset,
-  },
-  {
-    name: "Monday Nights",
-    time: "Monday, 6pm–7pm",
-    host: "Josh Revens",
-    desc: "Evening community program with Josh Revens — local interviews, community news and stories.",
-    tag: "Community",
-    icon: Headphones,
-  },
-  {
-    name: "Punjabi Music Program",
-    time: "Monday, 11pm",
-    host: "ONE FM",
-    desc: "Punjabi language music program celebrating the Punjabi community of the Goulburn Valley.",
-    tag: "Multicultural",
-    icon: Headset,
-  },
-  {
-    name: "Arabic Music Program",
-    time: "Wednesday, 11pm",
-    host: "ONE FM",
-    desc: "Arabic language music program for the Arabic-speaking community of the Goulburn Murray.",
-    tag: "Multicultural",
-    icon: Headset,
-  },
-  {
-    name: "Rock 'n' Roll Fever",
-    time: "Thursday, 9pm",
-    host: "Carlo",
-    desc: "Rock 'n' Roll classics Thursday nights with Carlo — the sounds that defined a generation.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "The Essential Hits",
-    time: "Thu 6pm / Sun 12pm",
-    host: "Tim Symonds",
-    desc: "The essential hits from across the decades — Thursday evenings and Sunday afternoons with Tim Symonds.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "Country Requests & Open Spaces",
-    time: "Saturday, 8am",
-    host: "KT or Ralph",
-    desc: "Country music by request on Saturday mornings — your favourite country tracks from across the decades.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "All Things Rock",
-    time: "Wed–Thu, 3pm",
-    host: "Steve Little",
-    desc: "Rock music Wednesday and Thursday afternoons with Steve Little — the best of rock from all eras.",
-    tag: "Music",
-    icon: Music,
-  },
-  {
-    name: "Butterfly Favorites",
-    time: "Tuesday, 3pm",
-    host: "Judy",
-    desc: "Tuesday afternoon favourites with Judy — music and community from the heart of the Valley.",
-    tag: "Music",
-    icon: Music,
-  },
-].map((show) => ({
-  ...show,
-  time: formatGuideHours(show.name) ?? show.time,
+// Names, hosts, and categories from FULL_SCHEDULE (fm985.com.au/guide/).
+// Hours via formatGuideHours — do not keep a second handwritten show list.
+const SHOW_ICONS = {
+  Breakfast: Mic2,
+  Music: Music,
+  Country: Music,
+  Sport: Trophy,
+  Community: Headphones,
+  Multicultural: Headset,
+} as const
+
+function featuredShowBlurb(show: { name: string; host: string; category: string }): string {
+  if (show.name === BREAKFAST_SHOW) {
+    return `Weekday breakfast — ${getBreakfastScheduleLabel()}.`
+  }
+  if (show.host === 'ONE FM' || show.host === 'Automated') {
+    return `${show.category} on the weekly guide.`
+  }
+  return `Presented by ${show.host}.`
+}
+
+const shows = featuredShowsFromGuide().map((show) => ({
+  name: show.name,
+  time: formatGuideHours(show.name) ?? '',
+  host: show.host,
+  desc: featuredShowBlurb(show),
+  tag: show.category,
+  icon: SHOW_ICONS[show.category as keyof typeof SHOW_ICONS] ?? Music,
 }))
 
 /* ────────────────────────────────────────────────────────── */
@@ -682,7 +489,7 @@ export default function Programs() {
             <div>
               <WordReveal text="Featured Shows" className="font-h2 text-one-white mb-3 block" as="h2" />
               <p className="font-body text-one-white max-w-xl">
-                From dawn till dark, our presenters keep the Valley informed, entertained and connected.
+                Every named show on the weekly guide — hours and hosts from fm985.com.au.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
