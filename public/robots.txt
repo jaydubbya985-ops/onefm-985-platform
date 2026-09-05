@@ -1,2 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /ops
+Disallow: /ops/
+Disallow: /payment/
+
+Sitemap: https://onefmops.netlify.app/sitemap.xml
