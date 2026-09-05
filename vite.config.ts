@@ -4,6 +4,14 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { inspectAttr } from 'plugin-inspect-react-code'
 
+/** Keep crawler OG on this SPA — WordPress does not host /assets/images from this build. */
+function readPublicSiteOrigin() {
+  const src = fs.readFileSync(path.resolve('src/lib/publicSite.ts'), 'utf8')
+  const match = src.match(/export const PUBLIC_SITE_ORIGIN = '([^']+)'/)
+  if (!match) throw new Error('inject-coverage-og: missing PUBLIC_SITE_ORIGIN in publicSite.ts')
+  return match[1]
+}
+
 /** Read stationStats from pricing.ts so crawler OG stays on the same source as coverageCopy. */
 function readStationStats() {
   const src = fs.readFileSync(path.resolve('src/data/pricing.ts'), 'utf8')
@@ -26,15 +34,21 @@ function injectCoverageOg() {
   const pop = stationStats.broadcastPopulation.toLocaleString('en-AU')
   const og = `Community radio from Shepparton, VIC. ${towns}. ${pop} people in the broadcast area.`
   const meta = `ONE FM 98.5 — The Voice of the Goulburn Valley. Volunteer-run community radio from Shepparton, Victoria. ${towns} · ${stationStats.broadcastRadiusKm}km radius (ABS 2021 via townData).`
+  const siteOrigin = readPublicSiteOrigin()
   return {
     name: 'inject-coverage-og',
     transformIndexHtml(html: string) {
-      if (!html.includes('__ONEFM_OG_DESCRIPTION__') || !html.includes('__ONEFM_META_DESCRIPTION__')) {
-        throw new Error('inject-coverage-og: index.html is missing coverage placeholders')
+      if (
+        !html.includes('__ONEFM_OG_DESCRIPTION__') ||
+        !html.includes('__ONEFM_META_DESCRIPTION__') ||
+        !html.includes('__ONEFM_SITE_ORIGIN__')
+      ) {
+        throw new Error('inject-coverage-og: index.html is missing coverage / SPA origin placeholders')
       }
       const out = html
         .replaceAll('__ONEFM_META_DESCRIPTION__', meta)
         .replaceAll('__ONEFM_OG_DESCRIPTION__', og)
+        .replaceAll('__ONEFM_SITE_ORIGIN__', siteOrigin)
       if (out.includes('__ONEFM_')) {
         throw new Error('inject-coverage-og: placeholders remained after inject')
       }
