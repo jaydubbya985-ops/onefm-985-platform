@@ -58,7 +58,7 @@ function ListenHero() {
       />
       <HeroAtmosphere mode="rings" />
 
-      <div className="relative">
+      <div className="relative z-10">
         <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,160px)]">
           <PosterReveal lines={[
             <span key="a" className="poster-hover">Listen</span>,

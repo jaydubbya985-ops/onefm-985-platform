@@ -21,14 +21,13 @@ function SignalCanvas() {
   }, [])
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     const dpr = window.devicePixelRatio || 1
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const resize = () => {
       const W = canvas.offsetWidth
@@ -38,6 +37,31 @@ function SignalCanvas() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
     resize()
+
+    const paintStatic = () => {
+      const W = canvas.offsetWidth
+      const H = canvas.offsetHeight
+      ctx.clearRect(0, 0, W, H)
+      const ox = W * 0.5
+      const oy = H * 0.82
+      ;[0.18, 0.34, 0.5].forEach((frac, i) => {
+        ctx.beginPath()
+        ctx.arc(ox, oy, Math.hypot(W, H) * frac, 0, Math.PI * 2)
+        ctx.strokeStyle = `rgba(229,22,54,${(0.22 - i * 0.05).toFixed(3)})`
+        ctx.lineWidth = 1.5
+        ctx.stroke()
+      })
+    }
+
+    if (reduced) {
+      paintStatic()
+      const ro = new ResizeObserver(() => {
+        resize()
+        paintStatic()
+      })
+      ro.observe(canvas)
+      return () => ro.disconnect()
+    }
 
     type Ring = { born: number; ox: number; oy: number; gold: boolean }
     const rings: Ring[] = []
@@ -65,13 +89,13 @@ function SignalCanvas() {
         const age = (now - ring.born) / 6000
         if (age >= 1) { rings.splice(i, 1); continue }
         const r = Math.max(0, age) * maxR
-        const alpha = 0.22 * (1 - age) * (1 - age)
+        const alpha = 0.38 * (1 - age) * (1 - age)
         ctx.beginPath()
         ctx.arc(ring.ox, ring.oy, r, 0, Math.PI * 2)
         ctx.strokeStyle = ring.gold
           ? `rgba(229,22,54,${alpha.toFixed(3)})`
           : `rgba(${electricRgb.current},${(alpha * 0.7).toFixed(3)})`
-        ctx.lineWidth = ring.gold ? 1.5 : 1
+        ctx.lineWidth = ring.gold ? 2 : 1.25
         ctx.stroke()
       }
 
@@ -153,7 +177,7 @@ export function HeroAtmosphere({ mode = 'full' }: { mode?: 'full' | 'rings' }) {
 
   if (mode === 'rings') {
     return (
-      <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none" aria-hidden>
+      <div className="absolute inset-0 z-[2] overflow-hidden pointer-events-none" aria-hidden>
         <SignalCanvas />
       </div>
     )
