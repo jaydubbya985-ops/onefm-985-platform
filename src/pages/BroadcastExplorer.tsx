@@ -914,23 +914,23 @@ function BehindTheScenes() {
             <div className="relative overflow-hidden rounded-2xl">
               <img
                 src={STATION_PHOTOS.commentaryTeamUniform}
-                alt="ONE FM broadcast team in the commentary box"
+                alt="GVL match-day station photography — not a named presenter portrait"
                 className="w-full object-cover hover:scale-[1.03] transition-transform duration-700"
                 style={{ height: 300 }}
               />
               <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent">
-                <p className="font-micro text-one-white/80">The ONE FM team — ready to call the game</p>
+                <p className="font-micro text-one-white/80">GVL hoodies at the ground — station archive, not a named team portrait</p>
               </div>
             </div>
             <div className="relative overflow-hidden rounded-2xl">
               <img
                 src={STATION_PHOTOS.commentaryCallAction}
-                alt="ONE FM commentator calling the game live"
+                alt="ONE FM commentary box — station photography, not a named presenter portrait"
                 className="w-full object-cover hover:scale-[1.03] transition-transform duration-700"
                 style={{ height: 170 }}
               />
               <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent">
-                <p className="font-micro text-one-white/80">Calling the game — live from the ground</p>
+                <p className="font-micro text-one-white/80">Match-day call from the box. Named portraits: Di Hunter and Sally Nayler only.</p>
               </div>
             </div>
           </motion.div>
