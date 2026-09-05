@@ -8,7 +8,7 @@ interface SignalDividerProps {
 
 const BARS = [6, 11, 8, 16, 9, 14, 7, 13, 10, 12, 8, 15, 7, 11, 9] as const
 
-/** Heritage Gold / 98.5 Red — not leftover #D4AF37. */
+/** Heritage Gold / 98.5 Red — not leftover old gold chrome. */
 const RULE = BRAND_COLORS.gold
 const SIGNAL = 'rgba(229, 22, 54, 0.55)'
 const SIGNAL_SOFT = 'rgba(229, 22, 54, 0.28)'
