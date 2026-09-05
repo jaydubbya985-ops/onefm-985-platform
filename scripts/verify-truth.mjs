@@ -489,6 +489,13 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const brandTokens = readFileSync(new URL('../public/brand/brand-tokens.json', import.meta.url), 'utf8')
+if (/#D4AF37/i.test(brandTokens) || !brandTokens.includes('"Heritage Gold": "#F2F2F2"')) {
+  hits.push(
+    'public/brand/brand-tokens.json: Heritage Gold must match live #F2F2F2 — not leftover #D4AF37',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
