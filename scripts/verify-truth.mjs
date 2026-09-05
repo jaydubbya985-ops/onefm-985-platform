@@ -404,6 +404,22 @@ if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
   hits.push('pages/MediaKit.tsx: media-kit DOCX must use BRAND.phone, not a placeholder')
 }
 
+const weeklySchedule = files.find((f) => f.label === 'components/WeeklySchedule.tsx')
+if (
+  !weeklySchedule ||
+  !weeklySchedule.text.includes('aria-label="Week at a glance"') ||
+  !weeklySchedule.text.includes("s.name !== 'Overnight Mix'")
+) {
+  hits.push(
+    'components/WeeklySchedule.tsx: week-at-a-glance strip must stay; Overnight Mix filter stays for #458',
+  )
+}
+if (!weeklySchedule || !weeklySchedule.text.includes('with {slot.host}')) {
+  hits.push(
+    'components/WeeklySchedule.tsx: day list must still print with {slot.host} — do not steal #286',
+  )
+}
+
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
   !programs ||
