@@ -105,7 +105,6 @@ export const INVOICE_STATION = {
   ...DS.station,
   callsign: '3ONE',
   licensed: '1989',
-  tagline: "Goulburn Valley's Community Radio",
   communityLine: `Licensed community broadcaster · ACMA 1385226/1 · ${formatCoverageShort()}`,
   org: 'Goulburn Valley Community Radio Inc.',
 } as const
