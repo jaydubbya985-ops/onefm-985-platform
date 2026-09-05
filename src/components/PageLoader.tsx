@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BrandLogo } from '@/components/BrandLogo'
+import { OfflineListenBanner } from '@/components/OfflineListenBanner'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const FIRST_VISIT_KEY = 'one-fm-session-intro'
@@ -52,23 +53,28 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [isReady]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (hidden) return null
+  if (hidden) return <OfflineListenBanner />
 
   /* ── Repeat-visit: near-instant fade ── */
   if (!isFirstVisit) {
     return (
-      <div
-        className={`fixed inset-0 z-[9999] bg-[#0A0A0A] transition-opacity duration-300 ${
-          exiting ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-        aria-hidden
-      />
+      <>
+        <OfflineListenBanner />
+        <div
+          className={`fixed inset-0 z-[9999] bg-[#0A0A0A] transition-opacity duration-300 ${
+            exiting ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+          aria-hidden
+        />
+      </>
     )
   }
 
   /* ── First-visit: ON AIR sign-on flash ── */
   return (
-    <AnimatePresence>
+    <>
+      <OfflineListenBanner />
+      <AnimatePresence>
       {!exiting && (
         <motion.div
           key="intro"
@@ -106,7 +112,8 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+    </>
   )
 }
 
