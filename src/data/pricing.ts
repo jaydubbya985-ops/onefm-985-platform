@@ -31,7 +31,8 @@ export const rateCard = {
   websiteBanner: 150,
   newsletterMention: 30,
   eventActivation: 500,
-  packageDiscount: 0.15, // 15% discount for annual
+  // Not published on the public media kit — no sourced annual % exists.
+  packageDiscount: 0.15,
 };
 
 // Proposal templates. Digital inventory is Facebook + website + newsletter only
