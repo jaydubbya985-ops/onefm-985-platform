@@ -861,7 +861,7 @@ export default function ContractManager() {
         <StatCard
           title="Expiring This Month"
           value={String(stats.expiringThisMonth)}
-          subtitle="Needs attention"
+          subtitle="endDate this month"
           icon={AlertTriangle}
           delay={0.1}
         />
