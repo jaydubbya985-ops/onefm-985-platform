@@ -130,6 +130,7 @@ export function WeatherMini() {
         {iconMapSmall[iconKey]}
         <span className="text-one-white font-medium">{formatTempC(weather.tempC)}</span>
         <span className="hidden sm:inline">{location.name}</span>
+        <span className="text-one-muted/55">{WEATHER_SOURCE_LABEL}</span>
       </motion.div>
     </AnimatePresence>
   )
