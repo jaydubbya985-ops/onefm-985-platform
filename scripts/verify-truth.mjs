@@ -489,6 +489,17 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const indexCss = files.find((f) => f.label === 'index.css')
+if (
+  !indexCss ||
+  /212\s*,\s*175\s*,\s*55/.test(indexCss.text) ||
+  !/\.btn-primary:hover[\s\S]*?rgba\(\s*229\s*,\s*22\s*,\s*54/.test(indexCss.text)
+) {
+  hits.push(
+    'index.css: .btn-primary:hover glow must use signal red #E51636 — not leftover gold 212,175,55',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
