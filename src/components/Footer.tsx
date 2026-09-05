@@ -64,7 +64,7 @@ export function Footer() {
               </MagneticButton>
               <MagneticButton strength={8} cursorLabel="CONTACT">
                 <Link to="/contact" className="btn-secondary text-sm">
-                  Get in Touch
+                  Contact
                 </Link>
               </MagneticButton>
             </motion.div>
