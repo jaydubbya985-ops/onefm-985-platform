@@ -61,6 +61,7 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /contact\?subject=/, why: 'Contact ignores ?subject= — Heritage contribute must use a mailto draft' },
 ]
 
 function walk(dir) {
@@ -464,6 +465,18 @@ for (const required of [
   if (!opsPayments?.text.includes(required)) {
     hits.push(`components/ops/data/payments.ts: missing ${required} label`)
   }
+}
+
+const contribute = files.find((f) => f.label === 'components/archive/ContributePortal.tsx')
+if (
+  !contribute ||
+  !contribute.text.includes('mailto:') ||
+  !contribute.text.includes('email draft') ||
+  !contribute.text.includes('Living Archive contribution')
+) {
+  hits.push(
+    'components/archive/ContributePortal.tsx: archive memories must open a mailto draft, not a dead Contact query',
+  )
 }
 
 const app = files.find((f) => f.label === 'App.tsx')
