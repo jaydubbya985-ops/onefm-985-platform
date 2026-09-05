@@ -274,6 +274,16 @@ if (
 ) {
   hits.push('components/HorizontalGallery.tsx: captions must use formatTowns, formatBroadcastPopulation, formatRadius')
 }
+if (
+  !gallery ||
+  /first bounce/i.test(gallery.text) ||
+  /voice of the game/i.test(gallery.text) ||
+  !gallery.text.includes('GVL Match of the Day · ${GVL_MATCH_HOURS ?? \'Saturday\'} on the weekly guide.')
+) {
+  hits.push(
+    'components/HorizontalGallery.tsx: GVL slide must name Match of the Day on the weekly guide — not leftover first bounce',
+  )
+}
 
 const indexHtml = files.find((f) => f.label === 'index.html')
 if (
