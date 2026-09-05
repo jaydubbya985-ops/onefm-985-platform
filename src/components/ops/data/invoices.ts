@@ -74,7 +74,7 @@ export const INVOICE_THANK_YOU_MESSAGES: Record<string, string> = {
   'inv-009':
     "Ken, nothing beats the smell of fresh bread from Burkes Bakery — and nothing beats having you on board as a ONE FM sponsor! Whether it's Burkes or Strathbogie Baking Company, your support helps us serve the Goulburn Valley community every single day. Cheers for backing local, Ken.",
   'inv-010':
-    "Kati, that stunning new $50 million SAM building is a game-changer for Shepparton, and we're stoked to partner with you for the full year ahead. A media partnership between SAM and ONE FM is a perfect match — art, culture and community radio all under one roof. Can't wait to showcase everything SAM has to offer!",
+    "Kati, that stunning new SAM building is a game-changer for Shepparton, and we're stoked to partner with you for the full year ahead. A media partnership between SAM and ONE FM is a perfect match — art, culture and community radio all under one roof. Can't wait to showcase everything SAM has to offer!",
   'inv-011':
     "Hi Sissy — just touching base on the catch-up payment for Natural Approach Healing Centre's sponsorship through to mid-2026. We know you're juggling both Natural Approach and Go Nagambie, so no pressure, just let us know if you need to chat through anything. Your support means the world to keeping community radio alive in the Valley!",
   'inv-012':
