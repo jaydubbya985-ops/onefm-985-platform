@@ -23,7 +23,8 @@ import {
 import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 import { liveNowFromMetadata } from '@/lib/liveNow'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
-import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
+import { LabelReveal } from '@/components/motion/PosterReveal'
+import { HeroHeadline } from '@/components/home/HeroHeadline'
 
 const RED = '#E51636'
 const INK = '#071D3A'
@@ -142,18 +143,7 @@ function Hero() {
           <span className="block mt-1.5 text-[12px] text-white/40">{live.breakfastLabel}</span>
         ) : null}
       </p>
-      <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]">
-        <PosterReveal
-          lines={[
-            <span className="poster-hover">The Voice</span>,
-            <>of the <StrokeFill delay={1.0}>Goulburn</StrokeFill></>,
-            <>
-              <StrokeFill delay={1.15}>Valley</StrokeFill>
-              <span style={{ color: RED }}>.</span>
-            </>,
-          ]}
-        />
-      </h1>
+      <HeroHeadline />
       <p className="mt-7 max-w-[520px] text-[17px] leading-relaxed text-white/60">
         Volunteer-run, community-owned. From emergency broadcasts during the 2022 floods to
         calling the GVL Grand Final live — on air since 1989.
