@@ -214,6 +214,12 @@ if (
 ) {
   hits.push('pages/Support.tsx: leftover coverage must use formatCoverageShort and formatWeeklyListenersPlain')
 }
+if (support && /Keep the Valley on air/.test(support.text)) {
+  hits.push('pages/Support.tsx: leftover Keep the Valley on air is slogan extra — name transmission, studio and programming')
+}
+if (!support || !support.text.includes('Transmission, studio and programming')) {
+  hits.push('pages/Support.tsx: IMPACT programming card must name transmission, studio and programming')
+}
 
 for (const label of ['pages/Story.tsx', 'pages/AudienceAnalytics.tsx']) {
   const page = files.find((f) => f.label === label)
