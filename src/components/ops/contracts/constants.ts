@@ -119,7 +119,7 @@ export const CONTRACT_TEMPLATES: ContractTemplate[] = [
     packageType: 'football_gold',
     campaignName: 'GVL 2026 SEASON',
     descriptionText:
-      'Full season football sponsorship including match-day announcements, digital signage, social media mentions, website logo placement, and premium on-air spots throughout the football season. Includes 4 x 30-second spots across all dayparts (EM, B, M, L, D, LN) for the duration of the season.',
+      'Full season football sponsorship including match-day announcements, digital signage, Facebook mentions (facebook.com/onefmshepparton), website logo placement, and premium on-air spots throughout the football season. Includes 4 x 30-second spots across all dayparts (EM, B, M, L, D, LN) for the duration of the season.',
     defaultValue: 15000,
     defaultFrequency: 'monthly',
     defaultPeriods: 6,
@@ -141,7 +141,7 @@ export const CONTRACT_TEMPLATES: ContractTemplate[] = [
     packageType: 'program_premium',
     campaignName: 'PROGRAM NAMING RIGHTS 2026',
     descriptionText:
-      'Exclusive naming rights to a ONE FM program. Includes program intro/outro mentions, presenter acknowledgements, dedicated webpage section, social media promotion, and branded content opportunities.',
+      'Exclusive naming rights to a ONE FM program. Includes program intro/outro mentions, presenter acknowledgements, dedicated webpage section, Facebook posts (facebook.com/onefmshepparton), and branded content opportunities.',
     defaultValue: 8000,
     defaultFrequency: 'annually',
     defaultPeriods: 1,
@@ -159,7 +159,7 @@ export const CONTRACT_TEMPLATES: ContractTemplate[] = [
     packageType: 'event_large',
     campaignName: 'EVENT COVERAGE 2026',
     descriptionText:
-      'Comprehensive event coverage including pre-event promotion, live broadcast from event, post-event highlights, social media coverage, and website feature. Includes live cross interviews and dedicated event announcements.',
+      'Comprehensive event coverage including pre-event promotion, live broadcast from event, post-event highlights, Facebook posts (facebook.com/onefmshepparton), and website feature. Includes live cross interviews and dedicated event announcements.',
     defaultValue: 3000,
     defaultFrequency: 'one_time',
     defaultPeriods: 1,
@@ -176,7 +176,7 @@ export const CONTRACT_TEMPLATES: ContractTemplate[] = [
   {
     id: 'tpl_digital_package',
     name: 'Digital Package',
-    description: 'Digital and social media focused sponsorship',
+    description: 'Digital and Facebook-focused sponsorship',
     packageType: 'digital_premium',
     campaignName: 'DIGITAL PREMIUM 2026',
     descriptionText:
