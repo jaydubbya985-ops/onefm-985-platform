@@ -113,6 +113,15 @@ if (
 ) {
   hits.push('pages/Listen.tsx: live hero from liveNowFromMetadata; on-air wall from ON_AIR_WEEK')
 }
+if (
+  !listen ||
+  /Broadcasting ever since/i.test(listen.text) ||
+  !listen.text.includes("'Community licence'")
+) {
+  hits.push(
+    'pages/Listen.tsx: 1989 stat must name the community licence — not leftover Broadcasting ever since',
+  )
+}
 
 const home = files.find((f) => f.label === 'pages/Home.tsx')
 if (!home || !home.text.includes('liveNowFromMetadata')) {
