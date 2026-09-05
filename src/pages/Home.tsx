@@ -248,7 +248,7 @@ function StatsStrip() {
     { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners', red: false },
     { n: '98.5', t: 'FM · Callsign 3ONE', red: true },
     { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: false },
-    { n: '1989', t: 'On air ever since', red: false },
+    { n: '1989', t: 'Community licence', red: false },
   ]
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-px my-20" style={{ background: '#12325C' }}>
