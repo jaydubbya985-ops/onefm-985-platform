@@ -489,6 +489,30 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const socialHub = files.find((f) => f.label === 'pages/SocialHub.tsx')
+if (!socialHub) {
+  hits.push('pages/SocialHub.tsx: missing')
+} else {
+  if (/anywhere in the world/i.test(socialHub.text)) {
+    hits.push('SocialHub: do not invent worldwide stream reach in captions')
+  }
+  if (/stream anywhere/i.test(socialHub.text)) {
+    hits.push('SocialHub: do not invent worldwide stream reach in caption starters')
+  }
+  if (/INSTAGRAM · X|FACEBOOK · INSTAGRAM · X/i.test(socialHub.text)) {
+    hits.push('SocialHub: marquee must not invent Instagram or X — those profiles are null')
+  }
+  if (/24 CONTENT TEMPLATES/.test(socialHub.text)) {
+    hits.push('SocialHub: template count must match TEMPLATES.length, not an invented 24')
+  }
+  if (/Open in Canva|Download Font Package|New Campaign|Canva \((Square|Story|Reel|Landscape|Portrait|Carousel)\)/.test(socialHub.text)) {
+    hits.push('SocialHub: do not advertise Canva files, a font zip, or a campaign CMS we have not built')
+  }
+  if (!socialHub.text.includes('getMelbourneDateParts')) {
+    hits.push('SocialHub: campaign calendar today must use getMelbourneDateParts, not Date#getDate()')
+  }
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
