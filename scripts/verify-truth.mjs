@@ -489,6 +489,21 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const invoices = files.find((f) => f.label === 'components/ops/InvoiceGenerator.tsx')
+if (
+  !invoices ||
+  /#D4A84B/i.test(invoices.text) ||
+  /#C49A3B/i.test(invoices.text) ||
+  invoices.text.includes('formatCoverageShort')
+) {
+  hits.push(
+    'components/ops/InvoiceGenerator.tsx: chrome must use signal red — not leftover gold or leftover coverage stamp',
+  )
+}
+if (!invoices?.text.includes('Invoice payments: NAB BSB')) {
+  hits.push('components/ops/InvoiceGenerator.tsx: must still name NAB pay-to')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
