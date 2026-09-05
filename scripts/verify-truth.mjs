@@ -113,6 +113,16 @@ if (
 ) {
   hits.push('pages/Listen.tsx: live hero from liveNowFromMetadata; on-air wall from ON_AIR_WEEK')
 }
+if (
+  !listen ||
+  /Stream anywhere/.test(listen.text) ||
+  /anywhere in the world/.test(listen.text) ||
+  !listen.text.includes("title: 'On this site'")
+) {
+  hits.push(
+    'pages/Listen.tsx: stream tile must name this site — not leftover Stream anywhere',
+  )
+}
 
 const home = files.find((f) => f.label === 'pages/Home.tsx')
 if (!home || !home.text.includes('liveNowFromMetadata')) {
