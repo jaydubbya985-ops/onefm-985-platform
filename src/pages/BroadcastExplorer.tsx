@@ -1017,7 +1017,7 @@ function ListenLiveCTA() {
       </div>
 
       <div className="max-w-[600px] mx-auto px-4 sm:px-6 text-center relative z-10">
-        <WordReveal text="TUNE IN ANYWHERE" className="font-h2 text-one-white mb-4 block" as="h2" />
+        <WordReveal text={`LISTEN ON ${LISTEN_LINKS.fm.label}`} className="font-h2 text-one-white mb-4 block" as="h2" />
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
