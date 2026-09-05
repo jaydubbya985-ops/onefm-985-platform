@@ -100,10 +100,22 @@ export function OnAirNav() {
         <div className="h-full px-5 md:px-10 flex items-center justify-between">
           <Link to="/" className="group flex items-center gap-3 shrink-0" aria-label="ONE FM 98.5 — Home" data-cursor-label="HOME">
             <BrandLogo variant="white" className="logo-live h-10 w-auto object-contain max-w-[min(180px,40vw)]" />
-            <span className="relative flex h-2.5 w-2.5" title={meta.isLive ? 'On air' : 'Automated'}>
-              <span className="lamp-ring" aria-hidden />
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: RED }} />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: RED }} />
+            <span
+              className="relative flex h-2.5 w-2.5"
+              title={meta.isLive ? 'On air' : 'Automated'}
+              aria-label={meta.isLive ? 'On air' : 'Automated mix'}
+            >
+              {meta.isLive && !reduced ? (
+                <>
+                  <span className="lamp-ring" aria-hidden />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: RED }} />
+                </>
+              ) : null}
+              <span
+                className="relative inline-flex rounded-full h-2.5 w-2.5"
+                style={{ background: RED, opacity: meta.isLive ? 1 : 0.4 }}
+                aria-hidden
+              />
             </span>
           </Link>
 
