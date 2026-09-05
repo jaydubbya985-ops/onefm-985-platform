@@ -61,6 +61,11 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /geelong/i, why: 'DEMO CRM must not invent leftover Geelong geography — licensed coverage is Goulburn Valley via townData' },
+  { re: /bellarine/i, why: 'DEMO CRM must not invent leftover Barwon geography' },
+  { re: /Surf Coast/i, why: 'DEMO CRM must not invent leftover Barwon geography' },
+  { re: /\bNewcomb\b/i, why: 'DEMO CRM must not invent leftover Barwon geography' },
+  { re: /03 5222/, why: 'DEMO CRM must not invent leftover Geelong STD 03 5222' },
 ]
 
 function walk(dir) {
