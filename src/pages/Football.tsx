@@ -5,7 +5,7 @@ import {
   Check, Star, TrendingUp, Users, Radio, MapPin,
   Target, ArrowRight, Send, Phone, Mail,
   User, Building, MessageSquare, ChevronDown, Sparkles,
-  BarChart3, Clock, Shield, Award
+  BarChart3, Clock, Shield
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
@@ -193,16 +193,16 @@ function ScrollReveal({ children, className = '', delay = 0 }: { children: React
 }
 
 /* ─── 9-Tier Data (from pricing.ts) ─── */
-const tierMeta: Record<string, { key: string; shortName: string; color: string; accent: string; ctaStyle: 'primary' | 'secondary'; popular?: boolean; bestValue?: boolean; crown?: boolean }> = {
+const tierMeta: Record<string, { key: string; shortName: string; color: string; accent: string; ctaStyle: 'primary' | 'secondary' }> = {
   'Community Supporter': { key: 'community-supporter', shortName: 'SUPPORTER', color: 'text-one-white', accent: '#6B6B75', ctaStyle: 'secondary' },
   'Community Partner': { key: 'community-partner', shortName: 'PARTNER', color: 'text-one-gold', accent: '#F0C75E', ctaStyle: 'secondary' },
   'Local Champion': { key: 'local-champion', shortName: 'CHAMPION', color: 'text-one-gold', accent: '#F0C75E', ctaStyle: 'secondary' },
-  'Champion Partner': { key: 'champion-partner', shortName: 'CHAMPION+', color: 'text-one-gold', accent: '#D4963A', ctaStyle: 'primary', popular: true },
+  'Champion Partner': { key: 'champion-partner', shortName: 'CHAMPION+', color: 'text-one-gold', accent: '#D4963A', ctaStyle: 'primary' },
   'Major Partner': { key: 'major-partner', shortName: 'MAJOR', color: 'text-one-gold', accent: '#D4963A', ctaStyle: 'primary' },
-  'Premier Partner': { key: 'premier-partner', shortName: 'PREMIER', color: 'text-one-gold', accent: '#D4963A', ctaStyle: 'primary', bestValue: true },
+  'Premier Partner': { key: 'premier-partner', shortName: 'PREMIER', color: 'text-one-gold', accent: '#D4963A', ctaStyle: 'primary' },
   'Elite Partner': { key: 'elite-partner', shortName: 'ELITE', color: 'text-one-gold', accent: '#F0C75E', ctaStyle: 'primary' },
   'Signature Partner': { key: 'signature-partner', shortName: 'SIGNATURE', color: 'text-one-white', accent: '#D4A84B', ctaStyle: 'primary' },
-  'Naming Rights Partner': { key: 'naming-rights', shortName: 'NAMING', color: 'text-one-white', accent: '#D4A84B', ctaStyle: 'primary', crown: true },
+  'Naming Rights Partner': { key: 'naming-rights', shortName: 'NAMING', color: 'text-one-white', accent: '#D4A84B', ctaStyle: 'primary' },
 }
 
 const tiers = footballTiers.map((t) => {
@@ -217,10 +217,6 @@ const tiers = footballTiers.map((t) => {
     accent: meta.accent,
     features: t.features,
     ctaStyle: meta.ctaStyle,
-    popular: meta.popular,
-    bestValue: meta.bestValue,
-    badge: t.badge,
-    crown: meta.crown,
   }
 })
 
@@ -564,38 +560,13 @@ export default function Football() {
               <motion.div
                 key={tier.key}
                 initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: tier.popular || tier.bestValue ? -10 : 0 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.6, delay: i * 0.06, ease: easeOutExpo }}
-                whileHover={{ y: tier.popular || tier.bestValue ? -14 : -6, transition: { duration: 0.3 } }}
+                whileHover={{ y: -6, transition: { duration: 0.3 } }}
                 data-cursor-label="SELECT"
-                className={`glass-card p-6 relative transition-shadow duration-300 ${
-                  tier.popular || tier.bestValue ? 'border-one-gold/40 shadow-glow' : ''
-                } ${tier.crown ? 'border-one-gold/50' : ''}`}
-                style={tier.crown ? { boxShadow: '0 0 30px rgba(212,168,75,0.2)' } : {}}
+                className="glass-card p-6 relative transition-shadow duration-300"
               >
-                {/* Badge */}
-                {tier.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                    <span className={`font-label text-[10px] px-3 py-1 rounded-full whitespace-nowrap ${
-                      tier.crown
-                        ? 'bg-one-gold text-one-navy'
-                        : tier.bestValue
-                        ? 'bg-data-teal text-one-navy'
-                        : 'bg-one-gold text-one-navy'
-                    }`}>
-                      {tier.badge}
-                    </span>
-                  </div>
-                )}
-
-                {/* Crown icon for top tier */}
-                {tier.crown && (
-                  <div className="flex justify-center mb-3">
-                    <Award size={32} className="text-one-gold" />
-                  </div>
-                )}
-
                 {/* Tier name */}
                 <h3 className={`font-h3 ${tier.color} mb-1 text-center`}>{tier.name.toUpperCase()}</h3>
                 <p className="font-label text-muted text-center mb-4">{tier.shortName} TIER</p>
