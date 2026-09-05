@@ -29,7 +29,7 @@ import {
   tickerWeeklyListenersItem,
   weeklyListenersValue,
 } from '@/lib/coverageCopy'
-import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
+import { GVL_PREMIUM_BADGE, PARTNERSHIP_FROM_WEEKLY, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import { BRAND } from '@/lib/brand'
@@ -299,7 +299,7 @@ export default function SalesProposal() {
           items={[
             tickerWeeklyListenersItem(),
             `${formatTowns()} · ${formatRadius()} radius`,
-            'Packages from $50/week',
+            PARTNERSHIP_FROM_WEEKLY,
             STANDARD_SPOT_PLUS_GST,
             GVL_PREMIUM_BADGE,
             `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`,
