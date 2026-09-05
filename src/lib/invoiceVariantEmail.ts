@@ -323,7 +323,7 @@ function renderValley(ctx: RenderCtx): string {
   const body = `
   <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#2D4A3E;">
     <tr><td style="padding:32px 40px 28px 40px;" class="mp">
-      <div style="color:rgba(255,255,255,0.55);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;">Partners in the Valley</div>
+      <div style="color:rgba(255,255,255,0.55);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;">Tax invoice</div>
       <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
           <td style="vertical-align:middle;">
