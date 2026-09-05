@@ -212,7 +212,7 @@ export default function AudienceAnalytics() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: easeOutExpo }}
           >
-            <WordReveal text="AUDIENCE INTELLIGENCE" className="font-h1 text-one-white mb-2 block" as="h1" stagger={0.04} />
+            <WordReveal text="MODELLED AUDIENCE" className="font-h1 text-one-white mb-2 block" as="h1" stagger={0.04} />
             <p className="font-body text-one-white">
               Modelled audience for the {formatCoverageShort()} broadcast area (ABS 2021 via townData). Live stream counts: data pending.
             </p>

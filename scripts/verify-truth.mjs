@@ -21,6 +21,7 @@ const FORBIDDEN = [
   { re: /78% within 50km/i, why: 'no invented 50km coverage share' },
   { re: /Balanced gender split — 48\/52/i, why: 'gender split must match ABS LGA 49/51' },
   { re: /Real-time insights into who's listening/i, why: 'no fake live audience dashboard copy' },
+  { re: /AUDIENCE INTELLIGENCE/i, why: 'Audience heading is modelled ABS 2021 reach, not leftover intelligence' },
   { re: /25\+ multicultural programs weekly/i, why: 'programGuide has 8 multicultural slots, not 25+' },
   { re: /reaching a total population of/i, why: 'population is in the broadcast area, not reached' },
   { re: /covering a projected population of/i, why: 'population is in the broadcast area, not covered as reach' },
@@ -394,6 +395,24 @@ assertCoverageCopy('pages/AudienceAnalytics.tsx', [
   'formatWeeklyListenersPlain()',
   'formatBroadcastPopulation()',
 ])
+const audience = files.find((f) => f.label === 'pages/AudienceAnalytics.tsx')
+if (
+  !audience ||
+  /AUDIENCE INTELLIGENCE/i.test(audience.text) ||
+  !audience.text.includes('MODELLED AUDIENCE')
+) {
+  hits.push(
+    'pages/AudienceAnalytics.tsx: heading must name modelled ABS 2021 reach — not leftover intelligence',
+  )
+}
+if (
+  !audience ||
+  !audience.text.includes('DEMOGRAPHIC DEEP DIVE') ||
+  !audience.text.includes('PLATFORM PERFORMANCE') ||
+  !audience.text.includes('USE YOUR DATA')
+) {
+  hits.push('pages/AudienceAnalytics.tsx: do not steal leftover SaaS headings on this page')
+}
 assertCoverageCopy('pages/Heritage.tsx', ['formatTowns()', 'yearsBroadcastingValue()'])
 assertCoverageCopy('pages/Story.tsx', [
   'formatTowns()',
