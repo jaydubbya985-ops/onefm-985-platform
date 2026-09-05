@@ -60,7 +60,7 @@ function SponsorHero() {
           style={{ background: RED }}
           data-cursor-label="ENQUIRE"
         >
-          Start a Conversation →
+          Send the Enquiry →
         </a>
       </div>
     </section>
