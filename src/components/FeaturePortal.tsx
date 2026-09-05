@@ -4,6 +4,15 @@ import { MediaImage } from '@/components/MediaImage'
 import { BRAND, BRAND_COLORS } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
 
+/** Direction A navy from BRAND_COLORS — never leftover broadcast navy. */
+function inkA(alpha: number): string {
+  const n = BRAND_COLORS.navy.replace('#', '')
+  const r = parseInt(n.slice(0, 2), 16)
+  const g = parseInt(n.slice(2, 4), 16)
+  const b = parseInt(n.slice(4, 6), 16)
+  return `rgba(${r},${g},${b},${alpha})`
+}
+
 export interface FeaturePortalProps {
   to: string
   title: string
@@ -46,7 +55,8 @@ export function FeaturePortal({
       <div
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(to top, rgba(7,29,58,0.95) 0%, rgba(7,29,58,0.35) 45%, rgba(7,29,58,0.15) 100%)`,
+          // Direction A ink — leftover navy washed every Home job card.
+          background: `linear-gradient(to top, ${inkA(0.95)} 0%, ${inkA(0.35)} 45%, ${inkA(0.15)} 100%)`,
         }}
       />
       <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-5">
