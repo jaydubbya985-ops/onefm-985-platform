@@ -292,6 +292,7 @@ export function CustomCursor() {
       {/* Lagging ring */}
       <div
         ref={ringRef}
+        data-cursor-ring
         aria-hidden
         style={{
           position: 'fixed',

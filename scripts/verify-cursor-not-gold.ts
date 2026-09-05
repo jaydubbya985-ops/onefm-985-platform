@@ -29,6 +29,10 @@ assert(
   src.includes('SIGNAL_RED_RGB'),
   'hover ring must read SIGNAL_RED_RGB, not a leftover gold literal',
 )
+assert(
+  src.includes('data-cursor-ring'),
+  'CustomCursor ring must be queryable as [data-cursor-ring]',
+)
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 assert(
