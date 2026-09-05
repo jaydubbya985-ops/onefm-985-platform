@@ -40,6 +40,27 @@ export const STATION_TICKER: TickerItem[] = [
   { id: '4', text: 'Latest interviews & community news at fm985.com.au', href: 'https://fm985.com.au' },
 ]
 
+/** Station idents are not a now-playing track. Radio.co often sends "ONE FM 98.5". */
+export function isUsableNowPlaying(raw: string | null | undefined): boolean {
+  const text = raw?.trim() ?? ''
+  if (!text) return false
+  const folded = text.toLowerCase().replace(/[^a-z0-9]+/g, '')
+  if (
+    folded === 'onefm' ||
+    folded === 'onefm985' ||
+    folded === '985' ||
+    folded === '985fm' ||
+    folded === '3one' ||
+    folded === 'fm985' ||
+    folded === 'fm985comau'
+  ) {
+    return false
+  }
+  if (/^one\s*fm(\s*98\.?5)?$/i.test(text)) return false
+  if (/^98\.?5(\s*fm)?$/i.test(text)) return false
+  return true
+}
+
 const SOURCE_LABELS: Record<MetadataSource, string> = {
   schedule: 'Program schedule',
   rds: 'RDS live',
@@ -125,7 +146,7 @@ export async function fetchStreamMetadata(_streamUrl?: string): Promise<{
     if (data.status !== 'online') return null
 
     const raw = data.current_track?.title?.trim()
-    if (!raw) return null
+    if (!raw || !isUsableNowPlaying(raw)) return null
 
     // Reject raw technical IDs like "SHE60C@BB9" — no spaces, contains @ or
     // is all-uppercase alphanumeric (internal stream callsigns/track IDs).

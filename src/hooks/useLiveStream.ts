@@ -40,24 +40,35 @@ function getSnapshot(): StreamState {
   return state
 }
 
+export async function playLiveStream(): Promise<void> {
+  const a = getAudio()
+  if (state.playing) return
+
+  emit({ ...state, loading: true, error: null })
+  try {
+    await a.play()
+  } catch {
+    emit({ playing: false, loading: false, error: 'Playback blocked — open the web player instead.' })
+  }
+}
+
+export function pauseLiveStream(): void {
+  if (!audio) return
+  audio.pause()
+}
+
 export function useLiveStream() {
-  const local = useSyncExternalStore(subscribe, getSnapshot)
+  const local = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 
+  const play = useCallback(() => playLiveStream(), [])
+  const pause = useCallback(() => pauseLiveStream(), [])
   const toggle = useCallback(async () => {
-    const a = getAudio()
-
     if (state.playing) {
-      a.pause()
+      pauseLiveStream()
       return
     }
-
-    emit({ ...state, loading: true, error: null })
-    try {
-      await a.play()
-    } catch {
-      emit({ playing: false, loading: false, error: 'Playback blocked — open the web player instead.' })
-    }
+    await playLiveStream()
   }, [])
 
-  return { playing: local.playing, loading: local.loading, error: local.error, toggle }
+  return { playing: local.playing, loading: local.loading, error: local.error, toggle, play, pause }
 }

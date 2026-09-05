@@ -24,6 +24,8 @@ export interface LiveNowDisplay {
   withLine: string | null
   remainingLabel: string
   remainingMinutes: number
+  elapsedMinutes: number
+  slotMinutes: number
   elapsedRatio: number
 }
 
@@ -50,6 +52,8 @@ export function liveNowFromMetadata(meta: PlayerMetadata, now: Date = new Date()
     withLine: formatWithPresenter(presenter),
     remainingLabel: show.remainingLabel,
     remainingMinutes: show.remainingMinutes,
+    elapsedMinutes: show.elapsedMinutes,
+    slotMinutes,
     elapsedRatio: Math.min(1, Math.max(0, show.elapsedMinutes / slotMinutes)),
   }
 }
