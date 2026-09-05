@@ -183,6 +183,12 @@ if (
 if (!community || !community.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/Community.tsx: GVL badge/ticker hours must come from formatGuideHours / FULL_SCHEDULE')
 }
+if (community && /People in broadcast area \(ABS 2021/.test(community.text)) {
+  hits.push('pages/Community.tsx: 189,680 is townData 2026 town estimates, not ABS 2021')
+}
+if (community && /Where the Signal Reaches/.test(community.text)) {
+  hits.push('pages/Community.tsx: do not title the map strip as listener reach')
+}
 
 const stationHistory = files.find((f) => f.label === 'data/stationHistory.ts')
 if (
