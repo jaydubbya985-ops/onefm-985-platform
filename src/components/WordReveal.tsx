@@ -36,40 +36,44 @@ export function WordReveal({
     let gi = 0
     const wordChars = words.map(w => w.split('').map(c => ({ c, i: gi++ })))
 
+    // Sighted per-letter wipe is theatre. Assistive tech hears the line once.
     return (
-      <Tag className={className} style={style} aria-label={text}>
-        {wordChars.map((chars, wi) => (
-          <span
-            key={wi}
-            style={{
-              display: 'inline-block',
-              whiteSpace: 'nowrap',
-              marginRight: wi < wordChars.length - 1 ? '0.28em' : 0,
-            }}
-          >
-            {chars.map(({ c, i }) => (
-              <span
-                key={i}
-                className="inline-block overflow-hidden"
-                style={{ verticalAlign: 'bottom', paddingBottom: '0.08em', marginBottom: '-0.08em' }}
-              >
-                <motion.span
-                  className="inline-block"
-                  initial={prefersReducedMotion ? false : { y: '110%', opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={prefersReducedMotion ? { duration: 0 } : {
-                    delay: delay + i * (stagger ?? 0.028),
-                    duration: 0.52,
-                    ease,
-                  }}
+      <Tag className={className} style={style}>
+        <span className="sr-only">{text}</span>
+        <span aria-hidden="true">
+          {wordChars.map((chars, wi) => (
+            <span
+              key={wi}
+              style={{
+                display: 'inline-block',
+                whiteSpace: 'nowrap',
+                marginRight: wi < wordChars.length - 1 ? '0.28em' : 0,
+              }}
+            >
+              {chars.map(({ c, i }) => (
+                <span
+                  key={i}
+                  className="inline-block overflow-hidden"
+                  style={{ verticalAlign: 'bottom', paddingBottom: '0.08em', marginBottom: '-0.08em' }}
                 >
-                  {c}
-                </motion.span>
-              </span>
-            ))}
-          </span>
-        ))}
+                  <motion.span
+                    className="inline-block"
+                    initial={prefersReducedMotion ? false : { y: '110%', opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true, margin: '-60px' }}
+                    transition={prefersReducedMotion ? { duration: 0 } : {
+                      delay: delay + i * (stagger ?? 0.028),
+                      duration: 0.52,
+                      ease,
+                    }}
+                  >
+                    {c}
+                  </motion.span>
+                </span>
+              ))}
+            </span>
+          ))}
+        </span>
       </Tag>
     )
   }
@@ -77,21 +81,26 @@ export function WordReveal({
   // Default (ON AIR silk): the whole line rises from a clipped baseline —
   // calmer than per-word stagger, the poster-type standard. `stagger` is
   // retained in the API but line reveals ignore it by design.
+  // Sighted reveal is theatre. Assistive tech must hear the finished
+  // line once — not per-letter ticks and not a doubled aria-label.
   return (
-    <Tag className={className} style={style} aria-label={text}>
-      <span
-        className="inline-block overflow-hidden"
-        style={{ verticalAlign: 'bottom', paddingBottom: '0.08em', marginBottom: '-0.08em', maxWidth: '100%' }}
-      >
-        <motion.span
-          className="inline-block"
-          initial={prefersReducedMotion ? false : { y: '110%' }}
-          whileInView={{ y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={prefersReducedMotion ? { duration: 0 } : { delay, duration: 0.65, ease }}
+    <Tag className={className} style={style}>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
+        <span
+          className="inline-block overflow-hidden"
+          style={{ verticalAlign: 'bottom', paddingBottom: '0.08em', marginBottom: '-0.08em', maxWidth: '100%' }}
         >
-          {text}
-        </motion.span>
+          <motion.span
+            className="inline-block"
+            initial={prefersReducedMotion ? false : { y: '110%' }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={prefersReducedMotion ? { duration: 0 } : { delay, duration: 0.65, ease }}
+          >
+            {text}
+          </motion.span>
+        </span>
       </span>
     </Tag>
   )
