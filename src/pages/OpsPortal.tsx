@@ -25,6 +25,7 @@ import { BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { isSupabaseConfigured, getOpsCredentialSource, opsCredentialSourceLabel } from '@/lib/supabase'
+import { useRealtime } from '@/hooks/useRealtime'
 
 const EnquiryDashboard = lazy(() => import('@/components/ops/EnquiryDashboard'))
 const ProposalBuilder = lazy(() => import('@/components/ops/ProposalBuilder'))
@@ -148,6 +149,7 @@ function OpsPortalContent() {
   const { activeTab, setActiveTab, resetDemoData } = useOpsStore()
   const { toast } = useToast()
   const { logout, user } = useAuth()
+  const desk = useRealtime()
 
   return (
     <div className="min-h-screen bg-[#101010]">
@@ -180,6 +182,7 @@ function OpsPortalContent() {
             {isSupabaseConfigured() ? (
               <div className="mt-4 rounded-lg border border-emerald-700/40 bg-emerald-900/15 px-4 py-3 max-w-2xl">
                 <p className="text-sm text-emerald-400 font-semibold">LIVE — enquiries, proposals, contracts and invoices persist to Supabase</p>
+                <p className="text-xs text-one-muted mt-2">{desk.label}</p>
                 <p className="text-xs text-one-muted mt-0.5">
                   Sponsors, schedule, billing charts and payments start empty in live mode. DEMO seeds stay in DEMO mode only.
                   {getOpsCredentialSource() !== 'none' && (
@@ -192,6 +195,7 @@ function OpsPortalContent() {
                 <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold text-xs font-bold">D</span>
                 <div>
                   <p className="text-sm text-one-gold font-semibold">DEMO MODE — all data is local &amp; unsaved</p>
+                  <p className="text-xs text-one-muted mt-2">{desk.label}</p>
                   <p className="text-xs text-one-muted mt-0.5">
                     Invoices, proposals and contacts shown here are sample data. To enable live storage add{' '}
                     <code className="text-one-white/70">VITE_SUPABASE_URL</code> +{' '}
