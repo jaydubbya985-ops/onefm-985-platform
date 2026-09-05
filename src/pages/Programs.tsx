@@ -264,7 +264,7 @@ const shows = [
     name: "NIRS Sunday Afternoon AFL",
     time: "Sunday, 1pm–3pm",
     host: "ONE FM",
-    desc: "AFL Match of the Day via NIRS — live Sunday afternoon football coverage for the region.",
+    desc: "Sunday afternoon AFL via NIRS — Match of the Day on the weekly guide.",
     tag: "Sport",
     icon: Trophy,
   },

@@ -423,6 +423,15 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (
+  !programs ||
+  /live Sunday afternoon football coverage/i.test(programs.text) ||
+  !programs.text.includes('Sunday afternoon AFL via NIRS — Match of the Day on the weekly guide.')
+) {
+  hits.push(
+    'pages/Programs.tsx: NIRS Sunday AFL must name the weekly-guide relay — not leftover live regional coverage',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
