@@ -18,6 +18,7 @@ import {
 } from '@/data/programGuide'
 import { BRAND } from '@/lib/brand'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { songRequestMailto, songRequestPlaintext } from '@/lib/songRequestMailto'
 import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import {
@@ -167,16 +168,26 @@ function SongRequest() {
   const [name, setName] = useState('')
   const [song, setSong] = useState('')
   const [message, setMessage] = useState('')
-  const [draftOpened, setDraftOpened] = useState(false)
+  const [draftHref, setDraftHref] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   function onSubmit(e: FormEvent) {
     e.preventDefault()
     if (!name.trim() || !song.trim()) return
-    const body = encodeURIComponent(
-      `Song request from ${name.trim()}\n\nSong: ${song.trim()}\n\nMessage: ${message.trim() || '(none)'}`,
-    )
-    window.location.href = `mailto:${BRAND.email}?subject=${encodeURIComponent('ONE FM Song Request')}&body=${body}`
-    setDraftOpened(true)
+    const href = songRequestMailto({ name, song, message })
+    setDraftHref(href)
+    setCopied(false)
+    window.location.href = href
+  }
+
+  async function copyDraft() {
+    const text = songRequestPlaintext({ name, song, message })
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+    } catch {
+      setCopied(false)
+    }
   }
 
   const field =
@@ -191,12 +202,32 @@ function SongRequest() {
         </h2>
         <p className="text-[15px] leading-relaxed text-white/55 mt-3 mb-6">
           Opens an email draft to {BRAND.email}. Nothing is sent until you hit send in your email app.
-          You can also call {BRAND.phone} while we&apos;re live.
+          If a draft does not open, use the link or copy the text. You can also call {BRAND.phone} while we&apos;re live.
         </p>
-        {draftOpened && (
-          <p className="mb-6 text-[15px] font-bold" style={{ color: LIME }} role="status">
-            Email draft opened — complete the send in your email app so it reaches the studio.
-          </p>
+        {draftHref && (
+          <div className="mb-6 space-y-3" role="status">
+            <p className="text-[15px] font-bold" style={{ color: LIME }}>
+              Draft ready — nothing has been sent. Complete send in your email app, or use the fallback below.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href={draftHref}
+                data-cursor-label="DRAFT"
+                className="px-4 py-2 rounded-lg font-bold uppercase tracking-wide text-xs text-white"
+                style={{ background: RED }}
+              >
+                Open email draft
+              </a>
+              <button
+                type="button"
+                onClick={() => void copyDraft()}
+                data-cursor-label="COPY"
+                className="px-4 py-2 rounded-lg font-bold uppercase tracking-wide text-xs border border-white/20 text-white"
+              >
+                {copied ? 'Copied request text' : 'Copy request text'}
+              </button>
+            </div>
+          </div>
         )}
         <form onSubmit={onSubmit} className="space-y-4">
           <label className="block">

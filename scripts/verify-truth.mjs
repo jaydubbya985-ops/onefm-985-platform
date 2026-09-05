@@ -89,11 +89,13 @@ for (const file of files) {
 const listen = files.find((f) => f.label === 'pages/Listen.tsx')
 if (
   !listen ||
-  !listen.text.includes('Email draft opened') ||
-  !listen.text.includes('Open email draft')
+  !listen.text.includes('songRequestMailto') ||
+  !listen.text.includes('Open email draft') ||
+  !listen.text.includes('nothing has been sent') ||
+  /Email draft opened/i.test(listen.text)
 ) {
   hits.push(
-    'pages/Listen.tsx: routed song request must open a mailto draft and say so',
+    'pages/Listen.tsx: song request must offer a mailto draft without claiming it opened',
   )
 }
 if (listen && /stationStats/.test(listen.text)) {
@@ -416,11 +418,14 @@ if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (
   !programs ||
-  !programs.text.includes('Email Draft Opened') ||
-  /Request Received/i.test(programs.text)
+  !programs.text.includes('songRequestMailto') ||
+  !programs.text.includes('Open email draft') ||
+  !programs.text.includes('nothing has been sent') ||
+  /Request Received/i.test(programs.text) ||
+  /Email Draft Opened/i.test(programs.text)
 ) {
   hits.push(
-    'pages/Programs.tsx: song request must say a draft opened — not that it was received',
+    'pages/Programs.tsx: song request must name a draft — not leftover opened or received',
   )
 }
 if (
