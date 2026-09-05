@@ -26,6 +26,7 @@ import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
 
 const RED = '#E51636'
+const LIME = '#B6FF00'
 const INK = '#071D3A'
 const BAR = '#0B2A52'
 
@@ -140,6 +141,12 @@ function Hero() {
         </span>
         {live.breakfastOnAir && live.breakfastLabel ? (
           <span className="block mt-1.5 text-[12px] text-white/40">{live.breakfastLabel}</span>
+        ) : null}
+        {meta.nowPlaying ? (
+          <span className="block mt-1.5 text-[13px] font-bold" style={{ color: LIME }} aria-live="polite">
+            ♪ {meta.nowPlaying}
+            {meta.artist && !meta.nowPlaying.includes(meta.artist) ? ` — ${meta.artist}` : ''}
+          </span>
         ) : null}
       </p>
       <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,170px)]">
