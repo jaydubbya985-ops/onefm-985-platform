@@ -121,6 +121,9 @@ if (!home || !home.text.includes('liveNowFromMetadata')) {
 if (!home || !home.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/Home.tsx: GVL photo badge hours must come from formatGuideHours / FULL_SCHEDULE')
 }
+if (!home || !home.text.includes('♪ {meta.nowPlaying}')) {
+  hits.push('pages/Home.tsx: hero must name the stream track (♪ nowPlaying), not only the ticker')
+}
 
 const liveNow = files.find((f) => f.label === 'lib/liveNow.ts')
 if (
