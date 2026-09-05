@@ -19,16 +19,25 @@ import { donationTiers } from '@/data/pricing'
 import { BREAKFAST_SHOW, MULTICULTURAL_PROGRAM_COUNT, getBreakfastScheduleLabel } from '@/data/programGuide'
 import { formatTowns, formatCoverageShort, formatWeeklyListeners, formatWeeklyListenersPlain, yearsBroadcastingValue } from '@/lib/coverageCopy'
 import { PARTNERSHIP_FROM_WEEKLY } from '@/lib/inventoryCopy'
-import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
+import {
+  BANK_ACCOUNT,
+  BANK_ACCOUNT_NAME,
+  BANK_BSB,
+  BANK_INSTITUTION,
+  BANK_TRADING_AS,
+} from '@/lib/stationBank'
 import { BRAND } from '@/lib/brand'
 
 const RED = '#E51636'
 
 const BANK = {
   name: BANK_ACCOUNT_NAME,
-  bank: 'NAB',
+  tradingAs: BANK_TRADING_AS,
+  bank: BANK_INSTITUTION,
   bsb: BANK_BSB,
   account: BANK_ACCOUNT,
+  email: BRAND.email,
+  phone: BRAND.phone,
 } as const
 
 const STRIPE_READY =
@@ -141,6 +150,7 @@ function BankDetails() {
             <div>
               <dt className="text-white/40 text-[11px] font-bold tracking-[0.12em] uppercase">Account name</dt>
               <dd className="font-poster text-[22px] text-white mt-1">{BANK.name}</dd>
+              <dd className="text-white/55 text-[13px] mt-1">Trading as {BANK.tradingAs}</dd>
             </div>
             <div>
               <dt className="text-white/40 text-[11px] font-bold tracking-[0.12em] uppercase">Bank</dt>

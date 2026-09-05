@@ -59,8 +59,12 @@ export const BRAND_COLORS = {
 export const LOGO = {
   /** Vector SVG extracted from supplied PDF — use for digital */
   primarySvg:  '/brand/one-fm-logo-source.svg',
-  /** PNG from brand pack — use for social, email */
+  /** PNG raster of the source wordmark — invoices, email, PDF */
   primary:     '/brand/one-fm-logo-primary.png',
+  /** Official wordmark on white — tax invoices */
+  invoice:     '/brand/one-fm-logo-source.svg',
+  /** Dark-background prestige lockup — not for white invoices */
+  prestige:    '/brand/one-fm-logo-prestige.svg',
   /** Reversed/white-on-dark approximation */
   reversed:    '/brand/one-fm-logo-reversed.svg',
   /** Legacy transparent variant */

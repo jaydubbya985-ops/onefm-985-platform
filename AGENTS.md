@@ -81,6 +81,33 @@ npx skills add supabase/agent-skills
 
 **Security:** Prefer dev project only; use `?read_only=true` on the MCP URL if querying production-adjacent data. Review each MCP tool call before approving.
 
+## Parallel agents (do not collide)
+
+**This Cursor cloud agent = invoicing / collect.** Owns `src/components/ops/**`, `src/lib/stationBank.ts`, `src/lib/logoForPdf.ts`, `src/lib/invoice*.ts`. Do not start other projects in this thread.
+
+**Kimi (desktop) = public site.** New branch off `main`. Must not edit any ops/invoice files above. One prompt, one shippable public-page result, then stop.
+
+Jay: keep prompting this invoicing agent with one invoice at a time (`Next dollar. Open it. PDF. Stop.`). Paste the Kimi block below into Kimi at the same time.
+
+### KIMI — paste this now (public site only)
+
+```
+You are working on GitHub jaydubbya985-ops/onefm-985-platform.
+
+DO NOT TOUCH: src/components/ops/**, src/lib/stationBank.ts, src/lib/logoForPdf.ts, src/lib/invoiceAging.ts, src/lib/invoiceDocument.test.ts, InvoiceEmailTemplate, InvoiceBatchSender, InvoiceGenerator. Another agent owns invoicing.
+
+Pull origin main. Create branch cursor/public-truth-kimi. Work only on the public site.
+
+1. Grep src/pages and src/data for: Plemo, unsplash, lorem, "million listeners", AI-Enhanced, stock people photos.
+2. Breakfast must be ONE FM Breakfast with rotating hosts from src/data/programGuide.ts (Tim Ahemt, The Big G, Ralph Whitehead, Josh Revens). No invented hosts.
+3. Listener figure only 39,375 weekly / 25 towns / 100km from src/data/townData.ts (ABS 2021). If unknown, "Data pending".
+4. Photos only from src/lib/stationPhotos.ts → /public/assets/images/ and /public/brand/. No AI people.
+5. Cross-check program names against https://fm985.com.au/guide/ — do not invent shows.
+6. npm run build must pass. Commit, push the branch, open a PR to main. Do not merge. Do not deploy.
+
+If blocked: one line starting NEED JAY:
+```
+
 ## Cursor Cloud specific instructions
 
 1. Always `git pull origin main` before editing.

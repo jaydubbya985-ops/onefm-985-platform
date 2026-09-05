@@ -8,8 +8,9 @@ import {
   type ReactNode,
 } from 'react'
 import { MOCK_ENQUIRIES, type Enquiry, type EnquirySource } from './data/enquiries'
-import { BATCH_INVOICES, BILLING_INVOICES, realBatchInvoices } from './data/invoices'
+import { ALL_BATCH_INVOICES, BILLING_INVOICES, RENEWAL_PROPOSALS, realBatchInvoices } from './data/invoices'
 import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
+import { addDaysISO, todayISO } from '@/lib/opsClock'
 import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
 import type { DbContactEnquiry } from '@/lib/supabase'
 import * as opsApi from '@/lib/opsApi'
@@ -57,6 +58,8 @@ export interface Proposal {
   status: ProposalStatus
   createdAt: string
   updatedAt: string
+  /** demo = synthetic CRM. renewal = last billed, pending Jay. */
+  kind?: 'demo' | 'renewal'
 }
 
 export type OpsContract = Contract & { proposalId?: string }
@@ -94,6 +97,7 @@ export interface OpsInvoice {
   paidDate?: string
   paidAmount?: number
   paymentMethod?: string
+  batchId?: 'june-2026' | 'aug-2026'
 }
 
 export interface NewProposalInput {
@@ -135,6 +139,13 @@ interface OpsState {
 export interface OpsStore extends OpsState {
   activeTab: OpsTab
   setActiveTab: (tab: OpsTab) => void
+  /** One-click collect: Batch Send opens this invoice (internal id, e.g. inv-003). */
+  focusInvoiceId: string | null
+  setFocusInvoiceId: (id: string | null) => void
+  openInvoiceInBatch: (invoiceId: string) => void
+  /** Invoice numbers whose world-class PDF has been emailed (Gagliardi reissue). */
+  reissuedNumbers: string[]
+  markInvoiceReissued: (invoiceNumber: string) => void
   focusProposalId: string | null
   setFocusProposalId: (id: string | null) => void
   resetDemoData: () => void
@@ -166,9 +177,28 @@ export interface OpsStore extends OpsState {
 // Seed + persistence
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY = 'onefm_ops_v1'
+const STORAGE_KEY = 'onefm_ops_v3'
 const LIVE_STORAGE_KEY = 'onefm_ops_live_v1'
+const REISSUED_KEY = 'onefm_ops_reissued_v1'
 const SESSION_KEY = 'onefm_ops_session_v1'
+
+function loadReissued(): string[] {
+  try {
+    const raw = window.localStorage.getItem(REISSUED_KEY)
+    const parsed = raw ? JSON.parse(raw) : []
+    return Array.isArray(parsed) ? parsed.filter((item) => typeof item === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function persistReissued(numbers: string[]) {
+  try {
+    window.localStorage.setItem(REISSUED_KEY, JSON.stringify(numbers))
+  } catch {
+    // ignore
+  }
+}
 
 function loadSession(): { activeTab: OpsTab; focusProposalId: string | null } {
   try {
@@ -185,7 +215,7 @@ function loadSession(): { activeTab: OpsTab; focusProposalId: string | null } {
   } catch {
     // ignore
   }
-  return { activeTab: 'proposals', focusProposalId: null }
+  return { activeTab: 'batch', focusProposalId: null }
 }
 
 function isoDate(d: Date): string {
@@ -206,7 +236,7 @@ function nextSequential(existing: string[], prefix: string): string {
 function buildSeedState(): OpsState {
   // Enquiries that already had a proposal out the door get a matching seeded
   // proposal so the Proposals tab starts populated.
-  const proposals: Proposal[] = MOCK_ENQUIRIES.filter(
+  const demoProposals: Proposal[] = MOCK_ENQUIRIES.filter(
     (e) => e.status === 'proposal_sent',
   ).map((e, i) => ({
     id: `prop-seed-${String(i + 1).padStart(3, '0')}`,
@@ -216,11 +246,30 @@ function buildSeedState(): OpsState {
     company: e.company,
     email: e.email,
     source: e.source,
+    packageName: 'DEMO — do not send',
     value: e.value ?? 0,
     status: 'sent',
     createdAt: e.updatedAt,
     updatedAt: e.updatedAt,
+    kind: 'demo',
+    notes: 'DEMO DATA. Synthetic CRM row. Do not email.',
   }))
+
+  const renewalProposals: Proposal[] = RENEWAL_PROPOSALS.map((r) => ({
+    id: r.id,
+    clientName: r.clientName,
+    company: r.company,
+    email: r.email,
+    packageName: `Renewal draft — last billed ${r.lastInvoice}`,
+    value: r.value,
+    status: 'draft' as const,
+    createdAt: '2026-08-25',
+    updatedAt: '2026-08-25',
+    kind: 'renewal' as const,
+    notes: r.notes,
+  }))
+
+  const proposals: Proposal[] = [...renewalProposals, ...demoProposals]
 
   const billingInvoices: OpsInvoice[] = BILLING_INVOICES.map((b) => ({
     id: b.id,
@@ -242,7 +291,7 @@ function buildSeedState(): OpsState {
     paymentMethod: b.paymentMethod,
   }))
 
-  const batchInvoices: OpsInvoice[] = BATCH_INVOICES.map(fromBatchInvoice)
+  const batchInvoices: OpsInvoice[] = ALL_BATCH_INVOICES.map(fromBatchInvoice)
 
   return {
     enquiries: MOCK_ENQUIRIES,
@@ -256,7 +305,7 @@ function emptyState(): OpsState {
   return { enquiries: [], proposals: [], contracts: [], invoices: [] }
 }
 
-function fromBatchInvoice(b: (typeof BATCH_INVOICES)[number]): OpsInvoice {
+function fromBatchInvoice(b: (typeof ALL_BATCH_INVOICES)[number]): OpsInvoice {
   return {
     id: b.id,
     number: b.number,
@@ -276,6 +325,7 @@ function fromBatchInvoice(b: (typeof BATCH_INVOICES)[number]): OpsInvoice {
     emailBody: b.emailBody,
     story: b.story,
     notes: b.notes,
+    batchId: b.batchId ?? 'june-2026',
   }
 }
 
@@ -315,6 +365,8 @@ const OpsContext = createContext<OpsStore | null>(null)
 export function OpsProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<OpsState>(loadState)
   const [activeTab, setActiveTab] = useState<OpsTab>(() => loadSession().activeTab)
+  const [focusInvoiceId, setFocusInvoiceId] = useState<string | null>(null)
+  const [reissuedNumbers, setReissuedNumbers] = useState<string[]>(loadReissued)
   const [focusProposalId, setFocusProposalId] = useState<string | null>(
     () => loadSession().focusProposalId,
   )
@@ -437,15 +489,35 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       ...state,
       activeTab,
       setActiveTab,
+      focusInvoiceId,
+      setFocusInvoiceId,
+      openInvoiceInBatch: (invoiceId: string) => {
+        setFocusInvoiceId(invoiceId)
+        setActiveTab('batch')
+      },
+      reissuedNumbers,
+      markInvoiceReissued: (invoiceNumber: string) => {
+        setReissuedNumbers((prev) => {
+          if (prev.includes(invoiceNumber)) return prev
+          const next = [...prev, invoiceNumber]
+          persistReissued(next)
+          return next
+        })
+      },
       focusProposalId,
       setFocusProposalId,
 
       resetDemoData: () => {
         try {
           window.localStorage.removeItem(STORAGE_KEY)
+          window.localStorage.removeItem('onefm_ops_v1')
+          window.localStorage.removeItem('onefm_ops_v2')
+          window.localStorage.removeItem(REISSUED_KEY)
+          window.localStorage.removeItem(SESSION_KEY)
         } catch {
           // ignore
         }
+        setReissuedNumbers([])
         setState(buildSeedState())
       },
 
@@ -668,13 +740,17 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       generateInvoiceFromContract: (contractId) => {
         const contract = state.contracts.find((c) => c.id === contractId)
         if (!contract) return null
-        const amount = contract.contractValue
+        const amount =
+          contract.amountPerInvoice ??
+          (contract.numberOfPeriods
+            ? Math.round((contract.contractValue / contract.numberOfPeriods) * 100) / 100
+            : contract.contractValue)
         const gst = Math.round(amount * 0.1 * 100) / 100
         const invoice: OpsInvoice = {
           id: `inv-${Date.now()}`,
           number: nextSequential(
             state.invoices.map((i) => i.number),
-            'INV-2026-',
+            'ONEFM-2026-',
           ),
           company: contract.companyName,
           contactName: contract.primaryContact,
@@ -684,8 +760,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           total: Math.round((amount + gst) * 100) / 100,
           description: `${contract.campaignName} (${contract.contractNumber})`,
           period: `${contract.startDate} – ${contract.endDate}`,
-          issueDate: isoDate(new Date()),
-          dueDate: isoDate(new Date(Date.now() + 30 * 86400000)),
+          issueDate: todayISO(),
+          dueDate: addDaysISO(todayISO(), 14),
           status: 'draft',
           inBatch: false,
           contractId,
@@ -707,7 +783,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
             input.number ??
             nextSequential(
               state.invoices.map((i) => i.number),
-              'INV-2026-',
+              'ONEFM-2026-',
             ),
           status: input.status ?? 'draft',
           inBatch: input.inBatch ?? false,
@@ -792,7 +868,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         /* Locked — STATION_INVOICE_DESIGN_CHOICE in invoiceDesignVariants.ts */
       },
     }
-  }, [state, activeTab, focusProposalId, invoiceDesignVariant])
+  }, [state, activeTab, focusInvoiceId, reissuedNumbers, focusProposalId, invoiceDesignVariant])
 
   return <OpsContext.Provider value={value}>{children}</OpsContext.Provider>
 }

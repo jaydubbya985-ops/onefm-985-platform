@@ -358,6 +358,13 @@ export default function ProposalBuilder() {
         )}
       </div>
 
+      <div className="rounded-lg border border-amber-700/40 bg-amber-950/20 px-4 py-3 text-sm text-amber-200/90">
+        Five renewal drafts are loaded from last billed invoices (Jason&apos;s TV, McRae,
+        Cleave&apos;s, Burkes, Natural Approach). Amounts are last period — not a new 2026/27
+        quote. Confirm with Jay before send. Rows marked DEMO are synthetic CRM and must not
+        be emailed. Vision Australia rental is waiting on the last Xero invoice.
+      </div>
+
       {focused && (
         <div className="rounded-lg border border-one-gold/30 bg-one-gold/8 px-4 py-3 text-sm text-one-gold">
           Editing {focused.number ?? focused.id} — {focused.company ?? focused.clientName} ({focused.status})
@@ -532,7 +539,7 @@ export default function ProposalBuilder() {
               <Button
                 variant="outline"
                 onClick={() => void handleEmail()}
-                disabled={busy}
+                disabled={busy || focused?.kind === 'demo'}
                 className="border-one-gold/40 text-one-gold min-h-11"
               >
                 <Mail className="w-4 h-4 mr-2" />
@@ -596,6 +603,22 @@ export default function ProposalBuilder() {
                   >
                     {p.status}
                   </Badge>
+                  {p.kind === 'demo' && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] border-red-500/40 text-red-300 bg-red-500/10"
+                    >
+                      DEMO
+                    </Badge>
+                  )}
+                  {p.kind === 'renewal' && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] border-amber-500/40 text-amber-200 bg-amber-500/10"
+                    >
+                      Renewal
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs text-one-muted mt-0.5">
                   {p.number ?? '—'} · {p.packageName ?? 'No package yet'} ·{' '}

@@ -77,8 +77,20 @@ import {
   generateReceiptEmailHtml,
 } from './InvoiceEmailTemplate'
 import InvoiceEmailTemplate from './InvoiceEmailTemplate'
-import { OpsInvoiceSheet } from './OpsInvoiceSheet'
-import { BATCH_DUE_DATE, BATCH_INVOICES } from './data/invoices'
+import { TaxInvoiceDocument } from './TaxInvoiceDocument'
+import {
+  ALL_BATCH_INVOICES,
+  AUGUST_BATCH_DUE_DATE,
+  BATCH_DUE_DATE,
+} from './data/invoices'
+import { ageInvoice } from '@/lib/invoiceAging'
+import {
+  JUNE_BATCH_CREATED,
+  calendarDaysBetween,
+  formatAuDate,
+  formatElapsed,
+  todayISO,
+} from '@/lib/opsClock'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { downloadXeroCsv, summariseXeroExport } from './invoices/xeroExport'
 import {
@@ -116,6 +128,7 @@ interface BatchRow {
   emailBody: string
   status: BatchStatus
   notes: string
+  batchId: 'june-2026' | 'aug-2026'
 }
 
 function rowToSendPayload(row: BatchRow, overrideEmail?: string): InvoiceSendPayload {
@@ -228,6 +241,7 @@ function toBatchRow(invoice: OpsInvoice): BatchRow {
     emailBody: invoice.emailBody || '',
     status: toBatchStatus(invoice.status),
     notes: invoice.notes || '',
+    batchId: invoice.batchId ?? 'june-2026',
   }
 }
 
@@ -270,23 +284,21 @@ function StatCard({
 
 function InvoicePreview({ invoice }: { invoice: BatchRow }) {
   return (
-    <div className="max-w-[600px] mx-auto rounded-lg shadow-lg overflow-hidden">
-      <OpsInvoiceSheet
-        invoice={{
-          number: invoice.number,
-          company: invoice.company,
-          contactName: invoice.contactName,
-          email: invoice.email,
-          description: invoice.description,
-          period: invoice.period ? `Period: ${invoice.period}` : undefined,
-          amountExclGst: invoice.amountExclGst,
-          gst: invoice.gst,
-          total: invoice.total,
-          issueDate: formatDate(invoice.createdAt || new Date().toISOString().split('T')[0]),
-          dueDate: formatDate(invoice.dueDate),
-        }}
-      />
-    </div>
+    <TaxInvoiceDocument
+      invoice={{
+        number: invoice.number,
+        company: invoice.company,
+        contactName: invoice.contactName,
+        email: invoice.email,
+        description: invoice.description,
+        period: invoice.period,
+        issueDate: invoice.createdAt,
+        dueDate: invoice.dueDate,
+        amountExclGst: invoice.amountExclGst,
+        gst: invoice.gst,
+        total: invoice.total,
+      }}
+    />
   )
 }
 
@@ -296,12 +308,14 @@ function InvoicePreview({ invoice }: { invoice: BatchRow }) {
 
 export default function InvoiceBatchSender() {
   const { toast } = useToast()
-  const { invoices, updateInvoice, markInvoicePaid, sendBatch } = useOpsStore()
+  const { invoices, updateInvoice, markInvoicePaid, sendBatch, focusInvoiceId, setFocusInvoiceId } =
+    useOpsStore()
 
   const [activeId, setActiveId] = useState<string | null>(null)
   const [detailTab, setDetailTab] = useState('invoice')
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<BatchStatus | 'all' | 'unsent'>('all')
+  const [batchFilter, setBatchFilter] = useState<'all' | 'june-2026' | 'aug-2026'>('all')
   const [testMode, setTestMode] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [confirm, setConfirm] = useState<ConfirmState>({
@@ -326,8 +340,8 @@ export default function InvoiceBatchSender() {
       return live.map(toBatchRow)
     }
     if (inBatch.length > 0) return inBatch.map(toBatchRow)
-    // DEMO only: empty store still shows the June batch for local practice.
-    return BATCH_INVOICES.map((b) =>
+    // DEMO empty store still shows the June+August send guide for local practice.
+    return ALL_BATCH_INVOICES.map((b) =>
       toBatchRow({
         id: b.id,
         number: b.number,
@@ -347,6 +361,7 @@ export default function InvoiceBatchSender() {
         emailBody: b.emailBody,
         story: b.story,
         notes: b.notes,
+        batchId: b.batchId ?? 'june-2026',
       }),
     )
   }, [invoices])
@@ -367,7 +382,18 @@ export default function InvoiceBatchSender() {
         if (statusFilter === 'unsent') return r.status !== 'sent' && r.status !== 'paid'
         return r.status === statusFilter
       })
-  }, [rows, search, statusFilter])
+      .filter((r) => (batchFilter === 'all' ? true : r.batchId === batchFilter))
+  }, [rows, search, statusFilter, batchFilter])
+
+  useEffect(() => {
+    if (!focusInvoiceId) return
+    setActiveId(focusInvoiceId)
+    setDetailTab('invoice')
+    setSearch('')
+    setStatusFilter('all')
+    setBatchFilter('all')
+    setFocusInvoiceId(null)
+  }, [focusInvoiceId, setFocusInvoiceId])
 
   const stats = useMemo(() => {
     const selected = rows.filter((r) => selectedIds.has(r.id))
@@ -797,10 +823,13 @@ export default function InvoiceBatchSender() {
                     <Receipt className="w-5 h-5 text-[#101010]" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice Batch — June 2026</h1>
+                    <h1 className="text-2xl font-bold text-[#F4F1EA]">Invoice batches</h1>
                     <p className="text-sm text-[#F4F1EA]/50">
-                      ONE FM 98.5 • {rows.length} invoice{rows.length === 1 ? '' : 's'} • {formatCurrency(stats.total)} inc GST
-                      {rows.length > 0 ? ` • Due ${formatDate(BATCH_DUE_DATE)}` : ''}
+                      {rows.length} invoice{rows.length === 1 ? '' : 's'} ·{' '}
+                      {rows
+                        .reduce((s, r) => s + r.total, 0)
+                        .toLocaleString('en-AU', { style: 'currency', currency: 'AUD' })}{' '}
+                      inc GST
                     </p>
                     <p className="text-xs text-[#F4F1EA]/50 mt-2">
                       Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
@@ -843,6 +872,40 @@ export default function InvoiceBatchSender() {
 
         <div className="p-6 max-w-[1600px] mx-auto">
           <EmailServiceBanner />
+
+          <div className="mb-4 rounded-lg border border-amber-700/40 bg-amber-950/25 px-4 py-3 text-sm text-amber-200/90">
+            June batch created {formatAuDate(JUNE_BATCH_CREATED)} —{' '}
+            {formatElapsed(calendarDaysBetween(JUNE_BATCH_CREATED, todayISO()))}. Original due{' '}
+            {formatAuDate(BATCH_DUE_DATE)}. Those drafts were never sent, so they are stale to send,
+            not customer-overdue. August catch-up is due {formatAuDate(AUGUST_BATCH_DUE_DATE)}. FOOTT
+            ONEFM-2026-011 already covers Jun–Nov — do not raise another FOOTT invoice. Xero is the
+            books; this list is the send guide only. Payments received will come off later — do not
+            mark paid from here until Jay allocates them.
+          </div>
+
+          <div className="flex flex-wrap gap-2 mb-4">
+            {(
+              [
+                ['all', 'All batches'],
+                ['june-2026', 'June 2026 (stale)'],
+                ['aug-2026', 'August 2026 (new)'],
+              ] as const
+            ).map(([id, label]) => (
+              <Button
+                key={id}
+                size="sm"
+                variant="outline"
+                onClick={() => setBatchFilter(id)}
+                className={`border-[#1E293B] ${
+                  batchFilter === id
+                    ? 'bg-[#D4A853]/20 text-[#D4A853] border-[#D4A853]/50'
+                    : 'text-[#F4F1EA]/70 hover:bg-[#1E293B]'
+                }`}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
 
           {/* Stat cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -1086,6 +1149,16 @@ export default function InvoiceBatchSender() {
                                 <div>
                                   <p className="font-medium text-sm text-[#F4F1EA]">
                                     {row.company}
+                                  </p>
+                                  <p className="text-[10px] uppercase tracking-wider text-[#F4F1EA]/35 mt-0.5">
+                                    {row.batchId === 'aug-2026' ? 'Aug 2026 catch-up' : 'June 2026 batch'}
+                                    {row.batchId !== 'aug-2026' &&
+                                    ageInvoice(
+                                      { status: row.status, dueDate: row.dueDate },
+                                      todayISO(),
+                                    ) === 'unsent_stale'
+                                      ? ' · unsent stale'
+                                      : ''}
                                   </p>
                                   {row.contactName && (
                                     <p className="text-xs text-[#F4F1EA]/40">{row.contactName}</p>
@@ -1365,9 +1438,18 @@ export default function InvoiceBatchSender() {
                         </TabsList>
 
                         <TabsContent value="invoice" className="mt-0 space-y-4">
-                          <ScrollArea className="h-[calc(100vh-544px)] min-h-[200px]">
+                          <ScrollArea className="h-[min(72vh,760px)] min-h-[360px]">
                             <InvoicePreview invoice={active} />
                           </ScrollArea>
+                          <div className="rounded-md border border-[#1B458F]/60 bg-[#0B1220] px-3 py-2">
+                            <p className="text-[10px] uppercase tracking-wider text-[#7EB6FF] font-semibold">
+                              Pay to (same as PDF)
+                            </p>
+                            <p className="text-xs text-[#F4F1EA] mt-0.5 leading-snug">
+                              {BANK_ACCOUNT_NAME} · BSB {BANK_BSB} · {BANK_ACCOUNT} · ref{' '}
+                              <span className="font-mono text-[#E51636]">{active.number}</span>
+                            </p>
+                          </div>
                           <div className="flex gap-2 pt-2">
                             <Button
                               variant="outline"

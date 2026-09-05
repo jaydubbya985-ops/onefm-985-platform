@@ -18,8 +18,9 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { Button } from '@/components/ui/button'
 import { SkeletonLoader } from '@/components/SkeletonLoader'
-import { ToastProvider, useToast } from '@/components/ops/Toast'
-import { OpsProvider, useOpsStore, type OpsTab } from '@/components/ops/store'
+import { useToast } from '@/components/ops/Toast'
+import { useOpsStore, type OpsTab } from '@/components/ops/store'
+import { OpsCommandCentre } from '@/components/ops/OpsCommandCentre'
 import { useAuth } from '@/hooks/useAuth'
 import { BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
@@ -234,6 +235,10 @@ function OpsPortalContent() {
         </div>
       </div>
 
+      <div className="px-6 md:px-12 lg:px-20 pt-6">
+        <OpsCommandCentre />
+      </div>
+
       <div className="px-6 md:px-12 lg:px-20 py-4 border-b border-[#2A2A2A]/20">
         <div className="flex gap-2 overflow-x-auto pb-1">
           {TABS.map((t) => {
@@ -296,16 +301,12 @@ function OpsPortalContent() {
 
 export default function OpsPortal() {
   return (
-    <ToastProvider>
-      <OpsProvider>
-        <Layout hideFooter>
-          <SEO
-            title="Operations Portal"
-            description="ONE FM 98.5 operations dashboard — enquiries, sponsors, invoices, revenue."
-          />
-          <OpsPortalContent />
-        </Layout>
-      </OpsProvider>
-    </ToastProvider>
+    <Layout hideFooter>
+      <SEO
+        title="Operations Portal"
+        description="ONE FM 98.5 operations dashboard — enquiries, sponsors, invoices, revenue."
+      />
+      <OpsPortalContent />
+    </Layout>
   )
 }

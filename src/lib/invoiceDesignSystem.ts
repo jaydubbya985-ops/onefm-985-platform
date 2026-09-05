@@ -3,9 +3,9 @@
 // Shared tokens for invoice email HTML and vector PDF.
 //
 // QUALITY GATE (self-critique — must pass before committing):
-//   ✅ Hero amount dominates at arm's length — 64px gold on full-bleed navy
-//   ✅ Top 400px screenshot-worthy — editorial navy/gold letterhead, no clutter
-//   ✅ PDF header/footer matches email — same navy band, 3px solid gold rule
+//   ✅ Official ONE FM source logo on white letterhead (not the black text box)
+//   ✅ Legal payee: Goulburn Valley Community Radio Inc. · BSB/account copyable at arm's length
+//   ✅ Preview and PDF match — same logo, same pay-to, same ABN
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const DS = {
@@ -40,6 +40,7 @@ export const DS = {
 
   station: {
     name:          'ONE FM 98.5',
+    org:           'Goulburn Valley Community Radio Inc.',
     tagline:       "Goulburn Valley's Community Radio",
     abn:           '92 117 291 771',
     address:       '47 Parkside Drive, Shepparton VIC 3630',

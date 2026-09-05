@@ -5,6 +5,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { formatCoverageShort } from '@/lib/coverageCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { isSupabaseConfigured } from '@/lib/supabase'
+import { OpsProvider } from '@/components/ops/store'
+import { ToastProvider } from '@/components/ops/Toast'
 
 interface OpsRouteGuardProps {
   children: ReactNode
@@ -31,7 +33,7 @@ function OpsGatePhoto() {
 
 export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   const useAuthGate = isSupabaseConfigured()
-  const { authLoading, submitPassword, submitLogin } = useOpsAccess()
+  const { unlocked, authLoading, submitPassword, submitLogin } = useOpsAccess()
   const { isAuthenticated, loading } = useAuth()
 
   const [email, setEmail] = useState('')
@@ -40,7 +42,6 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   const [submitting, setSubmitting] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const unlocked = useAuthGate ? isAuthenticated : sessionStorage.getItem('ops_unlocked') === 'true'
   const checking = useAuthGate && (loading || authLoading)
 
   useEffect(() => {
@@ -53,7 +54,6 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
     e.preventDefault()
     if (submitPassword(password)) {
       setError('')
-      window.location.reload()
     } else {
       setError('Incorrect password. Try again.')
     }
@@ -78,7 +78,11 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
   }
 
   if (unlocked || (useAuthGate && isAuthenticated)) {
-    return <>{children}</>
+    return (
+      <ToastProvider>
+        <OpsProvider>{children}</OpsProvider>
+      </ToastProvider>
+    )
   }
 
   return (

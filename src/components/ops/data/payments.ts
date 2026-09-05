@@ -392,6 +392,9 @@ export const SEED_OUTSTANDING_INVOICES: OutstandingInvoice[] = [
   { id: 'out-004', number: 'ONEFM-2026-015', client: 'Peppermill Inn', balance: 4957.3, dueDate: '2026-06-23' },
   { id: 'out-005', number: 'INV-2026-003', client: 'Merritt Funeral Services', balance: 405, dueDate: '2026-02-10' },
   { id: 'out-006', number: 'ONEFM-2026-029', client: 'Donuts A Go Go', balance: 109.98, dueDate: '2026-06-23' },
+  { id: 'out-007', number: 'ONEFM-2026-030', client: 'Peppermill Inn', balance: 2478.66, dueDate: '2026-09-07' },
+  { id: 'out-008', number: 'ONEFM-2026-031', client: 'Aussie Ag Supplies Pty Ltd', balance: 669, dueDate: '2026-09-07' },
+  { id: 'out-009', number: 'ONEFM-2026-032', client: 'Aussie Ag Supplies Pty Ltd', balance: 669, dueDate: '2026-09-07' },
 ]
 
 // DEMO DATA — client payment rows are seed examples, not bank reconciled records.

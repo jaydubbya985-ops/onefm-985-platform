@@ -78,8 +78,10 @@ import {
 } from './invoices/contacts'
 import { buildMailtoInvoiceUrl, dispatchInvoiceEmail } from '@/lib/invoiceSend'
 import { generateInvoicePdf } from '@/components/ops/InvoiceEmailTemplate'
+import { TaxInvoiceLetterhead, TaxInvoicePayTo } from '@/components/ops/TaxInvoiceDocument'
 import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
-import { OpsInvoiceSheet } from '@/components/ops/OpsInvoiceSheet'
+import { ageInvoice } from '@/lib/invoiceAging'
+import { addDaysISO, calendarDaysBetween, currentMonthKey, formatAuDate, todayISO } from '@/lib/opsClock'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort } from '@/lib/coverageCopy'
@@ -190,12 +192,9 @@ function newInvoiceId(suffix?: number): string {
 // Helpers (bundle `nl`, `Se`, `Is`, `cl`, `Zt`, `rl`, `Ft`)
 // ---------------------------------------------------------------------------
 
-/** Days overdue relative to the demo "today" of 15 Feb 2026 (as deployed). */
+/** Days past due relative to today. Unsent drafts can be stale without being AR-overdue. */
 function daysOverdue(dueDate: string): number {
-  const today = new Date('2026-02-15')
-  const due = new Date(dueDate)
-  const days = Math.floor((today.getTime() - due.getTime()) / (1000 * 60 * 60 * 24))
-  return Math.max(0, days)
+  return Math.max(0, calendarDaysBetween(dueDate, todayISO()))
 }
 
 function fmt(value: number): string {
@@ -205,17 +204,7 @@ function fmt(value: number): string {
 }
 
 function fmtDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
-function addDays(date: string, days: number): string {
-  const d = new Date(date)
-  d.setDate(d.getDate() + days)
-  return d.toISOString().split('T')[0]
+  return formatAuDate(value.split('T')[0])
 }
 
 function nextInvoiceNumber(invoices: GeneratedInvoice[]): string {
@@ -340,15 +329,15 @@ export default function InvoiceGenerator() {
   const [contractId, setContractId] = useState('')
   const [contractSponsor, setContractSponsor] = useState('')
   const [contractItems, setContractItems] = useState<InvoiceLineItem[]>([emptyItem()])
-  const [contractDate, setContractDate] = useState('2026-02-15')
-  const [contractDueDate, setContractDueDate] = useState('2026-03-01')
+  const [contractDate, setContractDate] = useState(todayISO)
+  const [contractDueDate, setContractDueDate] = useState(() => addDaysISO(todayISO(), 14))
   const [contractNotes, setContractNotes] = useState('')
   const [contractProposalRef, setContractProposalRef] = useState('')
   const [recurring, setRecurring] = useState<BillingFrequency>('none')
 
   // Create dialog state
   const [sponsorCompany, setSponsorCompany] = useState('')
-  const [createDueDate, setCreateDueDate] = useState('')
+  const [createDueDate, setCreateDueDate] = useState(() => addDaysISO(todayISO(), 14))
   const [createNotes, setCreateNotes] = useState('')
   const [createItems, setCreateItems] = useState<InvoiceLineItem[]>([emptyItem()])
   const [createProposalRef, setCreateProposalRef] = useState('')
@@ -433,7 +422,7 @@ export default function InvoiceGenerator() {
         (i) =>
           (i.status === 'paid' || i.status === 'partially_paid') &&
           i.paidDate &&
-          i.paidDate.startsWith('2026-02'),
+          i.paidDate.startsWith(currentMonthKey()),
       )
       .reduce((sum, i) => sum + (i.paidAmount || 0), 0)
     const totalPaid = invoices
@@ -495,7 +484,7 @@ export default function InvoiceGenerator() {
     const invoice: GeneratedInvoice = {
       id: newInvoiceId(),
       invoiceNumber: nextInvoiceNumber(invoices),
-      date: '2026-02-15',
+      date: todayISO(),
       dueDate: createDueDate,
       billTo: { ...sponsor },
       items,
@@ -514,7 +503,7 @@ export default function InvoiceGenerator() {
 
   function resetCreateForm() {
     setSponsorCompany('')
-    setCreateDueDate('')
+    setCreateDueDate(addDaysISO(todayISO(), 14))
     setCreateNotes('')
     setCreateItems([emptyItem()])
     setCreateProposalRef('')
@@ -636,8 +625,8 @@ export default function InvoiceGenerator() {
     setContractId('')
     setContractSponsor('')
     setContractItems([emptyItem()])
-    setContractDate('2026-02-15')
-    setContractDueDate('2026-03-01')
+    setContractDate(todayISO())
+    setContractDueDate(addDaysISO(todayISO(), 14))
     setContractNotes('')
     setContractProposalRef('')
     setRecurring('none')
@@ -855,8 +844,8 @@ export default function InvoiceGenerator() {
       ...invoice,
       id: newInvoiceId(),
       invoiceNumber: nextInvoiceNumber(invoices),
-      date: '2026-02-15',
-      dueDate: addDays('2026-02-15', 14),
+      date: todayISO(),
+      dueDate: addDaysISO(todayISO(), 14),
       status: 'draft',
       paidDate: undefined,
       paidAmount: undefined,
@@ -1341,6 +1330,10 @@ export default function InvoiceGenerator() {
                 <TableBody>
                   {filtered.map((invoice) => {
                     const overdueDays = daysOverdue(invoice.dueDate)
+                    const aged = ageInvoice(
+                      { status: invoice.status, dueDate: invoice.dueDate },
+                      todayISO(),
+                    )
                     const isSelected = selectedIds.has(invoice.id)
                     return (
                       <TableRow
@@ -1383,7 +1376,11 @@ export default function InvoiceGenerator() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {invoice.status === 'overdue' ? (
+                          {aged === 'unsent_stale' ? (
+                            <span className="text-amber-400 text-xs font-medium flex items-center gap-1">
+                              <AlertTriangle className="h-3 w-3" /> Unsent · {overdueDays}d
+                            </span>
+                          ) : invoice.status === 'overdue' ? (
                             <span className="text-[#E31E24] text-xs font-medium flex items-center gap-1">
                               <AlertTriangle className="h-3 w-3" /> {overdueDays} day
                               {overdueDays !== 1 ? 's' : ''}
@@ -1445,7 +1442,7 @@ export default function InvoiceGenerator() {
                                 onClick={() => {
                                   setPayInvoice(invoice)
                                   setPayAmount(String(invoice.total - (invoice.paidAmount || 0)))
-                                  setPayDate('2026-02-15')
+                                  setPayDate(todayISO())
                                 }}
                                 className="text-emerald-400 hover:text-emerald-300 p-1"
                                 title="Mark Paid"
@@ -1903,30 +1900,151 @@ export default function InvoiceGenerator() {
       <Dialog open={!!viewInvoice} onOpenChange={(open) => !open && setViewInvoice(null)}>
         <DialogContent className="bg-white text-black max-w-3xl max-h-[85vh] overflow-y-auto print:max-w-none print:max-h-none print:w-full print:overflow-visible print:bg-white print:text-black print:border-none print:shadow-none print:fixed print:inset-0 print:top-0 print:left-0 print:translate-x-0 print:translate-y-0 print:rounded-none print:p-0">
           {viewInvoice && (
-            <div className="print-area -mx-6 -mt-6">
-              <OpsInvoiceSheet
-                invoice={{
-                  number: viewInvoice.invoiceNumber,
-                  company: viewInvoice.billTo.company,
-                  contactName: viewInvoice.billTo.name,
-                  email: viewInvoice.billTo.email,
-                  description: viewInvoice.items.map((item) => item.description).join(' · ') || 'Sponsorship',
-                  period: [viewInvoice.proposalRef, viewInvoice.contractRef]
-                    .filter(Boolean)
-                    .join(' · ') || undefined,
-                  items: viewInvoice.items.map((item) => ({
-                    description: item.description,
-                    amount: item.amount,
-                    detail: item.quantity > 1 ? `Qty ${item.quantity}` : undefined,
-                  })),
-                  notes: [viewInvoice.notes, viewInvoice.paymentNotes].filter(Boolean).join('\n'),
-                  amountExclGst: viewInvoice.subtotal,
-                  gst: viewInvoice.gst,
-                  total: viewInvoice.total,
-                  issueDate: fmtDate(viewInvoice.date),
-                  dueDate: fmtDate(viewInvoice.dueDate),
-                }}
-              />
+            <div className="print-area">
+              <TaxInvoiceLetterhead invoiceNumber={viewInvoice.invoiceNumber} />
+
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    Bill To
+                  </h4>
+                  <p className="font-semibold text-[#101010]">{viewInvoice.billTo.name}</p>
+                  <p className="text-gray-700">{viewInvoice.billTo.company}</p>
+                  {viewInvoice.billTo.phone && (
+                    <p className="text-gray-500 text-sm">{viewInvoice.billTo.phone}</p>
+                  )}
+                  <p className="text-gray-500 text-sm">{viewInvoice.billTo.email}</p>
+                  {viewInvoice.billTo.address && (
+                    <p className="text-gray-500 text-sm">{viewInvoice.billTo.address}</p>
+                  )}
+                  {viewInvoice.billTo.abn && (
+                    <p className="text-gray-500 text-sm">ABN: {viewInvoice.billTo.abn}</p>
+                  )}
+                </div>
+                <div className="text-right space-y-1">
+                  <div className="flex justify-end gap-4 text-sm">
+                    <span className="text-gray-500">Invoice Date:</span>
+                    <span className="font-medium">{fmtDate(viewInvoice.date)}</span>
+                  </div>
+                  <div className="flex justify-end gap-4 text-sm">
+                    <span className="text-gray-500">Due Date:</span>
+                    <span className="font-medium">{fmtDate(viewInvoice.dueDate)}</span>
+                  </div>
+                  {viewInvoice.proposalRef && (
+                    <div className="flex justify-end gap-4 text-sm">
+                      <span className="text-gray-500">Proposal Ref:</span>
+                      <span className="font-medium">{viewInvoice.proposalRef}</span>
+                    </div>
+                  )}
+                  {viewInvoice.contractRef && (
+                    <div className="flex justify-end gap-4 text-sm">
+                      <span className="text-gray-500">Contract Ref:</span>
+                      <span className="font-medium">{viewInvoice.contractRef}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-end gap-4 text-sm mt-2">
+                    <span className="text-gray-500">Status:</span>
+                    <span
+                      className={`font-semibold ${
+                        viewInvoice.status === 'paid'
+                          ? 'text-emerald-600'
+                          : viewInvoice.status === 'overdue'
+                            ? 'text-[#E31E24]'
+                            : viewInvoice.status === 'partially_paid'
+                              ? 'text-orange-500'
+                              : 'text-[#D4A84B]'
+                      }`}
+                    >
+                      {STATUS_LABELS[viewInvoice.status].toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <table className="w-full mb-6 border-collapse">
+                <thead>
+                  <tr className="bg-[#101010] text-white">
+                    <th className="text-left p-3 text-sm font-semibold">Description</th>
+                    <th className="text-center p-3 text-sm font-semibold w-20">Qty</th>
+                    <th className="text-right p-3 text-sm font-semibold w-32">Unit Price</th>
+                    <th className="text-right p-3 text-sm font-semibold w-32">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {viewInvoice.items.map((item, index) => (
+                    <tr key={index} className="border-b border-gray-200">
+                      <td className="p-3 text-sm">{item.description}</td>
+                      <td className="p-3 text-sm text-center">{item.quantity}</td>
+                      <td className="p-3 text-sm text-right">{fmt(item.unitPrice)}</td>
+                      <td className="p-3 text-sm text-right font-medium">{fmt(item.amount)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div className="flex justify-end mb-6">
+                <div className="w-80 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Subtotal (excl GST)</span>
+                    <span className="font-medium">{fmt(viewInvoice.subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">GST (10%)</span>
+                    <span className="font-medium">{fmt(viewInvoice.gst)}</span>
+                  </div>
+                  <div className="flex justify-between text-lg font-bold border-t-2 border-gray-300 pt-2">
+                    <span className="text-[#101010]">Total (AUD)</span>
+                    <span className="text-[#101010]">{fmt(viewInvoice.total)}</span>
+                  </div>
+                  {viewInvoice.paidAmount !== undefined && viewInvoice.paidAmount > 0 && (
+                    <>
+                      <div className="flex justify-between text-sm text-emerald-600 border-t border-gray-200 pt-1">
+                        <span>Paid ({viewInvoice.paymentMethod || 'Bank Transfer'})</span>
+                        <span className="font-medium">-{fmt(viewInvoice.paidAmount)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm font-semibold">
+                        <span>Balance Due</span>
+                        <span>{fmt(viewInvoice.total - viewInvoice.paidAmount)}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {viewInvoice.notes && (
+                <div className="bg-gray-50 p-3 rounded mb-6">
+                  <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Notes</p>
+                  <p className="text-sm text-gray-600 whitespace-pre-line">{viewInvoice.notes}</p>
+                </div>
+              )}
+              {viewInvoice.paymentNotes && (
+                <div className="bg-emerald-50 p-3 rounded mb-6">
+                  <p className="text-xs text-emerald-600 uppercase tracking-wider mb-1">
+                    Payment Notes
+                  </p>
+                  <p className="text-sm text-emerald-700">{viewInvoice.paymentNotes}</p>
+                </div>
+              )}
+
+              <TaxInvoicePayTo reference={viewInvoice.invoiceNumber} />
+
+              <div className="text-xs text-gray-400 border-t border-gray-200 pt-3 space-y-1">
+                <p className="font-medium text-gray-500 mb-1">Terms & Conditions</p>
+                <p>
+                  Payment is due within 14 days of invoice date. Late payments may incur a 5% late
+                  fee per month. GST included at 10% where applicable.
+                </p>
+                <p className="mt-2">For queries, contact accounts@fm985.com.au | (03) 5831 3131</p>
+              </div>
+
+              <div className="mt-6 text-center py-4 border-t border-gray-200">
+                <p className="text-[#101010] font-semibold text-sm">
+                  Thank you for supporting community radio!
+                </p>
+                <p className="text-gray-400 text-xs mt-1">
+                  ONE FM 98.5 — By the community, for the community
+                </p>
+              </div>
             </div>
           )}
         </DialogContent>

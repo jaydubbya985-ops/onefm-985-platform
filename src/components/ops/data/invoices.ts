@@ -2,9 +2,15 @@
 // ONE FM invoice data — extracted from the deployed OpsPortal bundle
 // (deployed-reference/assets/OpsPortal-dIeH6Okr.js).
 //
-// REAL (may exist in LIVE ops): ONEFM-2026-011 FOOTT, ONEFM-2026-012 Jason's TV.
-// DEMO DATA: remaining BATCH_INVOICES rows and the billing ledger. Do not upsert
-// those into Supabase.
+// Contains:
+//   • The June 2026 batch (19 invoices, ONEFM-2026-011 … ONEFM-2026-029)
+//   • August 2026 catch-up (Peppermill, Aussie Ag)
+//   • Per-invoice "thank you" / operational email bodies
+//   • The billing ledger (15 invoices, INV-2026-001 … INV-2026-015)
+//
+// Source of truth: Xero is the books. This last ops batch is a SEND GUIDE only.
+// LIVE upserts only REAL_INVOICE_NUMBERS (FOOTT, Jason's TV). Do not invent allocations.
+// DEMO local store may still show the rest of the June+August send guide.
 // ---------------------------------------------------------------------------
 
 /**
@@ -35,17 +41,15 @@ export interface BatchInvoice {
   selected?: boolean
   notes?: string
   createdAt?: string
+  /** june-2026 = original catch-up batch (accurate on 9 Jun). aug-2026 = elapsed-period catch-up. */
+  batchId?: 'june-2026' | 'aug-2026'
 }
 
 /** Batch issue date — the deployed batch was created 9 June 2026. */
 export const BATCH_ISSUE_DATE = '2026-06-09'
 
-/** Batch due date — issue date + 14 days (matches the bundle's `Je` constant). */
-export const BATCH_DUE_DATE = (() => {
-  const d = new Date(BATCH_ISSUE_DATE)
-  d.setDate(d.getDate() + 14)
-  return d.toISOString().split('T')[0]
-})()
+/** Batch due date — 9 June 2026 + 14 days. Hardcoded so UTC parsing cannot shift the day. */
+export const BATCH_DUE_DATE = '2026-06-23'
 
 export const DEFAULT_EMAIL_BODY =
   'Thank you for your partnership with ONE FM 98.5. Your support keeps community radio alive in the Goulburn Valley.'
@@ -93,6 +97,12 @@ export const INVOICE_THANK_YOU_MESSAGES: Record<string, string> = {
     "The team at Primary Care Connect does incredible work supporting health and wellbeing in our community, and we're proud to have you as a ONE FM sponsor. Just a gentle reminder about the outstanding invoice — please reach out if you need to discuss payment options. We'd love to keep this partnership going strong.",
   'inv-019':
     "Hey team — just a quick heads up about a small remaining balance on your Donuts A Go Go sponsorship. We know it's not much, but every bit helps keep ONE FM running for the Goulburn Valley! Drop us a line when you get a chance, and thanks for being part of the ONE FM family.",
+  'inv-030':
+    "Todd, this covers July and August 2026 of the Peppermill Inn GVL Major. The June invoice billed through June — these two months have now elapsed. Thanks for staying with ONE FM through the season.",
+  'inv-031':
+    "Daryl, July 2026 monthly instalment for Aussie Ag Supplies' Parts & Wrecking campaign — same rate as INV-2026-002. Please confirm this month has not already been receipted before paying.",
+  'inv-032':
+    "Daryl, August 2026 monthly instalment for Aussie Ag Supplies' Parts & Wrecking campaign — same rate as INV-2026-002. Please confirm this month has not already been receipted before paying.",
 }
 
 /** Personal thank-you message for an invoice (bundle's `Ke(id)` helper). */
@@ -144,6 +154,12 @@ export const INVOICE_OPERATIONAL_MESSAGES: Record<string, string> = {
     'This is a reissue of a previously invoiced amount that remains unpaid. We understand oversights happen — please let us know if you need any clarification or would like to arrange a payment plan.',
   'inv-019':
     "Hi there, this is a friendly reminder about a small outstanding balance. No amount is too small and every dollar helps keep community radio alive in the Goulburn Valley! Thank you for your support.",
+  'inv-030':
+    "Todd, this invoice covers July and August 2026 of the Peppermill Inn GVL 2026 Major sponsorship. The June batch billed through June; these two months have now elapsed. Thank you for staying with ONE FM through the season.",
+  'inv-031':
+    "Daryl, this is the July 2026 monthly instalment for Aussie Ag Supplies' Parts & Wrecking (PDL) campaign — same rate as INV-2026-002. Please confirm this month has not already been receipted before paying.",
+  'inv-032':
+    "Daryl, this is the August 2026 monthly instalment for Aussie Ag Supplies' Parts & Wrecking (PDL) campaign — same rate as INV-2026-002. Please confirm this month has not already been receipted before paying.",
 }
 
 /** Operational email body for an invoice (bundle's `Ye(id)`/`We(id)` helper). */
@@ -541,7 +557,234 @@ export const BATCH_INVOICES: BatchInvoice[] = [
   },
 ]
 
-/** Real June 2026 sponsor invoices. Everything else in BATCH_INVOICES is DEMO. */
+/**
+ * August 2026 catch-up — periods that elapsed after the 9 June batch.
+ *
+ * Not raised (and why):
+ *   • FOOTT ONEFM-2026-011 already bills Jun–Nov 2026 as one invoice — do not re-invoice.
+ *   • SAM / Gagliardi Scott / GVFL full-year invoices already sit on the June batch.
+ *   • Jason's TV, McRae, Cleave's, Burkes, Natural Approach — contract windows ended
+ *     June 2026. Listed on the renewal queue, not billed, until Jay confirms a renewal.
+ *
+ * Raised from documented contracts / ledger rates only:
+ *   • Peppermill Inn — remaining Jul–Aug of the 6-month GVL 2026 MAJOR ($6,760 ÷ 6 × 2)
+ *   • Aussie Ag Supplies — Jul + Aug monthly instalments matching INV-2026-002 ($608 + $61)
+ */
+export const AUGUST_BATCH_ISSUE_DATE = '2026-08-24'
+export const AUGUST_BATCH_DUE_DATE = '2026-09-07'
+
+export const AUGUST_BATCH_INVOICES: BatchInvoice[] = [
+  {
+    id: 'inv-030',
+    number: 'ONEFM-2026-030',
+    company: 'Peppermill Inn',
+    contactName: 'Todd Van Kerkhof',
+    email: 'manager@peppermillinn.com.au',
+    amountExclGst: 2253.33,
+    gst: 225.33,
+    total: 2478.66,
+    description:
+      'Peppermill Inn – GVL 2026 MAJOR Jul–Aug 2026 (2 of 6 months remaining on Mar–Sep contract; Jun batch billed through June)',
+    period: 'Jul 2026 – Aug 2026',
+    dueDate: AUGUST_BATCH_DUE_DATE,
+    story: 'Elapsed months of the active 6-month GVL Major after the June catch-up',
+    emailSubject: 'ONE FM 98.5 Invoice — Peppermill Inn GVL Major Jul–Aug 2026',
+    emailBody: getInvoiceEmailBody('inv-030'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Source: ACTIVE_CONTRACTS contract_peppermill_001 $6,760 excl over 6 months. $6,760 × 2/6. Confirm Todd has not already paid Jul–Aug before send.',
+    createdAt: AUGUST_BATCH_ISSUE_DATE,
+    batchId: 'aug-2026',
+  },
+  {
+    id: 'inv-031',
+    number: 'ONEFM-2026-031',
+    company: 'Aussie Ag Supplies Pty Ltd',
+    contactName: 'Daryl Gorman',
+    email: 'info@aussieagsupplies.com',
+    amountExclGst: 608,
+    gst: 61,
+    total: 669,
+    description: 'Parts & Wrecking (PDL) — July 2026 monthly instalment',
+    period: 'Jul 2026',
+    dueDate: AUGUST_BATCH_DUE_DATE,
+    story: 'Monthly instalment matching INV-2026-002. Confirm not already receipted.',
+    emailSubject: 'ONE FM 98.5 Invoice — Aussie Ag Supplies July 2026',
+    emailBody: getInvoiceEmailBody('inv-031'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Source: INV-2026-002 monthly rate $608 + $61 GST. Active contract through 24 Sep 2026. Confirm July not already receipted before send.',
+    createdAt: AUGUST_BATCH_ISSUE_DATE,
+    batchId: 'aug-2026',
+  },
+  {
+    id: 'inv-032',
+    number: 'ONEFM-2026-032',
+    company: 'Aussie Ag Supplies Pty Ltd',
+    contactName: 'Daryl Gorman',
+    email: 'info@aussieagsupplies.com',
+    amountExclGst: 608,
+    gst: 61,
+    total: 669,
+    description: 'Parts & Wrecking (PDL) — August 2026 monthly instalment',
+    period: 'Aug 2026',
+    dueDate: AUGUST_BATCH_DUE_DATE,
+    story: 'Monthly instalment matching INV-2026-002. Confirm not already receipted.',
+    emailSubject: 'ONE FM 98.5 Invoice — Aussie Ag Supplies August 2026',
+    emailBody: getInvoiceEmailBody('inv-032'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Source: INV-2026-002 monthly rate $608 + $61 GST. Active contract through 24 Sep 2026. Confirm August not already receipted before send.',
+    createdAt: AUGUST_BATCH_ISSUE_DATE,
+    batchId: 'aug-2026',
+  },
+]
+
+export const ALL_BATCH_INVOICES: BatchInvoice[] = [
+  ...BATCH_INVOICES.map((invoice) => ({
+    ...invoice,
+    batchId: invoice.batchId ?? ('june-2026' as const),
+  })),
+  ...AUGUST_BATCH_INVOICES,
+]
+
+export function batchTotals(invoices: BatchInvoice[]) {
+  return invoices.reduce(
+    (acc, invoice) => ({
+      count: acc.count + 1,
+      excl: acc.excl + invoice.amountExclGst,
+      gst: acc.gst + invoice.gst,
+      total: acc.total + invoice.total,
+    }),
+    { count: 0, excl: 0, gst: 0, total: 0 },
+  )
+}
+
+export interface RenewalDue {
+  company: string
+  contactName: string
+  ended: string
+  lastInvoice: string
+  note: string
+}
+
+/** Periods that ended with the June batch — do not bill again until Jay confirms a renewal. */
+export const RENEWALS_DUE: RenewalDue[] = [
+  {
+    company: "Jason's TV Pty Ltd",
+    contactName: 'Jason Aspland',
+    ended: '2026-06-30',
+    lastInvoice: 'ONEFM-2026-012',
+    note: '12-month clean-slate (Jun 2025–Jun 2026) ended. No 2026/27 amount on file.',
+  },
+  {
+    company: 'McRae Demolitions',
+    contactName: 'Keith McRae',
+    ended: '2026-06-30',
+    lastInvoice: 'ONEFM-2026-017',
+    note: 'Nov 2025–Jun 2026 window ended with the June batch.',
+  },
+  {
+    company: "Cleave's Garden Supplies",
+    contactName: 'Cleave',
+    ended: '2026-06-30',
+    lastInvoice: 'ONEFM-2026-018',
+    note: 'Nov 2025–Jun 2026 window ended with the June batch.',
+  },
+  {
+    company: 'Burkes Bakery',
+    contactName: 'Ken Tuckett',
+    ended: '2026-06-30',
+    lastInvoice: 'ONEFM-2026-019',
+    note: 'Dec 2025–Jun 2026 window ended with the June batch.',
+  },
+  {
+    company: 'Natural Approach Healing Centre',
+    contactName: 'Sissy Hoskin',
+    ended: '2026-06-30',
+    lastInvoice: 'ONEFM-2026-021',
+    note: 'Oct 2025–Jun 2026 catch-up ended with the June batch.',
+  },
+]
+
+/**
+ * Renewal proposal drafts — last billed amounts only, not new 2026/27 quotes.
+ * Jay must confirm the next package before these are sent or invoiced.
+ * Values are the June-batch invoice totals (inc GST).
+ */
+export interface RenewalProposalDraft {
+  id: string
+  clientName: string
+  company: string
+  email: string
+  lastInvoice: string
+  lastPeriod: string
+  value: number
+  notes: string
+}
+
+export const RENEWAL_PROPOSALS: RenewalProposalDraft[] = [
+  {
+    id: 'prop-renew-jasons-tv',
+    clientName: 'Jason Aspland',
+    company: "Jason's TV Pty Ltd",
+    email: 'jasonstv1@bigpond.com',
+    lastInvoice: 'ONEFM-2026-012',
+    lastPeriod: 'Jun 2025 – Jun 2026',
+    value: 8580,
+    notes:
+      'Last billed $8,580 inc GST on ONEFM-2026-012 (12-month clean slate). Not a 2026/27 quote until Jay confirms the next package. Do not invoice from this draft.',
+  },
+  {
+    id: 'prop-renew-mcrae',
+    clientName: 'Keith McRae',
+    company: 'McRae Demolitions',
+    email: '',
+    lastInvoice: 'ONEFM-2026-017',
+    lastPeriod: 'Nov 2025 – Jun 2026',
+    value: 4766.61,
+    notes:
+      'Last billed $4,766.61 inc GST on ONEFM-2026-017 (8 months). Not a 2026/27 quote until Jay confirms. Do not invoice from this draft.',
+  },
+  {
+    id: 'prop-renew-cleaves',
+    clientName: 'Cleave',
+    company: "Cleave's Garden Supplies",
+    email: '',
+    lastInvoice: 'ONEFM-2026-018',
+    lastPeriod: 'Nov 2025 – Jun 2026',
+    value: 4766.61,
+    notes:
+      'Last billed $4,766.61 inc GST on ONEFM-2026-018 (8 months). Not a 2026/27 quote until Jay confirms. Do not invoice from this draft.',
+  },
+  {
+    id: 'prop-renew-burkes',
+    clientName: 'Ken Tuckett',
+    company: 'Burkes Bakery',
+    email: 'strathbogiebakingcompany@gmail.com',
+    lastInvoice: 'ONEFM-2026-019',
+    lastPeriod: 'Dec 2025 – Jun 2026',
+    value: 3080,
+    notes:
+      'Last billed $3,080 inc GST on ONEFM-2026-019 (7 months). Not a 2026/27 quote until Jay confirms. Do not invoice from this draft.',
+  },
+  {
+    id: 'prop-renew-natural',
+    clientName: 'Sissy Hoskin',
+    company: 'Natural Approach Healing Centre',
+    email: '',
+    lastInvoice: 'ONEFM-2026-021',
+    lastPeriod: 'Oct 2025 – Jun 2026',
+    value: 1950.3,
+    notes:
+      'Last billed $1,950.30 inc GST on ONEFM-2026-021 (9-month catch-up). Not a 2026/27 quote until Jay confirms. Do not invoice from this draft.',
+  },
+]
+
+/** LIVE upserts only FOOTT and Jason's TV. June+August remainder stays in the DEMO send guide. */
 export const REAL_INVOICE_NUMBERS = ['ONEFM-2026-011', 'ONEFM-2026-012'] as const
 
 export function isRealSponsorInvoiceNumber(number: string): boolean {
