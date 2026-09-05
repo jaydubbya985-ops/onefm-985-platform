@@ -137,7 +137,7 @@ const studios = [
     title: "Eight language strands",
     desc: "Africonnect, Arabic, Filipino, Mandarin, Persian, Punjabi, Samoan and Swahili/Congolese programs run alongside ONE Youth.",
     icon: Languages,
-    specs: ["Weekend and evening slots", "Volunteer-presented", "Source: Annual Report 2024"],
+    specs: ["Monday–Wednesday evenings", "Volunteer-presented", "Source: Annual Report 2024"],
   },
 ]
 

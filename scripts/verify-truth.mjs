@@ -400,6 +400,16 @@ assertCoverageCopy('pages/Story.tsx', [
   'formatRadius()',
   'formatBroadcastPopulation()',
 ])
+const story = files.find((f) => f.label === 'pages/Story.tsx')
+if (
+  !story ||
+  /Weekend and evening slots/.test(story.text) ||
+  !story.text.includes('Monday–Wednesday evenings')
+) {
+  hits.push(
+    'pages/Story.tsx: language-strands card must name Monday–Wednesday evenings — not leftover weekend slots',
+  )
+}
 
 const mediaKit = files.find((f) => f.label === 'pages/MediaKit.tsx')
 if (
