@@ -7,6 +7,7 @@ import { join, relative } from 'node:path'
 
 const ROOT = new URL('../src', import.meta.url).pathname
 const INDEX_HTML = new URL('../index.html', import.meta.url).pathname
+const NETLIFY_TOML = new URL('../netlify.toml', import.meta.url).pathname
 
 /** Phrases that must never ship in src/ (gov-truth). */
 const FORBIDDEN = [
@@ -77,6 +78,7 @@ const hits = []
 const files = [
   ...walk(ROOT).map((p) => ({ label: relative(ROOT, p), text: readFileSync(p, 'utf8') })),
   { label: 'index.html', text: readFileSync(INDEX_HTML, 'utf8') },
+  { label: 'netlify.toml', text: readFileSync(NETLIFY_TOML, 'utf8') },
 ]
 for (const file of files) {
   for (const rule of FORBIDDEN) {
@@ -487,6 +489,29 @@ if (
   /path=\"\/social\" element=\{<Navigate to=\"\/community\"/.test(app.text)
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
+}
+
+const pathToHash = files.find((f) => f.label === 'lib/pathToHash.ts')
+if (
+  !pathToHash ||
+  !pathToHash.text.includes('export function installPathToHash') ||
+  !pathToHash.text.includes('pathToHashTarget')
+) {
+  hits.push(
+    'lib/pathToHash.ts: typed /listen must rewrite onto HashRouter #/listen, not paint Home',
+  )
+}
+const scrollProgress = files.find((f) => f.label === 'components/ScrollProgress.tsx')
+if (!scrollProgress || !scrollProgress.text.includes('installPathToHash()')) {
+  hits.push('components/ScrollProgress.tsx: must install path→hash before HashRouter mounts')
+}
+const netlifyToml = files.find((f) => f.label === 'netlify.toml')
+if (
+  !netlifyToml ||
+  !netlifyToml.text.includes('from = "/listen"') ||
+  !netlifyToml.text.includes('to = "/#/listen"')
+) {
+  hits.push('netlify.toml: /listen must 302 onto HashRouter /#/listen')
 }
 
 if (hits.length) {
