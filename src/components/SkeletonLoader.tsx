@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { BRAND } from '@/lib/brand'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
@@ -124,13 +124,13 @@ function RouteStill() {
       />
       <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
         <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-gold/80">
-          ONE FM 98.5 · loading
+          {BRAND.fullName} · loading
         </p>
         <p className="mt-1 text-one-white text-sm font-medium">
-          {formatCoverageShort()}
+          {BRAND.org}
         </p>
         <p className="text-one-muted text-xs mt-0.5">
-          {formatWeeklyListeners()} — ABS 2021 via townData
+          Shepparton · volunteer-run community radio
         </p>
         <p className="mt-2 flex flex-wrap gap-3 text-[11px]">
           <a
