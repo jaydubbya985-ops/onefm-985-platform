@@ -919,7 +919,9 @@ function BehindTheScenes() {
                 style={{ height: 300 }}
               />
               <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent">
-                <p className="font-micro text-one-white/80">The ONE FM team — ready to call the game</p>
+                <p className="font-micro text-one-white/80">
+                  GVL Match of the Day — {formatGuideHours('GVL Match of the Day')}
+                </p>
               </div>
             </div>
             <div className="relative overflow-hidden rounded-2xl">

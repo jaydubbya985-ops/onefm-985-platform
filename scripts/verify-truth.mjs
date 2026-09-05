@@ -489,6 +489,28 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const explorer = files.find((f) => f.label === 'pages/BroadcastExplorer.tsx')
+if (!explorer || /ready to call the game/i.test(explorer.text)) {
+  hits.push('pages/BroadcastExplorer.tsx: leftover ready-to-call caption must stay gone')
+}
+if (
+  !explorer ||
+  !explorer.text.includes("formatGuideHours('GVL Match of the Day')")
+) {
+  hits.push(
+    'pages/BroadcastExplorer.tsx: commentary still must name GVL Match of the Day from formatGuideHours',
+  )
+}
+if (!explorer || !explorer.text.includes('Calling the game — live from the ground')) {
+  hits.push('pages/BroadcastExplorer.tsx: do not steal the second commentary caption')
+}
+if (!explorer || !explorer.text.includes('Tour the Studio')) {
+  hits.push('pages/BroadcastExplorer.tsx: do not steal #435 leftover Tour the Studio')
+}
+if (!explorer || !explorer.text.includes('essential morning companion')) {
+  hits.push('pages/BroadcastExplorer.tsx: do not steal #464 leftover essential companion')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
