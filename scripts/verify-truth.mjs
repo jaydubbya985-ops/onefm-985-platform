@@ -489,6 +489,25 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const storyPage = files.find((f) => f.label === 'pages/Story.tsx')
+if (storyPage && /passionate broadcasters who found their home/i.test(storyPage.text)) {
+  hits.push('pages/Story.tsx: leftover passionate-home copy must stay gone')
+}
+if (
+  !storyPage ||
+  !storyPage.text.includes('BREAKFAST_SHOW') ||
+  !storyPage.text.includes('BREAKFAST_TIME') ||
+  !storyPage.text.includes('fm985.com.au/guide')
+) {
+  hits.push('pages/Story.tsx: team intro must name weekday breakfast from programGuide')
+}
+if (!storyPage || !storyPage.text.includes('APRA AMCOS Licensed')) {
+  hits.push('pages/Story.tsx: do not steal Story APRA leftover')
+}
+if (!storyPage || !storyPage.text.includes('Where the magic happens')) {
+  hits.push('pages/Story.tsx: do not steal #474 leftover magic')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)

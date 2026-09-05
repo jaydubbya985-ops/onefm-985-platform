@@ -16,6 +16,7 @@ import { TiltCard } from '@/components/TiltCard'
 import { AnimatedNumber } from '@/components/AnimatedNumber'
 import { Marquee } from '@/components/Marquee'
 import { LatestInterviews } from '@/components/LatestInterviews'
+import { BREAKFAST_SHOW, BREAKFAST_TIME } from '@/data/programGuide'
 import {
   ACMA_FACTS,
   EMERGENCY_BROADCAST_NARRATIVE,
@@ -387,7 +388,7 @@ export default function Story() {
           <div>
             <WordReveal text="Meet the Voices of the Valley" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body text-one-white max-w-xl">
-              Our team is a mix of lifelong locals and passionate broadcasters who found their home at ONE FM.
+              Named presenters from the weekly guide at fm985.com.au/guide — weekday {BREAKFAST_SHOW}, {BREAKFAST_TIME}.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
