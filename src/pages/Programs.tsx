@@ -336,7 +336,7 @@ const shows = [
     name: "All Things Rock",
     time: "Wed–Thu, 3pm",
     host: "Steve Little",
-    desc: "Rock music Wednesday and Thursday afternoons with Steve Little — the best of rock from all eras.",
+    desc: `Steve Little on the weekly guide — ${formatGuideHours('All Things Rock') ?? 'Wednesday and Thursday'}.`,
     tag: "Music",
     icon: Music,
   },

@@ -432,6 +432,16 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (!programs || /best of rock from all eras/i.test(programs.text)) {
+  hits.push(
+    'pages/Programs.tsx: leftover best of rock from all eras is back',
+  )
+}
+if (!programs || !programs.text.includes('essential hits from across the decades')) {
+  hits.push(
+    'pages/Programs.tsx: leftover essential hits decades must stay for #509',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
