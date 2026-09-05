@@ -1,4 +1,5 @@
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { getOpsLoadStatus, opsLoadChartNote } from '@/lib/opsLoadStatus'
 
 /** Empty-state for DEMO chart series that must not appear in live #/ops. */
 export function LivePendingNote({
@@ -8,11 +9,13 @@ export function LivePendingNote({
   title: string
   detail?: string
 }) {
+  const loadNote = opsLoadChartNote(getOpsLoadStatus())
   return (
     <div className="flex flex-col items-center justify-center py-10 px-4 text-center min-h-[160px] rounded-lg border border-[#2A2A2A]/30 bg-[#101010]/40">
       <p className="text-one-white/80 text-sm font-medium">{title}</p>
       <p className="text-one-white/40 text-xs mt-2 max-w-md">
-        {detail ??
+        {loadNote ??
+          detail ??
           `DEMO figures are hidden in live mode. Licensed coverage is ${formatCoverageShort()} (ABS 2021 via townData). Revenue charts wait on station-audited data.`}
       </p>
     </div>

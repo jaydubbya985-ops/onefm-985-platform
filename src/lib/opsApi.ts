@@ -19,6 +19,10 @@ import type {
 } from '@/components/ops/store'
 import type { ContractInvoiceEntry } from '@/components/ops/data/sponsors'
 import { isRealSponsorInvoiceNumber } from '@/components/ops/data/invoices'
+import {
+  opsLoadFromResults,
+  recordOpsLoad,
+} from '@/lib/opsLoadStatus'
 
 // ── Row mappers ────────────────────────────────────────────────
 
@@ -204,6 +208,7 @@ export interface OpsRemoteState {
 export async function loadAll(): Promise<{
   state: OpsRemoteState
   hasData: boolean
+  loadError?: string
 }> {
   const empty: OpsRemoteState = {
     enquiries: [],
@@ -212,7 +217,10 @@ export async function loadAll(): Promise<{
     invoices: [],
   }
 
-  if (!isSupabaseConfigured()) return { state: empty, hasData: false }
+  if (!isSupabaseConfigured()) {
+    recordOpsLoad(opsLoadFromResults(false, []))
+    return { state: empty, hasData: false }
+  }
 
   const [enqRes, propRes, conRes, invRes] = await Promise.all([
     supabase.from('contact_enquiries').select('*').order('created_at', { ascending: false }),
@@ -220,6 +228,17 @@ export async function loadAll(): Promise<{
     supabase.from('ops_contracts').select('*').order('created_at', { ascending: false }),
     supabase.from('ops_invoices').select('*').order('created_at', { ascending: false }),
   ])
+
+  const loadStatus = opsLoadFromResults(true, [
+    { table: 'contact_enquiries', error: enqRes.error?.message },
+    { table: 'ops_proposals', error: propRes.error?.message },
+    { table: 'ops_contracts', error: conRes.error?.message },
+    { table: 'ops_invoices', error: invRes.error?.message },
+  ])
+  recordOpsLoad(loadStatus)
+  if (loadStatus.kind === 'error') {
+    console.warn('[opsApi] loadAll failed:', loadStatus.failedTables.join(', '))
+  }
 
   const enquiries = (enqRes.data ?? []).map((r) =>
     dbRowToEnquiry(r as DbContactEnquiry),
@@ -234,7 +253,14 @@ export async function loadAll(): Promise<{
     contracts.length > 0 ||
     invoices.length > 0
 
-  return { state: { enquiries, proposals, contracts, invoices }, hasData }
+  return {
+    state: { enquiries, proposals, contracts, invoices },
+    hasData,
+    loadError:
+      loadStatus.kind === 'error'
+        ? `Ledger tables failed: ${loadStatus.failedTables.join(', ')}`
+        : undefined,
+  }
 }
 
 /** Seed only the two real sponsor invoices. Never dump the DEMO batch. */
