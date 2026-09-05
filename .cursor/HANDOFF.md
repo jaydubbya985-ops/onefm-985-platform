@@ -7,35 +7,43 @@
 **GitHub `main` is source of truth.** Always `git pull origin main` first.  
 **Do not merge PRs unless Jay says EXE.** Never merge PR **#13**. Never merge **#28** or **#29**.
 
-**ULTRA IS ON (3 September 2026).** Read `.cursor/ULTRA.md`. World class is the only pass mark. One deep PR — not the stamp factory.
+**ULTRA IS ON.** Read `.cursor/ULTRA.md`. World class is the only pass mark. One deep PR — not the stamp factory.
 
 **CONTINUOUS RUN IS ON.** Read `.cursor/CONTINUOUS.md`. Keep shipping.
 
-## Already true on GitHub `main` (`a2a0519`)
+## Already true on GitHub `main` (`5a39882`)
 
-- PR **#28–#143** batch is on `main` (home/listen craft #51, leftover AI copy #135, invoice Stripe honesty #121, marquee #143).
+- Latest on `main`: Explore heading names listen and the guide (#478).
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km** — always via `coverageCopy.ts`.
 - Standard 30s: **$25 plus GST**. GVL is premium — never “from $25”.
-- Invoice design **A · Broadcast Letter** is locked (`STATION_INVOICE_DESIGN_CHOICE`).
-- Breakfast is ONE FM Breakfast with rotating hosts — not Plemo.
+- Breakfast is ONE FM Breakfast with rotating hosts (Tim Ahemt, The Big G, Ralph Whitehead, Josh Revens) — not Plemo.
+- Photos: `/public/assets/images/` and `/public/brand/` only.
+
+## Waiting for Jay EXE (do not merge)
+
+These are ready, Bugbot-green, not on `main` until EXE:
+
+- **#516** Programs featured cards from `FULL_SCHEDULE` (not handwritten slogans)
+- **#526** 404 names the live show and plays the stream
+- **#530** Remaining time ticks from the guide clock (15s), Radio.co stays 60s
+
+Also still open and not EXE: Listen remaining aria-live **#475**, Home play **#235** (prefer over parked #510), Listen stream/grid parked **#508**.
 
 ## Open PRs (do not merge)
 
-The #170–#200 band is mostly **stamp-the-same-copy** (coverage + breakfast + GVL hours on one more page). Recommend **close**, do not stack more of them.
-
-Stale/conflicting: **#1 #3 #4 #8 #10 #11** — close manually. **#13** never merge (regresses ops).
+The leftover-slogan band is the stamp factory. Recommend **close** (do not merge): one-line remaps on Programs (#440 #492 #509 #513 and siblings), plus stale/conflicting **#1 #3 #4 #8 #10 #11**. **#13** never merge.
 
 ## NEED JAY (one action)
 
-Replace the two Cursor Cloud Supabase secrets:
+Say **EXE** on #516, #526, or #530 — those are the listener ships waiting on `main`.
 
-- `VITE_SUPABASE_URL` must be the full Project URL from Supabase Project Settings → API.
-- `VITE_SUPABASE_ANON_KEY` must be the anon / publishable key (`eyJ...` or `sb_publishable_...`), never `sb_secret...` / `sb_s...`.
+Phone: `.cursor/MOBILE.md`.
 
-Next human blocker after Supabase: `RESEND_API_KEY` in Netlify for live invoice email — test send one invoice to `jasonstv1@bigpond.com` in Test Mode first.
+Secrets still: Cloud `VITE_SUPABASE_URL` + **anon** key (never `sb_secret_`). Named host JPGs only if Jay drops them into `/public/photos/hosts/`.
 
 ## Next desks
 
-- Listen / Home craft a listener would feel (remaining time, honest presenter, stream errors).
-- Programs as a usable weekly grid.
-- Do **not** stamp coverage onto another chrome component.
+- Named portraits only after Jay drops filename-verified files
+- Guide Saturday-evening gaps (#523) — Overnight Mix is the leftover fallthrough
+- Do **not** stamp coverage onto another chrome component
+- Do **not** remap leftover strings owned by other PRs
