@@ -12,9 +12,8 @@ import { TiltCard } from '@/components/TiltCard'
 const TILES = [
   {
     title: 'Listen Live',
-    desc: 'Stream ONE FM now',
-    path: 'https://fm985.com.au/audio-player/',
-    external: true,
+    desc: 'The live player on this site',
+    path: '/listen',
     image: STATION_PHOTOS.commentaryBoxAction,
     fallback: PHOTO_DEFAULTS.regional,
   },
