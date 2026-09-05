@@ -13,8 +13,7 @@ const TILES = [
   {
     title: 'Listen Live',
     desc: 'Stream ONE FM now',
-    path: 'https://fm985.com.au/audio-player/',
-    external: true,
+    path: '/listen',
     image: STATION_PHOTOS.commentaryBoxAction,
     fallback: PHOTO_DEFAULTS.regional,
   },
