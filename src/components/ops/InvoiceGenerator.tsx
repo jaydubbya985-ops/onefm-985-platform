@@ -82,7 +82,6 @@ import { EmailServiceBanner } from '@/components/ops/EmailServiceBanner'
 import { OpsInvoiceSheet } from '@/components/ops/OpsInvoiceSheet'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
-import { formatCoverageShort } from '@/lib/coverageCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 // ---------------------------------------------------------------------------
@@ -146,7 +145,7 @@ const STATUS_STYLES: Record<GeneratedInvoiceStatus, string> = {
   draft: 'bg-[#2A2A2A] text-[#5B8DB8] hover:bg-[#2A2A2A]',
   previewed: 'bg-[#5B8DB8]/20 text-[#5B8DB8] hover:bg-[#5B8DB8]/20',
   tested: 'bg-purple-900/40 text-purple-400 hover:bg-purple-900/40',
-  sent: 'bg-[#D4A84B]/20 text-[#D4A84B] hover:bg-[#D4A84B]/20',
+  sent: 'bg-[#5B8DB8]/20 text-[#5B8DB8] hover:bg-[#5B8DB8]/20',
   viewed: 'bg-[#5B8DB8]/20 text-[#5B8DB8] hover:bg-[#5B8DB8]/20',
   paid: 'bg-emerald-900/40 text-emerald-400 hover:bg-emerald-900/40',
   overdue: 'bg-[#E31E24]/20 text-[#E31E24] hover:bg-[#E31E24]/20',
@@ -887,8 +886,8 @@ export default function InvoiceGenerator() {
             Station archive · match-day outside-broadcast banner
           </p>
           <p className="mt-1 text-xs text-white/35">
-            Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
-            {BANK_BSB} · {BANK_ACCOUNT_NAME}. This screen is not a Stripe receipt.
+            Invoice payments: NAB BSB {BANK_BSB} · {BANK_ACCOUNT_NAME}. This screen is not a Stripe
+            receipt.
           </p>
         </div>
       </div>
@@ -897,7 +896,7 @@ export default function InvoiceGenerator() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <FileText className="h-6 w-6 text-[#D4A84B]" />
+            <FileText className="h-6 w-6 text-[#E51636]" />
             Invoice Generator
           </h1>
           <p className="text-[#5B8DB8] text-sm mt-1">Create, manage and track ONE FM invoices</p>
@@ -911,7 +910,7 @@ export default function InvoiceGenerator() {
               setSelectedIds(new Set())
             }}
             className={`border-[#2A2A2A] text-[#5B8DB8] hover:bg-[#2A2A2A]/30 ${
-              batchMode ? 'bg-[#D4A84B]/20 text-[#D4A84B] border-[#D4A84B]/50' : ''
+              batchMode ? 'bg-[#E51636]/20 text-[#E51636] border-[#E51636]/50' : ''
             }`}
           >
             {batchMode ? <X className="h-4 w-4 mr-1" /> : <CheckSquare className="h-4 w-4 mr-1" />}
@@ -921,13 +920,13 @@ export default function InvoiceGenerator() {
             <TabsList className="bg-[#0E1E38] border border-[#2A2A2A]/50">
               <TabsTrigger
                 value="invoices"
-                className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#101010] text-[#5B8DB8]"
+                className="data-[state=active]:bg-[#E51636] data-[state=active]:text-white text-[#5B8DB8]"
               >
                 Invoices
               </TabsTrigger>
               <TabsTrigger
                 value="contracts"
-                className="data-[state=active]:bg-[#D4A84B] data-[state=active]:text-[#101010] text-[#5B8DB8]"
+                className="data-[state=active]:bg-[#E51636] data-[state=active]:text-white text-[#5B8DB8]"
               >
                 <FileSignature className="h-3.5 w-3.5 mr-1" />
                 From Contract
@@ -936,13 +935,13 @@ export default function InvoiceGenerator() {
           </Tabs>
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold">
+              <Button className="bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold">
                 <Plus className="h-4 w-4 mr-2" /> Create Invoice
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-[#0E1E38] border-[#2A2A2A] text-white max-w-2xl max-h-[85vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-[#D4A84B]">Create New Invoice</DialogTitle>
+                <DialogTitle className="text-[#E51636]">Create New Invoice</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -1075,7 +1074,7 @@ export default function InvoiceGenerator() {
                     <span className="text-[#5B8DB8]">GST (10%)</span>
                     <span>{fmt(createGst)}</span>
                   </div>
-                  <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#D4A84B]">
+                  <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#E51636]">
                     <span>Total</span>
                     <span>{fmt(createTotal)}</span>
                   </div>
@@ -1104,7 +1103,7 @@ export default function InvoiceGenerator() {
                 <Button
                   onClick={handleCreateInvoice}
                   disabled={!sponsor || !createDueDate || createTotal <= 0}
-                  className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold"
+                  className="bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold"
                 >
                   Create Invoice
                 </Button>
@@ -1122,8 +1121,8 @@ export default function InvoiceGenerator() {
           <div className="grid grid-cols-6 gap-4 mb-6">
             <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="bg-[#D4A84B]/20 p-2 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-[#D4A84B]" />
+                <div className="bg-[#E51636]/20 p-2 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-[#E51636]" />
                 </div>
                 <div>
                   <p className="text-[#5B8DB8] text-xs">Outstanding</p>
@@ -1251,7 +1250,7 @@ export default function InvoiceGenerator() {
                 <Button
                   size="sm"
                   onClick={handleBatchSend}
-                  className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold"
+                  className="bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold"
                 >
                   <Send className="h-3.5 w-3.5 mr-1" /> Queue for Batch Send
                 </Button>
@@ -1295,7 +1294,7 @@ export default function InvoiceGenerator() {
                   <TableRow className="border-[#2A2A2A]/50 hover:bg-transparent">
                     {batchMode && <TableHead className="text-[#5B8DB8] w-10" />}
                     <TableHead
-                      className="text-[#5B8DB8] cursor-pointer hover:text-[#D4A84B]"
+                      className="text-[#5B8DB8] cursor-pointer hover:text-[#E51636]"
                       onClick={() => toggleSort('company')}
                     >
                       <span className="flex items-center gap-1">
@@ -1303,7 +1302,7 @@ export default function InvoiceGenerator() {
                       </span>
                     </TableHead>
                     <TableHead
-                      className="text-[#5B8DB8] cursor-pointer hover:text-[#D4A84B]"
+                      className="text-[#5B8DB8] cursor-pointer hover:text-[#E51636]"
                       onClick={() => toggleSort('company')}
                     >
                       <span className="flex items-center gap-1">
@@ -1311,7 +1310,7 @@ export default function InvoiceGenerator() {
                       </span>
                     </TableHead>
                     <TableHead
-                      className="text-[#5B8DB8] cursor-pointer hover:text-[#D4A84B]"
+                      className="text-[#5B8DB8] cursor-pointer hover:text-[#E51636]"
                       onClick={() => toggleSort('date')}
                     >
                       <span className="flex items-center gap-1">
@@ -1319,7 +1318,7 @@ export default function InvoiceGenerator() {
                       </span>
                     </TableHead>
                     <TableHead
-                      className="text-[#5B8DB8] cursor-pointer hover:text-[#D4A84B]"
+                      className="text-[#5B8DB8] cursor-pointer hover:text-[#E51636]"
                       onClick={() => toggleSort('amount')}
                     >
                       <span className="flex items-center gap-1">
@@ -1327,7 +1326,7 @@ export default function InvoiceGenerator() {
                       </span>
                     </TableHead>
                     <TableHead
-                      className="text-[#5B8DB8] cursor-pointer hover:text-[#D4A84B]"
+                      className="text-[#5B8DB8] cursor-pointer hover:text-[#E51636]"
                       onClick={() => toggleSort('status')}
                     >
                       <span className="flex items-center gap-1">
@@ -1346,7 +1345,7 @@ export default function InvoiceGenerator() {
                       <TableRow
                         key={invoice.id}
                         className={`border-[#2A2A2A]/30 hover:bg-[#101010]/50 transition-colors ${
-                          isSelected ? 'bg-[#D4A84B]/5' : ''
+                          isSelected ? 'bg-[#E51636]/5' : ''
                         }`}
                       >
                         {batchMode && (
@@ -1355,17 +1354,17 @@ export default function InvoiceGenerator() {
                               variant="ghost"
                               size="sm"
                               onClick={() => toggleSelect(invoice.id)}
-                              className="text-[#5B8DB8] hover:text-[#D4A84B] p-1"
+                              className="text-[#5B8DB8] hover:text-[#E51636] p-1"
                             >
                               {isSelected ? (
-                                <CheckSquare className="h-4 w-4 text-[#D4A84B]" />
+                                <CheckSquare className="h-4 w-4 text-[#E51636]" />
                               ) : (
                                 <Square className="h-4 w-4" />
                               )}
                             </Button>
                           </TableCell>
                         )}
-                        <TableCell className="font-mono text-[#D4A84B] text-sm">
+                        <TableCell className="font-mono text-[#E51636] text-sm">
                           {invoice.invoiceNumber}
                         </TableCell>
                         <TableCell className="text-white text-sm">
@@ -1428,7 +1427,7 @@ export default function InvoiceGenerator() {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleSendInvoice(invoice.id)}
-                                  className="text-[#D4A84B] hover:text-[#C49A3B] p-1"
+                                  className="text-[#E51636] hover:text-[#c4122f] p-1"
                                   title="Send"
                                 >
                                   <Send className="h-4 w-4" />
@@ -1457,7 +1456,7 @@ export default function InvoiceGenerator() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handlePrint(invoice)}
-                              className="text-[#D4A84B] hover:text-[#C49A3B] p-1"
+                              className="text-[#E51636] hover:text-[#c4122f] p-1"
                               title="Download PDF"
                             >
                               <Download className="h-4 w-4" />
@@ -1507,7 +1506,7 @@ export default function InvoiceGenerator() {
         <div className="space-y-6">
           <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardHeader>
-              <CardTitle className="text-lg text-[#D4A84B] flex items-center gap-2">
+              <CardTitle className="text-lg text-[#E51636] flex items-center gap-2">
                 <FileSignature className="h-5 w-5" />
                 Create Invoice from Contract
               </CardTitle>
@@ -1566,11 +1565,11 @@ export default function InvoiceGenerator() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="bg-[#101010] rounded-lg p-4 border border-[#D4A84B]/30 text-sm space-y-2"
+                  className="bg-[#101010] rounded-lg p-4 border border-[#E51636]/30 text-sm space-y-2"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-[#D4A84B]">{contract.companyName}</h4>
-                    <Badge className="bg-[#D4A84B]/20 text-[#D4A84B]">{contract.industry}</Badge>
+                    <h4 className="font-semibold text-[#E51636]">{contract.companyName}</h4>
+                    <Badge className="bg-[#E51636]/20 text-[#E51636]">{contract.industry}</Badge>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <p>
@@ -1601,7 +1600,7 @@ export default function InvoiceGenerator() {
                   <div className="flex gap-4 pt-1 border-t border-[#2A2A2A]/50 mt-2">
                     <p>
                       <span className="text-[#5B8DB8]">Value:</span>{' '}
-                      <span className="text-[#D4A84B] font-semibold">
+                      <span className="text-[#E51636] font-semibold">
                         {fmt(contract.contractValue)}
                       </span>
                     </p>
@@ -1790,7 +1789,7 @@ export default function InvoiceGenerator() {
                       <span className="text-[#5B8DB8]">GST (10%)</span>
                       <span className="text-white">{fmt(contractGst)}</span>
                     </div>
-                    <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#D4A84B] text-base">
+                    <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#E51636] text-base">
                       <span>Total (incl GST)</span>
                       <span>{fmt(contractTotal)}</span>
                     </div>
@@ -1809,7 +1808,7 @@ export default function InvoiceGenerator() {
                       <Button
                         onClick={handleGenerateRecurring}
                         disabled={contractTotal <= 0}
-                        className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold flex-1"
+                        className="bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold flex-1"
                       >
                         <Repeat className="h-4 w-4 mr-2" />
                         Generate {FREQUENCY_LABELS[recurring]} Invoices
@@ -1818,7 +1817,7 @@ export default function InvoiceGenerator() {
                       <Button
                         onClick={handleCreateFromContract}
                         disabled={contractTotal <= 0}
-                        className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold flex-1"
+                        className="bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold flex-1"
                       >
                         <Receipt className="h-4 w-4 mr-2" />
                         Create Invoice
@@ -1840,7 +1839,7 @@ export default function InvoiceGenerator() {
           <Card className="bg-[#0E1E38] border-[#2A2A2A]/50">
             <CardHeader>
               <CardTitle className="text-lg text-white flex items-center gap-2">
-                <Landmark className="h-5 w-5 text-[#D4A84B]" />
+                <Landmark className="h-5 w-5 text-[#E51636]" />
                 Active Contracts
               </CardTitle>
             </CardHeader>
@@ -1872,12 +1871,12 @@ export default function InvoiceGenerator() {
                       <TableCell className="text-white font-medium text-sm">
                         {c.companyName}
                       </TableCell>
-                      <TableCell className="text-[#D4A84B] text-sm">{c.campaign}</TableCell>
+                      <TableCell className="text-[#E51636] text-sm">{c.campaign}</TableCell>
                       <TableCell className="text-[#5B8DB8] text-sm">{c.industry}</TableCell>
                       <TableCell className="text-white text-sm">{c.period}</TableCell>
                       <TableCell className="text-white text-sm">{fmt(c.contractValue)}</TableCell>
                       <TableCell className="text-[#5B8DB8] text-sm">{fmt(c.gst)}</TableCell>
-                      <TableCell className="text-[#D4A84B] font-semibold text-sm">
+                      <TableCell className="text-[#E51636] font-semibold text-sm">
                         {fmt(c.total)}
                       </TableCell>
                       <TableCell className="text-[#5B8DB8] text-sm">
@@ -1936,7 +1935,7 @@ export default function InvoiceGenerator() {
       <Dialog open={!!editInvoice} onOpenChange={(open) => !open && setEditInvoice(null)}>
         <DialogContent className="bg-[#0E1E38] border-[#2A2A2A] text-white max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-[#D4A84B]">
+            <DialogTitle className="text-[#E51636]">
               Edit Invoice {editInvoice?.invoiceNumber}
             </DialogTitle>
           </DialogHeader>
@@ -1995,7 +1994,7 @@ export default function InvoiceGenerator() {
                   <span className="text-[#5B8DB8]">GST (10%)</span>
                   <span>{fmt(editInvoice.gst)}</span>
                 </div>
-                <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#D4A84B]">
+                <div className="flex justify-between border-t border-[#2A2A2A] pt-1 font-semibold text-[#E51636]">
                   <span>Total</span>
                   <span>{fmt(editInvoice.total)}</span>
                 </div>
@@ -2008,7 +2007,7 @@ export default function InvoiceGenerator() {
             </Button>
             <Button
               onClick={handleSaveEdit}
-              className="bg-[#D4A84B] hover:bg-[#C49A3B] text-[#101010] font-semibold"
+              className="bg-[#E51636] hover:bg-[#c4122f] text-white font-semibold"
             >
               <CheckCircle className="h-4 w-4 mr-2" /> Save Changes
             </Button>
@@ -2020,7 +2019,7 @@ export default function InvoiceGenerator() {
       <Dialog open={!!payInvoice} onOpenChange={(open) => !open && setPayInvoice(null)}>
         <DialogContent className="bg-[#0E1E38] border-[#2A2A2A] text-white max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-[#D4A84B]">
+            <DialogTitle className="text-[#E51636]">
               {payInvoice?.status === 'partially_paid'
                 ? 'Record Additional Payment'
                 : 'Mark Invoice as Paid'}
@@ -2031,7 +2030,7 @@ export default function InvoiceGenerator() {
               <div className="bg-[#101010] rounded p-3 border border-[#2A2A2A]/50 text-sm">
                 <p className="text-[#5B8DB8]">
                   Invoice:{' '}
-                  <span className="text-[#D4A84B] font-mono">{payInvoice.invoiceNumber}</span>
+                  <span className="text-[#E51636] font-mono">{payInvoice.invoiceNumber}</span>
                 </p>
                 <p className="text-[#5B8DB8]">
                   Company: <span className="text-white">{payInvoice.billTo.company}</span>
@@ -2047,7 +2046,7 @@ export default function InvoiceGenerator() {
                 )}
                 <p className="text-[#5B8DB8]">
                   Balance:{' '}
-                  <span className="text-[#D4A84B] font-semibold">
+                  <span className="text-[#E51636] font-semibold">
                     {fmt(payInvoice.total - (payInvoice.paidAmount || 0))}
                   </span>
                 </p>
