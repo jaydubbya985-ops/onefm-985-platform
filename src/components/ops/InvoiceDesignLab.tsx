@@ -1,6 +1,6 @@
 /**
- * Invoice Design Lab — compare 3 world-class invoice options side-by-side.
- * Pick one for the June batch; persists to localStorage + ops store.
+ * Invoice Design Lab — Broadcast Letter is locked; B and C are preview-only.
+ * Choice persists to localStorage + ops store.
  */
 import { useCallback, useMemo, useState } from 'react'
 import { Check, Download, Mail, Palette, Sparkles } from 'lucide-react'
@@ -118,7 +118,7 @@ export default function InvoiceDesignLab() {
             <div>
               <h1 className="text-2xl font-bold">Invoice Design Lab</h1>
               <p className="text-sm text-[#F4F1EA]/50">
-                Three world-class options · Sample: {SAMPLE.company} ({SAMPLE.number})
+                Broadcast Letter locked · Sample: {SAMPLE.company} ({SAMPLE.number})
               </p>
             </div>
           </div>
