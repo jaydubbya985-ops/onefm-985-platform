@@ -193,11 +193,11 @@ export default function SponsorshipKit() {
           </h2>
           <EnquiryForm />
           <p className="text-[13px] text-white/35 mt-4">
-            Goes straight to the station's pipeline — or email{' '}
+            Email{' '}
             <a href={`mailto:${BRAND.email}`} className="underline hover:text-white">
               {BRAND.email}
             </a>{' '}
-            / call {BRAND.phone}.
+            or call {BRAND.phone} if you want a reply today.
           </p>
         </section>
 

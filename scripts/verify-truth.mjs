@@ -365,6 +365,15 @@ if (
 ) {
   hits.push('pages/SponsorshipKit.tsx: stats strip must use coverageStatsStrip()')
 }
+{
+  const sponsorKit = files.find((f) => f.label === 'pages/SponsorshipKit.tsx')
+  if (sponsorKit && /Goes straight to the station's pipeline/.test(sponsorKit.text)) {
+    hits.push("pages/SponsorshipKit.tsx: leftover Goes straight to the station's pipeline is invented send path")
+  }
+  if (!sponsorKit || !sponsorKit.text.includes('if you want a reply today')) {
+    hits.push('pages/SponsorshipKit.tsx: enquiry under-form must name email/phone for a reply today')
+  }
+}
 
 function assertCoverageCopy(label, requiredFns) {
   const file = files.find((f) => f.label === label)
