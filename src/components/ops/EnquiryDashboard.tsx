@@ -36,6 +36,11 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { BRAND } from '@/lib/brand'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import {
+  enquiryEmptyCopy,
+  proposalCreatedToast,
+  proposalMissingToast,
+} from '@/lib/enquiryDeskCopy'
 import { cn } from '@/lib/utils'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
@@ -172,7 +177,9 @@ export default function EnquiryDashboard() {
   const handleCreateProposal = (id: string) => {
     const proposalId = createProposalFromEnquiry(id)
     if (proposalId) {
-      toast('Draft proposal created — opening Proposals', 'success')
+      toast(proposalCreatedToast(), 'success')
+    } else {
+      toast(proposalMissingToast(), 'error')
     }
   }
 
@@ -204,6 +211,11 @@ export default function EnquiryDashboard() {
                 <h1 className="text-lg font-bold tracking-tight">Enquiry Management</h1>
                 <p className="text-[11px] text-one-muted leading-none mt-0.5">
                   {BRAND.fullName} · {formatCoverageShort()} — Track, manage & convert incoming enquiries
+                  {!isSupabaseConfigured() && (
+                    <span className="block text-amber-400/90 mt-1">
+                      DEMO rows — not real sponsors. Do not email them.
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
@@ -302,6 +314,17 @@ export default function EnquiryDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {filtered.length === 0 && (
+                  <TableRow className="border-one-border hover:bg-transparent">
+                    <TableCell colSpan={6} className="py-10 text-center text-sm text-one-muted">
+                      {enquiryEmptyCopy({
+                        live: isSupabaseConfigured(),
+                        searching: search.trim().length > 0,
+                        filter,
+                      })}
+                    </TableCell>
+                  </TableRow>
+                )}
                 {filtered.map((enq) => {
                   const status = STATUS_CONFIG[enq.status]
                   const source = SOURCE_CONFIG[enq.source]
