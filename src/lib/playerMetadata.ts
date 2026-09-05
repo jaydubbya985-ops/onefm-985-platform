@@ -3,7 +3,7 @@
  * Never invent now-playing data; label source clearly.
  */
 
-import { getCurrentLiveShow, type LiveShowInfo } from '@/data/programGuide'
+import { getCurrentLiveShow, GUIDE_GAP_NAME, type LiveShowInfo } from '@/data/programGuide'
 import { AUDIO_PLAYER_URL, STREAM_STATUS_URL } from '@/lib/streamConfig'
 
 export type MetadataSource = 'schedule' | 'rds' | 'stream' | 'manual' | 'unavailable'
@@ -58,7 +58,7 @@ function isBroadcastHours(now: Date): boolean {
 /** Schedule-based metadata (always available). */
 export function getScheduleMetadata(now: Date = new Date()): PlayerMetadata {
   const show: LiveShowInfo = getCurrentLiveShow(now)
-  const live = isBroadcastHours(now) && show.host !== 'Automated'
+  const live = isBroadcastHours(now) && show.host !== 'Automated' && show.name !== GUIDE_GAP_NAME
 
   return {
     isLive: live,
