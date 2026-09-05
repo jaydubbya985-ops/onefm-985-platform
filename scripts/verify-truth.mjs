@@ -444,6 +444,15 @@ if (
 ) {
   hits.push('lib/coverageCopy.ts: must export formatOgDescription and formatSeoDefault')
 }
+const brandLogo = files.find((f) => f.label === 'components/BrandLogo.tsx')
+if (
+  !brandLogo ||
+  brandLogo.text.includes('formatCoverageShort') ||
+  !brandLogo.text.includes('BRAND.fullName')
+) {
+  hits.push('components/BrandLogo.tsx: logo alt must be the station name, not a coverage stamp')
+}
+
 const presenterAssets = files.find((f) => f.label === 'lib/presenterAssets.ts')
 if (
   !presenterAssets ||

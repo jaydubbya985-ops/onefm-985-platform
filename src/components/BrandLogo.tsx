@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { logoCandidates, BRAND, type LogoVariant } from '@/lib/brand'
-import { formatCoverageShort } from '@/lib/coverageCopy'
 
-const DEFAULT_ALT = `${BRAND.fullName} — ${BRAND.tagline} · ${formatCoverageShort()}`
+/** Station name only — not a coverage stamp, not a tooltip novel. */
+const DEFAULT_ALT = BRAND.fullName
 
 interface BrandLogoProps {
   variant?: LogoVariant
@@ -29,7 +29,6 @@ export function BrandLogo({
     <img
       src={src}
       alt={alt}
-      title={alt}
       className={`brand-logo ${className}`}
       style={style}
       decoding="async"
