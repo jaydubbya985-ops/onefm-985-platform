@@ -80,7 +80,7 @@ export function ExploreOneFMGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10">
           <p className="font-label text-one-electric text-[10px] tracking-widest uppercase mb-2">Explore ONE FM</p>
-          <WordReveal text="Everything the station offers" className="font-h2 text-one-white block" as="h2" stagger={0.022} variant="char" />
+          <WordReveal text="Listen, the guide, and the Valley" className="font-h2 text-one-white block" as="h2" stagger={0.022} variant="char" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

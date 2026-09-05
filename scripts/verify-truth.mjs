@@ -253,6 +253,15 @@ if (
     'components/home/ExploreOneFMGrid.tsx: programs tile from BREAKFAST_SHOW; sport tile hours from formatGuideHours / FULL_SCHEDULE',
   )
 }
+if (
+  !explore ||
+  /Everything the station offers/.test(explore.text) ||
+  !explore.text.includes('Listen, the guide, and the Valley')
+) {
+  hits.push(
+    'components/home/ExploreOneFMGrid.tsx: heading must name listen and the guide — not leftover everything',
+  )
+}
 
 const siteNav = files.find((f) => f.label === 'lib/siteNav.ts')
 if (!siteNav || !siteNav.text.includes('BREAKFAST_SHOW') || !siteNav.text.includes('formatTowns()')) {
