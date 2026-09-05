@@ -10,6 +10,7 @@
  */
 
 import { BRAND } from '@/lib/brand'
+import { readEnquiryFunctionResult } from '@/lib/enquirySend'
 import { readFunctionJson } from '@/lib/readFunctionJson'
 
 export interface EmailPayload {
@@ -233,29 +234,29 @@ export async function sendEnquiryNotification(
         confirmationHtml,
       }),
     })
-    const result = await readFunctionJson<{ success?: boolean }>(res)
-    if (result?.success) return { success: true }
+    const result = await readFunctionJson<{ success?: boolean; error?: string }>(res)
+    const outcome = readEnquiryFunctionResult(result)
+    if (outcome.kind === 'sent') return { success: true }
+    if (outcome.kind === 'function_failed') {
+      return { success: false, error: outcome.error }
+    }
     console.warn('[Email] send-enquiry function responded:', res.status)
   } catch (err) {
     console.warn('[Email] send-enquiry function unavailable (dev mode?), falling back:', err)
   }
 
+  // Browser cannot send. Only used when the function is unreachable (local `npm run dev`).
   const station = await sendEmail({
     to: STATION_EMAIL,
     subject: `New ${data.enquiryType} Enquiry — ${data.name}`,
     html: stationHtml,
     replyTo: data.email,
   })
-  if (!station.success) {
-    return { success: false, devMode: station.devMode, error: station.error }
+  return {
+    success: false,
+    devMode: station.devMode,
+    error: station.error,
   }
-
-  await sendEmail({
-    to: data.email,
-    subject: `We've received your message — ONE FM 98.5`,
-    html: confirmationHtml,
-  })
-  return { success: true }
 }
 
 export async function sendProposalEmail(data: ProposalEmailData) {
