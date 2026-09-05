@@ -134,7 +134,7 @@ export function SoundCloudPanel({ interviews: interviewsProp, compact, className
       compact={compact}
       className={className}
       eyebrow="ON DEMAND"
-      title="Interview Archive"
+      title="fm985.com.au interviews"
       description={`${confirmedSocialNote()}. Interviews from fm985.com.au · ${formatCoverageShort()}.`}
       href={SOUNDCLOUD_PROFILE_URL}
       hrefLabel="Open SoundCloud"
