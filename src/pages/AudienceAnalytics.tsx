@@ -290,7 +290,7 @@ export default function AudienceAnalytics() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="HOUR-BY-HOUR LISTENING" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <WordReveal text="Weekly listeners, not an hourly grid" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mt-1">
               A heatmap of when people listen is data pending until Radio.co stream analytics are connected. We will not publish a typical-pattern grid as if it were ONE FM data.
             </p>
