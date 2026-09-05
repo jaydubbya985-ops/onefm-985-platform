@@ -7,6 +7,7 @@ import { join, relative } from 'node:path'
 
 const ROOT = new URL('../src', import.meta.url).pathname
 const INDEX_HTML = new URL('../index.html', import.meta.url).pathname
+const INDEX_CSS = new URL('../src/index.css', import.meta.url).pathname
 
 /** Phrases that must never ship in src/ (gov-truth). */
 const FORBIDDEN = [
@@ -77,6 +78,7 @@ const hits = []
 const files = [
   ...walk(ROOT).map((p) => ({ label: relative(ROOT, p), text: readFileSync(p, 'utf8') })),
   { label: 'index.html', text: readFileSync(INDEX_HTML, 'utf8') },
+  { label: 'index.css', text: readFileSync(INDEX_CSS, 'utf8') },
 ]
 for (const file of files) {
   for (const rule of FORBIDDEN) {
@@ -487,6 +489,17 @@ if (
   /path=\"\/social\" element=\{<Navigate to=\"\/community\"/.test(app.text)
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
+}
+
+const indexCss = files.find((f) => f.label === 'index.css')
+if (
+  !indexCss ||
+  /212\s*,\s*175\s*,\s*55/.test(indexCss.text) ||
+  !/\.btn-primary:hover[\s\S]*?rgba\(\s*229\s*,\s*22\s*,\s*54/.test(indexCss.text)
+) {
+  hits.push(
+    'index.css: .btn-primary:hover glow must use signal red #E51636 — not leftover gold 212,175,55',
+  )
 }
 
 if (hits.length) {

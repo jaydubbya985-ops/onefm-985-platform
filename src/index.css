@@ -424,7 +424,7 @@
   .btn-primary:hover {
     @apply scale-105;
     background: #E51636;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+    box-shadow: 0 0 20px rgba(229, 22, 54, 0.35);
   }
 
   .btn-primary:active {
@@ -778,7 +778,7 @@
     height: 35%;
     bottom: 20%;
     right: 15%;
-    background: radial-gradient(ellipse, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(229, 22, 54, 0.1) 0%, transparent 70%);
     animation: hero-mist-drift-c 19s ease-in-out infinite;
   }
 
