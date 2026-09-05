@@ -11,7 +11,7 @@ import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { OnAirTicker, NameWall, FeatureFrame, StatsStrip, LabelReveal, EditorialCards, PosterReveal, StrokeFill } from '@/components/onair/kit'
 import { towns } from '@/data/townData'
-import { formatBroadcastPopulation, formatRadius, formatTowns } from '@/lib/coverageCopy'
+import { formatBroadcastPopulation, formatCoverageShort, formatRadius, formatTowns } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 import { InventoryLadder } from '@/components/InventoryLadder'
 import {
@@ -69,7 +69,7 @@ function CommunityHero() {
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          {formatTowns()}, one signal. From the GVL grand final to {MULTICULTURAL_PROGRAM_COUNT} multicultural
+          {formatCoverageShort()}. From the GVL grand final to {MULTICULTURAL_PROGRAM_COUNT} multicultural
           programs on the weekly guide — this is the Valley, on air.
         </p>
       </div>
