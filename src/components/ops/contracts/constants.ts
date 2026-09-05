@@ -6,6 +6,7 @@
 // maps, contract templates and the invoice email template are verbatim.
 // ---------------------------------------------------------------------------
 
+import { BRAND } from '@/lib/brand'
 import type {
   Contract,
   ContractActivityEntry,
@@ -119,7 +120,7 @@ export const CONTRACT_TEMPLATES: ContractTemplate[] = [
     packageType: 'football_gold',
     campaignName: 'GVL 2026 SEASON',
     descriptionText:
-      'Full season football sponsorship including match-day announcements, digital signage, social media mentions, website logo placement, and premium on-air spots throughout the football season. Includes 4 x 30-second spots across all dayparts (EM, B, M, L, D, LN) for the duration of the season.',
+      `Full season football sponsorship including match-day announcements, social media mentions, website logo placement, and premium on-air spots throughout the football season. Includes 4 x 30-second spots across all dayparts (EM, B, M, L, D, LN) for the duration of the season. Digital signage is not a quoted inventory line — ask ${BRAND.email} if a venue board is part of a written agreement.`,
     defaultValue: 15000,
     defaultFrequency: 'monthly',
     defaultPeriods: 6,
