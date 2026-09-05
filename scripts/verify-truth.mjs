@@ -360,10 +360,19 @@ if (
 ) {
   hits.push('lib/proposalDocument.ts: proposal PDF/email must use weeklyListenersValue()')
 }
-if (
-  !files.find((f) => f.label === 'pages/SponsorshipKit.tsx')?.text.includes('coverageStatsStrip')
-) {
+const sponsorshipKit = files.find((f) => f.label === 'pages/SponsorshipKit.tsx')
+if (!sponsorshipKit?.text.includes('coverageStatsStrip')) {
   hits.push('pages/SponsorshipKit.tsx: stats strip must use coverageStatsStrip()')
+}
+if (
+  !sponsorshipKit ||
+  /You're in the pipeline/i.test(sponsorshipKit.text) ||
+  /station's pipeline/i.test(sponsorshipKit.text) ||
+  !sponsorshipKit.text.includes('enquiryReceiptHeadline')
+) {
+  hits.push(
+    'pages/SponsorshipKit.tsx: success copy must use enquiryReceipt flags — not invent a pipeline',
+  )
 }
 
 function assertCoverageCopy(label, requiredFns) {
