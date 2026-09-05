@@ -18,6 +18,7 @@ import {
 } from '@/data/programGuide'
 import { BRAND } from '@/lib/brand'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import {
@@ -142,22 +143,68 @@ function ListenHero() {
 }
 
 function WaysToListen() {
-  const ways = [
-    { icon: Radio, title: '98.5 FM', body: `On the dial across Shepparton and ${formatTowns()} of the Goulburn Valley — ${formatCoverageShort()} from Mt Major.` },
-    { icon: Wifi, title: 'Stream anywhere', body: 'The live stream follows you — this site, any browser, anywhere in the world. Press play above.' },
-    { icon: Phone, title: 'Studio line', body: 'Requests, shout-outs, community notices: (03) 5831 3131 — the studio answers when we’re live.' },
-  ]
+  const { playing, loading, error, toggle } = useLiveStream()
+  const card =
+    'border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636] text-left w-full block'
+
   return (
     <section className="px-6 md:px-12 lg:px-20 pb-6">
       <LabelReveal className="mb-8">Ways to Listen</LabelReveal>
       <div className="grid md:grid-cols-3 gap-5">
-        {ways.map((w) => (
-          <div key={w.title} className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636]">
-            <w.icon size={22} style={{ color: RED }} />
-            <h3 className="font-poster uppercase text-[26px] text-white mt-4 mb-2">{w.title}</h3>
-            <p className="text-[15px] leading-relaxed text-white/55">{w.body}</p>
-          </div>
-        ))}
+        <div className={card}>
+          <Radio size={22} style={{ color: RED }} aria-hidden />
+          <h3 className="font-poster uppercase text-[26px] text-white mt-4 mb-2">98.5 FM</h3>
+          <p className="text-[15px] leading-relaxed text-white/55">
+            On the dial across Shepparton and {formatTowns()} of the Goulburn Valley — {formatCoverageShort()} from Mt Major.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => void toggle()}
+          disabled={loading}
+          aria-pressed={playing}
+          aria-label={playing ? 'Pause the live stream' : 'Play the live stream'}
+          data-cursor-label={playing ? 'PAUSE' : 'PLAY'}
+          className={`${card} disabled:opacity-60`}
+        >
+          <Wifi size={22} style={{ color: RED }} aria-hidden />
+          <h3 className="font-poster uppercase text-[26px] text-white mt-4 mb-2">
+            {playing ? 'Playing' : 'Live stream'}
+          </h3>
+          <p className="text-[15px] leading-relaxed text-white/55">
+            {playing
+              ? 'On this page — Radio.co. Pause here or use the control above.'
+              : 'Play on this page. Same Radio.co stream as the control above.'}
+          </p>
+          {error ? (
+            <p className="mt-3 text-[14px] text-white/70" role="alert">
+              {error}{' '}
+              <a
+                href={AUDIO_PLAYER_URL}
+                className="underline"
+                style={{ color: RED }}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Open the fm985.com.au web player
+              </a>
+            </p>
+          ) : null}
+        </button>
+
+        <a
+          className={card}
+          href={LISTEN_LINKS.phone.href ?? `tel:${BRAND.phone}`}
+          data-cursor-label="CALL"
+        >
+          <Phone size={22} style={{ color: RED }} aria-hidden />
+          <h3 className="font-poster uppercase text-[26px] text-white mt-4 mb-2">Studio line</h3>
+          <p className="text-[15px] leading-relaxed text-white/55">
+            Requests, shout-outs, community notices: {BRAND.phone} — the studio answers when we&apos;re live.
+          </p>
+        </a>
       </div>
     </section>
   )
