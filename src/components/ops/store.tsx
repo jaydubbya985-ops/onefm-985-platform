@@ -17,6 +17,7 @@ import {
   getInvoiceDesignVariant,
   type InvoiceDesignVariantId,
 } from '@/lib/invoiceDesignVariants'
+import { opsLedgerAddDays, opsLedgerAddMonths, opsLedgerIsoDate } from '@/lib/opsLedgerDate'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -186,10 +187,6 @@ function loadSession(): { activeTab: OpsTab; focusProposalId: string | null } {
     // ignore
   }
   return { activeTab: 'proposals', focusProposalId: null }
-}
-
-function isoDate(d: Date): string {
-  return d.toISOString().split('T')[0]
 }
 
 function nextSequential(existing: string[], prefix: string): string {
@@ -502,7 +499,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           status: 'draft',
           createdAt: now(),
           updatedAt: now(),
-          validUntil: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+          validUntil: opsLedgerAddDays(30),
         }
         setState((prev) => ({
           ...prev,
@@ -571,12 +568,11 @@ export function OpsProvider({ children }: { children: ReactNode }) {
         const proposal = state.proposals.find((p) => p.id === id)
         if (!proposal) return null
         const start = new Date()
-        const end = new Date()
-        if (proposal.durationWeeks && proposal.durationWeeks > 0) {
-          end.setDate(start.getDate() + proposal.durationWeeks * 7)
-        } else {
-          end.setMonth(end.getMonth() + 6)
-        }
+        const startDate = opsLedgerIsoDate(start)
+        const endDate =
+          proposal.durationWeeks && proposal.durationWeeks > 0
+            ? opsLedgerAddDays(proposal.durationWeeks * 7, start)
+            : opsLedgerAddMonths(6, start)
         const gst = Math.round(proposal.value * 0.1 * 100) / 100
         const deliverableLine = proposal.deliverables?.length
           ? proposal.deliverables.map((d) => d.name).join('; ')
@@ -609,8 +605,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           contractValue: proposal.value,
           gst,
           totalValue: Math.round((proposal.value + gst) * 100) / 100,
-          startDate: isoDate(start),
-          endDate: isoDate(end),
+          startDate,
+          endDate,
           status: 'pending',
           tier: proposal.tier ?? 'Custom',
           packageType,
@@ -684,8 +680,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
           total: Math.round((amount + gst) * 100) / 100,
           description: `${contract.campaignName} (${contract.contractNumber})`,
           period: `${contract.startDate} – ${contract.endDate}`,
-          issueDate: isoDate(new Date()),
-          dueDate: isoDate(new Date(Date.now() + 30 * 86400000)),
+          issueDate: opsLedgerIsoDate(),
+          dueDate: opsLedgerAddDays(30),
           status: 'draft',
           inBatch: false,
           contractId,
@@ -731,7 +727,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       },
 
       markInvoicePaid: (id, paidAmount, method) => {
-        const paidDate = isoDate(new Date())
+        const paidDate = opsLedgerIsoDate()
         setState((prev) => ({
           ...prev,
           invoices: prev.invoices.map((i) =>
