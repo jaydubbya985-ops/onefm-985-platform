@@ -104,12 +104,17 @@ export const STATION_PHOTOS = {
 
 /**
  * Root-level public assets — real ONE FM host / studio photos.
+ *
+ * `/studio-control-room.jpg` is a byte-duplicate of `/on-air-host-1.jpg`
+ * (unlabeled host at the Solidyne desk). Do not alias it as a studio still.
+ * Named portraits stay in NAMED_PORTRAITS only. Until a cleared control-room
+ * still exists, this key is the branded OB van — station presence, not a face.
  */
 export const HOST_PHOTOS = {
   onAirHost1:       '/on-air-host-1.jpg',
   onAirHost2:       `${IMG}/studio-commentary-selfie.jpg`,
   onAirHost3:       `${IMG}/studio-sbs-diversity.jpg`,
-  studioControlRoom: '/studio-control-room.jpg',
+  studioControlRoom: STATION_PHOTOS.obVanBranded,
   communityEvent:   `${IMG}/community-book-stall.jpg`,
   regionalLandscape: `${IMG}/geo-rolling-green-hills.jpg`,
 } as const

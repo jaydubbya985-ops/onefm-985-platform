@@ -34,7 +34,7 @@ export const CINEGRAPHS = {
     poster: HOST_PHOTOS.studioControlRoom,
     fallback: STATION_PHOTOS.commentaryBoxAction,
     videoActive: false,
-    brief: 'Studio control room and commentary box — station archive stills. No invented cinegraph clip.',
+    brief: 'ONE FM branded outside-broadcast van and commentary box — station archive stills. No invented cinegraph clip.',
   },
   programsOnAir: {
     video: `${CG}/programs-on-air.mp4`,
