@@ -489,6 +489,18 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const sponsorCrm = files.find((f) => f.label === 'components/ops/SponsorCRM.tsx')
+if (
+  !sponsorCrm ||
+  /Pipeline Value/.test(sponsorCrm.text) ||
+  !sponsorCrm.text.includes('DEMO open total') ||
+  !sponsorCrm.text.includes('Open quoted total')
+) {
+  hits.push(
+    'components/ops/SponsorCRM.tsx: open quoted sum must be DEMO/LIVE labelled — not leftover Pipeline Value',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
