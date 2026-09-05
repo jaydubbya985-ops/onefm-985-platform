@@ -457,6 +457,14 @@ for (const required of [
   }
 }
 
+const invoiceVariantEmail = files.find((f) => f.label === 'lib/invoiceVariantEmail.ts')
+if (invoiceVariantEmail && /Partners in the Valley/i.test(invoiceVariantEmail.text)) {
+  hits.push('lib/invoiceVariantEmail.ts: leftover Partners in the Valley — Valley email is a tax invoice')
+}
+if (!invoiceVariantEmail || !invoiceVariantEmail.text.includes('>Tax invoice<')) {
+  hits.push('lib/invoiceVariantEmail.ts: Valley email masthead must name Tax invoice')
+}
+
 const app = files.find((f) => f.label === 'App.tsx')
 if (
   !app ||
