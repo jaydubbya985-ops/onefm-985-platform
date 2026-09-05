@@ -2,6 +2,7 @@
  * Fail the build if live-now labels invent a host or drop remaining time.
  * Run: npx vite-node scripts/verify-on-air.ts
  */
+import { readFileSync } from 'node:fs'
 import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
@@ -44,11 +45,27 @@ assert(/GVL|Match/i.test(gvl.name), `Saturday 14:10 should be GVL Match of the D
 assert(gvl.remainingMinutes > 0, 'GVL remaining must be positive during the slot')
 assert(formatWithPresenter(gvl.host) === null, 'GVL schedule host is ONE FM — do not print a with-line')
 
+// Saturday 08:15 — Songs of the Spirit (6–9) overlaps Saturday Sport (8–12). One live show, not leftover three LIVEs.
+const satOverlap = new Date('2026-09-05T08:15:00+10:00')
+const satLive = getCurrentLiveShow(satOverlap)
+assert(satLive.name === 'Saturday Sport', `Saturday 08:15 should be Saturday Sport (most recently started), got ${satLive.name}`)
+assert(satLive.startHour === 8, `Saturday Sport starts at 8, got ${satLive.startHour}`)
+const satSpirit = getCurrentLiveShow(new Date('2026-09-05T07:15:00+10:00'))
+assert(satSpirit.name === 'Songs of the Spirit', `Saturday 07:15 should still be Songs of the Spirit, got ${satSpirit.name}`)
+
 // Overnight — Sunday 02:00 Melbourne
 const overnight = new Date('2026-09-06T02:00:00+10:00')
 const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+
+const grid = readFileSync(new URL('../src/components/WeeklySchedule.tsx', import.meta.url), 'utf8')
+if (!grid.includes('getCurrentLiveShow')) {
+  throw new Error('WeeklySchedule must mark LIVE from getCurrentLiveShow — one show, not leftover hour overlap')
+}
+if (/slot.startHour <= currentHour/.test(grid)) {
+  throw new Error('WeeklySchedule leftover overlap LIVE predicate is back')
+}
 
 console.log('verify-on-air OK')
