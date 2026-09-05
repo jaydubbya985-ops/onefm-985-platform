@@ -5,6 +5,7 @@
 import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
+import { clampStreamVolume, effectiveStreamGain } from '../src/hooks/useLiveStream'
 
 function assert(cond: unknown, message: string) {
   if (!cond) {
@@ -50,5 +51,11 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+
+assert(clampStreamVolume(2) === 1, 'volume cannot exceed 1')
+assert(clampStreamVolume(-0.2) === 0, 'volume cannot go below 0')
+assert(clampStreamVolume(Number.NaN) === 1, 'invalid volume falls back to full')
+assert(effectiveStreamGain(0.5, true) === 0, 'mute must silence the stream')
+assert(effectiveStreamGain(0.4, false) === 0.4, 'unmuted gain follows the slider')
 
 console.log('verify-on-air OK')

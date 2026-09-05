@@ -6,6 +6,7 @@ import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { StreamVolume } from '@/components/StreamVolume'
 
 const HIDE_ON = ['/listen', '/ops']
 
@@ -105,6 +106,10 @@ export function MiniPlayer() {
                   <span className="font-label text-[10px] truncate" style={{ color: '#B6FF00' }}>{meta.nowPlaying}</span>
                 </div>
               )}
+
+              <div className="shrink-0">
+                <StreamVolume compact />
+              </div>
 
               {/* Play/Pause */}
               <button
