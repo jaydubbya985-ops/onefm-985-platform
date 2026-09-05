@@ -146,6 +146,14 @@ const onAirNav = files.find((f) => f.label === 'components/OnAirNav.tsx')
 if (!onAirNav || !onAirNav.text.includes('formatBreakfastChromeLabel')) {
   hits.push('components/OnAirNav.tsx: menu footer must show formatBreakfastChromeLabel from programGuide')
 }
+if (
+  !onAirNav ||
+  !onAirNav.text.includes('useLiveStream') ||
+  !onAirNav.text.includes('aria-pressed={playing}') ||
+  onAirNav.text.includes('hidden sm:inline-flex')
+) {
+  hits.push('components/OnAirNav.tsx: Listen Live must play the stream on every viewport, not only link to /listen')
+}
 
 const guide = files.find((f) => f.label === 'data/programGuide.ts')
 if (
