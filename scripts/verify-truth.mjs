@@ -488,6 +488,13 @@ if (
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
+const socialHub = files.find((f) => f.label === 'pages/SocialHub.tsx')
+if (socialHub && /text="CAMPAIGN CALENDAR"/.test(socialHub.text)) {
+  hits.push('pages/SocialHub.tsx: heading must not invent leftover Campaign Calendar')
+}
+if (socialHub && !socialHub.text.includes('POSTING CADENCE')) {
+  hits.push('pages/SocialHub.tsx: heading must name posting cadence from the guide')
+}
 
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))

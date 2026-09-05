@@ -750,11 +750,11 @@ function CampaignCalendar() {
   const getEventsForDay = (day: number) => CALENDAR_EVENTS.filter((e) => e.day === day)
 
   return (
-    <section className="bg-surface-peak section-bleed-top section-padding" data-cursor-label="CAMPAIGN PLAN">
+    <section className="bg-surface-peak section-bleed-top section-padding" data-cursor-label="POSTING CADENCE">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <WordReveal text="CAMPAIGN CALENDAR" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
+            <WordReveal text="POSTING CADENCE" className="font-h2 text-one-white mb-2 block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted">
               Posting cadence reminders — sport labels from the station guide (GVL Saturday, NIRS AFL Friday), not a fixture list.
             </p>
