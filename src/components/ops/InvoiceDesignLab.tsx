@@ -1,6 +1,7 @@
 /**
- * Invoice Design Lab — compare 3 world-class invoice options side-by-side.
- * Pick one for the June batch; persists to localStorage + ops store.
+ * Invoice Design Lab — preview three invoice skins.
+ * Live send is locked to STATION_INVOICE_DESIGN_CHOICE (A · Broadcast Letter).
+ * Previewing B / C does not change batch send. Do not invent a switch-before-send.
  */
 import { useCallback, useMemo, useState } from 'react'
 import { Check, Download, Mail, Palette, Sparkles } from 'lucide-react'
@@ -118,21 +119,21 @@ export default function InvoiceDesignLab() {
             <div>
               <h1 className="text-2xl font-bold">Invoice Design Lab</h1>
               <p className="text-sm text-[#F4F1EA]/50">
-                Three world-class options · Sample: {SAMPLE.company} ({SAMPLE.number})
+                Preview only · Sample: {SAMPLE.company} ({SAMPLE.number})
               </p>
             </div>
           </div>
           <p className="text-sm text-[#F4F1EA]/60 max-w-3xl mt-3">
-            Station choice locked:{' '}
-            <strong className="text-[#B8860B]">A · Broadcast Letter</strong> (navy &amp; gold) for the
-            June 2026 batch — email HTML and PDF attachments. B and C are preview-only here.
+            Live send is locked to{' '}
+            <strong className="text-[#B8860B]">A · Broadcast Letter</strong> (navy &amp; gold) —
+            email HTML and PDF attachments. Previewing B or C does not change what FOOTT is sent.
           </p>
           <p className="text-xs text-[#F4F1EA]/50 mt-2">
             Coverage: {formatCoverageShort()} (ABS 2021 via townData). Invoice payments: NAB BSB{' '}
             {BANK_BSB} · {BANK_ACCOUNT_NAME}. This lab is not a Stripe receipt.
           </p>
           <p className="text-xs text-[#F4F1EA]/40 mt-2">
-            Active sends use: {getVariantMeta(invoiceDesignVariant).name}
+            Batch send uses: {getVariantMeta(invoiceDesignVariant).name} — not this preview.
           </p>
         </div>
       </div>
@@ -220,7 +221,9 @@ export default function InvoiceDesignLab() {
         <div className="rounded-xl border border-[#2A2A2A] bg-[#0A0A0A] overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-[#2A2A2A] bg-[#141414]">
             <div>
-              <span className="text-xs uppercase tracking-wider text-[#F4F1EA]/40">Live preview</span>
+              <span className="text-xs uppercase tracking-wider text-[#F4F1EA]/40">
+                {preview === STATION_INVOICE_DESIGN_CHOICE ? 'Station send preview' : 'Preview only — not sent'}
+              </span>
               <span className="ml-2 font-semibold text-[#E51636]">
                 {INVOICE_DESIGN_VARIANTS.find((v) => v.id === preview)?.name}
               </span>
@@ -265,7 +268,7 @@ export default function InvoiceDesignLab() {
         </div>
 
         <p className="mt-4 text-xs text-[#F4F1EA]/35 text-center">
-          Design applies to Batch Send emails + PDF attachments. Switch anytime before live send.
+          Batch Send emails and PDF attachments stay on A · Broadcast Letter. This desk cannot unlock B or C.
         </p>
       </div>
     </div>
