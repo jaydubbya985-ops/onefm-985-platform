@@ -412,6 +412,15 @@ if (
 if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
   hits.push('pages/MediaKit.tsx: media-kit DOCX must use BRAND.phone, not a placeholder')
 }
+if (
+  !mediaKit ||
+  /WHO'S LISTENING/.test(mediaKit.text) ||
+  !mediaKit.text.includes('Who lives in ${formatTowns()}')
+) {
+  hits.push(
+    "pages/MediaKit.tsx: census heading must name who lives in formatTowns() — not leftover WHO'S LISTENING",
+  )
+}
 
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')
 if (

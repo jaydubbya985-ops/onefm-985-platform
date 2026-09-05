@@ -48,6 +48,7 @@ import {
   formatCoverageRegion,
   formatFmRadiusDetail,
   formatRadius,
+  formatTowns,
   weeklyListenersValue,
   yearsBroadcastingValue,
 } from '@/lib/coverageCopy'
@@ -562,7 +563,7 @@ export default function MediaKit() {
       {/* ═══════ AUDIENCE DEMOGRAPHICS ═══════ */}
       <section className="bg-surface-mid section-bleed-top section-padding" data-cursor-label="AUDIENCE DATA">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-          <WordReveal text="WHO'S LISTENING" className="font-h2 text-ivory mb-8 block" as="h2" stagger={0.05} />
+          <WordReveal text={`Who lives in ${formatTowns()}`} className="font-h2 text-ivory mb-8 block" as="h2" stagger={0.05} />
 
           {/* Tabs */}
           <div className="flex flex-wrap gap-2 mb-10">
