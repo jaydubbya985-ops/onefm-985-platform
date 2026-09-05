@@ -551,7 +551,7 @@ export default function Football() {
               <Shield size={18} className="text-one-electric" />
               <span className="font-label text-one-electric">9 SPONSORSHIP LEVELS</span>
             </div>
-            <WordReveal text="CHOOSE YOUR IMPACT" className="font-h2 text-one-white mb-3 block" as="h2" />
+            <WordReveal text="Quoted GVL sponsorship levels" className="font-h2 text-one-white mb-3 block" as="h2" />
             <p className="font-body-small text-muted max-w-[600px] mx-auto">
               Community Supporter is a match-day name-read and logo listing — not a GVL commercial spot.
               {STANDARD_SPOT_PLUS_GST}. GVL match-day commercials and live calls are quoted separately.
