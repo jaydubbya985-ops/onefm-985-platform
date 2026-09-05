@@ -61,7 +61,7 @@ export const HOME_JOBS = [
   {
     label: 'Listen Live',
     path: '/listen',
-    description: `Stream ${LISTEN_LINKS.fm.label} · Radio.co · ${LISTEN_LINKS.crp.label}`,
+    description: `Stream ${LISTEN_LINKS.fm.label} · Radio.co · ${LISTEN_LINKS.web.label}`,
     accent: '#E51636',
     image: STATION_PHOTOS.commentaryBoxAction,
     tags: ['Live', '98.5 FM', 'Stream'],

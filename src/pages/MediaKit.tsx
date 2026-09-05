@@ -132,7 +132,7 @@ const platformCards = [
     stat: 'Online',
     statLabel: 'via fm985.com.au',
     reach: 'Worldwide',
-    coverage: 'Radio.co stream · Community Radio Plus app',
+    coverage: 'Radio.co stream · fm985.com.au web player',
     accent: '#B6FF00',
   },
   {
@@ -372,7 +372,7 @@ export default function MediaKit() {
 
       const platformReach = [
         { platform: 'FM Radio', stat: '98.5 FM', reach: `${weeklyListenersValue()} est. weekly listeners` },
-        { platform: 'Live Stream', stat: 'fm985.com.au', reach: 'Radio.co · Community Radio Plus app' },
+        { platform: 'Live Stream', stat: 'fm985.com.au', reach: 'Radio.co · fm985.com.au web player' },
         { platform: 'Social Media', stat: 'Facebook', reach: 'facebook.com/onefmshepparton — follower count reported by the platform' },
         { platform: 'SoundCloud', stat: 'Interview archive', reach: 'Community interviews on fm985.com.au' },
       ]

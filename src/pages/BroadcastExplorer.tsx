@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play, Pause, Search, Grid3X3, List, ChevronDown,
-  ChevronLeft, ChevronRight, Radio, Globe, Smartphone,
+  ChevronLeft, ChevronRight, Radio, Globe,
   Headphones, Sparkles, Calendar, Phone, ArrowRight,
 } from 'lucide-react'
 import { WordReveal } from '@/components/WordReveal'
@@ -953,7 +953,7 @@ function BehindTheScenes() {
               {[
                 { title: 'Live community programming', desc: 'Real local voices, from the weekly guide (fm985.com.au/guide)' },
                 { title: `FM 98.5 · ${formatRadius()} from Mt Major`, desc: 'Licensed community broadcast — not a stream-only station' },
-                { title: 'Stream anywhere', desc: `${LISTEN_LINKS.web.label} · ${LISTEN_LINKS.crp.label}` },
+                { title: 'Stream anywhere', desc: `${LISTEN_LINKS.web.label} web player · Radio.co` },
               ].map((item, i) => (
                 <motion.div
                   key={item.title}
@@ -995,7 +995,6 @@ function ListenLiveCTA() {
   const platforms = [
     { name: '98.5 FM', hint: LISTEN_LINKS.fm.description, href: '/listen', external: false, icon: <Radio size={24} /> },
     { name: 'Web', hint: LISTEN_LINKS.web.description, href: LISTEN_LINKS.web.href, external: true, icon: <Globe size={24} /> },
-    { name: 'CR+', hint: LISTEN_LINKS.crp.description, href: LISTEN_LINKS.crp.href, external: true, icon: <Smartphone size={24} /> },
     { name: 'Studio', hint: LISTEN_LINKS.phone.description, href: LISTEN_LINKS.phone.href, external: false, icon: <Phone size={24} /> },
   ]
 
@@ -1025,7 +1024,7 @@ function ListenLiveCTA() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="font-body text-one-white mb-10"
         >
-          {LISTEN_LINKS.fm.label} · {LISTEN_LINKS.web.label} · {LISTEN_LINKS.crp.label} · studio {LISTEN_LINKS.phone.description}
+          {LISTEN_LINKS.fm.label} · {LISTEN_LINKS.web.label} · studio {LISTEN_LINKS.phone.description}
         </motion.p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-10">
