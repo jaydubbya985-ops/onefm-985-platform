@@ -113,6 +113,15 @@ if (
 ) {
   hits.push('pages/Listen.tsx: live hero from liveNowFromMetadata; on-air wall from ON_AIR_WEEK')
 }
+if (listen && /You can also call[\s\S]{0,120}while we/i.test(listen.text)) {
+  hits.push('pages/Listen.tsx: song request must not invent a live studio answering desk')
+}
+if (listen && /Studio request/.test(listen.text)) {
+  hits.push('pages/Listen.tsx: song request heading must not invent a live studio request desk')
+}
+if (listen && !listen.text.includes('LISTEN_LINKS.phone.href')) {
+  hits.push('pages/Listen.tsx: song request phone must be the sourced tel: link')
+}
 
 const home = files.find((f) => f.label === 'pages/Home.tsx')
 if (!home || !home.text.includes('liveNowFromMetadata')) {

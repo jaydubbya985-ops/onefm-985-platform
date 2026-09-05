@@ -19,6 +19,7 @@ import {
 import { BRAND } from '@/lib/brand'
 import { liveNowFromMetadata } from '@/lib/liveNow'
 import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
+import { LISTEN_LINKS } from '@/lib/listenLinks'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import {
   formatCoverageShort,
@@ -187,11 +188,15 @@ function SongRequest() {
       <LabelReveal className="mb-8">Request a song</LabelReveal>
       <div className="border border-white/12 rounded-xl p-7 md:p-10 max-w-2xl">
         <h2 id="song-request-heading" className="font-poster uppercase text-[32px] text-white leading-none">
-          Studio request<span style={{ color: RED }}>.</span>
+          Song request<span style={{ color: RED }}>.</span>
         </h2>
         <p className="text-[15px] leading-relaxed text-white/55 mt-3 mb-6">
           Opens an email draft to {BRAND.email}. Nothing is sent until you hit send in your email app.
-          You can also call {BRAND.phone} while we&apos;re live.
+          You can also call{' '}
+          <a href={LISTEN_LINKS.phone.href!} className="underline" style={{ color: RED }}>
+            {BRAND.phone}
+          </a>
+          .
         </p>
         {draftOpened && (
           <p className="mb-6 text-[15px] font-bold" style={{ color: LIME }} role="status">
