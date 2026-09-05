@@ -19,7 +19,7 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#E51636]">
               Sponsorship proposal
             </p>
-            <p className="mt-1 font-mono text-sm font-semibold text-[#071D3A]">{data.number}</p>
+            <p className="mt-1 font-mono text-sm font-semibold text-one-navy">{data.number}</p>
             <p className="text-xs text-[#6B6B6B]">{DS.station.name}</p>
           </div>
         </div>
@@ -36,13 +36,13 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#E51636]">
               Prepared for
             </p>
-            <p className="mt-1 font-semibold text-[#071D3A]">{data.clientName}</p>
+            <p className="mt-1 font-semibold text-one-navy">{data.clientName}</p>
             <p className="text-[#6B6B6B]">{data.company}</p>
             {data.email && <p className="text-[#6B6B6B]">{data.email}</p>}
           </div>
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#E51636]">From</p>
-            <p className="mt-1 font-semibold text-[#071D3A]">{DS.station.name}</p>
+            <p className="mt-1 font-semibold text-one-navy">{DS.station.name}</p>
             <p className="text-[#6B6B6B]">{DS.station.address}</p>
             <p className="text-[#6B6B6B]">
               {DS.station.phone} · {BRAND.email}
@@ -52,17 +52,17 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
 
         <div className="mt-5 grid grid-cols-3 gap-3 rounded-md bg-[#F8F8FA] px-4 py-3 text-sm">
           <div>
-            <p className="text-lg font-bold text-[#071D3A]">
+            <p className="text-lg font-bold text-one-navy">
               {weeklyListenersValue()}
             </p>
             <p className="text-[11px] text-[#6B6B6B]">est. weekly listeners</p>
           </div>
           <div>
-            <p className="text-lg font-bold text-[#071D3A]">{townCountValue()}</p>
+            <p className="text-lg font-bold text-one-navy">{townCountValue()}</p>
             <p className="text-[11px] text-[#6B6B6B]">towns</p>
           </div>
           <div>
-            <p className="text-lg font-bold text-[#071D3A]">{formatRadius()}</p>
+            <p className="text-lg font-bold text-one-navy">{formatRadius()}</p>
             <p className="text-[11px] text-[#6B6B6B]">radius</p>
           </div>
         </div>
@@ -71,7 +71,7 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
         </p>
 
         <div className="mt-5">
-          <p className="font-semibold text-[#071D3A]">{data.packageName}</p>
+          <p className="font-semibold text-one-navy">{data.packageName}</p>
           <p className="text-xs text-[#6B6B6B]">{data.tier} package</p>
         </div>
 
@@ -86,7 +86,7 @@ export function OpsProposalSheet({ data }: { data: ProposalDocData }) {
 
         {data.notes && <p className="mt-4 text-sm text-[#6B6B6B]">{data.notes}</p>}
 
-        <div className="mt-5 flex items-center justify-between rounded-md bg-[#071D3A] px-4 py-3">
+        <div className="mt-5 flex items-center justify-between rounded-md bg-one-navy px-4 py-3">
           <span className="text-sm text-white">
             {data.weeklyPrice ? `${formatAud(data.weeklyPrice)} / wk` : 'Total incl. GST'}
           </span>
