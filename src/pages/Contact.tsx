@@ -240,7 +240,7 @@ const enquiryIcons: Record<string, React.ElementType> = {
   'Technical Issue': Wrench,
 }
 
-/* ─── Section 2: Multi-Pathway Enquiry Form ─── */
+/* ─── Section 2: Enquiry form — sponsorship, volunteering, programming, or general ─── */
 function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -348,10 +348,10 @@ function ContactForm() {
               />
             ))}
           </div>
-          <WordReveal text="Multi-Pathway Enquiry" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
+          <WordReveal text="Send an enquiry" className="font-h2 text-one-white mb-4 block" as="h2" stagger={0.05} />
           <p className="font-body text-one-muted max-w-xl mx-auto">
-            Choose the path that fits your needs and we'll route your message to the
-            right team.
+            Sponsorship, volunteering, programming, or a general message — the station
+            reads it at {BRAND.email} or {BRAND.phone}.
           </p>
         </motion.div>
 

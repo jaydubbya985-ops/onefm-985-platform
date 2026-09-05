@@ -388,6 +388,18 @@ assertCoverageCopy('pages/Contact.tsx', [
   'formatRadius()',
   'formatBroadcastPopulation()',
 ])
+const contact = files.find((f) => f.label === 'pages/Contact.tsx')
+if (
+  !contact ||
+  /Multi-Pathway Enquiry/i.test(contact.text) ||
+  /route your message to the/i.test(contact.text) ||
+  !contact.text.includes('WordReveal text="Send an enquiry"') ||
+  !contact.text.includes('Sponsorship, volunteering, programming, or a general message')
+) {
+  hits.push(
+    'pages/Contact.tsx: enquiry heading must name send an enquiry — not leftover Multi-Pathway',
+  )
+}
 assertCoverageCopy('pages/AudienceAnalytics.tsx', [
   'formatTowns()',
   'formatRadius()',
