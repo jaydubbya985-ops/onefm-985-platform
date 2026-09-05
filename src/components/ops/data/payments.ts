@@ -277,35 +277,35 @@ export interface MembershipTier {
   benefits: string[]
 }
 
-/** Membership tier catalogue (verbatim from bundle, incl. benefit lists). */
+/** Suggested giving amounts. Do not list merch, dinners, newsletters, or titles as inventory. */
 export const MEMBERSHIP_TIERS: Record<MembershipTierId, MembershipTier> = {
   bronze: {
     label: 'Bronze',
     color: '#CD7F32',
     monthly: 5,
     annual: 50,
-    benefits: ['Email newsletter', 'Event discounts'],
+    benefits: ['Suggested giving amount', 'On-air thanks arranged with the station — not automatic'],
   },
   silver: {
     label: 'Silver',
     color: '#94A3B8',
     monthly: 10,
     annual: 100,
-    benefits: ['All Bronze perks', 'ONE FM T-shirt', 'Voting rights at AGM'],
+    benefits: ['Suggested giving amount', 'On-air thanks arranged with the station — not automatic'],
   },
   gold: {
     label: 'Gold',
     color: '#D4A853',
     monthly: 20,
     annual: 200,
-    benefits: ['All Silver perks', 'Name on website', 'Priority event access'],
+    benefits: ['Suggested giving amount', 'On-air thanks arranged with the station — not automatic'],
   },
   platinum: {
     label: 'Platinum',
     color: '#E5E4E2',
     monthly: 50,
     annual: 500,
-    benefits: ['All Gold perks', 'Quarterly dinner invite', 'Producer credit'],
+    benefits: ['Suggested giving amount', 'On-air thanks arranged with the station — not automatic'],
   },
 }
 
