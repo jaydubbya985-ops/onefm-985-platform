@@ -483,7 +483,8 @@ export const towns: Town[] = [
     sizeCategory: 'village',
     listenersEstimate: 98,
     distanceFromSheppartonKm: 84.5,
-    description: 'Small town famous for the iconic Australian song reference.',
+    // source: ABS 2021 usual residents + distanceFromSheppartonKm on this row — not leftover song hype
+    description: 'Mitchell Shire village — 748 people (ABS 2021), 84.5 km from Shepparton.',
     topIndustry: 'Agriculture & Equine Industry',
     bornOverseasPercent: 10.3,
     indigenousPercent: 1.7,
