@@ -67,11 +67,70 @@ export function WeeklySchedule() {
   const [activeDay, setActiveDay] = useState(defaultDay)
   const slots = slotsForDay(activeDay)
 
-  const isLiveSlot = (slot: ScheduleSlot) =>
-    activeDay === today && slot.startHour <= currentHour && currentHour < slot.endHour
+  const slotIsLive = (dayIndex: number, slot: ScheduleSlot) =>
+    dayIndex === today && slot.startHour <= currentHour && currentHour < slot.endHour
 
   return (
     <div>
+      <div
+        className="flex gap-2 overflow-x-auto pb-4 mb-4 -mx-1 px-1 snap-x snap-mandatory"
+        role="tablist"
+        aria-label="Week at a glance"
+      >
+        {DAY_TABS.map((day) => {
+          const daySlots = slotsForDay(day.index)
+          const selected = activeDay === day.index
+          const isToday = day.index === today
+          return (
+            <div
+              key={`glance-${day.index}`}
+              onClick={() => setActiveDay(day.index)}
+              className={`snap-start shrink-0 w-[9.75rem] text-left rounded-lg border px-3 py-2.5 transition-all cursor-pointer ${
+                selected
+                  ? 'bg-one-gold/10 border-one-gold'
+                  : 'border-one-border hover:border-one-gold/40'
+              }`}
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setActiveDay(day.index)}
+                data-cursor-label={day.label.toUpperCase()}
+                className="flex w-full items-baseline justify-between gap-1 mb-2 bg-transparent p-0 text-left"
+              >
+                <span
+                  className={`font-label text-[11px] tracking-[0.14em] uppercase ${
+                    selected ? 'text-one-gold' : 'text-one-white'
+                  }`}
+                >
+                  {day.label}
+                </span>
+                {isToday && (
+                  <span className="font-label text-[8px] uppercase tracking-wider text-one-red">today</span>
+                )}
+              </button>
+              <ul className="space-y-1 max-h-[18rem] overflow-y-auto">
+                {daySlots.map((slot, i) => {
+                  const live = slotIsLive(day.index, slot)
+                  return (
+                    <li key={`${slot.startHour}-${slot.name}-${i}`} className="min-w-0">
+                      <p className={`font-label text-[9px] truncate ${live ? 'text-one-red' : 'text-muted'}`}>
+                        {formatSlotTime(slot)}
+                        {live ? ' · live' : ''}
+                      </p>
+                      <p className="font-body-small text-[11px] text-one-white/85 truncate leading-tight">
+                        {slot.name}
+                      </p>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )
+        })}
+      </div>
+
       <div className="flex flex-wrap gap-2 mb-6">
         {DAY_TABS.map((day) => (
           <button
@@ -106,7 +165,7 @@ export function WeeklySchedule() {
             <li className="font-body-small text-muted py-8 text-center">No scheduled programs this day.</li>
           ) : (
             slots.map((slot, i) => {
-              const live = isLiveSlot(slot)
+              const live = slotIsLive(activeDay, slot)
               const accentColor = CATEGORY_COLORS[slot.category] ?? '#B6FF00'
               return (
                 <motion.li
