@@ -1,3 +1,5 @@
+import { BRAND } from '@/lib/brand'
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ONE FM 98.5 — Invoice Design System
 // Shared tokens for invoice email HTML and vector PDF.
@@ -40,7 +42,7 @@ export const DS = {
 
   station: {
     name:          'ONE FM 98.5',
-    tagline:       "Goulburn Valley's Community Radio",
+    tagline:       BRAND.tagline,
     abn:           '92 117 291 771',
     address:       '47 Parkside Drive, Shepparton VIC 3630',
     phone:         '(03) 5831 3131',
