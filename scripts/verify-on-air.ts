@@ -2,7 +2,7 @@
  * Fail the build if live-now labels invent a host or drop remaining time.
  * Run: npx vite-node scripts/verify-on-air.ts
  */
-import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
+import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday, GUIDE_GAP_NAME } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
 
@@ -50,5 +50,14 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+
+// Saturday evening is unlisted on fm985.com.au/guide/ — not leftover Overnight Mix 12am–6am.
+const satGap = new Date('2026-09-05T17:08:00+10:00')
+const gap = getCurrentLiveShow(satGap)
+assert(gap.name === GUIDE_GAP_NAME, `Saturday 17:08 should be a guide gap, got ${gap.name}`)
+assert(!/12:00AM — 6:00AM/.test(gap.time), `gap must not reuse overnight 12–6, got ${gap.time}`)
+assert(gap.remainingMinutes === 412, `Saturday 17:08 until Sunday Overnight Mix at midnight: expected 412 min, got ${gap.remainingMinutes}`)
+assert(gap.remainingLabel === '6 hr 52 min left', `gap remaining label: ${gap.remainingLabel}`)
+assert(getScheduleMetadata(satGap).isLive === false, 'unlisted hours must not be labelled On Air')
 
 console.log('verify-on-air OK')

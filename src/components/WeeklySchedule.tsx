@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Clock } from 'lucide-react'
-import { FULL_SCHEDULE, type ScheduleSlot } from '@/data/programGuide'
+import { GUIDE_GAP_NAME, guideDaySlotsWithGaps, type ScheduleSlot } from '@/data/programGuide'
+import { formatWithPresenter } from '@/lib/liveNow'
 
 const DAY_TABS = [
   { index: 1, label: 'Mon' },
@@ -47,9 +48,7 @@ function formatSlotTime(slot: ScheduleSlot): string {
 }
 
 function slotsForDay(day: number): ScheduleSlot[] {
-  return FULL_SCHEDULE.filter((s) => s.day === day && s.name !== 'Overnight Mix').sort(
-    (a, b) => a.startHour - b.startHour,
-  )
+  return guideDaySlotsWithGaps(day)
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -106,8 +105,9 @@ export function WeeklySchedule() {
             <li className="font-body-small text-muted py-8 text-center">No scheduled programs this day.</li>
           ) : (
             slots.map((slot, i) => {
-              const live = isLiveSlot(slot)
+              const live = isLiveSlot(slot) && slot.name !== GUIDE_GAP_NAME
               const accentColor = CATEGORY_COLORS[slot.category] ?? '#B6FF00'
+              const withLine = formatWithPresenter(slot.host)
               return (
                 <motion.li
                   key={`${slot.startHour}-${slot.name}-${i}`}
@@ -141,7 +141,11 @@ export function WeeklySchedule() {
                         </span>
                       )}
                     </div>
-                    <p className="font-body-small text-muted text-xs truncate">with {slot.host}</p>
+                    <p className="font-body-small text-muted text-xs truncate">
+                      {slot.name === GUIDE_GAP_NAME
+                        ? 'No show listed on fm985.com.au/guide/ this hour'
+                        : withLine ?? slot.host}
+                    </p>
                   </div>
                   <span
                     className="font-label text-[10px] px-2 py-0.5 rounded-full shrink-0 self-start sm:self-center"

@@ -234,15 +234,76 @@ function withClock(
   }
 }
 
+function occupiesHour(slot: ScheduleSlot, hour: number): boolean {
+  if (slot.startHour < slot.endHour) return hour >= slot.startHour && hour < slot.endHour
+  return hour >= slot.startHour || hour < slot.endHour
+}
+
+function slotsOnDay(day: number): ScheduleSlot[] {
+  return FULL_SCHEDULE.filter((s) => s.day === day).sort(
+    (a, b) => a.startHour - b.startHour || a.endHour - b.endHour,
+  )
+}
+
+/** Hours on the weekly guide with no listed show — not leftover Overnight Mix 12am–6am. */
+export const GUIDE_GAP_NAME = 'Between listed shows'
+
+function nextListedSlot(day: number, hour: number): { slot: ScheduleSlot; daysAhead: number } | null {
+  for (let offset = 0; offset < 8; offset++) {
+    const d = (day + offset) % 7
+    for (const s of slotsOnDay(d)) {
+      if (offset === 0 && s.startHour <= hour) continue
+      return { slot: s, daysAhead: offset }
+    }
+  }
+  return null
+}
+
+/**
+ * Day grid including honest gaps (source: fm985.com.au/guide/ has no show that hour).
+ * Overnight Mix rows stay off the public list; unlisted evening hours are named as a gap.
+ */
+export function guideDaySlotsWithGaps(day: number): ScheduleSlot[] {
+  const listed = slotsOnDay(day).filter((s) => s.name !== 'Overnight Mix')
+  const gaps: ScheduleSlot[] = []
+  let gapStart: number | null = null
+  for (let h = 0; h < 24; h++) {
+    const covering = slotsOnDay(day).filter((s) => occupiesHour(s, h))
+    const unlisted = covering.length === 0
+    if (unlisted) {
+      if (gapStart === null) gapStart = h
+    } else if (gapStart !== null) {
+      gaps.push({
+        day,
+        startHour: gapStart,
+        endHour: h,
+        name: GUIDE_GAP_NAME,
+        host: 'ONE FM',
+        category: 'Music',
+      })
+      gapStart = null
+    }
+  }
+  if (gapStart !== null) {
+    gaps.push({
+      day,
+      startHour: gapStart,
+      endHour: 24,
+      name: GUIDE_GAP_NAME,
+      host: 'ONE FM',
+      category: 'Music',
+    })
+  }
+  return [...listed, ...gaps].sort((a, b) => a.startHour - b.startHour || a.endHour - b.endHour)
+}
+
 /** Get current on-air show from full schedule */
 export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
   const { day, hour, minute } = getMelbourneClock(now)
 
   const candidates = FULL_SCHEDULE.filter(s => {
     if (s.day !== day) return false
-    if (s.startHour < s.endHour) return hour >= s.startHour && hour < s.endHour
-    // overnight wrap (e.g. 0–6 stored for day of broadcast)
-    return hour >= s.startHour || hour < s.endHour
+    return occupiesHour(s, hour)
   })
 
   if (candidates.length > 0) {
@@ -264,16 +325,26 @@ export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
     }, hour, minute)
   }
 
-  // Default overnight
-  return withClock({
-    name: 'Overnight Mix',
-    host: 'Automated',
-    time: '12:00AM — 6:00AM',
+  // Unlisted hour on fm985.com.au/guide/ — not leftover Overnight Mix 12:00AM—6:00AM.
+  const next = nextListedSlot(day, hour)
+  const remainingMinutes = next
+    ? Math.max(0, next.daysAhead * 24 * 60 + next.slot.startHour * 60 - (hour * 60 + minute))
+    : minutesUntilHour(6, hour, minute)
+  const endHour = next && next.daysAhead === 0 ? next.slot.startHour : 24
+  const upNext = next ? `${next.slot.name} at ${formatHour(next.slot.startHour)}` : 'Overnight Mix'
+  return {
+    name: GUIDE_GAP_NAME,
+    host: 'ONE FM',
+    time: next ? `Until ${next.slot.name} · ${formatHour(next.slot.startHour)}` : 'Until the next listed show',
     category: 'Music',
-    upNext: 'ONE FM Breakfast (Breaky) at 6:00AM',
-    startHour: 0,
-    endHour: 6,
-  }, hour, minute)
+    upNext,
+    startHour: hour,
+    endHour,
+    remainingMinutes,
+    elapsedMinutes: 0,
+    slotMinutes: Math.max(remainingMinutes, 1),
+    remainingLabel: formatRemaining(remainingMinutes),
+  }
 }
 
 function formatHour(h: number): string {
