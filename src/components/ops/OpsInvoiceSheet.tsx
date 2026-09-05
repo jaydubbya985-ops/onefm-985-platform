@@ -43,7 +43,7 @@ export function OpsInvoiceSheet({ invoice }: { invoice: OpsInvoiceSheetData }) {
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#E51636]">
               Tax invoice
             </p>
-            <p className="mt-1 font-mono text-sm font-semibold text-[#071D3A]">{invoice.number}</p>
+            <p className="mt-1 font-mono text-sm font-semibold text-one-navy">{invoice.number}</p>
             <p className="text-xs text-[#6B6B6B]">{DS.station.name}</p>
           </div>
         </div>
@@ -56,13 +56,13 @@ export function OpsInvoiceSheet({ invoice }: { invoice: OpsInvoiceSheetData }) {
         <div className="mt-6 grid grid-cols-2 gap-6 text-sm">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#E51636]">Bill to</p>
-            <p className="mt-1 font-semibold text-[#071D3A]">{invoice.contactName || invoice.company}</p>
+            <p className="mt-1 font-semibold text-one-navy">{invoice.contactName || invoice.company}</p>
             <p className="text-[#6B6B6B]">{invoice.company}</p>
             {invoice.email && <p className="text-[#6B6B6B]">{invoice.email}</p>}
           </div>
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#E51636]">From</p>
-            <p className="mt-1 font-semibold text-[#071D3A]">{DS.station.name}</p>
+            <p className="mt-1 font-semibold text-one-navy">{DS.station.name}</p>
             <p className="text-[#6B6B6B]">{DS.station.address}</p>
             <p className="text-[#6B6B6B]">
               {DS.station.phone} · {DS.station.accountsEmail}
@@ -73,7 +73,7 @@ export function OpsInvoiceSheet({ invoice }: { invoice: OpsInvoiceSheetData }) {
         <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#E51636]">Issue date</p>
-            <p className="mt-1 font-semibold text-[#071D3A]">{invoice.issueDate}</p>
+            <p className="mt-1 font-semibold text-one-navy">{invoice.issueDate}</p>
           </div>
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#E51636]">Due date</p>
@@ -81,7 +81,7 @@ export function OpsInvoiceSheet({ invoice }: { invoice: OpsInvoiceSheetData }) {
           </div>
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#E51636]">Reference</p>
-            <p className="mt-1 font-semibold text-[#071D3A]">{invoice.number}</p>
+            <p className="mt-1 font-semibold text-one-navy">{invoice.number}</p>
           </div>
         </div>
 
@@ -114,7 +114,7 @@ export function OpsInvoiceSheet({ invoice }: { invoice: OpsInvoiceSheetData }) {
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-between rounded-md bg-[#071D3A] px-4 py-3">
+        <div className="mt-5 flex items-center justify-between rounded-md bg-one-navy px-4 py-3">
           <span className="text-sm text-white">Total due</span>
           <span className="text-2xl font-bold text-[#E51636]">{aud(invoice.total)}</span>
         </div>
@@ -128,7 +128,7 @@ export function OpsInvoiceSheet({ invoice }: { invoice: OpsInvoiceSheetData }) {
             Pay by bank transfer
           </p>
           <p className="mt-1 font-medium text-[#3C6E2D]">National Australia Bank</p>
-          <p className="mt-1 font-semibold text-[#071D3A]">
+          <p className="mt-1 font-semibold text-one-navy">
             BSB {BANK_BSB} · Acc {BANK_ACCOUNT} · {BANK_ACCOUNT_NAME}
           </p>
           <p className="mt-1 text-xs text-[#6B6B6B]">
