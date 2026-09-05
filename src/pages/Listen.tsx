@@ -290,7 +290,7 @@ export default function Listen() {
             { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners' },
             { n: '98.5', t: 'FM · Callsign 3ONE', red: true },
             { n: formatTowns(), t: `Within a ${formatRadius()} radius` },
-            { n: '1989', t: 'Broadcasting ever since' },
+            { n: '1989', t: 'Community licence' },
           ]}
         />
         <div className="pb-32" />
