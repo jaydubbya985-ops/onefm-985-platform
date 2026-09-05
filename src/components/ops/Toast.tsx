@@ -20,14 +20,14 @@ const ToastContext = createContext<ToastContextValue | null>(null)
 const icons: Record<ToastType, ReactNode> = {
   success: <CheckCircle2 className="w-4 h-4 text-emerald-400" />,
   error: <AlertCircle className="w-4 h-4 text-red-400" />,
-  info: <Info className="w-4 h-4 text-[#D4A853]" />,
+  info: <Info className="w-4 h-4 text-[#E51636]" />,
   warning: <Info className="w-4 h-4 text-orange-400" />,
 }
 
 const styles: Record<ToastType, string> = {
   success: 'bg-emerald-500/10 border-emerald-500/30',
   error: 'bg-red-500/10 border-red-500/30',
-  info: 'bg-[#D4A853]/10 border-[#D4A853]/30',
+  info: 'bg-[#E51636]/10 border-[#E51636]/30',
   warning: 'bg-orange-500/10 border-orange-500/30',
 }
 

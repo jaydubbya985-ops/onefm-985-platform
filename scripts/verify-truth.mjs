@@ -489,6 +489,16 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const toast = files.find((f) => f.label === 'components/ops/Toast.tsx')
+if (
+  !toast ||
+  /#D4A853/i.test(toast.text) ||
+  /#D4A84B/i.test(toast.text) ||
+  !toast.text.includes('#E51636')
+) {
+  hits.push('components/ops/Toast.tsx: info toasts must use signal red — not leftover gold')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
