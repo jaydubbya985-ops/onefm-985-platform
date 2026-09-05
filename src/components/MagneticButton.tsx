@@ -1,4 +1,4 @@
-import { useRef, type MouseEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 
 interface MagneticButtonProps {
   children: ReactNode
@@ -13,6 +13,9 @@ interface MagneticButtonProps {
  * The inner element slides up to `strength` px toward the cursor,
  * then springs back on leave via CSS transition.
  *
+ * Leftover: the pull ignored prefers-reduced-motion while Marquee, the
+ * scanline, and Lenis already snap. Vestibular users get a still button.
+ *
  * Usage: wrap any <Link> or <button> — the wrapper is transparent.
  *   <MagneticButton><Link to="/listen" className="btn-primary">Listen</Link></MagneticButton>
  */
@@ -24,8 +27,27 @@ export function MagneticButton({
   cursorLabel,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement & HTMLSpanElement>(null)
+  const [reduceMotion, setReduceMotion] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const onChange = () => {
+      setReduceMotion(mq.matches)
+      if (mq.matches && ref.current) {
+        ref.current.style.transform = 'translate(0px, 0px)'
+        ref.current.style.transition = 'none'
+      }
+    }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
 
   const handleMouseMove = (e: MouseEvent) => {
+    if (reduceMotion) return
     const el = ref.current
     if (!el) return
     const rect = el.getBoundingClientRect()
@@ -41,7 +63,9 @@ export function MagneticButton({
     const el = ref.current
     if (!el) return
     el.style.transform = 'translate(0px, 0px)'
-    el.style.transition = 'transform 0.55s cubic-bezier(0.16,1,0.3,1)'
+    el.style.transition = reduceMotion
+      ? 'none'
+      : 'transform 0.55s cubic-bezier(0.16,1,0.3,1)'
   }
 
   return (
