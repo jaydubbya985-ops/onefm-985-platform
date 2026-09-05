@@ -176,7 +176,7 @@ export function getMelbourneWeekday(now: Date = new Date()): number {
   return getMelbourneClock(now).day
 }
 
-function getMelbourneClock(now: Date): { day: number; hour: number; minute: number } {
+export function getMelbourneClock(now: Date = new Date()): { day: number; hour: number; minute: number } {
   const parts = new Intl.DateTimeFormat('en-AU', {
     timeZone: 'Australia/Melbourne',
     weekday: 'short',

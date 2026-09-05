@@ -2,7 +2,7 @@
  * Fail the build if live-now labels invent a host or drop remaining time.
  * Run: npx vite-node scripts/verify-on-air.ts
  */
-import { getCurrentLiveShow, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
+import { getCurrentLiveShow, getMelbourneClock, getWeekdayBreakfastHost, getMelbourneWeekday } from '../src/data/programGuide'
 import { formatWithPresenter, liveNowFromMetadata } from '../src/lib/liveNow'
 import { getScheduleMetadata } from '../src/lib/playerMetadata'
 
@@ -50,5 +50,8 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+
+const thuClock = getMelbourneClock(new Date('2026-09-03T15:20:00+10:00'))
+assert(thuClock.day === 4 && thuClock.hour === 15 && thuClock.minute === 20, `Melbourne clock 15:20 Thu, got ${JSON.stringify(thuClock)}`)
 
 console.log('verify-on-air OK')

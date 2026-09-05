@@ -25,6 +25,7 @@ import {
   MULTICULTURAL_PROGRAM_COUNT,
   getCurrentLiveShow,
   getBreakfastScheduleLabel,
+  getMelbourneClock,
 } from '@/data/programGuide'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { formatCoverageShort, formatRadius } from '@/lib/coverageCopy'
@@ -66,7 +67,9 @@ const SHOWS = FULL_SCHEDULE.map((slot, i) => {
     day: toExplorerDay(slot.day),
     category: slot.category === 'Sport' ? 'Sports' : slot.category,
     color: CATEGORY_COLORS[slot.category] ?? '#B6FF00',
-    desc: `${slot.name} with ${slot.host}. Source: fm985.com.au/guide/`,
+    desc: formatWithPresenter(slot.host)
+      ? `${slot.name} ${formatWithPresenter(slot.host)}. Source: fm985.com.au/guide/`
+      : `${slot.name}. Source: fm985.com.au/guide/`,
   }
 })
 
@@ -314,11 +317,20 @@ function HeroSection() {
 
 /* ─── Section 2: Interactive Schedule ─── */
 function ScheduleSection() {
-  const [activeDay, setActiveDay] = useState(0)
+  const clock = getMelbourneClock()
+  const todayExplorer = toExplorerDay(clock.day)
+  const [activeDay, setActiveDay] = useState(todayExplorer)
   const [timeFilter, setTimeFilter] = useState('all')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [search, setSearch] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const nowLineRef = useRef<HTMLDivElement>(null)
+  const nowPct = ((clock.hour + clock.minute / 60) / 24) * 100
+
+  useEffect(() => {
+    if (activeDay !== todayExplorer) return
+    nowLineRef.current?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' })
+  }, [activeDay, todayExplorer])
 
   const filteredShows = useMemo(() => {
     let shows = SHOWS.filter((s) => s.day === activeDay)
@@ -359,6 +371,9 @@ function ScheduleSection() {
                 }`}
               >
                 {day}
+                {i === todayExplorer ? (
+                  <span className="ml-1 text-[8px] opacity-80">today</span>
+                ) : null}
               </button>
             ))}
           </div>
@@ -459,15 +474,19 @@ function ScheduleSection() {
                   </div>
                   <div className="flex-1 relative">
                     {/* Current time indicator (includes minutes for precision) */}
-                    {(() => {
-                      const now = new Date()
-                      const pct = ((now.getHours() + now.getMinutes() / 60) / 24) * 100
-                      return (
-                        <div className="absolute top-0 bottom-0 w-px bg-one-gold z-20" style={{ left: `${pct}%` }}>
-                          <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-one-gold animate-pulse" />
-                        </div>
-                      )
-                    })()}
+                    {activeDay === todayExplorer ? (
+                      <div
+                        ref={nowLineRef}
+                        className="absolute top-0 bottom-0 w-0.5 bg-one-gold z-20"
+                        style={{ left: `${nowPct}%` }}
+                        aria-hidden
+                      >
+                        <span className="absolute top-1 left-1.5 font-label text-[8px] uppercase tracking-[0.14em] text-one-gold whitespace-nowrap">
+                          Now
+                        </span>
+                        <div className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-one-gold animate-pulse" />
+                      </div>
+                    ) : null}
 
                     {/* Show blocks */}
                     {filteredShows.map((show, i) => (

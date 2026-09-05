@@ -26,7 +26,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Listen',
     items: [
       { label: 'Listen Live', path: '/listen', description: 'Stream 98.5 FM · Radio.co' },
-      { label: 'Program Guide', path: '/listen', description: `${BREAKFAST_SHOW} · fm985.com.au guide` },
+      { label: 'Program Guide', path: '/programs', description: `${BREAKFAST_SHOW} · fm985.com.au guide` },
       { label: 'Coverage Map', path: '/coverage', description: formatCoverageShort() },
     ],
   },
