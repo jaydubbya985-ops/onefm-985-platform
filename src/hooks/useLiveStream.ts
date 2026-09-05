@@ -8,6 +8,8 @@ import { STREAM_URL } from '@/lib/streamConfig'
 
 type StreamState = { playing: boolean; loading: boolean; error: string | null }
 
+export type StreamToggleResult = { playing: boolean; error: string | null }
+
 let audio: HTMLAudioElement | null = null
 let state: StreamState = { playing: false, loading: false, error: null }
 const bus = typeof window !== 'undefined' ? new EventTarget() : null
@@ -43,19 +45,22 @@ function getSnapshot(): StreamState {
 export function useLiveStream() {
   const local = useSyncExternalStore(subscribe, getSnapshot)
 
-  const toggle = useCallback(async () => {
+  const toggle = useCallback(async (): Promise<StreamToggleResult> => {
     const a = getAudio()
 
     if (state.playing) {
       a.pause()
-      return
+      return { playing: false, error: null }
     }
 
     emit({ ...state, loading: true, error: null })
     try {
       await a.play()
+      return { playing: true, error: null }
     } catch {
-      emit({ playing: false, loading: false, error: 'Playback blocked — open the web player instead.' })
+      const error = 'Playback blocked — open the web player instead.'
+      emit({ playing: false, loading: false, error })
+      return { playing: false, error }
     }
   }, [])
 

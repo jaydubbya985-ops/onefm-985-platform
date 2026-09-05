@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Pause, Play } from 'lucide-react'
+import { Pause, Play, Radio } from 'lucide-react'
 import { OnAirNav } from './OnAirNav'
 import { Footer } from './Footer'
 import { MiniPlayer } from './MiniPlayer'
@@ -15,8 +15,8 @@ interface LayoutProps {
 }
 
 export function Layout({ children, hideFooter = false }: LayoutProps) {
-  const { toggle, playing } = useLiveStream()
-  const [toast, setToast] = useState<'playing' | 'paused' | null>(null)
+  const { toggle } = useLiveStream()
+  const [toast, setToast] = useState<'playing' | 'paused' | 'error' | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -30,15 +30,20 @@ export function Layout({ children, hideFooter = false }: LayoutProps) {
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
       if ((e.target as HTMLElement).isContentEditable) return
       e.preventDefault()
-      toggle()
-      const next = playing ? 'paused' : 'playing'
-      if (toastTimer.current) clearTimeout(toastTimer.current)
-      setToast(next)
-      toastTimer.current = setTimeout(() => setToast(null), 1600)
+      void (async () => {
+        const result = await toggle()
+        if (toastTimer.current) clearTimeout(toastTimer.current)
+        if (result.error && !result.playing) {
+          setToast('error')
+        } else {
+          setToast(result.playing ? 'playing' : 'paused')
+        }
+        toastTimer.current = setTimeout(() => setToast(null), 2200)
+      })()
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [toggle, playing])
+  }, [toggle])
 
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current) }, [])
 
@@ -69,11 +74,15 @@ export function Layout({ children, hideFooter = false }: LayoutProps) {
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex items-center gap-2 bg-one-navy/95 border border-one-gold/25 backdrop-blur-md rounded-full pl-3 pr-3.5 py-2 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
-              {toast === 'playing'
-                ? <Play size={11} fill="currentColor" className="text-one-gold shrink-0" />
-                : <Pause size={11} fill="currentColor" className="text-one-gold/70 shrink-0" />}
+              {toast === 'playing' ? (
+                <Play size={11} fill="currentColor" className="text-one-gold shrink-0" />
+              ) : toast === 'paused' ? (
+                <Pause size={11} fill="currentColor" className="text-one-gold/70 shrink-0" />
+              ) : (
+                <Radio size={11} className="text-one-red shrink-0" />
+              )}
               <span className="font-label text-[11px] text-one-white">
-                {toast === 'playing' ? 'Playing' : 'Paused'}
+                {toast === 'playing' ? 'Playing' : toast === 'paused' ? 'Paused' : 'Stream unavailable'}
               </span>
               <span className="font-mono text-[9px] text-one-muted border border-one-border/50 px-1.5 py-0.5 rounded bg-black/30 leading-none">
                 Space
