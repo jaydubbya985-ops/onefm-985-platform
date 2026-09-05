@@ -19,6 +19,7 @@ import {
 } from '@/lib/pdfCoverImages'
 import { BRAND } from '@/lib/brand'
 import { formatCoverageShort, formatRadius, formatTowns, weeklyListenersValue } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import type { Contract } from '@/components/ops/data/sponsors'
 import {
@@ -27,6 +28,23 @@ import {
   paymentTermsLabel,
 } from '@/components/ops/contracts/constants'
 import { formatAud, formatAuDate } from '@/lib/proposalDocument'
+
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
+export const CONTRACT_GVL_LINE = GVL_HOURS
+  ? `GVL Match of the Day · ${GVL_HOURS}`
+  : null
+
+export function contractCoverAside(): string {
+  return CONTRACT_GVL_LINE
+    ? `${formatTowns()}  ·  ${formatRadius()}  ·  ${CONTRACT_GVL_LINE}`
+    : `${formatTowns()}  ·  ${formatRadius()}`
+}
+
+export function contractInteriorFooter(): string {
+  return CONTRACT_GVL_LINE
+    ? `${BRAND.org}  ·  ABN ${DS.station.abn}  ·  ${formatCoverageShort()}  ·  ${CONTRACT_GVL_LINE}`
+    : `${BRAND.org}  ·  ABN ${DS.station.abn}  ·  ${formatCoverageShort()}`
+}
 
 export async function generateContractPdf(contract: Contract): Promise<jsPDF> {
   const c = normalizeContract(contract)
@@ -49,7 +67,7 @@ export async function generateContractPdf(contract: Contract): Promise<jsPDF> {
     number: c.contractNumber,
     statValue: weeklyListenersValue(),
     statLabel: 'Est. weekly listeners  ·  ABS 2021 via townData',
-    statAside: `${formatTowns()}  ·  ${formatRadius()}`,
+    statAside: contractCoverAside(),
   })
 
   doc.addPage()
@@ -90,7 +108,18 @@ export async function generateContractPdf(contract: Contract): Promise<jsPDF> {
   norm(10)
   inkGrey()
   tl(`${c.tier}  ·  ${billingFrequencyLabel(c.billingFrequency)}`, M, y)
-  y += 8
+  y += 7
+  if (CONTRACT_GVL_LINE) {
+    const gvlNote = `${CONTRACT_GVL_LINE} — premium inventory, not the $25 standard spot`
+    const gvlLines = doc.splitTextToSize(gvlNote, CW) as string[]
+    norm(9)
+    inkNavy()
+    gvlLines.forEach((line) => {
+      tl(line, M, y)
+      y += 5
+    })
+    y += 3
+  }
 
   const descLines = doc.splitTextToSize(c.description || 'Sponsorship services as agreed.', CW) as string[]
   norm(10)
@@ -150,7 +179,7 @@ export async function generateContractPdf(contract: Contract): Promise<jsPDF> {
     doc.setPage(i)
     drawSlimFooter(
       p,
-      `${BRAND.org}  ·  ABN ${DS.station.abn}  ·  ${formatCoverageShort()}`,
+      contractInteriorFooter(),
       String(i),
     )
   }
