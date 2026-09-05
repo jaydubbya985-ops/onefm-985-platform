@@ -432,6 +432,16 @@ if (
     'pages/Programs.tsx: featured show and host hours must come from formatGuideHours / formatHostHours',
   )
 }
+if (
+  !programs ||
+  !programs.text.includes('liveNowFromMetadata') ||
+  !programs.text.includes('usePlayerMetadata') ||
+  !programs.text.includes('ON THE GUIDE')
+) {
+  hits.push(
+    'pages/Programs.tsx: On Air card must use liveNowFromMetadata so breakfast roster and remaining time stay current',
+  )
+}
 
 const coverageCopy = files.find((f) => f.label === 'lib/coverageCopy.ts')
 if (!coverageCopy || !coverageCopy.text.includes('stationStats.weeklyListeners')) {
