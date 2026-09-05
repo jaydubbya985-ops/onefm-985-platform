@@ -1,6 +1,6 @@
 /**
- * Invoice Design Lab — compare 3 world-class invoice options side-by-side.
- * Pick one for the June batch; persists to localStorage + ops store.
+ * Invoice Design Lab — Broadcast Letter is locked; B and C are preview-only.
+ * Choice persists to localStorage + ops store.
  */
 import { useCallback, useMemo, useState } from 'react'
 import { Check, Download, Mail, Palette, Sparkles } from 'lucide-react'
@@ -112,19 +112,19 @@ export default function InvoiceDesignLab() {
         />
         <div className="relative z-10 p-6 max-w-[1600px] mx-auto">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#E51636] to-[#B8860B] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#E51636] flex items-center justify-center">
               <Palette className="w-5 h-5 text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-bold">Invoice Design Lab</h1>
               <p className="text-sm text-[#F4F1EA]/50">
-                Three world-class options · Sample: {SAMPLE.company} ({SAMPLE.number})
+                Broadcast Letter locked · Sample: {SAMPLE.company} ({SAMPLE.number})
               </p>
             </div>
           </div>
           <p className="text-sm text-[#F4F1EA]/60 max-w-3xl mt-3">
             Station choice locked:{' '}
-            <strong className="text-[#B8860B]">A · Broadcast Letter</strong> (navy &amp; gold) for the
+            <strong className="text-[#E51636]">A · Broadcast Letter</strong> for the
             June 2026 batch — email HTML and PDF attachments. B and C are preview-only here.
           </p>
           <p className="text-xs text-[#F4F1EA]/50 mt-2">
@@ -159,7 +159,7 @@ export default function InvoiceDesignLab() {
                     <div className="flex items-center gap-2">
                       <h2 className="font-bold text-lg">{v.name}</h2>
                       {isStationChoice && (
-                        <Badge className="bg-[#B8860B] text-[#071D3A] border-0 text-[10px]">
+                        <Badge className="bg-[#E51636] text-white border-0 text-[10px]">
                           <Check className="w-3 h-3 mr-1" /> Station choice
                         </Badge>
                       )}

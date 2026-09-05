@@ -489,6 +489,17 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const lab = files.find((f) => f.label === 'components/ops/InvoiceDesignLab.tsx')
+if (
+  !lab ||
+  /world-class/i.test(lab.text) ||
+  !lab.text.includes('Broadcast Letter locked')
+) {
+  hits.push(
+    'components/ops/InvoiceDesignLab.tsx: heading must name locked Broadcast Letter — not leftover world-class',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
