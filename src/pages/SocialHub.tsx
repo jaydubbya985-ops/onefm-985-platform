@@ -331,7 +331,7 @@ function HeroSection() {
           speed={28}
           items={[
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">FACEBOOK · INSTAGRAM · X · SOUNDCLOUD</span>,
-            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">24 CONTENT TEMPLATES</span>,
+            <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">{TEMPLATES.length} CONTENT TEMPLATES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">120+ BRAND IMAGES</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-muted/85">98.5 FM · SHEPPARTON</span>,
             <span className="font-label text-[10px] tracking-[0.22em] text-one-gold/60">CAPTION TEMPLATES</span>,

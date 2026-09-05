@@ -479,6 +479,16 @@ if (
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
+const hubPage = files.find((f) => f.label === 'pages/SocialHub.tsx')
+if (
+  !hubPage ||
+  /24 CONTENT TEMPLATES/.test(hubPage.text) ||
+  !hubPage.text.includes('{TEMPLATES.length} CONTENT TEMPLATES')
+) {
+  hits.push(
+    'pages/SocialHub.tsx: marquee must count TEMPLATES.length — not leftover 24 CONTENT TEMPLATES',
+  )
+}
 
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
