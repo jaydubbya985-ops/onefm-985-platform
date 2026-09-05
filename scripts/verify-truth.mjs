@@ -61,6 +61,7 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /READY TO AMPLIFY\?/, why: 'Media kit closer names a proposal — not leftover amplify' },
 ]
 
 function walk(dir) {
@@ -411,6 +412,13 @@ if (
 }
 if (!mediaKit || !mediaKit.text.includes('contactPhone: BRAND.phone')) {
   hits.push('pages/MediaKit.tsx: media-kit DOCX must use BRAND.phone, not a placeholder')
+}
+if (
+  !mediaKit ||
+  /READY TO AMPLIFY/i.test(mediaKit.text) ||
+  !mediaKit.text.includes('WordReveal text="REQUEST A PROPOSAL"')
+) {
+  hits.push('pages/MediaKit.tsx: closer heading must name a proposal — not leftover amplify')
 }
 
 const programs = files.find((f) => f.label === 'pages/Programs.tsx')

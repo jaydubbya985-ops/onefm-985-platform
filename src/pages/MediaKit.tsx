@@ -971,7 +971,7 @@ export default function MediaKit() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="READY TO AMPLIFY?" className="font-h2 text-ivory mb-4 block" as="h2" stagger={0.05} />
+            <WordReveal text="REQUEST A PROPOSAL" className="font-h2 text-ivory mb-4 block" as="h2" stagger={0.05} />
             <p className="font-body text-chalk mb-10">
               Talk to the station on {BRAND.email} or {BRAND.phone} — we&apos;ll build a campaign that works for your brand.
             </p>
