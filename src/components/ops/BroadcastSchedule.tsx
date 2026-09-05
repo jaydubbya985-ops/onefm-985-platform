@@ -77,6 +77,8 @@ import {
   type SpotStatus,
 } from './data/schedule'
 import { FULL_SCHEDULE } from '@/data/programGuide'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 import { opsInitial, opsStorageKey } from '@/lib/opsMode'
 
 // ----------------------------- shared helpers ------------------------------
@@ -2029,6 +2031,25 @@ function ProgrammeGuide({ spots }: { spots: AdSpot[] }) {
 
 // ------------------------------ main component ------------------------------
 
+const GVL_GUIDE_HOURS = formatGuideHours('GVL Match of the Day')
+
+/** Header stamp — licensed coverage + GVL hours from FULL_SCHEDULE. */
+export function BroadcastScheduleIntro() {
+  return (
+    <div>
+      <h2 className="text-one-white text-2xl md:text-3xl font-h1 flex items-center gap-2">
+        <Radio className="w-6 h-6 text-one-gold" />
+        Broadcast Schedule
+      </h2>
+      <p className="text-one-white/40 text-sm mt-0.5">Manage ad spots, campaigns, and delivery reports</p>
+      <p className="font-label text-[10px] tracking-[0.12em] uppercase text-one-white/35 mt-1">
+        {formatCoverageShort()} · ABS 2021 via townData
+        {GVL_GUIDE_HOURS ? ` · GVL Match of the Day · ${GVL_GUIDE_HOURS}` : ''}
+      </p>
+    </div>
+  )
+}
+
 type ScheduleTab = 'schedule' | 'programme' | 'campaigns' | 'spots' | 'reports' | 'auto'
 
 export default function BroadcastSchedule() {
@@ -2097,13 +2118,7 @@ export default function BroadcastSchedule() {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
-        <div>
-          <h2 className="text-one-white text-2xl md:text-3xl font-h1 flex items-center gap-2">
-            <Radio className="w-6 h-6 text-one-gold" />
-            Broadcast Schedule
-          </h2>
-          <p className="text-one-white/40 text-sm mt-0.5">Manage ad spots, campaigns, and delivery reports</p>
-        </div>
+        <BroadcastScheduleIntro />
         {tab === 'schedule' && (
           <div className="flex items-center gap-2">
             <Button
