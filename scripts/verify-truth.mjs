@@ -489,6 +489,17 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const playerMeta = files.find((f) => f.label === 'hooks/usePlayerMetadata.ts')
+if (
+  !playerMeta ||
+  !playerMeta.text.includes('SCHEDULE_TICK_MS') ||
+  !playerMeta.text.includes('STREAM_REFRESH_MS')
+) {
+  hits.push(
+    'hooks/usePlayerMetadata.ts: remaining time must tick from the schedule clock — stream poll stays 60s',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
