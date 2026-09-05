@@ -129,7 +129,7 @@ export default function SponsorshipKit() {
   const tiers = Object.values(generalTiers).map((t) => ({
     tag: `$${t.weeklyPrice}/week`,
     title: t.name,
-    body: `${t.spots} announcements a week and ${t.socialPosts} social posts a month${'exclusivity' in t && t.exclusivity ? ' — with category exclusivity' : ''}. Range $${t.minPrice}–$${t.maxPrice}/week to fit your campaign.`,
+    body: `${t.spots} announcements a week and ${t.socialPosts} Facebook posts a month${'exclusivity' in t && t.exclusivity ? ' — with category exclusivity' : ''}. Range $${t.minPrice}–$${t.maxPrice}/week to fit your campaign.`,
   }))
 
   return (
