@@ -70,9 +70,13 @@ export function TextScramble({
     return () => window.clearTimeout(animRef.current)
   }, [isInView, text, delay, duration, once])
 
+  // Sighted scramble is theatre. Assistive tech must hear the finished
+  // string (3ONE / 98.5 FM / 1989) — not A7#K frames. Do not announce
+  // frames; a live region would read every tick.
   return (
     <Tag ref={ref as Ref<HTMLElement>} className={`font-mono tabular-nums ${className}`}>
-      {display}
+      <span aria-hidden="true">{display}</span>
+      <span className="sr-only">{text}</span>
     </Tag>
   )
 }
