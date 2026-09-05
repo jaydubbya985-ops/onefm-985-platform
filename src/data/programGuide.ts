@@ -388,9 +388,9 @@ export const PROGRAM_PREVIEW_CARDS = [
   {
     title: 'Dancing through the decades',
     presenter: 'Johnny P (John Painter)',
-    schedule: 'Monday–Friday, 9AM–12PM',
+    schedule: 'Mon 9AM–12PM · Tue–Fri 12PM–3PM',
     description:
-      'Music from across the decades with Johnny P. Four years on air, playing the hits that span generations.',
+      'Music from across the decades with Johnny P — the hits that span generations, from the station guide.',
   },
   {
     title: 'The James Manley Show',
@@ -408,9 +408,9 @@ export const PROGRAM_PREVIEW_CARDS = [
   {
     title: 'Planet of Sound',
     presenter: 'Carlos Rock',
-    schedule: 'Thursday, 11PM–12AM',
+    schedule: 'Thu 11PM–12AM',
     description:
-      'Rock music program spanning 19–20 years on air with Carlos Rock. A Valley institution for rock fans.',
+      'Thursday late rock with Carlos Rock — hours from the station guide (fm985.com.au/guide).',
   },
   {
     title: 'Good Evening Country',
