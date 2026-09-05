@@ -489,6 +489,17 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const cinegraph = files.find((f) => f.label === 'components/CinegraphBackground.tsx')
+if (
+  !cinegraph ||
+  !cinegraph.text.includes('alt={asset.brief}') ||
+  !cinegraph.text.includes('Station archive still')
+) {
+  hits.push(
+    'components/CinegraphBackground.tsx: still slots must name themselves as station archive, not an empty alt cinegraph',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
