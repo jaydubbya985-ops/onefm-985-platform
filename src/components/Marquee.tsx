@@ -1,5 +1,4 @@
 import { type ReactNode, useEffect, useState } from 'react'
-import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 interface MarqueeProps {
   items: ReactNode[]
@@ -9,28 +8,14 @@ interface MarqueeProps {
   reverse?: boolean
 }
 
-/**
- * Unused match-day banner still (1600×1537). Mark size only — not a hero
- * or presenter portrait. Station archive OB signage, unique of the van still.
- */
-function MatchDayBannerMark() {
+/** Hairline rule — not a GVL match-day still. Football photos stay on Football. */
+function MarqueeRule() {
   return (
-    <img
-      src={STATION_PHOTOS.obMatchDayBanner}
-      alt=""
+    <span
       aria-hidden
-      width={56}
-      height={28}
-      decoding="async"
-      className="mx-6 inline-block align-middle shrink-0"
+      className="mx-6 inline-block h-px w-8 shrink-0 align-middle"
       style={{
-        width: 56,
-        height: 28,
-        objectFit: 'cover',
-        objectPosition: 'center',
-        borderRadius: 3,
-        border: '1px solid rgba(255,255,255,0.14)',
-        opacity: 0.88,
+        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent)',
       }}
     />
   )
@@ -40,6 +25,7 @@ function MatchDayBannerMark() {
  * Infinite horizontal ticker.
  * Duplicates the item list to fill a second track so there's no gap on loop.
  * Respects prefers-reduced-motion — static display when set.
+ * First track is readable; the loop copy stays aria-hidden.
  */
 export function Marquee({
   items = [],
@@ -61,7 +47,7 @@ export function Marquee({
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  const sep = separator ?? <MatchDayBannerMark />
+  const sep = separator ?? <MarqueeRule />
 
   const track = items.flatMap((item, i) => [
     <span key={`a-${i}`} className="inline-flex items-center whitespace-nowrap shrink-0">{item}</span>,
@@ -69,7 +55,7 @@ export function Marquee({
   ])
 
   return (
-    <div className={`overflow-hidden ${className}`} aria-hidden>
+    <div className={`overflow-hidden ${className}`} role="region" aria-label="Station notes">
       <div
         className="flex"
         style={{
@@ -77,7 +63,6 @@ export function Marquee({
           willChange: reduceMotion ? 'auto' : 'transform',
         }}
       >
-        {/* Two identical tracks — second starts where first ends */}
         <div className="flex items-center shrink-0">{track}</div>
         {!reduceMotion && <div className="flex items-center shrink-0" aria-hidden>{track}</div>}
       </div>
