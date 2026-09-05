@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "truth": "node scripts/verify-truth.mjs && npx vite-node scripts/verify-on-air.ts",
+    "truth": "node scripts/verify-truth.mjs && npx vite-node scripts/verify-on-air.ts && npx vite-node scripts/verify-billing-not-coverage.ts",
     "live": "node scripts/verify-live.mjs && npx vite-node scripts/verify-foott-send.ts",
     "foott": "npx vite-node scripts/verify-foott-send.ts",
     "ops-config": "node --experimental-strip-types scripts/verify-ops-config.ts",
