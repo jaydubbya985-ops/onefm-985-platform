@@ -596,8 +596,8 @@ function buildRateCardTable(rateCard: MediaKitDocxData['rateCard']): Table {
 
 function buildTermsParagraphs(): Paragraph[] {
   const terms = [
-    'Payment Terms: 50% deposit upon contract signing. Balance due 30 days from campaign start date.',
-    'Cancellation Policy: 14 days written notice required for campaign cancellation. Deposits are non-refundable within 7 days of scheduled start.',
+    `Payment Terms: quoted on the signed agreement. Ask ${BRAND.email} for written terms — this proposal does not invent deposit percentages.`,
+    `Cancellation: quoted on the signed agreement. This proposal does not invent deposit refunds or cancellation windows.`,
     'Content Approval: All creative assets must be submitted for approval 5 business days before the scheduled air date. ONE FM retains the right to refuse content that does not meet broadcast standards or community guidelines.',
     'Rate Validity: All quoted rates are valid for 30 days from the date of this proposal. Rates are subject to change for campaigns booked after this period.',
     'Exclusivity: Category exclusivity is available for Signature and Naming Rights tier partners, subject to availability and additional fees.',
