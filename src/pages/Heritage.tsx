@@ -102,12 +102,12 @@ function HeritageHero() {
           >
             Search the Archive
           </a>
-          <a
-            href="#contribute"
+          <Link
+            to="/contact"
             className="rounded-full px-6 py-3 font-bold text-[12px] tracking-[0.12em] uppercase text-white/70 border border-white/15 hover:border-white/40 transition-colors"
           >
-            Add Your Memory
-          </a>
+            Send via Contact
+          </Link>
         </div>
       </div>
     </section>
