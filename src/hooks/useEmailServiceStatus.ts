@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
+import {
+  emailStatusFromPayload,
+  type EmailServiceStatus,
+} from '@/lib/emailStatus'
 import { readFunctionJson } from '@/lib/readFunctionJson'
 
-export type EmailServiceStatus = 'checking' | 'live' | 'pending' | 'unverified' | 'off' | 'unknown'
+export type { EmailServiceStatus }
 
 /**
  * Checks whether the invoice email pipeline (Resend, via the Netlify
@@ -10,10 +14,11 @@ export type EmailServiceStatus = 'checking' | 'live' | 'pending' | 'unverified' 
  * - 'live'       → key is set, Resend accepts it, fm985.com.au is verified.
  * - 'pending'    → DNS matches; Resend has not finished verifying yet.
  * - 'unverified' → key is set but fm985.com.au DNS does not match Resend.
- * - 'off'        → function reachable but RESEND_API_KEY missing — PDF+mailto fallback only.
- * - 'unknown'    → function unreachable (SPA HTML fallback or local `npm run dev`).
+ * - 'off'        → function reachable and resendConfigured is explicitly false.
+ * - 'unknown'    → SPA HTML, parse failure, or JSON without resendConfigured.
  *
- * Never guesses or invents a key.
+ * Never guesses or invents a key. Requires fromDomainVerified before live.
+ * A missing resendConfigured field is unknown — never 'off' / 'pending'.
  */
 export function useEmailServiceStatus(): EmailServiceStatus {
   const [status, setStatus] = useState<EmailServiceStatus>('checking')
@@ -32,23 +37,7 @@ export function useEmailServiceStatus(): EmailServiceStatus {
       )
       .then((data) => {
         if (cancelled) return
-        if (!data) {
-          setStatus('unknown')
-          return
-        }
-        if (!data.resendConfigured) {
-          setStatus('off')
-          return
-        }
-        if (data.fromDomainVerified === true && data.resendReachable !== false) {
-          setStatus('live')
-          return
-        }
-        if (data.domainStatus === 'pending') {
-          setStatus('pending')
-          return
-        }
-        setStatus('unverified')
+        setStatus(emailStatusFromPayload(data))
       })
       .catch(() => {
         if (!cancelled) setStatus('unknown')
