@@ -14,6 +14,7 @@ import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { formatCoverageShort, formatWeeklyListenersPlain } from '@/lib/coverageCopy'
 import { formatBreakfastChromeLabel } from '@/data/programGuide'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { ON_AIR_LAMP_AUTOMATED_TITLE, ON_AIR_LAMP_LIVE_TITLE } from '@/lib/onAirLamp'
 
 const RED = '#E51636'
 const EXPO = [0.16, 1, 0.3, 1] as const
@@ -100,10 +101,20 @@ export function OnAirNav() {
         <div className="h-full px-5 md:px-10 flex items-center justify-between">
           <Link to="/" className="group flex items-center gap-3 shrink-0" aria-label="ONE FM 98.5 — Home" data-cursor-label="HOME">
             <BrandLogo variant="white" className="logo-live h-10 w-auto object-contain max-w-[min(180px,40vw)]" />
-            <span className="relative flex h-2.5 w-2.5" title={meta.isLive ? 'On air' : 'Automated'}>
-              <span className="lamp-ring" aria-hidden />
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: RED }} />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: RED }} />
+            <span
+              className="relative flex h-2.5 w-2.5"
+              title={meta.isLive ? ON_AIR_LAMP_LIVE_TITLE : ON_AIR_LAMP_AUTOMATED_TITLE}
+              aria-label={meta.isLive ? ON_AIR_LAMP_LIVE_TITLE : ON_AIR_LAMP_AUTOMATED_TITLE}
+            >
+              {meta.isLive ? (
+                <>
+                  <span className="lamp-ring" aria-hidden />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: RED }} />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: RED }} />
+                </>
+              ) : (
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white/25" aria-hidden />
+              )}
             </span>
           </Link>
 
