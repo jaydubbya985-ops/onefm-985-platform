@@ -11,6 +11,7 @@ import { PeopleWall } from '@/components/archive/PeopleWall'
 import { DecadeDial } from '@/components/archive/DecadeDial'
 import { ContributePortal } from '@/components/archive/ContributePortal'
 import { ARCHIVE_PEOPLE } from '@/data/livingArchive/people'
+import { PANEL_1988_BADGE } from '@/data/livingArchive/decades'
 import {
   OnAirTicker,
   NameWall,
@@ -222,7 +223,7 @@ export default function Heritage() {
           to="/listen"
           img="/assets/images/heritage-original-panel-1988.jpg"
           alt="The original ONE FM mixing panel, built in 1988"
-          badge="The 1988 Mixing Panel · Still in the studio"
+          badge={PANEL_1988_BADGE}
         />
 
         <StatsStrip

@@ -1,17 +1,25 @@
 import type { ArchiveCard, DecadeId } from '@/types/livingArchive'
 
+/**
+ * The 1988 photo is in the station archive. Whether that desk remains
+ * the on-air panel is data pending — do not invent a current-studio claim.
+ */
+export const PANEL_1988_BADGE = 'The 1988 Mixing Panel · Station archive'
+export const PANEL_1988_BODY =
+  'Original desk built in-house. Photographed for the station archive — whether it is still the on-air panel is data pending.'
+
 export const DECADES: { id: DecadeId; label: string; intro: string }[] = [
   {
     id: '1980s',
     label: '1980s',
     intro:
-      'Organising in the late 1970s, established in 1980, licensed 1 April 1989. Volunteers build the mixing panel; May 1989 brings the first live football call.',
+      'Organising in the late 1970s, established in 1980, licensed 1 April 1989. Volunteers build a mixing panel; May 1989 brings the first live football call.',
   },
   {
     id: '1990s',
     label: '1990s',
     intro:
-      'Multicultural programming expands. Sally Nayler in Studio A. GVL partnership deepens. 24/7 broadcasting and the OB truck on the road.',
+      'Multicultural programming expands. Sally Nayler in Studio A. GVL partnership deepens. The branded OB truck is in the station archive.',
   },
   {
     id: '2000s',
@@ -67,9 +75,9 @@ export const ARCHIVE_CARDS: ArchiveCard[] = [
     topic: 'origins',
     cardType: 'photo',
     title: 'The 1988 mixing panel',
-    body: 'Original desk built in-house — still in the studio.',
+    body: PANEL_1988_BODY,
     confidence: 'confirmed-one-fm-document',
-    sources: [{ label: 'Station archive', type: 'fm985' }],
+    sources: [{ label: 'Station archive photo heritage-original-panel-1988.jpg', type: 'fm985' }],
     image: '/assets/images/heritage-original-panel-1988.jpg',
   },
   {
