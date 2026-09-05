@@ -36,6 +36,8 @@ assert(live.program.includes('Breakfast'), `liveNow program: ${live.program}`)
 assert(live.withLine === 'with Ralph Whitehead', `liveNow withLine: ${live.withLine}`)
 assert(live.remainingMinutes === 47, `liveNow remaining: ${live.remainingMinutes}`)
 assert(live.breakfastOnAir === true, 'breakfast must be flagged on air at 08:13 Melbourne Thursday')
+assert(meta.isLive === true, 'weekday breakfast is a listed presenter')
+assert(live.isLive === true, 'liveNow isLive follows schedule presenter')
 
 // Saturday GVL window — 3 Oct 2026 is a Saturday; use a known Saturday.
 const satFooty = new Date('2026-09-05T14:10:00+10:00')
@@ -50,5 +52,18 @@ const mix = getCurrentLiveShow(overnight)
 assert(mix.name === 'Overnight Mix', `expected Overnight Mix, got ${mix.name}`)
 assert(formatWithPresenter(mix.host) === null, 'overnight must not print with Automated')
 assert(mix.remainingMinutes === 240, `overnight 02:00 should have 4 hr left, got ${mix.remainingMinutes}`)
+assert(getScheduleMetadata(overnight).isLive === false, 'Melbourne overnight Automated is not a live presenter')
+
+assert(getScheduleMetadata(satFooty).isLive === true, 'Saturday GVL host ONE FM is still a listed slot')
+
+// UTC Sunday 02:00 = Sunday 12:00 Melbourne — leftover Date#getHours() treated this as overnight.
+const utcSun0200 = new Date('2026-09-06T02:00:00.000Z')
+const utcLunch = getScheduleMetadata(utcSun0200)
+assert(utcLunch.program.includes('Essential Hits'), `UTC Sunday 02:00 should be Melbourne lunch Essential Hits, got ${utcLunch.program}`)
+assert(utcLunch.isLive === true, 'Melbourne Sunday lunch must stay live when the viewer clock is UTC 02:00')
+
+// UTC Sunday 16:00 = Monday 02:00 Melbourne overnight
+const utcSun1600 = new Date('2026-09-06T16:00:00.000Z')
+assert(getScheduleMetadata(utcSun1600).isLive === false, 'Melbourne Monday 02:00 overnight is not live')
 
 console.log('verify-on-air OK')
