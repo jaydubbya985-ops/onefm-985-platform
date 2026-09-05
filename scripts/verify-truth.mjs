@@ -365,6 +365,16 @@ if (
 ) {
   hits.push('pages/SponsorshipKit.tsx: stats strip must use coverageStatsStrip()')
 }
+const sponsorshipKit = files.find((f) => f.label === 'pages/SponsorshipKit.tsx')
+if (
+  !sponsorshipKit ||
+  /Your Brand/i.test(sponsorshipKit.text) ||
+  !sponsorshipKit.text.includes('className="poster-hover">{formatTowns()}')
+) {
+  hits.push(
+    'pages/SponsorshipKit.tsx: hero must name formatTowns — not leftover Your Brand',
+  )
+}
 
 function assertCoverageCopy(label, requiredFns) {
   const file = files.find((f) => f.label === label)

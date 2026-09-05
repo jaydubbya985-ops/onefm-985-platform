@@ -45,8 +45,8 @@ function SponsorHero() {
       <div className="relative">
         <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(52px,10vw,150px)]">
           <PosterReveal lines={[
-            <span key="a" className="poster-hover">Your Brand,</span>,
-            <span key="b"><StrokeFill delay={0.9}>On Air</StrokeFill><span style={{ color: RED }}>.</span></span>,
+            <span key="a" className="poster-hover">{formatTowns()}</span>,
+            <span key="b"><StrokeFill delay={0.9}>On air</StrokeFill><span style={{ color: RED }}>.</span></span>,
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
