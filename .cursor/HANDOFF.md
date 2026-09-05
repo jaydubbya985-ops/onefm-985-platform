@@ -11,8 +11,9 @@
 
 **CONTINUOUS RUN IS ON.** Read `.cursor/CONTINUOUS.md`. Keep shipping.
 
-## Already true on GitHub `main` (`a2a0519`)
+## Already true on GitHub `main` (`1ee8711`)
 
+- PR **#201** Ultra allocations + Listen remaining-time desk is on `main` (EXE 3 Sep 2026).
 - PR **#28–#143** batch is on `main` (home/listen craft #51, leftover AI copy #135, invoice Stripe honesty #121, marquee #143).
 - Coverage: **39,375** weekly / **189,680** people / **25 towns** / **100km** — always via `coverageCopy.ts`.
 - Standard 30s: **$25 plus GST**. GVL is premium — never “from $25”.

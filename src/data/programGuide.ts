@@ -234,6 +234,12 @@ function withClock(
   }
 }
 
+/** True when this guide row is the one getCurrentLiveShow() would pick. */
+export function slotIsCurrentGuide(slot: ScheduleSlot, now: Date = new Date()): boolean {
+  const live = getCurrentLiveShow(now)
+  return slot.day === getMelbourneWeekday(now) && slot.name === live.name && slot.startHour === live.startHour
+}
+
 /** Get current on-air show from full schedule */
 export function getCurrentLiveShow(now: Date = new Date()): LiveShowInfo {
   const { day, hour, minute } = getMelbourneClock(now)
