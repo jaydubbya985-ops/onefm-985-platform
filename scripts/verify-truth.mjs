@@ -480,6 +480,13 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const invoiceNotes = files.find((f) => f.label === 'components/ops/data/invoices.ts')
+if (!invoiceNotes || /\$50 million/i.test(invoiceNotes.text)) {
+  hits.push(
+    'components/ops/data/invoices.ts: leftover $50 million invents a SAM build cost — name SAM without a leftover figure',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
