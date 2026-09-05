@@ -10,6 +10,7 @@ import { PageJobsBar, type PageJob } from '@/components/PageJobsBar'
 import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { BRAND } from '@/lib/brand'
 import { formatTowns } from '@/lib/coverageCopy'
+import { songRequestMailto, songRequestPlaintext } from '@/lib/songRequestMailto'
 import { HOST_PHOTOS } from '@/lib/stationPhotos'
 import { presenterVisual, programScene } from '@/lib/presenterAssets'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
@@ -29,7 +30,6 @@ import {
   Music,
   Headphones,
   Send,
-  CheckCircle2,
   Filter,
   Trophy,
   Play,
@@ -503,7 +503,8 @@ export default function Programs() {
   const [requestName, setRequestName] = useState("")
   const [requestSong, setRequestSong] = useState("")
   const [requestMsg, setRequestMsg] = useState("")
-  const [requestDraftOpened, setRequestDraftOpened] = useState(false)
+  const [requestDraftHref, setRequestDraftHref] = useState<string | null>(null)
+  const [requestCopied, setRequestCopied] = useState(false)
 
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -523,15 +524,22 @@ export default function Programs() {
 
   const handleRequestSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!requestName || !requestSong) return
-    const body = encodeURIComponent(
-      `Song request from ${requestName}\n\nSong: ${requestSong}\n\nMessage: ${requestMsg || '(none)'}`,
-    )
-    window.location.href = `mailto:${BRAND.email}?subject=${encodeURIComponent('ONE FM Song Request')}&body=${body}`
-    setRequestDraftOpened(true)
-    setTimeout(() => {
-      setRequestDraftOpened(false)
-    }, 4000)
+    if (!requestName.trim() || !requestSong.trim()) return
+    const href = songRequestMailto({ name: requestName, song: requestSong, message: requestMsg })
+    setRequestDraftHref(href)
+    setRequestCopied(false)
+    window.location.href = href
+  }
+
+  const copyRequestDraft = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        songRequestPlaintext({ name: requestName, song: requestSong, message: requestMsg }),
+      )
+      setRequestCopied(true)
+    } catch {
+      setRequestCopied(false)
+    }
   }
 
   return (
@@ -1151,7 +1159,8 @@ export default function Programs() {
         >
           <WordReveal text="Request a Song / Shoutout" className="font-h2 text-one-white mb-3 block" as="h2" />
           <p className="font-body text-one-white">
-            Want to hear your favourite track? Send a dedication to someone special? Drop your request below.
+            Opens an email draft to {BRAND.email}. Nothing is sent until you hit send in your email app.
+            If a draft does not open, use Open draft or copy the text. Studio line {BRAND.phone}.
           </p>
         </motion.div>
 
@@ -1162,27 +1171,29 @@ export default function Programs() {
           transition={{ duration: 0.5 }}
           className="glass-card p-6 md:p-10"
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {requestDraftOpened ? (
-              <motion.div
-                key="success"
-                initial={{ opacity: 1, scale: 1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-                className="flex flex-col items-center text-center py-12"
-              >
-                <CheckCircle2 size={56} className="text-data-teal mb-4" />
-                <h3 className="font-h3 text-one-white mb-2">Email Draft Opened</h3>
-                <p className="font-body text-muted max-w-md">
-                  Complete the send in your email app so the request reaches {BRAND.email}. You can also call the studio on {BRAND.phone}.
-                </p>
-              </motion.div>
-            ) : (
-              <motion.form
-                key="form"
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+              {requestDraftHref ? (
+                <div className="mb-6 space-y-3" role="status">
+                  <p className="font-h4 text-one-white">Draft ready — nothing has been sent.</p>
+                  <p className="font-body text-muted">
+                    Complete send in your email app so the request reaches {BRAND.email}.
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <a href={requestDraftHref} data-cursor-label="DRAFT" className="btn-primary text-sm inline-flex items-center gap-2">
+                      <Send size={16} />
+                      Open email draft
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => void copyRequestDraft()}
+                      data-cursor-label="COPY"
+                      className="btn-secondary text-sm"
+                    >
+                      {requestCopied ? 'Copied request text' : 'Copy request text'}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+              <form
                 onSubmit={handleRequestSubmit}
                 className="space-y-6"
               >
@@ -1221,13 +1232,11 @@ export default function Programs() {
                     className="w-full bg-one-navy/60 border border-one-border rounded-lg px-4 py-3 font-body text-one-white placeholder:text-muted focus:outline-none focus:border-one-gold focus:ring-2 focus:ring-one-gold/15 transition-all resize-none"
                   />
                 </div>
-                <button type="submit" data-cursor-label="SEND" className="btn-primary w-full justify-center">
+                <button type="submit" data-cursor-label="DRAFT" className="btn-primary w-full justify-center">
                   <Send size={16} />
-                  Send Request
+                  Open email draft
                 </button>
-              </motion.form>
-            )}
-          </AnimatePresence>
+              </form>
         </motion.div>
         </div>
       </section>
