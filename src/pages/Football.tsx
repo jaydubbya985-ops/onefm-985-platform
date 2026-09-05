@@ -1094,7 +1094,8 @@ export default function Football() {
             <WordReveal text="READY TO SPONSOR LOCAL FOOTBALL?" className="font-h2 text-one-white mb-4 block" as="h2" />
             <p className="font-body text-one-white mb-8">
               Join the local businesses keeping community football alive. Every sponsorship
-              dollar supports grassroots sport and puts your brand in front of thousands.
+              dollar supports grassroots sport and reaches an estimated {weeklyListenersValue()} weekly
+              listeners (ABS 2021 via townData).
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/proposal" data-cursor-label="PROPOSAL" className="btn-primary">
