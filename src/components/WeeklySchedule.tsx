@@ -82,20 +82,23 @@ export function WeeklySchedule() {
           const selected = activeDay === day.index
           const isToday = day.index === today
           return (
-            <button
+            <div
               key={`glance-${day.index}`}
-              type="button"
-              role="tab"
-              aria-selected={selected}
               onClick={() => setActiveDay(day.index)}
-              data-cursor-label={day.label.toUpperCase()}
-              className={`snap-start shrink-0 w-[9.75rem] text-left rounded-lg border px-3 py-2.5 transition-all ${
+              className={`snap-start shrink-0 w-[9.75rem] text-left rounded-lg border px-3 py-2.5 transition-all cursor-pointer ${}
                 selected
                   ? 'bg-one-gold/10 border-one-gold'
                   : 'border-one-border hover:border-one-gold/40'
               }`}
             >
-              <div className="flex items-baseline justify-between gap-1 mb-2">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setActiveDay(day.index)}
+                data-cursor-label={day.label.toUpperCase()}
+                className="flex w-full items-baseline justify-between gap-1 mb-2 bg-transparent p-0 text-left"
+              >
                 <span
                   className={`font-label text-[11px] tracking-[0.14em] uppercase ${
                     selected ? 'text-one-gold' : 'text-one-white'
@@ -106,7 +109,7 @@ export function WeeklySchedule() {
                 {isToday && (
                   <span className="font-label text-[8px] uppercase tracking-wider text-one-red">today</span>
                 )}
-              </div>
+              </button>
               <ul className="space-y-1 max-h-[18rem] overflow-y-auto">
                 {daySlots.map((slot, i) => {
                   const live = slotIsLive(day.index, slot)
@@ -123,7 +126,7 @@ export function WeeklySchedule() {
                   )
                 })}
               </ul>
-            </button>
+            </div>
           )
         })}
       </div>
