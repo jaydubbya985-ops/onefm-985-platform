@@ -102,6 +102,11 @@ import { LivePendingNote } from './LivePendingNote'
 import { downloadXeroCsv, type XeroExportableInvoice } from './invoices/xeroExport'
 import { BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import {
+  renewalActionLabel,
+  renewalDeskStatusLabel,
+  renewalGenerateToast,
+} from '@/lib/renewalProposalCopy'
 import { GVL_PREMIUM_BADGE, STANDARD_SPOT_PLUS_GST } from '@/lib/inventoryCopy'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
@@ -178,15 +183,7 @@ function renewalBadgeClass(status: RenewalStatus): string {
 }
 
 function renewalStatusLabel(status: RenewalStatus): string {
-  return (
-    {
-      upcoming: 'Upcoming',
-      proposal_sent: 'Proposal Sent',
-      negotiating: 'Negotiating',
-      renewed: 'Renewed',
-      churned: 'Churned',
-    } as Record<RenewalStatus, string>
-  )[status]
+  return renewalDeskStatusLabel(status)
 }
 
 function probabilityTextClass(probability: number): string {
@@ -245,7 +242,7 @@ export default function BillingEngine() {
   const { invoices, updateInvoice } = useOpsStore()
 
   const [tab, setTab] = useState<BillingTab>('dashboard')
-  const [renewals, setRenewals] = useState<RenewalRecord[]>(opsInitial(MOCK_RENEWALS, []))
+  const [renewals] = useState<RenewalRecord[]>(opsInitial(MOCK_RENEWALS, []))
   const [acquittals, setAcquittals] = useState<AcquittalRecord[]>(opsInitial(MOCK_ACQUITTALS, []))
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
@@ -538,13 +535,7 @@ export default function BillingEngine() {
   }
 
   function generateRenewalProposal(record: RenewalRecord) {
-    setRenewals((prev) =>
-      prev.map((r) => (r.id === record.id ? { ...r, status: 'proposal_sent' } : r)),
-    )
-    toast(
-      `Renewal proposal draft created for ${record.sponsorName}. It is not emailed. Mailto does not mark it sent.`,
-      'success',
-    )
+    toast(renewalGenerateToast(record.sponsorName), 'warning')
   }
 
   function exportXero() {
@@ -1814,7 +1805,7 @@ export default function BillingEngine() {
                             : 'bg-one-gold hover:bg-one-gold/90 text-one-navy'
                         }`}
                       >
-                        {renewal.status === 'proposal_sent' ? 'Draft ready' : 'Generate Proposal'}
+                        {renewalActionLabel(renewal.status)}
                       </Button>
                     </div>
                   ))}
