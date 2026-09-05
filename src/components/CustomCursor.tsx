@@ -1,6 +1,64 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLiveStream } from '@/hooks/useLiveStream'
+import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
+import { liveNowFromMetadata, type LiveNowDisplay } from '@/lib/liveNow'
+
+const RED = '#E51636'
+
+/** Melbourne guide clock — remaining time must not freeze on first hover. */
+function useGuideClock(ms = 30_000) {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return
+    const id = window.setInterval(() => setNow(new Date()), ms)
+    return () => window.clearInterval(id)
+  }, [ms])
+  return now
+}
+
+/** Home uses data-cursor; the rest of the site uses data-cursor-label. */
+export function readCursorVerb(target: Element | null): string | null {
+  const labeled = target?.closest?.('[data-cursor-label], [data-cursor]')
+  if (!labeled) return null
+  return labeled.getAttribute('data-cursor-label') ?? labeled.getAttribute('data-cursor')
+}
+
+export function isListenCursor(verb: string): boolean {
+  return /^(LISTEN|PLAY|PAUSE|TUNE IN|ON AIR)\b/i.test(verb)
+}
+
+/** Official breakfast name keeps "(Breaky)" in the guide; the cursor needs the short lockup. */
+export function compactShowName(name: string): string {
+  return name.replace(/\s*\(Breaky\)\s*/i, '').trim()
+}
+
+/** Shorten the stream hook's real errors — do not invent a new failure. */
+export function shortStreamError(error: string): string {
+  if (/unavailable/i.test(error)) return 'Stream unavailable'
+  if (/blocked/i.test(error)) return 'Playback blocked'
+  return error
+}
+
+/**
+ * Listen / play hovers name the Melbourne-guide show and remaining time.
+ * Hosts come from liveNow (BREAKFAST_ROSTER). No live-now listener counts.
+ */
+export function listenCursorDetail(
+  live: LiveNowDisplay,
+  error: string | null,
+): string {
+  if (error) return shortStreamError(error)
+  return [compactShowName(live.program), live.withLine, live.remainingLabel]
+    .filter(Boolean)
+    .join(' · ')
+}
 
 export function CustomCursor() {
+  const now = useGuideClock()
+  const meta = usePlayerMetadata()
+  const { error } = useLiveStream()
+  const live = liveNowFromMetadata(meta, now)
+
   const dotRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const spotRef = useRef<HTMLDivElement>(null)
@@ -19,6 +77,11 @@ export function CustomCursor() {
   const electricRgb = useRef('0, 229, 255')
   const lastMoveAt = useRef(0)
   const idleCleared = useRef(true)
+  const labelWide = useRef(false)
+
+  const detail = label && isListenCursor(label) ? listenCursorDetail(live, error) : null
+  const failed = Boolean(detail && error)
+  labelWide.current = Boolean(detail)
 
   useEffect(() => {
     const readColor = () => {
@@ -51,8 +114,7 @@ export function CustomCursor() {
         isHovering.current = hov
         setHovering(hov)
       }
-      const labeled = target?.closest?.('[data-cursor-label]')
-      const next = labeled?.getAttribute('data-cursor-label') ?? null
+      const next = readCursorVerb(target)
       if (next !== currentLabel.current) {
         currentLabel.current = next
         setLabel(next)
@@ -133,7 +195,13 @@ export function CustomCursor() {
         spotEl.style.transform = `translate(${spot.current.x - 200}px, ${spot.current.y - 200}px)`
       }
       if (labelEl) {
-        labelEl.style.transform = `translate(${pos.current.x + 14}px, ${pos.current.y - 32}px)`
+        const wide = labelWide.current
+        const flip = pos.current.x > window.innerWidth - (wide ? 280 : 140)
+        const x = flip ? pos.current.x - 16 : pos.current.x + 14
+        const y = pos.current.y - (wide ? 46 : 32)
+        labelEl.style.transform = flip
+          ? `translate(${x}px, ${y}px) translateX(-100%)`
+          : `translate(${x}px, ${y}px)`
       }
 
       // Waveform trail — sine wave perpendicular to path direction, fades to tail
@@ -147,7 +215,7 @@ export function CustomCursor() {
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         if (pts.length > 3) {
-          const now = performance.now()
+          const t = performance.now()
           // Perpendicular-offset position for each trail point
           const offsets: Array<{ x: number; y: number }> = []
           for (let i = 0; i < pts.length; i++) {
@@ -159,7 +227,7 @@ export function CustomCursor() {
             const nx = -dy / len
             const ny = dx / len
             const fade = 1 - i / (pts.length - 1)
-            const s = Math.sin(i * 0.45 + now * 0.003) * fade * 5
+            const s = Math.sin(i * 0.45 + t * 0.003) * fade * 5
             offsets.push({ x: pts[i].x + nx * s, y: pts[i].y + ny * s })
           }
           // Draw fading segments from head to tail
@@ -237,7 +305,7 @@ export function CustomCursor() {
           mixBlendMode: 'screen',
         }}
       />
-      {/* Contextual label — fades in/out via opacity, position driven by RAF */}
+      {/* Verb + live show / remaining time / honest stream error */}
       <div
         ref={labelElRef}
         aria-hidden
@@ -255,7 +323,7 @@ export function CustomCursor() {
       >
         <span
           style={{
-            display: 'inline-block',
+            display: 'block',
             fontSize: 9,
             letterSpacing: '0.26em',
             textTransform: 'uppercase',
@@ -266,6 +334,25 @@ export function CustomCursor() {
         >
           {label}
         </span>
+        {detail ? (
+          <span
+            style={{
+              display: 'block',
+              marginTop: 3,
+              maxWidth: 260,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              fontSize: 8,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: failed ? RED : 'rgba(242,242,242,0.72)',
+              fontWeight: 600,
+              fontFamily: 'JetBrains Mono, monospace',
+            }}
+          >
+            {detail}
+          </span>
+        ) : null}
       </div>
       {/* Solid dot — snaps to cursor */}
       <div
@@ -297,8 +384,8 @@ export function CustomCursor() {
           width: label ? 56 : hovering ? 48 : pressed ? 28 : 36,
           height: label ? 56 : hovering ? 48 : pressed ? 28 : 36,
           borderRadius: '50%',
-          border: `1.5px solid ${label || hovering ? 'rgba(212,175,55,0.7)' : 'rgba(var(--one-electric-rgb),0.35)'}`,
-          background: label || hovering ? 'rgba(212,175,55,0.06)' : 'transparent',
+          border: `1.5px solid ${failed ? 'rgba(229,22,54,0.75)' : label || hovering ? 'rgba(212,175,55,0.7)' : 'rgba(var(--one-electric-rgb),0.35)'}`,
+          background: failed ? 'rgba(229,22,54,0.08)' : label || hovering ? 'rgba(212,175,55,0.06)' : 'transparent',
           pointerEvents: 'none',
           zIndex: 99998,
           transform: 'translate(-100px, -100px)',
