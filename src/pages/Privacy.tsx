@@ -63,8 +63,10 @@ export default function Privacy() {
               because we are not setting non-essential tracking cookies.
             </p>
             <p>
-              Embedded Facebook, SoundCloud, Radio.co, and (when a key is configured) Google Maps
-              content may set their own cookies under those services&apos; policies.
+              We do not embed a Facebook page. Playing the Radio.co stream or a SoundCloud
+              interview, opening the OpenStreetMap studio map on Contact, or loading Google Maps
+              on the coverage page (when a key is configured) may set cookies under those
+              services&apos; policies.
             </p>
           </section>
 
@@ -74,7 +76,7 @@ export default function Privacy() {
               This website uses the following third-party services:
             </p>
             <ul className="list-disc pl-5 space-y-2">
-              <li><strong className="text-one-white/90">Facebook</strong> — page embeds and social sharing. Governed by Meta&apos;s Privacy Policy.</li>
+              <li><strong className="text-one-white/90">Facebook</strong> — outbound follow link to facebook.com/onefmshepparton. We do not embed a Facebook page or timeline. Meta&apos;s Privacy Policy applies when you open that page.</li>
               <li><strong className="text-one-white/90">SoundCloud</strong> — interview audio from the station SoundCloud profile.</li>
               <li><strong className="text-one-white/90">Radio.co</strong> — live stream audio (same source as fm985.com.au/audio-player/).</li>
               <li><strong className="text-one-white/90">Google Maps</strong> — the coverage map on this site may load Maps when a Maps key is configured; otherwise the town list still works.</li>

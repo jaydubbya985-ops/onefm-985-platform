@@ -61,6 +61,10 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /facebook\.com\/plugins\/page\.php/, why: 'Facebook is a follow link — do not embed plugins/page.php' },
+  { re: /page embeds and social sharing/, why: 'Privacy must not claim Facebook page embeds we do not load' },
+  { re: /News, events, and local stories from facebook\.com/, why: 'do not dress station stills as a Facebook news feed' },
+  { re: /Festivals, markets, and Valley happenings/, why: 'do not invent Facebook highlight captions' },
 ]
 
 function walk(dir) {
@@ -487,6 +491,31 @@ if (
   /path=\"\/social\" element=\{<Navigate to=\"\/community\"/.test(app.text)
 ) {
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
+}
+
+const facebookPanel = files.find((f) => f.label === 'components/social/FacebookPanel.tsx')
+if (
+  !facebookPanel ||
+  !facebookPanel.text.includes('does not load a Facebook timeline') ||
+  !facebookPanel.text.includes('not a Facebook post') ||
+  !facebookPanel.text.includes('facebook.com/onefmshepparton') ||
+  facebookPanel.text.includes('HIGHLIGHTS') ||
+  facebookPanel.text.includes('formatGuideHours')
+) {
+  hits.push(
+    'components/social/FacebookPanel.tsx: follow link only — no fake highlight feed or GVL hours stamp',
+  )
+}
+
+const privacy = files.find((f) => f.label === 'pages/Privacy.tsx')
+if (
+  !privacy ||
+  !privacy.text.includes('do not embed a Facebook page') ||
+  !privacy.text.includes('OpenStreetMap studio map')
+) {
+  hits.push(
+    'pages/Privacy.tsx: Facebook is a follow link; name the third parties that actually load',
+  )
 }
 
 if (hits.length) {
