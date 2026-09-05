@@ -121,6 +121,15 @@ if (!home || !home.text.includes('liveNowFromMetadata')) {
 if (!home || !home.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/Home.tsx: GVL photo badge hours must come from formatGuideHours / FULL_SCHEDULE')
 }
+if (
+  !home ||
+  /On air ever since/i.test(home.text) ||
+  !home.text.includes("'Community licence'")
+) {
+  hits.push(
+    'pages/Home.tsx: 1989 stat must name the community licence — not leftover On air ever since',
+  )
+}
 
 const liveNow = files.find((f) => f.label === 'lib/liveNow.ts')
 if (
