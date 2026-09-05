@@ -6,8 +6,7 @@ import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { WeatherMini } from '@/components/WeatherWidget'
 import { liveNowFromMetadata } from '@/lib/liveNow'
-
-const HIDE_ON = ['/listen', '/ops']
+import { isMiniPlayerHidden } from '@/lib/bottomChrome'
 
 const BAR_DELAYS = ['0s', '0.2s', '0.1s', '0.35s', '0.15s']
 
@@ -36,7 +35,7 @@ export function MiniPlayer() {
   const meta = usePlayerMetadata()
   const { playing, loading, toggle } = useLiveStream()
 
-  const hidden = HIDE_ON.some((p) => location.pathname === p) || dismissed
+  const hidden = isMiniPlayerHidden(location.pathname) || dismissed
   const live = liveNowFromMetadata(meta)
   const program = live.program
   const presenterLine = live.withLine
