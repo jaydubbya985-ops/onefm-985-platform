@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ExternalLink, Play } from 'lucide-react'
-import { fetchLatestInterviews, formatInterviewDate, type Fm985Interview } from '@/lib/fm985Feed'
+import {
+  fetchInterviewFeed,
+  formatInterviewDate,
+  interviewFeedEyebrow,
+  interviewFeedIntro,
+  type Fm985Interview,
+  type InterviewFeedSource,
+} from '@/lib/fm985Feed'
 import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 import { SoundCloudPanel } from '@/components/social/SoundCloudPanel'
 import { FacebookPanel } from '@/components/social/FacebookPanel'
@@ -80,17 +87,16 @@ function InterviewCard({ item, index = 0 }: { item: Fm985Interview; index?: numb
 
 export function LatestInterviews() {
   const [items, setItems] = useState<Fm985Interview[]>([])
+  const [source, setSource] = useState<InterviewFeedSource>('station-archive')
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    fetchLatestInterviews(6)
-      .then((data) => {
-        if (!cancelled) setItems(data)
-      })
-      .catch(() => {
-        if (!cancelled) setError('Could not load interviews — try again shortly.')
+    fetchInterviewFeed(6)
+      .then((feed) => {
+        if (cancelled) return
+        setItems(feed.items)
+        setSource(feed.source)
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -115,10 +121,14 @@ export function LatestInterviews() {
               />
             </div>
             <div className="min-w-0">
-              <span className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-3 block">LIVE &amp; LOCAL</span>
+              <span className="font-label text-[10px] tracking-[0.22em] text-one-electric mb-3 block">
+                {loading ? 'INTERVIEWS' : interviewFeedEyebrow(source)}
+              </span>
               <WordReveal text="Latest Interviews" className="font-h2 text-one-white mt-2 block" as="h2" stagger={0.028} variant="char" />
               <p className="font-body text-muted mt-2 max-w-xl">
-                Fresh from ONE FM 98.5 — synced from fm985.com.au with on-demand audio on SoundCloud.
+                {loading
+                  ? 'Checking fm985.com.au for published interviews.'
+                  : interviewFeedIntro(source)}
               </p>
             </div>
           </div>
@@ -154,17 +164,12 @@ export function LatestInterviews() {
               Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="rounded-xl h-28 border border-one-border/40 animate-pulse bg-one-border/10" />
               ))}
-            {error && (
+            {!loading && items.length === 0 && (
               <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
-                <p className="font-body-small text-one-muted">Interviews temporarily unavailable — check back soon or visit fm985.com.au</p>
+                <p className="font-body-small text-one-muted">No interviews in this feed — check fm985.com.au or SoundCloud.</p>
               </div>
             )}
-            {!loading && !error && items.length === 0 && (
-              <div className="rounded-xl border border-one-border/40 bg-one-border/10 p-6 text-center">
-                <p className="font-body-small text-one-muted">No recent interviews — check back soon.</p>
-              </div>
-            )}
-            {!loading && !error && items.map((item, i) => <InterviewCard key={item.id} item={item} index={i} />)}
+            {!loading && items.map((item, i) => <InterviewCard key={item.id} item={item} index={i} />)}
           </div>
 
           <div className="lg:col-span-5 flex flex-col gap-6">

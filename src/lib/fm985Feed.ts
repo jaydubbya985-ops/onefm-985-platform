@@ -101,10 +101,33 @@ async function fetchFromWp(limit: number): Promise<Fm985Interview[] | null> {
   return null
 }
 
-export async function fetchLatestInterviews(limit = 6): Promise<Fm985Interview[]> {
+export type InterviewFeedSource = 'wordpress' | 'station-archive'
+
+export interface InterviewFeed {
+  items: Fm985Interview[]
+  source: InterviewFeedSource
+}
+
+export function interviewFeedEyebrow(source: InterviewFeedSource): string {
+  return source === 'wordpress' ? 'FROM FM985.COM.AU' : 'STATION ARCHIVE'
+}
+
+export function interviewFeedIntro(source: InterviewFeedSource): string {
+  return source === 'wordpress'
+    ? 'Interviews published on fm985.com.au — play the SoundCloud cut when the post includes one.'
+    : 'The live WordPress feed is not on this session. These rows are the station interview archive, not today\'s posts.'
+}
+
+export async function fetchInterviewFeed(limit = 6): Promise<InterviewFeed> {
   const live = await fetchFromWp(limit)
-  if (live && live.length > 0) return live
-  return scrapedFallback(limit)
+  if (live && live.length > 0) return { items: live, source: 'wordpress' }
+  return { items: scrapedFallback(limit), source: 'station-archive' }
+}
+
+/** Array-only wrapper — SoundCloudPanel still consumes items, not the source label. */
+export async function fetchLatestInterviews(limit = 6): Promise<Fm985Interview[]> {
+  const feed = await fetchInterviewFeed(limit)
+  return feed.items
 }
 
 export function formatInterviewDate(iso: string): string {
