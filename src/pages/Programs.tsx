@@ -280,7 +280,7 @@ const shows = [
     name: "Radio Netherlands",
     time: "Monday, 7pm–8pm",
     host: "Margaret & Josh",
-    desc: "Dutch-language international community program with Margaret and Josh.",
+    desc: "Dutch-language community program with Margaret and Josh.",
     tag: "Multicultural",
     icon: Headset,
   },
