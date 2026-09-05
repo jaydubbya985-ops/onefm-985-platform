@@ -10,6 +10,7 @@ import { SEO } from '@/components/SEO'
 import { WeeklySchedule } from '@/components/WeeklySchedule'
 import { LatestInterviews } from '@/components/LatestInterviews'
 import { OnAirTicker, NameWall, StatsStrip, LabelReveal, PosterReveal, StrokeFill } from '@/components/onair/kit'
+import { useLiveNow } from '@/hooks/useLiveNow'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import {
@@ -36,8 +37,7 @@ const LIME = '#B6FF00'
 
 function ListenHero() {
   const { playing, loading, error, toggle } = useLiveStream()
-  const meta = usePlayerMetadata()
-  const live = liveNowFromMetadata(meta)
+  const { meta, live } = useLiveNow()
   const { program, programTime } = live
   const progressPct = Math.round(live.elapsedRatio * 100)
 
@@ -90,7 +90,12 @@ function ListenHero() {
             <div className="text-[14px] text-white/50 mt-1">
               {live.withLine ? `${live.withLine} · ` : ''}
               {programTime}
-              {live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
+              {live.remainingLabel ? (
+                <>
+                  {' · '}
+                  <span aria-live="polite">{live.remainingLabel}</span>
+                </>
+              ) : null}
             </div>
             {live.breakfastOnAir && live.breakfastLabel && (
               <div className="text-[12px] text-white/40 mt-1.5">
@@ -114,7 +119,7 @@ function ListenHero() {
           </div>
           <div className="mt-2 flex justify-between text-[11px] tracking-[0.12em] uppercase text-white/35">
             <span>This show on the guide</span>
-            <span>{live.remainingLabel}</span>
+            <span aria-live="polite">{live.remainingLabel}</span>
           </div>
         </div>
 
