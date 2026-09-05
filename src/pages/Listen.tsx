@@ -28,6 +28,7 @@ import {
   formatWeeklyListenersPlain,
 } from '@/lib/coverageCopy'
 import { InventoryLadder } from '@/components/InventoryLadder'
+import { HeroAtmosphere } from '@/components/home/HeroAtmosphere'
 
 const RED = '#E51636'
 const LIME = '#B6FF00'
@@ -55,8 +56,9 @@ function ListenHero() {
         style={{ background: 'linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.25) 40%, #0A0A0A 100%)' }}
         aria-hidden
       />
+      <HeroAtmosphere mode="rings" />
 
-      <div className="relative">
+      <div className="relative z-10">
         <h1 className="font-poster uppercase leading-[0.92] text-white text-[clamp(56px,11vw,160px)]">
           <PosterReveal lines={[
             <span key="a" className="poster-hover">Listen</span>,
