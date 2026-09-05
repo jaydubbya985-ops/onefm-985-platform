@@ -394,6 +394,25 @@ assertCoverageCopy('pages/AudienceAnalytics.tsx', [
   'formatWeeklyListenersPlain()',
   'formatBroadcastPopulation()',
 ])
+const audience = files.find((f) => f.label === 'pages/AudienceAnalytics.tsx')
+if (
+  !audience ||
+  /DEMOGRAPHIC DEEP DIVE/i.test(audience.text) ||
+  !audience.text.includes('WordReveal text="GREATER SHEPPARTON LGA"')
+) {
+  hits.push(
+    'pages/AudienceAnalytics.tsx: heading must name Greater Shepparton LGA — not leftover deep dive',
+  )
+}
+if (
+  !audience ||
+  !audience.text.includes('AUDIENCE INTELLIGENCE') ||
+  !audience.text.includes('PLATFORM PERFORMANCE') ||
+  !audience.text.includes('USE YOUR DATA') ||
+  !audience.text.includes('AUDIENCE INSIGHTS')
+) {
+  hits.push('pages/AudienceAnalytics.tsx: do not steal leftover SaaS headings on this page')
+}
 assertCoverageCopy('pages/Heritage.tsx', ['formatTowns()', 'yearsBroadcastingValue()'])
 assertCoverageCopy('pages/Story.tsx', [
   'formatTowns()',

@@ -468,7 +468,7 @@ export default function AudienceAnalytics() {
             viewport={{ once: true, margin: '-100px' }}
             variants={fadeUp}
           >
-            <WordReveal text="DEMOGRAPHIC DEEP DIVE" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
+            <WordReveal text="GREATER SHEPPARTON LGA" className="font-h2 text-one-white block" as="h2" stagger={0.05} />
             <p className="font-body-small text-muted mt-1">Greater Shepparton LGA (ABS 2021) — not a measured ONE FM listener survey</p>
           </motion.div>
 
