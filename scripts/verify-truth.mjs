@@ -489,6 +489,17 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const magnetic = files.find((f) => f.label === 'components/MagneticButton.tsx')
+if (
+  !magnetic ||
+  !magnetic.text.includes('prefers-reduced-motion: reduce') ||
+  !/if \(reduceMotion\) return/.test(magnetic.text)
+) {
+  hits.push(
+    'components/MagneticButton.tsx: leftover magnetic pull must skip when prefers-reduced-motion is reduce',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
