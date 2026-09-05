@@ -25,6 +25,7 @@ import {
   MULTICULTURAL_PROGRAM_COUNT,
   getCurrentLiveShow,
   getBreakfastScheduleLabel,
+  getMelbourneClock,
 } from '@/data/programGuide'
 import { useLiveStream } from '@/hooks/useLiveStream'
 import { formatCoverageShort, formatRadius } from '@/lib/coverageCopy'
@@ -314,7 +315,9 @@ function HeroSection() {
 
 /* ─── Section 2: Interactive Schedule ─── */
 function ScheduleSection() {
-  const [activeDay, setActiveDay] = useState(0)
+  const clock = getMelbourneClock()
+  const todayExplorer = toExplorerDay(clock.day)
+  const [activeDay, setActiveDay] = useState(() => toExplorerDay(getMelbourneClock().day))
   const [timeFilter, setTimeFilter] = useState('all')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [search, setSearch] = useState('')
@@ -459,15 +462,14 @@ function ScheduleSection() {
                   </div>
                   <div className="flex-1 relative">
                     {/* Current time indicator (includes minutes for precision) */}
-                    {(() => {
-                      const now = new Date()
-                      const pct = ((now.getHours() + now.getMinutes() / 60) / 24) * 100
+                    {activeDay === todayExplorer ? (() => {
+                      const pct = ((clock.hour + clock.minute / 60) / 24) * 100
                       return (
                         <div className="absolute top-0 bottom-0 w-px bg-one-gold z-20" style={{ left: `${pct}%` }}>
                           <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-one-gold animate-pulse" />
                         </div>
                       )
-                    })()}
+                    })() : null}
 
                     {/* Show blocks */}
                     {filteredShows.map((show, i) => (
