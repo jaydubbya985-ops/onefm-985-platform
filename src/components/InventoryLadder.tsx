@@ -1,6 +1,9 @@
+import { useLocation } from 'react-router-dom'
+import { TodayOnAir } from '@/components/TodayOnAir'
 import { STANDARD_SPOT_PLUS_GST, PARTNERSHIP_FROM_WEEKLY, GVL_PREMIUM_INTRO } from '@/lib/inventoryCopy'
 import { rateCard } from '@/data/pricing'
 import { formatGuideHours } from '@/lib/guideHours'
+import { isListenerInventorySurface } from '@/lib/todayOnAir'
 
 const GVL_GUIDE_HOURS = formatGuideHours('GVL Match of the Day')
 
@@ -39,6 +42,11 @@ const ROWS: { label: string; rate: string; note: string; premium?: boolean }[] =
 
 /** Public inventory stack — premiums sit above the $25 standard spot. */
 export function InventoryLadder({ className = '' }: { className?: string }) {
+  const { pathname } = useLocation()
+  if (isListenerInventorySurface(pathname)) {
+    return <TodayOnAir className={className} />
+  }
+
   return (
     <div className={className}>
       <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-gold mb-3">
