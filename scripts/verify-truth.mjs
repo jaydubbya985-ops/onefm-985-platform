@@ -489,6 +489,19 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const notFound = files.find((f) => f.label === 'pages/NotFound.tsx')
+if (
+  !notFound ||
+  !notFound.text.includes('useLiveStream') ||
+  !notFound.text.includes('liveNowFromMetadata') ||
+  /off the air/i.test(notFound.text) ||
+  /DEAD AIR/.test(notFound.text)
+) {
+  hits.push(
+    'pages/NotFound.tsx: 404 must name the live show and play — not claim the transmitter is off',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
