@@ -61,6 +61,8 @@ const FORBIDDEN = [
   { re: /planet-fri/, why: 'Planet of Sound is Thursday only in FULL_SCHEDULE — do not invent a Friday slot' },
   { re: /country-fri/, why: 'Good Evening Country is Monday 8–9pm in FULL_SCHEDULE — Friday 7–10pm is NIRS AFL' },
   { re: /regional-voice/, why: 'Do not invent a weekday 12–3 strip that is not on FULL_SCHEDULE' },
+  { re: /This frequency is off the air/i, why: '404 is a missing page — the transmitter is not off the air' },
+  { re: /DEAD AIR/, why: '404 must not claim dead air — the station is still broadcasting' },
 ]
 
 function walk(dir) {
@@ -464,6 +466,21 @@ for (const required of [
   if (!opsPayments?.text.includes(required)) {
     hits.push(`components/ops/data/payments.ts: missing ${required} label`)
   }
+}
+
+const notFound = files.find((f) => f.label === 'pages/NotFound.tsx')
+if (
+  !notFound ||
+  !notFound.text.includes('useLiveStream') ||
+  !notFound.text.includes('liveNowFromMetadata') ||
+  !notFound.text.includes("This page isn't on the site")
+) {
+  hits.push(
+    'pages/NotFound.tsx: missing page must play the live stream in place and say the page is missing, not that the frequency is off',
+  )
+}
+if (notFound && /dot-pulse/.test(notFound.text)) {
+  hits.push('pages/NotFound.tsx: do not pulse a live-red on-air dot on a missing page')
 }
 
 const app = files.find((f) => f.label === 'App.tsx')
