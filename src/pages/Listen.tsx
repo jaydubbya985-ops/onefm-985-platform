@@ -145,7 +145,7 @@ function WaysToListen() {
   const ways = [
     { icon: Radio, title: '98.5 FM', body: `On the dial across Shepparton and ${formatTowns()} of the Goulburn Valley — ${formatCoverageShort()} from Mt Major.` },
     { icon: Wifi, title: 'Stream anywhere', body: 'The live stream follows you — this site, any browser, anywhere in the world. Press play above.' },
-    { icon: Phone, title: 'Studio line', body: 'Requests, shout-outs, community notices: (03) 5831 3131 — the studio answers when we’re live.' },
+    { icon: Phone, title: 'Studio line', body: `Requests, shout-outs, community notices: ${BRAND.phone}. The station phone is listed on the weekly guide — this page does not confirm a live pickup.` },
   ]
   return (
     <section className="px-6 md:px-12 lg:px-20 pb-6">
@@ -191,7 +191,7 @@ function SongRequest() {
         </h2>
         <p className="text-[15px] leading-relaxed text-white/55 mt-3 mb-6">
           Opens an email draft to {BRAND.email}. Nothing is sent until you hit send in your email app.
-          You can also call {BRAND.phone} while we&apos;re live.
+          You can also call {BRAND.phone} — this form does not confirm a live pickup.
         </p>
         {draftOpened && (
           <p className="mb-6 text-[15px] font-bold" style={{ color: LIME }} role="status">
