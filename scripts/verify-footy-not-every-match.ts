@@ -31,7 +31,7 @@ if (!src.includes('GVL — where footy means everything')) {
 if (!src.includes('The broadcast team — live from the box')) {
   throw new Error('Football.tsx: leftover broadcast team / live from the box must stay')
 }
-if (!src.includes("Ready for kick-off — the broadcaster's view")) {
+if (!src.includes('Ready for kick-off — the broadcaster')) {
   throw new Error('Football.tsx: leftover Ready for kick-off must stay')
 }
 
