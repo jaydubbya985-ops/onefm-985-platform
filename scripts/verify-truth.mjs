@@ -183,6 +183,18 @@ if (
 if (!community || !community.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/Community.tsx: GVL badge/ticker hours must come from formatGuideHours / FULL_SCHEDULE')
 }
+if (!community || /Community radio since 1989/.test(community.text)) {
+  hits.push(
+    'pages/Community.tsx: leftover Community radio since 1989 — ticker must name licensed 1989 and established 1980',
+  )
+}
+if (
+  !community ||
+  !community.text.includes('BRAND.licensed') ||
+  !community.text.includes('BRAND.established')
+) {
+  hits.push('pages/Community.tsx: ticker years must come from BRAND.licensed / BRAND.established')
+}
 
 const stationHistory = files.find((f) => f.label === 'data/stationHistory.ts')
 if (
