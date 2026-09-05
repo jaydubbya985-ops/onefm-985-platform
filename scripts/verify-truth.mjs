@@ -267,6 +267,14 @@ const siteNav = files.find((f) => f.label === 'lib/siteNav.ts')
 if (!siteNav || !siteNav.text.includes('BREAKFAST_SHOW') || !siteNav.text.includes('formatTowns()')) {
   hits.push('lib/siteNav.ts: Program Guide and Community/Donate must use BREAKFAST_SHOW / formatTowns')
 }
+if (
+  !siteNav ||
+  /label: 'Program Guide', path: '\/listen'/.test(siteNav.text) ||
+  /label: 'Programs',\s*path: '\/listen'/.test(siteNav.text) ||
+  !siteNav.text.includes("label: 'Program Guide', path: '/programs'")
+) {
+  hits.push('lib/siteNav.ts: Program Guide / Programs jobs must open /programs — not leftover /listen')
+}
 
 const gallery = files.find((f) => f.label === 'components/HorizontalGallery.tsx')
 if (
