@@ -22,8 +22,12 @@ assert(
   'lab heading must name locked Broadcast Letter, not leftover world-class',
 )
 assert(
-  src.includes('STATION_INVOICE_DESIGN_CHOICE'),
-  'lab must still mark the station-locked Broadcast Letter choice',
+  !/#B8860B/i.test(src),
+  'InvoiceDesignLab chrome must not use leftover gold #B8860B',
+)
+assert(
+  !/navy &amp; gold|navy & gold/.test(src),
+  'InvoiceDesignLab must not describe Broadcast Letter as leftover navy & gold',
 )
 
 const ops = readFileSync(new URL('../src/pages/OpsPortal.tsx', import.meta.url), 'utf8')
