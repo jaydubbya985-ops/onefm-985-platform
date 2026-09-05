@@ -1,4 +1,4 @@
-import { STATION_PHOTOS, HOST_PHOTOS } from '@/lib/stationPhotos'
+import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 /**
  * Real presenter portraits — only files whose filename or archive record
@@ -9,16 +9,16 @@ export const NAMED_PORTRAITS: Record<string, string> = {
   'Sally Nayler': '/assets/images/heritage-sally-nayler-90s.jpg',
 }
 
-/** Studio / OB / valley photography used behind names that have no cleared portrait. */
+/** Studio / OB / valley photography used behind names that have no cleared portrait.
+ *  Never cycle `/on-air-host-1.jpg` or `/studio-control-room.jpg` — those two files
+ *  are the same unlabeled face (identical bytes), not a named portrait. */
 export const ON_AIR_WALL_BACKDROPS = [
-  HOST_PHOTOS.onAirHost1,
-  HOST_PHOTOS.studioControlRoom,
-  STATION_PHOTOS.studioPresenterMic,
   STATION_PHOTOS.obVanBranded,
-  STATION_PHOTOS.studioCommentarySelfie,
-  STATION_PHOTOS.commentaryBoxAction,
-  // Unused Goulburn Valley housing-estate sunset — station archive, not a portrait.
   STATION_PHOTOS.geoHousingEstateSunset,
+  STATION_PHOTOS.studioExteriorRainbow,
+  STATION_PHOTOS.matchDayFlag,
+  STATION_PHOTOS.commentaryBoxAction,
+  STATION_PHOTOS.studioCommentarySelfie,
 ] as const
 
 export const ON_AIR_WALL_PHOTO_NOTE =
