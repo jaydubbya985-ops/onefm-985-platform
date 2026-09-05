@@ -26,7 +26,7 @@ const HIGHLIGHTS = [
   {
     image: STATION_PHOTOS.studioPresenterMic,
     label: 'Behind the mic',
-    caption: 'Studio moments and multicultural programming.',
+    caption: 'Station archive still — not a Facebook studio feed. Open facebook.com/onefmshepparton.',
     icon: Users,
   },
 ] as const
