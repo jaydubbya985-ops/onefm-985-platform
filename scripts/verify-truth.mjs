@@ -121,6 +121,16 @@ if (!home || !home.text.includes('liveNowFromMetadata')) {
 if (!home || !home.text.includes("formatGuideHours('GVL Match of the Day')")) {
   hits.push('pages/Home.tsx: GVL photo badge hours must come from formatGuideHours / FULL_SCHEDULE')
 }
+if (
+  !home ||
+  !home.text.includes('useLiveStream') ||
+  !home.text.includes('void toggle()')
+) {
+  hits.push('pages/Home.tsx: hero must play the live stream, not only link to /listen')
+}
+if (!home || !home.text.includes('AUDIO_PLAYER_URL')) {
+  hits.push('pages/Home.tsx: stream errors must link the fm985.com.au web player')
+}
 
 const liveNow = files.find((f) => f.label === 'lib/liveNow.ts')
 if (

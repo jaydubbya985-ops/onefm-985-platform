@@ -7,6 +7,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
+import { Loader2, Pause, Play } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { SEO } from '@/components/SEO'
 import { LatestInterviews } from '@/components/LatestInterviews'
@@ -22,6 +23,8 @@ import {
 } from '@/lib/coverageCopy'
 import { presenterPhotoIsPortrait } from '@/lib/presenterAssets'
 import { liveNowFromMetadata } from '@/lib/liveNow'
+import { AUDIO_PLAYER_URL } from '@/lib/streamConfig'
+import { useLiveStream } from '@/hooks/useLiveStream'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { PosterReveal, StrokeFill, LabelReveal } from '@/components/motion/PosterReveal'
 
@@ -116,19 +119,59 @@ function HeroReel() {
 function Hero() {
   const meta = usePlayerMetadata()
   const live = liveNowFromMetadata(meta)
+  const { playing, loading, error, toggle } = useLiveStream()
   return (
     <section className="relative overflow-hidden px-6 md:px-12 lg:px-20 pt-24 pb-20 min-h-[88vh] flex flex-col justify-center">
       <HeroReel />
       <div className="relative">
-      <Link
-        to="/listen"
-        className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 mb-4 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03] bloom-red"
-        style={{ background: RED }}
-        data-cursor="LISTEN"
-      >
-        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-        {live.isLive ? 'On Air Now · Listen Live' : 'Listen Live · 98.5 FM'}
-      </Link>
+      <div className="flex items-center gap-4 flex-wrap mb-4">
+        <button
+          type="button"
+          onClick={() => void toggle()}
+          disabled={loading}
+          aria-pressed={playing}
+          aria-label={playing ? 'Pause the live stream' : 'Play the live stream'}
+          data-cursor-label={playing ? 'PAUSE' : 'PLAY'}
+          className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 font-bold text-[13px] tracking-[0.14em] uppercase text-white transition-transform hover:scale-[1.03] bloom-red disabled:opacity-60"
+          style={{ background: RED }}
+        >
+          {loading ? (
+            <Loader2 size={16} className="animate-spin" />
+          ) : playing ? (
+            <Pause size={16} />
+          ) : (
+            <Play size={16} className="translate-x-px" />
+          )}
+          {loading
+            ? 'Connecting'
+            : playing
+              ? 'On Air · Pause'
+              : live.isLive
+                ? 'On Air Now · Play'
+                : 'Play Live · 98.5 FM'}
+        </button>
+        <Link
+          to="/listen"
+          className="font-bold text-[13px] tracking-[0.12em] uppercase text-white/70 hover:text-white"
+          data-cursor-label="FULL PLAYER"
+        >
+          Full player →
+        </Link>
+      </div>
+      {error && (
+        <p className="mb-6 text-[14px] text-white/70 max-w-xl" role="alert">
+          {error}{' '}
+          <a
+            href={AUDIO_PLAYER_URL}
+            className="underline"
+            style={{ color: RED }}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open the fm985.com.au web player
+          </a>
+        </p>
+      )}
       <p className="mb-9 max-w-[560px]">
         <span className="block font-poster uppercase text-[clamp(22px,3.2vw,36px)] text-white leading-tight">
           {live.program}
