@@ -124,7 +124,7 @@ export function DecadeDial() {
       </div>
 
       <p className="text-[12px] text-white/30 mt-8">
-        {ARCHIVE_CARDS.length} curated cards · Wayback and newspaper archive expanding.
+        {ARCHIVE_CARDS.length} sourced archive cards — ACMA, Shepparton News, Annual Report 2024.
       </p>
     </section>
   )
