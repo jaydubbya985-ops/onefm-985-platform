@@ -1,6 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { AUTH_UNAVAILABLE } from '@/lib/authCopy'
+import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
+
+function requireLiveAuth() {
+  if (!isSupabaseConfigured()) {
+    throw new Error(AUTH_UNAVAILABLE)
+  }
+}
 
 interface AuthState {
   user: User | null
@@ -47,6 +54,7 @@ export function useAuth() {
   }, [])
 
   const login = useCallback(async (email: string, password: string) => {
+    requireLiveAuth()
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -57,6 +65,7 @@ export function useAuth() {
 
   const signup = useCallback(
     async (email: string, password: string, metadata?: Record<string, unknown>) => {
+      requireLiveAuth()
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -74,6 +83,7 @@ export function useAuth() {
   }, [])
 
   const resetPassword = useCallback(async (email: string) => {
+    requireLiveAuth()
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     })
