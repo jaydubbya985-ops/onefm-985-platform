@@ -7,6 +7,7 @@ import { join, relative } from 'node:path'
 
 const ROOT = new URL('../src', import.meta.url).pathname
 const INDEX_HTML = new URL('../index.html', import.meta.url).pathname
+const INDEX_CSS = new URL('../src/index.css', import.meta.url).pathname
 
 /** Phrases that must never ship in src/ (gov-truth). */
 const FORBIDDEN = [
@@ -77,6 +78,7 @@ const hits = []
 const files = [
   ...walk(ROOT).map((p) => ({ label: relative(ROOT, p), text: readFileSync(p, 'utf8') })),
   { label: 'index.html', text: readFileSync(INDEX_HTML, 'utf8') },
+  { label: 'index.css', text: readFileSync(INDEX_CSS, 'utf8') },
 ]
 for (const file of files) {
   for (const rule of FORBIDDEN) {
