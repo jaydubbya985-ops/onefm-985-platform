@@ -48,17 +48,15 @@ const SOURCE_LABELS: Record<MetadataSource, string> = {
   unavailable: 'Metadata unavailable',
 }
 
-function isBroadcastHours(now: Date): boolean {
-  const h = now.getHours()
-  const d = now.getDay()
-  if (d === 0 && h < 6) return false
-  return h >= 6 || h < 24
+/** Listed presenter on the Melbourne guide — not leftover `Date#getHours()` / Sunday-UTC 0–6. */
+function isListedPresenter(show: LiveShowInfo): boolean {
+  return show.host !== 'Automated'
 }
 
 /** Schedule-based metadata (always available). */
 export function getScheduleMetadata(now: Date = new Date()): PlayerMetadata {
   const show: LiveShowInfo = getCurrentLiveShow(now)
-  const live = isBroadcastHours(now) && show.host !== 'Automated'
+  const live = isListedPresenter(show)
 
   return {
     isLive: live,
