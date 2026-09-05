@@ -63,8 +63,8 @@ export function OpsRouteGuard({ children }: OpsRouteGuardProps) {
     e.preventDefault()
     setSubmitting(true)
     setError('')
-    const ok = await submitLogin(email, password)
-    if (!ok) setError('Invalid email or password.')
+    const result = await submitLogin(email, password)
+    if (!result.ok) setError(result.error ?? 'Invalid email or password.')
     setSubmitting(false)
   }
 

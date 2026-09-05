@@ -471,9 +471,9 @@ export function Navbar() {
           return ok
         }}
         onSubmitLogin={async (email, pw) => {
-          const ok = await ops.submitLogin(email, pw)
-          if (ok) window.location.hash = '#/ops'
-          return ok
+          const result = await ops.submitLogin(email, pw)
+          if (result.ok) window.location.hash = '#/ops'
+          return result.ok
         }}
         onClose={ops.close}
       />
