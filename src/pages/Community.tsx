@@ -158,7 +158,7 @@ export default function Community() {
         <StatsStrip
           stats={[
             { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: true },
-            { n: formatBroadcastPopulation(), t: 'People in broadcast area (ABS 2021 via townData)' },
+            { n: formatBroadcastPopulation(), t: 'People in broadcast area (townData 2026 est.)' },
             { n: String(MULTICULTURAL_PROGRAM_COUNT), t: 'Multicultural programs (station guide)' },
             { n: formatRadius(), t: 'Signal radius from Mt Major' },
           ]}
