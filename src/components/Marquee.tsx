@@ -1,5 +1,7 @@
 import { type ReactNode, useEffect, useState } from 'react'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { formatGuideHours } from '@/lib/guideHours'
 
 interface MarqueeProps {
   items: ReactNode[]
@@ -9,30 +11,39 @@ interface MarqueeProps {
   reverse?: boolean
 }
 
+const COVERAGE = formatCoverageShort()
+const GVL_HOURS = formatGuideHours('GVL Match of the Day')
+
 /**
  * Unused match-day banner still (1600×1537). Mark size only — not a hero
  * or presenter portrait. Station archive OB signage, unique of the van still.
+ * Caption is licensed GVL hours + coverage — not a live-now count.
  */
 function MatchDayBannerMark() {
   return (
-    <img
-      src={STATION_PHOTOS.obMatchDayBanner}
-      alt=""
-      aria-hidden
-      width={56}
-      height={28}
-      decoding="async"
-      className="mx-6 inline-block align-middle shrink-0"
-      style={{
-        width: 56,
-        height: 28,
-        objectFit: 'cover',
-        objectPosition: 'center',
-        borderRadius: 3,
-        border: '1px solid rgba(255,255,255,0.14)',
-        opacity: 0.88,
-      }}
-    />
+    <span className="mx-6 inline-flex items-center gap-2 align-middle shrink-0">
+      <img
+        src={STATION_PHOTOS.obMatchDayBanner}
+        alt=""
+        aria-hidden
+        width={56}
+        height={28}
+        decoding="async"
+        className="inline-block shrink-0"
+        style={{
+          width: 56,
+          height: 28,
+          objectFit: 'cover',
+          objectPosition: 'center',
+          borderRadius: 3,
+          border: '1px solid rgba(255,255,255,0.14)',
+          opacity: 0.88,
+        }}
+      />
+      <span className="font-label text-[9px] tracking-[0.16em] uppercase text-one-gold/70 whitespace-nowrap">
+        {GVL_HOURS ? `GVL · ${GVL_HOURS}` : 'GVL'} · {COVERAGE}
+      </span>
+    </span>
   )
 }
 
