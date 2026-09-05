@@ -83,6 +83,47 @@ function cacheKey(lat: number, lng: number) {
   return `${lat.toFixed(2)},${lng.toFixed(2)}`
 }
 
+function requireNumber(value: unknown, field: string): number {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    throw new Error(`Open-Meteo missing ${field}`)
+  }
+  return value
+}
+
+/** Reject incomplete payloads so a town is never labelled with a missing reading. */
+export function readOpenMeteoWeather(json: unknown): WeatherNow {
+  if (!json || typeof json !== 'object') {
+    throw new Error('Open-Meteo body is not an object')
+  }
+  const row = json as {
+    current?: Record<string, unknown>
+    daily?: Record<string, unknown>
+  }
+  const current = row.current
+  const daily = row.daily
+  if (!current || typeof current !== 'object') {
+    throw new Error('Open-Meteo missing current block')
+  }
+  if (!daily || typeof daily !== 'object') {
+    throw new Error('Open-Meteo missing daily block')
+  }
+  const maxes = daily.temperature_2m_max
+  const mins = daily.temperature_2m_min
+  if (!Array.isArray(maxes) || !Array.isArray(mins)) {
+    throw new Error('Open-Meteo missing daily highs or lows')
+  }
+  return {
+    tempC: requireNumber(current.temperature_2m, 'temperature_2m'),
+    feelsLikeC: requireNumber(current.apparent_temperature, 'apparent_temperature'),
+    tempMaxC: requireNumber(maxes[0], 'temperature_2m_max'),
+    tempMinC: requireNumber(mins[0], 'temperature_2m_min'),
+    weatherCode: requireNumber(current.weather_code, 'weather_code'),
+    windKmh: requireNumber(current.wind_speed_10m, 'wind_speed_10m'),
+    humidity: requireNumber(current.relative_humidity_2m, 'relative_humidity_2m'),
+    isDay: requireNumber(current.is_day, 'is_day') === 1,
+  }
+}
+
 export async function fetchWeather(lat: number, lng: number): Promise<WeatherNow> {
   const key = cacheKey(lat, lng)
   const cached = cache.get(key)
@@ -94,18 +135,7 @@ export async function fetchWeather(lat: number, lng: number): Promise<WeatherNow
 
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Open-Meteo request failed: ${res.status}`)
-  const json = await res.json()
-
-  const data: WeatherNow = {
-    tempC: json.current.temperature_2m,
-    feelsLikeC: json.current.apparent_temperature,
-    tempMaxC: json.daily.temperature_2m_max[0],
-    tempMinC: json.daily.temperature_2m_min[0],
-    weatherCode: json.current.weather_code,
-    windKmh: json.current.wind_speed_10m,
-    humidity: json.current.relative_humidity_2m,
-    isDay: json.current.is_day === 1,
-  }
+  const data = readOpenMeteoWeather(await res.json())
 
   cache.set(key, { data, fetchedAt: Date.now() })
   return data
