@@ -195,7 +195,7 @@ export default function NotFound() {
               animation: 'dot-pulse 1.4s ease-in-out infinite',
             }}
           />
-          NO SIGNAL
+          WRONG PAGE
         </div>
 
         <div style={{ position: 'relative', marginBottom: 8, lineHeight: 1 }}>

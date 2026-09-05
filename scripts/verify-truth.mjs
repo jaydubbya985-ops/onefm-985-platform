@@ -495,7 +495,8 @@ if (
   !notFound.text.includes('useLiveStream') ||
   !notFound.text.includes('liveNowFromMetadata') ||
   /off the air/i.test(notFound.text) ||
-  /DEAD AIR/.test(notFound.text)
+  /DEAD AIR/.test(notFound.text) ||
+  /NO SIGNAL/.test(notFound.text)
 ) {
   hits.push(
     'pages/NotFound.tsx: 404 must name the live show and play — not claim the transmitter is off',
