@@ -51,7 +51,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Support',
     items: [
       { label: 'Donate', path: '/support', description: `Support community radio across ${formatTowns()}` },
-      { label: 'Contact', path: '/contact', description: 'Studio · partnerships · enquiries' },
+      { label: 'Contact', path: '/contact', description: 'Studio phone · admin inbox' },
     ],
   },
 ]
