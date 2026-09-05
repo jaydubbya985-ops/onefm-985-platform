@@ -112,7 +112,7 @@ export default function EnquiryDashboard() {
       newThisWeek: enquiries.filter((e) => isWithinLastWeek(e.createdAt)).length,
       pending: enquiries.filter((e) => !isClosed(e.status)).length,
       closedWon: enquiries.filter((e) => e.status === 'closed_won').length,
-      pipeline: enquiries
+      openTotal: enquiries
         .filter((e) => !isClosed(e.status))
         .reduce((sum, e) => sum + (e.value ?? 0), 0),
     }
@@ -228,8 +228,8 @@ export default function EnquiryDashboard() {
           <StatCard icon={CircleCheck} label="Closed Won" value={stats.closedWon} color="text-green-400" />
           <StatCard
             icon={DollarSign}
-            label="Pipeline Value"
-            value={formatCurrency(stats.pipeline)}
+            label={isSupabaseConfigured() ? 'Open enquiry total' : 'DEMO open total'}
+            value={formatCurrency(stats.openTotal)}
             color="text-emerald-400"
             isText
           />
