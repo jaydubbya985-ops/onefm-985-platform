@@ -326,6 +326,7 @@ export default function Football() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [enquiryStored, setEnquiryStored] = useState(false)
 
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -350,13 +351,17 @@ export default function Football() {
         toast.error(result.error ?? 'Something went wrong. Please call us on (03) 5831 3131.')
         return
       }
+      setEnquiryStored(!!result.stored)
       setSubmitted(true)
       toast.success(
         result.stored
-          ? 'Enquiry received at the station.'
+          ? 'Enquiry stored at the station.'
           : 'Enquiry emailed to the station.',
       )
-      setTimeout(() => setSubmitted(false), 5000)
+      setTimeout(() => {
+        setSubmitted(false)
+        setEnquiryStored(false)
+      }, 5000)
     } catch {
       toast.error('Something went wrong. Please call us on (03) 5831 3131.')
     } finally {
@@ -1067,9 +1072,12 @@ export default function Football() {
                 <div className="w-16 h-16 rounded-full bg-data-teal/20 flex items-center justify-center mx-auto mb-4">
                   <Check size={32} className="text-data-teal" />
                 </div>
-                <h3 className="font-h3 text-one-white mb-2">Enquiry received</h3>
+                <h3 className="font-h3 text-one-white mb-2">
+                  {enquiryStored ? 'Enquiry stored at the station' : 'Enquiry emailed to the station'}
+                </h3>
                 <p className="font-body-small text-one-white">
-                  Thanks {formData.contactName || 'there'}! Our sponsorship team will be in touch.
+                  Thanks {formData.contactName || 'there'}. Talk to ONE FM on {BRAND.phone} or{' '}
+                  {BRAND.email} — this form does not invent a sponsorship team.
                 </p>
               </motion.div>
             )}
