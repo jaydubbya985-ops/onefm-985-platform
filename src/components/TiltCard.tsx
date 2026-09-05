@@ -13,6 +13,7 @@ interface TiltCardProps {
 /**
  * 3D perspective tilt on mouse move.
  * CSS transform only — no GSAP needed. Spring-back via transition.
+ * Yields on coarse pointers and prefers-reduced-motion — no invented swing.
  */
 export function TiltCard({ children, className = '', style, maxTilt = 8, hoverScale = 1.015 }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -21,6 +22,14 @@ export function TiltCard({ children, className = '', style, maxTilt = 8, hoverSc
     const el = ref.current
     if (!el) return
     if (window.matchMedia('(pointer: coarse)').matches) return
+    // Vestibular leftover — do not invent a 3D swing when the user asked for less motion.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (el.style.transform) {
+        el.style.transform = 'perspective(700px) rotateX(0deg) rotateY(0deg) scale(1)'
+        el.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1)'
+      }
+      return
+    }
     const rect = el.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width  - 0.5  // -0.5 → 0.5
     const y = (e.clientY - rect.top)  / rect.height - 0.5
