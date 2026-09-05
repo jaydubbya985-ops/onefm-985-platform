@@ -13,6 +13,7 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { usePlayerMetadata } from '@/hooks/usePlayerMetadata'
 import { formatCoverageShort, formatWeeklyListenersPlain } from '@/lib/coverageCopy'
 import { formatBreakfastChromeLabel } from '@/data/programGuide'
+import { liveNowFromMetadata } from '@/lib/liveNow'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
 const RED = '#E51636'
@@ -60,6 +61,7 @@ export function OnAirNav() {
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
   const meta = usePlayerMetadata()
+  const live = liveNowFromMetadata(meta)
   const reduced = useReducedMotion()
 
   const [lastPath, setLastPath] = useState(location.pathname)
@@ -111,10 +113,13 @@ export function OnAirNav() {
             <Link
               to="/listen"
               data-cursor-label="LISTEN"
-              className="hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-bold text-[12px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
+              aria-label={live.program ? `Listen live — ${live.program}` : 'Listen live'}
+              className="inline-flex items-center gap-2 rounded-full px-3.5 sm:px-5 py-2.5 font-bold text-[11px] sm:text-[12px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
               style={{ background: RED }}
             >
-              ▶ Listen Live
+              <span aria-hidden>▶</span>
+              <span className="sm:hidden">Listen</span>
+              <span className="hidden sm:inline">Listen Live</span>
             </Link>
             <button
               type="button"
