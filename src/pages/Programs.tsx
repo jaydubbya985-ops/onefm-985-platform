@@ -16,7 +16,6 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   BREAKFAST_SHOW,
   featuredShowsFromGuide,
-  getBreakfastScheduleLabel,
   getCurrentLiveShow,
 } from '@/data/programGuide'
 import { formatGuideHours, formatHostHours } from '@/lib/guideHours'
@@ -143,7 +142,7 @@ const SHOW_ICONS = {
 
 function featuredShowBlurb(show: { name: string; host: string; category: string }): string {
   if (show.name === BREAKFAST_SHOW) {
-    return `Weekday breakfast — ${getBreakfastScheduleLabel()}.`
+    return 'Weekday breakfast from the program guide.'
   }
   if (show.host === 'ONE FM' || show.host === 'Automated') {
     return `${show.category} on the weekly guide.`
