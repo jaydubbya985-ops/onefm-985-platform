@@ -15,7 +15,17 @@ export interface SponsorContact {
   phone: string
 }
 
-export const SPONSOR_DIRECTORY: SponsorContact[] = [
+/**
+ * Breakfast / wall hosts from BREAKFAST_ROSTER. They present on 98.5 —
+ * they are not sponsor companies to invoice.
+ */
+export function isOnAirHostCompany(company: string): boolean {
+  const n = company.trim().toLowerCase()
+  return n === 'craig stott' || n === 'josh revens' || n === 'ralph whitehead'
+}
+
+/** Bundle dump — filtered before export so DEMO invoice create cannot pick a host. */
+const BUNDLE_DIRECTORY: SponsorContact[] = [
   { name: 'Todd Van Kerkhof', company: 'Peppermill Inn', email: 'manager@peppermillinn.com.au', address: '7900 Goulburn Valley Hwy, Shepparton VIC 3630', abn: '', phone: '(03) 5823 1800' },
   { name: 'Daryl Gorman', company: 'Aussie Ag Supplies Pty Ltd', email: 'info@aussieagsupplies.com', address: '75 Gordon Drive, Kialla VIC 3631', abn: '', phone: '0428 235 000' },
   { name: 'Trent Merritt', company: 'Merritt Funeral Services', email: '', address: 'Shepparton VIC 3630', abn: '', phone: '' },
@@ -91,6 +101,10 @@ export const SPONSOR_DIRECTORY: SponsorContact[] = [
   { name: '', company: 'COGS', email: '', address: 'Shepparton VIC 3630', abn: '', phone: '' },
   { name: '', company: 'Donuts A Go Go', email: '', address: 'Shepparton VIC 3630', abn: '', phone: '' },
 ]
+
+export const SPONSOR_DIRECTORY: SponsorContact[] = BUNDLE_DIRECTORY.filter(
+  (s) => !isOnAirHostCompany(s.company),
+)
 
 export type BillingFrequency = 'none' | 'monthly' | 'quarterly' | 'annually'
 
