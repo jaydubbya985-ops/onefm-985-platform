@@ -9,9 +9,40 @@ export interface WeatherCycleResult {
   index: number
 }
 
+/**
+ * Advance the valley weather towns only when the listener asked for motion.
+ * `null` (unknown) and `true` stay on index 0 — the studio town — so
+ * prefers-reduced-motion is not a 7-second slideshow.
+ */
+export function shouldCycleWeather(
+  locationCount: number,
+  reducedMotion: boolean | null,
+): boolean {
+  if (locationCount <= 1) return false
+  return reducedMotion === false
+}
+
 // Cycles through a list of locations, fetching (cached) real weather for
 // whichever one is currently showing. Always starts at index 0.
+function usePrefersReducedMotion(): boolean | null {
+  const [reduced, setReduced] = useState<boolean | null>(() => {
+    if (typeof window === 'undefined') return null
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  })
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const onChange = () => setReduced(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  return reduced
+}
+
 export function useWeatherCycle(locations: WeatherLocation[], intervalMs = 7000): WeatherCycleResult {
+  const reducedMotion = usePrefersReducedMotion()
   const [index, setIndex] = useState(0)
   const [weather, setWeather] = useState<WeatherNow | null>(null)
   const [loading, setLoading] = useState(true)
@@ -25,10 +56,10 @@ export function useWeatherCycle(locations: WeatherLocation[], intervalMs = 7000)
   }
 
   useEffect(() => {
-    if (locations.length <= 1) return
+    if (!shouldCycleWeather(locations.length, reducedMotion)) return
     const id = setInterval(() => setIndex((i) => (i + 1) % locations.length), intervalMs)
     return () => clearInterval(id)
-  }, [locations.length, intervalMs])
+  }, [locations.length, intervalMs, reducedMotion])
 
   useEffect(() => {
     const location = locations[index]
