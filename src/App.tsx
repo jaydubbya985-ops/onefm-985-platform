@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { CookieConsent } from '@/components/CookieConsent'
@@ -26,6 +26,7 @@ const SponsorshipKit = lazy(() => import('./pages/SponsorshipKit'))
 const AudienceAnalytics = lazy(() => import('./pages/AudienceAnalytics'))
 const SalesProposal = lazy(() => import('./pages/SalesProposal'))
 const Heritage = lazy(() => import('./pages/Heritage'))
+const Story = lazy(() => import('./pages/Story'))
 const Community = lazy(() => import('./pages/Community'))
 const BroadcastExplorer = lazy(() => import('./pages/BroadcastExplorer'))
 const SocialHub = lazy(() => import('./pages/SocialHub'))
@@ -265,8 +266,14 @@ export default function App() {
             </LazyRoute>
           }
         />
-        {/* Absorbed into /heritage per REBUILD-SPEC.md */}
-        <Route path="/story" element={<Navigate to="/heritage" replace />} />
+        <Route
+          path="/story"
+          element={
+            <LazyRoute variant="text" routeName="Our Story">
+              <Story />
+            </LazyRoute>
+          }
+        />
         <Route
           path="/support"
           element={
