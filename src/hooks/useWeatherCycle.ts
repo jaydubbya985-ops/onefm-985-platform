@@ -9,20 +9,30 @@ export interface WeatherCycleResult {
   index: number
 }
 
+export function weatherLocationKey(location: WeatherLocation): string {
+  return `${location.name}:${location.lat.toFixed(3)},${location.lng.toFixed(3)}`
+}
+
+/** Never pair town B's name with town A's last reading. */
+export function weatherForLocation(
+  location: WeatherLocation | undefined,
+  readings: Record<string, WeatherNow>,
+): WeatherNow | null {
+  if (!location) return null
+  return readings[weatherLocationKey(location)] ?? null
+}
+
 // Cycles through a list of locations, fetching (cached) real weather for
 // whichever one is currently showing. Always starts at index 0.
 export function useWeatherCycle(locations: WeatherLocation[], intervalMs = 7000): WeatherCycleResult {
   const [index, setIndex] = useState(0)
-  const [weather, setWeather] = useState<WeatherNow | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [readings, setReadings] = useState<Record<string, WeatherNow>>({})
+  const [loadingKey, setLoadingKey] = useState<string | null>(null)
   const requestId = useRef(0)
-  const [prevIndex, setPrevIndex] = useState(index)
 
-  // New location → show loading state (render-phase adjustment)
-  if (prevIndex !== index) {
-    setPrevIndex(index)
-    setLoading(true)
-  }
+  const location = locations[index]
+  const weather = weatherForLocation(location, readings)
+  const loading = Boolean(location && loadingKey === weatherLocationKey(location) && !weather)
 
   useEffect(() => {
     if (locations.length <= 1) return
@@ -31,20 +41,24 @@ export function useWeatherCycle(locations: WeatherLocation[], intervalMs = 7000)
   }, [locations.length, intervalMs])
 
   useEffect(() => {
-    const location = locations[index]
     if (!location) return
+    const key = weatherLocationKey(location)
     const thisRequest = ++requestId.current
+    setLoadingKey(key)
     fetchWeather(location.lat, location.lng)
       .then((data) => {
-        if (requestId.current === thisRequest) setWeather(data)
+        if (requestId.current !== thisRequest) return
+        setReadings((prev) => ({ ...prev, [key]: data }))
       })
       .catch(() => {
-        if (requestId.current === thisRequest) setWeather(null)
+        // Keep a prior reading for this town only. Do not invent a number.
       })
       .finally(() => {
-        if (requestId.current === thisRequest) setLoading(false)
+        if (requestId.current === thisRequest) {
+          setLoadingKey((current) => (current === key ? null : current))
+        }
       })
-  }, [index, locations])
+  }, [index, location])
 
-  return { location: locations[index], weather, loading, index }
+  return { location, weather, loading, index }
 }
