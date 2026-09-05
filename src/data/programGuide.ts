@@ -161,6 +161,42 @@ export const MULTICULTURAL_PROGRAMS = Array.from(
 )
 export const MULTICULTURAL_PROGRAM_COUNT = MULTICULTURAL_PROGRAMS.length
 
+export type FeaturedGuideShow = {
+  name: string
+  host: string
+  category: string
+}
+
+function isWeekdayBreakfastSlot(slot: ScheduleSlot): boolean {
+  return isBreakfastProgram(slot.name) && slot.day >= 1 && slot.day <= 5
+}
+
+/**
+ * Unique named shows for the Programs featured grid.
+ * Source: FULL_SCHEDULE (fm985.com.au/guide/). Overnight Mix is the automated
+ * overnight bed, not a featured show. Weekday breakfast rows collapse to
+ * BREAKFAST_SHOW; Sunday breakfast keeps its own guide name.
+ */
+export function featuredShowsFromGuide(): FeaturedGuideShow[] {
+  const byName = new Map<string, ScheduleSlot[]>()
+  for (const slot of FULL_SCHEDULE) {
+    if (slot.name === 'Overnight Mix') continue
+    const key = isWeekdayBreakfastSlot(slot) ? BREAKFAST_SHOW : slot.name
+    const list = byName.get(key) ?? []
+    list.push(slot)
+    byName.set(key, list)
+  }
+
+  return [...byName.entries()].map(([name, slots]) => {
+    const hosts = [...new Set(slots.map((s) => s.host))]
+    return {
+      name,
+      host: name === BREAKFAST_SHOW ? getBreakfastScheduleLabel() : hosts.join(' · '),
+      category: name === BREAKFAST_SHOW ? 'Breakfast' : slots[0].category,
+    }
+  })
+}
+
 const MELBOURNE_DAY_INDEX: Record<string, number> = {
   Sun: 0,
   Mon: 1,
