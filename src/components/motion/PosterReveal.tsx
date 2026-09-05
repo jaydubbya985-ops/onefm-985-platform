@@ -4,8 +4,8 @@
  * reveals, reduced-motion renders instantly, nothing exceeds ~900ms
  * before content is readable.
  */
-import { motion, useReducedMotion } from 'framer-motion'
-import type { ReactNode } from 'react'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { type ReactNode, type RefObject, useEffect, useRef, useState } from 'react'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
 
@@ -86,24 +86,38 @@ export function LabelReveal({
   className?: string
 }) {
   const reduced = useReducedMotion()
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref as unknown as RefObject<Element>, { once: true, amount: 0 })
+  const [shown, setShown] = useState(!!reduced)
+
+  useEffect(() => {
+    if (reduced || inView) {
+      setShown(true)
+      return
+    }
+    // Same leftover as the count tiles: a negative IO inset can sit forever
+    // at 0. Snap the label on so EXPLORE / ON AIR THIS WEEK cannot vanish.
+    const t = window.setTimeout(() => setShown(true), 800)
+    return () => window.clearTimeout(t)
+  }, [reduced, inView])
+
   return (
     <div
+      ref={ref}
       className={`flex items-center gap-3 font-bold text-[13px] tracking-[0.18em] uppercase ${className}`}
       style={{ color: '#E51636' }}
     >
       <motion.span
         className="inline-block h-px w-6 origin-left"
         style={{ background: '#E51636' }}
-        initial={reduced ? false : { scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.5, ease: EXPO }}
+        initial={false}
+        animate={{ scaleX: shown ? 1 : 0 }}
+        transition={{ duration: reduced ? 0 : 0.5, ease: EXPO }}
       />
       <motion.span
-        initial={reduced ? false : { opacity: 0, x: -10 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.45, delay: 0.15, ease: EXPO }}
+        initial={false}
+        animate={{ opacity: shown ? 1 : 0, x: shown ? 0 : -10 }}
+        transition={{ duration: reduced ? 0 : 0.45, delay: reduced ? 0 : 0.15, ease: EXPO }}
       >
         {children}
       </motion.span>
