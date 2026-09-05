@@ -3,30 +3,40 @@ import { MediaImage } from '@/components/MediaImage'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 import { FACEBOOK_PAGE_URL } from '@/lib/socialLinks'
 import { formatGuideHours } from '@/lib/guideHours'
+import { formatCoverageShort } from '@/lib/coverageCopy'
+import { BRAND } from '@/lib/brand'
 import { SocialPlatformFrame } from '@/components/social/SocialPlatformFrame'
 import { cn } from '@/lib/utils'
 
 const FACEBOOK_ACCENT = '#1877F2'
+const COVERAGE = formatCoverageShort()
 
 const GVL_GAME_DAY_CAPTION = `GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'}`
+
+function highlightAlt(brief: string): string {
+  return `${brief} — ${BRAND.fullName} · ${COVERAGE}`
+}
 
 const HIGHLIGHTS = [
   {
     image: STATION_PHOTOS.gvlNightPanorama,
     label: 'GVL game day',
     caption: GVL_GAME_DAY_CAPTION,
+    alt: highlightAlt('GVL night football'),
     icon: Radio,
   },
   {
     image: STATION_PHOTOS.communityOutdoorMarket,
     label: 'Community events',
-    caption: 'Festivals, markets, and Valley happenings.',
+    caption: `Festivals, markets, and Valley happenings · ${COVERAGE}`,
+    alt: highlightAlt('Community book stall'),
     icon: Calendar,
   },
   {
     image: STATION_PHOTOS.studioPresenterMic,
     label: 'Behind the mic',
     caption: 'Studio moments and multicultural programming.',
+    alt: highlightAlt('Studio microphone'),
     icon: Users,
   },
 ] as const
@@ -65,7 +75,7 @@ export function FacebookPanel({ compact, className }: FacebookPanelProps) {
               <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-one-border/50">
                 <MediaImage
                   src={item.image}
-                  alt=""
+                  alt={item.alt}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-one-navy/20 group-hover:bg-one-navy/10 transition-colors" />
