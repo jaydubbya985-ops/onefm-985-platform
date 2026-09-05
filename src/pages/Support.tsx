@@ -239,7 +239,7 @@ export default function Support() {
             >
               <h3 className="font-poster uppercase text-[22px] text-white">Volunteer</h3>
               <p className="text-[15px] text-white/55 mt-2">
-                Go behind the mic, join an OB crew, or help in the studio — membership required.
+                Go behind the mic, join an OB, or help in the studio — ask via Contact. This page does not sell memberships.
               </p>
               <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>
                 Get involved →
