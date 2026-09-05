@@ -489,6 +489,22 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const batch = files.find((f) => f.label === 'components/ops/InvoiceBatchSender.tsx')
+if (
+  !batch ||
+  /Live Mode/.test(batch.text) ||
+  /Switch to Live/.test(batch.text) ||
+  /via Resend with PDF attachments/.test(batch.text) ||
+  /Invoice Batch — June 2026/.test(batch.text)
+) {
+  hits.push(
+    'components/ops/InvoiceBatchSender.tsx: must name sponsor addresses — not leftover Live Mode',
+  )
+}
+if (!batch?.text.includes('Sponsor addresses')) {
+  hits.push('components/ops/InvoiceBatchSender.tsx: must name sponsor addresses')
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
