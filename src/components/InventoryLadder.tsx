@@ -8,7 +8,7 @@ const ROWS: { label: string; rate: string; note: string; premium?: boolean }[] =
   {
     label: 'Standard 30-second spot',
     rate: STANDARD_SPOT_PLUS_GST,
-    note: 'Valley-wide inventory. High availability. This is the floor — not GVL, breakfast, or live reads.',
+    note: 'Standard 30-second floor. Not GVL, breakfast, or live reads. Availability is quoted.',
   },
   {
     label: 'Premium 60-second spot',

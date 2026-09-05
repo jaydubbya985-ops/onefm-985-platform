@@ -480,6 +480,17 @@ if (
   hits.push('App.tsx: /social must mount SocialHub, not redirect to /community')
 }
 
+const inventoryLadder = files.find((f) => f.label === 'components/InventoryLadder.tsx')
+if (
+  !inventoryLadder ||
+  /High availability/.test(inventoryLadder.text) ||
+  !inventoryLadder.text.includes('Availability is quoted')
+) {
+  hits.push(
+    'components/InventoryLadder.tsx: leftover High availability invents sell-out status — name quoted availability',
+  )
+}
+
 if (hits.length) {
   console.error('verify-truth failed:\n' + hits.map((h) => `  ${h}`).join('\n'))
   process.exit(1)
