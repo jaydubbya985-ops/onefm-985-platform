@@ -235,6 +235,10 @@ interface SponsorFormState {
   endDate: string
 }
 
+/** Role labels only — never invent a staff name or a station-manager title. */
+const CRM_NOTE_AUTHOR = 'Ops'
+const CRM_NOTE_AUTHORS = ['Ops', 'Accounts', 'Admin'] as const
+
 const EMPTY_SPONSOR_FORM: SponsorFormState = {
   companyName: '',
   contactName: '',
@@ -339,7 +343,7 @@ export default function SponsorCRM() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
   const [form, setForm] = useState<SponsorFormState>(EMPTY_SPONSOR_FORM)
   const [newNote, setNewNote] = useState<{ content: string; type: SponsorNoteType; author: string }>(
-    { content: '', type: 'note', author: 'Sarah J.' },
+    { content: '', type: 'note', author: CRM_NOTE_AUTHOR },
   )
 
   // Merge persisted CRM sponsors with companies derived from ops-store
@@ -453,7 +457,7 @@ export default function SponsorCRM() {
             {
               id: `n${Date.now()}`,
               date: new Date().toISOString().split('T')[0],
-              author: 'Station Mgr',
+              author: CRM_NOTE_AUTHOR,
               content: form.notes.trim(),
               type: 'note',
             },
@@ -484,7 +488,7 @@ export default function SponsorCRM() {
             {
               id: `n${Date.now()}`,
               date: new Date().toISOString().split('T')[0],
-              author: 'Station Mgr',
+              author: CRM_NOTE_AUTHOR,
               content: form.notes.trim(),
               type: 'note',
             },
@@ -542,7 +546,7 @@ export default function SponsorCRM() {
       type: newNote.type,
     }
     upsertSponsor(selected.id, { notes: [note, ...selected.notes] })
-    setNewNote({ content: '', type: 'note', author: 'Sarah J.' })
+    setNewNote({ content: '', type: 'note', author: CRM_NOTE_AUTHOR })
   }
 
   const changeStatus = (id: string, status: SponsorPipelineStatus) => {
@@ -1559,15 +1563,11 @@ export default function SponsorCRM() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-[#0E1E38] border-[#2A2A2A]/50">
-                            <SelectItem value="Sarah J." className="text-white text-xs">
-                              Sarah J.
-                            </SelectItem>
-                            <SelectItem value="Mike R." className="text-white text-xs">
-                              Mike R.
-                            </SelectItem>
-                            <SelectItem value="Alex T." className="text-white text-xs">
-                              Alex T.
-                            </SelectItem>
+                            {CRM_NOTE_AUTHORS.map((author) => (
+                              <SelectItem key={author} value={author} className="text-white text-xs">
+                                {author}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
