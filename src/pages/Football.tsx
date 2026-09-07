@@ -1069,7 +1069,7 @@ export default function Football() {
                 </div>
                 <h3 className="font-h3 text-one-white mb-2">Enquiry received</h3>
                 <p className="font-body-small text-one-white">
-                  Thanks {formData.contactName || 'there'}! Our sponsorship team will be in touch.
+                  Thanks {formData.contactName || 'there'}. We'll be in touch — call {BRAND.phone} or email {BRAND.email} if you need us now.
                 </p>
               </motion.div>
             )}
