@@ -30,7 +30,7 @@ interface PageLoaderProps {
 }
 
 /**
- * Frequency flash — not leftover ON AIR (overnight is automated; this is a splash).
+ * Frequency flash — not leftover live-now on a splash that is not the stream.
  * Content must be visible in under a second (Awwwards usability + honesty:
  * the old 2s gold sequence was the single biggest dead-time on the site).
  */
