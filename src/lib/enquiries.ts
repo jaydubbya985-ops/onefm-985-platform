@@ -2,10 +2,18 @@
  * Shared enquiry submission — used by Contact, Football, SponsorshipKit, etc.
  * Inserts into Supabase contact_enquiries and sends email notifications.
  */
-import { BRAND } from '@/lib/brand'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { sendEnquiryNotification } from '@/lib/email'
 import type { EnquirySource } from '@/components/ops/data/enquiries'
+import {
+  enquiryFallbackContact,
+  enquirySubmitOutcome,
+  type EnquirySubmitResult,
+} from '@/lib/enquirySubmitOutcome'
+
+export type { EnquirySubmitResult }
+export { enquiryFallbackContact }
+export type SubmitEnquiryResult = EnquirySubmitResult
 
 export interface SubmitEnquiryInput {
   name: string
@@ -19,21 +27,6 @@ export interface SubmitEnquiryInput {
   priority?: 'low' | 'medium' | 'high' | 'urgent'
   preferredContact?: string
 }
-
-export interface SubmitEnquiryResult {
-  success: boolean
-  id?: string
-  stored?: boolean
-  emailed?: boolean
-  error?: string
-}
-
-/** Public fallback when store/send fails — same station contact as the Contact page. */
-export function enquiryFallbackContact(): string {
-  return `Call ${BRAND.phone} or email ${BRAND.email}.`
-}
-
-const NOT_SENT = `Nothing was stored or emailed. ${enquiryFallbackContact()}`
 
 export async function submitEnquiry(
   input: SubmitEnquiryInput,
@@ -82,16 +75,11 @@ export async function submitEnquiry(
     preferredContact: input.preferredContact ?? 'email',
   })
 
-  if (stored || email.success) {
-    return { success: true, id: insertedId, stored, emailed: !!email.success }
-  }
-
-  return {
-    success: false,
-    stored: false,
-    emailed: false,
-    error: email.devMode
-      ? `Nothing was sent — email is not configured. ${enquiryFallbackContact()}`
-      : email.error || NOT_SENT,
-  }
+  return enquirySubmitOutcome({
+    stored,
+    insertedId,
+    emailed: !!email.success,
+    emailDevMode: email.devMode,
+    emailError: email.error,
+  })
 }
