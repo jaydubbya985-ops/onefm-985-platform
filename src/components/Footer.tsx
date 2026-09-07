@@ -7,6 +7,7 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { BRAND } from '@/lib/brand'
 import { FOOTER_LISTEN, FOOTER_SPONSOR, FOOTER_ABOUT, FOOTER_SUPPORT, FOOTER_RESOURCES } from '@/lib/siteNav'
 import { formatCoverageShort, formatWeeklyListeners } from '@/lib/coverageCopy'
+import { formatBreakfastChromeLabel } from '@/data/programGuide'
 import { formatGuideHours } from '@/lib/guideHours'
 import { MagneticButton } from '@/components/MagneticButton'
 import { WordReveal } from '@/components/WordReveal'
@@ -230,6 +231,9 @@ export function Footer() {
             <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-muted">
               {formatCoverageShort()} · {formatWeeklyListeners()}
               <span className="text-one-muted/60"> · ABS 2021 via townData</span>
+            </p>
+            <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-muted">
+              Weekday breakfast · {formatBreakfastChromeLabel()}
             </p>
             <p className="font-label text-[10px] tracking-[0.18em] uppercase text-one-muted">
               GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
