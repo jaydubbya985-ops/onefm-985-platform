@@ -195,8 +195,7 @@ function EnquiryForm({
           Request received<span style={{ color: RED }}>.</span>
         </div>
         <p className="text-white/55 mt-2 text-[15px]">
-          This page stored the request or opened a draft. It did not send a
-          tailored proposal. — {BRAND.fullName}
+          This page stored the request or opened a draft. It did not send a tailored proposal. — {BRAND.fullName}
         </p>
       </div>
     )
