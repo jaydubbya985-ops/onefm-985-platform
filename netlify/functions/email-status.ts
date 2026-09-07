@@ -1,10 +1,14 @@
 import type { Handler, HandlerEvent } from '@netlify/functions'
+import { emailStatusDryRunFields } from '../../src/lib/emailStatusDryRun'
 import { INVOICE_FROM, probeResend } from '../lib/resendProbe'
 
 /**
  * Read-only status for the invoice email pipeline.
  * Reports whether RESEND_API_KEY is set and whether Resend accepts it,
  * without exposing the key, sending mail, or restarting domain verification.
+ *
+ * dryRunSupported follows the key — send-invoice 500s before dry-run when
+ * RESEND_API_KEY is missing. dryRunSends is always false.
  */
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod !== 'GET') {
@@ -29,7 +33,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
       })),
       needJay: probe.needJay,
       from: INVOICE_FROM,
-      dryRunSupported: true,
+      ...emailStatusDryRunFields(probe.configured),
     }),
   }
 }
