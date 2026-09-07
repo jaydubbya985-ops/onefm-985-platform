@@ -5,6 +5,7 @@
 import { BrandLogo } from '@/components/BrandLogo'
 import { BANK_ACCOUNT, BANK_ACCOUNT_NAME, BANK_BSB } from '@/lib/bankDetails'
 import { formatCoverageShort } from '@/lib/coverageCopy'
+import { invoicePayReference } from '@/lib/invoicePayLine'
 import { DS } from '@/lib/invoiceDesignSystem'
 
 export interface OpsInvoiceSheetLine {
@@ -132,7 +133,7 @@ export function OpsInvoiceSheet({ invoice }: { invoice: OpsInvoiceSheetData }) {
             BSB {BANK_BSB} · Acc {BANK_ACCOUNT} · {BANK_ACCOUNT_NAME}
           </p>
           <p className="mt-1 text-xs text-[#6B6B6B]">
-            Reference {invoice.number} · payment due within 14 days
+            {invoicePayReference(invoice.number, invoice.dueDate)}
           </p>
         </div>
 
