@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { BrandLogo } from '@/components/BrandLogo'
 import { STATION_PHOTOS } from '@/lib/stationPhotos'
 
@@ -30,11 +30,12 @@ interface PageLoaderProps {
 }
 
 /**
- * ON AIR sign-on — a fast red flash of the frequency, not a cinematic hold.
+ * Frequency flash — not leftover live-now on a splash that is not the stream.
  * Content must be visible in under a second (Awwwards usability + honesty:
  * the old 2s gold sequence was the single biggest dead-time on the site).
  */
 export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
+  const reduced = useReducedMotion()
   const isFirstVisit =
     typeof window !== 'undefined' && !sessionStorage.getItem(FIRST_VISIT_KEY)
 
@@ -46,11 +47,11 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem(FIRST_VISIT_KEY, '1')
     }
-    const holdMs = isFirstVisit ? 700 : 120
+    const holdMs = reduced ? 80 : isFirstVisit ? 700 : 120
     const t1 = setTimeout(() => setExiting(true), holdMs)
     const t2 = setTimeout(() => setHidden(true), holdMs + 400)
     return () => { clearTimeout(t1); clearTimeout(t2) }
-  }, [isReady]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isReady, reduced])
 
   if (hidden) return null
 
@@ -99,7 +100,7 @@ export function InitialPageLoader({ isReady = true }: PageLoaderProps) {
             >
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
               <span className="font-label text-[11px] tracking-[0.35em] text-white/60 uppercase">
-                ONE FM · SHEPPARTON · ON AIR
+                ONE FM · SHEPPARTON · 98.5
               </span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
             </motion.div>
