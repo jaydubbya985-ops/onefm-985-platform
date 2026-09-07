@@ -144,7 +144,7 @@ function ListenHero() {
 function WaysToListen() {
   const ways = [
     { icon: Radio, title: '98.5 FM', body: `On the dial across Shepparton and ${formatTowns()} of the Goulburn Valley — ${formatCoverageShort()} from Mt Major.` },
-    { icon: Wifi, title: 'Stream anywhere', body: 'The live stream follows you — this site, any browser, anywhere in the world. Press play above.' },
+    { icon: Wifi, title: 'Live stream', body: `Same Radio.co stream as fm985.com.au — press play above. Licensed coverage is ${formatCoverageShort()} from Shepparton, not a worldwide or national stream total.` },
     { icon: Phone, title: 'Studio line', body: 'Requests, shout-outs, community notices: (03) 5831 3131 — the studio answers when we’re live.' },
   ]
   return (
