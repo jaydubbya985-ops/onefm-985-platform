@@ -5,8 +5,8 @@ import { FACEBOOK_PAGE_URL, SOUNDCLOUD_PROFILE_URL } from '@/lib/socialLinks'
 const RED = '#E51636'
 
 /**
- * Public crash chrome. Do not stamp coverage. Do not print error.message
- * (that can leak internals). Console already has the stack.
+ * Public crash chrome. Do not stamp coverage. Do not print the thrown
+ * message on screen (that can leak internals). Console already has the stack.
  */
 export function CrashFallback({
   photoSrc,
