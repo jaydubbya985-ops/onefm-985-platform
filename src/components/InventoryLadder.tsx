@@ -1,5 +1,6 @@
 import { STANDARD_SPOT_PLUS_GST, PARTNERSHIP_FROM_WEEKLY, GVL_PREMIUM_INTRO } from '@/lib/inventoryCopy'
 import { rateCard } from '@/data/pricing'
+import { formatCoverageShort } from '@/lib/coverageCopy'
 import { formatGuideHours } from '@/lib/guideHours'
 
 const GVL_GUIDE_HOURS = formatGuideHours('GVL Match of the Day')
@@ -25,7 +26,7 @@ const ROWS: { label: string; rate: string; note: string; premium?: boolean }[] =
   {
     label: 'Weekly partnership',
     rate: PARTNERSHIP_FROM_WEEKLY,
-    note: 'Spots plus digital mentions. Starts at Community Partner, not the $25 name-read.',
+    note: 'Spots plus Facebook mentions (facebook.com/onefmshepparton). Starts at Community Partner, not the $25 name-read.',
   },
   {
     label: 'GVL match-day / live call',
@@ -60,6 +61,9 @@ export function InventoryLadder({ className = '' }: { className?: string }) {
           </li>
         ))}
       </ul>
+      <p className="font-label text-[9px] tracking-[0.14em] uppercase text-one-muted/80 mt-3">
+        {formatCoverageShort()} · ABS 2021 via townData
+      </p>
     </div>
   )
 }
