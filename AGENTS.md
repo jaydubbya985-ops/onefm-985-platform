@@ -9,6 +9,15 @@ Government community broadcaster (Goulburn Valley Community Radio Inc.). **Never
 - **Netlify site ID:** `8df4de74-d9a8-42ce-9316-61bd06475c94`
 - **Stack:** Vite + React + TypeScript, Tailwind, Supabase (ops), Netlify
 
+## Operating model — 9 Sep 2026 (replaces Cursor Cloud workflow)
+
+- **Canonical working copy:** `C:\Users\jaydu\Documents\kimi\workspace\onefm-985-platform` (Kimi Work workspace). Old `Documents\onefm-985-platform` is archived as `onefm-985-platform-ARCHIVE-july-state` — do not edit it.
+- **Agents:** Kimi (controller, works from any device) + Claude Code CLI (overflow) only. Cursor retired — continuous runs are OFF. No agent loops without Jay's explicit say-so.
+- **Branch discipline:** never commit directly to `main`. One branch per task (`kimi/<topic>`, `claude/<topic>`), `git pull origin main` first, `npm run build` green before merge. Kimi merges after Jay says **EXE**.
+- **Push to `main` auto-deploys** the live site — keep main shippable at all times.
+- **PR cleanup:** the #170–#200 stamp band and stale #1 #3 #4 #8 #10 #11 get CLOSED, not merged. Never merge #13.
+- **NEED JAY:** when blocked on a dashboard, secret, or approval — one line, specific action.
+
 ## Commands
 
 ```bash
