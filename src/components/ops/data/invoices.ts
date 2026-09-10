@@ -2,9 +2,19 @@
 // ONE FM invoice data — extracted from the deployed OpsPortal bundle
 // (deployed-reference/assets/OpsPortal-dIeH6Okr.js).
 //
-// REAL (may exist in LIVE ops): ONEFM-2026-011 FOOTT, ONEFM-2026-012 Jason's TV.
-// DEMO DATA: remaining BATCH_INVOICES rows and the billing ledger. Do not upsert
-// those into Supabase.
+// GROUND TRUTH (Jay, 10 Sept 2026): BATCH_INVOICES — the whole June 2026 batch
+// of 19 — was the real receivables list at the time it was drafted, not demo
+// data. It contains real Goulburn Valley businesses, contacts and amounts.
+// Current send/payment status per invoice is unconfirmed (batch is from June);
+// reconcile with Jay before treating any row as outstanding.
+//
+// REAL_INVOICE_NUMBERS still gates live Supabase seeding to FOOTT + Jason's TV
+// only. Expanding it to the full batch is a deliberate Phase 2 step, taken
+// with Jay after per-invoice status is confirmed — not before.
+//
+// STILL FICTIONAL: BILLING_INVOICES (the INV-2026-xxx ledger), PAYMENT_RECORDS,
+// and their derived stats. These contradict the real batch (same businesses,
+// different numbers/amounts) and are slated for replacement in Phase 2.
 // ---------------------------------------------------------------------------
 
 /**
