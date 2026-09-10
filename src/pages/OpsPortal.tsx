@@ -191,9 +191,10 @@ function OpsPortalContent() {
               <div className="mt-4 rounded-lg border border-one-gold/30 bg-one-gold/8 px-4 py-3 max-w-2xl flex items-start gap-3">
                 <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold text-xs font-bold">D</span>
                 <div>
-                  <p className="text-sm text-one-gold font-semibold">DEMO MODE — all data is local &amp; unsaved</p>
+                  <p className="text-sm text-one-gold font-semibold">LOCAL MODE — data is on this device only &amp; unsaved</p>
                   <p className="text-xs text-one-muted mt-0.5">
-                    Invoices, proposals and contacts shown here are sample data. To enable live storage add{' '}
+                    The invoice book is the real June 2026 batch (19 drafts, none sent yet). Enquiries,
+                    contracts and CRM entries are still sample data. To enable live storage add{' '}
                     <code className="text-one-white/70">VITE_SUPABASE_URL</code> +{' '}
                     <code className="text-one-white/70">VITE_SUPABASE_ANON_KEY</code> in Netlify → Site settings → Environment variables.
                   </p>

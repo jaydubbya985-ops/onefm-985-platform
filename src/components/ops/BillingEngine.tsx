@@ -146,10 +146,13 @@ function daysOverdue(dueDate: string): number {
 }
 
 function formatCurrency(value: number): string {
+  // Whole-dollar amounts stay clean ($5,500); cent amounts keep both digits
+  // ($64,187.80, never $64,187.8).
+  const hasCents = !Number.isInteger(value)
   return new Intl.NumberFormat('en-AU', {
     style: 'currency',
     currency: 'AUD',
-    minimumFractionDigits: 0,
+    minimumFractionDigits: hasCents ? 2 : 0,
   }).format(value)
 }
 
@@ -322,6 +325,8 @@ export default function BillingEngine() {
     const ytdRevenue = paidish.reduce((sum, i) => sum + (i.paidAmount ?? 0), 0)
     const issued = invoices.filter((i) => displayStatus(i) !== 'draft')
     const totalIssued = issued.reduce((sum, i) => sum + i.total, 0)
+    const drafts = invoices.filter((i) => displayStatus(i) === 'draft')
+    const draftTotal = drafts.reduce((sum, i) => sum + i.total, 0)
     const totalPaid = ytdRevenue
     const collectionRate =
       totalIssued > 0 ? Math.round((totalPaid / totalIssued) * 100) : 0
@@ -351,6 +356,8 @@ export default function BillingEngine() {
       totalIssued,
       totalPaid,
       outstandingCount: outstanding.length,
+      draftTotal,
+      draftCount: drafts.length,
     }
   }, [invoices, currentMonthKey])
 
@@ -728,11 +735,11 @@ export default function BillingEngine() {
                 sub: `${formatCurrency(stats.totalPaid)} / ${formatCurrency(stats.totalIssued)}`,
               },
               {
-                label: 'Avg Days to Pay',
-                value: `${stats.avgDaysToPay}`,
+                label: 'Drafted — Never Sent',
+                value: formatCurrency(stats.draftTotal),
                 icon: Timer,
-                color: 'text-cyan-400',
-                sub: 'Average',
+                color: 'text-one-gold',
+                sub: `${stats.draftCount} invoices waiting to go out`,
               },
             ].map((kpi, idx) => (
               <motion.div key={idx} variants={fadeUp}>

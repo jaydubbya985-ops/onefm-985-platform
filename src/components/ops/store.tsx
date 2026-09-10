@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { MOCK_ENQUIRIES, type Enquiry, type EnquirySource } from './data/enquiries'
-import { BATCH_INVOICES, BILLING_INVOICES, realBatchInvoices } from './data/invoices'
+import { BATCH_INVOICES, realBatchInvoices } from './data/invoices'
 import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
 import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
 import type { DbContactEnquiry } from '@/lib/supabase'
@@ -222,33 +222,17 @@ function buildSeedState(): OpsState {
     updatedAt: e.updatedAt,
   }))
 
-  const billingInvoices: OpsInvoice[] = BILLING_INVOICES.map((b) => ({
-    id: b.id,
-    number: b.number,
-    company: b.company,
-    contactName: b.contactName,
-    email: '',
-    amount: b.amount,
-    gst: b.gst,
-    total: b.total,
-    description: 'Sponsorship',
-    period: '',
-    issueDate: b.issueDate,
-    dueDate: b.dueDate,
-    status: b.status,
-    inBatch: false,
-    paidDate: b.paidDate,
-    paidAmount: b.paidAmount,
-    paymentMethod: b.paymentMethod,
-  }))
-
+  // The fictional BILLING_INVOICES ledger is deliberately NOT seeded any more.
+  // The invoice book is the real June 2026 batch only (Jay, 10 Sept 2026):
+  // 19 drafted invoices, none ever sent. Billing/aging stats derive from it
+  // honestly — $0 outstanding because nothing has been issued yet.
   const batchInvoices: OpsInvoice[] = BATCH_INVOICES.map(fromBatchInvoice)
 
   return {
     enquiries: MOCK_ENQUIRIES,
     proposals,
     contracts: MOCK_CONTRACTS,
-    invoices: [...billingInvoices, ...batchInvoices],
+    invoices: batchInvoices,
   }
 }
 
