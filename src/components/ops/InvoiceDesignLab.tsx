@@ -144,11 +144,13 @@ export default function InvoiceDesignLab() {
             const selected = preview === v.id
             const isStationChoice = v.id === STATION_INVOICE_DESIGN_CHOICE
             return (
-              <button
+              // div, not button: the card contains its own <Button>s, and nested
+              // buttons are invalid HTML (hydration errors). Keyboard access is
+              // provided by the inner Preview button.
+              <div
                 key={v.id}
-                type="button"
                 onClick={() => selectPreview(v.id)}
-                className={`text-left rounded-xl border-2 p-5 transition-all ${
+                className={`text-left rounded-xl border-2 p-5 transition-all cursor-pointer ${
                   selected
                     ? 'border-[#E51636] bg-[#1A1A1A] shadow-lg shadow-[#E51636]/10'
                     : 'border-[#2A2A2A] bg-[#141414] hover:border-[#444]'
@@ -211,7 +213,7 @@ export default function InvoiceDesignLab() {
                     <Download className="w-3 h-3 mr-1" /> PDF
                   </Button>
                 </div>
-              </button>
+              </div>
             )
           })}
         </div>

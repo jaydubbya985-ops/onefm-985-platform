@@ -2700,7 +2700,7 @@ export default function PaymentsModule() {
           </TabsTrigger>
         </TabsList>
         <AnimatePresence mode="wait">
-          <TabsContent value="payments" className="mt-6">
+          <TabsContent key="payments" value="payments" className="mt-6">
             <motion.div
               key="payments"
               initial={{ opacity: 0, y: 10 }}
@@ -2711,7 +2711,7 @@ export default function PaymentsModule() {
               <PaymentsTab />
             </motion.div>
           </TabsContent>
-          <TabsContent value="donations" className="mt-6">
+          <TabsContent key="donations" value="donations" className="mt-6">
             <motion.div
               key="donations"
               initial={{ opacity: 0, y: 10 }}
@@ -2722,7 +2722,7 @@ export default function PaymentsModule() {
               <DonationsTab />
             </motion.div>
           </TabsContent>
-          <TabsContent value="memberships" className="mt-6">
+          <TabsContent key="memberships" value="memberships" className="mt-6">
             <motion.div
               key="memberships"
               initial={{ opacity: 0, y: 10 }}

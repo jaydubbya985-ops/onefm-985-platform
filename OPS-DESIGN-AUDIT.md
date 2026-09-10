@@ -10,29 +10,38 @@ from world-class. Ranked hit-list below — work top to bottom.
 
 ## P0 — Broken (fix before any styling work)
 
-### 1. Scroll rendering breakage on the ops route
-At deeper scroll positions the page tears: black voids, the nav bar floating
-mid-viewport, content crushed to the bottom edge. Cause: Lenis smooth-scroll +
-GSAP ScrollTrigger are wired globally in `src/App.tsx:141` and apply to the ops
-portal; when switching ops tabs changes the page height, ScrollTrigger's cached
-measurements go stale. Fix: exclude the ops route from Lenis/ScrollTrigger
-entirely (an ops tool should use native scroll), or at minimum call
-`ScrollTrigger.refresh()` on every tab change. Recommendation: **exclude** —
-smooth-scroll inertia on a dense data tool feels laggy, not premium.
+> **Status 10 Sept 2026 (Phase 1 done): all four items resolved or re-diagnosed.
+> Corrections below — two of the original claims were wrong.**
 
-### 2. Nested `<button>` inside `<button>` — invalid HTML + hydration errors
-`src/components/ops/InvoiceDesignLab.tsx:147` renders a card as a `<button>`
-containing shadcn `<Button>` children at line 189. React logs hydration errors;
-click targets are ambiguous. Make the outer element a `<div>` with an onClick
-or restructure so buttons are siblings.
+### 1. ~~Scroll rendering breakage~~ → CORRECTED: capture artifact, not a site bug
+The "black voids / displaced nav" seen at deep scroll positions turned out to be
+an artifact of the in-app browser pane's screenshot pipeline — reproduced
+identically on the public Heritage page. The site scrolls fine. **Jay: worth a
+10-second sanity scroll of `#/ops` in your own Chrome to double-confirm.**
+Change kept anyway (deliberate, not a bug fix): the ops route now uses native
+scroll — Lenis/ScrollTrigger, the custom cursor, and the consent banner are all
+disabled on `#/ops` (`src/App.tsx`, `isOps` gate). A work tool wants instant
+native scroll, no cursor theatrics, no consent overlay.
 
-### 3. Duplicate React keys (2 warnings in console)
-Two "Encountered two children with the same key" errors on the ops route.
-Rows can be duplicated/omitted silently. Find and fix both.
+### 2. Nested `<button>` inside `<button>` — FIXED
+`InvoiceDesignLab.tsx` option cards are now `<div onClick>` wrappers; the inner
+Preview/PDF `<Button>`s provide the real controls and keyboard access.
+Hydration errors gone; card click verified working.
 
-### 4. Four 404s on page load
-Four resources fail to load (images). Check DevTools network tab on `#/ops`,
-fix or remove the references.
+### 3. Duplicate React keys — FIXED (two real causes found)
+- `PaymentsModule.tsx`: `AnimatePresence` had three keyless `TabsContent`
+  children (keys were one level down on the motion.divs). Keys added.
+- Site-wide nav/footer: `siteNav.ts` has both "Listen Live" and "Program Guide"
+  pointing at `/listen`, and Navbar/Footer keyed items by path. Keys now
+  `path-label`. (Content question for later: should Program Guide link to
+  `/programs` instead? `FOOTER_RESOURCES` already does.)
+Verified: 0 duplicate-key warnings on a clean load.
+
+### 4. ~~Four 404s~~ → CORRECTED: expected local-dev behaviour, no fix needed
+The 404s are `/.netlify/functions/email-status` probes — that function only
+exists on Netlify, not under `npm run dev`. `useEmailServiceStatus` already
+handles it honestly ('unknown' → PDF+mailto fallback messaging). Not a bug;
+ignore the console noise locally.
 
 ---
 

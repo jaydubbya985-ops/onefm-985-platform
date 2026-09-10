@@ -129,6 +129,10 @@ function LazyRoute({
 export default function App() {
   const [ready, setReady] = useState(false)
   const location = useLocation()
+  // The ops portal is a work tool: native scroll (no Lenis/ScrollTrigger — its
+  // tab switches change page height and tear the smooth-scroll rendering),
+  // no custom cursor, no consent banner.
+  const isOps = location.pathname.startsWith('/ops')
 
   useEffect(() => {
     // Dismiss splash as soon as the app has painted — no artificial delay
@@ -137,8 +141,10 @@ export default function App() {
   }, [])
 
 
-  // Lenis smooth scroll — wired once at root, RAF-synced with GSAP ticker
+  // Lenis smooth scroll — wired at root for the public site, RAF-synced with
+  // the GSAP ticker; torn down while on the ops route
   useEffect(() => {
+    if (isOps) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const lenis = new Lenis({ duration: 1.1 })
@@ -154,12 +160,12 @@ export default function App() {
       lenis.destroy()
       registerLenis(null)
     }
-  }, [])
+  }, [isOps])
 
   return (
     <>
       <TimeOfDayTheme />
-      <CustomCursor />
+      {!isOps && <CustomCursor />}
       <RouteProgressBar />
       <ScrollProgress />
       <InitialPageLoader isReady={ready} />
@@ -339,7 +345,7 @@ export default function App() {
       </motion.div>
       </AnimatePresence>
       <ScanlineTransition />
-      <CookieConsent />
+      {!isOps && <CookieConsent />}
       <Toaster richColors position="top-center" />
     </>
   )
