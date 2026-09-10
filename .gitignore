@@ -16,3 +16,5 @@ scripts/google-drive.config.json
 
 # Local Netlify drag-drop zip (built by scripts/pack-drop-zip.mjs)
 /onefmops-production-drop.zip
+
+invoices-out/

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { MOCK_ENQUIRIES, type Enquiry, type EnquirySource } from './data/enquiries'
-import { BATCH_INVOICES, realBatchInvoices } from './data/invoices'
+import { BATCH_INVOICES, CURRENT_INVOICES, realBatchInvoices } from './data/invoices'
 import { MOCK_CONTRACTS, type Contract } from './data/sponsors'
 import { isSupabaseConfigured, supabase, dbRowToEnquiry } from '@/lib/supabase'
 import type { DbContactEnquiry } from '@/lib/supabase'
@@ -226,7 +226,9 @@ function buildSeedState(): OpsState {
   // The invoice book is the real June 2026 batch only (Jay, 10 Sept 2026):
   // 19 drafted invoices, none ever sent. Billing/aging stats derive from it
   // honestly — $0 outstanding because nothing has been issued yet.
-  const batchInvoices: OpsInvoice[] = BATCH_INVOICES.map(fromBatchInvoice)
+  const batchInvoices: OpsInvoice[] = [...CURRENT_INVOICES, ...BATCH_INVOICES].map(
+    fromBatchInvoice,
+  )
 
   return {
     enquiries: MOCK_ENQUIRIES,
@@ -691,7 +693,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
             input.number ??
             nextSequential(
               state.invoices.map((i) => i.number),
-              'INV-2026-',
+              'ONEFM-2026-',
             ),
           status: input.status ?? 'draft',
           inBatch: input.inBatch ?? false,

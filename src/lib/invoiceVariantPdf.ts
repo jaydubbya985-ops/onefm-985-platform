@@ -181,8 +181,11 @@ function drawSharedBody(p: PdfPen, invoice: PdfInvoiceData, y: number, variant: 
   doc.line(M, y, W - M, y)
   y += 8
 
-  const descLines = doc.splitTextToSize(invoice.description, CW - 50) as string[]
+  // Font must be set BEFORE measuring: splitTextToSize wraps against the
+  // active font, and the first line shares its row with the right-aligned
+  // amount — reserve that column's width or long descriptions collide with it.
   norm(11)
+  const descLines = doc.splitTextToSize(invoice.description, CW - 36) as string[]
   p.inkDark()
   descLines.forEach((line, i) => {
     tl(line, M, y)
@@ -213,7 +216,13 @@ function drawSharedBody(p: PdfPen, invoice: PdfInvoiceData, y: number, variant: 
   return y
 }
 
-function drawBankBlock(p: PdfPen, y: number, invoiceNumber: string, variant: InvoiceDesignVariantId): number {
+function drawBankBlock(
+  p: PdfPen,
+  y: number,
+  invoiceNumber: string,
+  variant: InvoiceDesignVariantId,
+  termsDays?: number,
+): number {
   const { M, CW, fillLight, fillRed, inkNab, inkNavy, inkDim, bold, norm, tl, box, kicker } = p
 
   if (variant === 'on-air') {
@@ -271,7 +280,11 @@ function drawBankBlock(p: PdfPen, y: number, invoiceNumber: string, variant: Inv
   tl(BANK_ACCOUNT_NAME, M + 118, y + 22)
   norm(8)
   inkDim()
-  tl(`Reference  ${invoiceNumber}  ·  payment due within 14 days`, M + 6, y + 30)
+  tl(
+    `Reference  ${invoiceNumber}${termsDays ? `  ·  payment due within ${termsDays} days` : ''}`,
+    M + 6,
+    y + 30,
+  )
   return y + 42
 }
 
@@ -300,7 +313,10 @@ export async function generateVariantInvoicePdf(
     y += 4
   }
 
-  drawBankBlock(p, y, invoice.number, variant)
+  // Real terms derived from the invoice's own dates — never a hardcoded claim.
+  const issueMs = new Date(invoice.issueDate ?? today.toISOString().slice(0, 10)).getTime()
+  const termsDays = Math.max(0, Math.round((new Date(invoice.dueDate).getTime() - issueMs) / 86400000))
+  drawBankBlock(p, y, invoice.number, variant, termsDays || undefined)
 
   // source: townData / coverageCopy — 25 towns · 100km radius (ABS 2021)
   const coverage = formatCoverageShort()

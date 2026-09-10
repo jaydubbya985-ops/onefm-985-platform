@@ -551,15 +551,46 @@ export const BATCH_INVOICES: BatchInvoice[] = [
   },
 ]
 
-/** Real June 2026 sponsor invoices. Everything else in BATCH_INVOICES is DEMO. */
-export const REAL_INVOICE_NUMBERS = ['ONEFM-2026-011', 'ONEFM-2026-012'] as const
+/**
+ * REAL invoices created after the June batch. Seeded into the ledger alongside
+ * BATCH_INVOICES; these are live receivables, not samples.
+ */
+export const CURRENT_INVOICES: BatchInvoice[] = [
+  {
+    id: 'inv-020',
+    number: 'ONEFM-2026-030',
+    company: 'Oporto Shepparton',
+    contactName: 'Bishoy Soliman',
+    email: 'oportoshepparton@gmail.com',
+    amountExclGst: 2000,
+    gst: 200,
+    total: 2200,
+    description:
+      '2026 Football Finals Partnership — Best Player award activation (on-air mentions, post-game interview, voucher presentation, social extension) + 120 × 30-second spots, ad production included',
+    period: '2026 Finals Series',
+    dueDate: '2026-09-17',
+    story: 'Requested by Bishoy Soliman 9 Sept 2026 — Option 1, 7-day terms',
+    emailSubject: 'ONE FM 98.5 — Oporto Shepparton Finals Partnership Invoice',
+    emailBody:
+      "Bishoy, we're stoked to have Oporto Shepparton on board for the 2026 finals! The Best Player award is going to be a cracking moment at every game — one player, one interview, one branded moment people can hear, watch, share and remember. Thanks for backing community radio in the Valley.",
+    status: 'draft',
+    selected: false,
+    notes: 'Option 1 per 2026 Finals Partnership proposal · 7-day terms',
+    createdAt: '2026-09-10',
+  },
+]
+
+/** Real sponsor invoices (live Supabase seeding gate). June batch reconciliation pending. */
+export const REAL_INVOICE_NUMBERS = ['ONEFM-2026-011', 'ONEFM-2026-012', 'ONEFM-2026-030'] as const
 
 export function isRealSponsorInvoiceNumber(number: string): boolean {
   return (REAL_INVOICE_NUMBERS as readonly string[]).includes(number)
 }
 
 export function realBatchInvoices(): BatchInvoice[] {
-  return BATCH_INVOICES.filter((i) => isRealSponsorInvoiceNumber(i.number))
+  return [...BATCH_INVOICES, ...CURRENT_INVOICES].filter((i) =>
+    isRealSponsorInvoiceNumber(i.number),
+  )
 }
 
 // ---------------------------------------------------------------------------
