@@ -458,9 +458,16 @@ export default function CoverageMap() {
       glowHandleRef.current = null
       clustererRef.current?.clearMarkers()
       clustererRef.current = null
-      markersRef.current.forEach((m) => m.setMap(null))
-      pinMarkersRef.current.forEach((m) => m.setMap(null))
-      pinMarkersRef.current.clear()
+      // Markers are populated asynchronously by initMap, so they must be read at
+      // cleanup time — capturing them at effect start would leak every marker.
+      /* eslint-disable react-hooks/exhaustive-deps */
+      const markers = markersRef.current
+      const pinMarkers = pinMarkersRef.current
+      /* eslint-enable react-hooks/exhaustive-deps */
+      markers.forEach((m) => m.setMap(null))
+      markersRef.current = []
+      pinMarkers.forEach((m) => m.setMap(null))
+      pinMarkers.clear()
     }
   }, [initMap])
 

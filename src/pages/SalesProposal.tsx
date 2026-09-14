@@ -5,7 +5,7 @@
  * Stats on this page: coverageCopy.ts (ABS 2021 via townData).
  * Do not add age-band % or invented demographics.
  */
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
 import { Check, Loader2 } from 'lucide-react'
@@ -275,13 +275,16 @@ function EnquiryForm({
 export default function SalesProposal() {
   const [searchParams] = useSearchParams()
   const [packageId, setPackageId] = useState('')
-
-  useEffect(() => {
+  // Adjust state during render when the query string changes (React-endorsed pattern —
+  // avoids a synchronous setState inside an effect).
+  const [prevSearchParams, setPrevSearchParams] = useState(searchParams)
+  if (searchParams !== prevSearchParams) {
+    setPrevSearchParams(searchParams)
     const fromQuery = matchInterest(
       searchParams.get('interest') ?? searchParams.get('package'),
     )
     if (fromQuery) setPackageId(fromQuery)
-  }, [searchParams])
+  }
 
   const pickPackage = (id: string) => {
     setPackageId(id)

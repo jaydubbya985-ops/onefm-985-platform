@@ -1,3 +1,7 @@
+// Class component is required — error boundaries have no function/hook equivalent.
+// The file also defines a local scene component, which react-refresh cannot classify,
+// so the only-export-components rule is disabled for the whole file.
+/* eslint-disable react-refresh/only-export-components */
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { formatCoverageShort } from '@/lib/coverageCopy'

@@ -300,7 +300,7 @@ export async function generateVariantInvoicePdf(
     y += 4
   }
 
-  y = drawBankBlock(p, y, invoice.number, variant)
+  drawBankBlock(p, y, invoice.number, variant)
 
   // source: townData / coverageCopy — 25 towns · 100km radius (ABS 2021)
   const coverage = formatCoverageShort()

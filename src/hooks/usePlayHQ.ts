@@ -16,23 +16,10 @@ export interface UsePlayHQGamesResult {
 }
 
 // Hook for GVL games
-export function usePlayHQGames(gradeId?: string): UsePlayHQGamesResult {
-  const [games, setGames] = useState<PlayHQGame[]>(MOCK_GVL_GAMES);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchGames = useCallback(async () => {
-    // PlayHQ keys must stay server-side. Use static data until a Netlify proxy exists.
-    setError(null);
-    setLoading(false);
-    setGames(MOCK_GVL_GAMES);
-  }, [gradeId]);
-
-  useEffect(() => {
-    fetchGames();
-  }, [fetchGames]);
-
-  return { games, loading, error, refetch: fetchGames };
+export function usePlayHQGames(_gradeId?: string): UsePlayHQGamesResult {
+  // PlayHQ keys must stay server-side. Use static data until a Netlify proxy exists.
+  const refetch = useCallback(() => {}, [])
+  return { games: MOCK_GVL_GAMES, loading: false, error: null, refetch }
 }
 
 // Hook for GVL ladder
@@ -45,23 +32,10 @@ export function usePlayHQLadder(): {
 }
 
 // Hook for game summary with player stats
-export function usePlayHQGameSummary(gameId: string) {
-  const [summary, setSummary] = useState<PlayHQGameSummary | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchSummary = useCallback(async () => {
-    // PlayHQ live summary requires a server-side proxy to keep API keys private.
-    setError(null);
-    setLoading(false);
-    setSummary(null);
-  }, [gameId]);
-
-  useEffect(() => {
-    fetchSummary();
-  }, [fetchSummary]);
-
-  return { summary, loading, error, refetch: fetchSummary };
+export function usePlayHQGameSummary(_gameId: string) {
+  // PlayHQ live summary requires a server-side proxy to keep API keys private.
+  const refetch = useCallback(() => {}, [])
+  return { summary: null as PlayHQGameSummary | null, loading: false, error: null, refetch }
 }
 
 // Hook for live game polling (auto-refresh during games)
