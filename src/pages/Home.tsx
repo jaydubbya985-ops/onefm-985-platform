@@ -1,6 +1,6 @@
-/**
- * Home — "ON AIR" design system (Direction A, approved 2026-07-05).
- * Black canvas · Anton poster type · signal red #E51636 as the on-air light.
+﻿/**
+ * Home â€” "ON AIR" design system (Direction A, approved 2026-07-05).
+ * Black canvas Â· Anton poster type Â· signal red #E51636 as the on-air light.
  * Discipline rule: red is the brand, one fluoro is the signal,
  * nothing else gets colour. All names, photos and stats are real.
  */
@@ -40,13 +40,13 @@ function Ticker() {
   const meta = usePlayerMetadata()
   const live = liveNowFromMetadata(meta)
   const items = [
-    live.isLive ? `● ON AIR — ${live.program}${live.withLine ? ` ${live.withLine}` : ''}` : `● ${live.program}`,
-    meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` — ${meta.artist}` : ''}` : '98.5 FM · Shepparton · Goulburn Valley',
+    live.isLive ? `â— ON AIR â€” ${live.program}${live.withLine ? ` ${live.withLine}` : ''}` : `â— ${live.program}`,
+    meta.nowPlaying ? `Now playing: ${meta.nowPlaying}${meta.artist ? ` â€” ${meta.artist}` : ''}` : '98.5 FM Â· Shepparton Â· Goulburn Valley',
     formatWeeklyListeners(),
     formatCoverageShort(),
-    'Community radio since 1989 · Callsign 3ONE',
+    'Community radio since 1989 Â· Callsign 3ONE',
   ]
-  const line = items.join('   ·   ')
+  const line = items.join('   Â·   ')
   return (
     <motion.div
       className="overflow-hidden"
@@ -58,14 +58,14 @@ function Ticker() {
     >
       <div className="flex whitespace-nowrap py-2 font-bold text-[13px] tracking-[0.12em] uppercase text-white animate-marquee">
         {[0, 1].map((i) => (
-          <span key={i} className="pr-12">{line}   ·   </span>
+          <span key={i} className="pr-12">{line}   Â·   </span>
         ))}
       </div>
     </motion.div>
   )
 }
 
-/** Real Goulburn Valley drone footage — six shots cycling under the type. */
+/** Real Goulburn Valley drone footage â€” six shots cycling under the type. */
 const HERO_REEL = [
   '/videos/heroes/hero-01-aerial-factory.mp4',
   '/videos/heroes/hero-02-pink-tower.mp4',
@@ -127,16 +127,16 @@ function Hero() {
         data-cursor="LISTEN"
       >
         <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-        {live.isLive ? 'On Air Now · Listen Live' : 'Listen Live · 98.5 FM'}
+        {live.isLive ? 'On Air Now Â· Listen Live' : 'Listen Live Â· 98.5 FM'}
       </Link>
       <p className="mb-9 max-w-[560px]">
         <span className="block font-poster uppercase text-[clamp(22px,3.2vw,36px)] text-white leading-tight">
           {live.program}
         </span>
         <span className="block mt-1.5 text-[14px] text-white/50">
-          {live.withLine ? `${live.withLine} · ` : ''}
+          {live.withLine ? `${live.withLine} Â· ` : ''}
           {live.programTime}
-          {live.remainingLabel ? ` · ${live.remainingLabel}` : ''}
+          {live.remainingLabel ? ` Â· ${live.remainingLabel}` : ''}
         </span>
         {live.breakfastOnAir && live.breakfastLabel ? (
           <span className="block mt-1.5 text-[12px] text-white/40">{live.breakfastLabel}</span>
@@ -156,7 +156,7 @@ function Hero() {
       </h1>
       <p className="mt-7 max-w-[520px] text-[17px] leading-relaxed text-white/60">
         Volunteer-run, community-owned. From emergency broadcasts during the 2022 floods to
-        calling the GVL Grand Final live — on air since 1989.
+        calling the GVL Grand Final live â€” on air since 1989.
       </p>
       <div className="mt-9 flex items-center gap-8 flex-wrap">
         <Link
@@ -164,7 +164,7 @@ function Hero() {
           className="font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-1 hover:opacity-80"
           style={{ borderColor: RED }}
         >
-          Full Program Guide →
+          Full Program Guide â†’
         </Link>
         <Link
           to="/sponsorship"
@@ -204,8 +204,8 @@ function NameWall() {
               role="img"
               aria-label={
                 presenterPhotoIsPortrait(p.name)
-                  ? `${p.name} — ${p.sub}`
-                  : `ONE FM station photography beside ${p.name} — not a presenter portrait`
+                  ? `${p.name} â€” ${p.sub}`
+                  : `ONE FM station photography beside ${p.name} â€” not a presenter portrait`
               }
             />
           </motion.div>
@@ -226,8 +226,8 @@ function FeatureFrame() {
         data-cursor="GVL"
       >
         <img
-          src="/assets/images/gvl-action-sprint.jpg"
-          alt="GVL football action — called live on ONE FM 98.5"
+          src="/assets/images/gvl-duguid-run.jpg"
+          alt="GVL football action â€” called live on ONE FM 98.5"
           className="w-full h-[420px] md:h-[520px] object-cover group-hover:scale-[1.02] transition-transform duration-700"
           loading="lazy"
           decoding="async"
@@ -236,7 +236,7 @@ function FeatureFrame() {
           className="absolute bottom-6 left-6 px-5 py-2.5 rounded font-bold text-[13px] tracking-[0.13em] uppercase text-white"
           style={{ background: RED }}
         >
-          GVL Match of the Day · {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
+          GVL Match of the Day Â· {formatGuideHours('GVL Match of the Day') ?? 'Saturday'}
         </div>
       </Link>
     </motion.div>
@@ -246,7 +246,7 @@ function FeatureFrame() {
 function StatsStrip() {
   const stats = [
     { n: formatWeeklyListenersPlain(), t: 'Est. weekly listeners', red: false },
-    { n: '98.5', t: 'FM · Callsign 3ONE', red: true },
+    { n: '98.5', t: 'FM Â· Callsign 3ONE', red: true },
     { n: formatTowns(), t: `Within a ${formatRadius()} radius`, red: false },
     { n: '1989', t: 'On air ever since', red: false },
   ]
@@ -271,7 +271,7 @@ export default function Home() {
   return (
     <Layout>
       <SEO
-        title="ONE FM 98.5 — The Voice of the Goulburn Valley"
+        title="ONE FM 98.5 â€” The Voice of the Goulburn Valley"
         description={`Community radio for the Goulburn Valley. Volunteer-run since 1989. ${formatCoverageShort()} (ABS 2021 via townData). Listen live, program guide, GVL football.`}
       />
       <div style={{ background: INK }} className="min-h-screen">

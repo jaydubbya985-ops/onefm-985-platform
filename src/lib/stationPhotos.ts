@@ -12,7 +12,10 @@ export const STATION_PHOTOS = {
   gvlNightPanorama: `${IMG}/gvl-night-panorama.jpg`,
   gvlStadiumDay: `${IMG}/gvl-stadium-day.jpg`,
   gvlPlayerHighFive: `${IMG}/gvl-player-high-five.jpg`,
-  gvlActionSprint: `${IMG}/gvl-action-sprint.jpg`,
+  // Was gvl-action-sprint.jpg — actually an AFL photo (Nth Melb v Hawthorn),
+  // caught by Jay 14 Sept 2026, quarantined in _unverified/. Replaced with the
+  // verified GVL photo from the Grand Final poster (kit asset duguid.jpg).
+  gvlActionSprint: `${IMG}/gvl-duguid-run.jpg`,
   gvlPlayerCelebration: `${IMG}/gvl-player-celebration.jpg`,
   gvlTownersWin: `${IMG}/gvl-towners-win.jpg`,
   gvlTeamCelebration: `${IMG}/gvl-team-celebration.jpg`,

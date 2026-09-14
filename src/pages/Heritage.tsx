@@ -190,7 +190,7 @@ export default function Heritage() {
 
         <FeatureFrame
           to="/football"
-          img="/assets/images/gvl-action-sprint.jpg"
+          img="/assets/images/gvl-duguid-run.jpg"
           alt="GVL football — live on ONE FM 98.5"
           badge={`GVL Match of the Day · ${formatGuideHours('GVL Match of the Day') ?? 'Saturday'} · live since May 1989`}
         />

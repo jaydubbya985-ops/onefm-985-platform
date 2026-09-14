@@ -1,9 +1,9 @@
-/**
- * ON AIR navigation — rockhall pattern, approved spec (2026-07-05).
+﻿/**
+ * ON AIR navigation â€” rockhall pattern, approved spec (2026-07-05).
  * The bar holds exactly three objects: logo + living lamp, LISTEN LIVE,
  * and the menu button. The menu is a full-screen destination: six poster
  * lines with photo bars, a quiet secondary row, stats along the bottom.
- * Identical at every viewport — one system, nothing to desync.
+ * Identical at every viewport â€” one system, nothing to desync.
  */
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -18,7 +18,7 @@ import { STATION_PHOTOS } from '@/lib/stationPhotos'
 const RED = '#E51636'
 const EXPO = [0.16, 1, 0.3, 1] as const
 
-/** Unused station archive still — tall transmitter mast. Not a live listener count. */
+/** Unused station archive still â€” tall transmitter mast. Not a live listener count. */
 function TowerMastBackdrop() {
   return (
     <>
@@ -41,7 +41,7 @@ const MENU: { label: string; to: string; img: string }[] = [
   { label: 'Listen', to: '/listen', img: '/on-air-host-1.jpg' },
   { label: 'Our Community', to: '/community', img: '/assets/images/heritage-ob-mall-1989.jpg' },
   { label: 'History', to: '/heritage', img: '/assets/images/heritage-original-panel-1988.jpg' },
-  { label: 'Sponsor', to: '/sponsorship', img: '/assets/images/gvl-action-sprint.jpg' },
+  { label: 'Sponsor', to: '/sponsorship', img: '/assets/images/gvl-duguid-run.jpg' },
   { label: 'Donate', to: '/support', img: '/assets/images/heritage-di-hunter-carols-2014.jpg' },
 ]
 
@@ -89,7 +89,7 @@ export function OnAirNav() {
 
   return (
     <>
-      {/* ── The bar: three objects ── */}
+      {/* â”€â”€ The bar: three objects â”€â”€ */}
       <nav
         className={`fixed top-0 inset-x-0 z-[300] transition-colors duration-300 ${
           scrolled || open ? 'bg-[#0A0A0A]/92 backdrop-blur-xl border-b border-white/8' : 'bg-transparent'
@@ -98,7 +98,7 @@ export function OnAirNav() {
         aria-label="Main"
       >
         <div className="h-full px-5 md:px-10 flex items-center justify-between">
-          <Link to="/" className="group flex items-center gap-3 shrink-0" aria-label="ONE FM 98.5 — Home" data-cursor-label="HOME">
+          <Link to="/" className="group flex items-center gap-3 shrink-0" aria-label="ONE FM 98.5 â€” Home" data-cursor-label="HOME">
             <BrandLogo variant="white" className="logo-live h-10 w-auto object-contain max-w-[min(180px,40vw)]" />
             <span className="relative flex h-2.5 w-2.5" title={meta.isLive ? 'On air' : 'Automated'}>
               <span className="lamp-ring" aria-hidden />
@@ -114,7 +114,7 @@ export function OnAirNav() {
               className="hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-bold text-[12px] tracking-[0.14em] uppercase text-white bloom-red hover:scale-[1.03] transition-transform"
               style={{ background: RED }}
             >
-              ▶ Listen Live
+              â–¶ Listen Live
             </Link>
             <button
               type="button"
@@ -131,7 +131,7 @@ export function OnAirNav() {
         </div>
       </nav>
 
-      {/* ── The menu: a destination ── */}
+      {/* â”€â”€ The menu: a destination â”€â”€ */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -173,7 +173,7 @@ export function OnAirNav() {
                           />
                           {active && (
                             <span className="text-[11px] font-bold tracking-[0.2em] uppercase" style={{ color: RED }}>
-                              ● You're here
+                              â— You're here
                             </span>
                           )}
                         </Link>
@@ -200,13 +200,13 @@ export function OnAirNav() {
                   ))}
                 </div>
                 <div className="mt-5 pt-4 border-t border-white/8 text-[11px] tracking-[0.16em] uppercase text-white/30">
-                  98.5 FM · Shepparton · Est. {formatWeeklyListenersPlain()} weekly listeners · {formatCoverageShort()} · Community radio since 1989
+                  98.5 FM Â· Shepparton Â· Est. {formatWeeklyListenersPlain()} weekly listeners Â· {formatCoverageShort()} Â· Community radio since 1989
                 </div>
                 <div className="mt-2 text-[11px] tracking-[0.12em] uppercase text-white/30">
                   {formatBreakfastChromeLabel()}
                 </div>
                 <p className="mt-2 text-[10px] tracking-[0.16em] uppercase text-white/25">
-                  Station archive · transmitter mast
+                  Station archive Â· transmitter mast
                 </p>
               </motion.div>
             </div>
