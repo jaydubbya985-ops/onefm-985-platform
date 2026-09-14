@@ -3,10 +3,11 @@
  * Run: npm run truth
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { join, relative, sep } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const ROOT = new URL('../src', import.meta.url).pathname
-const INDEX_HTML = new URL('../index.html', import.meta.url).pathname
+const ROOT = fileURLToPath(new URL('../src', import.meta.url))
+const INDEX_HTML = fileURLToPath(new URL('../index.html', import.meta.url))
 
 /** Phrases that must never ship in src/ (gov-truth). */
 const FORBIDDEN = [
@@ -75,7 +76,7 @@ function walk(dir) {
 
 const hits = []
 const files = [
-  ...walk(ROOT).map((p) => ({ label: relative(ROOT, p), text: readFileSync(p, 'utf8') })),
+  ...walk(ROOT).map((p) => ({ label: relative(ROOT, p).split(sep).join('/'), text: readFileSync(p, 'utf8') })),
   { label: 'index.html', text: readFileSync(INDEX_HTML, 'utf8') },
 ]
 for (const file of files) {
@@ -296,7 +297,7 @@ if (indexHtml && /25 towns/.test(indexHtml.text)) {
   hits.push('index.html: do not hardcode 25 towns — inject formatOgDescription at build')
 }
 
-const viteConfig = readFileSync(new URL('../vite.config.ts', import.meta.url).pathname, 'utf8')
+const viteConfig = readFileSync(fileURLToPath(new URL('../vite.config.ts', import.meta.url)), 'utf8')
 if (!viteConfig.includes('inject-coverage-og') || !viteConfig.includes('stationStats')) {
   hits.push('vite.config.ts: must inject OG description from stationStats')
 }
