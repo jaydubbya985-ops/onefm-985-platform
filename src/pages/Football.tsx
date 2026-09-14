@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { towns } from '@/data/townData'
 import { FULL_SCHEDULE } from '@/data/programGuide'
+import { GRAND_FINAL_WEEK_2026 } from '@/data/grandFinalWeek'
 import { footballTiers } from '@/data/pricing'
 import {
   broadcastPopulationValue,
@@ -496,6 +497,52 @@ export default function Football() {
           ]}
         />
       </div>
+
+      {/* ─── GVL Grand Final Week 2026 (src/data/grandFinalWeek.ts — verified fixtures only) ─── */}
+      <section className="bg-one-deep-blue border-b border-one-gold/25 py-14 px-4 sm:px-6" data-cursor-label="GRAND FINAL WEEK">
+        <div className="max-w-[1200px] mx-auto">
+          <ScrollReveal className="mb-8">
+            <span className="font-label text-[10px] tracking-[0.28em] text-gold-gradient uppercase block mb-2">
+              Grand Final Week · {GRAND_FINAL_WEEK_2026.year}
+            </span>
+            <h2 className="font-h3 text-one-white mb-2">{GRAND_FINAL_WEEK_2026.title}</h2>
+            <p className="font-body-small text-muted max-w-[640px]">
+              {GRAND_FINAL_WEEK_2026.dateLabel} · {GRAND_FINAL_WEEK_2026.venue}.{' '}
+              {GRAND_FINAL_WEEK_2026.dayLabel}.
+            </p>
+          </ScrollReveal>
+          <div className="grid sm:grid-cols-2 gap-4 mb-8">
+            {GRAND_FINAL_WEEK_2026.fixtures.map((f) => (
+              <div
+                key={f.grade}
+                className="glass-card p-5 border-2 border-one-gold/40 rounded-2xl"
+              >
+                <p className="font-label text-[10px] tracking-[0.2em] text-one-gold uppercase mb-2">
+                  {f.grade}
+                </p>
+                <h3 className="font-h4 text-one-white mb-1">
+                  {f.home} <span className="text-one-gold">v</span> {f.away}
+                </h3>
+                {f.note && <p className="font-body-small text-muted">{f.note}</p>}
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-6">
+            <MagneticButton strength={8}>
+              <Link to="/listen" data-cursor-label="LISTEN LIVE" className="btn-primary">
+                Listen live on 98.5 FM
+              </Link>
+            </MagneticButton>
+            <p className="font-body-small text-muted max-w-[420px]">
+              {GVL_MATCH_SLOT.name} — {GVL_MATCH_SLOT.days} {GVL_MATCH_SLOT.time} through the
+              season on ONE FM, plus match-day presence at GVL finals.
+            </p>
+          </div>
+          <p className="mt-6 font-label text-[10px] tracking-[0.14em] text-one-muted/60 uppercase">
+            Fixtures confirmed via {GRAND_FINAL_WEEK_2026.sources.join(' · ')}
+          </p>
+        </div>
+      </section>
 
       {/* ─── Sport on the weekly guide (programGuide.ts / fm985.com.au/guide) ─── */}
       <section className="bg-one-navy border-b border-one-gold/15 py-12 px-4 sm:px-6" data-cursor-label="STATION GUIDE">
