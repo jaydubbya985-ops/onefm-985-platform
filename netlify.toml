@@ -67,8 +67,18 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     X-XSS-Protection = "1; mode=block"
 
-# HTML — short cache so deploys propagate quickly
+# HTML — short cache so deploys propagate quickly.
+# NOTE: browsers request "/" (HashRouter never sends the #/ part), and a rule
+# for "/index.html" does not match "/". Without an explicit Cache-Control on
+# "/", browsers heuristically cache the app shell — then the next deploy
+# renames the hashed chunks and returning visitors get stale pages or
+# "Failed to fetch dynamically imported module". Cover both paths.
 [[headers]]
   for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
