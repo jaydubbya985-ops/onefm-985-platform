@@ -2,7 +2,10 @@ import { useCallback, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { isSupabaseConfigured } from '@/lib/supabase'
 
-export const OPS_PASSWORD = 'onefm2026'
+// Interim gate only — a bundled password is a hurdle, not security. The real
+// lock is LIVE mode (Supabase staff logins). Rotated 14 Sept 2026 when the
+// invoice book became real data.
+export const OPS_PASSWORD = 'siren-985-valley'
 export const OPS_SESSION_KEY = 'ops_unlocked'
 
 /**
