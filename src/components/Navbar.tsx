@@ -23,28 +23,6 @@ function getSheppartonHHMMSS() {
   }).format(new Date())
 }
 
-function SignalMeter() {
-  return (
-    <div
-      aria-hidden
-      style={{ display: 'flex', alignItems: 'flex-end', gap: '2px', height: 14 }}
-    >
-      {[4, 7, 10, 14].map((h, i) => (
-        <div
-          key={i}
-          style={{
-            width: 2.5,
-            height: h,
-            background: 'var(--one-electric)',
-            borderRadius: 1,
-            animation: `signal-flicker ${1.7 + i * 0.28}s ease-in-out ${i * 0.38}s infinite`,
-          }}
-        />
-      ))}
-    </div>
-  )
-}
-
 function NavWeather() {
   const { weather } = useWeatherCycle(SHEPPARTON_ONLY)
   if (!weather) return null
@@ -430,8 +408,6 @@ export function Navbar() {
               <span className="font-label text-one-red text-xs">ON AIR</span>
               <span className="w-px h-3 bg-one-border/60" aria-hidden />
               <BroadcastClock />
-              <span className="w-px h-3 bg-one-border/60" aria-hidden />
-              <SignalMeter />
               <span className="w-px h-3 bg-one-border/60" aria-hidden />
               <NavWeather />
             </div>
