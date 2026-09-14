@@ -1,0 +1,11 @@
+{
+  "name": "GVL_Grand_Final_2026_Result",
+  "template": "final_score",
+  "league": "Goulburn Valley League • 2026 Grand Final",
+  "title_big": "Premiers",
+  "home": {"name": "Echuca", "logo": "echuca.png", "score": 0, "detail": "0.0"},
+  "away": {"name": "Shepparton", "logo": "shepparton.png", "score": 0, "detail": "0.0"},
+  "grade": "Seniors",
+  "round": "Grand Final", "venue": "", "date": "Sunday 20 September",
+  "best": []
+}
