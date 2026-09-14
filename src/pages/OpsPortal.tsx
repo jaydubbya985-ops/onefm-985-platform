@@ -145,7 +145,8 @@ function OpsResumeCard() {
 }
 
 function OpsPortalContent() {
-  const { activeTab, setActiveTab, resetDemoData } = useOpsStore()
+  const { activeTab, setActiveTab, resetDemoData, invoices } = useOpsStore()
+  const draftCount = invoices.filter((i) => i.status === 'draft').length
   const { toast } = useToast()
   const { logout, user } = useAuth()
 
@@ -193,7 +194,7 @@ function OpsPortalContent() {
                 <div>
                   <p className="text-sm text-one-gold font-semibold">LOCAL MODE — data is on this device only &amp; unsaved</p>
                   <p className="text-xs text-one-muted mt-0.5">
-                    The invoice book is the real June 2026 batch (19 drafts, none sent yet). Enquiries,
+                    The invoice book is real ({draftCount} drafts, none sent yet). Enquiries,
                     contracts and CRM entries are still sample data. To enable live storage add{' '}
                     <code className="text-one-white/70">VITE_SUPABASE_URL</code> +{' '}
                     <code className="text-one-white/70">VITE_SUPABASE_ANON_KEY</code> in Netlify → Site settings → Environment variables.
