@@ -1,0 +1,12 @@
+{
+  "name": "GVL_Grand_Final_2026_Preview",
+  "league": "Goulburn Valley League • 2026 Finals",
+  "badge": "Live Sunday",
+  "hero": "duguid.jpg", "hero_focus": [0.5, 0.3],
+  "title_script": "It all comes down to this",
+  "title_big": "Grand Final",
+  "home": {"name": "Echuca", "logo": "echuca.png"},
+  "away": {"name": "Shepparton", "logo": "shepparton.png"},
+  "date": "Sunday 20 September", "venue": "", "bounce": "2:30 PM",
+  "on_air_line": "Live call on ONE FM 98.5  •  Local footy. Local voices."
+}

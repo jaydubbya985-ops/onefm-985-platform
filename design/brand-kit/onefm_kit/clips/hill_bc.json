@@ -1,0 +1,20 @@
+{
+ "league_tag": "ONE FM Football",
+ "title": "Post-match interview",
+ "name": "KDL_GF_Reserves_Wez_Hill",
+ "src": "clips/hill.mp4",
+ "match_line": "KDL Grand Final Day  \u2022  Reserves",
+ "speaker": "Wez Hill",
+ "role": "Oporto Player of the Day  \u2022  Lancaster  \u2022  with James Manley",
+ "sponsor_logo": "oporto_black.png",
+ "league_line": "KDL Grand Final Day 2026",
+ "open": {
+  "script": "Grand Final Day",
+  "big": "Player of the Day",
+  "sub": "Wez Hill  \u2022  Lancaster  \u2022  Reserves",
+  "sponsor": "oporto_black.png"
+ },
+ "close": {
+  "big": "KDL Grand Final Day"
+ }
+}

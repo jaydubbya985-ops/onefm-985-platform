@@ -1,0 +1,16 @@
+{
+  "name": "GVL_Prelim_Final_Preview",
+  "template": "preview",
+  "badge": "Live today",
+  "title_script": "Preliminary",
+  "title_big": "Final",
+  "home": {"name": "Shepparton", "logo": "shepparton.png"},
+  "away": {"name": "Kyabram", "logo": "kyabram.png"},
+  "date": "Sunday 13 September", "venue": "Deakin Reserve", "bounce": "2:00 PM", "on_air": "1:30 PM",
+  "guests": [
+    {"photo": "kirby.jpg", "face": [830, 400, 440], "label": "Special comments", "name": "Paul Kirby",
+     "line1": "Tatura & GVL legend  •  300 games", "line2": "Premiership player  •  Vic Country ruckman"},
+    {"photo": "whitlock.webp", "face": [700, 580, 720], "label": "Half-time special", "name": "Matt Whitlock",
+     "line1": "Shepparton Football Club product", "line2": "North Melbourne  •  AFL"}
+  ]
+}

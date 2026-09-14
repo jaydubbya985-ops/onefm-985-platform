@@ -1,0 +1,14 @@
+{
+ "name": "KDL_GF_U15_POTD_Lachlan_King",
+ "template": "potd",
+ "league": "KDL Grand Final Day 2026",
+ "photo": "potd_u15_king.jpg",
+ "focus": [
+  0.5,
+  0.17
+ ],
+ "player": "Lachlan King",
+ "club": "Stanhope",
+ "grade": "Under 15 Grand Final",
+ "match_line": ""
+}

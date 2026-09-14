@@ -1,0 +1,11 @@
+{
+  "name": "EXAMPLE_Final_Score",
+  "template": "final_score",
+  "league": "Goulburn Valley League",
+  "title_big": "Final Score",
+  "home": {"name": "Shepparton", "logo": "shepparton.png", "score": 0, "detail": "0.0"},
+  "away": {"name": "Kyabram", "logo": "kyabram.png", "score": 0, "detail": "0.0"},
+  "grade": "Seniors",
+  "round": "Preliminary Final", "venue": "Deakin Reserve", "date": "Sunday 13 September",
+  "best": []
+}

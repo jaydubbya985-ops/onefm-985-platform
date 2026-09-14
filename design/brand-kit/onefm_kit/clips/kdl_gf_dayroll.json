@@ -1,0 +1,21 @@
+{
+  "name": "KDL_Grand_Final_Day_Roll",
+  "league_line": "KDL Grand Final Day 2026",
+  "open":  {"script": "There was something about the weekend", "big": "KDL Grand Final Day", "sub": "Saturday 12 September 2026"},
+  "close": {"script": "There was something about the weekend", "big": "KDL Grand Final Day", "sub": "Local footy. Local voices. Live on ONE FM 98.5"},
+  "secs": 4.5,
+  "items": [
+    {"video": "clips/day_01_ground_pan.mp4", "start": 0, "secs": 7, "line1": "Grand Final Day", "line2": "Saturday 12 September"},
+    {"video": "clips/day_02.mp4", "start": 0, "secs": 7, "line1": "Under 15 Grand Final", "line2": "Through the banner"},
+    {"photo": "day_u15_stanhope_wait.webp", "focus": [0.35, 0.55], "line1": "Stanhope", "line2": "Under 15 Premiers"},
+    {"photo": "potd_u15_king.jpg", "focus": [0.5, 0.2], "line1": "Lachlan King", "line2": "Stanhope  •  Under 15s  •  Oporto Player of the Day"},
+    {"photo": "day_u18_truck.jpg", "focus": [0.5, 0.5], "secs": 5, "line1": "Nagambie", "line2": "Under 18 Premiers"},
+    {"video": "clips/u18_nagambie_premiers.mp4", "start": 2, "secs": 8, "line1": "Nagambie", "line2": "The song"},
+    {"photo": "day_coll_chair.jpg", "focus": [0.5, 0.3], "line1": "Cooper Coll", "line2": "Nagambie  •  Under 18s  •  Oporto Player of the Day"},
+    {"photo": "potd_res_hill.jpg", "focus": [0.5, 0.2], "line1": "Wez Hill", "line2": "Lancaster  •  Reserves  •  Oporto Player of the Day"},
+    {"photo": "potd_snr_fothergill.jpg", "focus": [0.5, 0.3], "line1": "Blake Fothergill", "line2": "Nagambie  •  Seniors  •  Oporto Player of the Day"},
+    {"photo": "day_umpires.webp", "focus": [0.5, 0.5], "line1": "Thanks to the umpires", "line2": "Every grade, all day"},
+    {"photo": "day_sam_truck.jpg", "focus": [0.5, 0.3], "line1": "Behind the mic", "line2": "Sam Saracino  •  ONE FM 98.5"},
+    {"video": "clips/day_end.mp4", "start": 0, "secs": 6, "line1": "In the box", "line2": "Live on ONE FM 98.5"}
+  ]
+}

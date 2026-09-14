@@ -1,0 +1,8 @@
+{ "name": "GVL_Prelim_Interview_Jason_Wells", "src": "clips/wells.mp4",
+  "league": "Goulburn Valley League • 2026 Finals",
+  "intro_script": "Full Time", "intro_big": "Preliminary Final",
+  "match_line": "Shepparton 19.7 (121) def Kyabram 7.7 (49)",
+  "speaker": "Jason Wells", "role": "Shepparton Senior Co-Coach  •  with Sam Saracino",
+  "tease": {"script": "Grand Final Day", "big": "Next Sunday", "home_logo": "echuca.png", "away_logo": "shepparton.png",
+            "line1": "Echuca  v  Shepparton", "line2": "Sunday 20 September  •  Bounce 2:30 PM"},
+  "formats": ["9x16", "1x1"] }

@@ -18,3 +18,7 @@ scripts/google-drive.config.json
 /onefmops-production-drop.zip
 
 invoices-out/
+
+design/brand-kit/onefm_kit/out/
+design/brand-kit/onefm_kit/tmp/
+__pycache__/

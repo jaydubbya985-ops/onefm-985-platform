@@ -1,0 +1,20 @@
+{
+ "league_tag": "ONE FM Football",
+ "title": "Post-match interview",
+ "name": "KDL_GF_U18_Flyn_Busch",
+ "src": "clips/busch.mp4",
+ "match_line": "KDL Grand Final Day  \u2022  Under 18s",
+ "speaker": "Flyn Busch",
+ "role": "Nagambie Under 18s  \u2022  with James Manley",
+ "start": 18.0,
+ "league_line": "KDL Grand Final Day 2026",
+ "open": {
+  "script": "Grand Final Day",
+  "big": "Under 18 Premiers",
+  "sub": "Nagambie  \u2022  KDL Grand Final Day 2026",
+  "sponsor": null
+ },
+ "close": {
+  "big": "KDL Grand Final Day"
+ }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "GVL_Prelim_Final_Result",
+  "template": "result",
+  "league": "Goulburn Valley League • 2026 Finals",
+  "title_script": "Full Time",
+  "title_big": "Preliminary Final",
+  "hero": "shepp_action.jpg", "hero_focus": [0.5, 0.3],
+  "home": {"name": "Shepparton", "logo": "shepparton.png", "score": 121, "detail": "19.7", "winner": true,
+           "quarters": ["0.4", "6.1", "5.0", "8.2"],
+           "best": ["Liam Duguid", "Luke Smith", "Jacob Watts", "Bryce Stephenson", "Lewis McShane"]},
+  "away": {"name": "Kyabram", "logo": "kyabram.png", "score": 49, "detail": "7.7",
+           "quarters": ["0.1", "1.2", "3.2", "3.2"],
+           "best": ["Aidan Robinson", "Kaine Herbert", "Cooper Vick", "Bohden Learmonth", "Jack Russell"]},
+  "potd": {"photo": "potd_prelim.jpg", "focus": [0.42, 0.25], "name": "Luke Smith", "label": "Oporto Player of the Day", "sponsor_logo": "oporto_black.png"},
+  "footer2": "Shepparton through to the Grand Final  •  Deakin Reserve, Sunday 13 September"
+}

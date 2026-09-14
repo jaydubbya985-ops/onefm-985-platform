@@ -1,0 +1,24 @@
+{
+ "league_tag": "ONE FM Football",
+ "title": "Post-match interview",
+ "match_line": "Shepparton v Kyabram  \u2022  Preliminary Final",
+ "result_label": "Full time  \u2022  Preliminary Final",
+ "home": {
+  "name": "Shepparton",
+  "logo": "shepparton.png",
+  "score": 121,
+  "detail": "19.7",
+  "winner": true
+ },
+ "away": {
+  "name": "Kyabram",
+  "logo": "kyabram.png",
+  "score": 49,
+  "detail": "7.7"
+ },
+ "name": "GVL_Prelim_Wells",
+ "src": "clips/wells.mp4",
+ "start": 8,
+ "speaker": "Jason Wells",
+ "role": "Shepparton Senior Co-Coach"
+}

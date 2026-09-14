@@ -1,0 +1,70 @@
+{
+ "league": "Goulburn Valley League \u2022 2026 Finals",
+ "intro_script": "Full Time",
+ "intro_big": "Preliminary Final",
+ "home": {
+  "name": "Shepparton",
+  "logo": "shepparton.png",
+  "score": 121,
+  "detail": "19.7",
+  "winner": true,
+  "best": [
+   "Liam Duguid",
+   "Luke Smith",
+   "Jacob Watts",
+   "Bryce Stephenson",
+   "Lewis McShane"
+  ]
+ },
+ "away": {
+  "name": "Kyabram",
+  "logo": "kyabram.png",
+  "score": 49,
+  "detail": "7.7",
+  "best": [
+   "Aidan Robinson",
+   "Kaine Herbert",
+   "Cooper Vick",
+   "Bohden Learmonth",
+   "Jack Russell"
+  ]
+ },
+ "open_photo": "duguid.jpg",
+ "open_focus": [
+  0.5,
+  0.35
+ ],
+ "featured": [
+  {
+   "photo": "duguid.jpg",
+   "focus": [
+    0.5,
+    0.3
+   ],
+   "name": "Liam Duguid",
+   "sub": "Best on ground"
+  },
+  {
+   "photo": "watts.jpg",
+   "focus": [
+    0.3,
+    0.3
+   ],
+   "name": "Jacob Watts",
+   "sub": "Shepparton best"
+  }
+ ],
+ "tease": {
+  "script": "Grand Final Day",
+  "big": "Next Sunday",
+  "home_logo": "echuca.png",
+  "away_logo": "shepparton.png",
+  "line1": "Echuca  v  Shepparton",
+  "line2": "Sunday 20 September  \u2022  Bounce 2:30 PM"
+ },
+ "name": "GVL_Prelim_Smith_Broadcast",
+ "src": "clips/smith.mp4",
+ "speaker": "Luke Smith",
+ "role": "Oporto Player of the Day  \u2022  with Sam Saracino",
+ "sponsor_logo": "oporto_black.png"
+}
