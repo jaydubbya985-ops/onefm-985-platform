@@ -21,10 +21,7 @@ import { SkeletonLoader } from '@/components/SkeletonLoader'
 import { ToastProvider, useToast } from '@/components/ops/Toast'
 import { OpsProvider, useOpsStore, type OpsTab } from '@/components/ops/store'
 import { useAuth } from '@/hooks/useAuth'
-import { BANK_BSB } from '@/lib/bankDetails'
-import { formatCoverageShort, formatTowns } from '@/lib/coverageCopy'
-import { STATION_PHOTOS } from '@/lib/stationPhotos'
-import { isSupabaseConfigured, getOpsCredentialSource, opsCredentialSourceLabel } from '@/lib/supabase'
+import { isSupabaseConfigured } from '@/lib/supabase'
 
 const EnquiryDashboard = lazy(() => import('@/components/ops/EnquiryDashboard'))
 const ProposalBuilder = lazy(() => import('@/components/ops/ProposalBuilder'))
@@ -45,22 +42,41 @@ function OpsTabPanel({ children }: { children: React.ReactNode }) {
   )
 }
 
-const TABS: {
+interface OpsTabDef {
   id: OpsTab
   label: string
   icon: React.ComponentType<{ className?: string }>
   description: string
-}[] = [
-  { id: 'enquiries', label: 'Enquiries', icon: Inbox, description: 'Manage incoming enquiries' },
-  { id: 'proposals', label: 'Proposals', icon: FileText, description: 'Build & track proposals' },
-  { id: 'contracts', label: 'Contracts', icon: Settings, description: 'Sponsorship contracts' },
-  { id: 'sponsors', label: 'Sponsors', icon: Users, description: 'CRM, contacts & pipeline' },
-  { id: 'schedule', label: 'Schedule', icon: Radio, description: 'Broadcast & ad schedule' },
-  { id: 'invoices', label: 'Invoices', icon: Receipt, description: 'Create, send & track invoices' },
-  { id: 'batch', label: 'Batch Send', icon: Send, description: 'Send a batch of invoices' },
-  { id: 'design', label: 'Invoice Design', icon: Palette, description: 'Pick from 3 world-class invoice designs' },
-  { id: 'billing', label: 'Billing', icon: BarChart3, description: 'Payments, aging & reports' },
-  { id: 'payments', label: 'Payments', icon: CreditCard, description: 'Donations & memberships' },
+}
+
+/** Tabs grouped by job — Sales pipeline, Money, Broadcast — instead of ten
+ *  flat tabs overflowing the bar. */
+const TAB_GROUPS: { label: string; tabs: OpsTabDef[] }[] = [
+  {
+    label: 'Sales',
+    tabs: [
+      { id: 'enquiries', label: 'Enquiries', icon: Inbox, description: 'Manage incoming enquiries' },
+      { id: 'proposals', label: 'Proposals', icon: FileText, description: 'Build & track proposals' },
+      { id: 'contracts', label: 'Contracts', icon: Settings, description: 'Sponsorship contracts' },
+      { id: 'sponsors', label: 'Sponsors', icon: Users, description: 'CRM, contacts & pipeline' },
+    ],
+  },
+  {
+    label: 'Money',
+    tabs: [
+      { id: 'invoices', label: 'Invoices', icon: Receipt, description: 'Create, send & track invoices' },
+      { id: 'batch', label: 'Batch', icon: Send, description: 'Send a batch of invoices' },
+      { id: 'design', label: 'Design', icon: Palette, description: 'Invoice design variants' },
+      { id: 'billing', label: 'Billing', icon: BarChart3, description: 'Payments, aging & reports' },
+      { id: 'payments', label: 'Payments', icon: CreditCard, description: 'Donations & memberships' },
+    ],
+  },
+  {
+    label: 'Broadcast',
+    tabs: [
+      { id: 'schedule', label: 'Schedule', icon: Radio, description: 'Broadcast & ad schedule' },
+    ],
+  },
 ]
 
 function PipelineIndicator() {
@@ -147,116 +163,113 @@ function OpsResumeCard() {
 function OpsPortalContent() {
   const { activeTab, setActiveTab, resetDemoData, invoices } = useOpsStore()
   const draftCount = invoices.filter((i) => i.status === 'draft').length
+  const draftTotal = invoices
+    .filter((i) => i.status === 'draft')
+    .reduce((sum, i) => sum + i.total, 0)
   const { toast } = useToast()
   const { logout, user } = useAuth()
+  const live = isSupabaseConfigured()
 
   return (
     <div className="min-h-screen bg-[#101010]">
-      <div className="relative overflow-hidden border-b border-[#2A2A2A]/30">
-        <img
-          src={STATION_PHOTOS.studioChristmasBroadcast}
-          alt=""
-          aria-hidden
-          loading="eager"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-b from-[#101010]/78 via-[#101010]/88 to-[#101010]"
-        />
-        <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-24 pb-6">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Settings className="w-7 h-7 text-one-gold" />
-              <h1 className="font-h1 text-one-white text-3xl md:text-4xl">Operations Portal</h1>
+      {/* Compact utility header — a work tool, not a landing page */}
+      <div className="border-b border-[#2A2A2A]/40 bg-[#0C0C0C]">
+        <div className="px-6 md:px-12 lg:px-20 pt-20 pb-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3 min-w-0">
+              <Settings className="w-5 h-5 text-one-gold shrink-0" />
+              <h1 className="font-h1 text-one-white text-xl md:text-2xl whitespace-nowrap">Operations</h1>
+              {live ? (
+                <span className="px-2 py-0.5 rounded font-label text-[10px] tracking-widest bg-emerald-900/40 text-emerald-400 border border-emerald-700/40">
+                  LIVE
+                </span>
+              ) : (
+                <span
+                  className="px-2 py-0.5 rounded font-label text-[10px] tracking-widest bg-one-gold/10 text-one-gold border border-one-gold/30"
+                  title={`Data is on this device only. The invoice book is real (${draftCount} drafts, none sent yet); enquiries, contracts and CRM entries are still sample data. To go live add VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY in Netlify.`}
+                >
+                  LOCAL
+                </span>
+              )}
+              {live && user && (
+                <span className="text-one-muted text-xs truncate">{user.email}</span>
+              )}
             </div>
-            <p className="text-one-white/50 text-sm max-w-2xl">
-              Station ops for {formatTowns()} — {formatCoverageShort()} (ABS 2021 via townData).
-              Invoice payments: NAB BSB {BANK_BSB}. This screen is not a Stripe receipt.
-            </p>
-            {isSupabaseConfigured() && user && (
-              <p className="text-one-muted text-xs mt-1">Signed in as {user.email}</p>
-            )}
-            {isSupabaseConfigured() ? (
-              <div className="mt-4 rounded-lg border border-emerald-700/40 bg-emerald-900/15 px-4 py-3 max-w-2xl">
-                <p className="text-sm text-emerald-400 font-semibold">LIVE — enquiries, proposals, contracts and invoices persist to Supabase</p>
-                <p className="text-xs text-one-muted mt-0.5">
-                  Sponsors, schedule, billing charts and payments start empty in live mode. DEMO seeds stay in DEMO mode only.
-                  {getOpsCredentialSource() !== 'none' && (
-                    <> Credentials: {opsCredentialSourceLabel()}.</>
-                  )}
-                </p>
-              </div>
-            ) : (
-              <div className="mt-4 rounded-lg border border-one-gold/30 bg-one-gold/8 px-4 py-3 max-w-2xl flex items-start gap-3">
-                <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-one-gold/20 flex items-center justify-center text-one-gold text-xs font-bold">D</span>
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-4 text-right">
                 <div>
-                  <p className="text-sm text-one-gold font-semibold">LOCAL MODE — data is on this device only &amp; unsaved</p>
-                  <p className="text-xs text-one-muted mt-0.5">
-                    The invoice book is real ({draftCount} drafts, none sent yet). Enquiries,
-                    contracts and CRM entries are still sample data. To enable live storage add{' '}
-                    <code className="text-one-white/70">VITE_SUPABASE_URL</code> +{' '}
-                    <code className="text-one-white/70">VITE_SUPABASE_ANON_KEY</code> in Netlify → Site settings → Environment variables.
+                  <p className="font-label text-[9px] tracking-widest text-one-white/40 uppercase">Drafted · unsent</p>
+                  <p className="font-h1 text-one-gold text-lg leading-tight tabular-nums">
+                    ${draftTotal.toLocaleString('en-AU', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
+                <div>
+                  <p className="font-label text-[9px] tracking-widest text-one-white/40 uppercase">Invoices</p>
+                  <p className="font-h1 text-one-white text-lg leading-tight tabular-nums">{invoices.length}</p>
+                </div>
               </div>
-            )}
+              {live ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => logout()}
+                  className="border-one-border text-one-white/60 hover:text-one-white bg-transparent"
+                >
+                  <LogOut className="w-3.5 h-3.5 mr-2" />
+                  Sign out
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    resetDemoData()
+                    toast('Demo data reset', 'success')
+                  }}
+                  className="border-one-border text-one-white/60 hover:text-one-white bg-transparent"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 mr-2" />
+                  Reset
+                </Button>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            {isSupabaseConfigured() && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => logout()}
-                className="border-one-border text-one-white/60 hover:text-one-white bg-transparent"
-              >
-                <LogOut className="w-3.5 h-3.5 mr-2" />
-                Sign out
-              </Button>
-            )}
-            {!isSupabaseConfigured() && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  resetDemoData()
-                  toast('Demo data reset', 'success')
-                }}
-                className="border-one-border text-one-white/60 hover:text-one-white bg-transparent"
-              >
-                <RotateCcw className="w-3.5 h-3.5 mr-2" />
-                Reset demo data
-              </Button>
-            )}
-          </div>
+          <OpsResumeCard />
+          <PipelineIndicator />
         </div>
-        <OpsResumeCard />
-        <PipelineIndicator />
-        </div>
-      </div>
 
-      <div className="px-6 md:px-12 lg:px-20 py-4 border-b border-[#2A2A2A]/20">
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {TABS.map((t) => {
-            const Icon = t.icon
-            const active = activeTab === t.id
-            return (
-              <Button
-                key={t.id}
-                onClick={() => setActiveTab(t.id)}
-                title={t.description}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-label text-xs tracking-wider transition-all whitespace-nowrap min-w-0 shrink-0 ${
-                  active
-                    ? 'bg-one-gold text-one-navy hover:bg-one-gold/90'
-                    : 'bg-transparent text-one-white/60 border border-[#2A2A2A]/30 hover:text-one-white hover:border-one-gold/30'
-                }`}
-              >
-                <Icon className="w-4 h-4 shrink-0" />
-                <span className="truncate">{t.label}</span>
-              </Button>
-            )
-          })}
+        {/* Grouped nav — Sales · Money · Broadcast */}
+        <div className="px-6 md:px-12 lg:px-20 pb-3">
+          <div className="flex gap-5 overflow-x-auto">
+            {TAB_GROUPS.map((group) => (
+              <div key={group.label} className="shrink-0">
+                <p className="font-label text-[9px] tracking-[0.2em] text-one-white/35 uppercase mb-1.5 pl-1">
+                  {group.label}
+                </p>
+                <div className="flex gap-1.5">
+                  {group.tabs.map((t) => {
+                    const Icon = t.icon
+                    const active = activeTab === t.id
+                    return (
+                      <Button
+                        key={t.id}
+                        onClick={() => setActiveTab(t.id)}
+                        title={t.description}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label text-xs tracking-wider transition-all whitespace-nowrap min-w-0 shrink-0 ${
+                          active
+                            ? 'bg-one-gold text-one-navy hover:bg-one-gold/90'
+                            : 'bg-transparent text-one-white/60 border border-[#2A2A2A]/40 hover:text-one-white hover:border-one-gold/30'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5 shrink-0" />
+                        <span>{t.label}</span>
+                      </Button>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
