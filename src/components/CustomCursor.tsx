@@ -33,6 +33,9 @@ export function CustomCursor() {
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) return
+    // Native cursor is hidden via CSS only while this class is present —
+    // see index.css. Must be removed on unmount (e.g. entering /ops).
+    document.documentElement.classList.add('custom-cursor-active')
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const canvas = canvasRef.current
@@ -189,6 +192,7 @@ export function CustomCursor() {
     window.addEventListener('blur', onBlur)
 
     return () => {
+      document.documentElement.classList.remove('custom-cursor-active')
       cancelAnimationFrame(rafId.current)
       document.removeEventListener('mousemove', onMove)
       document.removeEventListener('mouseleave', onLeave)

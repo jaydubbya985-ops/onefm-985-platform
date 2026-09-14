@@ -185,8 +185,13 @@
     font-synthesis: none;
   }
 
+  /* Hide the native cursor ONLY while the CustomCursor component is mounted
+     (it sets this class) — routes without it (ops portal) keep the real
+     cursor, otherwise users have no cursor at all. */
   @media (pointer: fine) {
-    *, *::before, *::after {
+    html.custom-cursor-active *,
+    html.custom-cursor-active *::before,
+    html.custom-cursor-active *::after {
       cursor: none !important;
     }
   }
