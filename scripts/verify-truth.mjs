@@ -75,9 +75,12 @@ function walk(dir) {
 }
 
 const hits = []
+// Normalise CRLF → LF so content checks are line-ending agnostic on
+// Windows checkouts (core.autocrlf=true) — CI on Linux is already LF.
+const readNorm = (p) => readFileSync(p, 'utf8').replace(/\r\n/g, '\n')
 const files = [
-  ...walk(ROOT).map((p) => ({ label: relative(ROOT, p).split(sep).join('/'), text: readFileSync(p, 'utf8') })),
-  { label: 'index.html', text: readFileSync(INDEX_HTML, 'utf8') },
+  ...walk(ROOT).map((p) => ({ label: relative(ROOT, p).split(sep).join('/'), text: readNorm(p) })),
+  { label: 'index.html', text: readNorm(INDEX_HTML) },
 ]
 for (const file of files) {
   for (const rule of FORBIDDEN) {

@@ -6,8 +6,11 @@
 import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync, rmSync, statSync, copyFileSync, mkdirSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const root = new URL('..', import.meta.url).pathname
+// fileURLToPath (not .pathname) — on Windows, pathname is '/C:/...' which
+// Node resolves to 'C:\C:\...' and every fs call dies with ENOENT.
+const root = fileURLToPath(new URL('..', import.meta.url))
 const dist = resolve(root, 'dist')
 const htmlPath = resolve(dist, 'index.html')
 
@@ -45,10 +48,36 @@ const zipName = 'onefmops-production-drop.zip'
 const zipPath = resolve(root, zipName)
 rmSync(zipPath, { force: true })
 
-const zipped = spawnSync('zip', ['-r', '-q', zipPath, '.'], { cwd: dist, stdio: 'inherit' })
-if (zipped.status !== 0) {
-  console.error('pack-drop-zip: zip failed')
-  process.exit(zipped.status ?? 1)
+// Zip fallback chain: unix `zip` (CI) → tar (Linux) → PowerShell
+// Compress-Archive (absolute path — Git Bash strips COMSPEC and System32
+// from PATH, so 'powershell.exe' is not always resolvable by name).
+function tryZip() {
+  const zip = spawnSync('zip', ['-r', '-q', zipPath, '.'], { cwd: dist, stdio: 'inherit' })
+  if (zip.status === 0) return 0
+
+  if (process.platform !== 'win32') {
+    const tar = spawnSync('tar', ['-a', '-cf', zipPath, '.'], { cwd: dist, stdio: 'inherit' })
+    return tar.status ?? 1
+  }
+
+  const winDir = process.env.WINDIR ?? 'C:\\Windows'
+  const psPath = resolve(winDir, 'System32/WindowsPowerShell/v1.0/powershell.exe')
+  if (!existsSync(psPath)) {
+    console.error(`pack-drop-zip: powershell not found at ${psPath}`)
+    return 1
+  }
+  const ps = spawnSync(
+    psPath,
+    ['-NoProfile', '-NonInteractive', '-Command', `Compress-Archive -Path '${dist}\\*' -DestinationPath '${zipPath}' -Force`],
+    { stdio: 'inherit' },
+  )
+  return ps.status ?? 1
+}
+
+const zipStatus = tryZip()
+if (zipStatus !== 0) {
+  console.error('pack-drop-zip: zip failed (tried zip, tar, powershell)')
+  process.exit(zipStatus)
 }
 
 const mb = (statSync(zipPath).size / (1024 * 1024)).toFixed(1)
