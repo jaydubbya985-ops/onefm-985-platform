@@ -1,5 +1,5 @@
-﻿/**
- * OUR COMMUNITY â€” rebuilt per REBUILD-SPEC.md (page 3 of 6).
+/**
+ * OUR COMMUNITY — rebuilt per REBUILD-SPEC.md (page 3 of 6).
  * Real towns (townData.ts), real multicultural programs (programGuide.ts),
  * real festival footage. GVL and Coverage keep their own pages until
  * their content is fully absorbed; this page fronts them.
@@ -22,7 +22,7 @@ import {
 
 const WEEKDAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
 
-/** Guide hours as spoken labels â€” source: programGuide FULL_SCHEDULE (fm985.com.au/guide). */
+/** Guide hours as spoken labels — source: programGuide FULL_SCHEDULE (fm985.com.au/guide). */
 function guideHour(h: number): string {
   if (h === 0 || h === 24) return '12am'
   if (h === 12) return '12pm'
@@ -30,13 +30,13 @@ function guideHour(h: number): string {
 }
 
 function multiculturalWhen(slot: ScheduleSlot): string {
-  return `${WEEKDAY[slot.day]} ${guideHour(slot.startHour)}â€“${guideHour(slot.endHour)}`
+  return `${WEEKDAY[slot.day]} ${guideHour(slot.startHour)}–${guideHour(slot.endHour)}`
 }
 
 const GVL_MATCH_HOURS = formatGuideHours('GVL Match of the Day')
 const RED = '#E51636'
 
-/** Town wall photos â€” real station/valley imagery (not per-town photos yet). */
+/** Town wall photos — real station/valley imagery (not per-town photos yet). */
 const TOWN_IMGS = [
   '/assets/images/heritage-ob-mall-1989.jpg',
   '/assets/images/gvl-duguid-run.jpg',
@@ -70,7 +70,7 @@ function CommunityHero() {
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
           {formatTowns()}, one signal. From the GVL grand final to {MULTICULTURAL_PROGRAM_COUNT} multicultural
-          programs on the weekly guide â€” this is the Valley, on air.
+          programs on the weekly guide — this is the Valley, on air.
         </p>
       </div>
     </section>
@@ -81,7 +81,7 @@ export default function Community() {
   const [showAllTowns, setShowAllTowns] = useState(false)
   const wallTowns = (showAllTowns ? towns : towns.slice(0, 6)).map((t, i) => ({
     name: t.name,
-    sub: `${t.lga} Â· pop. ${t.population2021.toLocaleString()}`,
+    sub: `${t.lga} · pop. ${t.population2021.toLocaleString()}`,
     img: TOWN_IMGS[i % TOWN_IMGS.length],
   }))
 
@@ -94,15 +94,15 @@ export default function Community() {
   return (
     <Layout>
       <SEO
-        title="Our Community â€” ONE FM 98.5"
+        title="Our Community — ONE FM 98.5"
         description={`${formatTowns()} across the Goulburn Valley: GVL footy called live, ${MULTICULTURAL_PROGRAM_COUNT} multicultural programs from the station guide, and the communities ONE FM serves.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
         <OnAirTicker
           items={[
-            `â— ${formatTowns()} across the Goulburn Valley`,
-            `GVL Match of the Day Â· ${GVL_MATCH_HOURS ?? 'Saturday'}`,
-            `Multicultural programming â€” ${MULTICULTURAL_PROGRAM_COUNT} programs on the weekly guide`,
+            `● ${formatTowns()} across the Goulburn Valley`,
+            `GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`,
+            `Multicultural programming — ${MULTICULTURAL_PROGRAM_COUNT} programs on the weekly guide`,
             'Community radio since 1989',
           ]}
           delay={0.4}
@@ -112,11 +112,11 @@ export default function Community() {
         <FeatureFrame
           to="/football"
           img="/assets/images/gvl-duguid-run.jpg"
-          alt="GVL football under lights â€” called live on ONE FM 98.5"
-          badge={`GVL Match of the Day Â· ${GVL_MATCH_HOURS ?? 'Saturday'}`}
+          alt="GVL football under lights — called live on ONE FM 98.5"
+          badge={`GVL Match of the Day · ${GVL_MATCH_HOURS ?? 'Saturday'}`}
         />
 
-        <NameWall label={`The Towns We Serve${showAllTowns ? '' : ' Â· Top 6'}`} rows={wallTowns} />
+        <NameWall label={`The Towns We Serve${showAllTowns ? '' : ' · Top 6'}`} rows={wallTowns} />
         <div className="px-6 md:px-12 lg:px-20 -mt-8 pb-8">
           <button
             type="button"
@@ -125,7 +125,7 @@ export default function Community() {
             style={{ borderColor: RED }}
             data-cursor-label={showAllTowns ? 'LESS' : 'MORE'}
           >
-            {showAllTowns ? 'Show fewer' : `All ${towns.length} towns`} â†’
+            {showAllTowns ? 'Show fewer' : `All ${towns.length} towns`} →
           </button>
         </div>
 
@@ -137,7 +137,7 @@ export default function Community() {
             <div>
               <h3 className="font-poster uppercase text-[30px] text-white">The Coverage Map</h3>
               <p className="text-[15px] text-white/55 mt-1 max-w-[480px]">
-                {formatRadius()} of signal from Mt Major â€” explore every town, transmitter and GVL club on the interactive map.
+                {formatRadius()} of signal from Mt Major — explore every town, transmitter and GVL club on the interactive map.
               </p>
             </div>
             <Link
@@ -146,7 +146,7 @@ export default function Community() {
               style={{ background: RED }}
               data-cursor-label="MAP"
             >
-              Open the Map â†’
+              Open the Map →
             </Link>
           </div>
         </section>

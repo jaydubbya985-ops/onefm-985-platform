@@ -1,7 +1,7 @@
-﻿/**
- * SPONSOR â€” rebuilt per REBUILD-SPEC.md (page 4 of 6). The money page.
- * Flow: ARRIVE (ticker+hero) â†’ HOOK (reach stats) â†’ BODY (tiers, GVL,
- * evidence) â†’ ACT (one working enquiry form â†’ live Supabase).
+/**
+ * SPONSOR — rebuilt per REBUILD-SPEC.md (page 4 of 6). The money page.
+ * Flow: ARRIVE (ticker+hero) → HOOK (reach stats) → BODY (tiers, GVL,
+ * evidence) → ACT (one working enquiry form → live Supabase).
  */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -50,9 +50,9 @@ function SponsorHero() {
           ]} />
         </h1>
         <p className="mt-7 max-w-[560px] text-[17px] leading-relaxed text-white/60">
-          Radio advertising that supports the community it sells to â€” {PARTNERSHIP_FROM_WEEKLY},
+          Radio advertising that supports the community it sells to — {PARTNERSHIP_FROM_WEEKLY},
           heard across {formatTowns()} of the Goulburn Valley. {BREAKFAST_SHOW} runs {BREAKFAST_TIME} weekdays.
-          GVL match-day commercials are premium inventory â€” not the standard 30-second floor.
+          GVL match-day commercials are premium inventory — not the standard 30-second floor.
         </p>
         <a
           href="#enquire"
@@ -60,7 +60,7 @@ function SponsorHero() {
           style={{ background: RED }}
           data-cursor-label="ENQUIRE"
         >
-          Start a Conversation â†’
+          Start a Conversation →
         </a>
       </div>
     </section>
@@ -88,7 +88,7 @@ function EnquiryForm() {
     if (result.success) {
       setState('done')
     } else {
-      setError(result.error ?? `Something went wrong â€” email ${BRAND.email} instead.`)
+      setError(result.error ?? `Something went wrong — email ${BRAND.email} instead.`)
       setState('error')
     }
   }
@@ -97,7 +97,7 @@ function EnquiryForm() {
     return (
       <div className="border-2 rounded-2xl p-10 text-center" style={{ borderColor: RED }}>
         <div className="font-poster uppercase text-[34px] text-white">You're in the pipeline<span style={{ color: RED }}>.</span></div>
-        <p className="text-white/55 mt-2 text-[15px]">We'll be in touch. â€” ONE FM 98.5</p>
+        <p className="text-white/55 mt-2 text-[15px]">We'll be in touch. — ONE FM 98.5</p>
       </div>
     )
   }
@@ -109,7 +109,7 @@ function EnquiryForm() {
       <input name="company" placeholder="Business name" aria-label="Business name" className={input} />
       <input name="email" type="email" required placeholder="Email" aria-label="Email" className={input} />
       <input name="phone" placeholder="Phone (optional)" aria-label="Phone" className={input} />
-      <textarea name="message" required placeholder="Tell us about your business and what you're afterâ€¦" aria-label="Message" rows={4} className={`${input} md:col-span-2`} />
+      <textarea name="message" required placeholder="Tell us about your business and what you're after…" aria-label="Message" rows={4} className={`${input} md:col-span-2`} />
       {state === 'error' && <p className="text-sm md:col-span-2" style={{ color: RED }}>{error}</p>}
       <button
         type="submit"
@@ -119,7 +119,7 @@ function EnquiryForm() {
         data-cursor-label="SEND"
       >
         {state === 'sending' && <Loader2 size={16} className="animate-spin" />}
-        Send the Enquiry â†’
+        Send the Enquiry →
       </button>
     </form>
   )
@@ -129,13 +129,13 @@ export default function SponsorshipKit() {
   const tiers = Object.values(generalTiers).map((t) => ({
     tag: `$${t.weeklyPrice}/week`,
     title: t.name,
-    body: `${t.spots} announcements a week and ${t.socialPosts} social posts a month${'exclusivity' in t && t.exclusivity ? ' â€” with category exclusivity' : ''}. Range $${t.minPrice}â€“$${t.maxPrice}/week to fit your campaign.`,
+    body: `${t.spots} announcements a week and ${t.socialPosts} social posts a month${'exclusivity' in t && t.exclusivity ? ' — with category exclusivity' : ''}. Range $${t.minPrice}–$${t.maxPrice}/week to fit your campaign.`,
   }))
 
   return (
     <Layout>
       <SEO
-        title="Sponsor ONE FM 98.5 â€” Advertise Across the Goulburn Valley"
+        title="Sponsor ONE FM 98.5 — Advertise Across the Goulburn Valley"
         description={`${PARTNERSHIP_FROM_WEEKLY}. ${formatWeeklyListeners()} across ${formatTowns()}. ${STANDARD_SPOT_PLUS_GST}. ${GVL_PREMIUM_BADGE}. ${BREAKFAST_SHOW} ${BREAKFAST_TIME}.`}
       />
       <div style={{ background: '#0A0A0A' }} className="min-h-screen">
@@ -145,7 +145,7 @@ export default function SponsorshipKit() {
             formatTownsGvl(),
             PARTNERSHIP_FROM_WEEKLY,
             STANDARD_SPOT_PLUS_GST,
-            `${BREAKFAST_SHOW} Â· ${BREAKFAST_TIME}`,
+            `${BREAKFAST_SHOW} · ${BREAKFAST_TIME}`,
             getBreakfastScheduleLabel(),
             GVL_PREMIUM_BADGE,
           ]}
@@ -154,7 +154,7 @@ export default function SponsorshipKit() {
         <SponsorHero />
 
         <StatsStrip
-          stats={[...coverageStatsStrip(), { n: `$${ENTRY_WEEKLY}`, t: 'Per week â€” Community Partner floor' }]}
+          stats={[...coverageStatsStrip(), { n: `$${ENTRY_WEEKLY}`, t: 'Per week — Community Partner floor' }]}
         />
 
         <EditorialCards label="The Packages" items={tiers} columns={2} />
@@ -166,7 +166,7 @@ export default function SponsorshipKit() {
         <FeatureFrame
           to="/football"
           img="/assets/images/gvl-duguid-run.jpg"
-          alt="GVL football â€” sponsor the live call on ONE FM 98.5"
+          alt="GVL football — sponsor the live call on ONE FM 98.5"
           badge={GVL_PREMIUM_BADGE}
         />
 
@@ -175,13 +175,13 @@ export default function SponsorshipKit() {
           <div className="grid md:grid-cols-2 gap-5">
             <Link to="/audience" className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636] block" data-cursor-label="DATA">
               <h3 className="font-poster uppercase text-[26px] text-white">Audience &amp; Reach Data</h3>
-              <p className="text-[15px] text-white/55 mt-2">ABS 2021 modelled reach via townData â€” not a measured listener survey. Stream analytics pending Radio.co.</p>
-              <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>See the data â†’</span>
+              <p className="text-[15px] text-white/55 mt-2">ABS 2021 modelled reach via townData — not a measured listener survey. Stream analytics pending Radio.co.</p>
+              <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>See the data →</span>
             </Link>
             <Link to="/media-kit" className="border border-white/12 rounded-xl p-7 transition-colors hover:border-[#E51636] block" data-cursor-label="KIT">
               <h3 className="font-poster uppercase text-[26px] text-white">Media Kit &amp; Rate Card</h3>
               <p className="text-[15px] text-white/55 mt-2">Rate card, coverage, and station brand files for your marketing team or agency.</p>
-              <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>Open the kit â†’</span>
+              <span className="inline-block mt-4 font-bold text-[13px] tracking-[0.12em] uppercase text-white border-b-2 pb-0.5" style={{ borderColor: RED }}>Open the kit →</span>
             </Link>
           </div>
         </section>
@@ -193,7 +193,7 @@ export default function SponsorshipKit() {
           </h2>
           <EnquiryForm />
           <p className="text-[13px] text-white/35 mt-4">
-            Goes straight to the station's pipeline â€” or email{' '}
+            Goes straight to the station's pipeline — or email{' '}
             <a href={`mailto:${BRAND.email}`} className="underline hover:text-white">
               {BRAND.email}
             </a>{' '}
