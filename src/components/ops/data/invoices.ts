@@ -5,12 +5,20 @@
 // GROUND TRUTH (Jay, 10 Sept 2026): BATCH_INVOICES — the whole June 2026 batch
 // of 19 — was the real receivables list at the time it was drafted, not demo
 // data. It contains real Goulburn Valley businesses, contacts and amounts.
-// Current send/payment status per invoice is unconfirmed (batch is from June);
-// reconcile with Jay before treating any row as outstanding.
+//
+// BATCH 2.0 (22 Sept 2026): batch re-issued 17 Sept 2026 (issue date rolled,
+// due dates now 1 Oct 2026). FOOTT (inv-001) and Jason's TV (inv-002) marked
+// PAID per Jason. GVFL settlement (inv-004) SET ASIDE — do not send. Added:
+// KDL (020), CBF grants ×3 (021–023), Vision Australia (024), Bowls Victoria
+// 25/26 + 26/27 (025–026), Jul–Sep 2026 catch-ups for Burkes/Cleave's/McRae
+// (027–029), and Oporto Shepparton (030) merged in from GitHub main's
+// CURRENT_INVOICES — renumbered ONEFM-2026-040 because 030 = KDL in this
+// batch. Oporto was never sent. ALL INVOICES REMAIN DRAFT/UNSELECTED —
+// nothing sends without Jason's manual selection and send command.
 //
 // REAL_INVOICE_NUMBERS still gates live Supabase seeding to FOOTT + Jason's TV
-// only. Expanding it to the full batch is a deliberate Phase 2 step, taken
-// with Jay after per-invoice status is confirmed — not before.
+// + Oporto only. Expanding it to the full batch is a deliberate Phase 2 step,
+// taken with Jay after per-invoice status is confirmed — not before.
 //
 // STILL FICTIONAL: BILLING_INVOICES (the INV-2026-xxx ledger), PAYMENT_RECORDS,
 // and their derived stats. These contradict the real batch (same businesses,
@@ -47,8 +55,11 @@ export interface BatchInvoice {
   createdAt?: string
 }
 
-/** Batch issue date — the deployed batch was created 9 June 2026. */
-export const BATCH_ISSUE_DATE = '2026-06-09'
+/**
+ * Batch issue date — originally created 9 June 2026; RE-ISSUED 17 September
+ * 2026 as the final send batch (Batch 2.0). Due date auto-rolls to 1 Oct 2026.
+ */
+export const BATCH_ISSUE_DATE = '2026-09-17'
 
 /** Batch due date — issue date + 14 days (matches the bundle's `Je` constant). */
 export const BATCH_DUE_DATE = (() => {
@@ -103,6 +114,28 @@ export const INVOICE_THANK_YOU_MESSAGES: Record<string, string> = {
     "The team at Primary Care Connect does incredible work supporting health and wellbeing in our community, and we're proud to have you as a ONE FM sponsor. Just a gentle reminder about the outstanding invoice — please reach out if you need to discuss payment options. We'd love to keep this partnership going strong.",
   'inv-019':
     "Hey team — just a quick heads up about a small remaining balance on your Donuts A Go Go sponsorship. We know it's not much, but every bit helps keep ONE FM running for the Goulburn Valley! Drop us a line when you get a chance, and thanks for being part of the ONE FM family.",
+  'inv-020':
+    "The Kyabram District League and ONE FM are keeping local footy on the air together — thank you for backing community broadcasting for Season 2026! This invoice covers the KDL 2026 season broadcast sponsorship. We can't wait to bring every mark, goal and grand final moment to the region again this year.",
+  'inv-021':
+    'Please find attached our tax invoice for Instalment 1 of our 2026/27 Development & Operations grant (D&O-02457), together with the signed grant agreement. These funds keep three part-time station roles on air — thank you for backing community broadcasting in the Goulburn Valley.',
+  'inv-022':
+    'Please find attached our tax invoice for Instalment 1 of our 2026/27 Specialist Radio Programming grant (SRP-01802), together with the signed grant agreement. This funding keeps 8 hours of Ethnic programming and 1 hour of First Nations programming on air every week — thank you.',
+  'inv-023':
+    "Please find attached our tax invoice for Instalment 1 of our 2026/27 Content grant (C-02270), together with the signed grant agreement. 'Regional Voice' will bring the stories of all five shires to air every weekday — thank you for making it possible.",
+  'inv-024':
+    'Thank you Vision Australia for continuing to host your transmission equipment at our Mount Major site. This invoice covers site rental for the six-month term July – December 2026. We apologise for the delayed invoice following our system rebuild — the next six-month invoice will follow in January 2027 as per our agreement.',
+  'inv-025':
+    'Thank you Bowls Victoria for partnering with ONE FM on the Bowls Podcast for the 2025/26 season. This invoice covers the season sponsorship ($1,000 + GST). It has been a pleasure bringing bowls coverage to the region — and with the 2026/27 season now starting up, a separate invoice for the new season accompanies this one.',
+  'inv-026':
+    'Thank you Bowls Victoria for continuing the Bowls Podcast partnership into the 2026/27 season. This invoice covers the new season sponsorship ($1,000 + GST). We look forward to another great season of bowls on air together.',
+  'inv-027':
+    "Hi Ken, this invoice covers your sponsorship for July, August and September 2026 — your ads continued to air through the quarter while we rebuilt our invoicing system, and our apologies for the delay. Thank you for your ongoing support of community radio!",
+  'inv-028':
+    "Hi Cleave, this invoice covers your sponsorship for July, August and September 2026 — your sponsorship continued on air through the quarter while we rebuilt our invoicing system. Our apologies for the delay, and thank you for sticking with us.",
+  'inv-029':
+    "Hi Keith, this invoice covers your sponsorship for July, August and September 2026 — your sponsorship continued on air through the quarter while we rebuilt our invoicing system. Our apologies for the delay, and thank you for your long-term support of ONE FM.",
+  'inv-030':
+    'Hi Bishoy, thank you for partnering with ONE FM 98.5 for the 2026 Football Finals! The Best Player award activation, post-game interviews and your 30-second spots across the finals series put Oporto Shepparton right at the heart of local footy. We appreciate your support of community radio and look forward to working with you again.',
 }
 
 /** Personal thank-you message for an invoice (bundle's `Ke(id)` helper). */
@@ -154,6 +187,28 @@ export const INVOICE_OPERATIONAL_MESSAGES: Record<string, string> = {
     'This is a reissue of a previously invoiced amount that remains unpaid. We understand oversights happen — please let us know if you need any clarification or would like to arrange a payment plan.',
   'inv-019':
     "Hi there, this is a friendly reminder about a small outstanding balance. No amount is too small and every dollar helps keep community radio alive in the Goulburn Valley! Thank you for your support.",
+  'inv-020':
+    'This invoice covers the Kyabram District League broadcast sponsorship for Season 2026 — live coverage of KDL football across the season. Please find the tax invoice attached; payment terms are 14 days.',
+  'inv-021':
+    'Tax invoice for Instalment 1 ($21,164 + GST) of grant D&O-02457 (2026/27 Development & Operations). Signed agreement attached. Per the agreement, payment is due within 30 days of receipt of the signed agreement and this invoice. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-022':
+    'Tax invoice for Instalment 1 ($17,680 + GST) of grant SRP-01802 (2026/27 Specialist Radio Programming). Signed agreement attached. Per the agreement, payment is due within 30 days of receipt of the signed agreement and this invoice. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-023':
+    'Tax invoice for Instalment 1 ($8,090 + GST) of grant C-02270 (2026/27 Content). Signed agreement attached. Per the agreement, payment is due within 30 days of receipt of the signed agreement and this invoice. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-024':
+    'Tax invoice for Mount Major site rental — six-month term July to December 2026 ($7,000 + GST). This invoice was due to send in July 2026 and was delayed by our system rebuild; our apologies. The following six-month term (January – June 2027) will be invoiced in January 2027.',
+  'inv-025':
+    'Tax invoice for Bowls Podcast sponsorship — 2025/26 season ($1,000 + GST = $1,100). Please find the tax invoice attached; payment terms are 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-026':
+    'Tax invoice for Bowls Podcast sponsorship — 2026/27 season ($1,000 + GST = $1,100). Please find the tax invoice attached; payment terms are 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-027':
+    'Tax invoice for sponsorship July–September 2026 (3 months × $400 + GST = $1,320). Payment terms 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-028':
+    'Tax invoice for sponsorship July–September 2026 (3 months × $541.66 + GST = $1,787.48). Payment terms 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-029':
+    'Tax invoice for sponsorship July–September 2026 (3 months × $541.66 + GST = $1,787.48). Payment terms 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-030':
+    'Tax invoice for 2026 Football Finals Partnership — Best Player award activation (on-air mentions, post-game interview, voucher presentation, social extension) plus 120 × 30-second spots, ad production included ($2,000 + GST = $2,200). Payment terms 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
 }
 
 /** Operational email body for an invoice (bundle's `Ye(id)`/`We(id)` helper). */
@@ -184,9 +239,10 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     story: 'New major community partner for 6 months',
     emailSubject: 'Your ONE FM 98.5 Community Partnership Invoice – Welcome Aboard!',
     emailBody: getInvoiceEmailBody('inv-001'),
-    status: 'draft',
+    status: 'paid',
     selected: false,
-    notes: 'New sponsor onboarding – priority send',
+    notes:
+      'PAID – money received (reported by Jason 17 Sep 2026). Verify amount against bank statement; if partial, record balance.',
     createdAt: BATCH_ISSUE_DATE,
   },
   {
@@ -204,9 +260,10 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     story: 'Clean slate 12-month consolidation invoice',
     emailSubject: 'Clean Slate Invoice – 12 Month Sponsorship Consolidation',
     emailBody: getInvoiceEmailBody('inv-002'),
-    status: 'draft',
+    status: 'paid',
     selected: false,
-    notes: 'Clean slate consolidation – personal relationship',
+    notes:
+      'PAID – money received (reported by Jason 17 Sep 2026). Verify amount against bank statement; if partial, record balance.',
     createdAt: BATCH_ISSUE_DATE,
   },
   {
@@ -226,7 +283,8 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     emailBody: getInvoiceEmailBody('inv-003'),
     status: 'draft',
     selected: false,
-    notes: 'GVL major sponsor – high priority',
+    notes:
+      'GVL major sponsor – high priority. Contract 012-00781-0001 (GVL 2026) EXPIRES 30 Sep 2026 – send before expiry; renewal decision needed.',
     createdAt: BATCH_ISSUE_DATE,
   },
   {
@@ -246,7 +304,8 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     emailBody: getInvoiceEmailBody('inv-004'),
     status: 'draft',
     selected: false,
-    notes: '2025 settlement – closing out old year',
+    notes:
+      'SET ASIDE 17 Sep 2026 (Jason) – GVFL $10k not expected now, possibly ever. DO NOT SEND. Excluded from collectable totals; retained for records/debt review.',
     createdAt: BATCH_ISSUE_DATE,
   },
   {
@@ -266,7 +325,8 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     emailBody: getInvoiceEmailBody('inv-005'),
     status: 'draft',
     selected: false,
-    notes: 'Major sponsor – carry forward balance included',
+    notes:
+      'Major sponsor – carry forward balance included. Contract 012-00782-0001 (GVL 2026 MAJOR) EXPIRES 30 Sep 2026 – send before expiry; renewal decision needed.',
     createdAt: BATCH_ISSUE_DATE,
   },
   {
@@ -326,7 +386,8 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     emailBody: getInvoiceEmailBody('inv-008'),
     status: 'draft',
     selected: false,
-    notes: 'Previously unsent – system migration issue',
+    notes:
+      'Previously unsent – system migration issue. Contract 011-00018-0001 (Annual Image) expires 17 Oct 2026.',
     createdAt: BATCH_ISSUE_DATE,
   },
   {
@@ -346,7 +407,8 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     emailBody: getInvoiceEmailBody('inv-009'),
     status: 'draft',
     selected: false,
-    notes: 'Previously unsent – local business',
+    notes:
+      'Previously unsent – local business. Contract 011-00780-0001 (OB 12 Months Image) expires 18 Oct 2026.',
     createdAt: BATCH_ISSUE_DATE,
   },
   {
@@ -446,7 +508,8 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     emailBody: getInvoiceEmailBody('inv-014'),
     status: 'draft',
     selected: false,
-    notes: 'Selected months – respected community business',
+    notes:
+      'Selected months – respected community business. Contract 010-00139-0001 (LT Image) EXPIRES 25 Sep 2026 – send before expiry.',
     createdAt: BATCH_ISSUE_DATE,
   },
   {
@@ -549,16 +612,215 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     notes: 'Small balance – friendly follow-up',
     createdAt: BATCH_ISSUE_DATE,
   },
-]
-
-/**
- * REAL invoices created after the June batch. Seeded into the ledger alongside
- * BATCH_INVOICES; these are live receivables, not samples.
- */
-export const CURRENT_INVOICES: BatchInvoice[] = [
   {
     id: 'inv-020',
     number: 'ONEFM-2026-030',
+    company: 'Kyabram District League',
+    contactName: '',
+    email: '',
+    amountExclGst: 4000,
+    gst: 400,
+    total: 4400,
+    description: 'KDL Broadcast Season 2026 – Sponsorship',
+    period: 'Season 2026',
+    dueDate: '2026-10-01',
+    story: 'KDL Season 2026 broadcast partnership',
+    emailSubject: 'KDL Season 2026 Broadcast Sponsorship – Invoice',
+    emailBody: getInvoiceEmailBody('inv-020'),
+    status: 'draft',
+    selected: false,
+    notes: 'Added 22 Jul 2026 – needs contact name + email',
+    createdAt: '2026-07-22',
+  },
+  {
+    id: 'inv-021',
+    number: 'ONEFM-2026-031',
+    company: 'Community Broadcasting Foundation',
+    contactName: 'CBF Grants Team',
+    email: '',
+    amountExclGst: 21164,
+    gst: 2116.4,
+    total: 23280.4,
+    description: 'CBF Development & Operations Grant (D&O-02457) – Instalment 1, 2026/27',
+    period: '2026/27 R1',
+    dueDate: '2026-10-01',
+    story: 'D&O grant instalment 1 – salaries: Specialist Programs Coordinator, IT/Scheduling, On Demand/Training',
+    emailSubject: 'Tax Invoice – CBF Grant D&O-02457 Instalment 1 (signed agreement attached)',
+    emailBody: getInvoiceEmailBody('inv-021'),
+    status: 'draft',
+    selected: false,
+    notes: 'REQUIRES: signed agreement (two officers) + submit via SmartyGrants. CBF pays within 30 days of receipt.',
+    createdAt: '2026-07-22',
+  },
+  {
+    id: 'inv-022',
+    number: 'ONEFM-2026-032',
+    company: 'Community Broadcasting Foundation',
+    contactName: 'CBF Grants Team',
+    email: '',
+    amountExclGst: 17680,
+    gst: 1768,
+    total: 19448,
+    description: 'CBF Specialist Radio Programming Grant (SRP-01802) – Instalment 1, 2026/27',
+    period: '2026/27 R1',
+    dueDate: '2026-10-01',
+    story: 'SRP grant instalment 1 – 8 hrs/wk Ethnic + 1 hr/wk First Nations programming',
+    emailSubject: 'Tax Invoice – CBF Grant SRP-01802 Instalment 1 (signed agreement attached)',
+    emailBody: getInvoiceEmailBody('inv-022'),
+    status: 'draft',
+    selected: false,
+    notes: 'REQUIRES: signed agreement (two officers) + submit via SmartyGrants. CBF pays within 30 days of receipt.',
+    createdAt: '2026-07-22',
+  },
+  {
+    id: 'inv-023',
+    number: 'ONEFM-2026-033',
+    company: 'Community Broadcasting Foundation',
+    contactName: 'CBF Grants Team',
+    email: '',
+    amountExclGst: 8090,
+    gst: 809,
+    total: 8899,
+    description: "CBF Content Grant (C-02270) – Instalment 1, 2026/27 'Regional Voice'",
+    period: '2026/27 R1',
+    dueDate: '2026-10-01',
+    story: "Content grant instalment 1 – 'Regional Voice' weekday 30-min public interest program, 5 shires",
+    emailSubject: 'Tax Invoice – CBF Grant C-02270 Instalment 1 (signed agreement attached)',
+    emailBody: getInvoiceEmailBody('inv-023'),
+    status: 'draft',
+    selected: false,
+    notes: 'REQUIRES: signed agreement (two officers) + submit via SmartyGrants. CBF pays within 30 days of receipt.',
+    createdAt: '2026-07-22',
+  },
+  {
+    id: 'inv-024',
+    number: 'ONEFM-2026-034',
+    company: 'Vision Australia',
+    contactName: '',
+    email: '',
+    amountExclGst: 7000,
+    gst: 700,
+    total: 7700,
+    description: 'Mount Major Site Rental – 6 Month Term (Jul–Dec 2026)',
+    period: 'Jul 2026 – Dec 2026',
+    dueDate: '2026-10-01',
+    story: 'Mount Major transmission site rental – recurring 6-monthly',
+    emailSubject: 'Mount Major Site Rental Invoice – Jul–Dec 2026 Term',
+    emailBody: getInvoiceEmailBody('inv-024'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Added 17 Sep 2026 – due to send July, delayed by system rebuild. RECURRING: next 6-month invoice (Jan–Jun 2027) due January 2027. Needs contact name + email.',
+    createdAt: '2026-09-17',
+  },
+  {
+    id: 'inv-025',
+    number: 'ONEFM-2026-035',
+    company: 'Bowls Victoria',
+    contactName: '',
+    email: '',
+    amountExclGst: 1000,
+    gst: 100,
+    total: 1100,
+    description: 'Bowls Podcast Sponsorship – Season 2025/26',
+    period: '2025/26 season',
+    dueDate: '2026-10-01',
+    story: 'Bowls Podcast sponsorship – 2025/26 season',
+    emailSubject: 'Bowls Podcast Sponsorship Invoice – 2025/26 Season',
+    emailBody: getInvoiceEmailBody('inv-025'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Added 22 Sep 2026 (Jason) – 25/26 Bowls Podcast $1,000 + GST. Needs contact name + email.',
+    createdAt: '2026-09-22',
+  },
+  {
+    id: 'inv-026',
+    number: 'ONEFM-2026-036',
+    company: 'Bowls Victoria',
+    contactName: '',
+    email: '',
+    amountExclGst: 1000,
+    gst: 100,
+    total: 1100,
+    description: 'Bowls Podcast Sponsorship – Season 2026/27',
+    period: '2026/27 season',
+    dueDate: '2026-10-01',
+    story: 'Bowls Podcast sponsorship – 2026/27 season (starting up)',
+    emailSubject: 'Bowls Podcast Sponsorship Invoice – 2026/27 Season',
+    emailBody: getInvoiceEmailBody('inv-026'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Added 22 Sep 2026 (Jason) – 26/27 Bowls Podcast $1,000 + GST, sent with the 25/26 invoice as the new season is starting up. Needs contact name + email.',
+    createdAt: '2026-09-22',
+  },
+  {
+    id: 'inv-027',
+    number: 'ONEFM-2026-037',
+    company: 'Burkes Bakery',
+    contactName: 'Ken',
+    email: 'strathbogiebakingcompany@gmail.com',
+    amountExclGst: 1200,
+    gst: 120,
+    total: 1320,
+    description: 'Sponsorship Catch-Up – Jul/Aug/Sep 2026 (3 months × $400)',
+    period: 'Jul 2026 – Sep 2026',
+    dueDate: '2026-10-01',
+    story: 'Monthly sponsorship continued to air Jul–Sep 2026, never invoiced',
+    emailSubject: 'Sponsorship Invoice – July to September 2026',
+    emailBody: getInvoiceEmailBody('inv-027'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Added 22 Sep 2026 – pro-rated from ONEFM-2026-019 ($2,800 ex / 7 months = $400/mo). Contract 011-00780-0001 expired 18 Oct 2026. Confirm service continued Jul–Sep before send.',
+    createdAt: '2026-09-22',
+  },
+  {
+    id: 'inv-028',
+    number: 'ONEFM-2026-038',
+    company: "Cleave's Garden Supplies",
+    contactName: 'Cleave',
+    email: '',
+    amountExclGst: 1624.98,
+    gst: 162.5,
+    total: 1787.48,
+    description: 'Sponsorship Catch-Up – Jul/Aug/Sep 2026 (3 months × $541.66)',
+    period: 'Jul 2026 – Sep 2026',
+    dueDate: '2026-10-01',
+    story: 'Monthly sponsorship continued to air Jul–Sep 2026, never invoiced',
+    emailSubject: 'Sponsorship Invoice – July to September 2026',
+    emailBody: getInvoiceEmailBody('inv-028'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Added 22 Sep 2026 – pro-rated from ONEFM-2026-018 ($4,333.28 ex / 8 months = $541.66/mo). Contract 011-00018-0001 expired 17 Oct 2026. Confirm service continued Jul–Sep before send.',
+    createdAt: '2026-09-22',
+  },
+  {
+    id: 'inv-029',
+    number: 'ONEFM-2026-039',
+    company: 'McRae Demolitions',
+    contactName: 'Keith',
+    email: '',
+    amountExclGst: 1624.98,
+    gst: 162.5,
+    total: 1787.48,
+    description: 'Sponsorship Catch-Up – Jul/Aug/Sep 2026 (3 months × $541.66)',
+    period: 'Jul 2026 – Sep 2026',
+    dueDate: '2026-10-01',
+    story: 'Monthly sponsorship continued to air Jul–Sep 2026, never invoiced',
+    emailSubject: 'Sponsorship Invoice – July to September 2026',
+    emailBody: getInvoiceEmailBody('inv-029'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Added 22 Sep 2026 – pro-rated from ONEFM-2026-017 ($4,333.28 ex / 8 months = $541.66/mo). Confirm service continued Jul–Sep before send.',
+    createdAt: '2026-09-22',
+  },
+  {
+    id: 'inv-030',
+    number: 'ONEFM-2026-040',
     company: 'Oporto Shepparton',
     contactName: 'Bishoy Soliman',
     email: 'oportoshepparton@gmail.com',
@@ -568,20 +830,31 @@ export const CURRENT_INVOICES: BatchInvoice[] = [
     description:
       '2026 Football Finals Partnership — Best Player award activation (on-air mentions, post-game interview, voucher presentation, social extension) + 120 × 30-second spots, ad production included',
     period: '2026 Finals Series',
-    dueDate: '2026-09-17',
+    dueDate: '2026-10-01',
     story: 'Requested by Bishoy Soliman 9 Sept 2026 — Option 1, 7-day terms',
     emailSubject: 'ONE FM 98.5 — Oporto Shepparton Finals Partnership Invoice',
-    emailBody:
-      "Bishoy, we're stoked to have Oporto Shepparton on board for the 2026 finals! The Best Player award is going to be a cracking moment at every game — one player, one interview, one branded moment people can hear, watch, share and remember. Thanks for backing community radio in the Valley.",
+    emailBody: getInvoiceEmailBody('inv-030'),
     status: 'draft',
     selected: false,
-    notes: 'Option 1 per 2026 Finals Partnership proposal · 7-day terms',
+    notes:
+      'Merged from GitHub main 22 Sep 2026 — existed on main as draft ONEFM-2026-030 (10 Sep); renumbered 040 because 030 = KDL in this batch. Never sent. Original 7-day terms rolled to batch due date.',
     createdAt: '2026-09-10',
   },
 ]
 
-/** Real sponsor invoices (live Supabase seeding gate). June batch reconciliation pending. */
-export const REAL_INVOICE_NUMBERS = ['ONEFM-2026-011', 'ONEFM-2026-012', 'ONEFM-2026-030'] as const
+/**
+ * CURRENT_INVOICES — previously held Oporto Shepparton (ONEFM-2026-030) on
+ * main. Oporto is now merged into BATCH_INVOICES as inv-030 / ONEFM-2026-040
+ * (030 = KDL in this batch). Kept as an empty array because store.tsx and
+ * scripts/generate-invoice-pdf.ts import it — do not remove the export.
+ */
+export const CURRENT_INVOICES: BatchInvoice[] = []
+
+/**
+ * Real sponsor invoices (live Supabase seeding gate). Oporto renumbered
+ * 030 → 040 in the Batch 2.0 merge (22 Sept 2026).
+ */
+export const REAL_INVOICE_NUMBERS = ['ONEFM-2026-011', 'ONEFM-2026-012', 'ONEFM-2026-040'] as const
 
 export function isRealSponsorInvoiceNumber(number: string): boolean {
   return (REAL_INVOICE_NUMBERS as readonly string[]).includes(number)
