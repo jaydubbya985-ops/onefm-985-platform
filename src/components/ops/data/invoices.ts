@@ -11,10 +11,12 @@
 // PAID per Jason. GVFL settlement (inv-004) SET ASIDE — do not send. Added:
 // KDL (020), CBF grants ×3 (021–023), Vision Australia (024), Bowls Victoria
 // 25/26 + 26/27 (025–026), Jul–Sep 2026 catch-ups for Burkes/Cleave's/McRae
-// (027–029), and Oporto Shepparton (030) merged in from GitHub main's
+// (027–029), Oporto Shepparton (030) merged in from GitHub main's
 // CURRENT_INVOICES — renumbered ONEFM-2026-040 because 030 = KDL in this
-// batch. Oporto was never sent. ALL INVOICES REMAIN DRAFT/UNSELECTED —
-// nothing sends without Jason's manual selection and send command.
+// batch. Oporto was never sent. Merritt Funeral Services Jul–Sep catch-up
+// (031 / ONEFM-2026-041) added 22 Sep (Jason confirmed); Aussie Ag excluded
+// (still paying). ALL INVOICES REMAIN DRAFT/UNSELECTED — nothing sends
+// without Jason's manual selection and send command.
 //
 // REAL_INVOICE_NUMBERS still gates live Supabase seeding to FOOTT + Jason's TV
 // + Oporto only. Expanding it to the full batch is a deliberate Phase 2 step,
@@ -136,6 +138,8 @@ export const INVOICE_THANK_YOU_MESSAGES: Record<string, string> = {
     "Hi Keith, this invoice covers your sponsorship for July, August and September 2026 — your sponsorship continued on air through the quarter while we rebuilt our invoicing system. Our apologies for the delay, and thank you for your long-term support of ONE FM.",
   'inv-030':
     'Hi Bishoy, thank you for partnering with ONE FM 98.5 for the 2026 Football Finals! The Best Player award activation, post-game interviews and your 30-second spots across the finals series put Oporto Shepparton right at the heart of local footy. We appreciate your support of community radio and look forward to working with you again.',
+  'inv-031':
+    "Hi Trent, this invoice covers your sponsorship for July, August and September 2026 — your sponsorship continued on air through the quarter while we rebuilt our invoicing system. Our apologies for the delay, and thank you for your continued trust in ONE FM 98.5.",
 }
 
 /** Personal thank-you message for an invoice (bundle's `Ke(id)` helper). */
@@ -209,6 +213,8 @@ export const INVOICE_OPERATIONAL_MESSAGES: Record<string, string> = {
     'Tax invoice for sponsorship July–September 2026 (3 months × $541.66 + GST = $1,787.48). Payment terms 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
   'inv-030':
     'Tax invoice for 2026 Football Finals Partnership — Best Player award activation (on-air mentions, post-game interview, voucher presentation, social extension) plus 120 × 30-second spots, ad production included ($2,000 + GST = $2,200). Payment terms 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
+  'inv-031':
+    'Tax invoice for sponsorship July–September 2026 (3 months × $368.34 + GST = $1,215.52). Payment terms 14 days. Bank: 98.5 One FM, NAB, BSB 083-894, Account 553 219 432.',
 }
 
 /** Operational email body for an invoice (bundle's `Ye(id)`/`We(id)` helper). */
@@ -839,6 +845,27 @@ export const BATCH_INVOICES: BatchInvoice[] = [
     notes:
       'Merged from GitHub main 22 Sep 2026 — existed on main as draft ONEFM-2026-030 (10 Sep); renumbered 040 because 030 = KDL in this batch. Never sent. Original 7-day terms rolled to batch due date.',
     createdAt: '2026-09-10',
+  },
+  {
+    id: 'inv-031',
+    number: 'ONEFM-2026-041',
+    company: 'Merritt Funeral Services',
+    contactName: 'Trent Merritt',
+    email: '',
+    amountExclGst: 1105.02,
+    gst: 110.5,
+    total: 1215.52,
+    description: 'Sponsorship Catch-Up – Jul/Aug/Sep 2026 (3 months × $368.34)',
+    period: 'Jul 2026 – Sep 2026',
+    dueDate: '2026-10-01',
+    story: 'Monthly sponsorship continued to air Jul–Sep 2026, never invoiced',
+    emailSubject: 'Sponsorship Invoice – July to September 2026',
+    emailBody: getInvoiceEmailBody('inv-031'),
+    status: 'draft',
+    selected: false,
+    notes:
+      'Added 22 Sep 2026 (Jason confirmed) – pro-rated from ONEFM-2026-024 ($1,473.36 ex / 4 selected months = $368.34/mo). Aussie Ag excluded — Jason advises they have kept paying. Needs email address. Confirm service continued Jul–Sep before send.',
+    createdAt: '2026-09-22',
   },
 ]
 
